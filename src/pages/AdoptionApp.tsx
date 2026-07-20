@@ -10,11 +10,9 @@ import type {
   View,
   DraftEntry,
   AdoptionStore,
-  DraftAction,
-  HistorySnapshot,
-  OrgProfile
+  DraftAction
 } from '@lib/adoptionState';
-import { initializeStore, createEmptyEntry, cloneDraft, cloneEntry } from '@lib/adoptionState';
+import { initializeStore, createEmptyEntry, cloneEntry } from '@lib/adoptionState';
 import {
   getMetrics as computeMetrics,
   buildRadarChartData,
@@ -22,25 +20,20 @@ import {
 } from '@lib/adoptionMetrics';
 import { validateEntry } from '@lib/adoptionValidator';
 import { load, save } from '@lib/storage';
+import {
+  ADOPTION_STORAGE_KEY,
+  buildAdoptionExportPayload,
+  buildHistorySnapshot,
+  mergeImportedAdoptionState,
+  type SavedAdoptionAssessment
+} from '@lib/adoptionIO';
 import { AdoptionDashboard } from '@components/views/AdoptionDashboard';
 import { SettingsPanel } from '@components/views/SettingsPanel';
 import { ActionPlanTracker } from '@components/views/ActionPlanTracker';
 import { AssessmentPanel } from '@components/views/AssessmentPanel';
 
-const ADOPTION_STORAGE_KEY = 'nhs-digital-adoption-store';
-
-interface SavedAdoptionAssessment {
-  orgProfile: OrgProfile;
-  currentDraft: Record<string, Record<string, DraftEntry>>;
-  history: HistorySnapshot[];
-}
-
 function cloneAction(action: DraftAction): DraftAction {
   return { ...action };
-}
-
-function buildSnapshotLabel(date = new Date()): string {
-  return date.toLocaleString('en-GB', { month: 'short', year: 'numeric' });
 }
 
 function getRubricText(componentId: string, lensName: string, score: number): string {
@@ -152,14 +145,7 @@ export function AdoptionApp() {
   }, []);
 
   const handleExport = useCallback(() => {
-    const payload: SavedAdoptionAssessment = {
-      orgProfile: store.orgProfile,
-      currentDraft: cloneDraft(store.currentDraft),
-      history: store.history.map((snapshot) => ({
-        ...snapshot,
-        data: cloneDraft(snapshot.data)
-      }))
-    };
+    const payload = buildAdoptionExportPayload(store);
 
     downloadFile(
       `adoption-assessment-${(store.orgProfile.trustName || 'export').replace(/\s+/g, '_')}.json`,
@@ -181,12 +167,7 @@ export function AdoptionApp() {
     try {
       const text = await file.text();
       const parsed = JSON.parse(text) as Partial<SavedAdoptionAssessment>;
-      setStore((prev) => initializeStore({
-        ...prev,
-        orgProfile: parsed.orgProfile || prev.orgProfile,
-        currentDraft: parsed.currentDraft || prev.currentDraft,
-        history: parsed.history || prev.history
-      }));
+      setStore((prev) => mergeImportedAdoptionState(parsed, prev));
       setView('dashboard');
     } catch (_error) {
       window.alert('Unable to import adoption assessment. Please verify the file contents.');
@@ -196,11 +177,7 @@ export function AdoptionApp() {
   }, []);
 
   const handleFinaliseMonth = useCallback(() => {
-    const snapshot: HistorySnapshot = {
-      monthLabel: buildSnapshotLabel(),
-      overallPercentage: metrics.overallPct,
-      data: cloneDraft(store.currentDraft)
-    };
+    const snapshot = buildHistorySnapshot(store.currentDraft, metrics.overallPct);
 
     setStore((prev) => ({
       ...prev,

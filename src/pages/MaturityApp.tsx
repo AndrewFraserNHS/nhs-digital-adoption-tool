@@ -6,71 +6,21 @@ import { componentMatrix } from '@data/legacy-data';
 import { MATURITY_STAGES } from '@data/rubrics';
 import { exportMaturityReportToCSV, type MaturityReportData } from '@lib/reporting';
 import type { ActionItem, ComponentDetail, MaturityStore } from '@lib/maturityState';
-import { initializeMaturityStore, initializeDetails } from '@lib/maturityState';
+import { initializeMaturityStore } from '@lib/maturityState';
+import {
+  buildInitialDetails,
+  cloneDetail,
+  createEmptyDetail,
+  normaliseDetails,
+  normaliseResponses,
+  type ProjectProfile,
+  type SavedMaturityAssessment
+} from '@lib/maturityIO';
 import { MaturityOverview } from '@components/views/MaturityOverview';
 import { MaturityAssessmentPanel } from '@components/views/MaturityAssessmentPanel';
 import { MaturityModalManager, type MaturityGuidance } from '@components/views/MaturityModalManager';
 
 const STAGES = MATURITY_STAGES;
-
-interface ProjectProfile {
-  org: string;
-  project: string;
-  phase: string;
-}
-
-interface SavedMaturityAssessment {
-  orgProfile?: Partial<ProjectProfile>;
-  responses?: Record<string, number>;
-  details?: Record<string, Partial<ComponentDetail>>;
-}
-
-function createEmptyDetail(): ComponentDetail {
-  return {
-    justification: '',
-    notes: '',
-    links: [],
-    actions: []
-  };
-}
-
-function cloneDetail(detail: Partial<ComponentDetail> | undefined): ComponentDetail {
-  return {
-    justification: detail?.justification || '',
-    notes: detail?.notes || '',
-    links: [...(detail?.links || [])],
-    actions: (detail?.actions || []).map((action) => ({ ...action }))
-  };
-}
-
-function buildInitialDetails(): Record<string, ComponentDetail> {
-  const details = initializeDetails();
-
-  Object.keys(componentMatrix).forEach((componentName) => {
-    details[componentName] = createEmptyDetail();
-  });
-
-  return details;
-}
-
-function normaliseDetails(
-  source?: Record<string, Partial<ComponentDetail>>
-): Record<string, ComponentDetail> {
-  const details = buildInitialDetails();
-
-  Object.keys(componentMatrix).forEach((componentName) => {
-    details[componentName] = cloneDetail(source?.[componentName]);
-  });
-
-  return details;
-}
-
-function normaliseResponses(source: Record<string, unknown> | undefined): Record<string, number> {
-  return Object.keys(componentMatrix).reduce<Record<string, number>>((acc, componentName) => {
-    acc[componentName] = Number(source?.[componentName] || 0);
-    return acc;
-  }, {});
-}
 
 function buildStatusSummary(actions: ActionItem[]): { labels: string[]; values: number[] } {
   const labels = ['Not Started', 'In Progress', 'Completed'];
@@ -203,11 +153,11 @@ export function MaturityApp() {
   });
 
   const [responses, setResponses] = useState<Record<string, number>>(() =>
-    normaliseResponses(state.assessment.responses)
+    normaliseResponses(componentList, state.assessment.responses)
   );
 
   const [details, setDetails] = useState<Record<string, ComponentDetail>>(() =>
-    buildInitialDetails()
+    buildInitialDetails(componentList)
   );
 
   const getScores = useCallback((): Record<string, number> => {
@@ -356,10 +306,10 @@ export function MaturityApp() {
       return;
     }
 
-    setResponses(normaliseResponses({}));
-    setDetails(buildInitialDetails());
+    setResponses(normaliseResponses(componentList, {}));
+    setDetails(buildInitialDetails(componentList));
     setStore((current) => ({ ...current, modal: '', modalComp: '' }));
-  }, []);
+  }, [componentList]);
 
   const handleFileLoad = useCallback(
     async (event: ChangeEvent<HTMLInputElement>) => {
@@ -376,15 +326,15 @@ export function MaturityApp() {
           project: parsed.orgProfile?.project || '',
           phase: parsed.orgProfile?.phase || ''
         }));
-        setResponses(normaliseResponses(parsed.responses as Record<string, unknown> | undefined));
-        setDetails(normaliseDetails(parsed.details));
+        setResponses(normaliseResponses(componentList, parsed.responses as Record<string, unknown> | undefined));
+        setDetails(normaliseDetails(componentList, parsed.details));
       } catch (_error) {
         window.alert('Unable to load assessment file. Please verify the file format.');
       } finally {
         event.target.value = '';
       }
     },
-    []
+    [componentList]
   );
 
   const handleScoreChange = useCallback((componentId: string, score: number) => {

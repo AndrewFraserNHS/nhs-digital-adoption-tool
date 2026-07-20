@@ -1,13 +1,21 @@
 import React, { JSX, useCallback } from 'react';
 import { MATURITY_STAGES, STAGE_COLORS as STAGE_COLORS_PALETTE } from '@data/rubrics';
-import { generateMaturityReport } from '@lib/reporting';
+import { generateMaturityReport, type MaturityReportData } from '@lib/reporting';
+
+export interface MaturityGuidance {
+  purpose: string;
+  inputs: string;
+  indicators: string;
+  deliverables: string;
+}
 
 export interface MaturityModalManagerProps {
   modalType: '' | 'matrix' | 'guidance' | 'report';
   activeComponent: string;
   scores: Record<string, number>;
   componentMatrix: Record<string, string[]>;
-  guidanceData: Record<string, any>;
+  guidanceData: Record<string, MaturityGuidance>;
+  reportData?: MaturityReportData;
   components?: string[];
   onClose: () => void;
   onSetScore?: (componentId: string, score: number) => void;
@@ -23,6 +31,7 @@ export function MaturityModalManager({
   scores,
   componentMatrix,
   guidanceData,
+  reportData,
   components = [],
   onClose,
   onSetScore,
@@ -33,6 +42,11 @@ export function MaturityModalManager({
   }, []);
 
   const handleExportCsv = useCallback(() => {
+    if (onExportCsv && reportData?.rows?.length) {
+      onExportCsv(reportData.rows);
+      return;
+    }
+
     if (onExportCsv && components) {
       onExportCsv(
         components.map((n) => ({
@@ -42,7 +56,7 @@ export function MaturityModalManager({
         }))
       );
     }
-  }, [components, scores, onExportCsv]);
+  }, [components, reportData, scores, onExportCsv]);
 
   const handleSetScore = useCallback(
     (score: number) => {
@@ -195,7 +209,7 @@ export function MaturityModalManager({
           </div>
           <div
             className="p-8 overflow-y-auto print-area"
-            dangerouslySetInnerHTML={{ __html: generateMaturityReport() }}
+            dangerouslySetInnerHTML={{ __html: generateMaturityReport(reportData) }}
           />
         </div>
       </div>

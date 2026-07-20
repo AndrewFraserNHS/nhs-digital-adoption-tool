@@ -22,6 +22,18 @@ export function SettingsPanel({ orgProfile, onProfileUpdate }: SettingsPanelProp
     onProfileUpdate(updated);
   }, [profile, onProfileUpdate]);
 
+  const handleProjectChange = useCallback((value: string) => {
+    const updated = { ...profile, projectName: value };
+    setProfile(updated);
+    onProfileUpdate(updated);
+  }, [profile, onProfileUpdate]);
+
+  const handleLeadChange = useCallback((value: string) => {
+    const updated = { ...profile, leadName: value };
+    setProfile(updated);
+    onProfileUpdate(updated);
+  }, [profile, onProfileUpdate]);
+
   return (
     <div className="max-w-2xl mx-auto">
       <h2 className="text-2xl font-bold text-slate-800 mb-6">Organisation Settings</h2>
@@ -37,7 +49,7 @@ export function SettingsPanel({ orgProfile, onProfileUpdate }: SettingsPanelProp
             onChange={(e) => handleTrustChange(e.target.value)}
           />
         </div>
-        {/* <div>
+        <div>
           <label className="block text-sm font-medium text-slate-700 mb-1">
             Programme / Project Name
           </label>
@@ -58,7 +70,7 @@ export function SettingsPanel({ orgProfile, onProfileUpdate }: SettingsPanelProp
             value={profile.leadName || ''}
             onChange={(e) => handleLeadChange(e.target.value)}
           />
-        </div> */}
+        </div>
       </div>
     </div>
   );

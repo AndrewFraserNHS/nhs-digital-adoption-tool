@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import AppState from '@lib/state';
 import { createRadarChart, createLineChart } from '@lib/charts';
-import { escapeHtml } from '@lib/utils';
+import { downloadFile, escapeHtml } from '@lib/utils';
 import { ASSESSMENT_LENSES as LENSES } from '@data/lenses';
 import { ASSESSMENT_COMPONENTS, getComponentById } from '@data/components';
 import { GENERIC_RUBRIC } from '@data/rubrics';
@@ -9,18 +9,39 @@ import { SPECIFIC_RUBRICS } from '@types/constants';
 import type {
   View,
   DraftEntry,
-  AdoptionStore
+  AdoptionStore,
+  DraftAction,
+  HistorySnapshot,
+  OrgProfile
 } from '@lib/adoptionState';
-import { initializeStore, createEmptyEntry, cloneEntry } from '@lib/adoptionState';
+import { initializeStore, createEmptyEntry, cloneDraft, cloneEntry } from '@lib/adoptionState';
 import {
   getMetrics as computeMetrics,
-  buildRadarChartData
+  buildRadarChartData,
+  flattenActions
 } from '@lib/adoptionMetrics';
 import { validateEntry } from '@lib/adoptionValidator';
+import { load, save } from '@lib/storage';
 import { AdoptionDashboard } from '@components/views/AdoptionDashboard';
 import { SettingsPanel } from '@components/views/SettingsPanel';
 import { ActionPlanTracker } from '@components/views/ActionPlanTracker';
 import { AssessmentPanel } from '@components/views/AssessmentPanel';
+
+const ADOPTION_STORAGE_KEY = 'nhs-digital-adoption-store';
+
+interface SavedAdoptionAssessment {
+  orgProfile: OrgProfile;
+  currentDraft: Record<string, Record<string, DraftEntry>>;
+  history: HistorySnapshot[];
+}
+
+function cloneAction(action: DraftAction): DraftAction {
+  return { ...action };
+}
+
+function buildSnapshotLabel(date = new Date()): string {
+  return date.toLocaleString('en-GB', { month: 'short', year: 'numeric' });
+}
 
 function getRubricText(componentId: string, lensName: string, score: number): string {
   const rubricGroup = (SPECIFIC_RUBRICS as Record<string, any>)[componentId];
@@ -34,16 +55,18 @@ export function AdoptionApp() {
   const [store, setStore] = useState<AdoptionStore>(() => {
     const state = AppState.getInstance();
     state.loadFromWindow();
+    const persisted = load<AdoptionStore>(ADOPTION_STORAGE_KEY);
     return initializeStore({
       view: 'dashboard',
-      orgProfile: state.adoption?.orgProfile,
-      currentDraft: state.adoption?.currentDraft,
-      history: state.adoption?.history
+      orgProfile: persisted?.orgProfile || state.adoption?.orgProfile,
+      currentDraft: persisted?.currentDraft || state.adoption?.currentDraft,
+      history: persisted?.history || state.adoption?.history
     }) as AdoptionStore;
   });
 
   const [showMatrix, setShowMatrix] = useState<Record<string, boolean>>({});
   const dashboardRef = React.useRef<HTMLDivElement>(null);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const getEntry = useCallback((componentId: string, lens: string): DraftEntry => {
     if (!store.currentDraft[componentId]) {
@@ -56,6 +79,27 @@ export function AdoptionApp() {
   }, [store]);
 
   const metrics = computeMetrics(store, COMPONENTS);
+  const actionRows = flattenActions(
+    store,
+    (componentId) => getComponentById(componentId) || COMPONENTS[0],
+    getEntry
+  ).sort((left, right) => {
+    const ownerCompare = left.action.owner.localeCompare(right.action.owner);
+    if (ownerCompare !== 0) {
+      return ownerCompare;
+    }
+    return left.component.localeCompare(right.component);
+  });
+
+  useEffect(() => {
+    save(ADOPTION_STORAGE_KEY, store);
+    const appState = AppState.getInstance();
+    appState.adoption = {
+      orgProfile: store.orgProfile,
+      currentDraft: store.currentDraft,
+      history: store.history
+    };
+  }, [store]);
 
   // Render charts after dashboard mounts
   useEffect(() => {
@@ -71,10 +115,10 @@ export function AdoptionApp() {
           const lineCanvas = dashboardRef.current?.querySelector('#adoption-line-chart') as HTMLCanvasElement;
           if (lineCanvas) {
             const lineData = {
-              labels: store.history.map((_, i) => `Month ${i + 1}`),
+              labels: store.history.map((snapshot) => snapshot.monthLabel),
               datasets: [{
                 label: 'Adoption Score',
-                data: store.history.map(h => h.score || 0),
+                data: store.history.map(h => h.overallPercentage || 0),
                 borderColor: '#005EB8',
                 backgroundColor: 'rgba(0, 94, 184, 0.1)',
                 fill: true,
@@ -94,6 +138,77 @@ export function AdoptionApp() {
     setView(newView);
   };
 
+  const updateEntry = useCallback((componentId: string, lens: string, entry: DraftEntry) => {
+    setStore((prev) => ({
+      ...prev,
+      currentDraft: {
+        ...prev.currentDraft,
+        [componentId]: {
+          ...prev.currentDraft[componentId],
+          [lens]: cloneEntry(entry)
+        }
+      }
+    }));
+  }, []);
+
+  const handleExport = useCallback(() => {
+    const payload: SavedAdoptionAssessment = {
+      orgProfile: store.orgProfile,
+      currentDraft: cloneDraft(store.currentDraft),
+      history: store.history.map((snapshot) => ({
+        ...snapshot,
+        data: cloneDraft(snapshot.data)
+      }))
+    };
+
+    downloadFile(
+      `adoption-assessment-${(store.orgProfile.trustName || 'export').replace(/\s+/g, '_')}.json`,
+      JSON.stringify(payload, null, 2),
+      'application/json'
+    );
+  }, [store]);
+
+  const handleImportClick = useCallback(() => {
+    fileInputRef.current?.click();
+  }, []);
+
+  const handleImportFile = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    try {
+      const text = await file.text();
+      const parsed = JSON.parse(text) as Partial<SavedAdoptionAssessment>;
+      setStore((prev) => initializeStore({
+        ...prev,
+        orgProfile: parsed.orgProfile || prev.orgProfile,
+        currentDraft: parsed.currentDraft || prev.currentDraft,
+        history: parsed.history || prev.history
+      }));
+      setView('dashboard');
+    } catch (_error) {
+      window.alert('Unable to import adoption assessment. Please verify the file contents.');
+    } finally {
+      event.target.value = '';
+    }
+  }, []);
+
+  const handleFinaliseMonth = useCallback(() => {
+    const snapshot: HistorySnapshot = {
+      monthLabel: buildSnapshotLabel(),
+      overallPercentage: metrics.overallPct,
+      data: cloneDraft(store.currentDraft)
+    };
+
+    setStore((prev) => ({
+      ...prev,
+      history: [...prev.history, snapshot]
+    }));
+    setView('dashboard');
+  }, [metrics.overallPct, store.currentDraft]);
+
   const getComponentStatus = (comp: typeof COMPONENTS[0]) => {
     let scoredCount = 0, justifiedCount = 0;
     comp.lenses.forEach(l => {
@@ -112,6 +227,13 @@ export function AdoptionApp() {
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50 text-slate-800">
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="application/json"
+        className="hidden"
+        onChange={handleImportFile}
+      />
       {/* Sidebar */}
       <div className="w-72 bg-[#005eb8] text-white flex flex-col shadow-xl z-20 flex-shrink-0">
         <div className="p-6 border-b border-blue-700">
@@ -192,13 +314,22 @@ export function AdoptionApp() {
             </span>
           </div>
           <div className="flex items-center space-x-3">
-            <button className="text-sm px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-md font-medium transition-colors">
+            <button
+              onClick={handleImportClick}
+              className="text-sm px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-md font-medium transition-colors"
+            >
               Import
             </button>
-            <button className="text-sm px-4 py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-md font-medium transition-colors">
+            <button
+              onClick={handleExport}
+              className="text-sm px-4 py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-md font-medium transition-colors"
+            >
               Export JSON
             </button>
-            <button className="text-sm px-4 py-2 bg-[#005eb8] text-white hover:bg-blue-700 rounded-md font-medium shadow-sm transition-colors">
+            <button
+              onClick={handleFinaliseMonth}
+              className="text-sm px-4 py-2 bg-[#005eb8] text-white hover:bg-blue-700 rounded-md font-medium shadow-sm transition-colors"
+            >
               Finalise Month
             </button>
           </div>
@@ -229,18 +360,7 @@ export function AdoptionApp() {
               getRubricText={getRubricText}
               getEntry={getEntry}
               onComponentChange={setActiveComponentId}
-              onEntryUpdate={(componentId, lens, entry) => {
-                setStore(prev => ({
-                  ...prev,
-                  currentDraft: {
-                    ...prev.currentDraft,
-                    [componentId]: {
-                      ...prev.currentDraft[componentId],
-                      [lens]: entry
-                    }
-                  }
-                }));
-              }}
+              onEntryUpdate={updateEntry}
               onMatrixToggle={(key) => {
                 setShowMatrix(prev => ({
                   ...prev,
@@ -249,23 +369,16 @@ export function AdoptionApp() {
               }}
               onActionRemove={(componentId, lens, actionId) => {
                 const entry = getEntry(componentId, lens);
-                entry.actions = entry.actions.filter(a => a.id !== actionId);
-                setStore(prev => ({
-                  ...prev,
-                  currentDraft: {
-                    ...prev.currentDraft,
-                    [componentId]: {
-                      ...prev.currentDraft[componentId],
-                      [lens]: entry
-                    }
-                  }
-                }));
+                updateEntry(componentId, lens, {
+                  ...entry,
+                  actions: entry.actions.filter(a => a.id !== actionId).map(cloneAction)
+                });
               }}
             />
           )}
           {view === 'action-plan' && (
             <ActionPlanTracker
-              actions={[]}
+              actions={actionRows}
               onComponentClick={(componentId) => {
                 setActiveComponentId(componentId);
                 setView('assessment');

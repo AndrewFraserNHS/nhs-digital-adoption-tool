@@ -1,7 +1,7 @@
 import { AdoptionStore, DraftEntry } from '@lib/adoptionState';
 import { Metrics } from '@lib/adoptionMetrics';
 import { AssessmentComponent } from '@data/components';
-import { JSX } from 'react';
+import { JSX, useMemo, useState } from 'react';
 
 export interface DashboardProps {
   store: AdoptionStore;
@@ -20,6 +20,46 @@ export function AdoptionDashboard({
   getEntry,
   onComponentClick
 }: DashboardProps): JSX.Element {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'not-started' | 'below-target' | 'on-track'>('all');
+  const [sortBy, setSortBy] = useState<'name' | 'score' | 'target'>('score');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+
+  const componentRows = useMemo(() => {
+    const query = searchTerm.trim().toLowerCase();
+
+    return components
+      .map((component) => {
+        let total = 0;
+        component.lenses.forEach((lens) => {
+          total += Number(getEntry(component.id, lens).score || 0);
+        });
+        const avgNum = Number((total / component.lenses.length).toFixed(1));
+        const status = avgNum === 0 ? 'not-started' : avgNum >= component.target ? 'on-track' : 'below-target';
+        return { component, avgNum, status };
+      })
+      .filter(({ component, status }) => {
+        if (statusFilter !== 'all' && status !== statusFilter) {
+          return false;
+        }
+        if (!query) {
+          return true;
+        }
+        return component.label.toLowerCase().includes(query);
+      })
+      .sort((left, right) => {
+        let comparison = 0;
+        if (sortBy === 'name') {
+          comparison = left.component.label.localeCompare(right.component.label);
+        } else if (sortBy === 'target') {
+          comparison = left.component.target - right.component.target;
+        } else {
+          comparison = left.avgNum - right.avgNum;
+        }
+        return sortDirection === 'asc' ? comparison : -comparison;
+      });
+  }, [components, getEntry, searchTerm, sortBy, sortDirection, statusFilter]);
+
   return (
     <div className="max-w-6xl mx-auto">
       <h2 className="text-2xl font-bold text-slate-800 mb-6">Adoption Readiness Dashboard</h2>
@@ -91,14 +131,45 @@ export function AdoptionDashboard({
 
       {/* Component Overview */}
       <div className="bg-white rounded-lg shadow-sm p-6 border border-slate-200 mb-8">
-        <h3 className="text-lg font-semibold text-slate-800 mb-4">Overall Average by Component</h3>
+        <div className="flex flex-col gap-4 mb-4 xl:flex-row xl:items-center xl:justify-between">
+          <h3 className="text-lg font-semibold text-slate-800">Overall Average by Component</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 xl:w-[52rem]">
+            <input
+              type="search"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search components..."
+              className="rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:ring-blue-500"
+            />
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value as 'all' | 'not-started' | 'below-target' | 'on-track')}
+              className="rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:ring-blue-500"
+            >
+              <option value="all">All statuses</option>
+              <option value="not-started">Not started</option>
+              <option value="below-target">Below target</option>
+              <option value="on-track">On track</option>
+            </select>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as 'name' | 'score' | 'target')}
+              className="rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:ring-blue-500"
+            >
+              <option value="score">Sort by score</option>
+              <option value="name">Sort by name</option>
+              <option value="target">Sort by target</option>
+            </select>
+            <button
+              onClick={() => setSortDirection((current) => current === 'asc' ? 'desc' : 'asc')}
+              className="rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+            >
+              {sortDirection === 'asc' ? 'Ascending' : 'Descending'}
+            </button>
+          </div>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {components.map((component) => {
-            let total = 0;
-            component.lenses.forEach((lens) => {
-              total += Number(getEntry(component.id, lens).score || 0);
-            });
-            const avgNum = Number((total / component.lenses.length).toFixed(1));
+          {componentRows.map(({ component, avgNum }) => {
             const badgeClass =
               avgNum === 0
                 ? 'bg-slate-200 text-slate-500'
@@ -121,6 +192,11 @@ export function AdoptionDashboard({
               </button>
             );
           })}
+          {!componentRows.length && (
+            <div className="col-span-full rounded-md border border-dashed border-slate-200 bg-slate-50 p-6 text-sm text-slate-500">
+              No components match the current filters.
+            </div>
+          )}
         </div>
       </div>
 
@@ -129,9 +205,13 @@ export function AdoptionDashboard({
         <h3 className="text-lg font-semibold text-slate-800 mb-4">Lens & Component Breakdown</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {lenses.map((lens) => {
-            const mapped = components.filter((component) =>
-              component.lenses.includes(lens)
-            );
+            const mapped = componentRows
+              .filter(({ component }) => component.lenses.includes(lens))
+              .map(({ component }) => component);
+
+            if (!mapped.length) {
+              return null;
+            }
 
             return (
               <div key={lens} className="border border-slate-100 rounded-md p-4 bg-slate-50">

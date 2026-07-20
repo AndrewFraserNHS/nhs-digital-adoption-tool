@@ -24,6 +24,8 @@ export interface OrgProfile {
   trustName: string;
   region: string;
   trustType: string;
+  projectName?: string;
+  leadName?: string;
 }
 
 export interface HistorySnapshot {
@@ -47,7 +49,13 @@ export interface AdoptionStore {
 export function initializeStore(persisted?: Partial<AdoptionStore>): AdoptionStore {
   return {
     view: persisted?.view || 'dashboard',
-    orgProfile: persisted?.orgProfile || { trustName: '', region: '', trustType: '' },
+    orgProfile: persisted?.orgProfile || {
+      trustName: '',
+      region: '',
+      trustType: '',
+      projectName: '',
+      leadName: ''
+    },
     currentDraft: persisted?.currentDraft || {},
     history: persisted?.history || []
   };
@@ -95,4 +103,16 @@ export function cloneEntry(entry: DraftEntry): DraftEntry {
     evidence: entry.evidence,
     actions: entry.actions.map(a => ({ ...a }))
   };
+}
+
+export function cloneDraft(
+  draft: Record<string, Record<string, DraftEntry>>
+): Record<string, Record<string, DraftEntry>> {
+  return Object.keys(draft).reduce<Record<string, Record<string, DraftEntry>>>((components, componentId) => {
+    components[componentId] = Object.keys(draft[componentId]).reduce<Record<string, DraftEntry>>((lenses, lens) => {
+      lenses[lens] = cloneEntry(draft[componentId][lens]);
+      return lenses;
+    }, {});
+    return components;
+  }, {});
 }

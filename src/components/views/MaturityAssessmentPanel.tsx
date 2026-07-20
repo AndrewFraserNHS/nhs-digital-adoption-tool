@@ -1,4 +1,4 @@
-import { JSX, useCallback } from 'react';
+import { JSX, useCallback, useMemo, useState } from 'react';
 import { MATURITY_STAGES, STAGE_COLORS as STAGE_COLORS_PALETTE } from '@data/rubrics';
 import type { ComponentDetail } from '@lib/maturityState';
 
@@ -31,9 +31,90 @@ export function MaturityAssessmentPanel({
   onOpenGuidance,
   onDetailUpdate
 }: MaturityAssessmentPanelProps): JSX.Element {
+  const [componentSearch, setComponentSearch] = useState('');
+  const [componentSortBy, setComponentSortBy] = useState<'name' | 'score' | 'actions'>('name');
+  const [componentSortDirection, setComponentSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [actionSearch, setActionSearch] = useState('');
+  const [actionStatusFilter, setActionStatusFilter] = useState('all');
+  const [actionSortBy, setActionSortBy] = useState<'text' | 'owner' | 'dueDate' | 'status'>('dueDate');
+  const [actionSortDirection, setActionSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [linkSearch, setLinkSearch] = useState('');
+  const [linkSortDirection, setLinkSortDirection] = useState<'asc' | 'desc'>('asc');
+
   const d = details[activeComponent];
   const sc = scores[activeComponent] || 0;
   const matrixRow = componentMatrix[activeComponent] || [];
+
+  const sortedComponents = useMemo(() => {
+    const query = componentSearch.trim().toLowerCase();
+    return [...components]
+      .filter((name) => !query || name.toLowerCase().includes(query))
+      .sort((left, right) => {
+        let comparison = 0;
+        if (componentSortBy === 'score') {
+          comparison = (scores[left] || 0) - (scores[right] || 0);
+        } else if (componentSortBy === 'actions') {
+          comparison = (details[left]?.actions.length || 0) - (details[right]?.actions.length || 0);
+        } else {
+          comparison = left.localeCompare(right);
+        }
+        return componentSortDirection === 'asc' ? comparison : -comparison;
+      });
+  }, [componentSearch, componentSortBy, componentSortDirection, components, details, scores]);
+
+  const visibleLinks = useMemo(() => {
+    if (!d) {
+      return [] as Array<{ link: string; index: number }>;
+    }
+
+    const query = linkSearch.trim().toLowerCase();
+    return d.links
+      .map((link, index) => ({ link, index }))
+      .filter(({ link }) => !query || link.toLowerCase().includes(query))
+      .sort((left, right) => {
+        const comparison = left.link.localeCompare(right.link);
+        return linkSortDirection === 'asc' ? comparison : -comparison;
+      });
+  }, [d, linkSearch, linkSortDirection]);
+
+  const visibleActions = useMemo(() => {
+    if (!d) {
+      return [] as Array<{ action: ComponentDetail['actions'][number]; index: number }>;
+    }
+
+    const query = actionSearch.trim().toLowerCase();
+    return d.actions
+      .map((action, index) => ({ action, index }))
+      .filter(({ action }) => {
+        if (actionStatusFilter !== 'all' && action.status !== actionStatusFilter) {
+          return false;
+        }
+        if (!query) {
+          return true;
+        }
+        return [action.text, action.owner, action.dueDate, action.status]
+          .join(' ')
+          .toLowerCase()
+          .includes(query);
+      })
+      .sort((left, right) => {
+        const getValue = (item: { action: ComponentDetail['actions'][number] }): string => {
+          if (actionSortBy === 'owner') {
+            return item.action.owner || 'zzz';
+          }
+          if (actionSortBy === 'status') {
+            return item.action.status;
+          }
+          if (actionSortBy === 'text') {
+            return item.action.text;
+          }
+          return item.action.dueDate || '9999-12-31';
+        };
+
+        const comparison = getValue(left).localeCompare(getValue(right));
+        return actionSortDirection === 'asc' ? comparison : -comparison;
+      });
+  }, [actionSearch, actionSortBy, actionSortDirection, actionStatusFilter, d]);
 
   const handleScoreChange = useCallback(
     (newScore: number) => {
@@ -156,8 +237,32 @@ export function MaturityAssessmentPanel({
     <div className="bg-white rounded-2xl shadow-lg border border-gray-200 mb-8">
       {/* Tabs */}
       <div className="p-4 border-b border-gray-100 overflow-x-auto">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4">
+          <input
+            type="search"
+            value={componentSearch}
+            onChange={(e) => setComponentSearch(e.target.value)}
+            placeholder="Search components..."
+            className="md:col-span-2 bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+          />
+          <select
+            value={componentSortBy}
+            onChange={(e) => setComponentSortBy(e.target.value as 'name' | 'score' | 'actions')}
+            className="bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+          >
+            <option value="name">Sort by name</option>
+            <option value="score">Sort by score</option>
+            <option value="actions">Sort by actions</option>
+          </select>
+          <button
+            onClick={() => setComponentSortDirection((current) => current === 'asc' ? 'desc' : 'asc')}
+            className="border border-gray-300 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+          >
+            {componentSortDirection === 'asc' ? 'Ascending' : 'Descending'}
+          </button>
+        </div>
         <div className="flex space-x-2">
-          {components.map((name) => {
+          {sortedComponents.map((name) => {
             const componentScore = scores[name] || 0;
             const isActive = name === activeComponent;
             return (
@@ -182,6 +287,9 @@ export function MaturityAssessmentPanel({
               </button>
             );
           })}
+          {!sortedComponents.length && (
+            <div className="text-sm text-gray-400 py-2">No components match the current filters.</div>
+          )}
         </div>
       </div>
 
@@ -268,21 +376,38 @@ export function MaturityAssessmentPanel({
 
               {/* Links */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Supporting Links
-                </label>
+                <div className="flex flex-col gap-3 mb-2 md:flex-row md:items-center md:justify-between">
+                  <label className="block text-sm font-semibold text-gray-700">
+                    Supporting Links
+                  </label>
+                  <div className="flex flex-col gap-2 sm:flex-row">
+                    <input
+                      type="search"
+                      value={linkSearch}
+                      onChange={(e) => setLinkSearch(e.target.value)}
+                      placeholder="Filter links..."
+                      className="bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    />
+                    <button
+                      onClick={() => setLinkSortDirection((current) => current === 'asc' ? 'desc' : 'asc')}
+                      className="border border-gray-300 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                    >
+                      {linkSortDirection === 'asc' ? 'A-Z' : 'Z-A'}
+                    </button>
+                  </div>
+                </div>
                 <div className="space-y-2">
-                  {d.links.map((link, i) => (
-                    <div key={i} className="flex gap-2">
+                  {visibleLinks.map(({ link, index }) => (
+                    <div key={index} className="flex gap-2">
                       <input
                         type="url"
                         value={link}
-                        onChange={(e) => handleLinkChange(i, e.target.value)}
+                        onChange={(e) => handleLinkChange(index, e.target.value)}
                         placeholder="https://..."
                         className="flex-1 bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
                       />
                       <button
-                        onClick={() => handleRemoveLink(i)}
+                        onClick={() => handleRemoveLink(index)}
                         className="px-2 py-1 text-red-400 hover:text-red-600 text-xl leading-none"
                         title="Remove"
                       >
@@ -290,6 +415,9 @@ export function MaturityAssessmentPanel({
                       </button>
                     </div>
                   ))}
+                  {!visibleLinks.length && d.links.length > 0 && (
+                    <div className="text-sm text-gray-400">No supporting links match the current filter.</div>
+                  )}
                 </div>
                 <button
                   onClick={handleAddLink}
@@ -301,16 +429,57 @@ export function MaturityAssessmentPanel({
 
               {/* Actions */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Actions to Improve Maturity
-                </label>
+                <div className="flex flex-col gap-3 mb-2 md:flex-row md:items-center md:justify-between">
+                  <label className="block text-sm font-semibold text-gray-700">
+                    Actions to Improve Maturity
+                  </label>
+                  <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 w-full md:w-auto">
+                    <input
+                      type="search"
+                      value={actionSearch}
+                      onChange={(e) => setActionSearch(e.target.value)}
+                      placeholder="Search actions..."
+                      className="sm:col-span-2 bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    />
+                    <select
+                      value={actionStatusFilter}
+                      onChange={(e) => setActionStatusFilter(e.target.value)}
+                      className="bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    >
+                      <option value="all">All statuses</option>
+                      {ACTION_STATUSES.map((status) => (
+                        <option key={status} value={status}>
+                          {status}
+                        </option>
+                      ))}
+                    </select>
+                    <select
+                      value={actionSortBy}
+                      onChange={(e) => setActionSortBy(e.target.value as 'text' | 'owner' | 'dueDate' | 'status')}
+                      className="bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    >
+                      <option value="dueDate">Sort by due date</option>
+                      <option value="text">Sort by action</option>
+                      <option value="owner">Sort by owner</option>
+                      <option value="status">Sort by status</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="mb-3 flex justify-end">
+                  <button
+                    onClick={() => setActionSortDirection((current) => current === 'asc' ? 'desc' : 'asc')}
+                    className="border border-gray-300 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                  >
+                    {actionSortDirection === 'asc' ? 'Ascending' : 'Descending'}
+                  </button>
+                </div>
                 <div className="space-y-3">
-                  {d.actions.map((action, i) => (
+                  {visibleActions.map(({ action, index }) => (
                     <div key={action.id} className="bg-gray-50 border border-gray-200 rounded-lg p-3 space-y-2">
                       <input
                         type="text"
                         value={action.text}
-                        onChange={(e) => handleActionTextChange(i, e.target.value)}
+                        onChange={(e) => handleActionTextChange(index, e.target.value)}
                         placeholder="Describe the action..."
                         className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
                       />
@@ -318,19 +487,19 @@ export function MaturityAssessmentPanel({
                         <input
                           type="text"
                           value={action.owner}
-                          onChange={(e) => handleActionOwnerChange(i, e.target.value)}
+                          onChange={(e) => handleActionOwnerChange(index, e.target.value)}
                           placeholder="Owner"
                           className="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-300"
                         />
                         <input
                           type="date"
                           value={action.dueDate}
-                          onChange={(e) => handleActionDueChange(i, e.target.value)}
+                          onChange={(e) => handleActionDueChange(index, e.target.value)}
                           className="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-300"
                         />
                         <select
                           value={action.status}
-                          onChange={(e) => handleActionStatusChange(i, e.target.value)}
+                          onChange={(e) => handleActionStatusChange(index, e.target.value)}
                           className="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-300"
                         >
                           {ACTION_STATUSES.map((status) => (
@@ -342,7 +511,7 @@ export function MaturityAssessmentPanel({
                       </div>
                       <div className="flex justify-end">
                         <button
-                          onClick={() => handleRemoveAction(i)}
+                          onClick={() => handleRemoveAction(index)}
                           className="text-xs text-red-500 hover:text-red-700 transition-colors"
                         >
                           Remove
@@ -350,6 +519,9 @@ export function MaturityAssessmentPanel({
                       </div>
                     </div>
                   ))}
+                  {!visibleActions.length && d.actions.length > 0 && (
+                    <div className="text-sm text-gray-400">No actions match the current filters.</div>
+                  )}
                 </div>
                 <button
                   onClick={handleAddAction}

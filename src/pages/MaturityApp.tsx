@@ -4,12 +4,12 @@ import { createRadarChart } from '@lib/charts';
 import { validateScore } from '@lib/adoptionValidator';
 import { componentMatrix } from '@data/legacy-data';
 import { MATURITY_STAGES } from '@data/rubrics';
-import { exportMaturityReportToCSV } from '@lib/reporting';
+import { exportMaturityReportToCSV, type MaturityReportData } from '@lib/reporting';
 import type { ActionItem, ComponentDetail, MaturityStore } from '@lib/maturityState';
 import { initializeMaturityStore, initializeDetails } from '@lib/maturityState';
 import { MaturityOverview } from '@components/views/MaturityOverview';
 import { MaturityAssessmentPanel } from '@components/views/MaturityAssessmentPanel';
-import { MaturityModalManager } from '@components/views/MaturityModalManager';
+import { MaturityModalManager, type MaturityGuidance } from '@components/views/MaturityModalManager';
 
 const STAGES = MATURITY_STAGES;
 
@@ -124,6 +124,62 @@ function buildDueDateSummary(actions: ActionItem[]): { labels: string[]; values:
   return {
     labels,
     values: labels.map((label) => counts.get(label) || 0)
+  };
+}
+
+function buildGuidanceData(
+  scores: Record<string, number>,
+  details: Record<string, ComponentDetail>
+): Record<string, MaturityGuidance> {
+  return Object.keys(componentMatrix).reduce<Record<string, MaturityGuidance>>((acc, componentName) => {
+    const stage = scores[componentName] || 0;
+    const currentStageText = componentMatrix[componentName]?.[stage] || 'No stage selected yet.';
+    const nextStageText = componentMatrix[componentName]?.[Math.min(stage + 1, STAGES.length - 1)] || currentStageText;
+    const detail = details[componentName] || createEmptyDetail();
+
+    acc[componentName] = {
+      purpose: `Assess the current maturity of ${componentName} and identify the practical change activities needed to progress to the next stage.`,
+      inputs: [
+        `Current stage evidence: ${currentStageText}`,
+        detail.justification ? `Existing justification: ${detail.justification}` : 'Add a short rationale for the selected stage.',
+        detail.links.length ? `Supporting links recorded: ${detail.links.join(', ')}` : 'Add supporting links or documents to evidence the score.'
+      ].join('\n\n'),
+      indicators: [
+        `Current stage (${stage} — ${STAGES[stage] || STAGES[0]}): ${currentStageText}`,
+        `Next stage focus: ${nextStageText}`
+      ].join('\n\n'),
+      deliverables: [
+        'Documented justification for the selected maturity stage.',
+        'Evidence links and notes showing current state.',
+        detail.actions.length ? `${detail.actions.length} tracked improvement action(s) for this component.` : 'At least one concrete action to improve maturity for this component.'
+      ].join('\n')
+    };
+
+    return acc;
+  }, {});
+}
+
+function buildMaturityReportData(
+  profile: ProjectProfile,
+  responses: Record<string, number>,
+  details: Record<string, ComponentDetail>,
+  createdAt?: string
+): MaturityReportData {
+  return {
+    orgName: profile.org || 'Unknown organisation',
+    projectName: profile.project,
+    phase: profile.phase,
+    createdAt,
+    rows: Object.keys(componentMatrix).map((componentName) => ({
+      id: componentName,
+      label: componentName,
+      value: responses[componentName] || 0,
+      max: 5,
+      justification: details[componentName]?.justification || '',
+      notes: details[componentName]?.notes || '',
+      links: details[componentName]?.links || [],
+      actionCount: details[componentName]?.actions.length || 0
+    }))
   };
 }
 
@@ -349,6 +405,8 @@ export function MaturityApp() {
   }, []);
 
   const scores = getScores();
+  const guidanceData = buildGuidanceData(scores, details);
+  const reportData = buildMaturityReportData(projectProfile, responses, details, state.assessment.createdAt);
 
   return (
     <div className="min-h-screen bg-slate-50 p-4 sm:p-6 lg:p-8">
@@ -419,7 +477,8 @@ export function MaturityApp() {
           activeComponent={store.modalComp}
           scores={scores}
           componentMatrix={componentMatrix}
-          guidanceData={{}}
+          guidanceData={guidanceData}
+          reportData={reportData}
           components={componentList}
           onClose={() => {
             setStore((current) => ({ ...current, modal: '', modalComp: '' }));

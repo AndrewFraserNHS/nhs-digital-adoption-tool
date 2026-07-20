@@ -9,6 +9,8 @@ export interface AdoptionState {
     trustName: string;
     region?: string;
     trustType?: string;
+    projectName?: string;
+    leadName?: string;
   };
   currentDraft?: Record<string, Record<string, any>>;
   history?: Array<{

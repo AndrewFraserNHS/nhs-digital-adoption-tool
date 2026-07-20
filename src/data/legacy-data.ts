@@ -1,10 +1,4 @@
 /**
- * Legacy Data - specific rubric entries and guidance for components
- * Re-exported from components.ts for backward compatibility
- * Data sourced from legacyData.ts to maintain fidelity during migration
- */
-
-/**
  * Maturity assessment matrix - maps component names to stage descriptions
  * Preserved from original implementation for data fidelity
  */

@@ -17,21 +17,14 @@ import {
   buildRadarChartData
 } from '@lib/adoptionMetrics';
 import { validateEntry } from '@lib/adoptionValidator';
-import { mountDashboard } from '@components/views/AdoptionDashboard';
-import { mountSettingsPanel } from '@components/views/SettingsPanel';
-import { mountActionPlan } from '@components/views/ActionPlanTracker';
-import { mountAssessmentPanel } from '@components/views/AssessmentPanel';
+import { AdoptionDashboard } from '@components/views/AdoptionDashboard';
+import { SettingsPanel } from '@components/views/SettingsPanel';
+import { ActionPlanTracker } from '@components/views/ActionPlanTracker';
+import { AssessmentPanel } from '@components/views/AssessmentPanel';
 
 function getRubricText(componentId: string, lensName: string, score: number): string {
   const rubricGroup = (SPECIFIC_RUBRICS as Record<string, any>)[componentId];
   return rubricGroup?.[lensName]?.[score] || GENERIC_RUBRIC[score] || GENERIC_RUBRIC[0];
-}
-
-interface ViewPort {
-  dashboard: React.RefObject<HTMLDivElement>;
-  assessment: React.RefObject<HTMLDivElement>;
-  actionPlan: React.RefObject<HTMLDivElement>;
-  settings: React.RefObject<HTMLDivElement>;
 }
 
 export function AdoptionApp() {
@@ -49,16 +42,8 @@ export function AdoptionApp() {
     }) as AdoptionStore;
   });
 
-  const viewRefs = {
-    dashboard: React.useRef<HTMLDivElement>(null),
-    assessment: React.useRef<HTMLDivElement>(null),
-    actionPlan: React.useRef<HTMLDivElement>(null),
-    settings: React.useRef<HTMLDivElement>(null),
-  } as ViewPort;
-
-  const getComponent = useCallback((componentId: string = activeComponentId || '') => {
-    return getComponentById(componentId) || COMPONENTS[0];
-  }, [activeComponentId]);
+  const [showMatrix, setShowMatrix] = useState<Record<string, boolean>>({});
+  const dashboardRef = React.useRef<HTMLDivElement>(null);
 
   const getEntry = useCallback((componentId: string, lens: string): DraftEntry => {
     if (!store.currentDraft[componentId]) {
@@ -72,35 +57,18 @@ export function AdoptionApp() {
 
   const metrics = computeMetrics(store, COMPONENTS);
 
-  // Render view components into refs (legacy mount/render pattern for now)
+  // Render charts after dashboard mounts
   useEffect(() => {
-    if (view === 'dashboard' && viewRefs.dashboard.current) {
-      viewRefs.dashboard.current.innerHTML = '';
-      const tempContainer = document.createElement('div');
-      viewRefs.dashboard.current.appendChild(tempContainer);
-      
-      mountDashboard(tempContainer, {
-        store,
-        components: COMPONENTS,
-        lenses: LENSES,
-        metrics,
-        getEntry,
-        onComponentClick: (componentId) => {
-          setActiveComponentId(componentId);
-          setView('assessment');
-        }
-      });
-
-      // Render charts
+    if (view === 'dashboard' && dashboardRef.current) {
       setTimeout(() => {
-        const radarCanvas = tempContainer.querySelector('#adoption-radar-chart') as HTMLCanvasElement;
+        const radarCanvas = dashboardRef.current?.querySelector('#adoption-radar-chart') as HTMLCanvasElement;
         if (radarCanvas) {
           const radarData = buildRadarChartData(store, LENSES, COMPONENTS, getEntry);
           createRadarChart(radarCanvas, radarData);
         }
         
         if (store.history.length > 0) {
-          const lineCanvas = tempContainer.querySelector('#adoption-line-chart') as HTMLCanvasElement;
+          const lineCanvas = dashboardRef.current?.querySelector('#adoption-line-chart') as HTMLCanvasElement;
           if (lineCanvas) {
             const lineData = {
               labels: store.history.map((_, i) => `Month ${i + 1}`),
@@ -118,87 +86,9 @@ export function AdoptionApp() {
         }
       }, 100);
     }
-  }, [view, store, metrics, getEntry]);
+  }, [view, store, getEntry]);
 
-  useEffect(() => {
-    if (view === 'assessment' && viewRefs.assessment.current) {
-      viewRefs.assessment.current.innerHTML = '';
-      const tempContainer = document.createElement('div');
-      viewRefs.assessment.current.appendChild(tempContainer);
-      
-      mountAssessmentPanel(tempContainer, {
-        store,
-        components: COMPONENTS,
-        activeComponentId: activeComponentId || COMPONENTS[0].id,
-        getRubricText,
-        getEntry,
-        onComponentChange: (componentId) => {
-          setActiveComponentId(componentId);
-        },
-        onEntryUpdate: (componentId, lens, entry) => {
-          setStore(prev => ({
-            ...prev,
-            currentDraft: {
-              ...prev.currentDraft,
-              [componentId]: {
-                ...prev.currentDraft[componentId],
-                [lens]: entry
-              }
-            }
-          }));
-        },
-        onMatrixToggle: () => {},
-        onActionRemove: (componentId, lens, actionId) => {
-          const entry = getEntry(componentId, lens);
-          entry.actions = entry.actions.filter(a => a.id !== actionId);
-          setStore(prev => ({
-            ...prev,
-            currentDraft: {
-              ...prev.currentDraft,
-              [componentId]: {
-                ...prev.currentDraft[componentId],
-                [lens]: entry
-              }
-            }
-          }));
-        }
-      });
-    }
-  }, [view, store, activeComponentId, getEntry]);
-
-  useEffect(() => {
-    if (view === 'settings' && viewRefs.settings.current) {
-      viewRefs.settings.current.innerHTML = '';
-      const tempContainer = document.createElement('div');
-      viewRefs.settings.current.appendChild(tempContainer);
-      
-      mountSettingsPanel(tempContainer, {
-        orgProfile: store.orgProfile,
-        onProfileUpdate: (updatedProfile) => {
-          setStore(prev => ({
-            ...prev,
-            orgProfile: updatedProfile
-          }));
-        }
-      });
-    }
-  }, [view, store.orgProfile]);
-
-  useEffect(() => {
-    if (view === 'action-plan' && viewRefs.actionPlan.current) {
-      viewRefs.actionPlan.current.innerHTML = '';
-      const tempContainer = document.createElement('div');
-      viewRefs.actionPlan.current.appendChild(tempContainer);
-      
-      mountActionPlan(tempContainer, {
-        actions: [], // TODO: implement flattenActions
-        onComponentClick: (componentId) => {
-          setActiveComponentId(componentId);
-          setView('assessment');
-        }
-      });
-    }
-  }, [view, store.currentDraft]);
+  // Dashboard rendering now handled by React component below
 
   const handleViewChange = (newView: View) => {
     setView(newView);
@@ -316,10 +206,83 @@ export function AdoptionApp() {
 
         {/* Main Content Area */}
         <main className="flex-1 overflow-y-auto p-8">
-          {view === 'dashboard' && <div ref={viewRefs.dashboard} />}
-          {view === 'assessment' && <div ref={viewRefs.assessment} />}
-          {view === 'action-plan' && <div ref={viewRefs.actionPlan} />}
-          {view === 'settings' && <div ref={viewRefs.settings} />}
+          {view === 'dashboard' && (
+            <div ref={dashboardRef}>
+              <AdoptionDashboard
+                store={store}
+                components={COMPONENTS}
+                lenses={LENSES}
+                metrics={metrics}
+                getEntry={getEntry}
+                onComponentClick={(componentId) => {
+                  setActiveComponentId(componentId);
+                  setView('assessment');
+                }}
+              />
+            </div>
+          )}
+          {view === 'assessment' && (
+            <AssessmentPanel
+              store={{ ...store, showMatrix }}
+              components={COMPONENTS}
+              activeComponentId={activeComponentId}
+              getRubricText={getRubricText}
+              getEntry={getEntry}
+              onComponentChange={setActiveComponentId}
+              onEntryUpdate={(componentId, lens, entry) => {
+                setStore(prev => ({
+                  ...prev,
+                  currentDraft: {
+                    ...prev.currentDraft,
+                    [componentId]: {
+                      ...prev.currentDraft[componentId],
+                      [lens]: entry
+                    }
+                  }
+                }));
+              }}
+              onMatrixToggle={(key) => {
+                setShowMatrix(prev => ({
+                  ...prev,
+                  [key]: !prev[key]
+                }));
+              }}
+              onActionRemove={(componentId, lens, actionId) => {
+                const entry = getEntry(componentId, lens);
+                entry.actions = entry.actions.filter(a => a.id !== actionId);
+                setStore(prev => ({
+                  ...prev,
+                  currentDraft: {
+                    ...prev.currentDraft,
+                    [componentId]: {
+                      ...prev.currentDraft[componentId],
+                      [lens]: entry
+                    }
+                  }
+                }));
+              }}
+            />
+          )}
+          {view === 'action-plan' && (
+            <ActionPlanTracker
+              actions={[]}
+              onComponentClick={(componentId) => {
+                setActiveComponentId(componentId);
+                setView('assessment');
+              }}
+            />
+          )}
+          {view === 'settings' && (
+            <SettingsPanel
+              orgProfile={store.orgProfile}
+              onProfileUpdate={(updatedProfile) => {
+                setStore(prev => ({
+                  ...prev,
+                  orgProfile: updatedProfile
+                }));
+              }}
+            />
+          )}
         </main>
       </div>
     </div>

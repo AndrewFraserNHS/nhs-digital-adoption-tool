@@ -21,14 +21,14 @@
     "resolveJsonModule": true,
     "skipLibCheck": false,
     "forceConsistentCasingInFileNames": true,
+    "rootDir": ".",
     "outDir": "dist",
-    "baseUrl": "./",
     "paths": {
-      "@lib/*": ["src/lib/*"],
-      "@pages/*": ["src/pages/*"],
-      "@data/*": ["src/data/*"],
-      "@components/*": ["src/components/*"],
-      "@types/*": ["src/types/*"]
+      "@lib/*": ["./src/lib/*"],
+      "@pages/*": ["./src/pages/*"],
+      "@data/*": ["./src/data/*"],
+      "@components/*": ["./src/components/*"],
+      "@types/*": ["./src/types/*"]
     }
   },
   "include": ["src/**/*", "vite-env.d.ts"],

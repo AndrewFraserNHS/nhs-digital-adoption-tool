@@ -1,0 +1,40 @@
+/**
+ * Component metadata for Maturity Assessment Tool
+ * Defines assessment components, their phases, target scores, and lens mappings
+ */
+
+export interface AssessmentComponent {
+  id: string;
+  label: string;
+  lenses: string[];
+  phase: number;
+  target: number;
+}
+
+export const ASSESSMENT_COMPONENTS: AssessmentComponent[] = [
+  { id: 'vision', label: 'Vision', lenses: ['Strategic Direction and Leadership', 'People Experience and Culture'], phase: 1, target: 5 },
+  { id: 'case_for_change', label: 'Case for Change', lenses: ['Strategic Direction and Leadership', 'People Experience and Culture'], phase: 1, target: 5 },
+  { id: 'sponsorship', label: 'Senior Sponsorship & Governance', lenses: ['Strategic Direction and Leadership', 'People Experience and Culture', 'Planning and Risk'], phase: 2, target: 4 },
+  { id: 'change_network', label: 'Change Network', lenses: ['Strategic Direction and Leadership', 'People Experience and Culture'], phase: 2, target: 4 },
+  { id: 'benefits', label: 'Benefits', lenses: ['Process and Sustainment', 'Planning and Risk'], phase: 2, target: 3 },
+  { id: 'change_impact', label: 'Change Impact', lenses: ['People Experience and Culture', 'Planning and Risk'], phase: 2, target: 4 },
+  { id: 'risk_management', label: 'Risk Management', lenses: ['Planning and Risk', 'Process and Sustainment'], phase: 3, target: 5 },
+  { id: 'cm_readiness', label: 'CM Readiness & Planning', lenses: ['Strategic Direction and Leadership', 'Planning and Risk'], phase: 3, target: 4 },
+  { id: 'stakeholder', label: 'Stakeholder Engagement & Comms', lenses: ['Strategic Direction and Leadership', 'People Experience and Culture'], phase: 3, target: 5 },
+  { id: 'resistance', label: 'Resistance Management', lenses: ['People Experience and Culture', 'Skills and Behaviour'], phase: 3, target: 4 },
+  { id: 'skills_learning', label: 'Skills/ Learning', lenses: ['People Experience and Culture', 'Skills and Behaviour'], phase: 3, target: 4 },
+  { id: 'capability', label: 'Capability & Confidence', lenses: ['People Experience and Culture', 'Skills and Behaviour'], phase: 4, target: 4 },
+  { id: 'change_adoption', label: 'Change Adoption', lenses: ['Process and Sustainment', 'Skills and Behaviour', 'Planning and Risk'], phase: 4, target: 2 },
+  { id: 'process_change', label: 'Process Change', lenses: ['Process and Sustainment', 'Skills and Behaviour'], phase: 4, target: 5 },
+  { id: 'reinforcement', label: 'Reinforcement', lenses: ['People Experience and Culture', 'Process and Sustainment'], phase: 5, target: 2 },
+  { id: 'org_maturity', label: 'Org Change Readiness', lenses: ['Strategic Direction and Leadership', 'Skills and Behaviour'], phase: 5, target: 4 },
+  { id: 'transfer_bau', label: 'Transfer to BAU', lenses: ['Strategic Direction and Leadership', 'Process and Sustainment'], phase: 5, target: 4 }
+];
+
+export function getComponentById(id: string): AssessmentComponent | undefined {
+  return ASSESSMENT_COMPONENTS.find((c) => c.id === id);
+}
+
+export function getComponentsByPhase(phase: number): AssessmentComponent[] {
+  return ASSESSMENT_COMPONENTS.filter((c) => c.phase === phase);
+}

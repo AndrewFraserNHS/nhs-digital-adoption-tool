@@ -1,0 +1,98 @@
+/**
+ * State management for Adoption Tool
+ * Manages draft entries, organization profile, and history
+ */
+
+import { Store, type StateListener } from './observable';
+
+export interface DraftAction {
+  id: string;
+  text: string;
+  owner: string;
+  timescale: string;
+  status: string;
+}
+
+export interface DraftEntry {
+  score: number;
+  justification: string;
+  evidence: string;
+  actions: DraftAction[];
+}
+
+export interface OrgProfile {
+  trustName: string;
+  region: string;
+  trustType: string;
+}
+
+export interface HistorySnapshot {
+  monthLabel: string;
+  overallPercentage: number;
+  data: Record<string, Record<string, DraftEntry>>;
+}
+
+export type View = 'dashboard' | 'assessment' | 'action-plan' | 'settings';
+
+export interface AdoptionStore {
+  view: View;
+  orgProfile: OrgProfile;
+  currentDraft: Record<string, Record<string, DraftEntry>>;
+  history: HistorySnapshot[];
+}
+
+/**
+ * Initialize store from persisted state
+ */
+export function initializeStore(persisted?: Partial<AdoptionStore>): AdoptionStore {
+  return {
+    view: persisted?.view || 'dashboard',
+    orgProfile: persisted?.orgProfile || { trustName: '', region: '', trustType: '' },
+    currentDraft: persisted?.currentDraft || {},
+    history: persisted?.history || []
+  };
+}
+
+/**
+ * Create a reactive adoption store with observable pattern
+ * Allows components to subscribe to state changes
+ */
+export function createReactiveAdoptionStore(persisted?: Partial<AdoptionStore>): {
+  getState: () => AdoptionStore;
+  setState: (updater: (current: AdoptionStore) => AdoptionStore) => void;
+  subscribe: (listener: StateListener<AdoptionStore>) => () => void;
+  getSubscriberCount: () => number;
+} {
+  const store = new Store(initializeStore(persisted));
+  
+  return {
+    getState: () => store.getState(),
+    setState: (updater) => store.setState(updater),
+    subscribe: (listener) => store.subscribe(listener),
+    getSubscriberCount: () => store.getSubscriberCount()
+  };
+}
+
+/**
+ * Create a new entry with default values
+ */
+export function createEmptyEntry(): DraftEntry {
+  return {
+    score: 0,
+    justification: '',
+    evidence: '',
+    actions: []
+  };
+}
+
+/**
+ * Clone an entry to avoid mutations
+ */
+export function cloneEntry(entry: DraftEntry): DraftEntry {
+  return {
+    score: entry.score,
+    justification: entry.justification,
+    evidence: entry.evidence,
+    actions: entry.actions.map(a => ({ ...a }))
+  };
+}

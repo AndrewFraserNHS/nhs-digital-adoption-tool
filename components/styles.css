@@ -1,0 +1,11 @@
+:root{
+  --brand-blue: #005EB8;
+  --bg: #f3f4f6;
+}
+body{ background: var(--bg); }
+.nhs-header{ background: white; border-bottom: 1px solid #e6eef8 }
+.nhs-sidebar{ background: linear-gradient(180deg,#003a63 0%, #005eb8 100%); color: white }
+.glass-panel{ background: rgba(255,255,255,0.9); }
+
+/* Scoped utility for templates */
+.component-wrap{ max-width:1200px; margin:0 auto; padding:1rem }

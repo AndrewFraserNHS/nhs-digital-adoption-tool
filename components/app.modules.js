@@ -12,7 +12,9 @@
 
         return {
             getInstance: function(){
-                if (!instance) instance = create();
+                if (!instance) {
+instance = create();
+}
                 return instance;
             }
         };

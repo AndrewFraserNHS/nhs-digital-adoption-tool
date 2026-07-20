@@ -10,15 +10,19 @@
     "preview": "vite preview",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
-    "lint": "eslint '**/*.{js,ts,html}' --fix || true",
+    "lint": "eslint '**/*.{js,ts}' --fix || true",
     "format": "prettier --write '**/*.{js,ts,css,html,json,md}'"
   },
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "^8.64.0",
     "@typescript-eslint/parser": "^8.64.0",
-    "chart.js": "^4.4.0"
+    "chart.js": "^4.4.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0"
   },
   "devDependencies": {
+    "@types/react": "^19.2.17",
+    "@vitejs/plugin-react": "^4.2.0",
     "eslint": "^8.50.0",
     "eslint-config-prettier": "^9.0.0",
     "gh-pages": "^5.0.0",

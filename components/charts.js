@@ -6,7 +6,9 @@
             id: 'centerText',
             beforeDraw: function(chart){
                 const txt = chart.config.options.plugins.centerText && chart.config.options.plugins.centerText.text;
-                if (!txt) return;
+                if (!txt) {
+return;
+}
                 const ctx = chart.ctx;
                 const width = chart.width;
                 const height = chart.height;
@@ -19,11 +21,15 @@
                 ctx.restore();
             }
         };
-        if (Chart && !Chart.registry.plugins.get(centerText.id)) Chart.register(centerText);
+        if (Chart && !Chart.registry.plugins.get(centerText.id)) {
+Chart.register(centerText);
+}
     }
 
     function createRadarChart(ctx, labels, datasets, options){
-        if (!window.Chart) throw new Error('Chart.js not available');
+        if (!window.Chart) {
+throw new Error('Chart.js not available');
+}
         registerPlugins(window.Chart);
         const cfg = {
             type: 'radar',
@@ -34,7 +40,9 @@
     }
 
     function createLineChart(ctx, labels, datasets, options){
-        if (!window.Chart) throw new Error('Chart.js not available');
+        if (!window.Chart) {
+throw new Error('Chart.js not available');
+}
         const cfg = {
             type: 'line',
             data: { labels, datasets },
@@ -43,7 +51,9 @@
         return new Chart(ctx, cfg);
     }
 
-    function toBase64Image(chart){ return chart.toBase64Image(); }
+    function toBase64Image(chart){
+ return chart.toBase64Image(); 
+}
 
     ns.Charts = { createRadarChart, createLineChart, toBase64Image };
 })(window.NHSDigitalAdoption || (window.NHSDigitalAdoption = {}));

@@ -1,7 +1,9 @@
 // Utilities: CSV export and small helpers
 (function(ns){
     function escapeCSV(val){
-        if (val === null || val === undefined) return '';
+        if (val === null || val === undefined) {
+return '';
+}
         const s = String(val);
         if (s.includes(',') || s.includes('\n') || s.includes('"')){
             return '"' + s.replace(/"/g, '""') + '"';

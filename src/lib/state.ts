@@ -1,5 +1,3 @@
-type PartialRecord<K extends string, T> = { [P in K]?: T };
-
 export interface AssessmentState {
   orgName?: string;
   createdAt?: string;
@@ -28,7 +26,9 @@ class AppState {
   private constructor() {}
 
   static getInstance(): AppState {
-    if (!AppState.instance) AppState.instance = new AppState();
+    if (!AppState.instance) {
+AppState.instance = new AppState();
+}
     return AppState.instance;
   }
 
@@ -36,7 +36,9 @@ class AppState {
     // migrate legacy window.assessmentState if present
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const legacy: any = (window as any).assessmentState || (window as any).NHSDigitalAdoption?.AppState;
-    if (legacy) this.assessment = { ...this.assessment, ...legacy };
+    if (legacy) {
+this.assessment = { ...this.assessment, ...legacy };
+}
   }
 }
 

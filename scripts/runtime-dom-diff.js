@@ -8,7 +8,9 @@ function usage() {
   process.exit(2);
 }
 
-if (process.argv.length < 4) usage();
+if (process.argv.length < 4) {
+usage();
+}
 const aPath = process.argv[2];
 const bPath = process.argv[3];
 
@@ -33,7 +35,9 @@ function buildPath(node) {
 function extractTree(root) {
   const out = [];
   function walk(node) {
-    if (!node.tagName) return;
+    if (!node.tagName) {
+return;
+}
     const attrs = {};
     for (const [k, v] of Object.entries(node.attributes || {})) {
       attrs[k] = String(v);
@@ -49,7 +53,6 @@ function extractTree(root) {
 async function captureRenderedHtml(filePath) {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
-  const abs = (new URL(`file://${process.cwd()}/`)).resolve ? new URL(`file://${process.cwd()}/`) : new URL(`file://${process.cwd()}/`);
   const fileUrl = new URL(filePath, `file://${process.cwd()}/`).href;
   await page.goto(fileUrl, { waitUntil: 'networkidle0', timeout: 30000 }).catch(() => {});
   // give additional time for any runtime mutations
@@ -73,20 +76,30 @@ function diffHtml(aHtml, bHtml) {
       missing.push(n.path);
       continue;
     }
-    if (n.tag !== m.tag) diffs.push({ path: n.path, type: 'tag', a: n.tag, b: m.tag });
-    if ((n.id || '') !== (m.id || '')) diffs.push({ path: n.path, type: 'id', a: n.id, b: m.id });
+    if (n.tag !== m.tag) {
+diffs.push({ path: n.path, type: 'tag', a: n.tag, b: m.tag });
+}
+    if ((n.id || '') !== (m.id || '')) {
+diffs.push({ path: n.path, type: 'id', a: n.id, b: m.id });
+}
     const as = (n.class || '').split(/\s+/).filter(Boolean).sort().join(' ');
     const bs = (m.class || '').split(/\s+/).filter(Boolean).sort().join(' ');
-    if (as !== bs) diffs.push({ path: n.path, type: 'class', a: as, b: bs });
+    if (as !== bs) {
+diffs.push({ path: n.path, type: 'class', a: as, b: bs });
+}
     const attrKeys = Array.from(new Set([...Object.keys(n.attrs || {}), ...Object.keys(m.attrs || {})]));
     for (const k of attrKeys) {
       const av = (n.attrs && n.attrs[k]) || '';
       const bv = (m.attrs && m.attrs[k]) || '';
-      if (av !== bv) diffs.push({ path: n.path, type: `attr:${k}`, a: av, b: bv });
+      if (av !== bv) {
+diffs.push({ path: n.path, type: `attr:${k}`, a: av, b: bv });
+}
     }
     const ai = (n.inner || '').replace(/\s+/g, ' ').trim();
     const bi = (m.inner || '').replace(/\s+/g, ' ').trim();
-    if (ai !== bi) diffs.push({ path: n.path, type: 'innerHTML', a: ai.slice(0, 200), b: bi.slice(0, 200) });
+    if (ai !== bi) {
+diffs.push({ path: n.path, type: 'innerHTML', a: ai.slice(0, 200), b: bi.slice(0, 200) });
+}
   }
   return { missing, diffs };
 }

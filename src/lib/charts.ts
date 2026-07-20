@@ -1,7 +1,9 @@
 import Chart, { ChartType, ChartConfiguration, Plugin } from 'chart.js/auto';
 
 function resolveCanvas(ctx: CanvasRenderingContext2D | HTMLCanvasElement) {
-  if ((ctx as HTMLCanvasElement).getContext) return ctx as HTMLCanvasElement;
+  if ((ctx as HTMLCanvasElement).getContext) {
+return ctx as HTMLCanvasElement;
+}
   return (ctx as CanvasRenderingContext2D).canvas as HTMLCanvasElement;
 }
 
@@ -20,6 +22,8 @@ export function createRadarChart(ctx: CanvasRenderingContext2D | HTMLCanvasEleme
   Chart.defaults.elements.point.hoverRadius = 6;
 
   const defaultOpts = {
+    maintainAspectRatio: true,
+    responsive: true,
     plugins: {
       legend: { display: false },
       tooltip: { enabled: true, backgroundColor: 'rgba(11,18,32,0.95)', titleColor: '#fff', bodyColor: '#fff' },
@@ -72,10 +76,14 @@ const radarCenterPlugin: Plugin = {
       const opts = (chart.options as any) || {};
       const centerCfg = opts.plugins?.centerText;
       const txt = centerCfg?.text || centerCfg || '';
-      if (!txt) return;
+      if (!txt) {
+return;
+}
 
       const chartType = String((chart.config as any)?.type || '');
-      if (chartType !== 'radar' && chartType !== 'doughnut') return;
+      if (chartType !== 'radar' && chartType !== 'doughnut') {
+return;
+}
 
       ctx.save();
       ctx.textAlign = 'center';
@@ -106,8 +114,8 @@ const radarCenterPlugin: Plugin = {
         });
       }
       ctx.restore();
-    } catch (e) {
-      // ignore
+    } catch (_e) {
+      // ignore rendering errors
     }
   }
 };

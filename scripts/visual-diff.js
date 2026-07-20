@@ -9,7 +9,9 @@ function usage() {
   process.exit(2);
 }
 
-if (process.argv.length < 4) usage();
+if (process.argv.length < 4) {
+usage();
+}
 const aPath = process.argv[2];
 const bPath = process.argv[3];
 

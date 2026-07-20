@@ -34,7 +34,7 @@ export function mountMaturityOverview(container: HTMLElement, context: MaturityO
  * Render overview HTML
  */
 function renderOverviewHtml(context: MaturityOverviewContext): string {
-  const { overallText, summaryView, summaryData } = context;
+  const { overallText, summaryView } = context;
 
   return `
     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 px-6 py-4 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -83,14 +83,14 @@ function renderOverviewHtml(context: MaturityOverviewContext): string {
               <button data-summary-view="status" class="px-2 py-0.5 rounded-full ${summaryView === 'status' ? 'bg-white text-gray-800 shadow' : 'text-gray-600'}">By Status</button>
             </div>
           </div>
-          <div class="relative flex-grow h-40"><canvas id="actions-summary-chart"></canvas></div>
+          <div class="w-full h-48 flex items-center justify-center"><canvas id="actions-summary-chart" style="max-height: 100%; max-width: 100%;"></canvas></div>
         </div>
       </div>
     </div>
 
     <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-200 mb-8">
       <h2 class="text-2xl font-bold text-center text-gray-900 mb-4">Maturity Radar</h2>
-      <div class="chart-container"><canvas id="maturityRadar"></canvas></div>
+      <div style="position: relative; width: 100%; height: 400px;"><canvas id="maturityRadar" style="max-height: 100%; max-width: 100%;"></canvas></div>
       <div class="flex flex-wrap justify-center gap-x-4 gap-y-2 mt-4 text-sm text-gray-600">
         ${STAGES.map((s, i) => `<div class="flex items-center"><span class="w-3 h-3 rounded-full mr-2" style="background-color:${STAGE_COLORS[i]}"></span>${i} = ${s}</div>`).join('')}
       </div>

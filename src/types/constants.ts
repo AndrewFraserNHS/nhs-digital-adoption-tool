@@ -294,6 +294,6 @@ export const SPECIFIC_RUBRICS = {
   }
 };
 
-export type Rubric = { id: string; label: string; max: number };
+export interface Rubric { id: string; label: string; max: number }
 
 export default CONSTANTS;

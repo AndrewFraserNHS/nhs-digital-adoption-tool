@@ -6,8 +6,6 @@
 import { escapeHtml } from '@lib/utils';
 import { AdoptionStore, DraftEntry, DraftAction } from '@lib/adoptionState';
 import { AssessmentComponent } from '@data/components';
-import { createEmptyEntry, cloneEntry } from '@lib/adoptionState';
-import { validateEntry } from '@lib/adoptionValidator';
 
 export interface AssessmentPanelContext {
   store: AdoptionStore;
@@ -100,8 +98,7 @@ function renderAssessmentHtml(context: AssessmentPanelContext): string {
  * Bind event listeners for assessment panel
  */
 function bindAssessmentEvents(container: HTMLElement, context: AssessmentPanelContext): void {
-  const { store, components, activeComponentId, getEntry, onComponentChange, onEntryUpdate, onMatrixToggle, onActionRemove } = context;
-  const component = components.find(c => c.id === activeComponentId) || components[0];
+  const { getEntry, onComponentChange, onEntryUpdate, onMatrixToggle, onActionRemove } = context;
 
   // Component selector
   const componentSelect = document.getElementById('active-component-select') as HTMLSelectElement | null;

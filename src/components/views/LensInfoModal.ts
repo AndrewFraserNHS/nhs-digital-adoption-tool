@@ -16,7 +16,9 @@ export interface LensInfoModalContext {
  */
 export function renderLensInfoModal(context: LensInfoModalContext): string {
   const { lensName } = context;
-  if (!lensName || !LENS_INFO[lensName]) return '';
+  if (!lensName || !LENS_INFO[lensName]) {
+return '';
+}
 
   const info = LENS_INFO[lensName];
   

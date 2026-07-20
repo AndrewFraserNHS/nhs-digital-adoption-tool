@@ -70,7 +70,9 @@ function renderDashboardHtml(context: DashboardContext): string {
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           ${components.map((component) => {
             let total = 0;
-            component.lenses.forEach((lens) => { total += Number(getEntry(component.id, lens).score || 0); });
+            component.lenses.forEach((lens) => {
+ total += Number(getEntry(component.id, lens).score || 0); 
+});
             const avgNum = Number((total / component.lenses.length).toFixed(1));
             const badgeClass = avgNum === 0 ? 'bg-slate-200 text-slate-500' : (avgNum >= component.target ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700');
             return `<button data-nav-component="${component.id}" class="flex justify-between items-center p-3 bg-slate-50 border border-slate-100 rounded-md hover:border-blue-300 transition-colors group text-left"><span class="text-sm font-medium text-slate-700 truncate pr-2 group-hover:text-[#005eb8]">${escapeHtml(component.label)}</span><span class="text-xs font-bold px-2 py-1 rounded ${badgeClass}">${avgNum > 0 ? avgNum.toFixed(1) : '-'}</span></button>`;

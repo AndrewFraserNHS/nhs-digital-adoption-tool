@@ -50,7 +50,7 @@ function renderSettingsPanelHtml(context: SettingsPanelContext): string {
 /**
  * Bind event listeners for settings panel
  */
-function bindSettingsPanelEvents(container: HTMLElement, context: SettingsPanelContext): void {
+function bindSettingsPanelEvents(_container: HTMLElement, context: SettingsPanelContext): void {
   const { orgProfile, onProfileUpdate } = context;
 
   const trust = document.getElementById('setting-trust-name') as HTMLInputElement | null;

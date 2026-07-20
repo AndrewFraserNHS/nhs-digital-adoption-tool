@@ -5,7 +5,7 @@
 
 import { escapeHtml } from '@lib/utils';
 import { MATURITY_STAGES, STAGE_COLORS as STAGE_COLORS_PALETTE } from '@data/rubrics';
-import type { ComponentDetail, ActionItem } from '@lib/maturityState';
+import type { ComponentDetail } from '@lib/maturityState';
 
 export interface MaturityAssessmentPanelContext {
   activeComponent: string;
@@ -134,7 +134,9 @@ function bindPanelEvents(container: HTMLElement, context: MaturityAssessmentPane
   });
 
   const d = details[activeComponent];
-  if (!d) return;
+  if (!d) {
+return;
+}
 
   // Score change
   document.getElementById('comp-stage')?.addEventListener('change', e => {

@@ -4,8 +4,6 @@
  * Data sourced from legacyData.ts to maintain fidelity during migration
  */
 
-import type { SpecificRubrics } from './rubrics';
-
 /**
  * Maturity assessment matrix - maps component names to stage descriptions
  * Preserved from original implementation for data fidelity

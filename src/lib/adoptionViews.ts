@@ -103,7 +103,7 @@ export function renderAssessment(context: RenderContext): string {
 /**
  * Render the action plan view with flattened action items
  */
-export function renderActionPlan(context: RenderContext): string {
+export function renderActionPlan(_context: RenderContext): string {
   return `
     <div class="max-w-6xl mx-auto">
       <h2 class="text-2xl font-bold text-slate-800 mb-6">Gap Bridging Action Plan</h2>

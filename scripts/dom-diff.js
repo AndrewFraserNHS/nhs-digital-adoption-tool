@@ -7,7 +7,9 @@ function usage() {
   process.exit(2);
 }
 
-if (process.argv.length < 4) usage();
+if (process.argv.length < 4) {
+usage();
+}
 const aPath = process.argv[2];
 const bPath = process.argv[3];
 
@@ -32,7 +34,9 @@ function buildPath(node) {
 function extractTree(root) {
   const out = [];
   function walk(node) {
-    if (!node.tagName) return;
+    if (!node.tagName) {
+return;
+}
     const attrs = {};
     for (const [k, v] of Object.entries(node.attributes || {})) {
       attrs[k] = String(v);
@@ -65,19 +69,27 @@ for (const n of aList) {
     continue;
   }
   // compare tag
-  if (n.tag !== m.tag) diffs.push({ path: n.path, type: 'tag', a: n.tag, b: m.tag });
+  if (n.tag !== m.tag) {
+diffs.push({ path: n.path, type: 'tag', a: n.tag, b: m.tag });
+}
   // compare id
-  if ((n.id || '') !== (m.id || '')) diffs.push({ path: n.path, type: 'id', a: n.id, b: m.id });
+  if ((n.id || '') !== (m.id || '')) {
+diffs.push({ path: n.path, type: 'id', a: n.id, b: m.id });
+}
   // compare class list (normalized)
   const as = (n.class || '').split(/\s+/).filter(Boolean).sort().join(' ');
   const bs = (m.class || '').split(/\s+/).filter(Boolean).sort().join(' ');
-  if (as !== bs) diffs.push({ path: n.path, type: 'class', a: as, b: bs });
+  if (as !== bs) {
+diffs.push({ path: n.path, type: 'class', a: as, b: bs });
+}
   // compare all attributes
   const attrKeys = Array.from(new Set([...Object.keys(n.attrs || {}), ...Object.keys(m.attrs || {})]));
   for (const k of attrKeys) {
     const av = (n.attrs && n.attrs[k]) || '';
     const bv = (m.attrs && m.attrs[k]) || '';
-    if (av !== bv) diffs.push({ path: n.path, type: `attr:${k}`, a: av, b: bv });
+    if (av !== bv) {
+diffs.push({ path: n.path, type: `attr:${k}`, a: av, b: bv });
+}
   }
   // compare innerHTML for content differences (trimmed)
   const ai = (n.inner || '').replace(/\s+/g, ' ').trim();

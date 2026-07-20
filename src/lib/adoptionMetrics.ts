@@ -40,7 +40,9 @@ export function getMetrics(
     Object.keys(store.currentDraft[componentId]).forEach((lens) => {
       const score = Number(store.currentDraft[componentId][lens].score || 0);
       totalCurrent += score;
-      if (score > 0) assessedCount += 1;
+      if (score > 0) {
+assessedCount += 1;
+}
     });
   });
 
@@ -60,7 +62,7 @@ export function getMetrics(
  * Compute radar chart data for current scores
  */
 export function computeRadarData(
-  store: AdoptionStore,
+  _store: AdoptionStore,
   lenses: string[],
   components: AssessmentComponent[],
   getEntry: (componentId: string, lens: string) => DraftEntry

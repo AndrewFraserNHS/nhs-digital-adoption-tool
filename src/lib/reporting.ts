@@ -1,7 +1,7 @@
 import { escapeCsv, downloadFile } from './utils';
 import AppState from './state';
 import { CONSTANTS, SPECIFIC_RUBRICS } from '../types/constants';
-import { load, save } from './storage';
+import { save } from './storage';
 
 export function generateMaturityReport(): string {
   const state = AppState.getInstance();
@@ -11,7 +11,7 @@ export function generateMaturityReport(): string {
 
   const rubric = SPECIFIC_RUBRICS.sampleRubric || [];
   const rows = rubric.map(r => ({ id: r.id, label: r.label, value: responses[r.id] ?? 0, max: r.max }));
-  const tableRows = rows.map(r => `<tr class=\"report-row\"><td class=\"report-cell-label\">${r.label}</td><td class=\"report-cell-num\">${r.value}</td><td class=\"report-cell-num\">${r.max}</td></tr>`).join('');
+  const tableRows = rows.map(r => `<tr class='report-row'><td class='report-cell-label'>${r.label}</td><td class='report-cell-num'>${r.value}</td><td class='report-cell-num'>${r.max}</td></tr>`).join('');
 
   // compute totals
   const totalScore = rows.reduce((s, x) => s + Number(x.value || 0), 0);
@@ -35,7 +35,7 @@ export function generateMaturityReport(): string {
     <section class="report-table-wrap">
       <table class="report-table" role="table">
         <thead>
-          <tr><th>Rubric</th><th style=\"text-align:right\">Score</th><th style=\"text-align:right\">Max</th></tr>
+          <tr><th>Rubric</th><th style='text-align:right'>Score</th><th style='text-align:right'>Max</th></tr>
         </thead>
         <tbody>
           ${tableRows}
@@ -62,22 +62,30 @@ export function getMaturityRows() {
 
 export function showMaturityReportInModal(containerId = 'report-display-content') {
   const el = typeof document !== 'undefined' ? document.getElementById(containerId) : null;
-  if (!el) return;
+  if (!el) {
+return;
+}
   const html = generateMaturityReport();
   el.innerHTML = html;
 
   // wire modal buttons
   const printBtn = el.querySelector('#report-print') as HTMLButtonElement | null;
   const exportBtn = el.querySelector('#report-export-csv') as HTMLButtonElement | null;
-  if (printBtn) printBtn.addEventListener('click', () => window.print());
-  if (exportBtn) exportBtn.addEventListener('click', () => {
+  if (printBtn) {
+printBtn.addEventListener('click', () => window.print());
+}
+  if (exportBtn) {
+exportBtn.addEventListener('click', () => {
     const rows = getMaturityRows();
     exportMaturityReportToCSV(rows, 'maturity-report.csv');
   });
 }
+}
 
 export function exportMaturityReportToCSV(rows: Array<Record<string, any>>, filename = 'maturity-report.csv') {
-  if (!rows || rows.length === 0) return;
+  if (!rows || rows.length === 0) {
+return;
+}
   const keys = Object.keys(rows[0]);
   const lines = [keys.map(escapeCsv).join(',')];
   for (const r of rows) {
@@ -85,7 +93,11 @@ export function exportMaturityReportToCSV(rows: Array<Record<string, any>>, file
   }
   const csv = lines.join('\n');
   // remember last export for quick re-use
-  try { save('last-maturity-csv', { filename, csv }); } catch {}
+  try {
+    save('last-maturity-csv', { filename, csv });
+  } catch (_err) {
+    // silently ignore storage errors
+  }
   downloadFile(filename, csv);
 }
 

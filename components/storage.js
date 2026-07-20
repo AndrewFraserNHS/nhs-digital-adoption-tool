@@ -6,15 +6,22 @@
         try{
             const raw = localStorage.getItem(KEY);
             return raw ? JSON.parse(raw) : null;
-        }catch(e){ console.error('Failed to load state', e); return null; }
+        }catch(e){
+ console.error('Failed to load state', e); return null; 
+}
     }
 
     function save(state){
-        try{ localStorage.setItem(KEY, JSON.stringify(state)); return true; }
-        catch(e){ console.error('Failed to save state', e); return false; }
+        try{
+ localStorage.setItem(KEY, JSON.stringify(state)); return true; 
+} catch(e){
+ console.error('Failed to save state', e); return false; 
+}
     }
 
-    function clear(){ localStorage.removeItem(KEY); }
+    function clear(){
+ localStorage.removeItem(KEY); 
+}
 
     function exportJSON(state){
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
@@ -25,7 +32,13 @@
 
     function importFromFile(file, onLoad){
         const reader = new FileReader();
-        reader.onload = (e) => { try{ const parsed = JSON.parse(e.target.result); onLoad(parsed); }catch(err){ console.error(err); alert('Invalid file'); } };
+        reader.onload = (e) => {
+ try{
+ const parsed = JSON.parse(e.target.result); onLoad(parsed); 
+}catch(err){
+ console.error(err); alert('Invalid file'); 
+} 
+};
         reader.readAsText(file);
     }
 

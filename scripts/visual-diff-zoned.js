@@ -10,7 +10,9 @@ function usage() {
   process.exit(2);
 }
 
-if (process.argv.length < 5) usage();
+if (process.argv.length < 5) {
+usage();
+}
 const aPath = process.argv[2];
 const bPath = process.argv[3];
 const preset = process.argv[4];
@@ -29,7 +31,11 @@ async function capture(pageUrl, outPng, collectCharts = false) {
       for (const s of clickSelectors) {
         const el = document.querySelector(s);
         if (el && typeof el.click === 'function') {
-          try { el.click(); } catch (e) { /* ignore */ }
+          try {
+            el.click();
+          } catch (_e) {
+            // ignore click errors
+          }
         }
       }
     }).catch(() => {});

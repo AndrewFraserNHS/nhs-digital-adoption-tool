@@ -5,7 +5,7 @@
 
 import { escapeHtml } from '@lib/utils';
 import { MATURITY_STAGES, STAGE_COLORS as STAGE_COLORS_PALETTE } from '@data/rubrics';
-import { generateMaturityReport, exportMaturityReportToCSV } from '@lib/reporting';
+import { generateMaturityReport } from '@lib/reporting';
 
 export interface MaturityModalContext {
   modalType: '' | 'matrix' | 'guidance' | 'report';
@@ -94,7 +94,7 @@ function renderGuidanceModalHtml(context: MaturityModalContext): string {
 /**
  * Render report modal HTML
  */
-function renderReportModalHtml(context: MaturityModalContext): string {
+function renderReportModalHtml(_context: MaturityModalContext): string {
   return `<div id="report-overlay" class="fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-4">
     <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col">
       <div class="flex justify-between items-center p-4 border-b border-gray-200 shrink-0">
@@ -123,7 +123,9 @@ function bindModalEvents(container: HTMLElement, context: MaturityModalContext):
   const overlay = container.firstElementChild as HTMLElement | null;
   if (overlay) {
     overlay.addEventListener('click', e => {
-      if (e.target === overlay) context.onClose();
+      if (e.target === overlay) {
+context.onClose();
+}
     });
   }
 

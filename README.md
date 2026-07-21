@@ -1,27 +1,52 @@
-# NHS Digital Adoption — componentised static UI
+# NHS Digital Adoption - componentised static UI
 
-This repo contains static HTML tools for digital adoption and change readiness. The code has been partially componentised into `components/` to centralise constants, storage, and utilities while keeping zero-build usage.
+This repository contains NHS digital adoption and change readiness tools, with React/TypeScript pages built by Vite.
 
-Getting started
+## Getting started
 
-1. Install developer tooling (optional):
+1. Install dependencies:
 
 ```bash
 npm install
 ```
 
-2. Start a simple static server (recommended) or open the HTML files directly in your browser:
+2. Start the local development server:
 
 ```bash
-npm start
-# then open http://localhost:3000/Change\ Maturity\ Assessment\ Tool\ V5.20.html
+npm run dev
 ```
 
-Deployment
+3. Open the URL printed by Vite (typically http://localhost:5173/).
 
-- Deploy the repository root to GitHub Pages using `npm run deploy` (requires `gh-pages` package and a GitHub repo).
+## Build
 
-Linting & formatting
+```bash
+npm run build
+```
 
-- `npm run lint` — run ESLint (auto-fixes where possible)
-- `npm run format` — run Prettier
+## Testing
+
+```bash
+npm test
+```
+
+For watch mode:
+
+```bash
+npm run test:watch
+```
+
+For coverage report generation:
+
+```bash
+npm run test:coverage
+```
+
+## Deployment
+
+- Deploy the built site to GitHub Pages with `npm run deploy`.
+
+## Linting and formatting
+
+- `npm run lint` runs ESLint.
+- `npm run format` runs Prettier.

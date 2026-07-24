@@ -370,7 +370,7 @@ export function MaturityApp() {
           onChange={handleFileLoad}
         />
         <div className="mb-6 flex items-center">
-          <button onClick={() => window.location.href = '/'} className="text-sm px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-md font-medium transition-colors">
+          <button onClick={() => { window.location.hash = '#/'; }} className="text-sm px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-md font-medium transition-colors">
             ← Back to Home
           </button>
         </div>

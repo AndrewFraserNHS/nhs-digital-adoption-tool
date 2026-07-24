@@ -2,10 +2,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { fileURLToPath, URL } from 'node:url';
 
-// Vite config for a static site served from project root.
-// - Uses a relative `base` so the built site can be deployed to GitHub Pages
-// - Sets dev server port to 5173 (default) so links expecting that port work
-// - Outputs to `dist` which `gh-pages` will publish
+// Single-entry React SPA config for GitHub Pages.
 export default defineConfig({
   plugins: [react()],
   base: './',
@@ -15,14 +12,7 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    emptyOutDir: true,
-    rollupOptions: {
-      input: {
-        main: fileURLToPath(new URL('./index.html', import.meta.url)),
-        maturity: fileURLToPath(new URL('./maturity.html', import.meta.url)),
-        adoption: fileURLToPath(new URL('./adoption.html', import.meta.url)),
-      }
-    }
+    emptyOutDir: true
   },
   resolve: {
     alias: {

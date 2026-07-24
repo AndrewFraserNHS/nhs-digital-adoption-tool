@@ -18,7 +18,6 @@ import {
   buildRadarChartData,
   flattenActions
 } from '@lib/adoptionMetrics';
-import { validateEntry } from '@lib/adoptionValidator';
 import { load, save } from '@lib/storage';
 import {
   ADOPTION_STORAGE_KEY,
@@ -28,9 +27,17 @@ import {
   type SavedAdoptionAssessment
 } from '@lib/adoptionIO';
 import { AdoptionDashboard } from '@components/views/AdoptionDashboard';
-import { SettingsPanel } from '@components/views/SettingsPanel';
+import { SettingsPanel, type AdoptionUserSettings } from '@components/views/SettingsPanel';
 import { ActionPlanTracker } from '@components/views/ActionPlanTracker';
 import { AssessmentPanel } from '@components/views/AssessmentPanel';
+
+const ADOPTION_USER_SETTINGS_KEY = 'nhs-digital-adoption-user-settings';
+
+const DEFAULT_USER_SETTINGS: AdoptionUserSettings = {
+  name: '',
+  preferences: '',
+  themeColor: '#005eb8'
+};
 
 function cloneAction(action: DraftAction): DraftAction {
   return { ...action };
@@ -45,6 +52,12 @@ export function AdoptionApp() {
   const COMPONENTS = ASSESSMENT_COMPONENTS;
   const [view, setView] = useState<View>('dashboard');
   const [activeComponentId, setActiveComponentId] = useState<string>(COMPONENTS[0].id);
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(() => {
+    if (typeof window === 'undefined') {
+      return true;
+    }
+    return window.innerWidth >= 1024;
+  });
   const [store, setStore] = useState<AdoptionStore>(() => {
     const state = AppState.getInstance();
     state.loadFromWindow();
@@ -58,6 +71,13 @@ export function AdoptionApp() {
   });
 
   const [showMatrix, setShowMatrix] = useState<Record<string, boolean>>({});
+  const [userSettings, setUserSettings] = useState<AdoptionUserSettings>(() => {
+    const persisted = load<Partial<AdoptionUserSettings>>(ADOPTION_USER_SETTINGS_KEY);
+    return {
+      ...DEFAULT_USER_SETTINGS,
+      ...persisted
+    };
+  });
   const dashboardRef = React.useRef<HTMLDivElement>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
@@ -94,6 +114,10 @@ export function AdoptionApp() {
     };
   }, [store]);
 
+  useEffect(() => {
+    save(ADOPTION_USER_SETTINGS_KEY, userSettings);
+  }, [userSettings]);
+
   // Render charts after dashboard mounts
   useEffect(() => {
     if (view === 'dashboard' && dashboardRef.current) {
@@ -125,10 +149,33 @@ export function AdoptionApp() {
     }
   }, [view, store, getEntry]);
 
+  useEffect(() => {
+    const syncSidebarWithViewport = () => {
+      setIsSidebarOpen(window.innerWidth >= 1024);
+    };
+
+    syncSidebarWithViewport();
+    window.addEventListener('resize', syncSidebarWithViewport);
+
+    return () => {
+      window.removeEventListener('resize', syncSidebarWithViewport);
+    };
+  }, []);
+
   // Dashboard rendering now handled by React component below
+
+  const shouldAutoCloseSidebar = () => {
+    if (typeof window === 'undefined') {
+      return false;
+    }
+    return window.innerWidth < 1024;
+  };
 
   const handleViewChange = (newView: View) => {
     setView(newView);
+    if (shouldAutoCloseSidebar()) {
+      setIsSidebarOpen(false);
+    }
   };
 
   const updateEntry = useCallback((componentId: string, lens: string, entry: DraftEntry) => {
@@ -186,6 +233,44 @@ export function AdoptionApp() {
     setView('dashboard');
   }, [metrics.overallPct, store.currentDraft]);
 
+  const handleLoadExampleData = useCallback(async () => {
+    try {
+      const response = await fetch('test-data/adoption-sample.json');
+      if (!response.ok) {
+        throw new Error(`Failed to load sample data: ${response.status}`);
+      }
+
+      const payload = (await response.json()) as Partial<SavedAdoptionAssessment>;
+      setStore((prev) => mergeImportedAdoptionState(payload, prev));
+      setView('dashboard');
+      if (shouldAutoCloseSidebar()) {
+        setIsSidebarOpen(false);
+      }
+    } catch (error) {
+      console.error(error);
+      window.alert('Unable to load example data right now. Please try again.');
+    }
+  }, []);
+
+  const handleResetData = useCallback(() => {
+    const confirmed = window.confirm(
+      'Warning: this will reset all assessment data (organisation profile, scores, actions, and history). If you are worried, please export your data first. Continue?'
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    const resetStore = initializeStore();
+    setStore(resetStore);
+    setShowMatrix({});
+    setView('dashboard');
+
+    if (shouldAutoCloseSidebar()) {
+      setIsSidebarOpen(false);
+    }
+  }, []);
+
   const getComponentStatus = (comp: typeof COMPONENTS[0]) => {
     let scoredCount = 0, justifiedCount = 0;
     comp.lenses.forEach(l => {
@@ -211,8 +296,21 @@ export function AdoptionApp() {
         className="hidden"
         onChange={handleImportFile}
       />
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 z-10 bg-slate-900/35 backdrop-blur-[1px] lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
       {/* Sidebar */}
-      <div className="w-72 bg-[#005eb8] text-white flex flex-col shadow-xl z-20 flex-shrink-0">
+      <div
+        className={`fixed inset-y-0 left-0 z-20 bg-[#005eb8] text-white flex flex-col shadow-xl overflow-hidden transition-all duration-300 ease-out lg:static lg:translate-x-0 ${
+          isSidebarOpen
+            ? 'w-72 translate-x-0'
+            : 'w-0 -translate-x-full lg:w-0'
+        }`}
+        style={{ backgroundColor: userSettings.themeColor }}
+      >
         <div className="p-6 border-b border-blue-700">
           <h1 className="text-xl font-bold tracking-tight">NHS Digital Adoption</h1>
           <p className="text-blue-200 text-xs mt-1 flex justify-between items-center">
@@ -250,6 +348,9 @@ export function AdoptionApp() {
                   onClick={() => {
                     setActiveComponentId(comp.id);
                     setView('assessment');
+                    if (shouldAutoCloseSidebar()) {
+                      setIsSidebarOpen(false);
+                    }
                   }}
                   className={`w-full text-left px-4 py-2 text-sm flex items-center justify-between transition-colors ${
                     isActive ? 'bg-white font-medium text-[#005eb8]' : `hover:bg-blue-800 ${status.color}`
@@ -277,8 +378,18 @@ export function AdoptionApp() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
         {/* Header */}
-        <header className="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-6 shrink-0 z-10 shadow-sm">
+        <header className="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-6 shrink-0 z-10 shadow-sm" style={{ borderTop: `3px solid ${userSettings.themeColor}` }}>
           <div className="flex items-center text-sm gap-4">
+            <button
+              onClick={() => setIsSidebarOpen((current) => !current)}
+              className="inline-flex items-center justify-center px-3 py-2 text-white rounded-md font-semibold transition-colors shadow-sm"
+              aria-label={isSidebarOpen ? 'Collapse side navigation' : 'Expand side navigation'}
+              title={isSidebarOpen ? 'Collapse side navigation' : 'Expand side navigation'}
+              style={{ backgroundColor: userSettings.themeColor }}
+            >
+              <span aria-hidden="true" className="text-lg leading-none">{isSidebarOpen ? '«' : '»'}</span>
+              <span className="sr-only">{isSidebarOpen ? 'Collapse side navigation' : 'Expand side navigation'}</span>
+            </button>
             <button onClick={() => window.location.href = '/'} className="text-sm px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-md font-medium transition-colors">
               ← Back
             </button>
@@ -305,7 +416,8 @@ export function AdoptionApp() {
             </button>
             <button
               onClick={handleFinaliseMonth}
-              className="text-sm px-4 py-2 bg-[#005eb8] text-white hover:bg-blue-700 rounded-md font-medium shadow-sm transition-colors"
+              className="text-sm px-4 py-2 text-white rounded-md font-medium shadow-sm transition-colors"
+              style={{ backgroundColor: userSettings.themeColor }}
             >
               Finalise Month
             </button>
@@ -325,6 +437,9 @@ export function AdoptionApp() {
                 onComponentClick={(componentId) => {
                   setActiveComponentId(componentId);
                   setView('assessment');
+                  if (shouldAutoCloseSidebar()) {
+                    setIsSidebarOpen(false);
+                  }
                 }}
               />
             </div>
@@ -359,18 +474,25 @@ export function AdoptionApp() {
               onComponentClick={(componentId) => {
                 setActiveComponentId(componentId);
                 setView('assessment');
+                if (shouldAutoCloseSidebar()) {
+                  setIsSidebarOpen(false);
+                }
               }}
             />
           )}
           {view === 'settings' && (
             <SettingsPanel
               orgProfile={store.orgProfile}
+              userSettings={userSettings}
               onProfileUpdate={(updatedProfile) => {
                 setStore(prev => ({
                   ...prev,
                   orgProfile: updatedProfile
                 }));
               }}
+              onUserSettingsUpdate={setUserSettings}
+              onLoadExampleData={handleLoadExampleData}
+              onResetData={handleResetData}
             />
           )}
         </main>

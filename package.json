@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "description": "Static NHS Digital Adoption and Change Readiness tools (componentised)",
+  "homepage": "https://andrewfrasernhs.github.io/nhs-digital-adoption-tool/",
   "type": "module",
   "scripts": {
     "dev": "vite",

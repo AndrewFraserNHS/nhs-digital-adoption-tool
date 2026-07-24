@@ -1,0 +1,70 @@
+{
+  "orgProfile": {
+    "org": "North Valley NHS Trust",
+    "project": "Electronic Patient Record Rollout",
+    "phase": "Phase 3: Development"
+  },
+  "responses": {
+    "Vision": 4,
+    "Case for Change": 3,
+    "Sponsorship/ Change Network": 4,
+    "Benefits": 3,
+    "Change Impact & Risk": 2,
+    "Change Management Readiness & Planning": 3,
+    "Stakeholder Engagement & Comms": 3,
+    "Resistance Management": 2,
+    "Skills/ Learning": 3,
+    "Process change": 2,
+    "Reinforcement": 1,
+    "Change Management Capability": 2
+  },
+  "details": {
+    "Vision": {
+      "justification": "Programme vision is defined and communicated to most stakeholder groups.",
+      "notes": "Need stronger clinical champion messaging.",
+      "links": [
+        "https://example.nhs.uk/vision-pack",
+        "https://example.nhs.uk/townhall-recording"
+      ],
+      "actions": [
+        {
+          "id": "maturity-1",
+          "text": "Refresh vision cascade for ward managers",
+          "owner": "Change Lead",
+          "dueDate": "2026-08-15",
+          "status": "In Progress"
+        }
+      ]
+    },
+    "Benefits": {
+      "justification": "Benefits are defined, but baselines are incomplete.",
+      "notes": "Operational metrics still being aligned.",
+      "links": [
+        "https://example.nhs.uk/benefits-register"
+      ],
+      "actions": [
+        {
+          "id": "maturity-2",
+          "text": "Complete baseline data pack",
+          "owner": "Benefits Manager",
+          "dueDate": "2026-07-30",
+          "status": "Not Started"
+        }
+      ]
+    },
+    "Reinforcement": {
+      "justification": "Post go-live reinforcement approach is not yet defined.",
+      "notes": "Need adoption dashboard and coaching plan.",
+      "links": [],
+      "actions": [
+        {
+          "id": "maturity-3",
+          "text": "Design reinforcement KPI dashboard",
+          "owner": "PMO",
+          "dueDate": "2026-09-05",
+          "status": "Not Started"
+        }
+      ]
+    }
+  }
+}

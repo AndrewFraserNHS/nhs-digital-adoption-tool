@@ -1,6 +1,7 @@
 import type { JSX } from 'react';
 import { useCallback } from 'react';
 import { MATURITY_STAGES, STAGE_COLORS as STAGE_COLORS_PALETTE } from '@data/rubrics';
+import { CONSTANTS } from '../../types/constants';
 
 export interface MaturityOverviewProps {
   organisationName: string;
@@ -57,7 +58,7 @@ export function MaturityOverview({
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 px-6 py-4 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-xl font-bold text-slate-900">Change Maturity Assessment Tool</h1>
-          <p className="text-xs text-slate-500 mt-0.5">V5.20 — NHS Change Maturity Framework</p>
+          <p className="text-xs text-slate-500 mt-0.5">{CONSTANTS.VERSION} — NHS Change Maturity Framework</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <button

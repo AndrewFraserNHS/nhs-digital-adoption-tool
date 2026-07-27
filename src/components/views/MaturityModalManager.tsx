@@ -1,6 +1,7 @@
 import React, { JSX, useCallback } from 'react';
 import { MATURITY_STAGES, STAGE_COLORS as STAGE_COLORS_PALETTE } from '@data/rubrics';
 import { generateMaturityReport, type MaturityReportData } from '@lib/reporting';
+import { CONSTANTS, VERSION_HISTORY_ITEMS } from '../../types/constants';
 
 export interface MaturityGuidance {
   purpose: string;
@@ -10,7 +11,7 @@ export interface MaturityGuidance {
 }
 
 export interface MaturityModalManagerProps {
-  modalType: '' | 'matrix' | 'guidance' | 'report';
+  modalType: '' | 'matrix' | 'guidance' | 'report' | 'help' | 'versionHistory';
   activeComponent: string;
   scores: Record<string, number>;
   componentMatrix: Record<string, string[]>;
@@ -24,6 +25,7 @@ export interface MaturityModalManagerProps {
 
 const STAGES = MATURITY_STAGES;
 const STAGE_COLORS = STAGE_COLORS_PALETTE;
+
 
 export function MaturityModalManager({
   modalType,
@@ -169,6 +171,93 @@ export function MaturityModalManager({
             </button>
           </div>
           <div className="p-6 overflow-y-auto">{body}</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (modalType === 'help') {
+    return (
+      <div
+        className="fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-4"
+        onClick={handleOverlayClick}
+      >
+        <div
+          className="bg-white rounded-2xl shadow-xl w-full max-w-3xl max-h-[90vh] flex flex-col"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex justify-between items-center p-4 border-b border-gray-200 shrink-0">
+            <h2 className="text-xl font-bold text-gray-900">How to Use This Tool</h2>
+            <button
+              onClick={onClose}
+              className="text-gray-500 hover:text-gray-800 text-2xl leading-none"
+            >
+              ×
+            </button>
+          </div>
+          <div className="p-6 overflow-y-auto space-y-4 text-sm text-gray-700">
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-1">1. Fill in Project Details</h3>
+              <p>Start by entering the <span className="font-medium">Organisation Name</span> and <span className="font-medium">Project Name</span>. You can also select a <span className="font-medium">Project Phase</span> to compare your current scores with the expected maturity for that phase.</p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-1">2. Assess Each Theme</h3>
+              <p>Use the tabs to navigate between the 12 change maturity themes. For each theme, select the <span className="font-medium">Maturity Stage</span> that best describes your project’s current state. Click <span className="font-medium">View Matrix</span> for detailed descriptions of each stage, or <span className="font-medium">View Guidance</span> for theme-specific advice.</p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-1">3. Provide Context &amp; Actions</h3>
+              <p>In the text boxes, add your <span className="font-medium">Justification</span> for the score, any <span className="font-medium">Additional information and notes</span>, and add supporting links with <span className="font-medium">Add Supporting Link</span>. Use the <span className="font-medium">Actions to Improve Maturity</span> section to add trackable actions with owners and dates.</p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-1">4. Track Your Progress</h3>
+              <p>The <span className="font-medium">Maturity Radar</span> and <span className="font-medium">Overall Change Maturity</span> score update in real time as you work. The <span className="font-medium">Actions Summary</span> chart gives a quick view of your action plan, and your progress is automatically saved in your browser.</p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-1">5. Save, Load &amp; Report</h3>
+              <p>Use the buttons in the header to <span className="font-medium">Save As...</span> to save your assessment as a file, <span className="font-medium">Load</span> a previous assessment, generate <span className="font-medium">Reports</span> (Maturity or Action Plan), or <span className="font-medium">Reset</span> the tool.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (modalType === 'versionHistory') {
+    return (
+      <div
+        className="fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-4"
+        onClick={handleOverlayClick}
+      >
+        <div
+          className="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex justify-between items-center p-4 border-b border-gray-200 shrink-0">
+            <h2 className="text-xl font-bold text-gray-900">Version History</h2>
+            <button
+              onClick={onClose}
+              className="text-gray-500 hover:text-gray-800 text-2xl leading-none"
+            >
+              ×
+            </button>
+          </div>
+          <div className="p-6 overflow-y-auto space-y-4">
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
+              <p className="font-semibold text-slate-900">CADAS - Change Maturity Assessment Tool {CONSTANTS.VERSION}</p>
+            </div>
+            <div className="space-y-4">
+              {VERSION_HISTORY_ITEMS.map((item) => (
+                <div key={item.version} className="border-b border-slate-200 pb-4 last:border-b-0 last:pb-0">
+                  <h3 className="font-semibold text-slate-900">Version {item.version}</h3>
+                  <ul className="mt-2 space-y-1 text-sm text-slate-700">
+                    {item.notes.map((note) => (
+                      <li key={note} className="leading-6">• {note}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     );

@@ -69,6 +69,24 @@ describe('MaturityModalManager', () => {
     expect(screen.getByText('No guidance available.')).toBeInTheDocument();
   });
 
+  it('renders help modal with usage guidance', () => {
+    const props = buildProps();
+    render(<MaturityModalManager {...props} modalType="help" />);
+
+    expect(screen.getByRole('heading', { name: /how to use this tool/i })).toBeInTheDocument();
+    expect(screen.getByText(/fill in project details/i)).toBeInTheDocument();
+    expect(screen.getByText(/assess each theme/i)).toBeInTheDocument();
+  });
+
+  it('renders version history modal with release notes', () => {
+    const props = buildProps();
+    render(<MaturityModalManager {...props} modalType="versionHistory" />);
+
+    expect(screen.getByRole('heading', { name: /version history/i })).toBeInTheDocument();
+    expect(screen.getByText(/version 5\.20/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/updated component matrix definitions/i).length).toBeGreaterThan(0);
+  });
+
   it('renders report modal, prints, and exports csv from report rows', () => {
     const props = buildProps();
     const printSpy = vi.spyOn(window, 'print').mockImplementation(() => {});

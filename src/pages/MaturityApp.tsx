@@ -369,10 +369,35 @@ export function MaturityApp() {
           className="hidden"
           onChange={handleFileLoad}
         />
-        <div className="mb-6 flex items-center">
-          <button onClick={() => { window.location.hash = '#/'; }} className="text-sm px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-md font-medium transition-colors">
+        <div className="mb-6 flex items-center justify-between gap-3">
+          <button
+            onClick={() => {
+              window.location.hash = '#/';
+            }}
+            className="text-sm px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-md font-medium transition-colors"
+          >
             ← Back to Home
           </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                setStore((current) => ({ ...current, modal: 'help' }));
+              }}
+              aria-label="Open help"
+              title="Help"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-lg font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-100"
+            >
+              ?
+            </button>
+            <button
+              onClick={() => {
+                setStore((current) => ({ ...current, modal: 'versionHistory' }));
+              }}
+              className="text-sm px-3 py-2 rounded-md border border-slate-200 bg-white text-slate-700 font-medium shadow-sm transition-colors hover:bg-slate-100"
+            >
+              Version History
+            </button>
+          </div>
         </div>
         {/* Overview Section */}
         <div ref={overviewRef} className="mb-8">

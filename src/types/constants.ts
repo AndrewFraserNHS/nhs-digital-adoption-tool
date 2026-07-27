@@ -1,6 +1,8 @@
+import packageJson from '../../package.json';
+
 export const CONSTANTS = {
   APP_NAME: 'NHS Digital Adoption',
-  VERSION: 'v6',
+  VERSION: `v${packageJson.version}`,
 };
 
 export const SPECIFIC_RUBRICS = {
@@ -295,5 +297,214 @@ export const SPECIFIC_RUBRICS = {
 };
 
 export interface Rubric { id: string; label: string; max: number }
+
+export const VERSION_HISTORY_ITEMS = [
+  {
+    version: '6.0.1',
+    notes: [
+      'Ported the application from the legacy HTML implementation into a React + Vite application.',
+      'Preserved the full maturity assessment workflow, including project overview, maturity scoring, guidance and matrix modals, action planning, reports, and autosave behaviour.',
+      'Delivered a modern component-based architecture with reusable views, improved maintainability, and a more accessible UI.',
+      'Added support for routing between the adoption and maturity tools, along with a refreshed responsive interface and improved state handling.',
+      'Added support ticket link in the header for users to report issues or request assistance.'
+    ]
+  },
+  {
+    version: '5.20',
+    notes: [
+      "Updated Component Matrix definitions for 'Reinforcement' and 'Case for Change'.",
+      "Updated Guidance content (Purpose, Inputs, Indicators, Deliverables) for 'Reinforcement' and 'Case for Change' to align with latest standards."
+    ]
+  },
+  {
+    version: '5.19',
+    notes: [
+      "Updated Component Matrix definitions for 'Reinforcement' and 'Case for Change' to align with latest guidance."
+    ]
+  },
+  {
+    version: '5.17',
+    notes: [
+      'Added new "Export to CSV" button on the report modal for both Maturity and Action Plan reports.'
+    ]
+  },
+  {
+    version: '5.16',
+    notes: [
+      'Updated Report print button to Print or Save as PDF.',
+      'Updated the Maturity Assessment Report format into a table.',
+      'Updated Action Status options to: “Planned”, “In Progress”, “Completed”, and "Cancelled".',
+      'Updated Due Date descriptors in the summary chart to: "On Track", "Due in <30 Days", and "Overdue".'
+    ]
+  },
+  {
+    version: '5.9',
+    notes: [
+      "Made the Maturity Radar interactive. Clicking on a theme's data point now automatically navigates to that theme's assessment section below."
+    ]
+  },
+  {
+    version: '5.8',
+    notes: [
+      "Added a 'Version History' button to the 'About' window to allow users to see all previous version notes."
+    ]
+  },
+  {
+    version: '5.7',
+    notes: [
+      'Visual Refresh (Step 5 of 5): Enhanced the overall accessibility of the tool, ensuring compliance with WCAG 2.1 AA standards. This includes improved keyboard navigation, screen reader support, and colour contrast adjustments.'
+    ]
+  },
+  {
+    version: '5.6',
+    notes: [
+      'Visual Refresh (Step 4 of 5): Updated all modal windows (pop-ups) with a cleaner, more consistent design that aligns with the new visual identity.'
+    ]
+  },
+  {
+    version: '5.5',
+    notes: [
+      'Visual Refresh (Step 3 of 5): Redesigned the main assessment area, introducing clearer typography, better spacing, and a more intuitive layout for maturity selection, justification, and action planning sections.'
+    ]
+  },
+  {
+    version: '5.4',
+    notes: [
+      "Added a toggle to the 'Actions Summary' chart to switch between viewing actions 'By Due Date' (for In Progress items) and 'By Status' (for all items).",
+      'The actions summary pop-up now correctly displays actions from all historical stages, not just the currently selected one.',
+      'Clicking an action in the summary pop-up now correctly navigates to the relevant theme and historical stage before opening the edit modal.'
+    ]
+  },
+  {
+    version: '5.3',
+    notes: [
+      'Visual Refresh (Step 2 of 5): Implemented the new enhanced dashboard layout, creating a cleaner "Project Overview" and a larger, more central radar chart.'
+    ]
+  },
+  {
+    version: '5.2',
+    notes: [
+      'Visual Refresh (Step 1 of 5): Implemented a new, more readable font (Inter) and a refined, consistent color palette based on NHS brand guidelines.'
+    ]
+  },
+  {
+    version: '5.1',
+    notes: [
+      'Corrected table heading alignment in the Action Plan report.'
+    ]
+  },
+  {
+    version: '5.0',
+    notes: [
+      'Added confirmation dialog when deleting an action.',
+      'Organisation and Project Name are now included in the Action Plan report header.'
+    ]
+  },
+  {
+    version: '4.9',
+    notes: [
+      'Reworked action management to use a pop-up modal for adding and editing actions, providing a more user-friendly experience.',
+      'Editing an action is now done by clicking anywhere on the action\'s row.',
+      'The delete button has been moved into the new "Edit Action" modal.'
+    ]
+  },
+  {
+    version: '4.8',
+    notes: [
+      'Updated the "Actions Summary" to only show a breakdown of "In Progress" actions by their date status.'
+    ]
+  },
+  {
+    version: '4.7',
+    notes: [
+      'The "Actions Summary" in Project Details now provides a detailed breakdown of "In Progress" actions by their due date status (Overdue, Due in 30 days, OK).'
+    ]
+  },
+  {
+    version: '4.6',
+    notes: [
+      'Added an "Actions Summary" section to the Project Details card.',
+      'The summary provides a live count of total, in-progress, paused, and completed actions across all themes and historical stages.'
+    ]
+  },
+  {
+    version: '4.5',
+    notes: [
+      'Corrected date formatting across the tool to use UK standard (DD/MM/YYYY) in reports.',
+      'Fixed an issue with the date picker functionality in the Actions table.',
+      'Cleaned up formatting on the Action Plan report for better clarity.'
+    ]
+  },
+  {
+    version: '4.4',
+    notes: [
+      'Added a "Status" dropdown ("In Progress", "Paused", "Completed") to each individual action.',
+      'Implemented conditional color-coding for action due dates to indicate urgency (Overdue, Due Soon, OK).',
+      'Updated the Action Plan report to include the new status field.'
+    ]
+  },
+  {
+    version: '4.3',
+    notes: [
+      'Overhauled the "Actions" section to allow for individual action items with start/due dates and owners.',
+      'The Action Plan report is now more detailed, listing each individual action.',
+      'Added a one-time automatic migration for old action data.'
+    ]
+  },
+  {
+    version: '4.2',
+    notes: [
+      'Major UI update: Replaced the long scrollable list of themes with a new tabbed interface.',
+      'The Project Details and Maturity Radar are now fixed at the top for better visibility.'
+    ]
+  },
+  {
+    version: '4.1',
+    notes: [
+      'Implemented a data history feature. All text entries (justification, evidence, actions, etc.) are now saved independently for each maturity stage.',
+      'Selecting a different maturity stage will now load the historical data associated with it, allowing users to track their assessment\'s evolution over time.',
+      'Added a visual separator between themes on the Action Plan report for improved readability.'
+    ]
+  },
+  {
+    version: '4.0',
+    notes: [
+      'The "View Matrix" window is now interactive. Users can click to select a new maturity stage directly from the pop-up.',
+      'Conditional "Save" and "Cancel" buttons appear in the matrix window only when a change is made.'
+    ]
+  },
+  {
+    version: '3.9',
+    notes: [
+      'Fully updated and expanded all sections within the "View Guidance" modal for each theme to provide more detailed and actionable information.',
+      'Updated tool version number in the header and title.'
+    ]
+  },
+  {
+    version: '3.8',
+    notes: [
+      'Added the "About" window to display version and release notes.'
+    ]
+  },
+  {
+    version: '3.7',
+    notes: [
+      'Radar chart legend for phase comparison now dynamically updates based on the selected project phase (e.g., "Expected for Phase 1: Pre-Discovery").'
+    ]
+  },
+  {
+    version: '3.6',
+    notes: [
+      'Updated all text descriptions for each maturity level within the "View Matrix" pop-up to align with the latest standard.'
+    ]
+  },
+  {
+    version: '3.5',
+    notes: [
+      'Initial public release version.',
+      'Auto-saved progress loaded.'
+    ]
+  }
+];
 
 export default CONSTANTS;

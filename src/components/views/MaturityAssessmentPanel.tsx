@@ -17,7 +17,7 @@ export interface MaturityAssessmentPanelProps {
 
 const STAGES = MATURITY_STAGES;
 const STAGE_COLORS = STAGE_COLORS_PALETTE;
-const ACTION_STATUSES = ['Not Started', 'In Progress', 'Completed'];
+const ACTION_STATUSES = ['Planned', 'In Progress', 'Completed', 'Cancelled'];
 
 export function MaturityAssessmentPanel({
   activeComponent,
@@ -36,7 +36,7 @@ export function MaturityAssessmentPanel({
   const [componentSortDirection, setComponentSortDirection] = useState<'asc' | 'desc'>('asc');
   const [actionSearch, setActionSearch] = useState('');
   const [actionStatusFilter, setActionStatusFilter] = useState('all');
-  const [actionSortBy, setActionSortBy] = useState<'text' | 'owner' | 'dueDate' | 'status'>('dueDate');
+  const [actionSortBy, setActionSortBy] = useState<'text' | 'owner' | 'startDate' | 'dueDate' | 'status'>('dueDate');
   const [actionSortDirection, setActionSortDirection] = useState<'asc' | 'desc'>('asc');
   const [linkSearch, setLinkSearch] = useState('');
   const [linkSortDirection, setLinkSortDirection] = useState<'asc' | 'desc'>('asc');
@@ -92,7 +92,7 @@ export function MaturityAssessmentPanel({
         if (!query) {
           return true;
         }
-        return [action.text, action.owner, action.dueDate, action.status]
+        return [action.text, action.owner, action.startDate || '', action.dueDate, action.status]
           .join(' ')
           .toLowerCase()
           .includes(query);
@@ -107,6 +107,9 @@ export function MaturityAssessmentPanel({
           }
           if (actionSortBy === 'text') {
             return item.action.text;
+          }
+          if (actionSortBy === 'startDate') {
+            return item.action.startDate || '9999-12-31';
           }
           return item.action.dueDate || '9999-12-31';
         };
@@ -176,8 +179,9 @@ export function MaturityAssessmentPanel({
         id: Date.now().toString(),
         text: '',
         owner: '',
+        startDate: '',
         dueDate: '',
-        status: 'Not Started'
+        status: 'Planned'
       });
       onDetailUpdate(activeComponent, { ...d });
     }
@@ -207,6 +211,16 @@ export function MaturityAssessmentPanel({
     (index: number, value: string) => {
       if (d) {
         d.actions[index].owner = value;
+        onDetailUpdate(activeComponent, { ...d });
+      }
+    },
+    [activeComponent, d, onDetailUpdate]
+  );
+
+  const handleActionStartDateChange = useCallback(
+    (index: number, value: string) => {
+      if (d) {
+        d.actions[index].startDate = value;
         onDetailUpdate(activeComponent, { ...d });
       }
     },
@@ -455,9 +469,10 @@ export function MaturityAssessmentPanel({
                     </select>
                     <select
                       value={actionSortBy}
-                      onChange={(e) => setActionSortBy(e.target.value as 'text' | 'owner' | 'dueDate' | 'status')}
+                      onChange={(e) => setActionSortBy(e.target.value as 'text' | 'owner' | 'startDate' | 'dueDate' | 'status')}
                       className="bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-300"
                     >
+                      <option value="startDate">Sort by start date</option>
                       <option value="dueDate">Sort by due date</option>
                       <option value="text">Sort by action</option>
                       <option value="owner">Sort by owner</option>
@@ -483,31 +498,49 @@ export function MaturityAssessmentPanel({
                         placeholder="Describe the action..."
                         className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
                       />
-                      <div className="grid grid-cols-3 gap-2">
-                        <input
-                          type="text"
-                          value={action.owner}
-                          onChange={(e) => handleActionOwnerChange(index, e.target.value)}
-                          placeholder="Owner"
-                          className="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-300"
-                        />
-                        <input
-                          type="date"
-                          value={action.dueDate}
-                          onChange={(e) => handleActionDueChange(index, e.target.value)}
-                          className="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-300"
-                        />
-                        <select
-                          value={action.status}
-                          onChange={(e) => handleActionStatusChange(index, e.target.value)}
-                          className="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-300"
-                        >
-                          {ACTION_STATUSES.map((status) => (
-                            <option key={status} value={status}>
-                              {status}
-                            </option>
-                          ))}
-                        </select>
+                      <div className="grid grid-cols-4 gap-2">
+                        <div className="space-y-1">
+                          <label className="block text-xs font-medium text-gray-600">Owner</label>
+                          <input
+                            type="text"
+                            value={action.owner}
+                            onChange={(e) => handleActionOwnerChange(index, e.target.value)}
+                            placeholder="Owner"
+                            className="w-full bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-300"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="block text-xs font-medium text-gray-600">Start Date</label>
+                          <input
+                            type="date"
+                            value={action.startDate || ''}
+                            onChange={(e) => handleActionStartDateChange(index, e.target.value)}
+                            className="w-full bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-300"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="block text-xs font-medium text-gray-600">Due Date</label>
+                          <input
+                            type="date"
+                            value={action.dueDate}
+                            onChange={(e) => handleActionDueChange(index, e.target.value)}
+                            className="w-full bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-300"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="block text-xs font-medium text-gray-600">Status</label>
+                          <select
+                            value={action.status}
+                            onChange={(e) => handleActionStatusChange(index, e.target.value)}
+                            className="w-full bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-300"
+                          >
+                            {ACTION_STATUSES.map((status) => (
+                              <option key={status} value={status}>
+                                {status}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
                       </div>
                       <div className="flex justify-end">
                         <button

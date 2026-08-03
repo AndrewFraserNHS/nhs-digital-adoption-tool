@@ -26,7 +26,14 @@ export function cloneDetail(detail: Partial<ComponentDetail> | undefined): Compo
     justification: detail?.justification || '',
     notes: detail?.notes || '',
     links: [...(detail?.links || [])],
-    actions: (detail?.actions || []).map((action) => ({ ...action }))
+    actions: (detail?.actions || []).map((action) => ({
+      id: action.id || `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      text: action.text || '',
+      owner: action.owner || '',
+      startDate: action.startDate || '',
+      dueDate: action.dueDate || '',
+      status: action.status || 'Planned'
+    }))
   };
 }
 

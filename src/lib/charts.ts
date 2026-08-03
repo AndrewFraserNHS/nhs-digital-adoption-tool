@@ -199,10 +199,17 @@ const radarPointLabelPlugin: Plugin = {
         const position = scale.getPointPosition(index, scale.drawingArea + padding, 0);
         const lineHeight = fontSize * 1.15;
         const offset = (lines.length - 1) * -lineHeight / 2;
+        const labelHeight = Math.max(fontSize, lines.length * lineHeight);
+        const minX = fontSize * 1.5;
+        const maxX = chart.width - fontSize * 1.5;
+        const minY = labelHeight / 2;
+        const maxY = chart.height - labelHeight / 2;
+        const clampedX = Math.min(Math.max(position.x, minX), maxX);
+        const clampedY = Math.min(Math.max(position.y, minY), maxY);
 
         lines.forEach((line: string, lineIndex: number) => {
-          const y = position.y + offset + lineIndex * lineHeight;
-          ctx.fillText(line, position.x, y);
+          const y = clampedY + offset + lineIndex * lineHeight;
+          ctx.fillText(line, clampedX, y);
         });
       });
 

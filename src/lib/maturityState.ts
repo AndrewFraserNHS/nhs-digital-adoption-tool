@@ -9,6 +9,7 @@ export interface ActionItem {
   id: string;
   text: string;
   owner: string;
+  startDate?: string;
   dueDate: string;
   status: string;
 }
@@ -92,6 +93,7 @@ export function getDetail(
 export function createAction(
   text: string,
   owner: string = '',
+  startDate: string = '',
   dueDate: string = '',
   status: string = 'Not Started'
 ): ActionItem {
@@ -99,6 +101,7 @@ export function createAction(
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
     text,
     owner,
+    startDate,
     dueDate,
     status
   };

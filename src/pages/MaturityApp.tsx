@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react';
 import AppState from '@lib/state';
-import { createRadarChart } from '@lib/charts';
+import { createChart, createRadarChart } from '@lib/charts';
 import { validateScore } from '@lib/adoptionValidator';
 import { componentMatrix } from '@data/legacy-data';
-import { MATURITY_STAGES } from '@data/rubrics';
+import { MATURITY_STAGES, STAGE_COLORS } from '@data/rubrics';
 import { exportMaturityReportToCSV, exportActionPlanReportToCSV, type MaturityReportData, type ActionPlanReportData } from '@lib/reporting';
 import type { ActionItem, ComponentDetail, MaturityStore } from '@lib/maturityState';
 import { initializeMaturityStore } from '@lib/maturityState';
@@ -22,38 +22,178 @@ import { MaturityModalManager, type MaturityGuidance } from '@components/views/M
 
 const STAGES = MATURITY_STAGES;
 
-function buildStatusSummary(actions: ActionItem[]): { labels: string[]; values: number[] } {
-  const labels = ['Not Started', 'In Progress', 'Completed'];
+interface SummaryData {
+  labels: string[];
+  values: number[];
+  colors: string[];
+  centerText: number;
+  centerSubText: string;
+}
+
+interface LegacyAction {
+  id?: string;
+  text?: string;
+  description?: string;
+  owner?: string;
+  startDate?: string;
+  dueDate?: string;
+  status?: string;
+}
+
+interface LegacyHistoryStage {
+  justification?: string;
+  evidence?: string;
+  links?: Array<string | { description?: string; url?: string }>;
+  actions?: LegacyAction[];
+}
+
+interface LegacyComponent {
+  name?: string;
+  score?: number;
+  history?: Record<string, LegacyHistoryStage>;
+}
+
+interface LegacySavedMaturityAssessment {
+  projectDetails?: {
+    organisation?: string;
+    project?: string;
+    phase?: string;
+  };
+  components?: LegacyComponent[];
+}
+
+const PHASE_EXPECTED_SCORES: Record<string, Record<string, number>> = {
+  'Phase 1: Pre-Discovery': {
+    'Vision': 5,
+    'Case for Change': 5,
+    'Sponsorship/ Change Network': 1,
+    'Benefits': 1,
+    'Change Impact & Risk': 1,
+    'Change Management Readiness & Planning': 1,
+    'Stakeholder Engagement & Comms': 1,
+    'Resistance Management': 1,
+    'Skills/ Learning': 1,
+    'Process change': 1,
+    'Reinforcement': 1,
+    'Change Management Capability': 1
+  },
+  'Phase 2: Solution Design': {
+    'Vision': 5,
+    'Case for Change': 5,
+    'Sponsorship/ Change Network': 2,
+    'Benefits': 3,
+    'Change Impact & Risk': 2,
+    'Change Management Readiness & Planning': 2,
+    'Stakeholder Engagement & Comms': 2,
+    'Resistance Management': 2,
+    'Skills/ Learning': 2,
+    'Process change': 3,
+    'Reinforcement': 2,
+    'Change Management Capability': 2
+  },
+  'Phase 3: Development': {
+    'Vision': 5,
+    'Case for Change': 5,
+    'Sponsorship/ Change Network': 3,
+    'Benefits': 4,
+    'Change Impact & Risk': 3,
+    'Change Management Readiness & Planning': 3,
+    'Stakeholder Engagement & Comms': 3,
+    'Resistance Management': 3,
+    'Skills/ Learning': 4,
+    'Process change': 4,
+    'Reinforcement': 3,
+    'Change Management Capability': 3
+  },
+  'Phase 4: Implementation': {
+    'Vision': 5,
+    'Case for Change': 5,
+    'Sponsorship/ Change Network': 5,
+    'Benefits': 5,
+    'Change Impact & Risk': 5,
+    'Change Management Readiness & Planning': 4,
+    'Stakeholder Engagement & Comms': 5,
+    'Resistance Management': 4,
+    'Skills/ Learning': 5,
+    'Process change': 5,
+    'Reinforcement': 4,
+    'Change Management Capability': 4
+  },
+  'Phase 5: Post Deployment': {
+    'Vision': 5,
+    'Case for Change': 5,
+    'Sponsorship/ Change Network': 5,
+    'Benefits': 5,
+    'Change Impact & Risk': 5,
+    'Change Management Readiness & Planning': 5,
+    'Stakeholder Engagement & Comms': 5,
+    'Resistance Management': 5,
+    'Skills/ Learning': 5,
+    'Process change': 5,
+    'Reinforcement': 5,
+    'Change Management Capability': 5
+  }
+};
+
+function normaliseActionStatus(status: string | undefined): string {
+  if (status === 'Not Started') {
+    return 'Planned';
+  }
+  if (status === 'Blocked') {
+    return 'In Progress';
+  }
+  if (status === 'Planned' || status === 'In Progress' || status === 'Completed' || status === 'Cancelled') {
+    return status;
+  }
+  return 'Planned';
+}
+
+function buildStatusSummary(actions: ActionItem[]): SummaryData {
+  const labels = ['Planned', 'In Progress', 'Completed', 'Cancelled'];
+  const colors = ['#768692', '#FFB81C', '#00A499', '#AE2521'];
   const counts = new Map(labels.map((label) => [label, 0]));
+  let total = 0;
 
   actions.forEach((action) => {
-    const label = counts.has(action.status) ? action.status : 'Not Started';
+    total += 1;
+    const label = normaliseActionStatus(action.status);
     counts.set(label, (counts.get(label) || 0) + 1);
   });
 
   return {
     labels,
-    values: labels.map((label) => counts.get(label) || 0)
+    values: labels.map((label) => counts.get(label) || 0),
+    colors,
+    centerText: total,
+    centerSubText: 'Total Actions'
   };
 }
 
-function buildDueDateSummary(actions: ActionItem[]): { labels: string[]; values: number[] } {
-  const labels = ['Overdue', 'Next 30 Days', 'Later', 'No Due Date'];
+function buildDueDateSummary(actions: ActionItem[]): SummaryData {
+  const labels = ['Overdue', 'Due in <30 Days', 'On Track'];
+  const colors = ['#AE2521', '#FFB81C', '#00A499'];
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const nextMonth = new Date(today);
   nextMonth.setDate(today.getDate() + 30);
   const counts = new Map(labels.map((label) => [label, 0]));
+  let inProgress = 0;
 
   actions.forEach((action) => {
+    if (normaliseActionStatus(action.status) !== 'In Progress') {
+      return;
+    }
+
+    inProgress += 1;
+
     if (!action.dueDate) {
-      counts.set('No Due Date', (counts.get('No Due Date') || 0) + 1);
+      counts.set('On Track', (counts.get('On Track') || 0) + 1);
       return;
     }
 
     const dueDate = new Date(action.dueDate);
     if (Number.isNaN(dueDate.getTime())) {
-      counts.set('No Due Date', (counts.get('No Due Date') || 0) + 1);
+      counts.set('On Track', (counts.get('On Track') || 0) + 1);
       return;
     }
 
@@ -64,16 +204,106 @@ function buildDueDateSummary(actions: ActionItem[]): { labels: string[]; values:
     }
 
     if (dueDate <= nextMonth) {
-      counts.set('Next 30 Days', (counts.get('Next 30 Days') || 0) + 1);
+      counts.set('Due in <30 Days', (counts.get('Due in <30 Days') || 0) + 1);
       return;
     }
 
-    counts.set('Later', (counts.get('Later') || 0) + 1);
+    counts.set('On Track', (counts.get('On Track') || 0) + 1);
   });
 
   return {
     labels,
-    values: labels.map((label) => counts.get(label) || 0)
+    values: labels.map((label) => counts.get(label) || 0),
+    colors,
+    centerText: inProgress,
+    centerSubText: 'In Progress'
+  };
+}
+
+function parseMaturityAssessment(
+  parsed: SavedMaturityAssessment | LegacySavedMaturityAssessment,
+  componentNames: string[]
+): {
+  profile: ProjectProfile;
+  responses: Record<string, number>;
+  details: Record<string, ComponentDetail>;
+} {
+  const legacyParsed = parsed as LegacySavedMaturityAssessment;
+  const hasLegacyComponents = Array.isArray(legacyParsed.components);
+
+  if (!hasLegacyComponents) {
+    const modernParsed = parsed as SavedMaturityAssessment;
+    const normalisedDetails = normaliseDetails(componentNames, modernParsed.details);
+    Object.values(normalisedDetails).forEach((detail) => {
+      detail.actions = detail.actions.map((action) => ({
+        ...action,
+        startDate: action.startDate || '',
+        status: normaliseActionStatus(action.status)
+      }));
+    });
+
+    return {
+      profile: {
+        org: modernParsed.orgProfile?.org || '',
+        project: modernParsed.orgProfile?.project || '',
+        phase: modernParsed.orgProfile?.phase || ''
+      },
+      responses: normaliseResponses(componentNames, modernParsed.responses as Record<string, unknown> | undefined),
+      details: normalisedDetails
+    };
+  }
+
+  const responses = normaliseResponses(componentNames, {});
+  const details = buildInitialDetails(componentNames);
+
+  (legacyParsed.components || []).forEach((component) => {
+    const name = component.name || '';
+    if (!name || !componentNames.includes(name)) {
+      return;
+    }
+
+    const score = Number(component.score || 0);
+    responses[name] = Number.isFinite(score) ? score : 0;
+
+    const history = component.history || {};
+    const selectedStage = history[String(score)] || {};
+    const selectedLinks = Array.isArray(selectedStage.links) ? selectedStage.links : [];
+    const allActions = Object.values(history).flatMap((stage) =>
+      Array.isArray(stage?.actions) ? stage.actions : []
+    );
+
+    details[name] = {
+      justification: selectedStage.justification || '',
+      notes: selectedStage.evidence || '',
+      links: selectedLinks
+        .map((link) => {
+          if (typeof link === 'string') {
+            return link;
+          }
+          return link?.url || '';
+        })
+        .filter(Boolean),
+      actions: allActions
+        .map((action, index) => ({
+          id: action.id || `${name}-${index}`,
+          text: action.text || action.description || '',
+          owner: action.owner || '',
+          startDate: action.startDate || '',
+          dueDate: action.dueDate || '',
+          status: normaliseActionStatus(action.status)
+        }))
+        .filter((action) => action.text.trim())
+    };
+  });
+
+  return {
+    profile: {
+      org: legacyParsed.projectDetails?.organisation || '',
+      project: legacyParsed.projectDetails?.project || '',
+      phase: legacyParsed.projectDetails?.phase || ''
+    },
+    responses,
+    details
   };
 }
 
@@ -148,7 +378,7 @@ function buildActionPlanReportData(
         theme: componentName,
         text: a.text,
         owner: a.owner || '',
-        status: a.status || 'Not Started',
+        status: normaliseActionStatus(a.status),
         dueDate: a.dueDate || ''
       }))
   );
@@ -240,7 +470,8 @@ export function MaturityApp() {
       ? buildStatusSummary(actions)
       : buildDueDateSummary(actions);
 
-    const summaryChart = createRadarChart(
+    const summaryChart = createChart(
+      'doughnut',
       summaryCanvas,
       {
         labels: summary.labels,
@@ -248,17 +479,37 @@ export function MaturityApp() {
           {
             label: store.summaryView === 'status' ? 'Actions by Status' : 'Actions by Due Date',
             data: summary.values,
-            borderColor: '#005EB8',
-            backgroundColor: 'rgba(0, 94, 184, 0.12)',
+            backgroundColor: summary.colors,
+            borderColor: '#f0f4f5',
             borderWidth: 2,
-            pointRadius: 4,
-            pointHoverRadius: 6
+            hoverBorderWidth: 4
           }
         ]
       },
       {
+        cutout: '70%',
         maintainAspectRatio: false,
-        responsive: true
+        responsive: true,
+        plugins: {
+          legend: {
+            display: true,
+            position: 'bottom',
+            labels: {
+              font: { size: 10 },
+              boxWidth: 10,
+              padding: 10
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: (context: { label?: string; parsed?: number }) => `${context.label || ''}: ${context.parsed ?? 0}`
+            }
+          },
+          centerText: {
+            text: String(summary.centerText),
+            subText: summary.centerSubText
+          }
+        }
       }
     );
 
@@ -273,14 +524,58 @@ export function MaturityApp() {
             borderColor: '#005EB8',
             backgroundColor: 'rgba(0, 94, 184, 0.1)',
             borderWidth: 2,
+            pointBackgroundColor: componentList.map((componentName) => {
+              const score = Math.round(responses[componentName] || 0);
+              return STAGE_COLORS[score] || STAGE_COLORS[0];
+            }),
+            pointHoverBackgroundColor: componentList.map((componentName) => {
+              const score = Math.round(responses[componentName] || 0);
+              return STAGE_COLORS[score] || STAGE_COLORS[0];
+            }),
+            pointBorderColor: '#ffffff',
             pointRadius: 4,
             pointHoverRadius: 6
-          }
+          },
+          ...(projectProfile.phase && PHASE_EXPECTED_SCORES[projectProfile.phase]
+            ? [
+                {
+                  label: `Expected for ${projectProfile.phase}`,
+                  data: componentList.map(
+                    (componentName) => PHASE_EXPECTED_SCORES[projectProfile.phase]?.[componentName] || 0
+                  ),
+                  backgroundColor: 'rgba(118, 134, 146, 0.1)',
+                  borderColor: 'rgba(78, 90, 97, 1)',
+                  borderWidth: 2,
+                  borderDash: [5, 5],
+                  pointBackgroundColor: 'rgba(78, 90, 97, 1)',
+                  pointBorderColor: '#fff',
+                  pointRadius: 4,
+                  pointHoverRadius: 7,
+                  pointHoverBackgroundColor: '#fff',
+                  pointHoverBorderColor: 'rgba(78, 90, 97, 1)'
+                }
+              ]
+            : [])
         ]
       },
       {
         maintainAspectRatio: false,
-        responsive: true
+        responsive: true,
+        layout: {
+          padding: {
+            top: 56,
+            bottom: 56,
+            left: 36,
+            right: 36
+          }
+        },
+        scales: {
+          r: {
+            pointLabels: {
+              padding: 24
+            }
+          }
+        }
       }
     );
 
@@ -288,7 +583,7 @@ export function MaturityApp() {
       summaryChart.destroy();
       radarChart.destroy();
     };
-  }, [componentList, details, responses, store.summaryView]);
+  }, [componentList, details, projectProfile.phase, responses, store.summaryView]);
 
   const updateProjectProfile = useCallback(
     (field: keyof ProjectProfile, value: string) => {
@@ -353,14 +648,15 @@ export function MaturityApp() {
           return;
         }
         try {
-          const parsed = JSON.parse(text) as SavedMaturityAssessment;
+          const parsed = JSON.parse(text) as SavedMaturityAssessment | LegacySavedMaturityAssessment;
+          const loaded = parseMaturityAssessment(parsed, componentList);
           setProjectProfile((current) => ({
-            org: parsed.orgProfile?.org || current.org,
-            project: parsed.orgProfile?.project || '',
-            phase: parsed.orgProfile?.phase || ''
+            org: loaded.profile.org || current.org,
+            project: loaded.profile.project || '',
+            phase: loaded.profile.phase || ''
           }));
-          setResponses(normaliseResponses(componentList, parsed.responses as Record<string, unknown> | undefined));
-          setDetails(normaliseDetails(componentList, parsed.details));
+          setResponses(loaded.responses);
+          setDetails(loaded.details);
         } catch (error) {
           console.error('Maturity file load error:', error);
           window.alert('Unable to load assessment file. Please verify the file format.');

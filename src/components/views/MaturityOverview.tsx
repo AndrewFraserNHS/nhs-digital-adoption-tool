@@ -188,7 +188,7 @@ export function MaturityOverview({
       {/* Maturity Radar Section */}
       <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-200 mb-8">
         <h2 className="text-2xl font-bold text-center text-gray-900 mb-4">Maturity Radar</h2>
-        <div style={{ position: 'relative', width: '100%', height: '400px' }}>
+        <div style={{ position: 'relative', width: '100%', height: '520px', overflow: 'visible' }}>
           <canvas
             id="maturityRadar"
             style={{ maxHeight: '100%', maxWidth: '100%' }}

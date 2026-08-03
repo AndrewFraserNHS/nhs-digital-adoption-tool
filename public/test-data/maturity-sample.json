@@ -48,7 +48,7 @@
           "text": "Complete baseline data pack",
           "owner": "Benefits Manager",
           "dueDate": "2026-07-30",
-          "status": "Not Started"
+          "status": "Planned"
         }
       ]
     },
@@ -62,7 +62,7 @@
           "text": "Design reinforcement KPI dashboard",
           "owner": "PMO",
           "dueDate": "2026-09-05",
-          "status": "Not Started"
+          "status": "Planned"
         }
       ]
     }

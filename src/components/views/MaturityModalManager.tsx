@@ -8,6 +8,9 @@ export interface MaturityGuidance {
   inputs: string;
   indicators: string;
   deliverables: string;
+  inputsHtml?: string;
+  indicatorsHtml?: string;
+  deliverablesHtml?: string;
 }
 
 export interface MaturityModalManagerProps {
@@ -45,6 +48,13 @@ export function MaturityModalManager({
   onExportCsv,
   onExportActionPlanCsv
 }: MaturityModalManagerProps): JSX.Element | null {
+  const renderGuidanceContent = useCallback((plainText: string, html?: string): JSX.Element => {
+    if (html) {
+      return <div dangerouslySetInnerHTML={{ __html: html }} />;
+    }
+    return <div>{plainText || ''}</div>;
+  }, []);
+
   // Opens a blank window containing only report HTML so print output is clean and full-width
   const handlePrint = useCallback((html: string, title: string) => {
     const win = window.open('', '_blank');
@@ -167,15 +177,15 @@ export function MaturityModalManager({
         </div>
         <div>
           <h4 className="font-semibold text-gray-600 mb-1">Inputs, tools and templates</h4>
-          <div>{theme.inputs || ''}</div>
+          {renderGuidanceContent(theme.inputs || '', theme.inputsHtml)}
         </div>
         <div>
           <h4 className="font-semibold text-gray-600 mb-1">Indicators for success</h4>
-          <div>{theme.indicators || ''}</div>
+          {renderGuidanceContent(theme.indicators || '', theme.indicatorsHtml)}
         </div>
         <div>
           <h4 className="font-semibold text-gray-600 mb-1">Deliverables</h4>
-          <div>{theme.deliverables || ''}</div>
+          {renderGuidanceContent(theme.deliverables || '', theme.deliverablesHtml)}
         </div>
       </div>
     ) : (

@@ -4,6 +4,7 @@ import { createChart, createRadarChart } from '@lib/charts';
 import { validateScore } from '@lib/adoptionValidator';
 import { componentMatrix } from '@data/legacy-data';
 import { MATURITY_STAGES, STAGE_COLORS } from '@data/rubrics';
+import { resolveGuidanceLinks, type MaturityGuidanceTarget } from '@data/maturity-guidance-links';
 import { exportMaturityReportToCSV, exportActionPlanReportToCSV, type MaturityReportData, type ActionPlanReportData } from '@lib/reporting';
 import type { ActionItem, ComponentDetail, MaturityStore } from '@lib/maturityState';
 import { initializeMaturityStore } from '@lib/maturityState';
@@ -21,6 +22,8 @@ import { MaturityAssessmentPanel } from '@components/views/MaturityAssessmentPan
 import { MaturityModalManager, type MaturityGuidance } from '@components/views/MaturityModalManager';
 
 const STAGES = MATURITY_STAGES;
+
+const DEFAULT_GUIDANCE_TARGET: MaturityGuidanceTarget = 'Default';
 
 interface SummaryData {
   labels: string[];
@@ -135,6 +138,45 @@ const PHASE_EXPECTED_SCORES: Record<string, Record<string, number>> = {
   }
 };
 
+const LEGACY_GUIDANCE_OVERRIDES: Partial<Record<string, Partial<MaturityGuidance>>> = {
+  'Process change': {
+    purpose:
+      'To design, document, and implement new business processes and ways of working that are aligned with the goals of the change and are adopted by the organisation.',
+    indicatorsHtml:
+      "<div class='flex mb-2'><span class='mr-3'>&bull;</span><span>New processes are followed consistently across the relevant teams.</span></div><div class='flex mb-2'><span class='mr-3'>&bull;</span><span>The intended efficiencies or quality improvements from the new processes are being realised.</span></div><div class='flex mb-2'><span class='mr-3'>&bull;</span><span>Employees understand the new processes and their roles within them.</span></div>",
+    deliverablesHtml:
+      "<div class='flex mb-2'><span class='mr-3'>&bull;</span><span>Validated 'To-Be' process maps and updated, signed-off SOPs.</span></div>"
+  }
+};
+
+function buildLinkedInputsHtml(componentName: string, target: MaturityGuidanceTarget): string | undefined {
+  const links = resolveGuidanceLinks(target, componentName, 'inputs');
+  if (!links.length) {
+    return undefined;
+  }
+
+  return links
+    .map((link) => {
+      const suffix = link.description ? ` - ${link.description}` : '';
+      return `<div class='flex mb-2'><span class='mr-3'>&bull;</span><span><a href='${link.url}' target='_blank' rel='noopener noreferrer' class='text-blue-600 hover:underline'>${link.label}</a>${suffix}</span></div>`;
+    })
+    .join('');
+}
+
+function buildLinkedDeliverablesHtml(componentName: string, target: MaturityGuidanceTarget): string | undefined {
+  const links = resolveGuidanceLinks(target, componentName, 'deliverables');
+  if (!links.length) {
+    return undefined;
+  }
+
+  return links
+    .map((link) => {
+      const suffix = link.description ? ` - ${link.description}` : '';
+      return `<div class='flex mb-2'><span class='mr-3'>&bull;</span><span><a href='${link.url}' target='_blank' rel='noopener noreferrer' class='text-blue-600 hover:underline'>${link.label}</a>${suffix}</span></div>`;
+    })
+    .join('');
+}
+
 function normaliseActionStatus(status: string | undefined): string {
   if (status === 'Not Started') {
     return 'Planned';
@@ -246,7 +288,8 @@ function parseMaturityAssessment(
       profile: {
         org: modernParsed.orgProfile?.org || '',
         project: modernParsed.orgProfile?.project || '',
-        phase: modernParsed.orgProfile?.phase || ''
+        phase: modernParsed.orgProfile?.phase || '',
+        guidanceTarget: modernParsed.orgProfile?.guidanceTarget || DEFAULT_GUIDANCE_TARGET,
       },
       responses: normaliseResponses(componentNames, modernParsed.responses as Record<string, unknown> | undefined),
       details: normalisedDetails
@@ -300,7 +343,8 @@ function parseMaturityAssessment(
     profile: {
       org: legacyParsed.projectDetails?.organisation || '',
       project: legacyParsed.projectDetails?.project || '',
-      phase: legacyParsed.projectDetails?.phase || ''
+      phase: legacyParsed.projectDetails?.phase || '',
+      guidanceTarget: DEFAULT_GUIDANCE_TARGET
     },
     responses,
     details
@@ -309,7 +353,8 @@ function parseMaturityAssessment(
 
 function buildGuidanceData(
   scores: Record<string, number>,
-  details: Record<string, ComponentDetail>
+  details: Record<string, ComponentDetail>,
+  guidanceTarget: MaturityGuidanceTarget
 ): Record<string, MaturityGuidance> {
   return Object.keys(componentMatrix).reduce<Record<string, MaturityGuidance>>((acc, componentName) => {
     const stage = scores[componentName] || 0;
@@ -317,7 +362,7 @@ function buildGuidanceData(
     const nextStageText = componentMatrix[componentName]?.[Math.min(stage + 1, STAGES.length - 1)] || currentStageText;
     const detail = details[componentName] || createEmptyDetail();
 
-    acc[componentName] = {
+    const baseGuidance: MaturityGuidance = {
       purpose: `Assess the current maturity of ${componentName} and identify the practical change activities needed to progress to the next stage.`,
       inputs: [
         `Current stage evidence: ${currentStageText}`,
@@ -333,6 +378,16 @@ function buildGuidanceData(
         'Evidence links and notes showing current state.',
         detail.actions.length ? `${detail.actions.length} tracked improvement action(s) for this component.` : 'At least one concrete action to improve maturity for this component.'
       ].join('\n')
+    };
+
+    const override = LEGACY_GUIDANCE_OVERRIDES[componentName];
+    const targetLinkedInputsHtml = buildLinkedInputsHtml(componentName, guidanceTarget);
+    const targetLinkedDeliverablesHtml = buildLinkedDeliverablesHtml(componentName, guidanceTarget);
+    acc[componentName] = {
+      ...baseGuidance,
+      ...override,
+      inputsHtml: targetLinkedInputsHtml || override?.inputsHtml,
+      deliverablesHtml: targetLinkedDeliverablesHtml || override?.deliverablesHtml
     };
 
     return acc;
@@ -405,7 +460,8 @@ export function MaturityApp() {
   const [projectProfile, setProjectProfile] = useState<ProjectProfile>({
     org: state.assessment.orgName || '',
     project: '',
-    phase: ''
+    phase: '',
+    guidanceTarget: DEFAULT_GUIDANCE_TARGET
   });
 
   const [responses, setResponses] = useState<Record<string, number>>(() =>
@@ -653,7 +709,8 @@ export function MaturityApp() {
           setProjectProfile((current) => ({
             org: loaded.profile.org || current.org,
             project: loaded.profile.project || '',
-            phase: loaded.profile.phase || ''
+            phase: loaded.profile.phase || '',
+            guidanceTarget: loaded.profile.guidanceTarget || DEFAULT_GUIDANCE_TARGET
           }));
           setResponses(loaded.responses);
           setDetails(loaded.details);
@@ -692,7 +749,7 @@ export function MaturityApp() {
   }, []);
 
   const scores = getScores();
-  const guidanceData = buildGuidanceData(scores, details);
+  const guidanceData = buildGuidanceData(scores, details, projectProfile.guidanceTarget);
   const reportData = buildMaturityReportData(
     projectProfile,
     responses,
@@ -750,9 +807,11 @@ export function MaturityApp() {
             organisationName={projectProfile.org}
             projectName={projectProfile.project}
             projectPhase={projectProfile.phase}
+            guidanceTarget={projectProfile.guidanceTarget}
             onOrganisationNameChange={(value) => updateProjectProfile('org', value)}
             onProjectNameChange={(value) => updateProjectProfile('project', value)}
             onProjectPhaseChange={(value) => updateProjectProfile('phase', value)}
+            onGuidanceTargetChange={(value) => updateProjectProfile('guidanceTarget', value)}
             overallText={overallText()}
             summaryView={store.summaryView}
             onSummaryViewToggle={(view) => {

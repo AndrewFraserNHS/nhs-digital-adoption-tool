@@ -249,66 +249,89 @@ export function MaturityAssessmentPanel({
 
   return (
     <div className="bg-white rounded-2xl shadow-lg border border-gray-200 mb-8">
-      {/* Tabs */}
-      <div className="p-4 border-b border-gray-100 overflow-x-auto">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4">
-          <input
-            type="search"
-            value={componentSearch}
-            onChange={(e) => setComponentSearch(e.target.value)}
-            placeholder="Search components..."
-            className="md:col-span-2 bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-          />
+      <div className="p-4 lg:p-6">
+        <div className="mb-4 lg:hidden">
+          <label htmlFor="component-selector-mobile" className="block text-sm font-medium text-gray-600 mb-1">
+            Theme
+          </label>
           <select
-            value={componentSortBy}
-            onChange={(e) => setComponentSortBy(e.target.value as 'name' | 'score' | 'actions')}
-            className="bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+            id="component-selector-mobile"
+            value={activeComponent}
+            onChange={(e) => onComponentChange(e.target.value)}
+            className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
           >
-            <option value="name">Sort by name</option>
-            <option value="score">Sort by score</option>
-            <option value="actions">Sort by actions</option>
-          </select>
-          <button
-            onClick={() => setComponentSortDirection((current) => current === 'asc' ? 'desc' : 'asc')}
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-          >
-            {componentSortDirection === 'asc' ? 'Ascending' : 'Descending'}
-          </button>
-        </div>
-        <div className="flex space-x-2">
-          {sortedComponents.map((name) => {
-            const componentScore = scores[name] || 0;
-            const isActive = name === activeComponent;
-            return (
-              <button
-                key={name}
-                onClick={() => onComponentChange(name)}
-                className={`px-3 py-2 rounded-lg border text-sm whitespace-nowrap transition-colors ${
-                  isActive
-                    ? 'bg-blue-100 border-blue-300 text-blue-800 font-medium'
-                    : 'bg-white border-gray-200 text-gray-700 hover:border-blue-200'
-                }`}
-              >
+            {sortedComponents.map((name) => (
+              <option key={name} value={name}>
                 {name}
-                {componentScore > 0 && (
-                  <span
-                    className="ml-1 text-xs font-bold"
-                    style={{ color: STAGE_COLORS[componentScore] }}
-                  >
-                    {componentScore}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-          {!sortedComponents.length && (
-            <div className="text-sm text-gray-400 py-2">No components match the current filters.</div>
-          )}
+              </option>
+            ))}
+          </select>
         </div>
-      </div>
 
-      {/* Panel Content */}
-      <div className="p-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[320px_minmax(0,1fr)] gap-6">
+          <aside className="hidden lg:block">
+            <div className="lg:sticky lg:top-6 rounded-xl border border-gray-200 bg-white p-4">
+              <h4 className="text-sm font-semibold text-gray-800 mb-3">Themes</h4>
+              <div className="grid grid-cols-1 gap-2 mb-3">
+                <input
+                  type="search"
+                  value={componentSearch}
+                  onChange={(e) => setComponentSearch(e.target.value)}
+                  placeholder="Search themes..."
+                  className="bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+                />
+                <div className="grid grid-cols-2 gap-2">
+                  <select
+                    value={componentSortBy}
+                    onChange={(e) => setComponentSortBy(e.target.value as 'name' | 'score' | 'actions')}
+                    className="bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+                  >
+                    <option value="name">Name</option>
+                    <option value="score">Score</option>
+                    <option value="actions">Actions</option>
+                  </select>
+                  <button
+                    onClick={() => setComponentSortDirection((current) => current === 'asc' ? 'desc' : 'asc')}
+                    className="border border-gray-300 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                  >
+                    {componentSortDirection === 'asc' ? 'Asc' : 'Desc'}
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-2 max-h-[70vh] overflow-y-auto pr-1">
+                {sortedComponents.map((name) => {
+                  const componentScore = scores[name] || 0;
+                  const actionCount = details[name]?.actions.length || 0;
+                  const isActive = name === activeComponent;
+                  return (
+                    <button
+                      key={name}
+                      onClick={() => onComponentChange(name)}
+                      className={`w-full text-left px-3 py-2 rounded-lg border text-sm transition-colors ${
+                        isActive
+                          ? 'bg-blue-100 border-blue-300 text-blue-800 font-medium'
+                          : 'bg-white border-gray-200 text-gray-700 hover:border-blue-200'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <span className="leading-snug break-words">{name}</span>
+                        <span className="shrink-0 text-xs font-bold" style={{ color: STAGE_COLORS[componentScore] || STAGE_COLORS[0] }}>
+                          {componentScore}
+                        </span>
+                      </div>
+                      <div className="mt-1 text-xs text-gray-500">{actionCount} action{actionCount === 1 ? '' : 's'}</div>
+                    </button>
+                  );
+                })}
+                {!sortedComponents.length && (
+                  <div className="text-sm text-gray-400 py-2">No components match the current filters.</div>
+                )}
+              </div>
+            </div>
+          </aside>
+
+          <div className="min-w-0">
         {d ? (
           <div className="bg-white rounded-2xl">
             <h3 className="text-xl font-bold text-gray-900 mb-4">{activeComponent}</h3>
@@ -568,6 +591,8 @@ export function MaturityAssessmentPanel({
         ) : (
           <div className="text-center text-gray-400">Select a component to view details</div>
         )}
+          </div>
+        </div>
       </div>
     </div>
   );

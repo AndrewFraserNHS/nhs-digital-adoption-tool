@@ -7,9 +7,11 @@ function buildProps() {
     organisationName: 'Example Trust',
     projectName: 'Digital Programme',
     projectPhase: 'Phase 2: Solution Design',
+    guidanceTarget: 'Default' as const,
     onOrganisationNameChange: vi.fn(),
     onProjectNameChange: vi.fn(),
     onProjectPhaseChange: vi.fn(),
+    onGuidanceTargetChange: vi.fn(),
     overallText: '2.75 - Developing',
     summaryView: 'dueDate' as const,
     onSummaryViewToggle: vi.fn(),
@@ -37,10 +39,12 @@ describe('MaturityOverview', () => {
     fireEvent.change(screen.getByLabelText('Organisation Name'), { target: { value: 'Updated Trust' } });
     fireEvent.change(screen.getByLabelText('Project Name'), { target: { value: 'Updated Project' } });
     fireEvent.change(screen.getByLabelText('Project Phase'), { target: { value: 'Phase 3: Development' } });
+    fireEvent.change(screen.getByLabelText('Guidance Target'), { target: { value: 'EPR' } });
 
     expect(props.onOrganisationNameChange).toHaveBeenCalledWith('Updated Trust');
     expect(props.onProjectNameChange).toHaveBeenCalledWith('Updated Project');
     expect(props.onProjectPhaseChange).toHaveBeenCalledWith('Phase 3: Development');
+    expect(props.onGuidanceTargetChange).toHaveBeenCalledWith('EPR');
   });
 
   it('triggers toolbar and summary toggle actions', () => {

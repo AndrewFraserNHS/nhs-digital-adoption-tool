@@ -1,15 +1,18 @@
 import type { JSX } from 'react';
 import { useCallback } from 'react';
 import { MATURITY_STAGES, STAGE_COLORS as STAGE_COLORS_PALETTE } from '@data/rubrics';
+import { MATURITY_GUIDANCE_TARGETS, type MaturityGuidanceTarget } from '@data/maturity-guidance-links';
 import { CONSTANTS } from '../../types/constants';
 
 export interface MaturityOverviewProps {
   organisationName: string;
   projectName: string;
   projectPhase: string;
+  guidanceTarget: MaturityGuidanceTarget;
   onOrganisationNameChange: (value: string) => void;
   onProjectNameChange: (value: string) => void;
   onProjectPhaseChange: (value: string) => void;
+  onGuidanceTargetChange: (value: MaturityGuidanceTarget) => void;
   overallText: string;
   summaryView: 'dueDate' | 'status';
   onSummaryViewToggle: (view: 'dueDate' | 'status') => void;
@@ -34,9 +37,11 @@ export function MaturityOverview({
   organisationName,
   projectName,
   projectPhase,
+  guidanceTarget,
   onOrganisationNameChange,
   onProjectNameChange,
   onProjectPhaseChange,
+  onGuidanceTargetChange,
   overallText,
   summaryView,
   onSummaryViewToggle,
@@ -134,6 +139,23 @@ export function MaturityOverview({
                 {PHASES.map((phase) => (
                   <option key={phase} value={phase}>
                     {phase}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label htmlFor="guidance-target-select" className="block text-sm font-medium text-gray-600 mb-1">
+                Guidance Target
+              </label>
+              <select
+                id="guidance-target-select"
+                value={guidanceTarget}
+                onChange={(e) => onGuidanceTargetChange(e.target.value as MaturityGuidanceTarget)}
+                className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+              >
+                {MATURITY_GUIDANCE_TARGETS.map((target) => (
+                  <option key={target} value={target}>
+                    {target}
                   </option>
                 ))}
               </select>

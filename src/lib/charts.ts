@@ -1,14 +1,35 @@
 import Chart, { ChartType, ChartConfiguration, Plugin } from 'chart.js/auto';
 
+export function wrapChartLabel(label: string): string[] {
+  if (!label) {
+    return [];
+  }
+
+  const words = label.split(/\s+/).filter(Boolean);
+  if (words.length < 2) {
+    return words;
+  }
+
+  const firstLine = words.slice(0, Math.ceil(words.length / 2)).join(' ');
+  const secondLine = words.slice(Math.ceil(words.length / 2)).join(' ');
+  return [firstLine, secondLine].filter(Boolean);
+}
+
 function resolveCanvas(ctx: CanvasRenderingContext2D | HTMLCanvasElement) {
   if ((ctx as HTMLCanvasElement).getContext) {
-return ctx as HTMLCanvasElement;
-}
+    return ctx as HTMLCanvasElement;
+  }
   return (ctx as CanvasRenderingContext2D).canvas as HTMLCanvasElement;
 }
 
 export function createChart(type: ChartType, ctx: CanvasRenderingContext2D | HTMLCanvasElement, data: any, options: any = {}) {
   const canvas = resolveCanvas(ctx);
+  const existingChart = (Chart as typeof Chart & { getChart?: (canvas: HTMLCanvasElement) => Chart | null }).getChart?.(canvas);
+
+  if (existingChart) {
+    existingChart.destroy();
+  }
+
   const cfg: ChartConfiguration = { type, data, options } as ChartConfiguration;
   return new Chart(canvas, cfg);
 }
@@ -39,12 +60,37 @@ export function createRadarChart(ctx: CanvasRenderingContext2D | HTMLCanvasEleme
         grid: { color: 'rgba(11,18,32,0.06)', lineWidth: 1 },
         angleLines: { color: 'rgba(11,18,32,0.10)', lineWidth: 1 },
         ticks: { display: false },
-        pointLabels: { color: '#0b1220', font: { size: 12, family: Chart.defaults.font.family } }
+        pointLabels: {
+          display: false,
+          color: '#0b1220',
+          font: { size: 12, family: Chart.defaults.font.family },
+          padding: 14,
+          callback: (value: string) => wrapChartLabel(value).join('\n')
+        }
       }
     }
   };
 
-  return createChart('radar', ctx, data, { ...defaultOpts, ...options });
+  const mergedOptions = {
+    ...defaultOpts,
+    ...options,
+    scales: {
+      ...(defaultOpts.scales || {}),
+      ...(options.scales || {}),
+      r: {
+        ...(defaultOpts.scales?.r || {}),
+        ...(options.scales?.r || {}),
+        pointLabels: {
+          ...(defaultOpts.scales?.r?.pointLabels || {}),
+          ...(options.scales?.r?.pointLabels || {}),
+          display: false,
+          callback: (value: string) => wrapChartLabel(value).join('\n')
+        }
+      }
+    }
+  };
+
+  return createChart('radar', ctx, data, mergedOptions);
 }
 
 export function createLineChart(ctx: CanvasRenderingContext2D | HTMLCanvasElement, data: any, options: any = {}) {
@@ -120,7 +166,54 @@ return;
   }
 };
 
-Chart.register(radarCenterPlugin);
+const radarPointLabelPlugin: Plugin = {
+  id: 'radarPointLabelText',
+  afterDraw: (chart) => {
+    try {
+      const scale = chart.scales?.r as any;
+      const pointLabels = scale?.options?.pointLabels;
+      if (!scale || !pointLabels || chart.config.type !== 'radar') {
+        return;
+      }
+
+      const ctx = chart.ctx;
+      const fontSize = Number(pointLabels.font?.size || Chart.defaults.font.size || 12);
+      const fontFamily = pointLabels.font?.family || Chart.defaults.font.family || 'Inter, sans-serif';
+      const color = pointLabels.color || '#0b1220';
+      const padding = Number(pointLabels.padding ?? 14);
+      const labels = Array.isArray(scale._pointLabels) ? scale._pointLabels : [];
+
+      ctx.save();
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = color;
+      ctx.font = `${fontSize}px ${fontFamily}`;
+
+      labels.forEach((label: string, index: number) => {
+        const text = String(label ?? '');
+        const lines = text.split('\n').filter(Boolean);
+        if (!lines.length) {
+          return;
+        }
+
+        const position = scale.getPointPosition(index, scale.drawingArea + padding, 0);
+        const lineHeight = fontSize * 1.15;
+        const offset = (lines.length - 1) * -lineHeight / 2;
+
+        lines.forEach((line: string, lineIndex: number) => {
+          const y = position.y + offset + lineIndex * lineHeight;
+          ctx.fillText(line, position.x, y);
+        });
+      });
+
+      ctx.restore();
+    } catch (_error) {
+      // ignore rendering errors
+    }
+  }
+};
+
+Chart.register(radarCenterPlugin, radarPointLabelPlugin);
 
 // Register minimal global adapter for legacy pages
 if (typeof window !== 'undefined') {

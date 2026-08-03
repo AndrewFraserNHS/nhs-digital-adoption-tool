@@ -30,6 +30,7 @@ import { AdoptionDashboard } from '@components/views/AdoptionDashboard';
 import { SettingsPanel, type AdoptionUserSettings } from '@components/views/SettingsPanel';
 import { ActionPlanTracker } from '@components/views/ActionPlanTracker';
 import { AssessmentPanel } from '@components/views/AssessmentPanel';
+import { LensInfoModal } from '@components/views/LensInfoModal';
 
 const ADOPTION_USER_SETTINGS_KEY = 'nhs-digital-adoption-user-settings';
 
@@ -71,6 +72,7 @@ export function AdoptionApp() {
   });
 
   const [showMatrix, setShowMatrix] = useState<Record<string, boolean>>({});
+  const [activeLensInfo, setActiveLensInfo] = useState('');
   const [userSettings, setUserSettings] = useState<AdoptionUserSettings>(() => {
     const persisted = load<Partial<AdoptionUserSettings>>(ADOPTION_USER_SETTINGS_KEY);
     return {
@@ -453,6 +455,7 @@ export function AdoptionApp() {
               getEntry={getEntry}
               onComponentChange={setActiveComponentId}
               onEntryUpdate={updateEntry}
+              onOpenLensInfo={setActiveLensInfo}
               onMatrixToggle={(key) => {
                 setShowMatrix(prev => ({
                   ...prev,
@@ -496,6 +499,10 @@ export function AdoptionApp() {
             />
           )}
         </main>
+
+        {activeLensInfo ? (
+          <LensInfoModal lensName={activeLensInfo} onClose={() => setActiveLensInfo('')} />
+        ) : null}
       </div>
     </div>
   );

@@ -69,6 +69,7 @@ function createProps(overrides?: {
     getEntry: (componentId: string, lens: string) => entryByKey[`${componentId}:${lens}`],
     onComponentChange: vi.fn(),
     onEntryUpdate: vi.fn(),
+    onOpenLensInfo: vi.fn(),
     onMatrixToggle: vi.fn(),
     onActionRemove: vi.fn()
   };
@@ -118,6 +119,14 @@ describe('AssessmentPanel', () => {
     fireEvent.click(levelFiveButton);
     const updatedEntries = props.onEntryUpdate.mock.calls.map((call) => call[2]);
     expect(updatedEntries.some((entry: DraftEntry) => entry.score === 5)).toBe(true);
+  });
+
+  it('opens lens info when clicking the lens header button', () => {
+    const props = createProps();
+    render(<AssessmentPanel {...props} />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Strategic Direction' }));
+    expect(props.onOpenLensInfo).toHaveBeenCalledWith('Strategic Direction');
   });
 
   it('adds and removes actions via callbacks', () => {

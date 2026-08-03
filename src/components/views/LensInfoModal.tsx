@@ -6,6 +6,20 @@ export interface LensInfoModalProps {
   onClose: () => void;
 }
 
+function InfoIcon(): JSX.Element {
+  return (
+    <svg
+      className="w-5 h-5 text-blue-500 mr-2 shrink-0"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
+    </svg>
+  );
+}
+
 function isAssessmentLens(lensName: string): lensName is AssessmentLens {
   return lensName in LENS_INFO;
 }
@@ -51,11 +65,17 @@ export function LensInfoModal({ lensName, onClose }: LensInfoModalProps): JSX.El
         </div>
         <div className="p-6 space-y-4 text-slate-700">
           <div>
-            <h3 className="font-bold text-lg text-slate-800 mb-2">Outcome</h3>
+            <h3 className="font-bold text-lg text-slate-800 mb-2 flex items-center">
+              <InfoIcon />
+              Outcome
+            </h3>
             <p className="whitespace-pre-wrap">{info.outcome}</p>
           </div>
           <div>
-            <h3 className="font-bold text-lg text-slate-800 mb-2">What Good Looks Like</h3>
+            <h3 className="font-bold text-lg text-slate-800 mb-2 flex items-center">
+              <InfoIcon />
+              What Good Looks Like
+            </h3>
             <p className="whitespace-pre-wrap">{info.whatGoodLooksLike}</p>
           </div>
         </div>

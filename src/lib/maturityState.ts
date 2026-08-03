@@ -23,7 +23,7 @@ export interface ComponentDetail {
 export interface MaturityStore {
   activeComponent: string;
   summaryView: 'dueDate' | 'status';
-  modal: '' | 'matrix' | 'guidance' | 'report' | 'help' | 'versionHistory';
+  modal: '' | 'matrix' | 'guidance' | 'reportChoice' | 'report' | 'actionPlanReport' | 'help' | 'versionHistory';
   modalComp: string;
 }
 

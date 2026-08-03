@@ -85,7 +85,7 @@ export function ActionPlanTracker({ actions, onComponentClick }: ActionPlanTrack
   return (
     <div className="max-w-6xl mx-auto">
       <h2 className="text-2xl font-bold text-slate-800 mb-6">Action Tracker</h2>
-      <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-4 mb-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-3">
+      <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-4 mb-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-7 gap-3">
         <input
           type="search"
           value={searchTerm}
@@ -129,7 +129,7 @@ export function ActionPlanTracker({ actions, onComponentClick }: ActionPlanTrack
             </option>
           ))}
         </select>
-        <div className="flex gap-2">
+        {/* <div className="flex gap-2"> */}
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as 'component' | 'lens' | 'owner' | 'status')}
@@ -147,7 +147,7 @@ export function ActionPlanTracker({ actions, onComponentClick }: ActionPlanTrack
             {sortDirection === 'asc' ? 'A-Z' : 'Z-A'}
           </button>
         </div>
-      </div>
+      {/* </div> */}
       <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
         {filteredActions.length ? (
           <div className="overflow-x-auto">

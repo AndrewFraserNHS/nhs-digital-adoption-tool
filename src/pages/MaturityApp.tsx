@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useRef, useState, type ChangeEvent } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react';
 import AppState from '@lib/state';
 import { createRadarChart } from '@lib/charts';
 import { validateScore } from '@lib/adoptionValidator';
 import { componentMatrix } from '@data/legacy-data';
 import { MATURITY_STAGES } from '@data/rubrics';
-import { exportMaturityReportToCSV, type MaturityReportData } from '@lib/reporting';
+import { exportMaturityReportToCSV, exportActionPlanReportToCSV, type MaturityReportData, type ActionPlanReportData } from '@lib/reporting';
 import type { ActionItem, ComponentDetail, MaturityStore } from '@lib/maturityState';
 import { initializeMaturityStore } from '@lib/maturityState';
 import {
@@ -113,13 +113,17 @@ function buildMaturityReportData(
   profile: ProjectProfile,
   responses: Record<string, number>,
   details: Record<string, ComponentDetail>,
-  createdAt?: string
+  createdAt?: string,
+  overallScore?: string,
+  chartImageUrl?: string
 ): MaturityReportData {
   return {
     orgName: profile.org || 'Unknown organisation',
     projectName: profile.project,
     phase: profile.phase,
     createdAt,
+    overallScore,
+    chartImageUrl,
     rows: Object.keys(componentMatrix).map((componentName) => ({
       id: componentName,
       label: componentName,
@@ -133,6 +137,28 @@ function buildMaturityReportData(
   };
 }
 
+function buildActionPlanReportData(
+  profile: ProjectProfile,
+  details: Record<string, ComponentDetail>
+): ActionPlanReportData {
+  const rows = Object.entries(details).flatMap(([componentName, detail]) =>
+    (detail.actions || [])
+      .filter((a) => a.text?.trim())
+      .map((a) => ({
+        theme: componentName,
+        text: a.text,
+        owner: a.owner || '',
+        status: a.status || 'Not Started',
+        dueDate: a.dueDate || ''
+      }))
+  );
+  return {
+    orgName: profile.org || 'Unknown organisation',
+    projectName: profile.project,
+    rows
+  };
+}
+
 export function MaturityApp() {
   const [state] = useState(() => {
     const s = AppState.getInstance();
@@ -140,7 +166,7 @@ export function MaturityApp() {
     s.assessment.responses = s.assessment.responses || {};
     return s;
   });
-  const componentList = Object.keys(componentMatrix || {});
+  const componentList = useMemo(() => Object.keys(componentMatrix || {}), []);
 
   const [store, setStore] = useState<MaturityStore>(() =>
     initializeMaturityStore(componentList[0] || '')
@@ -177,6 +203,7 @@ export function MaturityApp() {
 
   const overviewRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [reportChartImage, setReportChartImage] = useState('');
 
   useEffect(() => {
     state.assessment.responses = responses;
@@ -312,27 +339,41 @@ export function MaturityApp() {
   }, [componentList]);
 
   const handleFileLoad = useCallback(
-    async (event: ChangeEvent<HTMLInputElement>) => {
+    (event: ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
+      const input = event.target;
       if (!file) {
         return;
       }
 
-      try {
-        const text = await file.text();
-        const parsed = JSON.parse(text) as SavedMaturityAssessment;
-        setProjectProfile((current) => ({
-          org: parsed.orgProfile?.org || current.org,
-          project: parsed.orgProfile?.project || '',
-          phase: parsed.orgProfile?.phase || ''
-        }));
-        setResponses(normaliseResponses(componentList, parsed.responses as Record<string, unknown> | undefined));
-        setDetails(normaliseDetails(componentList, parsed.details));
-      } catch (_error) {
-        window.alert('Unable to load assessment file. Please verify the file format.');
-      } finally {
-        event.target.value = '';
-      }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const text = e.target?.result;
+        if (typeof text !== 'string') {
+          return;
+        }
+        try {
+          const parsed = JSON.parse(text) as SavedMaturityAssessment;
+          setProjectProfile((current) => ({
+            org: parsed.orgProfile?.org || current.org,
+            project: parsed.orgProfile?.project || '',
+            phase: parsed.orgProfile?.phase || ''
+          }));
+          setResponses(normaliseResponses(componentList, parsed.responses as Record<string, unknown> | undefined));
+          setDetails(normaliseDetails(componentList, parsed.details));
+        } catch (error) {
+          console.error('Maturity file load error:', error);
+          window.alert('Unable to load assessment file. Please verify the file format.');
+        } finally {
+          input.value = '';
+        }
+      };
+      reader.onerror = () => {
+        console.error('FileReader error:', reader.error);
+        window.alert('Unable to read the file. Please try again.');
+        input.value = '';
+      };
+      reader.readAsText(file);
     },
     [componentList]
   );
@@ -356,7 +397,15 @@ export function MaturityApp() {
 
   const scores = getScores();
   const guidanceData = buildGuidanceData(scores, details);
-  const reportData = buildMaturityReportData(projectProfile, responses, details, state.assessment.createdAt);
+  const reportData = buildMaturityReportData(
+    projectProfile,
+    responses,
+    details,
+    state.assessment.createdAt,
+    overallText(),
+    reportChartImage
+  );
+  const actionPlanData = buildActionPlanReportData(projectProfile, details);
 
   return (
     <div className="min-h-screen bg-slate-50 p-4 sm:p-6 lg:p-8">
@@ -365,7 +414,7 @@ export function MaturityApp() {
           ref={fileInputRef}
           id="load-file-input"
           type="file"
-          accept="application/json"
+          accept=".json,application/json"
           className="hidden"
           onChange={handleFileLoad}
         />
@@ -417,7 +466,7 @@ export function MaturityApp() {
             onLoadClick={handleLoadClick}
             onResetClick={handleResetClick}
             onReportsClick={() => {
-              setStore((current) => ({ ...current, modal: 'report' }));
+              setStore((current) => ({ ...current, modal: 'reportChoice' }));
             }}
           />
         </div>
@@ -454,6 +503,7 @@ export function MaturityApp() {
           componentMatrix={componentMatrix}
           guidanceData={guidanceData}
           reportData={reportData}
+          actionPlanData={actionPlanData}
           components={componentList}
           onClose={() => {
             setStore((current) => ({ ...current, modal: '', modalComp: '' }));
@@ -462,8 +512,21 @@ export function MaturityApp() {
             handleScoreChange(componentId, score);
             setStore((current) => ({ ...current, modal: '', modalComp: '' }));
           }}
+          onSelectReport={(type) => {
+            if (type === 'maturity') {
+              const canvas = overviewRef.current?.querySelector('#maturityRadar') as HTMLCanvasElement | null;
+              setReportChartImage(canvas?.toDataURL('image/png') ?? '');
+            }
+            setStore((current) => ({
+              ...current,
+              modal: type === 'maturity' ? 'report' : 'actionPlanReport'
+            }));
+          }}
           onExportCsv={(data) => {
             exportMaturityReportToCSV(data, 'maturity-report.csv');
+          }}
+          onExportActionPlanCsv={(rows) => {
+            exportActionPlanReportToCSV(rows, 'action-plan-report.csv');
           }}
         />
       </div>

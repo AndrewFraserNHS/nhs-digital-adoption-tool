@@ -36,6 +36,7 @@ import { ChangeManagementGuide } from '@components/views/ChangeManagementGuide';
 import { HighlightBuilderTool } from '@components/views/HighlightBuilderTool';
 
 const ADOPTION_USER_SETTINGS_KEY = 'nhs-digital-adoption-user-settings';
+const ADOPTION_REPORT_REMINDER_DISMISS_KEY = 'nhs-digital-adoption-report-reminder-dismissed';
 const DEFAULT_GUIDANCE_TARGET: MaturityGuidanceTarget = 'Default';
 
 const DEFAULT_USER_SETTINGS: AdoptionUserSettings = {
@@ -51,6 +52,51 @@ function cloneAction(action: DraftAction): DraftAction {
 function getRubricText(componentId: string, lensName: string, score: number): string {
   const rubricGroup = (SPECIFIC_RUBRICS as Record<string, any>)[componentId];
   return rubricGroup?.[lensName]?.[score] || GENERIC_RUBRIC[score] || GENERIC_RUBRIC[0];
+}
+
+function getMonthStorageKey(date = new Date()): string {
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  return `${date.getFullYear()}-${month}`;
+}
+
+function getPreviousMonthLabel(date = new Date()): string {
+  const previousMonth = new Date(date.getFullYear(), date.getMonth() - 1, 1);
+  return previousMonth.toLocaleString('en-GB', { month: 'short', year: 'numeric' });
+}
+
+function buildReminderBody(previousMonthLabel: string, trustName: string, projectName: string): string {
+  return [
+    'Monthly Adoption Reporting Reminder',
+    '',
+    'Organisation',
+    `${trustName || 'Unconfigured Trust'}${projectName ? ` / ${projectName}` : ''}`,
+    '',
+    'Action Required',
+    `Please finalise the ${previousMonthLabel} adoption month if it has not already been captured.`,
+    '',
+    'Attached',
+    'Point-in-time JSON report export generated from the latest working draft.',
+    '',
+    'Next Step',
+    'Review, confirm finalisation status, and circulate to the team.'
+  ].join('\n');
+}
+
+function toBase64Utf8(value: string): string {
+  const bytes = new TextEncoder().encode(value);
+  let binary = '';
+  bytes.forEach((byte) => {
+    binary += String.fromCharCode(byte);
+  });
+  return window.btoa(binary);
+}
+
+function wrapBase64Lines(value: string, lineLength = 76): string {
+  const chunks: string[] = [];
+  for (let index = 0; index < value.length; index += lineLength) {
+    chunks.push(value.slice(index, index + lineLength));
+  }
+  return chunks.join('\r\n');
 }
 
 export function AdoptionApp() {
@@ -87,6 +133,30 @@ export function AdoptionApp() {
   });
   const dashboardRef = React.useRef<HTMLDivElement>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const currentReminderMonthKey = useMemo(() => getMonthStorageKey(), []);
+  const [dismissedReminderMonths, setDismissedReminderMonths] = useState<Record<string, boolean>>(() => {
+    const persisted = load<Record<string, boolean>>(ADOPTION_REPORT_REMINDER_DISMISS_KEY);
+    return persisted || {};
+  });
+
+  const reportReminder = useMemo(() => {
+    const today = new Date();
+    const previousMonthLabel = getPreviousMonthLabel(today);
+    const isFirstDayOfMonth = today.getDate() === 1;
+    const hasFinalisedPreviousMonth = store.history.some(
+      (snapshot) => snapshot.monthLabel === previousMonthLabel
+    );
+
+    return {
+      previousMonthLabel,
+      isFirstDayOfMonth,
+      hasFinalisedPreviousMonth,
+      shouldNotify: isFirstDayOfMonth && !hasFinalisedPreviousMonth
+    };
+  }, [store.history]);
+  const [emailTo, setEmailTo] = useState('test@test.com');
+  const [emailSubject, setEmailSubject] = useState('');
+  const [emailBody, setEmailBody] = useState('');
 
   const getEntry = useCallback((componentId: string, lens: string): DraftEntry => {
     if (!store.currentDraft[componentId]) {
@@ -138,6 +208,21 @@ export function AdoptionApp() {
   useEffect(() => {
     save(ADOPTION_USER_SETTINGS_KEY, userSettings);
   }, [userSettings]);
+
+  useEffect(() => {
+    save(ADOPTION_REPORT_REMINDER_DISMISS_KEY, dismissedReminderMonths);
+  }, [dismissedReminderMonths]);
+
+  useEffect(() => {
+    setEmailSubject(`Action required: finalise ${reportReminder.previousMonthLabel} adoption report`);
+    setEmailBody(
+      buildReminderBody(
+        reportReminder.previousMonthLabel,
+        store.orgProfile.trustName,
+        store.orgProfile.projectName || ''
+      )
+    );
+  }, [reportReminder.previousMonthLabel, store.orgProfile.projectName, store.orgProfile.trustName]);
 
   // Render charts after dashboard mounts
   useEffect(() => {
@@ -331,6 +416,75 @@ export function AdoptionApp() {
     }
   }, []);
 
+  const buildPointInTimePayload = useCallback(() => {
+    return {
+      generatedAt: new Date().toISOString(),
+      targetMonth: reportReminder.previousMonthLabel,
+      finalisedPriorMonth: reportReminder.hasFinalisedPreviousMonth,
+      report: buildAdoptionExportPayload(store)
+    };
+  }, [reportReminder.hasFinalisedPreviousMonth, reportReminder.previousMonthLabel, store]);
+
+  const buildPointInTimeFilename = useCallback(() => {
+    const monthSlug = reportReminder.previousMonthLabel.toLowerCase().replace(/\s+/g, '-');
+    return `adoption-point-in-time-${monthSlug}.json`;
+  }, [reportReminder.previousMonthLabel]);
+
+  const handleDownloadPointInTimeJson = useCallback(() => {
+    const filename = buildPointInTimeFilename();
+    downloadFile(filename, JSON.stringify(buildPointInTimePayload(), null, 2), 'application/json');
+  }, [buildPointInTimeFilename, buildPointInTimePayload]);
+
+  const handleOpenMailDraft = useCallback(() => {
+    const recipient = emailTo.trim() || 'test@test.com';
+    const attachmentName = buildPointInTimeFilename();
+    const body = `${emailBody}\n\nAttachment: ${attachmentName}`;
+    const mailto = `mailto:${recipient}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailto;
+  }, [buildPointInTimeFilename, emailBody, emailSubject, emailTo]);
+
+  const handleDownloadEmailDraft = useCallback(() => {
+    const recipient = emailTo.trim() || 'test@test.com';
+    const jsonFilename = buildPointInTimeFilename();
+    const payload = JSON.stringify(buildPointInTimePayload(), null, 2);
+    const encodedAttachment = wrapBase64Lines(toBase64Utf8(payload));
+    const boundary = `----nhs-adoption-reminder-${Date.now()}`;
+    const eml = [
+      `To: ${recipient}`,
+      `Subject: ${emailSubject}`,
+      'MIME-Version: 1.0',
+      `Content-Type: multipart/mixed; boundary="${boundary}"`,
+      '',
+      `--${boundary}`,
+      'Content-Type: text/plain; charset="UTF-8"',
+      'Content-Transfer-Encoding: 8bit',
+      '',
+      emailBody,
+      '',
+      `--${boundary}`,
+      `Content-Type: application/json; name="${jsonFilename}"`,
+      'Content-Transfer-Encoding: base64',
+      `Content-Disposition: attachment; filename="${jsonFilename}"`,
+      '',
+      encodedAttachment,
+      `--${boundary}--`,
+      ''
+    ].join('\r\n');
+
+    const monthSlug = reportReminder.previousMonthLabel.toLowerCase().replace(/\s+/g, '-');
+    downloadFile(`adoption-reminder-${monthSlug}.eml`, eml, 'message/rfc822');
+  }, [buildPointInTimeFilename, buildPointInTimePayload, emailBody, emailSubject, emailTo, reportReminder.previousMonthLabel]);
+
+  const dismissReportReminder = useCallback(() => {
+    setDismissedReminderMonths((prev) => ({
+      ...prev,
+      [currentReminderMonthKey]: true
+    }));
+  }, [currentReminderMonthKey]);
+
+  const shouldShowReportReminder =
+    reportReminder.shouldNotify && !dismissedReminderMonths[currentReminderMonthKey];
+
   const getComponentStatus = (comp: typeof COMPONENTS[0]) => {
     let scoredCount = 0, justifiedCount = 0;
     comp.lenses.forEach(l => {
@@ -482,6 +636,85 @@ export function AdoptionApp() {
 
         {/* Main Content Area */}
         <main className="flex-1 overflow-y-auto p-8">
+          {shouldShowReportReminder && (
+            <section className="mb-8 rounded-xl border border-amber-300 bg-amber-50 p-5 shadow-sm">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-amber-700">First Day Reminder</p>
+                  <h3 className="text-lg font-bold text-amber-900 mt-1">
+                    Submit prior month report for {reportReminder.previousMonthLabel}
+                  </h3>
+                  <p className="text-sm text-amber-800 mt-2">
+                    Please prompt the team to finalise {reportReminder.previousMonthLabel} if it has not already been recorded.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={dismissReportReminder}
+                  className="text-sm px-3 py-1.5 rounded-md border border-amber-300 text-amber-700 hover:bg-amber-100"
+                >
+                  Dismiss
+                </button>
+              </div>
+
+              <div className="mt-4 grid gap-3 md:grid-cols-2">
+                <label className="text-sm text-slate-700">
+                  <span className="font-semibold">To</span>
+                  <input
+                    type="email"
+                    value={emailTo}
+                    onChange={(event) => setEmailTo(event.target.value)}
+                    className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2"
+                  />
+                </label>
+                <label className="text-sm text-slate-700">
+                  <span className="font-semibold">Subject</span>
+                  <input
+                    type="text"
+                    value={emailSubject}
+                    onChange={(event) => setEmailSubject(event.target.value)}
+                    className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2"
+                  />
+                </label>
+              </div>
+
+              <label className="mt-3 block text-sm text-slate-700">
+                <span className="font-semibold">Body</span>
+                <textarea
+                  value={emailBody}
+                  onChange={(event) => setEmailBody(event.target.value)}
+                  rows={9}
+                  className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 font-mono text-xs"
+                />
+              </label>
+
+              <div className="mt-4 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={handleDownloadPointInTimeJson}
+                  className="rounded-md bg-white px-3 py-2 text-sm font-medium text-slate-700 border border-slate-300 hover:bg-slate-50"
+                >
+                  Download Point-in-Time JSON
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDownloadEmailDraft}
+                  className="rounded-md bg-white px-3 py-2 text-sm font-medium text-slate-700 border border-slate-300 hover:bg-slate-50"
+                >
+                  Download Email Draft with Attachment (.eml)
+                </button>
+                <button
+                  type="button"
+                  onClick={handleOpenMailDraft}
+                  className="rounded-md px-3 py-2 text-sm font-semibold text-white"
+                  style={{ backgroundColor: userSettings.themeColor }}
+                >
+                  Open Mail Draft
+                </button>
+              </div>
+            </section>
+          )}
+
           {view === 'dashboard' && (
             <div ref={dashboardRef}>
               <AdoptionDashboard

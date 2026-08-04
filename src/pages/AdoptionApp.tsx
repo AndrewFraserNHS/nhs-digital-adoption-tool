@@ -33,6 +33,7 @@ import { ActionPlanTracker } from '@components/views/ActionPlanTracker';
 import { AssessmentPanel } from '@components/views/AssessmentPanel';
 import { LensInfoModal } from '@components/views/LensInfoModal';
 import { ChangeManagementGuide } from '@components/views/ChangeManagementGuide';
+import { HighlightBuilderTool } from '@components/views/HighlightBuilderTool';
 
 const ADOPTION_USER_SETTINGS_KEY = 'nhs-digital-adoption-user-settings';
 const DEFAULT_GUIDANCE_TARGET: MaturityGuidanceTarget = 'Default';
@@ -381,7 +382,7 @@ export function AdoptionApp() {
         <div className="flex-1 overflow-y-auto py-4">
           <div className="px-4 mb-2 text-xs font-semibold text-blue-300 uppercase tracking-wider">Navigation</div>
           <nav className="space-y-1 mb-8">
-            {(['dashboard', 'action-plan', 'cm-guide', 'settings'] as View[]).map(v => (
+            {(['dashboard', 'action-plan', 'cm-guide', 'highlight-builder', 'settings'] as View[]).map(v => (
               <button
                 key={v}
                 onClick={() => handleViewChange(v)}
@@ -391,7 +392,7 @@ export function AdoptionApp() {
                     : 'text-blue-100 hover:bg-blue-800 border-l-4 border-transparent'
                 }`}
               >
-                {v === 'dashboard' ? 'Dashboard' : v === 'action-plan' ? 'Action Tracker' : v === 'cm-guide' ? 'CM Toolkit Guide' : 'Settings & Profile'}
+                {v === 'dashboard' ? 'Dashboard' : v === 'action-plan' ? 'Action Tracker' : v === 'cm-guide' ? 'CM Toolkit Guide' : v === 'highlight-builder' ? 'Highlight Builder Tool' : 'Settings & Profile'}
               </button>
             ))}
           </nav>
@@ -526,6 +527,18 @@ export function AdoptionApp() {
           )}
           {view === 'cm-guide' && (
             <ChangeManagementGuide />
+          )}
+          {view === 'highlight-builder' && (
+            <HighlightBuilderTool
+              store={store}
+              metrics={metrics}
+              lenses={LENSES}
+              components={COMPONENTS}
+              getEntry={getEntry}
+              trustName={store.orgProfile.trustName}
+              projectName={store.orgProfile.projectName}
+              themeColor={userSettings.themeColor}
+            />
           )}
           {view === 'settings' && (
             <SettingsPanel

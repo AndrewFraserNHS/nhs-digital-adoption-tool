@@ -61,6 +61,7 @@ const store: AdoptionStore = {
       }
     }
   },
+  phaseOverrides: {},
   history: []
 };
 
@@ -74,7 +75,69 @@ describe('adoptionMetrics', () => {
       totalCurrent: 6,
       assessedCount: 2,
       totalExpected: 3,
-      overallPct: 40
+      overallPct: 40,
+      totalActions: 2,
+      completedActions: 1,
+      actionCompletionPct: 50,
+      currentPhase: 1,
+      phaseSummaries: [
+        {
+          phase: 1,
+          componentCount: 2,
+          assessedLenses: 2,
+          totalLenses: 3,
+          onTrackComponents: 1,
+          actionCompletionPct: 50,
+          rag: 'Amber'
+        }
+      ],
+      nextSteps: [
+        {
+          componentId: 'vision',
+          componentLabel: 'Vision',
+          phase: 1,
+          gapToTarget: 2,
+          message: 'Raise Vision from 2.0 to target 4. Assess 1 remaining lens area(s).'
+        }
+      ]
+    });
+  });
+
+  it('suggests next steps for out-of-target components', () => {
+    const belowTargetStore: AdoptionStore = {
+      ...store,
+      currentDraft: {
+        vision: {
+          'Lens A': {
+            score: 1,
+            justification: '',
+            evidence: '',
+            actions: []
+          },
+          'Lens B': {
+            score: 0,
+            justification: '',
+            evidence: '',
+            actions: []
+          }
+        },
+        benefits: {
+          'Lens A': {
+            score: 1,
+            justification: '',
+            evidence: '',
+            actions: []
+          }
+        }
+      }
+    };
+
+    const metrics = getMetrics(belowTargetStore, components);
+    expect(metrics.currentPhase).toBe(1);
+    expect(metrics.nextSteps.length).toBeGreaterThan(0);
+    expect(metrics.nextSteps[0]).toMatchObject({
+      componentId: 'vision',
+      phase: 1
     });
   });
 

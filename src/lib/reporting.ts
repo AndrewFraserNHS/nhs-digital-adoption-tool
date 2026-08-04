@@ -123,6 +123,7 @@ const ACTION_STATUS_COLORS: Record<string, string> = {
   'Planned': '#768692',
   'Not Started': '#768692',
   'In Progress': '#FFB81C',
+  'Blocked': '#AE2521',
   'Completed': '#00A499',
   'Cancelled': '#AE2521'
 };

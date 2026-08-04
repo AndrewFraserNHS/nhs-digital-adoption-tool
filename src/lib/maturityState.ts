@@ -4,14 +4,18 @@
  */
 
 import { Store, type StateListener } from './observable';
+import type { UnifiedActionStatus } from './actionModel';
 
 export interface ActionItem {
   id: string;
   text: string;
   owner: string;
   startDate?: string;
-  dueDate: string;
-  status: string;
+  dueDate?: string;
+  status: UnifiedActionStatus;
+  phase?: number;
+  guidanceUrl?: string;
+  timescale?: string;
 }
 
 export interface ComponentDetail {
@@ -95,7 +99,7 @@ export function createAction(
   owner: string = '',
   startDate: string = '',
   dueDate: string = '',
-  status: string = 'Not Started'
+  status: UnifiedActionStatus = 'Planned'
 ): ActionItem {
   return {
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,

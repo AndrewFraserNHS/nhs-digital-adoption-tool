@@ -51,7 +51,7 @@ describe('adoptionIO', () => {
           score: 4,
           justification: 'Strong',
           evidence: 'Plan',
-          actions: [{ id: '1', text: 'Communicate', owner: 'Lead', timescale: 'Aug', status: 'Not Started' }]
+          actions: [{ id: '1', text: 'Communicate', owner: 'Lead', timescale: 'Aug', status: 'Planned' }]
         }
       }
     };

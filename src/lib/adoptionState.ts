@@ -4,13 +4,18 @@
  */
 
 import { Store, type StateListener } from './observable';
+import type { UnifiedActionStatus } from './actionModel';
 
 export interface DraftAction {
   id: string;
   text: string;
   owner: string;
   timescale: string;
-  status: string;
+  status: UnifiedActionStatus;
+  phase?: number;
+  guidanceUrl?: string;
+  startDate?: string;
+  dueDate?: string;
 }
 
 export interface DraftEntry {
@@ -34,13 +39,14 @@ export interface HistorySnapshot {
   data: Record<string, Record<string, DraftEntry>>;
 }
 
-export type View = 'dashboard' | 'assessment' | 'action-plan' | 'settings';
+export type View = 'dashboard' | 'assessment' | 'action-plan' | 'cm-guide' | 'settings';
 
 export interface AdoptionStore {
   view: View;
   orgProfile: OrgProfile;
   currentDraft: Record<string, Record<string, DraftEntry>>;
   history: HistorySnapshot[];
+  phaseOverrides: Record<string, string>;
 }
 
 /**
@@ -57,7 +63,8 @@ export function initializeStore(persisted?: Partial<AdoptionStore>): AdoptionSto
       leadName: ''
     },
     currentDraft: persisted?.currentDraft || {},
-    history: persisted?.history || []
+    history: persisted?.history || [],
+    phaseOverrides: persisted?.phaseOverrides || {}
   };
 }
 

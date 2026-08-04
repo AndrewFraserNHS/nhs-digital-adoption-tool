@@ -52,8 +52,10 @@ describe('MaturityAssessmentPanel', () => {
     fireEvent.change(screen.getByLabelText('Current Maturity Stage'), { target: { value: '3' } });
     fireEvent.click(screen.getByRole('button', { name: 'View Matrix' }));
     fireEvent.click(screen.getByRole('button', { name: 'View Guidance' }));
-    const benefitsLabel = screen.getByText('Benefits');
-    const benefitsButton = benefitsLabel.closest('button');
+    const benefitsLabels = screen.getAllByText('Benefits');
+    const benefitsButton = benefitsLabels
+      .map((label) => label.closest('button'))
+      .find((candidate) => candidate);
     if (!benefitsButton) {
       throw new Error('Expected Benefits tab button');
     }
@@ -114,7 +116,7 @@ describe('MaturityAssessmentPanel', () => {
     });
 
     render(<MaturityAssessmentPanel {...props} />);
-    fireEvent.change(screen.getByPlaceholderText('Search components...'), { target: { value: 'zzz' } });
+    fireEvent.change(screen.getByPlaceholderText('Search themes...'), { target: { value: 'zzz' } });
 
     expect(screen.getByText('No components match the current filters.')).toBeInTheDocument();
     expect(screen.getByText('Select a component to view details')).toBeInTheDocument();
@@ -124,10 +126,10 @@ describe('MaturityAssessmentPanel', () => {
     const props = buildProps();
     render(<MaturityAssessmentPanel {...props} />);
 
-    const descendingButtons = screen.getAllByRole('button', { name: 'Ascending' });
-    fireEvent.click(descendingButtons[0]);
-    fireEvent.click(descendingButtons[1]);
+    fireEvent.click(screen.getByRole('button', { name: 'Asc' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Ascending' }));
 
-    expect(screen.getAllByRole('button', { name: 'Descending' }).length).toBeGreaterThan(0);
+    expect(screen.getByRole('button', { name: 'Desc' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Descending' })).toBeInTheDocument();
   });
 });

@@ -1,4 +1,5 @@
 import type { ComponentDetail } from './maturityState';
+import { normalizeActionStatus } from './actionModel';
 
 export interface ProjectProfile {
   org: string;
@@ -33,7 +34,10 @@ export function cloneDetail(detail: Partial<ComponentDetail> | undefined): Compo
       owner: action.owner || '',
       startDate: action.startDate || '',
       dueDate: action.dueDate || '',
-      status: action.status || 'Planned'
+      status: normalizeActionStatus(action.status),
+      phase: action.phase,
+      guidanceUrl: action.guidanceUrl,
+      timescale: action.timescale
     }))
   };
 }

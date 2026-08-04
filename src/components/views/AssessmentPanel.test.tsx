@@ -59,6 +59,7 @@ function createProps(overrides?: {
       },
       currentDraft: {},
       history: [],
+      phaseOverrides: {},
       showMatrix: {
         'vision:Strategic Direction': Boolean(overrides?.showMatrix)
       }

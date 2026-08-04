@@ -15,6 +15,26 @@ export interface GuidanceSectionLinks {
 
 export type GuidanceLinkMap = Partial<Record<string, GuidanceSectionLinks>>;
 
+const ADOPTION_COMPONENT_TO_GUIDANCE_KEYS: Record<string, string[]> = {
+  vision: ['Vision'],
+  case_for_change: ['Case for Change'],
+  sponsorship: ['Sponsorship/ Change Network'],
+  change_network: ['Sponsorship/ Change Network'],
+  benefits: ['Benefits'],
+  change_impact: ['Change Impact & Risk'],
+  risk_management: ['Change Impact & Risk'],
+  cm_readiness: ['Change Management Readiness & Planning'],
+  stakeholder: ['Stakeholder Engagement & Comms'],
+  resistance: ['Resistance Management'],
+  skills_learning: ['Skills/ Learning'],
+  capability: ['Change Management Capability'],
+  change_adoption: ['Reinforcement'],
+  process_change: ['Process change'],
+  reinforcement: ['Reinforcement'],
+  org_maturity: ['Change Management Capability'],
+  transfer_bau: ['Reinforcement']
+};
+
 const DEFAULT_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
   'Vision': {
     inputs: [
@@ -168,4 +188,24 @@ export function resolveGuidanceLinks(
     return byTarget;
   }
   return MATURITY_GUIDANCE_LINKS.Default?.[componentName]?.[section] || [];
+}
+
+export function resolveGuidanceLinksForAdoptionComponent(
+  target: MaturityGuidanceTarget,
+  componentId: string,
+  section: keyof GuidanceSectionLinks
+): GuidanceLink[] {
+  const keys = ADOPTION_COMPONENT_TO_GUIDANCE_KEYS[componentId] || [];
+  const deduped = new Map<string, GuidanceLink>();
+
+  keys.forEach((key) => {
+    resolveGuidanceLinks(target, key, section).forEach((link) => {
+      const dedupeKey = `${link.label}::${link.url}`;
+      if (!deduped.has(dedupeKey)) {
+        deduped.set(dedupeKey, link);
+      }
+    });
+  });
+
+  return [...deduped.values()];
 }

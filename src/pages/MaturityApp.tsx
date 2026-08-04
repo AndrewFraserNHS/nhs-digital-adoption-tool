@@ -8,6 +8,7 @@ import { resolveGuidanceLinks, type MaturityGuidanceTarget } from '@data/maturit
 import { exportMaturityReportToCSV, exportActionPlanReportToCSV, type MaturityReportData, type ActionPlanReportData } from '@lib/reporting';
 import type { ActionItem, ComponentDetail, MaturityStore } from '@lib/maturityState';
 import { initializeMaturityStore } from '@lib/maturityState';
+import { normalizeActionStatus } from '@lib/actionModel';
 import {
   buildInitialDetails,
   cloneDetail,
@@ -177,28 +178,15 @@ function buildLinkedDeliverablesHtml(componentName: string, target: MaturityGuid
     .join('');
 }
 
-function normaliseActionStatus(status: string | undefined): string {
-  if (status === 'Not Started') {
-    return 'Planned';
-  }
-  if (status === 'Blocked') {
-    return 'In Progress';
-  }
-  if (status === 'Planned' || status === 'In Progress' || status === 'Completed' || status === 'Cancelled') {
-    return status;
-  }
-  return 'Planned';
-}
-
 function buildStatusSummary(actions: ActionItem[]): SummaryData {
-  const labels = ['Planned', 'In Progress', 'Completed', 'Cancelled'];
-  const colors = ['#768692', '#FFB81C', '#00A499', '#AE2521'];
+  const labels = ['Planned', 'In Progress', 'Blocked', 'Completed', 'Cancelled'];
+  const colors = ['#768692', '#FFB81C', '#AE2521', '#00A499', '#4b5563'];
   const counts = new Map(labels.map((label) => [label, 0]));
   let total = 0;
 
   actions.forEach((action) => {
     total += 1;
-    const label = normaliseActionStatus(action.status);
+    const label = normalizeActionStatus(action.status);
     counts.set(label, (counts.get(label) || 0) + 1);
   });
 
@@ -222,7 +210,7 @@ function buildDueDateSummary(actions: ActionItem[]): SummaryData {
   let inProgress = 0;
 
   actions.forEach((action) => {
-    if (normaliseActionStatus(action.status) !== 'In Progress') {
+    if (normalizeActionStatus(action.status) !== 'In Progress') {
       return;
     }
 
@@ -280,7 +268,7 @@ function parseMaturityAssessment(
       detail.actions = detail.actions.map((action) => ({
         ...action,
         startDate: action.startDate || '',
-        status: normaliseActionStatus(action.status)
+        status: normalizeActionStatus(action.status)
       }));
     });
 
@@ -333,7 +321,7 @@ function parseMaturityAssessment(
           owner: action.owner || '',
           startDate: action.startDate || '',
           dueDate: action.dueDate || '',
-          status: normaliseActionStatus(action.status)
+          status: normalizeActionStatus(action.status)
         }))
         .filter((action) => action.text.trim())
     };
@@ -433,7 +421,7 @@ function buildActionPlanReportData(
         theme: componentName,
         text: a.text,
         owner: a.owner || '',
-        status: normaliseActionStatus(a.status),
+        status: normalizeActionStatus(a.status),
         dueDate: a.dueDate || ''
       }))
   );

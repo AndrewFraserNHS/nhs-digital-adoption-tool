@@ -5,12 +5,38 @@
 
 import { AdoptionStore, DraftEntry } from './adoptionState';
 import { AssessmentComponent } from '@data/components';
+import { isCompletedActionStatus } from './actionModel';
 
 export interface Metrics {
   totalCurrent: number;
   assessedCount: number;
   totalExpected: number;
   overallPct: number;
+  totalActions: number;
+  completedActions: number;
+  actionCompletionPct: number;
+  currentPhase: number;
+  phaseSummaries: PhaseSummary[];
+  nextSteps: NextStep[];
+}
+
+export interface PhaseSummary {
+  phase: number;
+  componentCount: number;
+  assessedLenses: number;
+  totalLenses: number;
+  onTrackComponents: number;
+  actionCompletionPct: number;
+  rag: 'Red' | 'Amber' | 'Green';
+}
+
+export interface NextStep {
+  componentId: string;
+  componentLabel: string;
+  phase: number;
+  gapToTarget: number;
+  message: string;
+  toolkitLinks?: Array<{ label: string; url: string }>;
 }
 
 export interface ActionRow {
@@ -35,15 +61,88 @@ export function getMetrics(
 ): Metrics {
   let totalCurrent = 0;
   let assessedCount = 0;
+  let totalActions = 0;
+  let completedActions = 0;
 
-  Object.keys(store.currentDraft).forEach((componentId) => {
-    Object.keys(store.currentDraft[componentId]).forEach((lens) => {
-      const score = Number(store.currentDraft[componentId][lens].score || 0);
+  const byPhase = new Map<number, {
+    componentCount: number;
+    assessedLenses: number;
+    totalLenses: number;
+    onTrackComponents: number;
+    totalActions: number;
+    completedActions: number;
+  }>();
+
+  const componentProgress: Array<{
+    component: AssessmentComponent;
+    avgScore: number;
+    gapToTarget: number;
+    assessedLenses: number;
+    totalLenses: number;
+    totalActions: number;
+    completedActions: number;
+  }> = [];
+
+  components.forEach((component) => {
+    const phaseBucket = byPhase.get(component.phase) || {
+      componentCount: 0,
+      assessedLenses: 0,
+      totalLenses: 0,
+      onTrackComponents: 0,
+      totalActions: 0,
+      completedActions: 0
+    };
+    phaseBucket.componentCount += 1;
+    phaseBucket.totalLenses += component.lenses.length;
+
+    let componentTotal = 0;
+    let componentAssessed = 0;
+    let componentActions = 0;
+    let componentActionsCompleted = 0;
+
+    component.lenses.forEach((lens) => {
+      const entry = store.currentDraft[component.id]?.[lens];
+      const score = Number(entry?.score || 0);
       totalCurrent += score;
+      componentTotal += score;
       if (score > 0) {
-assessedCount += 1;
-}
+        assessedCount += 1;
+        componentAssessed += 1;
+        phaseBucket.assessedLenses += 1;
+      }
+
+      const actions = entry?.actions || [];
+      actions.forEach((action) => {
+        totalActions += 1;
+        componentActions += 1;
+        phaseBucket.totalActions += 1;
+        if (isCompletedActionStatus(action.status)) {
+          completedActions += 1;
+          componentActionsCompleted += 1;
+          phaseBucket.completedActions += 1;
+        }
+      });
     });
+
+    const avgScore = component.lenses.length
+      ? Number((componentTotal / component.lenses.length).toFixed(1))
+      : 0;
+    const gapToTarget = Number(Math.max(0, component.target - avgScore).toFixed(1));
+    if (avgScore >= component.target) {
+      phaseBucket.onTrackComponents += 1;
+    }
+
+    componentProgress.push({
+      component,
+      avgScore,
+      gapToTarget,
+      assessedLenses: componentAssessed,
+      totalLenses: component.lenses.length,
+      totalActions: componentActions,
+      completedActions: componentActionsCompleted
+    });
+
+    byPhase.set(component.phase, phaseBucket);
   });
 
   const totalExpected = components.reduce(
@@ -55,7 +154,76 @@ assessedCount += 1;
     ? Math.round((totalCurrent / absoluteMaxPossible) * 100)
     : 0;
 
-  return { totalCurrent, assessedCount, totalExpected, overallPct };
+  const actionCompletionPct = totalActions
+    ? Math.round((completedActions / totalActions) * 100)
+    : 0;
+
+  const phaseSummaries = [...byPhase.entries()]
+    .sort(([left], [right]) => left - right)
+    .map(([phase, bucket]): PhaseSummary => {
+      const phaseActionCompletionPct = bucket.totalActions
+        ? Math.round((bucket.completedActions / bucket.totalActions) * 100)
+        : 0;
+      const phaseOnTrackPct = bucket.componentCount
+        ? bucket.onTrackComponents / bucket.componentCount
+        : 0;
+      const rag: PhaseSummary['rag'] =
+        phaseOnTrackPct >= 0.75 && phaseActionCompletionPct >= 50
+          ? 'Green'
+          : phaseOnTrackPct >= 0.4 || phaseActionCompletionPct >= 25
+            ? 'Amber'
+            : 'Red';
+
+      return {
+        phase,
+        componentCount: bucket.componentCount,
+        assessedLenses: bucket.assessedLenses,
+        totalLenses: bucket.totalLenses,
+        onTrackComponents: bucket.onTrackComponents,
+        actionCompletionPct: phaseActionCompletionPct,
+        rag
+      };
+    });
+
+  const firstNonGreen = phaseSummaries.find((phaseSummary) => phaseSummary.rag !== 'Green');
+  const currentPhase = firstNonGreen?.phase || phaseSummaries[phaseSummaries.length - 1]?.phase || 1;
+  const nextSteps = componentProgress
+    .filter(({ component, gapToTarget }) => component.phase <= currentPhase + 1 && gapToTarget > 0)
+    .sort((left, right) => {
+      if (left.component.phase !== right.component.phase) {
+        return left.component.phase - right.component.phase;
+      }
+      return right.gapToTarget - left.gapToTarget;
+    })
+    .slice(0, 3)
+    .map(({ component, avgScore, gapToTarget, totalActions, completedActions, assessedLenses, totalLenses }) => {
+      const remainingActions = Math.max(0, totalActions - completedActions);
+      const evidenceText = assessedLenses < totalLenses
+        ? `Assess ${totalLenses - assessedLenses} remaining lens area(s).`
+        : remainingActions > 0
+          ? `Complete ${remainingActions} open action(s).`
+          : 'Create at least one delivery action linked to this component.';
+      return {
+        componentId: component.id,
+        componentLabel: component.label,
+        phase: component.phase,
+        gapToTarget,
+        message: `Raise ${component.label} from ${avgScore.toFixed(1)} to target ${component.target}. ${evidenceText}`
+      };
+    });
+
+  return {
+    totalCurrent,
+    assessedCount,
+    totalExpected,
+    overallPct,
+    totalActions,
+    completedActions,
+    actionCompletionPct,
+    currentPhase,
+    phaseSummaries,
+    nextSteps
+  };
 }
 
 /**

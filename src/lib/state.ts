@@ -18,6 +18,7 @@ export interface AdoptionState {
     overallPercentage: number;
     data: Record<string, Record<string, any>>;
   }>;
+  phaseOverrides?: Record<string, string>;
 }
 
 class AppState {

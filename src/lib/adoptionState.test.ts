@@ -12,6 +12,7 @@ describe('adoptionState', () => {
     const defaults = initializeStore();
     expect(defaults.view).toBe('dashboard');
     expect(defaults.orgProfile.trustName).toBe('');
+    expect(defaults.phaseOverrides).toEqual({});
 
     const persisted = initializeStore({
       view: 'settings',
@@ -45,7 +46,7 @@ describe('adoptionState', () => {
           score: 2,
           justification: '',
           evidence: '',
-          actions: [{ id: '1', text: 'One', owner: 'A', timescale: 'Q1', status: 'Not Started' }]
+          actions: [{ id: '1', text: 'One', owner: 'A', timescale: 'Q1', status: 'Planned' }]
         }
       }
     };

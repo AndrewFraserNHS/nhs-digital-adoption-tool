@@ -43,7 +43,7 @@ describe('maturityIO', () => {
       justification: 'Text',
       notes: 'Notes',
       links: ['https://example.com'],
-      actions: [{ id: '1', text: 'Act', owner: 'Lead', dueDate: '2026-08-01', status: 'Not Started' }]
+      actions: [{ id: '1', text: 'Act', owner: 'Lead', dueDate: '2026-08-01', status: 'Planned' }]
     };
 
     const detail = cloneDetail(source);

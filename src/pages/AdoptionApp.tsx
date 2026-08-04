@@ -1,9 +1,10 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import AppState from '@lib/state';
 import { createRadarChart, createLineChart } from '@lib/charts';
 import { downloadFile, escapeHtml } from '@lib/utils';
 import { ASSESSMENT_LENSES as LENSES } from '@data/lenses';
 import { ASSESSMENT_COMPONENTS, getComponentById } from '@data/components';
+import { resolveGuidanceLinksForAdoptionComponent, type MaturityGuidanceTarget } from '@data/maturity-guidance-links';
 import { GENERIC_RUBRIC } from '@data/rubrics';
 import { SPECIFIC_RUBRICS } from '@types/constants';
 import type {
@@ -31,8 +32,10 @@ import { SettingsPanel, type AdoptionUserSettings } from '@components/views/Sett
 import { ActionPlanTracker } from '@components/views/ActionPlanTracker';
 import { AssessmentPanel } from '@components/views/AssessmentPanel';
 import { LensInfoModal } from '@components/views/LensInfoModal';
+import { ChangeManagementGuide } from '@components/views/ChangeManagementGuide';
 
 const ADOPTION_USER_SETTINGS_KEY = 'nhs-digital-adoption-user-settings';
+const DEFAULT_GUIDANCE_TARGET: MaturityGuidanceTarget = 'Default';
 
 const DEFAULT_USER_SETTINGS: AdoptionUserSettings = {
   name: '',
@@ -67,7 +70,8 @@ export function AdoptionApp() {
       view: 'dashboard',
       orgProfile: persisted?.orgProfile || state.adoption?.orgProfile,
       currentDraft: persisted?.currentDraft || state.adoption?.currentDraft,
-      history: persisted?.history || state.adoption?.history
+      history: persisted?.history || state.adoption?.history,
+      phaseOverrides: persisted?.phaseOverrides || state.adoption?.phaseOverrides
     }) as AdoptionStore;
   });
 
@@ -93,7 +97,20 @@ export function AdoptionApp() {
     return store.currentDraft[componentId][lens];
   }, [store]);
 
-  const metrics = computeMetrics(store, COMPONENTS);
+  const metrics = useMemo(() => {
+    const baseMetrics = computeMetrics(store, COMPONENTS);
+    return {
+      ...baseMetrics,
+      nextSteps: baseMetrics.nextSteps.map((step) => ({
+        ...step,
+        toolkitLinks: resolveGuidanceLinksForAdoptionComponent(
+          DEFAULT_GUIDANCE_TARGET,
+          step.componentId,
+          'inputs'
+        ).slice(0, 3)
+      }))
+    };
+  }, [store]);
   const actionRows = flattenActions(
     store,
     (componentId) => getComponentById(componentId) || COMPONENTS[0],
@@ -112,7 +129,8 @@ export function AdoptionApp() {
     appState.adoption = {
       orgProfile: store.orgProfile,
       currentDraft: store.currentDraft,
-      history: store.history
+      history: store.history,
+      phaseOverrides: store.phaseOverrides
     };
   }, [store]);
 
@@ -179,6 +197,45 @@ export function AdoptionApp() {
       setIsSidebarOpen(false);
     }
   };
+
+  const openComponentAssessment = useCallback((componentId: string) => {
+    const targetComponent = getComponentById(componentId);
+    if (!targetComponent) {
+      return;
+    }
+
+    const hasOverride = Boolean(store.phaseOverrides[componentId]);
+    const requiresOverride = targetComponent.phase > metrics.currentPhase && !hasOverride;
+
+    if (requiresOverride) {
+      const proceed = window.confirm(
+        `This component is in Phase ${targetComponent.phase}, but your current focus is Phase ${metrics.currentPhase}. Continue with an override?`
+      );
+      if (!proceed) {
+        return;
+      }
+
+      const rationale = window.prompt('Please provide a brief rationale for working ahead of phase.');
+      if (!rationale || !rationale.trim()) {
+        window.alert('Override cancelled. A rationale is required to work ahead of phase.');
+        return;
+      }
+
+      setStore((prev) => ({
+        ...prev,
+        phaseOverrides: {
+          ...prev.phaseOverrides,
+          [componentId]: rationale.trim()
+        }
+      }));
+    }
+
+    setActiveComponentId(componentId);
+    setView('assessment');
+    if (shouldAutoCloseSidebar()) {
+      setIsSidebarOpen(false);
+    }
+  }, [metrics.currentPhase, store.phaseOverrides]);
 
   const updateEntry = useCallback((componentId: string, lens: string, entry: DraftEntry) => {
     setStore((prev) => ({
@@ -324,7 +381,7 @@ export function AdoptionApp() {
         <div className="flex-1 overflow-y-auto py-4">
           <div className="px-4 mb-2 text-xs font-semibold text-blue-300 uppercase tracking-wider">Navigation</div>
           <nav className="space-y-1 mb-8">
-            {(['dashboard', 'action-plan', 'settings'] as View[]).map(v => (
+            {(['dashboard', 'action-plan', 'cm-guide', 'settings'] as View[]).map(v => (
               <button
                 key={v}
                 onClick={() => handleViewChange(v)}
@@ -334,7 +391,7 @@ export function AdoptionApp() {
                     : 'text-blue-100 hover:bg-blue-800 border-l-4 border-transparent'
                 }`}
               >
-                {v === 'dashboard' ? 'Dashboard' : v === 'action-plan' ? 'Action Tracker' : 'Settings & Profile'}
+                {v === 'dashboard' ? 'Dashboard' : v === 'action-plan' ? 'Action Tracker' : v === 'cm-guide' ? 'CM Toolkit Guide' : 'Settings & Profile'}
               </button>
             ))}
           </nav>
@@ -348,11 +405,7 @@ export function AdoptionApp() {
                 <button
                   key={comp.id}
                   onClick={() => {
-                    setActiveComponentId(comp.id);
-                    setView('assessment');
-                    if (shouldAutoCloseSidebar()) {
-                      setIsSidebarOpen(false);
-                    }
+                    openComponentAssessment(comp.id);
                   }}
                   className={`w-full text-left px-4 py-2 text-sm flex items-center justify-between transition-colors ${
                     isActive ? 'bg-white font-medium text-[#005eb8]' : `hover:bg-blue-800 ${status.color}`
@@ -436,13 +489,7 @@ export function AdoptionApp() {
                 lenses={LENSES}
                 metrics={metrics}
                 getEntry={getEntry}
-                onComponentClick={(componentId) => {
-                  setActiveComponentId(componentId);
-                  setView('assessment');
-                  if (shouldAutoCloseSidebar()) {
-                    setIsSidebarOpen(false);
-                  }
-                }}
+                onComponentClick={openComponentAssessment}
               />
             </div>
           )}
@@ -453,7 +500,7 @@ export function AdoptionApp() {
               activeComponentId={activeComponentId}
               getRubricText={getRubricText}
               getEntry={getEntry}
-              onComponentChange={setActiveComponentId}
+              onComponentChange={openComponentAssessment}
               onEntryUpdate={updateEntry}
               onOpenLensInfo={setActiveLensInfo}
               onMatrixToggle={(key) => {
@@ -474,14 +521,11 @@ export function AdoptionApp() {
           {view === 'action-plan' && (
             <ActionPlanTracker
               actions={actionRows}
-              onComponentClick={(componentId) => {
-                setActiveComponentId(componentId);
-                setView('assessment');
-                if (shouldAutoCloseSidebar()) {
-                  setIsSidebarOpen(false);
-                }
-              }}
+              onComponentClick={openComponentAssessment}
             />
+          )}
+          {view === 'cm-guide' && (
+            <ChangeManagementGuide />
           )}
           {view === 'settings' && (
             <SettingsPanel

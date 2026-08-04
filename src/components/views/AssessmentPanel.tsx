@@ -1,6 +1,7 @@
 import React, { JSX, useCallback } from 'react';
 import { AdoptionStore, DraftEntry, DraftAction } from '@lib/adoptionState';
 import { AssessmentComponent } from '@data/components';
+import { UNIFIED_ACTION_STATUSES } from '@lib/actionModel';
 
 type AssessmentPanelStore = AdoptionStore & {
   showMatrix?: Record<string, boolean>;
@@ -19,7 +20,7 @@ export interface AssessmentPanelProps {
   onActionRemove: (componentId: string, lens: string, actionId: string) => void;
 }
 
-const STATUS_OPTIONS = ['Not Started', 'In Progress', 'Blocked', 'Completed'];
+const STATUS_OPTIONS = UNIFIED_ACTION_STATUSES;
 const SCORE_LEVELS = [0, 1, 2, 3, 4, 5];
 const SCORE_LABELS: Record<number, string> = {
   0: 'Not Started',
@@ -143,7 +144,8 @@ export function AssessmentPanel({
         text: '',
         owner: '',
         timescale: '',
-        status: 'Not Started'
+        status: 'Planned',
+        phase: component.phase
       };
       entry.actions.push(newAction);
       onEntryUpdate(component.id, lens, entry);

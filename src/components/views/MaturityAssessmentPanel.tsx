@@ -1,6 +1,7 @@
 import { JSX, useCallback, useMemo, useState } from 'react';
 import { MATURITY_STAGES, STAGE_COLORS as STAGE_COLORS_PALETTE } from '@data/rubrics';
 import type { ComponentDetail } from '@lib/maturityState';
+import { UNIFIED_ACTION_STATUSES } from '@lib/actionModel';
 
 export interface MaturityAssessmentPanelProps {
   activeComponent: string;
@@ -17,7 +18,7 @@ export interface MaturityAssessmentPanelProps {
 
 const STAGES = MATURITY_STAGES;
 const STAGE_COLORS = STAGE_COLORS_PALETTE;
-const ACTION_STATUSES = ['Planned', 'In Progress', 'Completed', 'Cancelled'];
+const ACTION_STATUSES = UNIFIED_ACTION_STATUSES;
 
 export function MaturityAssessmentPanel({
   activeComponent,

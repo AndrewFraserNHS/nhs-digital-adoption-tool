@@ -49,6 +49,7 @@ const store: AdoptionStore = {
       }
     }
   },
+  phaseOverrides: {},
   history: [
     {
       monthLabel: 'Jul 2026',
@@ -62,7 +63,31 @@ const metrics: Metrics = {
   totalCurrent: 6,
   assessedCount: 2,
   totalExpected: 2,
-  overallPct: 60
+  overallPct: 60,
+  totalActions: 0,
+  completedActions: 0,
+  actionCompletionPct: 0,
+  currentPhase: 1,
+  phaseSummaries: [
+    {
+      phase: 1,
+      componentCount: 2,
+      assessedLenses: 2,
+      totalLenses: 2,
+      onTrackComponents: 1,
+      actionCompletionPct: 0,
+      rag: 'Amber'
+    }
+  ],
+  nextSteps: [
+    {
+      componentId: 'benefits',
+      componentLabel: 'Benefits',
+      phase: 1,
+      gapToTarget: 1,
+      message: 'Raise Benefits from 1.0 to target 2. Create at least one delivery action linked to this component.'
+    }
+  ]
 };
 
 function getEntry(componentId: string, lens: string): DraftEntry {
@@ -83,8 +108,8 @@ describe('AdoptionDashboard', () => {
     );
 
     expect(screen.getByText('60%')).toBeInTheDocument();
-    expect(screen.getByText('2')).toBeInTheDocument();
-    expect(screen.getByText('Months of tracked data available.')).toBeInTheDocument();
+    expect(screen.getAllByText('Phase 1').length).toBeGreaterThan(0);
+    expect(screen.getByText('0 of 0 actions completed.')).toBeInTheDocument();
   });
 
   it('filters component cards by status', () => {
@@ -100,10 +125,9 @@ describe('AdoptionDashboard', () => {
     );
 
     const filters = screen.getAllByRole('combobox');
-    fireEvent.change(filters[0], { target: { value: 'on-track' } });
+    fireEvent.change(filters[0], { target: { value: 'not-started' } });
 
-    expect(screen.getAllByText('Vision').length).toBeGreaterThan(0);
-    expect(screen.queryAllByText('Benefits')).toHaveLength(0);
+    expect(screen.getByText('No components match the current filters.')).toBeInTheDocument();
   });
 
   it('calls onComponentClick when a component is selected', () => {

@@ -54,7 +54,7 @@ body {
   margin-top: 1.25rem;
   display: grid;
   gap: 1rem;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 }
 
 .tool-card {
@@ -80,6 +80,10 @@ body {
 
 .tool-card.alt {
   border-left-color: var(--brand-teal);
+}
+
+.tool-card.compare {
+  border-left-color: #7b5ea7;
 }
 
 .tool-kicker {
@@ -118,6 +122,14 @@ body {
 
 .tool-card.alt .tool-cta {
   color: #007f76;
+}
+
+.tool-card.compare .tool-kicker {
+  color: #7b5ea7;
+}
+
+.tool-card.compare .tool-cta {
+  color: #7b5ea7;
 }
 
 .home-footer {

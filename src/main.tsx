@@ -4,7 +4,12 @@ import App from './App';
 import './styles/legacy.css';
 import './styles/home.css';
 
-ReactDOM.createRoot(document.getElementById('app') as HTMLElement).render(
+const rootEl = document.getElementById('app');
+if (!rootEl) {
+  throw new Error('Root element #app is missing from index.html');
+}
+
+ReactDOM.createRoot(rootEl).render(
   <React.StrictMode>
     <App />
   </React.StrictMode>

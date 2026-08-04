@@ -1,4 +1,4 @@
-import { AdoptionStore, DraftEntry } from '@lib/adoptionState';
+import { AdoptionStore, DraftAction, DraftEntry } from '@lib/adoptionState';
 import { Metrics } from '@lib/adoptionMetrics';
 import { AssessmentComponent } from '@data/components';
 import { JSX, useMemo, useState } from 'react';
@@ -29,6 +29,44 @@ export function AdoptionDashboard({
 
   const phases = useMemo(() => [...new Set(components.map((c) => c.phase))].sort((a, b) => a - b), [components]);
 
+  const [overdueVisible, setOverdueVisible] = useState(true);
+
+  const lastSnapshot = useMemo(
+    () => (store.history.length > 0 ? store.history[store.history.length - 1] : null),
+    [store.history]
+  );
+
+  const scoreDelta = lastSnapshot !== null ? metrics.overallPct - lastSnapshot.overallPercentage : null;
+
+  const snapshotDue = useMemo(() => {
+    if (metrics.assessedCount === 0) return false;
+    const currentLabel = new Date().toLocaleString('en-GB', { month: 'short', year: 'numeric' });
+    return !store.history.some((h) => h.monthLabel === currentLabel);
+  }, [store.history, metrics.assessedCount]);
+
+  const urgentActions = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const weekOut = new Date(today);
+    weekOut.setDate(today.getDate() + 7);
+
+    const items: Array<{ action: DraftAction; componentLabel: string; componentId: string; isOverdue: boolean }> = [];
+    components.forEach((comp) => {
+      comp.lenses.forEach((lens) => {
+        getEntry(comp.id, lens).actions.forEach((action) => {
+          if (!action.dueDate || action.status === 'Completed' || action.status === 'Cancelled') return;
+          const due = new Date(action.dueDate);
+          if (isNaN(due.getTime())) return;
+          if (due <= weekOut) {
+            items.push({ action, componentLabel: comp.label, componentId: comp.id, isOverdue: due < today });
+          }
+        });
+      });
+    });
+
+    return items.sort((a, b) => new Date(a.action.dueDate!).getTime() - new Date(b.action.dueDate!).getTime());
+  }, [components, getEntry, store.currentDraft]);
+
   const componentRows = useMemo(() => {
     const query = searchTerm.trim().toLowerCase();
 
@@ -40,7 +78,20 @@ export function AdoptionDashboard({
         });
         const avgNum = Number((total / component.lenses.length).toFixed(1));
         const status = avgNum === 0 ? 'not-started' : avgNum >= component.target ? 'on-track' : 'below-target';
-        return { component, avgNum, status };
+
+        // Compare to last finalised snapshot (null when no history or unchanged)
+        let delta: number | null = null;
+        if (lastSnapshot) {
+          let prevTotal = 0;
+          component.lenses.forEach((lens) => {
+            prevTotal += Number(lastSnapshot.data[component.id]?.[lens]?.score || 0);
+          });
+          const prevAvg = Number((prevTotal / component.lenses.length).toFixed(1));
+          const raw = Number((avgNum - prevAvg).toFixed(1));
+          if (raw !== 0) delta = raw;
+        }
+
+        return { component, avgNum, status, delta };
       })
       .filter(({ component, status }) => {
         if (statusFilter !== 'all' && status !== statusFilter) {
@@ -65,10 +116,63 @@ export function AdoptionDashboard({
         }
         return sortDirection === 'asc' ? comparison : -comparison;
       });
-  }, [components, componentPhaseFilter, getEntry, searchTerm, sortBy, sortDirection, statusFilter]);
+  }, [components, componentPhaseFilter, getEntry, lastSnapshot, searchTerm, sortBy, sortDirection, statusFilter]);
 
   return (
     <div className="max-w-6xl mx-auto">
+
+      {/* Overdue / due-soon actions — the main daily pull-back signal */}
+      {overdueVisible && urgentActions.length > 0 && (
+        <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-red-800 mb-2">
+                {urgentActions.filter((i) => i.isOverdue).length > 0 &&
+                  `${urgentActions.filter((i) => i.isOverdue).length} overdue action${urgentActions.filter((i) => i.isOverdue).length > 1 ? 's' : ''}`}
+                {urgentActions.filter((i) => i.isOverdue).length > 0 && urgentActions.filter((i) => !i.isOverdue).length > 0 && ', '}
+                {urgentActions.filter((i) => !i.isOverdue).length > 0 &&
+                  `${urgentActions.filter((i) => !i.isOverdue).length} due within 7 days`}
+              </p>
+              <ul className="space-y-1.5">
+                {urgentActions.slice(0, 5).map((item) => (
+                  <li key={item.action.id} className="flex items-start gap-2">
+                    <span className={`mt-0.5 shrink-0 text-xs font-bold px-1.5 py-0.5 rounded ${
+                      item.isOverdue ? 'bg-red-200 text-red-800' : 'bg-amber-100 text-amber-800'
+                    }`}>
+                      {item.isOverdue ? 'Overdue' : 'Due soon'}
+                    </span>
+                    <span className="text-xs text-slate-700">
+                      <button
+                        onClick={() => onComponentClick(item.componentId)}
+                        className="font-medium text-[#005eb8] hover:underline mr-1"
+                      >
+                        {item.componentLabel}
+                      </button>
+                      {'\u2014 '}{item.action.text}
+                      {item.action.dueDate && (
+                        <span className="text-slate-400 ml-1">
+                          (due {new Date(item.action.dueDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })})
+                        </span>
+                      )}
+                    </span>
+                  </li>
+                ))}
+                {urgentActions.length > 5 && (
+                  <li className="text-xs text-slate-500 pl-1">+ {urgentActions.length - 5} more — see the Action Tracker for the full list.</li>
+                )}
+              </ul>
+            </div>
+            <button
+              onClick={() => setOverdueVisible(false)}
+              className="shrink-0 text-slate-400 hover:text-slate-600 text-xl leading-none"
+              aria-label="Dismiss"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
+
       <h2 className="text-2xl font-bold text-slate-800 mb-6">Adoption Delivery Dashboard</h2>
       
       {/* Metrics Cards */}
@@ -77,8 +181,16 @@ export function AdoptionDashboard({
           <h3 className="text-sm font-medium text-slate-500 mb-1">
             Live Delivery Progress
           </h3>
-          <div className="flex items-end space-x-2">
+          <div className="flex items-end gap-3">
             <span className="text-4xl font-bold text-[#005eb8]">{metrics.overallPct}%</span>
+            {scoreDelta !== null && (
+              <span className={`text-sm font-semibold mb-1 ${
+                scoreDelta > 0 ? 'text-green-600' : scoreDelta < 0 ? 'text-red-500' : 'text-slate-400'
+              }`}>
+                {scoreDelta > 0 ? '↑' : scoreDelta < 0 ? '↓' : '='}
+                {' '}{Math.abs(scoreDelta)}% vs last month
+              </span>
+            )}
           </div>
           <div className="mt-4 w-full bg-slate-100 rounded-full h-3 relative overflow-hidden">
             <div
@@ -158,6 +270,17 @@ export function AdoptionDashboard({
           </p>
         )}
       </div>
+
+      {/* Snapshot reminder — only when work exists but this month isn't captured */}
+      {snapshotDue && (
+        <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 flex items-center gap-3 mb-8">
+          <span className="text-blue-400 text-xl shrink-0">📅</span>
+          <p className="text-sm text-blue-800">
+            <strong>This month hasn't been recorded yet.</strong>{' '}
+            Use <span className="font-semibold">'Finalise Month'</span> in the header to snapshot today's progress and build your delivery trajectory.
+          </p>
+        </div>
+      )}
 
       {/* Phase Progress */}
       <div className="bg-white rounded-lg shadow-sm p-6 border border-slate-200 mb-8">
@@ -289,9 +412,18 @@ export function AdoptionDashboard({
                 <span className="text-sm font-medium text-slate-700 truncate pr-2 group-hover:text-[#005eb8]">
                   {component.label}
                 </span>
-                <span className={`text-xs font-bold px-2 py-1 rounded ${badgeClass}`}>
-                  {avgNum > 0 ? avgNum.toFixed(1) : '-'}
-                </span>
+                <div className="flex items-center gap-1 shrink-0">
+                  {scoreDelta !== null && (
+                    <span className={`text-xs font-semibold ${
+                      scoreDelta > 0 ? 'text-green-600' : 'text-red-400'
+                    }`}>
+                      {scoreDelta > 0 ? '↑' : '↓'}
+                    </span>
+                  )}
+                  <span className={`text-xs font-bold px-2 py-1 rounded ${badgeClass}`}>
+                    {avgNum > 0 ? avgNum.toFixed(1) : '-'}
+                  </span>
+                </div>
               </button>
             );
           })}

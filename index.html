@@ -5,6 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NHS Digital Adoption — Tools</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Unregister stale service workers then reload so the fresh page is served immediately -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function (regs) {
+          if (regs.length > 0) {
+            Promise.all(regs.map(function (r) { return r.unregister(); })).then(function () {
+              window.location.reload();
+            });
+          }
+        });
+      }
+    </script>
   </head>
   <body>
     <div id="app"></div>

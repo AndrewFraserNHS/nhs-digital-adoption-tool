@@ -1,6 +1,7 @@
 import { HashRouter, Navigate, Route, Routes } from 'react-router-dom';
 import AdoptionApp from '@pages/AdoptionApp';
 import MaturityApp from '@pages/MaturityApp';
+import CompareApp from '@pages/CompareApp';
 
 function HomePage(): JSX.Element {
   return (
@@ -33,6 +34,16 @@ function HomePage(): JSX.Element {
           </p>
           <span className="tool-cta">Open adoption tool -&gt;</span>
         </a>
+
+        <a className="tool-card compare" href="#/compare">
+          <span className="tool-kicker">Analysis</span>
+          <h2 className="tool-title">Assess &amp; Compare</h2>
+          <p className="tool-desc">
+            Upload one or two adoption exports to analyse tool engagement, surface insights, and
+            compare organisations side-by-side.
+          </p>
+          <span className="tool-cta">Open analysis tool -&gt;</span>
+        </a>
       </section>
 
       <p className="home-footer">Copyright NHS Digital Adoption</p>
@@ -47,6 +58,7 @@ export default function App(): JSX.Element {
         <Route path="/" element={<HomePage />} />
         <Route path="/adoption" element={<AdoptionApp />} />
         <Route path="/maturity" element={<MaturityApp />} />
+        <Route path="/compare" element={<CompareApp />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </HashRouter>

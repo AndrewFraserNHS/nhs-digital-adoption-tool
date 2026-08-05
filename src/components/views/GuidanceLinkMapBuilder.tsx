@@ -8,6 +8,7 @@ import {
   type GuidanceSectionLinks,
   type GuidanceWorkstreamDefinition
 } from '@data/maturity-guidance-links';
+import { CST_TYPE_OPTIONS, type CstType } from '@data/cst';
 import { downloadFile } from '@lib/utils';
 
 const SECTION_KEYS: Array<keyof GuidanceSectionLinks> = ['inputs', 'deliverables'];
@@ -24,14 +25,33 @@ function cloneLinkMap(source: GuidanceLinkMap): GuidanceLinkMap {
   );
 }
 
-function createWorkstream(name: string): GuidanceWorkstreamDefinition {
+function createWorkstream(
+  name: string,
+  cstType: CstType,
+  baseMap?: GuidanceLinkMap,
+  reportEmailTo?: string
+): GuidanceWorkstreamDefinition {
   return {
     name,
-    map: cloneLinkMap(DEFAULT_GUIDANCE_LINK_MAP),
+    cstType,
+    map: cloneLinkMap(baseMap || DEFAULT_GUIDANCE_LINK_MAP),
     targetCompletionDate: '',
-    reportEmailTo: '',
+    reportEmailTo: reportEmailTo || '',
     usefulContacts: ''
   };
+}
+
+function looksLikeGuidanceMap(value: unknown): value is GuidanceLinkMap {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return false;
+  }
+  return Object.values(value).some((sectionCandidate) => {
+    if (!sectionCandidate || typeof sectionCandidate !== 'object') {
+      return false;
+    }
+    const sections = sectionCandidate as GuidanceSectionLinks;
+    return Array.isArray(sections.inputs) || Array.isArray(sections.deliverables);
+  });
 }
 
 function normaliseImportedWorkstreams(value: unknown): GuidanceWorkstreamDefinition[] {
@@ -49,6 +69,15 @@ function normaliseImportedWorkstreams(value: unknown): GuidanceWorkstreamDefinit
     if (candidate.name) {
       return [candidate as GuidanceWorkstreamDefinition];
     }
+    if (looksLikeGuidanceMap(candidate)) {
+      return [
+        {
+          name: 'Imported CST',
+          cstType: 'project',
+          map: cloneLinkMap(candidate)
+        }
+      ];
+    }
   }
 
   return [];
@@ -63,6 +92,14 @@ export function GuidanceLinkMapBuilder({
   const [newWorkstreamName, setNewWorkstreamName] = useState('');
   const [selectedWorkstreamName, setSelectedWorkstreamName] = useState(() => getStoredGuidanceWorkstreams()[0]?.name || '');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const onboardingUploadRef = useRef<HTMLInputElement>(null);
+  const onboardingBaseTemplateRef = useRef<HTMLInputElement>(null);
+  const [showOnboarding, setShowOnboarding] = useState(() => getStoredGuidanceWorkstreams().length === 0);
+  const [onboardingStep, setOnboardingStep] = useState<'choose' | 'upload' | 'create'>('choose');
+  const [onboardingName, setOnboardingName] = useState('');
+  const [onboardingType, setOnboardingType] = useState<CstType>('project');
+  const [onboardingUseUploadBase, setOnboardingUseUploadBase] = useState(false);
+  const [onboardingBaseMap, setOnboardingBaseMap] = useState<GuidanceLinkMap | null>(null);
 
   useEffect(() => {
     saveStoredGuidanceWorkstreams(workstreams);
@@ -89,6 +126,11 @@ export function GuidanceLinkMapBuilder({
     );
   };
 
+  const completeOnboarding = (nextWorkstreamName: string) => {
+    setSelectedWorkstreamName(nextWorkstreamName);
+    setShowOnboarding(false);
+  };
+
   const handleCreateWorkstream = () => {
     const trimmed = newWorkstreamName.trim();
     if (!trimmed) {
@@ -101,10 +143,83 @@ export function GuidanceLinkMapBuilder({
       return;
     }
 
-    const created = createWorkstream(trimmed);
+    const created = createWorkstream(trimmed, 'project', DEFAULT_GUIDANCE_LINK_MAP, defaultReportEmailTo);
     setWorkstreams((current) => [...current, created]);
     setSelectedWorkstreamName(trimmed);
     setNewWorkstreamName('');
+  };
+
+  const parseUploadFile = async (file: File): Promise<GuidanceWorkstreamDefinition[]> => {
+    const parsed = JSON.parse(await file.text()) as unknown;
+    const imported = normaliseImportedWorkstreams(parsed);
+    if (!imported.length) {
+      throw new Error('No workstreams found in file.');
+    }
+    return imported.map((item) => ({
+      ...item,
+      cstType: item.cstType || 'project',
+      map: cloneLinkMap(item.map || DEFAULT_GUIDANCE_LINK_MAP)
+    }));
+  };
+
+  const handleOnboardingUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    try {
+      const imported = await parseUploadFile(file);
+      setWorkstreams(imported);
+      completeOnboarding(imported[0].name);
+    } catch {
+      window.alert('Unable to import CST JSON. Please check the file structure.');
+    } finally {
+      event.target.value = '';
+    }
+  };
+
+  const handleOnboardingBaseUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    try {
+      const imported = await parseUploadFile(file);
+      setOnboardingBaseMap(cloneLinkMap(imported[0].map));
+    } catch {
+      window.alert('Unable to load base CST template JSON.');
+    } finally {
+      event.target.value = '';
+    }
+  };
+
+  const handleOnboardingCreate = () => {
+    const trimmed = onboardingName.trim();
+    if (!trimmed) {
+      window.alert('Please provide a CST name.');
+      return;
+    }
+
+    if (workstreams.some((item) => item.name === trimmed)) {
+      window.alert('A CST with this name already exists.');
+      return;
+    }
+
+    if (onboardingUseUploadBase && !onboardingBaseMap) {
+      window.alert('Upload a base CST JSON first, or create from default template.');
+      return;
+    }
+
+    const created = createWorkstream(
+      trimmed,
+      onboardingType,
+      onboardingBaseMap || DEFAULT_GUIDANCE_LINK_MAP,
+      defaultReportEmailTo
+    );
+    setWorkstreams((current) => [...current, created]);
+    completeOnboarding(trimmed);
   };
 
   const handleDeleteWorkstream = () => {
@@ -222,11 +337,7 @@ export function GuidanceLinkMapBuilder({
     }
 
     try {
-      const parsed = JSON.parse(await file.text()) as unknown;
-      const imported = normaliseImportedWorkstreams(parsed);
-      if (!imported.length) {
-        throw new Error('No workstreams found in file.');
-      }
+      const imported = await parseUploadFile(file);
 
       setWorkstreams((current) => {
         const next = [...current];
@@ -257,6 +368,156 @@ export function GuidanceLinkMapBuilder({
         className="hidden"
         onChange={handleImportFile}
       />
+      <input
+        ref={onboardingUploadRef}
+        type="file"
+        accept="application/json"
+        className="hidden"
+        onChange={handleOnboardingUpload}
+      />
+      <input
+        ref={onboardingBaseTemplateRef}
+        type="file"
+        accept="application/json"
+        className="hidden"
+        onChange={handleOnboardingBaseUpload}
+      />
+
+      {showOnboarding && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/50 p-4">
+          <div className="w-full max-w-2xl rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Welcome</p>
+            <h3 className="mt-2 text-2xl font-bold text-slate-900">Set up your first CST</h3>
+            <p className="mt-2 text-sm text-slate-600">
+              No saved CSTs were found. Upload a CST JSON to use now, or create a new one from the default template or another CST file.
+            </p>
+
+            {onboardingStep === 'choose' && (
+              <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                <button
+                  type="button"
+                  onClick={() => setOnboardingStep('upload')}
+                  className="rounded-lg border border-slate-300 bg-white p-4 text-left hover:bg-slate-50"
+                >
+                  <p className="text-sm font-semibold text-slate-900">Upload existing CST JSON</p>
+                  <p className="mt-1 text-xs text-slate-600">Use an existing Context Specific Toolkit file immediately.</p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setOnboardingStep('create')}
+                  className="rounded-lg border border-blue-300 bg-blue-50 p-4 text-left hover:bg-blue-100"
+                >
+                  <p className="text-sm font-semibold text-blue-900">Create new CST</p>
+                  <p className="mt-1 text-xs text-blue-700">Choose type, name, and starting template.</p>
+                </button>
+              </div>
+            )}
+
+            {onboardingStep === 'upload' && (
+              <div className="mt-6 space-y-4">
+                <p className="text-sm text-slate-700">Upload a CST JSON file to start working.</p>
+                <button
+                  type="button"
+                  onClick={() => onboardingUploadRef.current?.click()}
+                  className="rounded-md bg-[#005eb8] px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+                >
+                  Select CST JSON
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setOnboardingStep('choose')}
+                  className="ml-2 rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                >
+                  Back
+                </button>
+              </div>
+            )}
+
+            {onboardingStep === 'create' && (
+              <div className="mt-6 space-y-4">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <label className="text-sm text-slate-700">
+                    <span className="mb-1 block font-semibold">CST Type</span>
+                    <select
+                      value={onboardingType}
+                      onChange={(event) => setOnboardingType(event.target.value as CstType)}
+                      className="w-full rounded-md border border-slate-300 px-3 py-2"
+                    >
+                      {CST_TYPE_OPTIONS.map((option) => (
+                        <option key={option.value} value={option.value}>{option.label}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="text-sm text-slate-700">
+                    <span className="mb-1 block font-semibold">Name</span>
+                    <input
+                      value={onboardingName}
+                      onChange={(event) => setOnboardingName(event.target.value)}
+                      placeholder="e.g. AVT Paediatrics Rollout"
+                      className="w-full rounded-md border border-slate-300 px-3 py-2"
+                    />
+                  </label>
+                </div>
+
+                <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+                  <p className="text-sm font-semibold text-slate-800">Starting template</p>
+                  <div className="mt-3 space-y-2">
+                    <label className="flex items-center gap-2 text-sm text-slate-700">
+                      <input
+                        type="radio"
+                        checked={!onboardingUseUploadBase}
+                        onChange={() => setOnboardingUseUploadBase(false)}
+                      />
+                      Create from default template (DEFAULT_GUIDANCE_LINK_MAP)
+                    </label>
+                    <label className="flex items-center gap-2 text-sm text-slate-700">
+                      <input
+                        type="radio"
+                        checked={onboardingUseUploadBase}
+                        onChange={() => setOnboardingUseUploadBase(true)}
+                      />
+                      Base from uploaded CST JSON
+                    </label>
+                    {onboardingUseUploadBase && (
+                      <div className="pt-2">
+                        <button
+                          type="button"
+                          onClick={() => onboardingBaseTemplateRef.current?.click()}
+                          className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+                        >
+                          Upload Base Template JSON
+                        </button>
+                        {onboardingBaseMap ? (
+                          <p className="mt-2 text-xs text-green-700">Base template loaded.</p>
+                        ) : (
+                          <p className="mt-2 text-xs text-amber-700">No uploaded base yet.</p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={handleOnboardingCreate}
+                    className="rounded-md bg-[#005eb8] px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+                  >
+                    Create CST
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setOnboardingStep('choose')}
+                    className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                  >
+                    Back
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">Guidance Link Map Builder</p>
@@ -311,7 +572,12 @@ export function GuidanceLinkMapBuilder({
                       : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
                   }`}
                 >
-                  {workstream.name}
+                  <span>{workstream.name}</span>
+                  {workstream.cstType ? (
+                    <span className="ml-2 rounded bg-slate-100 px-1.5 py-0.5 text-[11px] uppercase tracking-wide text-slate-600">
+                      {workstream.cstType}
+                    </span>
+                  ) : null}
                 </button>
               ))
             )}

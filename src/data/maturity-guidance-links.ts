@@ -17,6 +17,7 @@ export type GuidanceLinkMap = Partial<Record<string, GuidanceSectionLinks>>;
 
 export interface GuidanceWorkstreamDefinition {
   name: string;
+  cstType?: 'project' | 'program' | 'initiative';
   map: GuidanceLinkMap;
   targetCompletionDate?: string;
   reportEmailTo?: string;

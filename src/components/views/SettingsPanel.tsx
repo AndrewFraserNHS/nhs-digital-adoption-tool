@@ -157,7 +157,7 @@ export function SettingsPanel({
         <h3 className="text-lg font-semibold text-slate-800">Organisation Settings</h3>
         <div>
           <label htmlFor="org-trust-name" className="block text-sm font-medium text-slate-700 mb-1">
-            NHS Trust / Organisation Name
+           Organisation Name
           </label>
           <input
             id="org-trust-name"
@@ -254,7 +254,7 @@ export function SettingsPanel({
             </div>
             <div>
               <label htmlFor="cst-benefit" className="block text-sm font-medium text-slate-700 mb-1">
-                Benefit Realization Date (optional)
+                Benefit Realisation Date (optional)
               </label>
               <input
                 id="cst-benefit"

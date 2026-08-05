@@ -11,7 +11,6 @@ import {
   PATHWAY_LABELS,
   type CompetenceGrade,
   type ConfidenceScore,
-  type CstPathwayKey,
   type OverarchingPhase
 } from '@data/cst';
 import { GENERIC_RUBRIC } from '@data/rubrics';
@@ -37,8 +36,6 @@ import {
   mergeImportedAdoptionState,
   type SavedAdoptionAssessment
 } from '@lib/adoptionIO';
-import { getPathwayRulesForComponent } from '@data/pathway-rules';
-import { calculateChecklistCompletion } from '@lib/pathwayAnalysis';
 import { validateCstProfile } from '@lib/adoptionValidator';
 import { AdoptionDashboard } from '@components/views/AdoptionDashboard';
 import { SettingsPanel, type AdoptionUserSettings } from '@components/views/SettingsPanel';
@@ -480,27 +477,6 @@ export function AdoptionApp() {
       `${actionLabel} has CST warnings:\n\n${warnings}\n\nContinue anyway?`
     );
   }, [store.orgProfile]);
-
-  const handlePathwayCheckToggle = useCallback((componentId: string, checklistKey: string, checked: boolean) => {
-    setStore((prev) => {
-      const pathway = prev.orgProfile.cst.pathway as CstPathwayKey;
-      const currentKeys = prev.pathwayChecks[componentId]?.[pathway] || [];
-      const nextKeys = checked
-        ? [...new Set([...currentKeys, checklistKey])]
-        : currentKeys.filter((item) => item !== checklistKey);
-
-      return {
-        ...prev,
-        pathwayChecks: {
-          ...prev.pathwayChecks,
-          [componentId]: {
-            ...(prev.pathwayChecks[componentId] || {}),
-            [pathway]: nextKeys
-          }
-        }
-      };
-    });
-  }, []);
 
   const handleExport = useCallback(() => {
     const proceed = confirmIfCstWarnings('Export JSON');
@@ -1186,8 +1162,7 @@ export function AdoptionApp() {
                 });
               }}
               pathway={store.orgProfile.cst.pathway}
-              pathwayChecks={store.pathwayChecks}
-              onPathwayCheckToggle={handlePathwayCheckToggle}
+              productName={store.orgProfile.projectName || 'product name'}
             />
           )}
           {view === 'action-plan' && (

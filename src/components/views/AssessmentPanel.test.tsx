@@ -83,8 +83,7 @@ function createProps(overrides?: {
     onMatrixToggle: vi.fn(),
     onActionRemove: vi.fn(),
     pathway: 'pathway-1' as const,
-    pathwayChecks: {},
-    onPathwayCheckToggle: vi.fn()
+    productName: 'Test Product'
   };
 }
 
@@ -99,7 +98,7 @@ describe('AssessmentPanel', () => {
     expect(props.onComponentChange).toHaveBeenCalledWith('benefits');
   });
 
-  it('updates score and text fields through onEntryUpdate', () => {
+  it('updates score and component justification through onEntryUpdate', () => {
     const props = createProps();
     render(<AssessmentPanel {...props} />);
 
@@ -108,12 +107,10 @@ describe('AssessmentPanel', () => {
 
     const areas = screen.getAllByRole('textbox');
     fireEvent.change(areas[0], { target: { value: 'Updated justification' } });
-    fireEvent.change(areas[1], { target: { value: 'Updated evidence' } });
 
     const updatedEntries = props.onEntryUpdate.mock.calls.map((call) => call[2]);
     expect(updatedEntries.some((entry: DraftEntry) => entry.score === 4)).toBe(true);
     expect(updatedEntries.some((entry: DraftEntry) => entry.justification === 'Updated justification')).toBe(true);
-    expect(updatedEntries.some((entry: DraftEntry) => entry.evidence === 'Updated evidence')).toBe(true);
   });
 
   it('toggles matrix and allows selecting score from matrix cards', () => {
@@ -148,6 +145,8 @@ describe('AssessmentPanel', () => {
     render(<AssessmentPanel {...props} />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Add Action' }));
+    fireEvent.change(screen.getByLabelText('Description'), { target: { value: 'Created from modal' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save Action' }));
     expect(props.onEntryUpdate).toHaveBeenCalled();
     const lastUpdateEntry = props.onEntryUpdate.mock.calls.at(-1)[2] as DraftEntry;
     expect(lastUpdateEntry.actions.length).toBe(2);

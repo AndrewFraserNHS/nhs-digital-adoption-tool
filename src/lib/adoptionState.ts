@@ -7,6 +7,11 @@ import { Store, type StateListener } from './observable';
 import type { UnifiedActionStatus } from './actionModel';
 import { DEFAULT_CST_PROFILE, type CstPathwayKey, type CstProfile } from '@data/cst';
 
+export interface ActionTargetLink {
+  componentId: string;
+  lens: string;
+}
+
 export interface DraftAction {
   id: string;
   text: string;
@@ -17,6 +22,9 @@ export interface DraftAction {
   guidanceUrl?: string;
   startDate?: string;
   dueDate?: string;
+  notes?: string;
+  evidence?: string;
+  linkedTargets?: ActionTargetLink[];
 }
 
 export interface DraftEntry {

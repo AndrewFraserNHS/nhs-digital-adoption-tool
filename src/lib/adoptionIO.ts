@@ -1,6 +1,6 @@
 import type { AdoptionStore, DraftEntry, HistorySnapshot, OrgProfile, PathwayChecklistState } from './adoptionState';
 import { cloneDraft, initializeStore, normalizeOrgProfile } from './adoptionState';
-import { normalizeActionStatus } from './actionModel';
+import { deriveTemporalActionStatus, normalizeActionStatus } from './actionModel';
 
 export const ADOPTION_STORAGE_KEY = 'nhs-digital-adoption-store';
 
@@ -94,7 +94,13 @@ function cloneAndNormaliseDraft(
     Object.keys(cloned[componentId]).forEach((lens) => {
       cloned[componentId][lens].actions = cloned[componentId][lens].actions.map((action) => ({
         ...action,
-        status: normalizeActionStatus(action.status)
+        status: deriveTemporalActionStatus(action.status, action.startDate, action.dueDate),
+        notes: action.notes || '',
+        evidence: action.evidence || '',
+        linkedTargets: (action.linkedTargets || []).map((target) => ({
+          componentId: target.componentId,
+          lens: target.lens
+        }))
       }));
     });
   });

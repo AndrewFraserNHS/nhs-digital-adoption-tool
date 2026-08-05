@@ -3,7 +3,9 @@ export const UNIFIED_ACTION_STATUSES = [
   'In Progress',
   'Blocked',
   'Completed',
-  'Cancelled'
+  'Cancelled',
+  'Overdue start',
+  'Overdue completion'
 ] as const;
 
 export type UnifiedActionStatus = (typeof UNIFIED_ACTION_STATUSES)[number];
@@ -29,6 +31,47 @@ export function normalizeActionStatus(status: string | undefined): UnifiedAction
 
   if (value === 'cancelled' || value === 'canceled') {
     return 'Cancelled';
+  }
+
+  if (value === 'overdue start' || value === 'overdue-start') {
+    return 'Overdue start';
+  }
+
+  if (value === 'overdue completion' || value === 'overdue-completion') {
+    return 'Overdue completion';
+  }
+
+  return 'Planned';
+}
+
+export function deriveTemporalActionStatus(
+  status: string | undefined,
+  startDate: string | undefined,
+  dueDate: string | undefined,
+  now = new Date()
+): UnifiedActionStatus {
+  const normalized = normalizeActionStatus(status);
+  if (normalized === 'Completed' || normalized === 'Cancelled') {
+    return normalized;
+  }
+
+  const today = new Date(now);
+  today.setHours(0, 0, 0, 0);
+
+  const parsedDueDate = dueDate ? new Date(dueDate) : null;
+  if (parsedDueDate && !isNaN(parsedDueDate.getTime())) {
+    parsedDueDate.setHours(0, 0, 0, 0);
+    if (today > parsedDueDate) {
+      return 'Overdue completion';
+    }
+  }
+
+  const parsedStartDate = startDate ? new Date(startDate) : null;
+  if (parsedStartDate && !isNaN(parsedStartDate.getTime())) {
+    parsedStartDate.setHours(0, 0, 0, 0);
+    if (today > parsedStartDate) {
+      return 'Overdue start';
+    }
   }
 
   return 'Planned';

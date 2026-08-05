@@ -16,8 +16,12 @@ export type PathwayRulesByDomain = Record<string, Record<CstPathwayKey, PathwayD
 
 const PATHWAY_HEADER_TO_KEY: Record<string, CstPathwayKey> = {
   'Pathway 1 - We are starting AVT for the first time': 'pathway-1',
+  'Pathway 1 - We are starting product for the first time': 'pathway-1',
   'Pathway 2 - We have piloted AVT and need to scale up': 'pathway-2',
+  'Pathway 2 - We have piloted product and need to scale up': 'pathway-2',
   'Pathway 3 - AVT is live but adoption is patchy': 'pathway-3'
+  ,
+  'Pathway 3 - product is live but adoption is patchy': 'pathway-3'
 };
 
 const DOMAIN_BY_COMPONENT_ID: Record<string, string> = {
@@ -42,6 +46,15 @@ const DOMAIN_BY_COMPONENT_ID: Record<string, string> = {
 
 function sanitizeKeyPart(value: string): string {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+}
+
+function withProductToken(value: string): string {
+  return value.replace(/\bAVT\b/g, '${productName}');
+}
+
+export function resolvePathwayCopy(value: string, productName?: string): string {
+  const name = (productName || '').trim() || 'product name';
+  return value.replace(/\$\{productName\}/g, name);
 }
 
 function parsePathwayRules(raw: string): PathwayRulesByDomain {
@@ -74,7 +87,7 @@ function parsePathwayRules(raw: string): PathwayRulesByDomain {
 
     let descriptor = '';
     if (index < lines.length && lines[index].startsWith('Descriptor:')) {
-      descriptor = lines[index].replace('Descriptor:', '').trim();
+      descriptor = withProductToken(lines[index].replace('Descriptor:', '').trim());
       index += 1;
       while (
         index < lines.length &&
@@ -83,14 +96,14 @@ function parsePathwayRules(raw: string): PathwayRulesByDomain {
         !lines[index].startsWith('ARE YOU ON TRACK?') &&
         !PATHWAY_HEADER_TO_KEY[lines[index]]
       ) {
-        descriptor = `${descriptor} ${lines[index]}`.trim();
+        descriptor = withProductToken(`${descriptor} ${lines[index]}`.trim());
         index += 1;
       }
     }
 
     const checklist: PathwayChecklistRule[] = [];
     while (index < lines.length && lines[index].startsWith('☐')) {
-      const text = lines[index].replace(/^☐\s*/, '').trim();
+      const text = withProductToken(lines[index].replace(/^☐\s*/, '').trim());
       const key = `${pathway}:${sanitizeKeyPart(domain)}:${checklist.length + 1}`;
       checklist.push({ key, text });
       index += 1;

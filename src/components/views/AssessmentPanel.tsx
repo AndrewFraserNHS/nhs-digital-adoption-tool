@@ -1,14 +1,21 @@
-import React, { JSX, useCallback } from 'react';
-import { AdoptionStore, DraftEntry, DraftAction } from '@lib/adoptionState';
+import React, { JSX, useCallback, useMemo, useState } from 'react';
+import { AdoptionStore, DraftEntry, DraftAction, type ActionTargetLink } from '@lib/adoptionState';
 import { AssessmentComponent } from '@data/components';
-import { UNIFIED_ACTION_STATUSES } from '@lib/actionModel';
+import { UNIFIED_ACTION_STATUSES, deriveTemporalActionStatus } from '@lib/actionModel';
 import type { CstPathwayKey } from '@data/cst';
 import { PATHWAY_LABELS } from '@data/cst';
-import { getPathwayRulesForComponent } from '@data/pathway-rules';
+import { getPathwayRulesForComponent, resolvePathwayCopy } from '@data/pathway-rules';
 
 type AssessmentPanelStore = AdoptionStore & {
   showMatrix?: Record<string, boolean>;
 };
+
+interface ActionEditorState {
+  lens: string;
+  mode: 'create' | 'edit';
+  actionId?: string;
+  action: DraftAction;
+}
 
 export interface AssessmentPanelProps {
   store: AssessmentPanelStore;
@@ -22,8 +29,7 @@ export interface AssessmentPanelProps {
   onMatrixToggle: (key: string) => void;
   onActionRemove: (componentId: string, lens: string, actionId: string) => void;
   pathway: CstPathwayKey;
-  pathwayChecks: AdoptionStore['pathwayChecks'];
-  onPathwayCheckToggle: (componentId: string, checklistKey: string, checked: boolean) => void;
+  productName: string;
 }
 
 const STATUS_OPTIONS = UNIFIED_ACTION_STATUSES;
@@ -94,6 +100,26 @@ function HeaderInfoIcon(): JSX.Element {
   );
 }
 
+function createEmptyAction(phase: number, componentId: string, lens: string): DraftAction {
+  return {
+    id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    text: '',
+    owner: '',
+    timescale: '',
+    status: 'Planned',
+    phase,
+    startDate: '',
+    dueDate: '',
+    notes: '',
+    evidence: '',
+    linkedTargets: [{ componentId, lens }]
+  };
+}
+
+function hasTarget(targets: ActionTargetLink[] | undefined, componentId: string, lens: string): boolean {
+  return (targets || []).some((target) => target.componentId === componentId && target.lens === lens);
+}
+
 export function AssessmentPanel({
   store,
   components,
@@ -106,12 +132,24 @@ export function AssessmentPanel({
   onMatrixToggle,
   onActionRemove,
   pathway,
-  pathwayChecks,
-  onPathwayCheckToggle
+  productName
 }: AssessmentPanelProps): JSX.Element {
-  const component = components.find(c => c.id === activeComponentId) || components[0];
+  const component = components.find((c) => c.id === activeComponentId) || components[0];
   const pathwayRule = getPathwayRulesForComponent(component.id, pathway);
-  const checkedItems = pathwayChecks[component.id]?.[pathway] || [];
+  const [actionEditor, setActionEditor] = useState<ActionEditorState | null>(null);
+
+  const allTargetCombos = useMemo(
+    () =>
+      components.flatMap((item) =>
+        item.lenses.map((lens) => ({ componentId: item.id, componentLabel: item.label, lens }))
+      ),
+    [components]
+  );
+
+  const componentJustification = useMemo(() => {
+    const firstLens = component.lenses[0];
+    return firstLens ? getEntry(component.id, firstLens).justification : '';
+  }, [component.id, component.lenses, getEntry]);
 
   const handleComponentSelect = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -123,94 +161,138 @@ export function AssessmentPanel({
   const handleScoreChange = useCallback(
     (lens: string, newScore: number) => {
       const entry = getEntry(component.id, lens);
-      entry.score = newScore;
-      onEntryUpdate(component.id, lens, entry);
+      onEntryUpdate(component.id, lens, {
+        ...entry,
+        score: newScore
+      });
     },
     [component.id, getEntry, onEntryUpdate]
   );
 
-  const handleJustificationChange = useCallback(
-    (lens: string, value: string) => {
-      const entry = getEntry(component.id, lens);
-      entry.justification = value;
-      onEntryUpdate(component.id, lens, entry);
+  const handleComponentJustificationChange = useCallback(
+    (value: string) => {
+      component.lenses.forEach((lens) => {
+        const entry = getEntry(component.id, lens);
+        onEntryUpdate(component.id, lens, {
+          ...entry,
+          justification: value
+        });
+      });
     },
-    [component.id, getEntry, onEntryUpdate]
+    [component.id, component.lenses, getEntry, onEntryUpdate]
   );
 
-  const handleEvidenceChange = useCallback(
-    (lens: string, value: string) => {
-      const entry = getEntry(component.id, lens);
-      entry.evidence = value;
-      onEntryUpdate(component.id, lens, entry);
+  const openCreateActionModal = useCallback(
+    (lens: string, seedText?: string) => {
+      const seeded = createEmptyAction(component.phase, component.id, lens);
+      if (seedText) {
+        seeded.text = seedText;
+      }
+      setActionEditor({
+        lens,
+        mode: 'create',
+        action: seeded
+      });
     },
-    [component.id, getEntry, onEntryUpdate]
+    [component.id, component.phase]
   );
 
-  const handleAddAction = useCallback(
-    (lens: string) => {
-      const entry = getEntry(component.id, lens);
-      const newAction: DraftAction = {
-        id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-        text: '',
-        owner: '',
-        timescale: '',
-        status: 'Planned',
-        phase: component.phase
+  const openEditActionModal = useCallback((lens: string, action: DraftAction) => {
+    setActionEditor({
+      lens,
+      mode: 'edit',
+      actionId: action.id,
+      action: {
+        ...action,
+        linkedTargets: (action.linkedTargets || []).map((target) => ({ ...target })),
+        notes: action.notes || '',
+        evidence: action.evidence || '',
+        startDate: action.startDate || '',
+        dueDate: action.dueDate || ''
+      }
+    });
+  }, []);
+
+  const closeActionModal = () => {
+    setActionEditor(null);
+  };
+
+  const saveActionModal = () => {
+    if (!actionEditor) {
+      return;
+    }
+
+    if (!actionEditor.action.text.trim()) {
+      window.alert('Action description is required.');
+      return;
+    }
+
+    const normalizedAction: DraftAction = {
+      ...actionEditor.action,
+      status: deriveTemporalActionStatus(
+        actionEditor.action.status,
+        actionEditor.action.startDate,
+        actionEditor.action.dueDate
+      ),
+      linkedTargets: (actionEditor.action.linkedTargets || []).length
+        ? actionEditor.action.linkedTargets
+        : [{ componentId: component.id, lens: actionEditor.lens }],
+      timescale: actionEditor.action.dueDate || actionEditor.action.startDate || actionEditor.action.timescale
+    };
+
+    const entry = getEntry(component.id, actionEditor.lens);
+    const nextActions =
+      actionEditor.mode === 'create'
+        ? [...entry.actions, normalizedAction]
+        : entry.actions.map((item) => (item.id === actionEditor.actionId ? normalizedAction : item));
+
+    onEntryUpdate(component.id, actionEditor.lens, {
+      ...entry,
+      actions: nextActions
+    });
+
+    closeActionModal();
+  };
+
+  const updateActionEditor = (updates: Partial<DraftAction>) => {
+    setActionEditor((current) => {
+      if (!current) {
+        return current;
+      }
+      const next = {
+        ...current,
+        action: {
+          ...current.action,
+          ...updates
+        }
       };
-      entry.actions.push(newAction);
-      onEntryUpdate(component.id, lens, entry);
-    },
-    [component.id, getEntry, onEntryUpdate]
-  );
+      next.action.status = deriveTemporalActionStatus(
+        next.action.status,
+        next.action.startDate,
+        next.action.dueDate
+      );
+      return next;
+    });
+  };
 
-  const handleActionTextChange = useCallback(
-    (lens: string, actionId: string, value: string) => {
-      const entry = getEntry(component.id, lens);
-      const action = entry.actions.find(a => a.id === actionId);
-      if (action) {
-        action.text = value;
-        onEntryUpdate(component.id, lens, entry);
+  const toggleActionTarget = (componentId: string, lens: string, checked: boolean) => {
+    setActionEditor((current) => {
+      if (!current) {
+        return current;
       }
-    },
-    [component.id, getEntry, onEntryUpdate]
-  );
-
-  const handleActionOwnerChange = useCallback(
-    (lens: string, actionId: string, value: string) => {
-      const entry = getEntry(component.id, lens);
-      const action = entry.actions.find(a => a.id === actionId);
-      if (action) {
-        action.owner = value;
-        onEntryUpdate(component.id, lens, entry);
-      }
-    },
-    [component.id, getEntry, onEntryUpdate]
-  );
-
-  const handleActionTimescaleChange = useCallback(
-    (lens: string, actionId: string, value: string) => {
-      const entry = getEntry(component.id, lens);
-      const action = entry.actions.find(a => a.id === actionId);
-      if (action) {
-        action.timescale = value;
-        onEntryUpdate(component.id, lens, entry);
-      }
-    },
-    [component.id, getEntry, onEntryUpdate]
-  );
-
-  const handleActionStatusChange = useCallback(
-    (lens: string, actionId: string, value: string) => {
-      const entry = getEntry(component.id, lens);
-      const action = entry.actions.find(a => a.id === actionId);
-      if (action) {
-        action.status = value;
-        onEntryUpdate(component.id, lens, entry);
-      }
-    },
-    [component.id, getEntry, onEntryUpdate]
-  );
+      const existing = current.action.linkedTargets || [];
+      const nextTargets = checked
+        ? [...existing, { componentId, lens }]
+        : existing.filter((target) => !(target.componentId === componentId && target.lens === lens));
+      return {
+        ...current,
+        action: {
+          ...current.action,
+          linkedTargets: nextTargets
+        }
+      };
+    });
+  };
 
   return (
     <div className="max-w-5xl mx-auto pb-20">
@@ -223,8 +305,7 @@ export function AssessmentPanel({
             </span>
           </h2>
           <p className="text-slate-500 mt-2">
-            Score the current readiness of this component. The target score prior to Go-Live is
-            Level {component.target}.
+            Score readiness at lens level. Component-level justification and actions are tracked below.
           </p>
         </div>
         <select
@@ -244,26 +325,36 @@ export function AssessmentPanel({
         <div className="mb-8 rounded-lg border border-indigo-200 bg-indigo-50 p-5">
           <p className="text-xs font-semibold uppercase tracking-wider text-indigo-700">Pathway analysis</p>
           <p className="mt-1 text-sm font-semibold text-indigo-900">{PATHWAY_LABELS[pathway]}</p>
-          <p className="mt-2 text-sm text-indigo-900">{pathwayRule.descriptor}</p>
+          <p className="mt-2 text-sm text-indigo-900">
+            {resolvePathwayCopy(pathwayRule.descriptor, productName)}
+          </p>
 
-          <div className="mt-4 grid gap-2">
-            {pathwayRule.checklist.map((item) => {
-              const isChecked = checkedItems.includes(item.key);
-              return (
-                <label key={item.key} className="flex items-start gap-2 text-sm text-indigo-900">
-                  <input
-                    type="checkbox"
-                    checked={isChecked}
-                    onChange={(event) => onPathwayCheckToggle(component.id, item.key, event.target.checked)}
-                    className="mt-0.5 h-4 w-4 rounded border-indigo-300 text-indigo-600 focus:ring-indigo-500"
-                  />
-                  <span>{item.text}</span>
-                </label>
-              );
-            })}
+          <div className="mt-4 space-y-2">
+            {pathwayRule.checklist.map((item) => (
+              <div key={item.key} className="flex items-start justify-between gap-3 rounded border border-indigo-200 bg-white p-3">
+                <span className="text-sm text-indigo-900">{resolvePathwayCopy(item.text, productName)}</span>
+                <button
+                  type="button"
+                  onClick={() => openCreateActionModal(component.lenses[0], resolvePathwayCopy(item.text, productName))}
+                  className="shrink-0 rounded-md bg-indigo-600 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-indigo-700"
+                >
+                  Create Action
+                </button>
+              </div>
+            ))}
           </div>
         </div>
       ) : null}
+
+      <div className="mb-8 rounded-lg border border-slate-200 bg-white p-5">
+        <label className="block text-sm font-semibold text-slate-700 mb-2">Component Justification</label>
+        <textarea
+          value={componentJustification}
+          onChange={(event) => handleComponentJustificationChange(event.target.value)}
+          className="w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm h-24 p-2 border"
+          placeholder="Record rationale for this component."
+        />
+      </div>
 
       <div className="space-y-8">
         {component.lenses.map((lens) => {
@@ -273,16 +364,10 @@ export function AssessmentPanel({
             entry.score >= component.target ? '#22c55e' : entry.score > 0 ? '#f59e0b' : '#cbd5e1';
 
           return (
-            <div
-              key={lens}
-              className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden"
-            >
-              {/* Header */}
+            <div key={lens} className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
               <div className="bg-slate-50 p-6 border-b border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-blue-600 block mb-1">
-                    Lens
-                  </span>
+                  <span className="text-xs font-bold uppercase tracking-wider text-blue-600 block mb-1">Lens</span>
                   <button
                     onClick={() => onOpenLensInfo(lens)}
                     className="flex items-center text-xl font-semibold text-slate-800 hover:text-[#005eb8] transition-colors group text-left"
@@ -293,9 +378,7 @@ export function AssessmentPanel({
                   </button>
                 </div>
                 <div className="shrink-0 w-full md:w-64">
-                  <label className="block text-xs font-semibold text-slate-500 mb-1">
-                    Readiness Score
-                  </label>
+                  <label className="block text-xs font-semibold text-slate-500 mb-1">Readiness Score</label>
                   <select
                     value={entry.score}
                     onChange={(e) => handleScoreChange(lens, Number(e.target.value))}
@@ -311,14 +394,13 @@ export function AssessmentPanel({
                 </div>
               </div>
 
-              {/* Rubric guidance */}
               <div className="px-6 py-4 bg-blue-50/50 border-b border-slate-100 text-sm">
                 <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
                   <div className="flex items-start flex-1">
                     <InfoIcon />
                     <p className="text-slate-600 whitespace-pre-line">
                       <strong className="text-slate-700">
-                        {entry.score === 0 ? 'Not Started' : `Level ${entry.score}`}:{' '}
+                        {entry.score === 0 ? 'Not Started' : `Level ${entry.score}`}: 
                       </strong>
                       {getRubricText(component.id, lens, entry.score)}
                     </p>
@@ -333,7 +415,6 @@ export function AssessmentPanel({
                 </div>
               </div>
 
-              {/* Matrix guidance grid */}
               {showMatrix && (
                 <div className="px-6 py-5 bg-slate-50 border-b border-slate-200">
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
@@ -377,114 +458,193 @@ export function AssessmentPanel({
                 </div>
               )}
 
-              {/* Entry form */}
-              <div className="p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Justification and Evidence */}
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">
-                      Justification
-                    </label>
-                    <textarea
-                      value={entry.justification}
-                      onChange={(e) => handleJustificationChange(lens, e.target.value)}
-                      className="w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm h-24 p-2 border"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">
-                      Evidence Links / Docs
-                    </label>
-                    <textarea
-                      value={entry.evidence}
-                      onChange={(e) => handleEvidenceChange(lens, e.target.value)}
-                      className="w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm h-16 p-2 border"
-                    />
-                  </div>
+              <div className="p-6 border-t border-slate-100">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="text-sm font-semibold text-slate-800">Lens Actions</h4>
+                  <button
+                    onClick={() => openCreateActionModal(lens)}
+                    className="px-3 py-1.5 rounded bg-[#005eb8] text-white text-xs font-semibold hover:bg-blue-700 transition-colors"
+                  >
+                    Add Action
+                  </button>
                 </div>
 
-                {/* Actions */}
-                <div className="border rounded-lg p-4 bg-slate-50">
-                  <div className="flex items-center justify-between mb-3">
-                    <h4 className="text-sm font-semibold text-slate-800">Gap Bridging Actions</h4>
-                    <button
-                      onClick={() => handleAddAction(lens)}
-                      className="px-3 py-1.5 rounded bg-[#005eb8] text-white text-xs font-semibold hover:bg-blue-700 transition-colors"
-                    >
-                      Add Action
-                    </button>
-                  </div>
-                  <div className="space-y-3">
-                    {entry.actions.length ? (
-                      entry.actions.map((action) => (
-                        <div
-                          key={action.id}
-                          className="bg-white border border-slate-200 rounded-md p-3"
-                        >
-                          <div className="grid grid-cols-1 gap-2 mb-3">
-                            <input
-                              type="text"
-                              value={action.text}
-                              onChange={(e) =>
-                                handleActionTextChange(lens, action.id, e.target.value)
-                              }
-                              className="w-full rounded-md border-slate-300 p-2 border text-sm focus:border-blue-500 focus:ring-blue-500"
-                              placeholder="Action description"
-                            />
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                              <input
-                                type="text"
-                                value={action.owner}
-                                onChange={(e) =>
-                                  handleActionOwnerChange(lens, action.id, e.target.value)
-                                }
-                                className="rounded-md border-slate-300 p-2 border text-sm focus:border-blue-500 focus:ring-blue-500"
-                                placeholder="Owner"
-                              />
-                              <input
-                                type="text"
-                                value={action.timescale}
-                                onChange={(e) =>
-                                  handleActionTimescaleChange(lens, action.id, e.target.value)
-                                }
-                                className="rounded-md border-slate-300 p-2 border text-sm focus:border-blue-500 focus:ring-blue-500"
-                                placeholder="Timescale"
-                              />
-                              <select
-                                value={action.status}
-                                onChange={(e) =>
-                                  handleActionStatusChange(lens, action.id, e.target.value)
-                                }
-                                className="rounded-md border-slate-300 p-2 border text-sm focus:border-blue-500 focus:ring-blue-500"
+                <div className="space-y-3">
+                  {entry.actions.length ? (
+                    entry.actions.map((action) => {
+                      const temporalStatus = deriveTemporalActionStatus(action.status, action.startDate, action.dueDate);
+                      return (
+                        <div key={action.id} className="bg-slate-50 border border-slate-200 rounded-md p-3">
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <p className="text-sm font-semibold text-slate-800">{action.text || 'Untitled action'}</p>
+                              <p className="text-xs text-slate-600 mt-1">
+                                Owner: {action.owner || 'Unassigned'} · Status: {temporalStatus}
+                              </p>
+                              <p className="text-xs text-slate-500 mt-1">
+                                Start: {action.startDate || 'N/A'} · End: {action.dueDate || 'N/A'}
+                              </p>
+                              <p className="text-xs text-slate-500 mt-1">
+                                Linked targets: {(action.linkedTargets || []).length || 1}
+                              </p>
+                            </div>
+                            <div className="flex gap-2">
+                              <button
+                                type="button"
+                                onClick={() => openEditActionModal(lens, action)}
+                                className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100"
                               >
-                                {STATUS_OPTIONS.map((status) => (
-                                  <option key={status} value={status}>
-                                    {status}
-                                  </option>
-                                ))}
-                              </select>
+                                Edit
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => onActionRemove(component.id, lens, action.id)}
+                                className="rounded-md border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100"
+                              >
+                                Remove
+                              </button>
                             </div>
                           </div>
-                          <div className="flex justify-end">
-                            <button
-                              onClick={() => onActionRemove(component.id, lens, action.id)}
-                              className="text-xs text-red-600 hover:text-red-800 transition-colors"
-                            >
-                              Remove
-                            </button>
-                          </div>
                         </div>
-                      ))
-                    ) : (
-                      <p className="text-sm text-slate-500">No actions yet for this lens.</p>
-                    )}
-                  </div>
+                      );
+                    })
+                  ) : (
+                    <p className="text-sm text-slate-500">No actions yet for this lens.</p>
+                  )}
                 </div>
               </div>
             </div>
           );
         })}
       </div>
+
+      {actionEditor ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 p-4">
+          <div className="w-full max-w-3xl rounded-xl border border-slate-200 bg-white p-6 shadow-2xl">
+            <div className="flex items-center justify-between gap-3">
+              <h3 className="text-lg font-semibold text-slate-900">
+                {actionEditor.mode === 'create' ? 'Create Action' : 'Edit Action'} · {component.label} / {actionEditor.lens}
+              </h3>
+              <button
+                type="button"
+                onClick={closeActionModal}
+                className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-100"
+              >
+                Close
+              </button>
+            </div>
+
+            <div className="mt-4 grid gap-3">
+              <label className="text-sm text-slate-700">
+                <span className="mb-1 block font-semibold">Description</span>
+                <textarea
+                  value={actionEditor.action.text}
+                  onChange={(event) => updateActionEditor({ text: event.target.value })}
+                  className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm h-20"
+                />
+              </label>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <label className="text-sm text-slate-700">
+                  <span className="mb-1 block font-semibold">Owner</span>
+                  <input
+                    value={actionEditor.action.owner}
+                    onChange={(event) => updateActionEditor({ owner: event.target.value })}
+                    className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+                  />
+                </label>
+                <label className="text-sm text-slate-700">
+                  <span className="mb-1 block font-semibold">Status</span>
+                  <select
+                    value={actionEditor.action.status}
+                    onChange={(event) => updateActionEditor({ status: event.target.value as DraftAction['status'] })}
+                    className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+                  >
+                    {STATUS_OPTIONS.map((status) => (
+                      <option key={status} value={status}>{status}</option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <label className="text-sm text-slate-700">
+                  <span className="mb-1 block font-semibold">Start Date</span>
+                  <input
+                    type="date"
+                    value={actionEditor.action.startDate || ''}
+                    onChange={(event) => updateActionEditor({ startDate: event.target.value })}
+                    className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+                  />
+                </label>
+                <label className="text-sm text-slate-700">
+                  <span className="mb-1 block font-semibold">End Date</span>
+                  <input
+                    type="date"
+                    value={actionEditor.action.dueDate || ''}
+                    onChange={(event) => updateActionEditor({ dueDate: event.target.value })}
+                    className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+                  />
+                </label>
+              </div>
+
+              <label className="text-sm text-slate-700">
+                <span className="mb-1 block font-semibold">Notes</span>
+                <textarea
+                  value={actionEditor.action.notes || ''}
+                  onChange={(event) => updateActionEditor({ notes: event.target.value })}
+                  className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm h-20"
+                />
+              </label>
+
+              <label className="text-sm text-slate-700">
+                <span className="mb-1 block font-semibold">Evidence Links / Docs</span>
+                <textarea
+                  value={actionEditor.action.evidence || ''}
+                  onChange={(event) => updateActionEditor({ evidence: event.target.value })}
+                  className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm h-20"
+                />
+              </label>
+
+              <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                <p className="text-sm font-semibold text-slate-800">Linked component-lens targets</p>
+                <div className="mt-2 max-h-40 overflow-auto space-y-1">
+                  {allTargetCombos.map((target) => {
+                    const checked = hasTarget(actionEditor.action.linkedTargets, target.componentId, target.lens);
+                    return (
+                      <label key={`${target.componentId}:${target.lens}`} className="flex items-start gap-2 text-sm text-slate-700">
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={(event) => toggleActionTarget(target.componentId, target.lens, event.target.checked)}
+                        />
+                        <span>{target.componentLabel} / {target.lens}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-4 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={closeActionModal}
+                className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={saveActionModal}
+                className="rounded-md bg-[#005eb8] px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+              >
+                Save Action
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

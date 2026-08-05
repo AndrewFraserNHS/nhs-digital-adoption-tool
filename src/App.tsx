@@ -1,6 +1,7 @@
+import type { JSX } from 'react';
 import { HashRouter, Navigate, Route, Routes } from 'react-router-dom';
 import AdoptionApp from '@pages/AdoptionApp';
-import MaturityApp from '@pages/MaturityApp';
+import MaturityApp from './legacy/MaturityApp';
 import CompareApp from '@pages/CompareApp';
 
 function HomePage(): JSX.Element {

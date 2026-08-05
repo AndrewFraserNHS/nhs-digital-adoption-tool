@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   combineValidationResults,
+  validateCstProfile,
   validateEntry,
   validateOrgProfile,
   validateScore
@@ -36,12 +37,53 @@ describe('adoptionValidator', () => {
     const result = validateOrgProfile({
       trustName: '',
       region: 'r'.repeat(101),
-      trustType: 'Acute'
+      trustType: 'Acute',
+      cst: {
+        type: 'project',
+        pathway: 'pathway-1',
+        goLiveDate: '',
+        fullAdoptionDate: '',
+        benefitRealizationDate: ''
+      }
     });
 
     expect(result.isValid).toBe(false);
     expect(result.errors.some((error) => error.field === 'trustName')).toBe(true);
     expect(result.errors.some((error) => error.field === 'region')).toBe(true);
+    expect(result.errors.some((error) => error.field === 'cst.goLiveDate')).toBe(true);
+  });
+
+  it('validates CST timeline ordering rules', () => {
+    const invalid = validateCstProfile({
+      trustName: 'Trust',
+      region: '',
+      trustType: 'Acute',
+      cst: {
+        type: 'program',
+        pathway: 'pathway-2',
+        goLiveDate: '2026-11-10',
+        fullAdoptionDate: '2026-11-09',
+        benefitRealizationDate: '2026-11-08'
+      }
+    });
+
+    expect(invalid.isValid).toBe(false);
+    expect(invalid.errors.some((error) => error.field === 'cst.fullAdoptionDate')).toBe(true);
+    expect(invalid.errors.some((error) => error.field === 'cst.benefitRealizationDate')).toBe(true);
+
+    const valid = validateCstProfile({
+      trustName: 'Trust',
+      region: '',
+      trustType: 'Acute',
+      cst: {
+        type: 'program',
+        pathway: 'pathway-2',
+        goLiveDate: '2026-11-10',
+        fullAdoptionDate: '2026-12-10',
+        benefitRealizationDate: '2027-01-10'
+      }
+    });
+    expect(valid.isValid).toBe(true);
   });
 
   it('combines validation errors from multiple results', () => {

@@ -29,7 +29,14 @@ const store: AdoptionStore = {
     region: 'North',
     trustType: 'Acute',
     projectName: 'Project',
-    leadName: 'Lead'
+    leadName: 'Lead',
+    cst: {
+      type: 'project',
+      pathway: 'pathway-1',
+      goLiveDate: '2026-10-01',
+      fullAdoptionDate: '',
+      benefitRealizationDate: ''
+    }
   },
   currentDraft: {
     vision: {
@@ -50,6 +57,7 @@ const store: AdoptionStore = {
     }
   },
   phaseOverrides: {},
+  pathwayChecks: {},
   history: [
     {
       monthLabel: 'Jul 2026',
@@ -104,6 +112,8 @@ describe('AdoptionDashboard', () => {
         metrics={metrics}
         getEntry={getEntry}
         onComponentClick={vi.fn()}
+        pathway="pathway-1"
+        pathwayChecks={{}}
       />
     );
 
@@ -121,6 +131,8 @@ describe('AdoptionDashboard', () => {
         metrics={metrics}
         getEntry={getEntry}
         onComponentClick={vi.fn()}
+        pathway="pathway-1"
+        pathwayChecks={{}}
       />
     );
 
@@ -140,6 +152,8 @@ describe('AdoptionDashboard', () => {
         metrics={metrics}
         getEntry={getEntry}
         onComponentClick={onComponentClick}
+        pathway="pathway-1"
+        pathwayChecks={{}}
       />
     );
 

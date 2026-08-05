@@ -12,11 +12,13 @@ describe('adoptionState', () => {
     const defaults = initializeStore();
     expect(defaults.view).toBe('dashboard');
     expect(defaults.orgProfile.trustName).toBe('');
+    expect(defaults.orgProfile.cst.pathway).toBe('pathway-1');
     expect(defaults.phaseOverrides).toEqual({});
+    expect(defaults.pathwayChecks).toEqual({});
 
     const persisted = initializeStore({
       view: 'settings',
-      orgProfile: { trustName: 'Trust', region: 'North', trustType: 'Acute' },
+      orgProfile: { trustName: 'Trust', region: 'North', trustType: 'Acute', cst: defaults.orgProfile.cst },
       currentDraft: { vision: {} },
       history: []
     });

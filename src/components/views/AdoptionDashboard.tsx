@@ -2,6 +2,10 @@ import { AdoptionStore, DraftAction, DraftEntry } from '@lib/adoptionState';
 import { Metrics } from '@lib/adoptionMetrics';
 import { AssessmentComponent } from '@data/components';
 import { JSX, useMemo, useState } from 'react';
+import type { CstPathwayKey } from '@data/cst';
+import { PATHWAY_LABELS } from '@data/cst';
+import { getPathwayRulesForComponent } from '@data/pathway-rules';
+import { calculateChecklistCompletion } from '@lib/pathwayAnalysis';
 
 export interface DashboardProps {
   store: AdoptionStore;
@@ -10,6 +14,8 @@ export interface DashboardProps {
   metrics: Metrics;
   getEntry: (componentId: string, lens: string) => DraftEntry;
   onComponentClick: (componentId: string) => void;
+  pathway: CstPathwayKey;
+  pathwayChecks: AdoptionStore['pathwayChecks'];
 }
 
 export function AdoptionDashboard({
@@ -18,7 +24,9 @@ export function AdoptionDashboard({
   lenses,
   metrics,
   getEntry,
-  onComponentClick
+  onComponentClick,
+  pathway,
+  pathwayChecks
 }: DashboardProps): JSX.Element {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'not-started' | 'below-target' | 'on-track'>('all');
@@ -118,6 +126,21 @@ export function AdoptionDashboard({
       });
   }, [components, componentPhaseFilter, getEntry, lastSnapshot, searchTerm, sortBy, sortDirection, statusFilter]);
 
+  const pathwaySummary = useMemo(() => {
+    let required = 0;
+    let checked = 0;
+
+    components.forEach((component) => {
+      const rule = getPathwayRulesForComponent(component.id, pathway);
+      const completion = calculateChecklistCompletion(pathwayChecks[component.id]?.[pathway] || [], rule);
+      required += completion.totalCount;
+      checked += completion.checkedCount;
+    });
+
+    const pct = required > 0 ? Math.round((checked / required) * 100) : 100;
+    return { required, checked, pct };
+  }, [components, pathway, pathwayChecks]);
+
   return (
     <div className="max-w-6xl mx-auto">
 
@@ -174,6 +197,14 @@ export function AdoptionDashboard({
       )}
 
       <h2 className="text-2xl font-bold text-slate-800 mb-6">Adoption Delivery Dashboard</h2>
+
+      <div className="mb-6 rounded-lg border border-indigo-200 bg-indigo-50 p-4">
+        <p className="text-xs font-semibold uppercase tracking-wider text-indigo-700">Current CST pathway</p>
+        <p className="mt-1 text-sm font-semibold text-indigo-900">{PATHWAY_LABELS[pathway]}</p>
+        <p className="mt-1 text-sm text-indigo-800">
+          Pathway checklist completion: {pathwaySummary.checked}/{pathwaySummary.required} ({pathwaySummary.pct}%).
+        </p>
+      </div>
       
       {/* Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

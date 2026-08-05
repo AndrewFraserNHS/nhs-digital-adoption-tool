@@ -55,11 +55,19 @@ function createProps(overrides?: {
         region: 'North',
         trustType: 'Acute',
         projectName: 'Programme',
-        leadName: 'Lead'
+        leadName: 'Lead',
+        cst: {
+          type: 'project',
+          pathway: 'pathway-1',
+          goLiveDate: '2026-10-01',
+          fullAdoptionDate: '',
+          benefitRealizationDate: ''
+        }
       },
       currentDraft: {},
       history: [],
       phaseOverrides: {},
+      pathwayChecks: {},
       showMatrix: {
         'vision:Strategic Direction': Boolean(overrides?.showMatrix)
       }
@@ -72,7 +80,10 @@ function createProps(overrides?: {
     onEntryUpdate: vi.fn(),
     onOpenLensInfo: vi.fn(),
     onMatrixToggle: vi.fn(),
-    onActionRemove: vi.fn()
+    onActionRemove: vi.fn(),
+    pathway: 'pathway-1' as const,
+    pathwayChecks: {},
+    onPathwayCheckToggle: vi.fn()
   };
 }
 

@@ -2,6 +2,9 @@ import React, { JSX, useCallback } from 'react';
 import { AdoptionStore, DraftEntry, DraftAction } from '@lib/adoptionState';
 import { AssessmentComponent } from '@data/components';
 import { UNIFIED_ACTION_STATUSES } from '@lib/actionModel';
+import type { CstPathwayKey } from '@data/cst';
+import { PATHWAY_LABELS } from '@data/cst';
+import { getPathwayRulesForComponent } from '@data/pathway-rules';
 
 type AssessmentPanelStore = AdoptionStore & {
   showMatrix?: Record<string, boolean>;
@@ -18,6 +21,9 @@ export interface AssessmentPanelProps {
   onOpenLensInfo: (lensName: string) => void;
   onMatrixToggle: (key: string) => void;
   onActionRemove: (componentId: string, lens: string, actionId: string) => void;
+  pathway: CstPathwayKey;
+  pathwayChecks: AdoptionStore['pathwayChecks'];
+  onPathwayCheckToggle: (componentId: string, checklistKey: string, checked: boolean) => void;
 }
 
 const STATUS_OPTIONS = UNIFIED_ACTION_STATUSES;
@@ -98,9 +104,14 @@ export function AssessmentPanel({
   onEntryUpdate,
   onOpenLensInfo,
   onMatrixToggle,
-  onActionRemove
+  onActionRemove,
+  pathway,
+  pathwayChecks,
+  onPathwayCheckToggle
 }: AssessmentPanelProps): JSX.Element {
   const component = components.find(c => c.id === activeComponentId) || components[0];
+  const pathwayRule = getPathwayRulesForComponent(component.id, pathway);
+  const checkedItems = pathwayChecks[component.id]?.[pathway] || [];
 
   const handleComponentSelect = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -228,6 +239,31 @@ export function AssessmentPanel({
           ))}
         </select>
       </div>
+
+      {pathwayRule ? (
+        <div className="mb-8 rounded-lg border border-indigo-200 bg-indigo-50 p-5">
+          <p className="text-xs font-semibold uppercase tracking-wider text-indigo-700">Pathway analysis</p>
+          <p className="mt-1 text-sm font-semibold text-indigo-900">{PATHWAY_LABELS[pathway]}</p>
+          <p className="mt-2 text-sm text-indigo-900">{pathwayRule.descriptor}</p>
+
+          <div className="mt-4 grid gap-2">
+            {pathwayRule.checklist.map((item) => {
+              const isChecked = checkedItems.includes(item.key);
+              return (
+                <label key={item.key} className="flex items-start gap-2 text-sm text-indigo-900">
+                  <input
+                    type="checkbox"
+                    checked={isChecked}
+                    onChange={(event) => onPathwayCheckToggle(component.id, item.key, event.target.checked)}
+                    className="mt-0.5 h-4 w-4 rounded border-indigo-300 text-indigo-600 focus:ring-indigo-500"
+                  />
+                  <span>{item.text}</span>
+                </label>
+              );
+            })}
+          </div>
+        </div>
+      ) : null}
 
       <div className="space-y-8">
         {component.lenses.map((lens) => {

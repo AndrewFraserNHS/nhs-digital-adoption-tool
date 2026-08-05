@@ -1,14 +1,17 @@
-import type { AdoptionStore, DraftEntry, HistorySnapshot, OrgProfile } from './adoptionState';
-import { cloneDraft, initializeStore } from './adoptionState';
+import type { AdoptionStore, DraftEntry, HistorySnapshot, OrgProfile, PathwayChecklistState } from './adoptionState';
+import { cloneDraft, initializeStore, normalizeOrgProfile } from './adoptionState';
 import { normalizeActionStatus } from './actionModel';
 
 export const ADOPTION_STORAGE_KEY = 'nhs-digital-adoption-store';
 
 export interface SavedAdoptionAssessment {
+  schemaVersion?: string;
+  exportedAt?: string;
   orgProfile: OrgProfile;
   currentDraft: Record<string, Record<string, DraftEntry>>;
   history: HistorySnapshot[];
   phaseOverrides: Record<string, string>;
+  pathwayChecks: PathwayChecklistState;
 }
 
 export function buildSnapshotLabel(date = new Date()): string {
@@ -17,13 +20,36 @@ export function buildSnapshotLabel(date = new Date()): string {
 
 export function buildAdoptionExportPayload(store: AdoptionStore): SavedAdoptionAssessment {
   return {
+    schemaVersion: '2.0',
+    exportedAt: new Date().toISOString(),
     orgProfile: { ...store.orgProfile },
     currentDraft: cloneAndNormaliseDraft(store.currentDraft),
     history: store.history.map((snapshot) => ({
       ...snapshot,
       data: cloneAndNormaliseDraft(snapshot.data)
     })),
-    phaseOverrides: { ...store.phaseOverrides }
+    phaseOverrides: { ...store.phaseOverrides },
+    pathwayChecks: clonePathwayChecks(store.pathwayChecks)
+  };
+}
+
+export function migrateSavedAdoptionAssessment(
+  payload: Partial<SavedAdoptionAssessment> | null | undefined
+): Partial<SavedAdoptionAssessment> {
+  if (!payload) {
+    return {};
+  }
+
+  const migratedProfile = normalizeOrgProfile(payload.orgProfile);
+  if (!payload.orgProfile?.cst?.pathway) {
+    migratedProfile.cst.pathway = 'pathway-1';
+  }
+
+  return {
+    ...payload,
+    schemaVersion: payload.schemaVersion || '2.0',
+    orgProfile: migratedProfile,
+    pathwayChecks: clonePathwayChecks(payload.pathwayChecks)
   };
 }
 
@@ -31,17 +57,20 @@ export function mergeImportedAdoptionState(
   payload: Partial<SavedAdoptionAssessment>,
   fallbackStore: AdoptionStore
 ): AdoptionStore {
+  const migrated = migrateSavedAdoptionAssessment(payload);
+
   return initializeStore({
     ...fallbackStore,
-    orgProfile: payload.orgProfile || fallbackStore.orgProfile,
-    currentDraft: payload.currentDraft
-      ? cloneAndNormaliseDraft(payload.currentDraft)
+    orgProfile: migrated.orgProfile || fallbackStore.orgProfile,
+    currentDraft: migrated.currentDraft
+      ? cloneAndNormaliseDraft(migrated.currentDraft)
       : cloneAndNormaliseDraft(fallbackStore.currentDraft),
-    history: (payload.history || fallbackStore.history).map((snapshot) => ({
+    history: (migrated.history || fallbackStore.history).map((snapshot) => ({
       ...snapshot,
       data: cloneAndNormaliseDraft(snapshot.data)
     })),
-    phaseOverrides: payload.phaseOverrides || fallbackStore.phaseOverrides
+    phaseOverrides: migrated.phaseOverrides || fallbackStore.phaseOverrides,
+    pathwayChecks: migrated.pathwayChecks || fallbackStore.pathwayChecks
   });
 }
 
@@ -70,4 +99,20 @@ function cloneAndNormaliseDraft(
     });
   });
   return cloned;
+}
+
+function clonePathwayChecks(checks?: PathwayChecklistState): PathwayChecklistState {
+  if (!checks) {
+    return {};
+  }
+
+  return Object.keys(checks).reduce<PathwayChecklistState>((next, componentId) => {
+    const componentChecks = checks[componentId] || {};
+    next[componentId] = {
+      'pathway-1': [...(componentChecks['pathway-1'] || [])],
+      'pathway-2': [...(componentChecks['pathway-2'] || [])],
+      'pathway-3': [...(componentChecks['pathway-3'] || [])]
+    };
+    return next;
+  }, {});
 }

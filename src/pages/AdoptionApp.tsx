@@ -5,6 +5,7 @@ import { downloadFile, escapeHtml } from '@lib/utils';
 import { ASSESSMENT_LENSES as LENSES } from '@data/lenses';
 import { ASSESSMENT_COMPONENTS, getComponentById } from '@data/components';
 import { resolveGuidanceLinksForAdoptionComponent, type MaturityGuidanceTarget } from '@data/maturity-guidance-links';
+import { PATHWAY_LABELS, type CstPathwayKey } from '@data/cst';
 import { GENERIC_RUBRIC } from '@data/rubrics';
 import { SPECIFIC_RUBRICS } from '@types/constants';
 import type {
@@ -24,9 +25,13 @@ import {
   ADOPTION_STORAGE_KEY,
   buildAdoptionExportPayload,
   buildHistorySnapshot,
+  migrateSavedAdoptionAssessment,
   mergeImportedAdoptionState,
   type SavedAdoptionAssessment
 } from '@lib/adoptionIO';
+import { getPathwayRulesForComponent } from '@data/pathway-rules';
+import { calculateChecklistCompletion } from '@lib/pathwayAnalysis';
+import { validateCstProfile } from '@lib/adoptionValidator';
 import { AdoptionDashboard } from '@components/views/AdoptionDashboard';
 import { SettingsPanel, type AdoptionUserSettings } from '@components/views/SettingsPanel';
 import { ActionPlanTracker } from '@components/views/ActionPlanTracker';
@@ -181,13 +186,14 @@ export function AdoptionApp() {
   const [store, setStore] = useState<AdoptionStore>(() => {
     const state = AppState.getInstance();
     state.loadFromWindow();
-    const persisted = load<AdoptionStore>(ADOPTION_STORAGE_KEY);
+    const persisted = migrateSavedAdoptionAssessment(load<SavedAdoptionAssessment>(ADOPTION_STORAGE_KEY));
     return initializeStore({
       view: 'dashboard',
       orgProfile: persisted?.orgProfile || state.adoption?.orgProfile,
       currentDraft: persisted?.currentDraft || state.adoption?.currentDraft,
       history: persisted?.history || state.adoption?.history,
-      phaseOverrides: persisted?.phaseOverrides || state.adoption?.phaseOverrides
+      phaseOverrides: persisted?.phaseOverrides || state.adoption?.phaseOverrides,
+      pathwayChecks: persisted?.pathwayChecks || state.adoption?.pathwayChecks
     }) as AdoptionStore;
   });
 
@@ -280,7 +286,8 @@ export function AdoptionApp() {
       orgProfile: store.orgProfile,
       currentDraft: store.currentDraft,
       history: store.history,
-      phaseOverrides: store.phaseOverrides
+      phaseOverrides: store.phaseOverrides,
+      pathwayChecks: store.pathwayChecks
     };
   }, [store]);
 
@@ -419,7 +426,45 @@ export function AdoptionApp() {
     }));
   }, []);
 
+  const confirmIfCstWarnings = useCallback((actionLabel: string): boolean => {
+    const validation = validateCstProfile(store.orgProfile);
+    if (validation.isValid) {
+      return true;
+    }
+
+    const warnings = validation.errors.map((error) => `- ${error.message}`).join('\n');
+    return window.confirm(
+      `${actionLabel} has CST warnings:\n\n${warnings}\n\nContinue anyway?`
+    );
+  }, [store.orgProfile]);
+
+  const handlePathwayCheckToggle = useCallback((componentId: string, checklistKey: string, checked: boolean) => {
+    setStore((prev) => {
+      const pathway = prev.orgProfile.cst.pathway as CstPathwayKey;
+      const currentKeys = prev.pathwayChecks[componentId]?.[pathway] || [];
+      const nextKeys = checked
+        ? [...new Set([...currentKeys, checklistKey])]
+        : currentKeys.filter((item) => item !== checklistKey);
+
+      return {
+        ...prev,
+        pathwayChecks: {
+          ...prev.pathwayChecks,
+          [componentId]: {
+            ...(prev.pathwayChecks[componentId] || {}),
+            [pathway]: nextKeys
+          }
+        }
+      };
+    });
+  }, []);
+
   const handleExport = useCallback(() => {
+    const proceed = confirmIfCstWarnings('Export JSON');
+    if (!proceed) {
+      return;
+    }
+
     const payload = buildAdoptionExportPayload(store);
 
     downloadFile(
@@ -427,7 +472,7 @@ export function AdoptionApp() {
       JSON.stringify(payload, null, 2),
       'application/json'
     );
-  }, [store]);
+  }, [confirmIfCstWarnings, store]);
 
   const handleImportClick = useCallback(() => {
     fileInputRef.current?.click();
@@ -452,6 +497,11 @@ export function AdoptionApp() {
   }, []);
 
   const handleFinaliseMonth = useCallback(() => {
+    const proceedWithWarnings = confirmIfCstWarnings('Finalise Month');
+    if (!proceedWithWarnings) {
+      return;
+    }
+
     const previousPhase = store.history.length > 0
       ? computeMetrics(
           {
@@ -500,9 +550,14 @@ export function AdoptionApp() {
     }));
     setEngagement((prev) => addEngagementXp(prev, 25));
     setView('dashboard');
-  }, [COMPONENTS, metrics.currentPhase, metrics.overallPct, store, store.currentDraft, store.history]);
+  }, [COMPONENTS, confirmIfCstWarnings, metrics.currentPhase, metrics.overallPct, store, store.currentDraft, store.history]);
 
   const handleFinalisePriorMonth = useCallback(() => {
+    const proceedWithWarnings = confirmIfCstWarnings('Finalise Prior Month');
+    if (!proceedWithWarnings) {
+      return;
+    }
+
     const previousMonthLabel = reportReminder.previousMonthLabel;
     const alreadyFinalised = store.history.some((snapshot) => snapshot.monthLabel === previousMonthLabel);
 
@@ -531,7 +586,7 @@ export function AdoptionApp() {
         submittedOnTime ? 45 : 20
       )
     );
-  }, [metrics.overallPct, reportReminder.previousMonthLabel, store.currentDraft, store.history]);
+  }, [confirmIfCstWarnings, metrics.overallPct, reportReminder.previousMonthLabel, store.currentDraft, store.history]);
 
   const handleLoadExampleData = useCallback(async () => {
     try {
@@ -856,6 +911,9 @@ export function AdoptionApp() {
             <span className="text-slate-600 ml-2">
               {store.orgProfile.projectName || 'Unnamed Project'}
             </span>
+            <span className="ml-2 rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600">
+              {store.orgProfile.cst.type.toUpperCase()} · {PATHWAY_LABELS[store.orgProfile.cst.pathway]}
+            </span>
           </div>
           <div className="flex items-center space-x-3">
             <button
@@ -1018,6 +1076,8 @@ export function AdoptionApp() {
                 metrics={metrics}
                 getEntry={getEntry}
                 onComponentClick={openComponentAssessment}
+                pathway={store.orgProfile.cst.pathway}
+                pathwayChecks={store.pathwayChecks}
               />
             </div>
           )}
@@ -1044,6 +1104,9 @@ export function AdoptionApp() {
                   actions: entry.actions.filter(a => a.id !== actionId).map(cloneAction)
                 });
               }}
+              pathway={store.orgProfile.cst.pathway}
+              pathwayChecks={store.pathwayChecks}
+              onPathwayCheckToggle={handlePathwayCheckToggle}
             />
           )}
           {view === 'action-plan' && (
@@ -1064,6 +1127,8 @@ export function AdoptionApp() {
               metrics={metrics}
               getEntry={getEntry}
               onComponentClick={openComponentAssessment}
+              pathway={store.orgProfile.cst.pathway}
+              pathwayChecks={store.pathwayChecks}
             />
           )}
           {view === 'highlight-builder' && (

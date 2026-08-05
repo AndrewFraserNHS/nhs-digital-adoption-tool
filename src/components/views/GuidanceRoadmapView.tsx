@@ -2,12 +2,17 @@ import type { JSX } from 'react';
 import type { AssessmentComponent } from '@data/components';
 import type { DraftEntry } from '@lib/adoptionState';
 import type { Metrics } from '@lib/adoptionMetrics';
+import type { CstPathwayKey } from '@data/cst';
+import { getPathwayRulesForComponent } from '@data/pathway-rules';
+import { evaluatePathwayTrackStatus } from '@lib/pathwayAnalysis';
 
 interface GuidanceRoadmapViewProps {
   components: AssessmentComponent[];
   metrics: Metrics;
   getEntry: (componentId: string, lens: string) => DraftEntry;
   onComponentClick: (componentId: string) => void;
+  pathway: CstPathwayKey;
+  pathwayChecks: Record<string, Partial<Record<CstPathwayKey, string[]>>>;
 }
 
 const PHASES = [1, 2, 3, 4, 5];
@@ -20,16 +25,45 @@ function getComponentAverage(component: AssessmentComponent, getEntry: GuidanceR
 function getRoadmapStatus(
   component: AssessmentComponent,
   average: number,
-  currentPhase: number
+  currentPhase: number,
+  pathway: CstPathwayKey,
+  checkedItemKeys: string[]
 ): {
   label: string;
   rowClass: string;
   chipClass: string;
   barClass: string;
 } {
+  const rule = getPathwayRulesForComponent(component.id, pathway);
+  const pathwayStatus = evaluatePathwayTrackStatus({
+    averageScore: average,
+    targetScore: component.target,
+    checkedItemKeys,
+    pathway,
+    rule
+  });
+
+  if (pathwayStatus.status === 'off-track') {
+    return {
+      label: `Off track (${pathwayStatus.completionPct}% checklist)`,
+      rowClass: 'border-red-200 bg-red-50',
+      chipClass: 'bg-red-100 text-red-700',
+      barClass: 'bg-red-500'
+    };
+  }
+
+  if (pathwayStatus.status === 'attention') {
+    return {
+      label: `Needs attention (${pathwayStatus.completionPct}% checklist)`,
+      rowClass: 'border-amber-200 bg-amber-50',
+      chipClass: 'bg-amber-100 text-amber-700',
+      barClass: 'bg-amber-500'
+    };
+  }
+
   if (average >= component.target) {
     return {
-      label: 'On track',
+      label: `On track (${pathwayStatus.completionPct}% checklist)`,
       rowClass: 'border-green-200 bg-green-50',
       chipClass: 'bg-green-100 text-green-700',
       barClass: 'bg-green-500'
@@ -66,14 +100,17 @@ export function GuidanceRoadmapView({
   components,
   metrics,
   getEntry,
-  onComponentClick
+  onComponentClick,
+  pathway,
+  pathwayChecks
 }: GuidanceRoadmapViewProps): JSX.Element {
   const rows = components.map((component) => {
     const average = getComponentAverage(component, getEntry);
+    const checkedItemKeys = pathwayChecks[component.id]?.[pathway] || [];
     return {
       component,
       average,
-      status: getRoadmapStatus(component, average, metrics.currentPhase)
+      status: getRoadmapStatus(component, average, metrics.currentPhase, pathway, checkedItemKeys)
     };
   });
 

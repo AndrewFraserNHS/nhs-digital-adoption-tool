@@ -5,6 +5,7 @@
 
 import { Store, type StateListener } from './observable';
 import type { UnifiedActionStatus } from './actionModel';
+import { DEFAULT_CST_PROFILE, type CstPathwayKey, type CstProfile } from '@data/cst';
 
 export interface DraftAction {
   id: string;
@@ -31,7 +32,10 @@ export interface OrgProfile {
   trustType: string;
   projectName?: string;
   leadName?: string;
+  cst: CstProfile;
 }
+
+export type PathwayChecklistState = Record<string, Partial<Record<CstPathwayKey, string[]>>>;
 
 export interface HistorySnapshot {
   monthLabel: string;
@@ -47,6 +51,37 @@ export interface AdoptionStore {
   currentDraft: Record<string, Record<string, DraftEntry>>;
   history: HistorySnapshot[];
   phaseOverrides: Record<string, string>;
+  pathwayChecks: PathwayChecklistState;
+}
+
+export function normalizeOrgProfile(profile?: Partial<OrgProfile>): OrgProfile {
+  return {
+    trustName: profile?.trustName || '',
+    region: profile?.region || '',
+    trustType: profile?.trustType || '',
+    projectName: profile?.projectName || '',
+    leadName: profile?.leadName || '',
+    cst: {
+      ...DEFAULT_CST_PROFILE,
+      ...(profile?.cst || {})
+    }
+  };
+}
+
+function clonePathwayChecks(checks?: PathwayChecklistState): PathwayChecklistState {
+  if (!checks) {
+    return {};
+  }
+
+  return Object.keys(checks).reduce<PathwayChecklistState>((next, componentId) => {
+    const componentChecks = checks[componentId] || {};
+    next[componentId] = {
+      'pathway-1': [...(componentChecks['pathway-1'] || [])],
+      'pathway-2': [...(componentChecks['pathway-2'] || [])],
+      'pathway-3': [...(componentChecks['pathway-3'] || [])]
+    };
+    return next;
+  }, {});
 }
 
 /**
@@ -55,16 +90,11 @@ export interface AdoptionStore {
 export function initializeStore(persisted?: Partial<AdoptionStore>): AdoptionStore {
   return {
     view: persisted?.view || 'dashboard',
-    orgProfile: persisted?.orgProfile || {
-      trustName: '',
-      region: '',
-      trustType: '',
-      projectName: '',
-      leadName: ''
-    },
+    orgProfile: normalizeOrgProfile(persisted?.orgProfile),
     currentDraft: persisted?.currentDraft || {},
     history: persisted?.history || [],
-    phaseOverrides: persisted?.phaseOverrides || {}
+    phaseOverrides: persisted?.phaseOverrides || {},
+    pathwayChecks: clonePathwayChecks(persisted?.pathwayChecks)
   };
 }
 

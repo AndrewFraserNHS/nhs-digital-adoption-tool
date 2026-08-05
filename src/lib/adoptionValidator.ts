@@ -5,6 +5,66 @@
 
 import { DraftEntry, OrgProfile } from './adoptionState';
 
+function isValidIsoDate(value: string): boolean {
+  if (!value) {
+    return false;
+  }
+  const parsed = new Date(value);
+  return !isNaN(parsed.getTime());
+}
+
+function asDate(value: string): Date | null {
+  if (!value || !isValidIsoDate(value)) {
+    return null;
+  }
+  return new Date(value);
+}
+
+export function validateCstProfile(profile: OrgProfile): ValidationResult {
+  const errors: ValidationError[] = [];
+  const cst = profile.cst;
+
+  if (!cst.goLiveDate || !cst.goLiveDate.trim()) {
+    errors.push({ field: 'cst.goLiveDate', message: 'Go live date is required.' });
+    return { isValid: false, errors };
+  }
+
+  const goLiveDate = asDate(cst.goLiveDate);
+  if (!goLiveDate) {
+    errors.push({ field: 'cst.goLiveDate', message: 'Go live date must be a valid date.' });
+    return { isValid: false, errors };
+  }
+
+  const fullAdoptionDate = asDate(cst.fullAdoptionDate);
+  if (cst.fullAdoptionDate && !fullAdoptionDate) {
+    errors.push({ field: 'cst.fullAdoptionDate', message: 'Full adoption date must be a valid date when provided.' });
+  }
+
+  const benefitDate = asDate(cst.benefitRealizationDate);
+  if (cst.benefitRealizationDate && !benefitDate) {
+    errors.push({ field: 'cst.benefitRealizationDate', message: 'Benefit realization date must be a valid date when provided.' });
+  }
+
+  if (fullAdoptionDate && fullAdoptionDate < goLiveDate) {
+    errors.push({
+      field: 'cst.fullAdoptionDate',
+      message: 'Full adoption date cannot be earlier than go live date.'
+    });
+  }
+
+  if (benefitDate) {
+    const baseline = fullAdoptionDate || goLiveDate;
+    if (benefitDate < baseline) {
+      errors.push({
+        field: 'cst.benefitRealizationDate',
+        message: 'Benefit realization date cannot be earlier than full adoption date (or go live when full adoption is empty).'
+      });
+    }
+  }
+
+  return { isValid: errors.length === 0, errors };
+}
+
 export interface ValidationError {
   field: string;
   message: string;
@@ -84,6 +144,9 @@ export function validateOrgProfile(profile: OrgProfile): ValidationResult {
       message: 'Region cannot exceed 100 characters'
     });
   }
+
+  const cstValidation = validateCstProfile(profile);
+  errors.push(...cstValidation.errors);
 
   return { isValid: errors.length === 0, errors };
 }

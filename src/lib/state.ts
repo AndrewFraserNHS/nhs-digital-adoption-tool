@@ -11,6 +11,13 @@ export interface AdoptionState {
     trustType?: string;
     projectName?: string;
     leadName?: string;
+    cst?: {
+      type?: 'project' | 'program' | 'initiative';
+      pathway?: 'pathway-1' | 'pathway-2' | 'pathway-3';
+      goLiveDate?: string;
+      fullAdoptionDate?: string;
+      benefitRealizationDate?: string;
+    };
   };
   currentDraft?: Record<string, Record<string, any>>;
   history?: Array<{
@@ -19,6 +26,7 @@ export interface AdoptionState {
     data: Record<string, Record<string, any>>;
   }>;
   phaseOverrides?: Record<string, string>;
+  pathwayChecks?: Record<string, Record<string, string[]>>;
 }
 
 class AppState {

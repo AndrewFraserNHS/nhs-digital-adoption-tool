@@ -1,6 +1,7 @@
 import { useState, useCallback, JSX, useEffect, useRef } from 'react';
 import { OrgProfile } from '@lib/adoptionState';
 import { validateOrgProfile } from '@lib/adoptionValidator';
+import { CST_TYPE_OPTIONS, PATHWAY_OPTIONS, type CstPathwayKey, type CstType } from '@data/cst';
 
 export interface AdoptionUserSettings {
   name: string;
@@ -47,6 +48,7 @@ export function SettingsPanel({
   const [settings, setSettings] = useState<AdoptionUserSettings>(userSettings);
   const [fileInputKey, setFileInputKey] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const profileValidation = validateOrgProfile(profile);
 
   useEffect(() => {
     setProfile(orgProfile);
@@ -76,6 +78,42 @@ export function SettingsPanel({
 
   const handleLeadChange = useCallback((value: string) => {
     const updated = { ...profile, leadName: value };
+    setProfile(updated);
+    onProfileUpdate(updated);
+  }, [profile, onProfileUpdate]);
+
+  const handleCstTypeChange = useCallback((value: CstType) => {
+    const updated = {
+      ...profile,
+      cst: {
+        ...profile.cst,
+        type: value
+      }
+    };
+    setProfile(updated);
+    onProfileUpdate(updated);
+  }, [profile, onProfileUpdate]);
+
+  const handlePathwayChange = useCallback((value: CstPathwayKey) => {
+    const updated = {
+      ...profile,
+      cst: {
+        ...profile.cst,
+        pathway: value
+      }
+    };
+    setProfile(updated);
+    onProfileUpdate(updated);
+  }, [profile, onProfileUpdate]);
+
+  const handleCstDateChange = useCallback((field: 'goLiveDate' | 'fullAdoptionDate' | 'benefitRealizationDate', value: string) => {
+    const updated = {
+      ...profile,
+      cst: {
+        ...profile.cst,
+        [field]: value
+      }
+    };
     setProfile(updated);
     onProfileUpdate(updated);
   }, [profile, onProfileUpdate]);
@@ -152,6 +190,94 @@ export function SettingsPanel({
             value={profile.leadName || ''}
             onChange={(e) => handleLeadChange(e.target.value)}
           />
+        </div>
+
+        <div className="rounded-md border border-slate-200 bg-slate-50 p-4 space-y-4">
+          <h4 className="text-sm font-semibold text-slate-800">Context Specific Template (CST)</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="cst-type" className="block text-sm font-medium text-slate-700 mb-1">
+                CST Type
+              </label>
+              <select
+                id="cst-type"
+                className="w-full rounded-md border border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2"
+                value={profile.cst.type}
+                onChange={(event) => handleCstTypeChange(event.target.value as CstType)}
+              >
+                {CST_TYPE_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>{option.label}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label htmlFor="cst-pathway" className="block text-sm font-medium text-slate-700 mb-1">
+                Pathway
+              </label>
+              <select
+                id="cst-pathway"
+                className="w-full rounded-md border border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2"
+                value={profile.cst.pathway}
+                onChange={(event) => handlePathwayChange(event.target.value as CstPathwayKey)}
+              >
+                {PATHWAY_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>{option.label}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label htmlFor="cst-go-live" className="block text-sm font-medium text-slate-700 mb-1">
+                Go Live Date (required)
+              </label>
+              <input
+                id="cst-go-live"
+                type="date"
+                className="w-full rounded-md border border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2"
+                value={profile.cst.goLiveDate}
+                onChange={(event) => handleCstDateChange('goLiveDate', event.target.value)}
+              />
+            </div>
+            <div>
+              <label htmlFor="cst-full-adoption" className="block text-sm font-medium text-slate-700 mb-1">
+                Full Adoption Date (optional)
+              </label>
+              <input
+                id="cst-full-adoption"
+                type="date"
+                className="w-full rounded-md border border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2"
+                value={profile.cst.fullAdoptionDate}
+                onChange={(event) => handleCstDateChange('fullAdoptionDate', event.target.value)}
+              />
+            </div>
+            <div>
+              <label htmlFor="cst-benefit" className="block text-sm font-medium text-slate-700 mb-1">
+                Benefit Realization Date (optional)
+              </label>
+              <input
+                id="cst-benefit"
+                type="date"
+                className="w-full rounded-md border border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2"
+                value={profile.cst.benefitRealizationDate}
+                onChange={(event) => handleCstDateChange('benefitRealizationDate', event.target.value)}
+              />
+            </div>
+          </div>
+
+          {profileValidation.errors.filter((error) => error.field.startsWith('cst.')).length > 0 ? (
+            <div className="rounded-md border border-amber-300 bg-amber-50 p-3">
+              <p className="text-xs font-semibold uppercase tracking-wider text-amber-800">CST validation warnings</p>
+              <ul className="mt-2 space-y-1 text-sm text-amber-900">
+                {profileValidation.errors
+                  .filter((error) => error.field.startsWith('cst.'))
+                  .map((error) => (
+                    <li key={error.field + error.message}>- {error.message}</li>
+                  ))}
+              </ul>
+            </div>
+          ) : null}
         </div>
       </div>
 

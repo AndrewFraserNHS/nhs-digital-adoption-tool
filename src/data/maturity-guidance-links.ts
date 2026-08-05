@@ -1,6 +1,6 @@
 export const MATURITY_GUIDANCE_TARGETS = ['Default', 'AVT', 'EPR'] as const;
 
-export type MaturityGuidanceTarget = (typeof MATURITY_GUIDANCE_TARGETS)[number];
+export type MaturityGuidanceTarget = (typeof MATURITY_GUIDANCE_TARGETS)[number] | string;
 
 export interface GuidanceLink {
   label: string;
@@ -14,6 +14,16 @@ export interface GuidanceSectionLinks {
 }
 
 export type GuidanceLinkMap = Partial<Record<string, GuidanceSectionLinks>>;
+
+export interface GuidanceWorkstreamDefinition {
+  name: string;
+  map: GuidanceLinkMap;
+  targetCompletionDate?: string;
+  reportEmailTo?: string;
+  usefulContacts?: string;
+}
+
+export const GUIDANCE_WORKSTREAMS_STORAGE_KEY = 'nhs-guidance-workstreams';
 
 const ADOPTION_COMPONENT_TO_GUIDANCE_KEYS: Record<string, string[]> = {
   vision: ['Vision'],
@@ -35,7 +45,7 @@ const ADOPTION_COMPONENT_TO_GUIDANCE_KEYS: Record<string, string[]> = {
   transfer_bau: ['Reinforcement']
 };
 
-const DEFAULT_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
+export const DEFAULT_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
   'Vision': {
     inputs: [
       { label: 'Change Vision Template', url: 'https://future.nhs.uk/CMN/view?objectId=37515792' },
@@ -178,16 +188,68 @@ export const MATURITY_GUIDANCE_LINKS: Record<MaturityGuidanceTarget, GuidanceLin
   EPR: EPR_GUIDANCE_LINK_MAP
 };
 
+function readStoredGuidanceWorkstreams(): GuidanceWorkstreamDefinition[] {
+  if (typeof window === 'undefined') {
+    return [];
+  }
+
+  try {
+    const raw = window.localStorage.getItem(GUIDANCE_WORKSTREAMS_STORAGE_KEY);
+    if (!raw) {
+      return [];
+    }
+
+    const parsed = JSON.parse(raw) as GuidanceWorkstreamDefinition[];
+    return Array.isArray(parsed)
+      ? parsed.filter((item) => item && typeof item.name === 'string' && item.name.trim())
+      : [];
+  } catch {
+    return [];
+  }
+}
+
+export function getStoredGuidanceWorkstreams(): GuidanceWorkstreamDefinition[] {
+  return readStoredGuidanceWorkstreams();
+}
+
+export function saveStoredGuidanceWorkstreams(workstreams: GuidanceWorkstreamDefinition[]): void {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  window.localStorage.setItem(
+    GUIDANCE_WORKSTREAMS_STORAGE_KEY,
+    JSON.stringify(workstreams, null, 2)
+  );
+}
+
+export function getAvailableGuidanceTargets(): string[] {
+  const customTargets = readStoredGuidanceWorkstreams()
+    .map((workstream) => workstream.name.trim())
+    .filter(Boolean);
+
+  return [...new Set([...MATURITY_GUIDANCE_TARGETS, ...customTargets])];
+}
+
+export function getGuidanceLinkMapByTarget(target: MaturityGuidanceTarget): GuidanceLinkMap {
+  const stored = readStoredGuidanceWorkstreams().find((workstream) => workstream.name === target);
+  if (stored) {
+    return stored.map;
+  }
+
+  return MATURITY_GUIDANCE_LINKS[target] || DEFAULT_GUIDANCE_LINK_MAP;
+}
+
 export function resolveGuidanceLinks(
   target: MaturityGuidanceTarget,
   componentName: string,
   section: keyof GuidanceSectionLinks
 ): GuidanceLink[] {
-  const byTarget = MATURITY_GUIDANCE_LINKS[target]?.[componentName]?.[section] || [];
+  const byTarget = getGuidanceLinkMapByTarget(target)?.[componentName]?.[section] || [];
   if (byTarget.length > 0) {
     return byTarget;
   }
-  return MATURITY_GUIDANCE_LINKS.Default?.[componentName]?.[section] || [];
+  return DEFAULT_GUIDANCE_LINK_MAP?.[componentName]?.[section] || [];
 }
 
 export function resolveGuidanceLinksForAdoptionComponent(

@@ -4,7 +4,7 @@ import { createChart, createRadarChart } from '@lib/charts';
 import { validateScore } from '@lib/adoptionValidator';
 import { componentMatrix } from '@data/legacy-data';
 import { MATURITY_STAGES, STAGE_COLORS } from '@data/rubrics';
-import { resolveGuidanceLinks, type MaturityGuidanceTarget } from '@data/maturity-guidance-links';
+import { getAvailableGuidanceTargets, resolveGuidanceLinks, type MaturityGuidanceTarget } from '@data/maturity-guidance-links';
 import { exportMaturityReportToCSV, exportActionPlanReportToCSV, type MaturityReportData, type ActionPlanReportData } from '@lib/reporting';
 import type { ActionItem, ComponentDetail, MaturityStore } from '@lib/maturityState';
 import { initializeMaturityStore } from '@lib/maturityState';
@@ -737,6 +737,7 @@ export function MaturityApp() {
   }, []);
 
   const scores = getScores();
+  const availableGuidanceTargets = getAvailableGuidanceTargets();
   const guidanceData = buildGuidanceData(scores, details, projectProfile.guidanceTarget);
   const reportData = buildMaturityReportData(
     projectProfile,
@@ -796,6 +797,7 @@ export function MaturityApp() {
             projectName={projectProfile.project}
             projectPhase={projectProfile.phase}
             guidanceTarget={projectProfile.guidanceTarget}
+            availableGuidanceTargets={availableGuidanceTargets}
             onOrganisationNameChange={(value) => updateProjectProfile('org', value)}
             onProjectNameChange={(value) => updateProjectProfile('project', value)}
             onProjectPhaseChange={(value) => updateProjectProfile('phase', value)}

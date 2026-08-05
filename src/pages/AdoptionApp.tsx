@@ -33,16 +33,42 @@ import { ActionPlanTracker } from '@components/views/ActionPlanTracker';
 import { AssessmentPanel } from '@components/views/AssessmentPanel';
 import { LensInfoModal } from '@components/views/LensInfoModal';
 import { ChangeManagementGuide } from '@components/views/ChangeManagementGuide';
+import { GuidanceLinkMapBuilder } from '@components/views/GuidanceLinkMapBuilder';
+import { GuidanceRoadmapView } from '@components/views/GuidanceRoadmapView';
 import { HighlightBuilderTool } from '@components/views/HighlightBuilderTool';
 
 const ADOPTION_USER_SETTINGS_KEY = 'nhs-digital-adoption-user-settings';
 const ADOPTION_REPORT_REMINDER_DISMISS_KEY = 'nhs-digital-adoption-report-reminder-dismissed';
+const ADOPTION_ENGAGEMENT_KEY = 'nhs-digital-adoption-engagement';
 const DEFAULT_GUIDANCE_TARGET: MaturityGuidanceTarget = 'Default';
+
+const THEME_PRESET_COLORS = ['#005eb8', '#003366', '#009b8a', '#6c28d9', '#059669', '#dc2626'];
+
+interface EngagementState {
+  xp: number;
+  level: number;
+  checkIns: Record<string, boolean>;
+  emailDraftOpens: number;
+  highlightLayoutSaves: number;
+  onTimeFinalisations: number;
+  lateFinalisations: number;
+}
 
 const DEFAULT_USER_SETTINGS: AdoptionUserSettings = {
   name: '',
   preferences: '',
-  themeColor: '#005eb8'
+  themeColor: '#005eb8',
+  profileImageDataUrl: ''
+};
+
+const DEFAULT_ENGAGEMENT_STATE: EngagementState = {
+  xp: 0,
+  level: 1,
+  checkIns: {},
+  emailDraftOpens: 0,
+  highlightLayoutSaves: 0,
+  onTimeFinalisations: 0,
+  lateFinalisations: 0
 };
 
 function cloneAction(action: DraftAction): DraftAction {
@@ -99,6 +125,49 @@ function wrapBase64Lines(value: string, lineLength = 76): string {
   return chunks.join('\r\n');
 }
 
+function getTodayKey(date = new Date()): string {
+  return date.toISOString().slice(0, 10);
+}
+
+function calculateLevelFromXp(xp: number): number {
+  return Math.max(1, Math.min(12, Math.floor(xp / 120) + 1));
+}
+
+function addEngagementXp(current: EngagementState, delta: number): EngagementState {
+  const nextXp = current.xp + delta;
+  return {
+    ...current,
+    xp: nextXp,
+    level: calculateLevelFromXp(nextXp)
+  };
+}
+
+function calculateEngagementGrade(onTimeFinalisations: number, emailDraftOpens: number): string {
+  const score = onTimeFinalisations * 30 + Math.min(emailDraftOpens, 20) * 4;
+  if (score >= 170) return 'S';
+  if (score >= 130) return 'A';
+  if (score >= 95) return 'B';
+  if (score >= 60) return 'C';
+  if (score >= 30) return 'D';
+  return 'E';
+}
+
+function calculateCheckInStreak(checkIns: Record<string, boolean>, anchor = new Date()): number {
+  let streak = 0;
+  const cursor = new Date(anchor);
+
+  while (true) {
+    const key = getTodayKey(cursor);
+    if (!checkIns[key]) {
+      break;
+    }
+    streak += 1;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+
+  return streak;
+}
+
 export function AdoptionApp() {
   const COMPONENTS = ASSESSMENT_COMPONENTS;
   const [view, setView] = useState<View>('dashboard');
@@ -131,9 +200,19 @@ export function AdoptionApp() {
       ...persisted
     };
   });
+  const [engagement, setEngagement] = useState<EngagementState>(() => {
+    const persisted = load<Partial<EngagementState>>(ADOPTION_ENGAGEMENT_KEY);
+    return {
+      ...DEFAULT_ENGAGEMENT_STATE,
+      ...persisted,
+      level: calculateLevelFromXp(persisted?.xp || 0),
+      checkIns: persisted?.checkIns || {}
+    };
+  });
   const dashboardRef = React.useRef<HTMLDivElement>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const currentReminderMonthKey = useMemo(() => getMonthStorageKey(), []);
+  const todayKey = useMemo(() => getTodayKey(), []);
   const [dismissedReminderMonths, setDismissedReminderMonths] = useState<Record<string, boolean>>(() => {
     const persisted = load<Record<string, boolean>>(ADOPTION_REPORT_REMINDER_DISMISS_KEY);
     return persisted || {};
@@ -208,6 +287,10 @@ export function AdoptionApp() {
   useEffect(() => {
     save(ADOPTION_USER_SETTINGS_KEY, userSettings);
   }, [userSettings]);
+
+  useEffect(() => {
+    save(ADOPTION_ENGAGEMENT_KEY, engagement);
+  }, [engagement]);
 
   useEffect(() => {
     save(ADOPTION_REPORT_REMINDER_DISMISS_KEY, dismissedReminderMonths);
@@ -369,14 +452,86 @@ export function AdoptionApp() {
   }, []);
 
   const handleFinaliseMonth = useCallback(() => {
+    const previousPhase = store.history.length > 0
+      ? computeMetrics(
+          {
+            ...store,
+            currentDraft: store.history[store.history.length - 1].data
+          },
+          COMPONENTS
+        ).currentPhase
+      : 1;
+
+    if (metrics.currentPhase > previousPhase) {
+      const gaps: string[] = [];
+      COMPONENTS.filter((component) => component.phase < metrics.currentPhase).forEach((component) => {
+        component.lenses.forEach((lens) => {
+          const entry = store.currentDraft[component.id]?.[lens];
+          if (!entry || entry.score <= 0 || !entry.justification?.trim()) {
+            gaps.push(`${component.label} / ${lens}`);
+          }
+        });
+      });
+
+      if (gaps.length > 0) {
+        const rationale = window.prompt(
+          `You're progressing from Phase ${previousPhase} to Phase ${metrics.currentPhase}, but ${gaps.length} item(s) are incomplete. Please provide a justification.`
+        );
+        if (!rationale || !rationale.trim()) {
+          window.alert('Phase progression cancelled. A justification is required when prior phase items are missing.');
+          return;
+        }
+
+        setStore((prev) => ({
+          ...prev,
+          phaseOverrides: {
+            ...prev.phaseOverrides,
+            [`phase-progression-${Date.now()}`]: rationale.trim()
+          }
+        }));
+      }
+    }
+
     const snapshot = buildHistorySnapshot(store.currentDraft, metrics.overallPct);
 
     setStore((prev) => ({
       ...prev,
       history: [...prev.history, snapshot]
     }));
+    setEngagement((prev) => addEngagementXp(prev, 25));
     setView('dashboard');
-  }, [metrics.overallPct, store.currentDraft]);
+  }, [COMPONENTS, metrics.currentPhase, metrics.overallPct, store, store.currentDraft, store.history]);
+
+  const handleFinalisePriorMonth = useCallback(() => {
+    const previousMonthLabel = reportReminder.previousMonthLabel;
+    const alreadyFinalised = store.history.some((snapshot) => snapshot.monthLabel === previousMonthLabel);
+
+    if (alreadyFinalised) {
+      window.alert(`${previousMonthLabel} has already been finalised.`);
+      return;
+    }
+
+    const previousDate = new Date();
+    previousDate.setMonth(previousDate.getMonth() - 1);
+
+    const snapshot = buildHistorySnapshot(store.currentDraft, metrics.overallPct, previousDate);
+    setStore((prev) => ({
+      ...prev,
+      history: [...prev.history, snapshot]
+    }));
+
+    const submittedOnTime = new Date().getDate() === 1;
+    setEngagement((prev) =>
+      addEngagementXp(
+        {
+          ...prev,
+          onTimeFinalisations: prev.onTimeFinalisations + (submittedOnTime ? 1 : 0),
+          lateFinalisations: prev.lateFinalisations + (submittedOnTime ? 0 : 1)
+        },
+        submittedOnTime ? 45 : 20
+      )
+    );
+  }, [metrics.overallPct, reportReminder.previousMonthLabel, store.currentDraft, store.history]);
 
   const handleLoadExampleData = useCallback(async () => {
     try {
@@ -440,8 +595,39 @@ export function AdoptionApp() {
     const attachmentName = buildPointInTimeFilename();
     const body = `${emailBody}\n\nAttachment: ${attachmentName}`;
     const mailto = `mailto:${recipient}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(body)}`;
+    setEngagement((prev) => addEngagementXp({ ...prev, emailDraftOpens: prev.emailDraftOpens + 1 }, 8));
     window.location.href = mailto;
   }, [buildPointInTimeFilename, emailBody, emailSubject, emailTo]);
+
+  const handleDailyCheckIn = useCallback(() => {
+    setEngagement((prev) => {
+      if (prev.checkIns[todayKey]) {
+        return prev;
+      }
+      return addEngagementXp(
+        {
+          ...prev,
+          checkIns: {
+            ...prev.checkIns,
+            [todayKey]: true
+          }
+        },
+        10
+      );
+    });
+  }, [todayKey]);
+
+  const handleHighlightLayoutSaved = useCallback(() => {
+    setEngagement((prev) =>
+      addEngagementXp(
+        {
+          ...prev,
+          highlightLayoutSaves: prev.highlightLayoutSaves + 1
+        },
+        15
+      )
+    );
+  }, []);
 
   const handleDownloadEmailDraft = useCallback(() => {
     const recipient = emailTo.trim() || 'test@test.com';
@@ -484,6 +670,50 @@ export function AdoptionApp() {
 
   const shouldShowReportReminder =
     reportReminder.shouldNotify && !dismissedReminderMonths[currentReminderMonthKey];
+  const themeUnlocked = engagement.level >= 3;
+  const engagementGrade = useMemo(
+    () => calculateEngagementGrade(engagement.onTimeFinalisations, engagement.emailDraftOpens),
+    [engagement.emailDraftOpens, engagement.onTimeFinalisations]
+  );
+  const hasCheckedInToday = Boolean(engagement.checkIns[todayKey]);
+  const checkInStreak = useMemo(() => calculateCheckInStreak(engagement.checkIns), [engagement.checkIns]);
+  const achievements = useMemo(
+    () => [
+      {
+        id: 'streak-3',
+        name: 'Steady Cadence',
+        description: 'Check in for 3 consecutive days.',
+        unlocked: checkInStreak >= 3,
+        progress: `${Math.min(checkInStreak, 3)}/3`
+      },
+      {
+        id: 'first-ontime',
+        name: 'On-Time Closer',
+        description: 'Finalise a prior month on time.',
+        unlocked: engagement.onTimeFinalisations >= 1,
+        progress: `${Math.min(engagement.onTimeFinalisations, 1)}/1`
+      },
+      {
+        id: 'first-save',
+        name: 'Story Builder',
+        description: 'Save your first highlight layout.',
+        unlocked: engagement.highlightLayoutSaves >= 1,
+        progress: `${Math.min(engagement.highlightLayoutSaves, 1)}/1`
+      }
+    ],
+    [checkInStreak, engagement.highlightLayoutSaves, engagement.onTimeFinalisations]
+  );
+
+  const handleUserSettingsUpdate = useCallback((nextSettings: AdoptionUserSettings) => {
+    if (!themeUnlocked && !THEME_PRESET_COLORS.includes(nextSettings.themeColor)) {
+      setUserSettings((prev) => ({
+        ...nextSettings,
+        themeColor: prev.themeColor
+      }));
+      return;
+    }
+    setUserSettings(nextSettings);
+  }, [themeUnlocked]);
 
   const getComponentStatus = (comp: typeof COMPONENTS[0]) => {
     let scoredCount = 0, justifiedCount = 0;
@@ -526,17 +756,33 @@ export function AdoptionApp() {
         style={{ backgroundColor: userSettings.themeColor }}
       >
         <div className="p-6 border-b border-blue-700">
-          <h1 className="text-xl font-bold tracking-tight">NHS Digital Adoption</h1>
-          <p className="text-blue-200 text-xs mt-1 flex justify-between items-center">
-            <span>Readiness Tracking Tool</span>
-            <span className="opacity-80 font-medium">V6.6</span>
-          </p>
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <h1 className="text-xl font-bold tracking-tight">NHS Digital Adoption</h1>
+              <p className="text-blue-200 text-xs mt-1 flex justify-between items-center">
+                <span>Readiness Tracking Tool</span>
+                <span className="opacity-80 font-medium">V6.6</span>
+              </p>
+            </div>
+            {userSettings.profileImageDataUrl ? (
+              <img
+                src={userSettings.profileImageDataUrl}
+                alt="Profile"
+                className="h-10 w-10 rounded-full border-2 border-blue-200 object-cover"
+              />
+            ) : null}
+          </div>
+
+          <div className="mt-3 rounded-md bg-blue-700 p-2 text-xs">
+            <div className="font-semibold text-blue-100">Level {engagement.level} · Grade {engagementGrade}</div>
+            <div className="text-blue-200">XP {engagement.xp} · Layout saves {engagement.highlightLayoutSaves}</div>
+          </div>
         </div>
 
         <div className="flex-1 overflow-y-auto py-4">
           <div className="px-4 mb-2 text-xs font-semibold text-blue-300 uppercase tracking-wider">Navigation</div>
           <nav className="space-y-1 mb-8">
-            {(['dashboard', 'action-plan', 'cm-guide', 'highlight-builder', 'settings'] as View[]).map(v => (
+            {(['dashboard', 'action-plan', 'cm-guide', 'guidance-builder', 'roadmap-view', 'highlight-builder', 'settings'] as View[]).map(v => (
               <button
                 key={v}
                 onClick={() => handleViewChange(v)}
@@ -546,7 +792,7 @@ export function AdoptionApp() {
                     : 'text-blue-100 hover:bg-blue-800 border-l-4 border-transparent'
                 }`}
               >
-                {v === 'dashboard' ? 'Dashboard' : v === 'action-plan' ? 'Action Tracker' : v === 'cm-guide' ? 'CM Toolkit Guide' : v === 'highlight-builder' ? 'Highlight Builder Tool' : 'Settings & Profile'}
+                {v === 'dashboard' ? 'Dashboard' : v === 'action-plan' ? 'Action Tracker' : v === 'cm-guide' ? 'CM Toolkit Guide' : v === 'guidance-builder' ? 'Guidance Link Builder' : v === 'roadmap-view' ? 'Roadmap View' : v === 'highlight-builder' ? 'Highlight Builder Tool' : 'Settings & Profile'}
               </button>
             ))}
           </nav>
@@ -636,6 +882,47 @@ export function AdoptionApp() {
 
         {/* Main Content Area */}
         <main className="flex-1 overflow-y-auto p-8">
+          <section className="mb-6 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Engagement</p>
+                <p className="text-sm text-slate-700 mt-1">
+                  Level {engagement.level} · Grade {engagementGrade} · On-time finalisations {engagement.onTimeFinalisations} · Email opens {engagement.emailDraftOpens}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={handleDailyCheckIn}
+                disabled={hasCheckedInToday}
+                className="rounded-md px-3 py-2 text-sm font-semibold text-white disabled:opacity-60"
+                style={{ backgroundColor: userSettings.themeColor }}
+              >
+                {hasCheckedInToday ? 'Checked In Today' : 'Daily Check-In (+10 XP)'}
+              </button>
+            </div>
+
+            <div className="mt-4 grid gap-3 md:grid-cols-3">
+              {achievements.map((achievement) => (
+                <div
+                  key={achievement.id}
+                  className={`rounded-lg border p-3 ${
+                    achievement.unlocked
+                      ? 'border-green-200 bg-green-50'
+                      : 'border-slate-200 bg-slate-50'
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-sm font-semibold text-slate-800">{achievement.name}</p>
+                    <span className="text-xs font-bold">
+                      {achievement.unlocked ? 'Unlocked' : achievement.progress}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-xs text-slate-600">{achievement.description}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
           {shouldShowReportReminder && (
             <section className="mb-8 rounded-xl border border-amber-300 bg-amber-50 p-5 shadow-sm">
               <div className="flex items-start justify-between gap-4">
@@ -711,6 +998,13 @@ export function AdoptionApp() {
                 >
                   Open Mail Draft
                 </button>
+                <button
+                  type="button"
+                  onClick={handleFinalisePriorMonth}
+                  className="rounded-md border border-amber-300 bg-white px-3 py-2 text-sm font-semibold text-amber-800 hover:bg-amber-100"
+                >
+                  Finalise Prior Month Now
+                </button>
               </div>
             </section>
           )}
@@ -761,6 +1055,17 @@ export function AdoptionApp() {
           {view === 'cm-guide' && (
             <ChangeManagementGuide />
           )}
+          {view === 'guidance-builder' && (
+            <GuidanceLinkMapBuilder defaultReportEmailTo={emailTo} />
+          )}
+          {view === 'roadmap-view' && (
+            <GuidanceRoadmapView
+              components={COMPONENTS}
+              metrics={metrics}
+              getEntry={getEntry}
+              onComponentClick={openComponentAssessment}
+            />
+          )}
           {view === 'highlight-builder' && (
             <HighlightBuilderTool
               store={store}
@@ -771,6 +1076,7 @@ export function AdoptionApp() {
               trustName={store.orgProfile.trustName}
               projectName={store.orgProfile.projectName}
               themeColor={userSettings.themeColor}
+              onLayoutSaved={handleHighlightLayoutSaved}
             />
           )}
           {view === 'settings' && (
@@ -783,9 +1089,13 @@ export function AdoptionApp() {
                   orgProfile: updatedProfile
                 }));
               }}
-              onUserSettingsUpdate={setUserSettings}
+              onUserSettingsUpdate={handleUserSettingsUpdate}
               onLoadExampleData={handleLoadExampleData}
               onResetData={handleResetData}
+              canUseCustomTheme={themeUnlocked}
+              engagementGrade={engagementGrade}
+              engagementLevel={engagement.level}
+              engagementXp={engagement.xp}
             />
           )}
         </main>

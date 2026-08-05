@@ -39,7 +39,7 @@ export interface HistorySnapshot {
   data: Record<string, Record<string, DraftEntry>>;
 }
 
-export type View = 'dashboard' | 'assessment' | 'action-plan' | 'cm-guide' | 'highlight-builder' | 'settings';
+export type View = 'dashboard' | 'assessment' | 'action-plan' | 'cm-guide' | 'guidance-builder' | 'roadmap-view' | 'highlight-builder' | 'settings';
 
 export interface AdoptionStore {
   view: View;

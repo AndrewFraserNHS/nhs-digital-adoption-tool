@@ -5,7 +5,7 @@ export interface ProjectProfile {
   org: string;
   project: string;
   phase: string;
-  guidanceTarget: 'Default' | 'AVT' | 'EPR';
+  guidanceTarget: string;
 }
 
 export interface SavedMaturityAssessment {

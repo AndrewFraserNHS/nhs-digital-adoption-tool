@@ -1,4 +1,4 @@
-import { useState, useCallback, JSX, useEffect } from 'react';
+import { useState, useCallback, JSX, useEffect, useRef } from 'react';
 import { OrgProfile } from '@lib/adoptionState';
 import { validateOrgProfile } from '@lib/adoptionValidator';
 
@@ -6,6 +6,7 @@ export interface AdoptionUserSettings {
   name: string;
   preferences: string;
   themeColor: string;
+  profileImageDataUrl?: string;
 }
 
 export interface SettingsPanelProps {
@@ -15,7 +16,20 @@ export interface SettingsPanelProps {
   onUserSettingsUpdate: (settings: AdoptionUserSettings) => void;
   onLoadExampleData: () => void;
   onResetData: () => void;
+  canUseCustomTheme?: boolean;
+  engagementGrade?: string;
+  engagementLevel?: number;
+  engagementXp?: number;
 }
+
+const PRESET_THEMES = [
+  { name: 'NHS Blue', color: '#005eb8' },
+  { name: 'Navy', color: '#003366' },
+  { name: 'Teal', color: '#009b8a' },
+  { name: 'Purple', color: '#6c28d9' },
+  { name: 'Green', color: '#059669' },
+  { name: 'Red', color: '#dc2626' }
+];
 
 export function SettingsPanel({
   orgProfile,
@@ -23,10 +37,16 @@ export function SettingsPanel({
   onProfileUpdate,
   onUserSettingsUpdate,
   onLoadExampleData,
-  onResetData
+  onResetData,
+  canUseCustomTheme = true,
+  engagementGrade,
+  engagementLevel,
+  engagementXp
 }: SettingsPanelProps): JSX.Element {
   const [profile, setProfile] = useState<OrgProfile>(orgProfile);
   const [settings, setSettings] = useState<AdoptionUserSettings>(userSettings);
+  const [fileInputKey, setFileInputKey] = useState(0);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setProfile(orgProfile);
@@ -65,6 +85,31 @@ export function SettingsPanel({
     setSettings(updated);
     onUserSettingsUpdate(updated);
   }, [settings, onUserSettingsUpdate]);
+
+  const handleProfileImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    const dataUrl = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result || ''));
+      reader.onerror = () => reject(new Error('Unable to read selected profile image.'));
+      reader.readAsDataURL(file);
+    });
+
+    updateUserSettings({ profileImageDataUrl: dataUrl });
+    setFileInputKey((current) => current + 1);
+  };
+
+  const handleRemoveProfileImage = () => {
+    updateUserSettings({ profileImageDataUrl: undefined });
+  };
+
+  const handlePresetTheme = (color: string) => {
+    updateUserSettings({ themeColor: color });
+  };
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
@@ -112,6 +157,27 @@ export function SettingsPanel({
 
       <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 space-y-5">
         <h3 className="text-lg font-semibold text-slate-800">User Settings</h3>
+
+        {(engagementGrade || engagementLevel || engagementXp !== undefined) && (
+          <div className="rounded-md border border-slate-200 bg-slate-50 p-4">
+            <h4 className="text-sm font-semibold text-slate-800 mb-2">Engagement Summary</h4>
+            <div className="grid grid-cols-3 gap-3">
+              <div>
+                <p className="text-xs text-slate-600">Grade</p>
+                <p className="text-lg font-bold text-slate-800">{engagementGrade || 'N/A'}</p>
+              </div>
+              <div>
+                <p className="text-xs text-slate-600">Level</p>
+                <p className="text-lg font-bold text-slate-800">{engagementLevel ?? 1}</p>
+              </div>
+              <div>
+                <p className="text-xs text-slate-600">XP</p>
+                <p className="text-lg font-bold text-slate-800">{engagementXp ?? 0}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div>
           <label htmlFor="user-name" className="block text-sm font-medium text-slate-700 mb-1">
             Your Name
@@ -135,19 +201,85 @@ export function SettingsPanel({
             onChange={(e) => updateUserSettings({ preferences: e.target.value })}
           />
         </div>
+
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-2">Profile Picture</label>
+          <div className="flex items-start gap-4">
+            {settings.profileImageDataUrl ? (
+              <img
+                src={settings.profileImageDataUrl}
+                alt="Profile"
+                className="h-20 w-20 rounded-md border border-slate-300 object-cover"
+              />
+            ) : (
+              <div className="h-20 w-20 rounded-md border-2 border-dashed border-slate-300 bg-slate-50 flex items-center justify-center">
+                <span className="text-xs text-slate-500">No image</span>
+              </div>
+            )}
+            <div className="space-y-2">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="text-sm px-3 py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-md font-medium"
+              >
+                {settings.profileImageDataUrl ? 'Change Picture' : 'Upload Picture'}
+              </button>
+              {settings.profileImageDataUrl ? (
+                <button
+                  type="button"
+                  onClick={handleRemoveProfileImage}
+                  className="text-sm px-3 py-2 bg-red-50 text-red-700 hover:bg-red-100 border border-red-200 rounded-md font-medium"
+                >
+                  Remove
+                </button>
+              ) : null}
+              <input
+                key={fileInputKey}
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleProfileImageUpload}
+              />
+            </div>
+          </div>
+        </div>
+
         <div>
           <label htmlFor="user-theme-colour" className="block text-sm font-medium text-slate-700 mb-1">
             Theme Colour
           </label>
-          <div className="flex items-center gap-3">
+          <div className="space-y-3">
+            <div className="flex flex-wrap gap-2">
+              {PRESET_THEMES.map((theme) => (
+                <button
+                  type="button"
+                  key={theme.color}
+                  onClick={() => handlePresetTheme(theme.color)}
+                  className="flex items-center gap-2 rounded-md border-2 px-3 py-2 text-sm"
+                  style={{
+                    borderColor: settings.themeColor === theme.color ? theme.color : '#e2e8f0',
+                    backgroundColor: settings.themeColor === theme.color ? `${theme.color}22` : 'transparent'
+                  }}
+                >
+                  <span className="h-4 w-4 rounded-sm border border-slate-300" style={{ backgroundColor: theme.color }} />
+                  <span>{theme.name}</span>
+                </button>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-3">
             <input
               id="user-theme-colour"
               type="color"
-              className="h-10 w-14 rounded border border-slate-300 p-1 cursor-pointer"
+              className="h-10 w-14 rounded border border-slate-300 p-1 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               value={settings.themeColor}
               onChange={(e) => updateUserSettings({ themeColor: e.target.value })}
+              disabled={!canUseCustomTheme}
             />
             <span className="text-sm text-slate-600 font-mono">{settings.themeColor}</span>
+            {!canUseCustomTheme ? <span className="text-xs text-slate-500">Unlocks at level 3</span> : null}
+            </div>
           </div>
         </div>
         <div className="pt-2">

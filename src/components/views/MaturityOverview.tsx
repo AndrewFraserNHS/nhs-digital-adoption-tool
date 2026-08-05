@@ -1,7 +1,7 @@
 import type { JSX } from 'react';
 import { useCallback } from 'react';
 import { MATURITY_STAGES, STAGE_COLORS as STAGE_COLORS_PALETTE } from '@data/rubrics';
-import { MATURITY_GUIDANCE_TARGETS, type MaturityGuidanceTarget } from '@data/maturity-guidance-links';
+import type { MaturityGuidanceTarget } from '@data/maturity-guidance-links';
 import { CONSTANTS } from '../../types/constants';
 
 export interface MaturityOverviewProps {
@@ -9,6 +9,7 @@ export interface MaturityOverviewProps {
   projectName: string;
   projectPhase: string;
   guidanceTarget: MaturityGuidanceTarget;
+  availableGuidanceTargets: string[];
   onOrganisationNameChange: (value: string) => void;
   onProjectNameChange: (value: string) => void;
   onProjectPhaseChange: (value: string) => void;
@@ -38,6 +39,7 @@ export function MaturityOverview({
   projectName,
   projectPhase,
   guidanceTarget,
+  availableGuidanceTargets,
   onOrganisationNameChange,
   onProjectNameChange,
   onProjectPhaseChange,
@@ -153,7 +155,7 @@ export function MaturityOverview({
                 onChange={(e) => onGuidanceTargetChange(e.target.value as MaturityGuidanceTarget)}
                 className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:border-blue-500 focus:ring-blue-500"
               >
-                {MATURITY_GUIDANCE_TARGETS.map((target) => (
+                {availableGuidanceTargets.map((target) => (
                   <option key={target} value={target}>
                     {target}
                   </option>

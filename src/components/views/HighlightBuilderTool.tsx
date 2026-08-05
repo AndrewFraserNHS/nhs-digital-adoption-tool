@@ -61,7 +61,8 @@ export function HighlightBuilderTool({
   getEntry,
   trustName,
   projectName,
-  themeColor
+  themeColor,
+  onLayoutSaved
 }: {
   store: AdoptionStore;
   metrics: Metrics;
@@ -71,6 +72,7 @@ export function HighlightBuilderTool({
   trustName?: string;
   projectName?: string;
   themeColor?: string;
+  onLayoutSaved?: () => void;
 }): JSX.Element {
   const [layout, setLayout] = useState<HighlightBuilderLayout>(() => {
     const stored = readStoredLayout();
@@ -177,6 +179,7 @@ export function HighlightBuilderTool({
     const serialised = JSON.stringify(layout, null, 2);
     window.localStorage.setItem(STORAGE_KEY, serialised);
     downloadFile('highlight-builder-layout.json', serialised, 'application/json');
+    onLayoutSaved?.();
   };
 
   const handleLoadLayout = async (event: React.ChangeEvent<HTMLInputElement>) => {

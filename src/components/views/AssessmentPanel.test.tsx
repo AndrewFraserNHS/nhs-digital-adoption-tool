@@ -61,7 +61,8 @@ function createProps(overrides?: {
           pathway: 'pathway-1',
           goLiveDate: '2026-10-01',
           fullAdoptionDate: '',
-          benefitRealizationDate: ''
+          benefitRealizationDate: '',
+          phaseCapability: {}
         }
       },
       currentDraft: {},

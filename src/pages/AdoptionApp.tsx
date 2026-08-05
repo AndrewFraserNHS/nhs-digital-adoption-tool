@@ -5,7 +5,15 @@ import { downloadFile, escapeHtml } from '@lib/utils';
 import { ASSESSMENT_LENSES as LENSES } from '@data/lenses';
 import { ASSESSMENT_COMPONENTS, getComponentById } from '@data/components';
 import { resolveGuidanceLinksForAdoptionComponent, type MaturityGuidanceTarget } from '@data/maturity-guidance-links';
-import { PATHWAY_LABELS, type CstPathwayKey } from '@data/cst';
+import {
+  COMPETENCE_OPTIONS,
+  CONFIDENCE_OPTIONS,
+  PATHWAY_LABELS,
+  type CompetenceGrade,
+  type ConfidenceScore,
+  type CstPathwayKey,
+  type OverarchingPhase
+} from '@data/cst';
 import { GENERIC_RUBRIC } from '@data/rubrics';
 import { SPECIFIC_RUBRICS } from '@types/constants';
 import type {
@@ -171,6 +179,41 @@ function calculateCheckInStreak(checkIns: Record<string, boolean>, anchor = new 
   }
 
   return streak;
+}
+
+function promptPhaseCapability(phase: OverarchingPhase): { competence: CompetenceGrade; confidence: ConfidenceScore } | null {
+  const competenceInput = window.prompt(
+    `Phase ${phase} readiness changed. Enter competence grade (${COMPETENCE_OPTIONS.join('/')}).`,
+    'C'
+  );
+  if (!competenceInput) {
+    return null;
+  }
+
+  const normalizedCompetence = competenceInput.trim().toUpperCase() as CompetenceGrade;
+  if (!COMPETENCE_OPTIONS.includes(normalizedCompetence)) {
+    window.alert(`Invalid competence grade. Use one of ${COMPETENCE_OPTIONS.join(', ')}.`);
+    return null;
+  }
+
+  const confidenceInput = window.prompt(
+    `Enter confidence score for Phase ${phase} (${CONFIDENCE_OPTIONS.join('-')}).`,
+    '3'
+  );
+  if (!confidenceInput) {
+    return null;
+  }
+
+  const normalizedConfidence = Number(confidenceInput.trim()) as ConfidenceScore;
+  if (!CONFIDENCE_OPTIONS.includes(normalizedConfidence)) {
+    window.alert(`Invalid confidence score. Use a number from ${CONFIDENCE_OPTIONS.join(' to ')}.`);
+    return null;
+  }
+
+  return {
+    competence: normalizedCompetence,
+    confidence: normalizedConfidence
+  };
 }
 
 export function AdoptionApp() {
@@ -513,6 +556,12 @@ export function AdoptionApp() {
       : 1;
 
     if (metrics.currentPhase > previousPhase) {
+      const assessment = promptPhaseCapability(metrics.currentPhase as OverarchingPhase);
+      if (!assessment) {
+        window.alert('Phase progression cancelled. Confidence and competence self-assessment is required when readiness phase changes.');
+        return;
+      }
+
       const gaps: string[] = [];
       COMPONENTS.filter((component) => component.phase < metrics.currentPhase).forEach((component) => {
         component.lenses.forEach((lens) => {
@@ -537,6 +586,38 @@ export function AdoptionApp() {
           phaseOverrides: {
             ...prev.phaseOverrides,
             [`phase-progression-${Date.now()}`]: rationale.trim()
+          },
+          orgProfile: {
+            ...prev.orgProfile,
+            cst: {
+              ...prev.orgProfile.cst,
+              phaseCapability: {
+                ...prev.orgProfile.cst.phaseCapability,
+                [metrics.currentPhase as OverarchingPhase]: {
+                  ...assessment,
+                  assessedAt: new Date().toISOString(),
+                  reason: 'phase-change'
+                }
+              }
+            }
+          }
+        }));
+      } else {
+        setStore((prev) => ({
+          ...prev,
+          orgProfile: {
+            ...prev.orgProfile,
+            cst: {
+              ...prev.orgProfile.cst,
+              phaseCapability: {
+                ...prev.orgProfile.cst.phaseCapability,
+                [metrics.currentPhase as OverarchingPhase]: {
+                  ...assessment,
+                  assessedAt: new Date().toISOString(),
+                  reason: 'phase-change'
+                }
+              }
+            }
           }
         }));
       }

@@ -20,7 +20,8 @@ describe('adoptionIO', () => {
           pathway: 'pathway-2',
           goLiveDate: '2026-09-01',
           fullAdoptionDate: '',
-          benefitRealizationDate: ''
+          benefitRealizationDate: '',
+          phaseCapability: {}
         }
       },
       currentDraft: {
@@ -56,7 +57,8 @@ describe('adoptionIO', () => {
           pathway: 'pathway-1',
           goLiveDate: '2026-11-01',
           fullAdoptionDate: '',
-          benefitRealizationDate: ''
+          benefitRealizationDate: '',
+          phaseCapability: {}
         }
       },
       currentDraft: {},
@@ -75,7 +77,8 @@ describe('adoptionIO', () => {
           pathway: 'pathway-3',
           goLiveDate: '2026-08-01',
           fullAdoptionDate: '',
-          benefitRealizationDate: ''
+          benefitRealizationDate: '',
+          phaseCapability: {}
         }
       }
     }, current);

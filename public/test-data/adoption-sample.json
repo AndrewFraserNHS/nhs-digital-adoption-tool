@@ -12,7 +12,14 @@
       "pathway": "pathway-2",
       "goLiveDate": "2026-10-01",
       "fullAdoptionDate": "2027-01-15",
-      "benefitRealizationDate": "2027-04-01"
+      "benefitRealizationDate": "2027-04-01",
+      "phaseCapability": {
+        "1": { "competence": "C", "confidence": 3, "reason": "initial" },
+        "2": { "competence": "B", "confidence": 4, "reason": "initial" },
+        "3": { "competence": "C", "confidence": 3, "reason": "initial" },
+        "4": { "competence": "D", "confidence": 2, "reason": "initial" },
+        "5": { "competence": "D", "confidence": 2, "reason": "initial" }
+      }
     }
   },
   "currentDraft": {

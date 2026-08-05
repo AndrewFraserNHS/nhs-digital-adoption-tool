@@ -8,10 +8,30 @@ import {
   type GuidanceSectionLinks,
   type GuidanceWorkstreamDefinition
 } from '@data/maturity-guidance-links';
-import { CST_TYPE_OPTIONS, type CstType } from '@data/cst';
+import {
+  COMPETENCE_OPTIONS,
+  CONFIDENCE_OPTIONS,
+  CST_TYPE_OPTIONS,
+  type CompetenceGrade,
+  type ConfidenceScore,
+  type CstType,
+  type OverarchingPhase,
+  type PhaseCapabilityProfile
+} from '@data/cst';
 import { downloadFile } from '@lib/utils';
 
 const SECTION_KEYS: Array<keyof GuidanceSectionLinks> = ['inputs', 'deliverables'];
+const PHASES: OverarchingPhase[] = [1, 2, 3, 4, 5];
+
+function createDefaultPhaseCapabilityProfile(): PhaseCapabilityProfile {
+  return {
+    1: { competence: 'C', confidence: 3, reason: 'initial' },
+    2: { competence: 'C', confidence: 3, reason: 'initial' },
+    3: { competence: 'C', confidence: 3, reason: 'initial' },
+    4: { competence: 'C', confidence: 3, reason: 'initial' },
+    5: { competence: 'C', confidence: 3, reason: 'initial' }
+  };
+}
 
 function cloneLinkMap(source: GuidanceLinkMap): GuidanceLinkMap {
   return Object.fromEntries(
@@ -29,11 +49,13 @@ function createWorkstream(
   name: string,
   cstType: CstType,
   baseMap?: GuidanceLinkMap,
-  reportEmailTo?: string
+  reportEmailTo?: string,
+  phaseCapability?: PhaseCapabilityProfile
 ): GuidanceWorkstreamDefinition {
   return {
     name,
     cstType,
+    phaseCapability: phaseCapability || createDefaultPhaseCapabilityProfile(),
     map: cloneLinkMap(baseMap || DEFAULT_GUIDANCE_LINK_MAP),
     targetCompletionDate: '',
     reportEmailTo: reportEmailTo || '',
@@ -100,6 +122,9 @@ export function GuidanceLinkMapBuilder({
   const [onboardingType, setOnboardingType] = useState<CstType>('project');
   const [onboardingUseUploadBase, setOnboardingUseUploadBase] = useState(false);
   const [onboardingBaseMap, setOnboardingBaseMap] = useState<GuidanceLinkMap | null>(null);
+  const [onboardingPhaseCapability, setOnboardingPhaseCapability] = useState<PhaseCapabilityProfile>(
+    createDefaultPhaseCapabilityProfile()
+  );
 
   useEffect(() => {
     saveStoredGuidanceWorkstreams(workstreams);
@@ -131,6 +156,16 @@ export function GuidanceLinkMapBuilder({
     setShowOnboarding(false);
   };
 
+  const openOnboarding = () => {
+    setShowOnboarding(true);
+    setOnboardingStep('choose');
+    setOnboardingName('');
+    setOnboardingType('project');
+    setOnboardingUseUploadBase(false);
+    setOnboardingBaseMap(null);
+    setOnboardingPhaseCapability(createDefaultPhaseCapabilityProfile());
+  };
+
   const handleCreateWorkstream = () => {
     const trimmed = newWorkstreamName.trim();
     if (!trimmed) {
@@ -143,7 +178,13 @@ export function GuidanceLinkMapBuilder({
       return;
     }
 
-    const created = createWorkstream(trimmed, 'project', DEFAULT_GUIDANCE_LINK_MAP, defaultReportEmailTo);
+    const created = createWorkstream(
+      trimmed,
+      'project',
+      DEFAULT_GUIDANCE_LINK_MAP,
+      defaultReportEmailTo,
+      createDefaultPhaseCapabilityProfile()
+    );
     setWorkstreams((current) => [...current, created]);
     setSelectedWorkstreamName(trimmed);
     setNewWorkstreamName('');
@@ -158,6 +199,7 @@ export function GuidanceLinkMapBuilder({
     return imported.map((item) => ({
       ...item,
       cstType: item.cstType || 'project',
+      phaseCapability: item.phaseCapability || createDefaultPhaseCapabilityProfile(),
       map: cloneLinkMap(item.map || DEFAULT_GUIDANCE_LINK_MAP)
     }));
   };
@@ -195,6 +237,23 @@ export function GuidanceLinkMapBuilder({
     }
   };
 
+  const updateOnboardingPhaseCapability = (
+    phase: OverarchingPhase,
+    field: 'competence' | 'confidence',
+    value: CompetenceGrade | ConfidenceScore
+  ) => {
+    setOnboardingPhaseCapability((current) => ({
+      ...current,
+      [phase]: {
+        competence: current[phase]?.competence || 'C',
+        confidence: current[phase]?.confidence || 3,
+        assessedAt: new Date().toISOString(),
+        reason: 'initial',
+        [field]: value
+      }
+    }));
+  };
+
   const handleOnboardingCreate = () => {
     const trimmed = onboardingName.trim();
     if (!trimmed) {
@@ -216,7 +275,8 @@ export function GuidanceLinkMapBuilder({
       trimmed,
       onboardingType,
       onboardingBaseMap || DEFAULT_GUIDANCE_LINK_MAP,
-      defaultReportEmailTo
+      defaultReportEmailTo,
+      onboardingPhaseCapability
     );
     setWorkstreams((current) => [...current, created]);
     completeOnboarding(trimmed);
@@ -497,6 +557,41 @@ export function GuidanceLinkMapBuilder({
                   </div>
                 </div>
 
+                <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+                  <p className="text-sm font-semibold text-slate-800">Baseline confidence and competence by phase</p>
+                  <p className="mt-1 text-xs text-slate-600">
+                    Complete this once at CST creation. Scores can be refreshed when readiness phase changes.
+                  </p>
+                  <div className="mt-3 space-y-2">
+                    {PHASES.map((phase) => {
+                      const value = onboardingPhaseCapability[phase] || { competence: 'C', confidence: 3 };
+                      return (
+                        <div key={`onboarding-phase-${phase}`} className="grid grid-cols-[120px,1fr,1fr] gap-2 items-center text-sm">
+                          <span className="font-semibold text-slate-700">Phase {phase}</span>
+                          <select
+                            value={value.competence}
+                            onChange={(event) => updateOnboardingPhaseCapability(phase, 'competence', event.target.value as CompetenceGrade)}
+                            className="rounded-md border border-slate-300 px-2 py-1.5"
+                          >
+                            {COMPETENCE_OPTIONS.map((option) => (
+                              <option key={`${phase}-comp-${option}`} value={option}>Competence {option}</option>
+                            ))}
+                          </select>
+                          <select
+                            value={value.confidence}
+                            onChange={(event) => updateOnboardingPhaseCapability(phase, 'confidence', Number(event.target.value) as ConfidenceScore)}
+                            className="rounded-md border border-slate-300 px-2 py-1.5"
+                          >
+                            {CONFIDENCE_OPTIONS.map((option) => (
+                              <option key={`${phase}-conf-${option}`} value={option}>Confidence {option}</option>
+                            ))}
+                          </select>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
                 <div className="flex gap-2">
                   <button
                     type="button"
@@ -550,6 +645,13 @@ export function GuidanceLinkMapBuilder({
             className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
           >
             Import Workstream JSON
+          </button>
+          <button
+            type="button"
+            onClick={openOnboarding}
+            className="rounded-md border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-100"
+          >
+            Reset Onboarding
           </button>
         </div>
       </div>

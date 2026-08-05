@@ -1,7 +1,20 @@
 import { useState, useCallback, JSX, useEffect, useRef } from 'react';
 import { OrgProfile } from '@lib/adoptionState';
 import { validateOrgProfile } from '@lib/adoptionValidator';
-import { CST_TYPE_OPTIONS, PATHWAY_OPTIONS, type CstPathwayKey, type CstType } from '@data/cst';
+import {
+  COMPETENCE_OPTIONS,
+  CONFIDENCE_OPTIONS,
+  CST_TYPE_OPTIONS,
+  OVERARCHING_PHASES,
+  PATHWAY_OPTIONS,
+  getCombinedCapabilityScore,
+  getOverallCapabilityScore,
+  type CompetenceGrade,
+  type ConfidenceScore,
+  type CstPathwayKey,
+  type CstType,
+  type OverarchingPhase
+} from '@data/cst';
 
 export interface AdoptionUserSettings {
   name: string;
@@ -49,6 +62,7 @@ export function SettingsPanel({
   const [fileInputKey, setFileInputKey] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const profileValidation = validateOrgProfile(profile);
+  const overallCapabilityScore = getOverallCapabilityScore(profile.cst.phaseCapability);
 
   useEffect(() => {
     setProfile(orgProfile);
@@ -117,6 +131,31 @@ export function SettingsPanel({
     setProfile(updated);
     onProfileUpdate(updated);
   }, [profile, onProfileUpdate]);
+
+  const handlePhaseCapabilityChange = useCallback(
+    (phase: OverarchingPhase, field: 'competence' | 'confidence', value: CompetenceGrade | ConfidenceScore) => {
+      const current = profile.cst.phaseCapability[phase] || { competence: 'C', confidence: 3 };
+      const updated = {
+        ...profile,
+        cst: {
+          ...profile.cst,
+          phaseCapability: {
+            ...profile.cst.phaseCapability,
+            [phase]: {
+              competence: current.competence,
+              confidence: current.confidence,
+              assessedAt: new Date().toISOString(),
+              reason: 'manual',
+              [field]: value
+            }
+          }
+        }
+      };
+      setProfile(updated);
+      onProfileUpdate(updated);
+    },
+    [profile, onProfileUpdate]
+  );
 
   const updateUserSettings = useCallback((updates: Partial<AdoptionUserSettings>) => {
     const updated = { ...settings, ...updates };
@@ -263,6 +302,65 @@ export function SettingsPanel({
                 value={profile.cst.benefitRealizationDate}
                 onChange={(event) => handleCstDateChange('benefitRealizationDate', event.target.value)}
               />
+            </div>
+          </div>
+
+          <div className="rounded-md border border-slate-200 bg-white p-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <p className="text-sm font-semibold text-slate-800">Confidence and competence by phase</p>
+              <p className="text-sm font-semibold text-slate-700">
+                Overall Score: {overallCapabilityScore ?? 'N/A'}{overallCapabilityScore !== null ? '%' : ''}
+              </p>
+            </div>
+            <p className="mt-1 text-xs text-slate-600">
+              Capture baseline at CST start, then refresh when readiness phase changes.
+            </p>
+
+            <div className="mt-3 space-y-2">
+              {OVERARCHING_PHASES.map((phase) => {
+                const value = profile.cst.phaseCapability[phase] || { competence: 'C', confidence: 3 };
+                const combined = getCombinedCapabilityScore({
+                  competence: value.competence,
+                  confidence: value.confidence
+                });
+
+                return (
+                  <div key={`phase-capability-${phase}`} className="grid grid-cols-[90px,1fr,1fr,90px] gap-2 items-center text-sm">
+                    <span className="font-semibold text-slate-700">Phase {phase}</span>
+                    <select
+                      value={value.competence}
+                      onChange={(event) =>
+                        handlePhaseCapabilityChange(
+                          phase,
+                          'competence',
+                          event.target.value as CompetenceGrade
+                        )
+                      }
+                      className="rounded-md border border-slate-300 px-2 py-1.5"
+                    >
+                      {COMPETENCE_OPTIONS.map((option) => (
+                        <option key={`${phase}-competence-${option}`} value={option}>Competence {option}</option>
+                      ))}
+                    </select>
+                    <select
+                      value={value.confidence}
+                      onChange={(event) =>
+                        handlePhaseCapabilityChange(
+                          phase,
+                          'confidence',
+                          Number(event.target.value) as ConfidenceScore
+                        )
+                      }
+                      className="rounded-md border border-slate-300 px-2 py-1.5"
+                    >
+                      {CONFIDENCE_OPTIONS.map((option) => (
+                        <option key={`${phase}-confidence-${option}`} value={option}>Confidence {option}</option>
+                      ))}
+                    </select>
+                    <span className="text-right font-semibold text-slate-700">{combined}%</span>
+                  </div>
+                );
+              })}
             </div>
           </div>
 

@@ -43,7 +43,8 @@ describe('adoptionValidator', () => {
         pathway: 'pathway-1',
         goLiveDate: '',
         fullAdoptionDate: '',
-        benefitRealizationDate: ''
+        benefitRealizationDate: '',
+        phaseCapability: {}
       }
     });
 
@@ -63,7 +64,8 @@ describe('adoptionValidator', () => {
         pathway: 'pathway-2',
         goLiveDate: '2026-11-10',
         fullAdoptionDate: '2026-11-09',
-        benefitRealizationDate: '2026-11-08'
+        benefitRealizationDate: '2026-11-08',
+        phaseCapability: {}
       }
     });
 
@@ -80,7 +82,8 @@ describe('adoptionValidator', () => {
         pathway: 'pathway-2',
         goLiveDate: '2026-11-10',
         fullAdoptionDate: '2026-12-10',
-        benefitRealizationDate: '2027-01-10'
+        benefitRealizationDate: '2027-01-10',
+        phaseCapability: {}
       }
     });
     expect(valid.isValid).toBe(true);

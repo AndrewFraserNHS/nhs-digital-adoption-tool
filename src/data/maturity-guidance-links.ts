@@ -1,3 +1,5 @@
+import type { PhaseCapabilityProfile } from './cst';
+
 export const MATURITY_GUIDANCE_TARGETS = ['Default', 'AVT', 'EPR'] as const;
 
 export type MaturityGuidanceTarget = (typeof MATURITY_GUIDANCE_TARGETS)[number] | string;
@@ -18,6 +20,7 @@ export type GuidanceLinkMap = Partial<Record<string, GuidanceSectionLinks>>;
 export interface GuidanceWorkstreamDefinition {
   name: string;
   cstType?: 'project' | 'program' | 'initiative';
+  phaseCapability?: PhaseCapabilityProfile;
   map: GuidanceLinkMap;
   targetCompletionDate?: string;
   reportEmailTo?: string;

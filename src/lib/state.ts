@@ -17,6 +17,12 @@ export interface AdoptionState {
       goLiveDate?: string;
       fullAdoptionDate?: string;
       benefitRealizationDate?: string;
+      phaseCapability?: Record<number, {
+        competence: 'A' | 'B' | 'C' | 'D' | 'E';
+        confidence: 1 | 2 | 3 | 4 | 5;
+        assessedAt?: string;
+        reason?: 'initial' | 'phase-change' | 'manual';
+      }>;
     };
   };
   currentDraft?: Record<string, Record<string, any>>;

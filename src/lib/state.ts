@@ -1,3 +1,11 @@
+import type {
+  ComponentObjective,
+  DraftEntry,
+  HistorySnapshot,
+  OrgProfile,
+  PathwayChecklistState
+} from './adoptionState';
+
 export interface AssessmentState {
   orgName?: string;
   createdAt?: string;
@@ -5,35 +13,12 @@ export interface AssessmentState {
 }
 
 export interface AdoptionState {
-  orgProfile?: {
-    trustName: string;
-    region?: string;
-    trustType?: string;
-    projectName?: string;
-    leadName?: string;
-    cst?: {
-      type?: 'project' | 'program' | 'initiative';
-      pathway?: 'pathway-1' | 'pathway-2' | 'pathway-3';
-      goLiveDate?: string;
-      fullAdoptionDate?: string;
-      benefitRealizationDate?: string;
-      phaseCapability?: Record<number, {
-        competence: 'A' | 'B' | 'C' | 'D' | 'E';
-        confidence: 1 | 2 | 3 | 4 | 5;
-        assessedAt?: string;
-        reason?: 'initial' | 'phase-change' | 'manual';
-      }>;
-    };
-  };
-  currentDraft?: Record<string, Record<string, any>>;
-  objectives?: Record<string, any[]>;
-  history?: Array<{
-    monthLabel: string;
-    overallPercentage: number;
-    data: Record<string, Record<string, any>>;
-  }>;
+  orgProfile?: OrgProfile;
+  currentDraft?: Record<string, Record<string, DraftEntry>>;
+  objectives?: Record<string, ComponentObjective[]>;
+  history?: HistorySnapshot[];
   phaseOverrides?: Record<string, string>;
-  pathwayChecks?: Record<string, Record<string, string[]>>;
+  pathwayChecks?: PathwayChecklistState;
 }
 
 class AppState {

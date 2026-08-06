@@ -14,7 +14,7 @@ import {
   type OverarchingPhase
 } from '@data/cst';
 import { GENERIC_RUBRIC } from '@data/rubrics';
-import { SPECIFIC_RUBRICS } from '@types/constants';
+import { SPECIFIC_RUBRICS } from '../types/constants';
 import type {
   View,
   DraftEntry,
@@ -46,7 +46,6 @@ import { LensInfoModal } from '@components/views/LensInfoModal';
 import { ChangeManagementGuide } from '@components/views/ChangeManagementGuide';
 import { syncVisionDerivedContent } from '@lib/visionAutomation';
 import { syncPathwayObjectives } from '@lib/pathwayObjectives';
-import { GuidanceLinkMapBuilder } from '@components/views/GuidanceLinkMapBuilder';
 import { GuidanceRoadmapView } from '@components/views/GuidanceRoadmapView';
 import { HighlightBuilderTool } from '@components/views/HighlightBuilderTool';
 import { ProjectDetailsPage } from '@components/views/ProjectDetailsPage';
@@ -99,7 +98,7 @@ function cloneAction(action: DraftAction): DraftAction {
 }
 
 function getRubricText(componentId: string, lensName: string, score: number): string {
-  const rubricGroup = (SPECIFIC_RUBRICS as Record<string, any>)[componentId];
+  const rubricGroup = (SPECIFIC_RUBRICS as unknown as Record<string, Record<string, Record<number, string>>>)[componentId];
   return rubricGroup?.[lensName]?.[score] || GENERIC_RUBRIC[score] || GENERIC_RUBRIC[0];
 }
 
@@ -167,11 +166,21 @@ function addEngagementXp(current: EngagementState, delta: number): EngagementSta
 
 function calculateEngagementGrade(onTimeFinalisations: number, emailDraftOpens: number): string {
   const score = onTimeFinalisations * 30 + Math.min(emailDraftOpens, 20) * 4;
-  if (score >= 170) return 'S';
-  if (score >= 130) return 'A';
-  if (score >= 95) return 'B';
-  if (score >= 60) return 'C';
-  if (score >= 30) return 'D';
+  if (score >= 170) {
+return 'S';
+}
+  if (score >= 130) {
+return 'A';
+}
+  if (score >= 95) {
+return 'B';
+}
+  if (score >= 60) {
+return 'C';
+}
+  if (score >= 30) {
+return 'D';
+}
   return 'E';
 }
 
@@ -179,13 +188,11 @@ function calculateCheckInStreak(checkIns: Record<string, boolean>, anchor = new 
   let streak = 0;
   const cursor = new Date(anchor);
 
-  while (true) {
-    const key = getTodayKey(cursor);
-    if (!checkIns[key]) {
-      break;
-    }
+  let key = getTodayKey(cursor);
+  while (checkIns[key]) {
     streak += 1;
     cursor.setDate(cursor.getDate() - 1);
+    key = getTodayKey(cursor);
   }
 
   return streak;
@@ -228,6 +235,7 @@ function promptPhaseCapability(phase: OverarchingPhase): { competence: Competenc
 
 export function AdoptionApp() {
   const COMPONENTS = ASSESSMENT_COMPONENTS;
+  const MUTABLE_LENSES = useMemo<string[]>(() => [...LENSES], []);
   const [view, setView] = useState<View>('dashboard');
   const [activeComponentId, setActiveComponentId] = useState<string>(COMPONENTS[0].id);
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(() => {
@@ -386,7 +394,7 @@ export function AdoptionApp() {
       setTimeout(() => {
         const radarCanvas = dashboardRef.current?.querySelector('#adoption-radar-chart') as HTMLCanvasElement;
         if (radarCanvas) {
-          const radarData = buildRadarChartData(store, LENSES, COMPONENTS, getEntry);
+          const radarData = buildRadarChartData(store, MUTABLE_LENSES, COMPONENTS, getEntry);
           createRadarChart(radarCanvas, radarData);
         }
         
@@ -409,7 +417,7 @@ export function AdoptionApp() {
         }
       }, 100);
     }
-  }, [view, store, getEntry]);
+  }, [view, store, getEntry, MUTABLE_LENSES]);
 
   useEffect(() => {
     const syncSidebarWithViewport = () => {
@@ -846,13 +854,21 @@ export function AdoptionApp() {
       const e = store.currentDraft[comp.id]?.[l];
       if (e && e.score > 0) {
         scoredCount++;
-        if (e.justification?.trim()) justifiedCount++;
+        if (e.justification?.trim()) {
+justifiedCount++;
+}
       }
     });
     
-    if (scoredCount === 0) return { icon: '◯', color: 'text-blue-100', label: 'Not Started' };
-    if (scoredCount > justifiedCount) return { icon: '⚠', color: 'text-red-300', label: 'Missing Justification' };
-    if (scoredCount < comp.lenses.length) return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
+    if (scoredCount === 0) {
+return { icon: '◯', color: 'text-blue-100', label: 'Not Started' };
+}
+    if (scoredCount > justifiedCount) {
+return { icon: '⚠', color: 'text-red-300', label: 'Missing Justification' };
+}
+    if (scoredCount < comp.lenses.length) {
+return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
+}
     return { icon: '✓', color: 'text-green-300', label: 'Completed' };
   };
 
@@ -907,7 +923,7 @@ export function AdoptionApp() {
         <div className="flex-1 overflow-y-auto py-4">
           <div className="px-4 mb-2 text-xs font-semibold text-blue-300 uppercase tracking-wider">Navigation</div>
           <nav className="space-y-1 mb-8">
-            {(['dashboard', 'project-details', 'action-plan', 'cm-guide', 'guidance-builder', 'roadmap-view', 'highlight-builder', 'settings'] as View[]).map(v => (
+            {(['dashboard', 'project-details', 'action-plan', 'cm-guide', 'roadmap-view', 'highlight-builder', 'settings'] as View[]).map(v => (
               <button
                 key={v}
                 onClick={() => handleViewChange(v)}
@@ -917,7 +933,19 @@ export function AdoptionApp() {
                     : 'text-blue-100 hover:bg-blue-800 border-l-4 border-transparent'
                 }`}
               >
-                {v === 'dashboard' ? 'Dashboard' : v === 'project-details' ? 'Project Details' : v === 'action-plan' ? 'Action Tracker' : v === 'cm-guide' ? 'CM Toolkit Guide' : v === 'guidance-builder' ? 'Guidance Link Builder' : v === 'roadmap-view' ? 'Roadmap View' : v === 'highlight-builder' ? 'Highlight Builder Tool' : 'Settings & Profile'}
+                {v === 'dashboard'
+                  ? 'Dashboard'
+                  : v === 'project-details'
+                    ? 'Project Details'
+                    : v === 'action-plan'
+                      ? 'Action Tracker'
+                      : v === 'cm-guide'
+                        ? 'CM Toolkit Guide'
+                        : v === 'roadmap-view'
+                          ? 'Roadmap View'
+                          : v === 'highlight-builder'
+                            ? 'Highlight Builder Tool'
+                            : 'Settings & Profile'}
               </button>
             ))}
           </nav>
@@ -971,7 +999,9 @@ export function AdoptionApp() {
               <span aria-hidden="true" className="text-lg leading-none">{isSidebarOpen ? '«' : '»'}</span>
               <span className="sr-only">{isSidebarOpen ? 'Collapse side navigation' : 'Expand side navigation'}</span>
             </button>
-            <button onClick={() => { window.location.hash = '#/'; }} className="text-sm px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-md font-medium transition-colors">
+            <button onClick={() => {
+ window.location.hash = '#/'; 
+}} className="text-sm px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-md font-medium transition-colors">
               ← Back
             </button>
             <span className="font-semibold text-slate-700 mr-2">
@@ -1162,7 +1192,7 @@ export function AdoptionApp() {
               <AdoptionDashboard
                 store={store}
                 components={COMPONENTS}
-                lenses={LENSES}
+                lenses={MUTABLE_LENSES}
                 metrics={metrics}
                 getEntry={getEntry}
                 onComponentClick={openComponentAssessment}
@@ -1183,7 +1213,7 @@ export function AdoptionApp() {
                 }));
               }}
               components={COMPONENTS}
-              lenses={LENSES}
+              lenses={MUTABLE_LENSES}
               store={store}
               getEntry={getEntry}
               onComponentClick={openComponentAssessment}
@@ -1225,9 +1255,6 @@ export function AdoptionApp() {
           {view === 'cm-guide' && (
             <ChangeManagementGuide />
           )}
-          {view === 'guidance-builder' && (
-            <GuidanceLinkMapBuilder defaultReportEmailTo={emailTo} />
-          )}
           {view === 'roadmap-view' && (
             <GuidanceRoadmapView
               components={COMPONENTS}
@@ -1242,7 +1269,7 @@ export function AdoptionApp() {
             <HighlightBuilderTool
               store={store}
               metrics={metrics}
-              lenses={LENSES}
+              lenses={MUTABLE_LENSES}
               components={COMPONENTS}
               getEntry={getEntry}
               trustName={store.orgProfile.trustName}

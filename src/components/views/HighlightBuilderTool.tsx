@@ -133,14 +133,6 @@ export function HighlightBuilderTool({
     [layout.sections]
   );
 
-  const componentById = useMemo(() => {
-    const map: Record<string, (typeof components)[number]> = {};
-    components.forEach((component) => {
-      map[component.id] = component;
-    });
-    return map;
-  }, [components]);
-
   const sectionIndexMap = useMemo(() => {
     return layout.sections.reduce<Record<string, number>>((next, id, index) => {
       next[id] = index;
@@ -349,8 +341,6 @@ export function HighlightBuilderTool({
   const upcomingPriorities = useMemo(() => {
     return metrics.nextSteps.slice(0, 7).map((step) => step.message);
   }, [metrics.nextSteps]);
-
-  const allComponentIds = useMemo(() => components.map((component) => component.id), [components]);
 
   const buildSectionNarrative = (sectionId: SectionId): string => {
     if ((layout.sectionNarratives[sectionId] || '').trim()) {
@@ -629,12 +619,27 @@ export function HighlightBuilderTool({
 
     const printStyles = win.document.createElement('style');
     printStyles.textContent = `
-      @page { margin: 12mm; size: A4 portrait; }
-      body { margin: 0; padding: 1.5cm; background: #ffffff; }
+      @page { margin: 8mm; size: A4 portrait; }
+      html, body { margin: 0 !important; padding: 0 !important; background: #ffffff !important; }
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .printable-report {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        padding: 4mm;
+        border: none !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+      }
+      .printable-report [data-print-hide="true"] { display: none !important; }
+      .printable-report article { break-inside: avoid; page-break-inside: avoid; }
+      .printable-report table { width: 100%; }
     `;
     win.document.head.appendChild(printStyles);
 
     const printable = previewContainerRef.current.cloneNode(true) as HTMLElement;
+    printable.className = 'printable-report';
+    printable.querySelectorAll('[data-print-exclude="true"]').forEach((node) => node.remove());
     win.document.body.appendChild(printable);
 
     win.document.close();
@@ -818,7 +823,7 @@ export function HighlightBuilderTool({
               <div className="flex h-12 w-12 items-center justify-center rounded-md bg-slate-200 text-sm font-bold text-slate-700">NHS</div>
             )}
             <div>
-              <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Builder Preview</div>
+              <div data-print-hide="true" className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Builder Preview</div>
               <div className="text-lg font-bold text-slate-900">{layout.title}</div>
               <div className="text-sm text-slate-600 mt-1">
                 {layout.programmeName || projectName || 'Unnamed Programme'} · {layout.reportingPeriod || 'Reporting period not set'}

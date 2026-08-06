@@ -20,6 +20,81 @@ export interface DashboardProps {
   onOpenLensInfo?: (lensName: string) => void;
 }
 
+type BragStatus = 'Blue' | 'Red' | 'Amber' | 'Green';
+type DeliveryStatus = BragStatus | 'N/A';
+
+function InfoIcon(): JSX.Element {
+  return (
+    <svg
+      className="h-4 w-4"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
+    </svg>
+  );
+}
+
+function getBragStatusFromGap(gapToTarget: number): BragStatus {
+  if (gapToTarget <= 0) {
+    return 'Blue';
+  }
+  if (gapToTarget >= 2) {
+    return 'Red';
+  }
+  if (gapToTarget >= 1) {
+    return 'Amber';
+  }
+  return 'Green';
+}
+
+function getBragStatusFromAverage(avgScore: number, targetScore: number): BragStatus {
+  if (avgScore <= 0) {
+    return 'Blue';
+  }
+
+  const gap = targetScore - avgScore;
+  if (gap >= 2) {
+    return 'Red';
+  }
+  if (gap > 0) {
+    return 'Amber';
+  }
+  return 'Green';
+}
+
+function getDeliveryStatusFromAverage(avgScore: number, targetScore: number, actionCount: number): DeliveryStatus {
+  if (actionCount <= 0) {
+    return 'N/A';
+  }
+  return getBragStatusFromAverage(avgScore, targetScore);
+}
+
+const DELIVERY_BADGE_STYLES: Record<DeliveryStatus, string> = {
+  'N/A': 'text-slate-600 bg-slate-200',
+  Blue: 'text-sky-800 bg-sky-100',
+  Red: 'text-red-800 bg-red-100',
+  Amber: 'text-amber-800 bg-amber-100',
+  Green: 'text-green-800 bg-green-100'
+};
+
+const BRAG_BADGE_STYLES: Record<BragStatus, string> = {
+  Blue: 'text-sky-800 bg-sky-100',
+  Red: 'text-red-800 bg-red-100',
+  Amber: 'text-amber-800 bg-amber-100',
+  Green: 'text-green-800 bg-green-100'
+};
+
+const LENS_EXPLANATIONS: Record<string, string> = {
+  'Strategic Direction and Leadership': 'This checks whether the vision has clear leadership direction. For example, Vision is a component assessed through this lens to test whether leaders are aligned and actively backing it.',
+  'People Experience and Culture': "It is all well and good making a vision, but has it been communicated and do people believe in it? This lens checks staff belief, trust, engagement, and cultural buy-in.",
+  'Planning and Risk': 'This lens checks whether plans are realistic, risks are visible, and delivery decisions are based on evidence rather than assumption.',
+  'Skills and Behaviour': 'This lens checks whether people have the capability and confidence to use the change in day-to-day practice, not just attend training.',
+  'Process and Sustainment': 'This lens checks whether new workflows are embedded into BAU so gains are sustained and continuously improved.'
+};
+
 export function AdoptionDashboard({
   store,
   components,
@@ -38,6 +113,7 @@ export function AdoptionDashboard({
   const [lensPhaseFilter, setLensPhaseFilter] = useState<number | 'all'>('all');
   const [sortBy, setSortBy] = useState<'name' | 'score' | 'target'>('score');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+  const [showLensBreakdownHelp, setShowLensBreakdownHelp] = useState(false);
 
   const phases = useMemo(() => [...new Set(components.map((c) => c.phase))].sort((a, b) => a - b), [components]);
 
@@ -85,8 +161,11 @@ export function AdoptionDashboard({
     return components
       .map((component) => {
         let total = 0;
+        let actionCount = 0;
         component.lenses.forEach((lens) => {
-          total += Number(getEntry(component.id, lens).score || 0);
+          const entry = getEntry(component.id, lens);
+          total += Number(entry.score || 0);
+          actionCount += (entry.actions || []).length;
         });
         const avgNum = Number((total / component.lenses.length).toFixed(1));
         const status = avgNum === 0 ? 'not-started' : avgNum >= component.target ? 'on-track' : 'below-target';
@@ -103,7 +182,7 @@ export function AdoptionDashboard({
           if (raw !== 0) delta = raw;
         }
 
-        return { component, avgNum, status, delta };
+        return { component, avgNum, status, delta, actionCount };
       })
       .filter(({ component, status }) => {
         if (statusFilter !== 'all' && status !== statusFilter) {
@@ -274,18 +353,21 @@ export function AdoptionDashboard({
         </p>
         {metrics.nextSteps.length > 0 ? (
           <div className="space-y-3">
-            {metrics.nextSteps.map((step) => (
-              <button
-                key={`${step.componentId}-${step.phase}`}
-                onClick={() => onComponentClick(step.componentId)}
-                className="w-full text-left rounded-md border border-slate-200 bg-slate-50 p-3 hover:border-blue-300 transition-colors"
-              >
+            {metrics.nextSteps.map((step) => {
+              const bragStatus = getBragStatusFromGap(step.gapToTarget);
+              return (
+                <button
+                  key={`${step.componentId}-${step.phase}`}
+                  onClick={() => onComponentClick(step.componentId)}
+                  className="w-full text-left rounded-md border border-slate-200 bg-slate-50 p-3 hover:border-blue-300 transition-colors"
+                >
                 <div className="flex items-center justify-between gap-3">
                   <span className="text-sm font-semibold text-slate-800">{step.componentLabel}</span>
-                  <span className="text-xs font-medium text-amber-700 bg-amber-100 rounded px-2 py-0.5">
-                    Gap {step.gapToTarget.toFixed(1)}
+                  <span className={`text-xs font-semibold rounded px-2.5 py-0.5 ${BRAG_BADGE_STYLES[bragStatus]}`}>
+                    {bragStatus}
                   </span>
                 </div>
+                
                 <p className="text-sm text-slate-600 mt-1">{step.message}</p>
                 {step.toolkitLinks?.length ? (
                   <div className="mt-2 flex flex-wrap gap-2">
@@ -303,8 +385,9 @@ export function AdoptionDashboard({
                     ))}
                   </div>
                 ) : null}
-              </button>
-            ))}
+                </button>
+              );
+            })}
           </div>
         ) : (
           <p className="text-sm text-slate-500">
@@ -446,9 +529,10 @@ export function AdoptionDashboard({
           <div>
             <h3 className="text-lg font-semibold text-slate-800">Overall Average by Component</h3>
             <p className="text-xs text-slate-500 mt-1">
-              Each component is scored 0-5. <span className="px-1.5 py-0.5 rounded bg-slate-200 text-slate-500">Grey</span> = not started,{' '}
-              <span className="px-1.5 py-0.5 rounded bg-amber-100 text-amber-700">amber</span> = below target,{' '}
-              <span className="px-1.5 py-0.5 rounded bg-green-100 text-green-700">green</span> = at or above target.
+              BRAG scoring is used for components: <span className="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800">Blue</span> = not started,{' '}
+              <span className="px-1.5 py-0.5 rounded bg-red-100 text-red-800">Red</span> = materially below target,{' '}
+              <span className="px-1.5 py-0.5 rounded bg-amber-100 text-amber-800">Amber</span> = slightly below target,{' '}
+              <span className="px-1.5 py-0.5 rounded bg-green-100 text-green-800">Green</span> = at/above target.
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-3 xl:w-[65rem]">
@@ -497,13 +581,8 @@ export function AdoptionDashboard({
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {componentRows.map(({ component, avgNum }) => {
-            const badgeClass =
-              avgNum === 0
-                ? 'bg-slate-200 text-slate-500'
-                : avgNum >= component.target
-                  ? 'bg-green-100 text-green-700'
-                  : 'bg-amber-100 text-amber-700';
+          {componentRows.map(({ component, avgNum, actionCount }) => {
+            const deliveryStatus = getDeliveryStatusFromAverage(avgNum, component.target, actionCount);
 
             return (
               <button
@@ -522,8 +601,8 @@ export function AdoptionDashboard({
                       {scoreDelta > 0 ? '↑' : '↓'}
                     </span>
                   )}
-                  <span className={`text-xs font-bold px-2 py-1 rounded ${badgeClass}`}>
-                    {avgNum > 0 ? avgNum.toFixed(1) : '-'}
+                  <span className={`text-xs font-bold px-2.5 py-1 rounded ${DELIVERY_BADGE_STYLES[deliveryStatus]}`}>
+                    {deliveryStatus}
                   </span>
                 </div>
               </button>
@@ -540,7 +619,27 @@ export function AdoptionDashboard({
       {/* Lens & Component Breakdown */}
       <div className="bg-white rounded-lg shadow-sm p-6 border border-slate-200 mb-8">
         <div className="flex flex-col gap-3 mb-4 sm:flex-row sm:items-center sm:justify-between">
-          <h3 className="text-lg font-semibold text-slate-800">Lens & Component Breakdown</h3>
+          <div>
+            <div className="flex items-center gap-2">
+              <h3 className="text-lg font-semibold text-slate-800">Lens & Component Breakdown</h3>
+              <button
+                type="button"
+                onClick={() => setShowLensBreakdownHelp((current) => !current)}
+                className="inline-flex items-center justify-center rounded-full border border-slate-300 p-1 text-slate-500 hover:border-[#005eb8] hover:text-[#005eb8]"
+                aria-label="Explain lenses and components"
+                title="Explain lenses and components"
+              >
+                <InfoIcon />
+              </button>
+            </div>
+            {showLensBreakdownHelp ? (
+              <p className="mt-2 text-xs text-slate-600 max-w-3xl">
+                A component is the change topic you are delivering (for example, Vision). A lens is the angle used to assess that
+                component. For example, Vision is reviewed through Strategic Direction and Leadership and People Experience and
+                Culture to check both leadership alignment and whether people understand and believe in the vision.
+              </p>
+            ) : null}
+          </div>
           <select
             value={lensPhaseFilter}
             onChange={(e) => setLensPhaseFilter(e.target.value === 'all' ? 'all' : Number(e.target.value))}
@@ -565,15 +664,12 @@ export function AdoptionDashboard({
             return (
               <div key={lens} className="border border-slate-100 rounded-md p-4 bg-slate-50">
                 <h4 className="font-bold text-sm text-[#005eb8] mb-3">{lens}</h4>
+                <p className="mb-3 text-xs text-slate-600">{LENS_EXPLANATIONS[lens] || 'This lens provides an additional perspective on how each component is landing across teams and services.'}</p>
                 <ul className="space-y-2">
                   {mapped.map((component) => {
-                    const score = Number(getEntry(component.id, lens).score || 0);
-                    const badgeClass =
-                      score === 0
-                        ? 'bg-slate-100 text-slate-400'
-                        : score >= component.target
-                          ? 'bg-green-100 text-green-700'
-                          : 'bg-amber-100 text-amber-700';
+                    const entry = getEntry(component.id, lens);
+                    const score = Number(entry.score || 0);
+                    const deliveryStatus = getDeliveryStatusFromAverage(score, component.target, (entry.actions || []).length);
 
                     return (
                       <li
@@ -585,9 +681,9 @@ export function AdoptionDashboard({
                         </span>
                         <button
                           onClick={() => onComponentClick(component.id)}
-                          className={`px-2 py-0.5 rounded font-bold ${badgeClass}`}
+                          className={`px-2.5 py-0.5 rounded font-bold ${DELIVERY_BADGE_STYLES[deliveryStatus]}`}
                         >
-                          {score === 0 ? '-' : `L${score}`}
+                          {deliveryStatus}
                         </button>
                       </li>
                     );

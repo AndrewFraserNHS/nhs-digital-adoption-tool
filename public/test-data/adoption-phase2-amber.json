@@ -1,0 +1,161 @@
+{
+  "schemaVersion": "4.0",
+  "exportedAt": "2026-08-06T16:31:00.000Z",
+  "orgProfile": {
+    "trustName": "Southvale NHS Foundation Trust",
+    "region": "Midlands",
+    "trustType": "Foundation",
+    "projectName": "AVT Scale-Up - Phase 2",
+    "leadName": "Priya Shah",
+    "cst": {
+      "type": "program",
+      "pathway": "pathway-2",
+      "goLiveDate": "2026-09-15",
+      "fullAdoptionDate": "2027-02-01",
+      "benefitRealizationDate": "2027-05-01",
+      "phaseCapability": {
+        "1": { "competence": "B", "confidence": 4, "reason": "initial" },
+        "2": { "competence": "C", "confidence": 3, "reason": "initial" }
+      }
+    }
+  },
+  "currentDraft": {
+    "vision": {
+      "Strategic Direction and Leadership": {
+        "score": 5,
+        "justification": "Vision is clear and routinely reinforced by senior leaders.",
+        "evidence": "Board comms pack",
+        "actions": [
+          {
+            "id": "p2-vision-1",
+            "text": "Monthly clinical leadership message",
+            "owner": "Clinical Director",
+            "timescale": "Monthly",
+            "status": "Completed"
+          }
+        ]
+      },
+      "People Experience and Culture": {
+        "score": 5,
+        "justification": "Staff can describe purpose and expected workflow change.",
+        "evidence": "Pulse survey",
+        "actions": [
+          {
+            "id": "p2-vision-2",
+            "text": "Champion storytelling sessions",
+            "owner": "Change Lead",
+            "timescale": "Aug 2026",
+            "status": "Completed"
+          }
+        ]
+      }
+    },
+    "case_for_change": {
+      "Strategic Direction and Leadership": {
+        "score": 5,
+        "justification": "Case is evidence-backed and approved in governance.",
+        "evidence": "Business case v3",
+        "actions": [
+          {
+            "id": "p2-case-1",
+            "text": "Refresh baseline metrics each month",
+            "owner": "PMO",
+            "timescale": "Monthly",
+            "status": "Completed"
+          }
+        ]
+      },
+      "People Experience and Culture": {
+        "score": 5,
+        "justification": "Case resonates with frontline staff and managers.",
+        "evidence": "Focus group notes",
+        "actions": []
+      }
+    },
+    "sponsorship": {
+      "Strategic Direction and Leadership": {
+        "score": 4,
+        "justification": "Sponsors actively unblock delivery issues.",
+        "evidence": "Steering logs",
+        "actions": []
+      },
+      "People Experience and Culture": {
+        "score": 4,
+        "justification": "Visible sponsorship in team forums.",
+        "evidence": "Town hall schedule",
+        "actions": []
+      },
+      "Planning and Risk": {
+        "score": 4,
+        "justification": "Escalation routes and risk ownership are clear.",
+        "evidence": "RAID log",
+        "actions": []
+      }
+    },
+    "change_network": {
+      "Strategic Direction and Leadership": {
+        "score": 4,
+        "justification": "Change champions have formal remit.",
+        "evidence": "Champion ToR",
+        "actions": []
+      },
+      "People Experience and Culture": {
+        "score": 4,
+        "justification": "Peer support is active in most clinical teams.",
+        "evidence": "Network attendance",
+        "actions": []
+      }
+    },
+    "benefits": {
+      "Process and Sustainment": {
+        "score": 1,
+        "justification": "Benefits tracking exists but is not used consistently.",
+        "evidence": "Benefits tracker",
+        "actions": [
+          {
+            "id": "p2-benefits-1",
+            "text": "Define standard monthly benefits review",
+            "owner": "Benefits Lead",
+            "timescale": "Sep 2026",
+            "status": "Planned"
+          }
+        ]
+      },
+      "Planning and Risk": {
+        "score": 1,
+        "justification": "Risk-adjusted benefits assumptions need re-baselining.",
+        "evidence": "Benefits assumptions",
+        "actions": []
+      }
+    },
+    "change_impact": {
+      "People Experience and Culture": {
+        "score": 2,
+        "justification": "Impact analysis incomplete for some staff cohorts.",
+        "evidence": "Impact matrix",
+        "actions": []
+      },
+      "Planning and Risk": {
+        "score": 2,
+        "justification": "Some high-risk workflows still need mitigation detail.",
+        "evidence": "Clinical safety review",
+        "actions": []
+      }
+    }
+  },
+  "objectives": {},
+  "history": [
+    {
+      "monthLabel": "Jun 2026",
+      "overallPercentage": 44,
+      "data": {}
+    },
+    {
+      "monthLabel": "Jul 2026",
+      "overallPercentage": 55,
+      "data": {}
+    }
+  ],
+  "phaseOverrides": {},
+  "pathwayChecks": {}
+}

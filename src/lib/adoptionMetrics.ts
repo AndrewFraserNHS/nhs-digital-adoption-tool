@@ -316,13 +316,30 @@ export function flattenActions(
   getEntry: (componentId: string, lens: string) => DraftEntry
 ): ActionRow[] {
   const rows: ActionRow[] = [];
+  const pushed = new Set<string>();
+
+  const pushRow = (componentId: string, lens: string, action: ActionRow['action']) => {
+    const key = `${action.id}:${componentId}:${lens}`;
+    if (pushed.has(key)) {
+      return;
+    }
+    pushed.add(key);
+    const component = getComponent(componentId);
+    rows.push({ compId: componentId, component: component.label, lens, action });
+  };
+
   Object.keys(store.currentDraft).forEach((componentId) => {
     Object.keys(store.currentDraft[componentId]).forEach((lens) => {
-      const component = getComponent(componentId);
       const actions = getEntry(componentId, lens).actions || [];
-      actions.forEach((action) =>
-        rows.push({ compId: componentId, component: component.label, lens, action })
-      );
+      actions.forEach((action) => {
+        const targets = action.linkedTargets && action.linkedTargets.length
+          ? action.linkedTargets
+          : [{ componentId, lens }];
+
+        targets.forEach((target) => {
+          pushRow(target.componentId, target.lens, action);
+        });
+      });
     });
   });
   return rows;

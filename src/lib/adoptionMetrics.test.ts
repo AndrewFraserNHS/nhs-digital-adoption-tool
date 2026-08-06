@@ -154,6 +154,40 @@ describe('adoptionMetrics', () => {
     expect(rows[1]).toMatchObject({ compId: 'benefits', component: 'Benefits', lens: 'Lens A' });
   });
 
+  it('expands linked actions across every linked target row', () => {
+    const linkedStore: AdoptionStore = {
+      ...store,
+      currentDraft: {
+        ...store.currentDraft,
+        vision: {
+          ...store.currentDraft.vision,
+          'Lens A': {
+            ...store.currentDraft.vision['Lens A'],
+            actions: [
+              {
+                id: 'linked-1',
+                text: 'Shared action',
+                owner: 'Casey',
+                timescale: 'Q2',
+                status: 'Planned',
+                linkedTargets: [
+                  { componentId: 'vision', lens: 'Lens A' },
+                  { componentId: 'benefits', lens: 'Lens A' }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    };
+
+    const rows = flattenActions(linkedStore, (id) => components.find((component) => component.id === id)!, (componentId, lens) => linkedStore.currentDraft[componentId][lens]);
+
+    expect(rows).toHaveLength(3);
+    expect(rows.find((row) => row.compId === 'vision' && row.lens === 'Lens A' && row.action.id === 'linked-1')).toBeTruthy();
+    expect(rows.find((row) => row.compId === 'benefits' && row.lens === 'Lens A' && row.action.id === 'linked-1')).toBeTruthy();
+  });
+
   it('builds chart.js radar data structure with current and target datasets', () => {
     const chartData = buildRadarChartData(store, ['Lens A', 'Lens B'], components, getEntry);
 

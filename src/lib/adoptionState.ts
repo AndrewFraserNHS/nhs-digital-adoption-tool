@@ -146,7 +146,13 @@ export function cloneEntry(entry: DraftEntry): DraftEntry {
     score: entry.score,
     justification: entry.justification,
     evidence: entry.evidence,
-    actions: entry.actions.map(a => ({ ...a }))
+    actions: entry.actions.map((action) => ({
+      ...action,
+      linkedTargets: (action.linkedTargets || []).map((target) => ({
+        componentId: target.componentId,
+        lens: target.lens
+      }))
+    }))
   };
 }
 

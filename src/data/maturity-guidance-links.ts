@@ -1,6 +1,6 @@
 import type { PhaseCapabilityProfile } from './cst';
 
-export const MATURITY_GUIDANCE_TARGETS = ['Default', 'AVT', 'EPR'] as const;
+export const MATURITY_GUIDANCE_TARGETS = ['Default', 'Product', 'EPR'] as const;
 
 export type MaturityGuidanceTarget = (typeof MATURITY_GUIDANCE_TARGETS)[number] | string;
 
@@ -154,8 +154,8 @@ export const DEFAULT_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
   }
 };
 
-const AVT_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
-  // TODO(AVT): Populate AVT-specific guidance links per theme.
+const PRODUCT_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
+  // TODO(Product): Populate product-specific guidance links per theme.
   'Vision': { inputs: [], deliverables: [] },
   'Case for Change': { inputs: [], deliverables: [] },
   'Sponsorship/ Change Network': { inputs: [], deliverables: [] },
@@ -188,7 +188,8 @@ const EPR_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
 
 export const MATURITY_GUIDANCE_LINKS: Record<MaturityGuidanceTarget, GuidanceLinkMap> = {
   Default: DEFAULT_GUIDANCE_LINK_MAP,
-  AVT: AVT_GUIDANCE_LINK_MAP,
+  Product: PRODUCT_GUIDANCE_LINK_MAP,
+  AVT: PRODUCT_GUIDANCE_LINK_MAP,
   EPR: EPR_GUIDANCE_LINK_MAP
 };
 

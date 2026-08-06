@@ -82,7 +82,13 @@ const DEFAULT_ENGAGEMENT_STATE: EngagementState = {
 };
 
 function cloneAction(action: DraftAction): DraftAction {
-  return { ...action };
+  return {
+    ...action,
+    linkedTargets: (action.linkedTargets || []).map((target) => ({
+      componentId: target.componentId,
+      lens: target.lens
+    }))
+  };
 }
 
 function getRubricText(componentId: string, lensName: string, score: number): string {

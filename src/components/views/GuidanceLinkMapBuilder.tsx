@@ -513,7 +513,7 @@ export function GuidanceLinkMapBuilder({
                     <input
                       value={onboardingName}
                       onChange={(event) => setOnboardingName(event.target.value)}
-                      placeholder="e.g. AVT Paediatrics Rollout"
+                      placeholder="e.g. Product Paediatrics Rollout"
                       className="w-full rounded-md border border-slate-300 px-3 py-2"
                     />
                   </label>
@@ -618,7 +618,7 @@ export function GuidanceLinkMapBuilder({
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">Guidance Link Map Builder</p>
         <h2 className="mt-2 text-2xl font-bold text-slate-900">Create and manage workstream guidance maps</h2>
         <p className="mt-2 text-sm text-slate-600">
-          Start from the default NHS guidance link map, create a named workstream such as AVT,
+          Start from the default NHS guidance link map, create a named workstream such as Product,
           update links, then export or import the result for use in other pages.
         </p>
       </div>
@@ -629,7 +629,7 @@ export function GuidanceLinkMapBuilder({
           <input
             value={newWorkstreamName}
             onChange={(event) => setNewWorkstreamName(event.target.value)}
-            placeholder="Enter a workstream name e.g. AVT"
+            placeholder="Enter a workstream name e.g. Product"
             className="min-w-[260px] flex-1 rounded-md border border-slate-300 px-3 py-2 text-sm"
           />
           <button

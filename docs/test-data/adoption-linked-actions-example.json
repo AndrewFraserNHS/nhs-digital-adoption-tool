@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "2.0",
+  "exportedAt": "2026-08-05T12:00:00.000Z",
+  "orgProfile": {
+    "trustName": "Example NHS Trust",
+    "region": "North East",
+    "trustType": "Acute",
+    "projectName": "Clinical Product Rollout",
+    "leadName": "Alex Morgan",
+    "cst": {
+      "type": "program",
+      "pathway": "pathway-2",
+      "goLiveDate": "2026-10-01",
+      "fullAdoptionDate": "2027-02-01",
+      "benefitRealizationDate": "2027-06-01",
+      "phaseCapability": {
+        "1": { "competence": "C", "confidence": 3, "reason": "initial" },
+        "2": { "competence": "C", "confidence": 3, "reason": "initial" },
+        "3": { "competence": "D", "confidence": 2, "reason": "initial" },
+        "4": { "competence": "D", "confidence": 2, "reason": "initial" },
+        "5": { "competence": "E", "confidence": 1, "reason": "initial" }
+      }
+    }
+  },
+  "currentDraft": {
+    "vision": {
+      "Strategic Direction and Leadership": {
+        "score": 3,
+        "justification": "Component-level justification shared across lenses for Vision.",
+        "evidence": "Leadership brief",
+        "actions": [
+          {
+            "id": "action-linked-001",
+            "text": "Run cross-service workflow rehearsal",
+            "owner": "Programme Office",
+            "timescale": "2026-09-20",
+            "status": "Planned",
+            "phase": 1,
+            "startDate": "2026-09-01",
+            "dueDate": "2026-09-20",
+            "notes": "Include clinical champions from medicine and surgery.",
+            "evidence": "https://example.org/rehearsal-plan",
+            "linkedTargets": [
+              { "componentId": "vision", "lens": "Strategic Direction and Leadership" },
+              { "componentId": "stakeholder", "lens": "People Experience and Culture" },
+              { "componentId": "skills_learning", "lens": "People Experience and Culture" }
+            ]
+          }
+        ]
+      },
+      "People Experience and Culture": {
+        "score": 2,
+        "justification": "Component-level justification shared across lenses for Vision.",
+        "evidence": "Pulse feedback",
+        "actions": []
+      }
+    },
+    "stakeholder": {
+      "People Experience and Culture": {
+        "score": 2,
+        "justification": "Local teams need clearer communication roles.",
+        "evidence": "Service-level comms logs",
+        "actions": []
+      }
+    },
+    "skills_learning": {
+      "People Experience and Culture": {
+        "score": 1,
+        "justification": "Training pathways are not yet standardized.",
+        "evidence": "LMS completion report",
+        "actions": []
+      }
+    }
+  },
+  "history": [],
+  "phaseOverrides": {},
+  "pathwayChecks": {}
+}

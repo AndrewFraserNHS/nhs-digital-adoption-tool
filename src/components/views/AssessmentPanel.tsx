@@ -1,20 +1,31 @@
-import React, { JSX, useCallback, useMemo, useState } from 'react';
+import React, { JSX, useCallback, useEffect, useMemo, useState } from 'react';
 import { AdoptionStore, DraftEntry, DraftAction, type ActionTargetLink } from '@lib/adoptionState';
 import { AssessmentComponent } from '@data/components';
 import { UNIFIED_ACTION_STATUSES, deriveTemporalActionStatus } from '@lib/actionModel';
 import type { CstPathwayKey } from '@data/cst';
 import { PATHWAY_LABELS } from '@data/cst';
 import { getPathwayRulesForComponent, resolvePathwayCopy } from '@data/pathway-rules';
+import { getDefaultActionsForTransition, getScoreLabel, getComponentHasDefaults } from '@data/default-actions';
 
 type AssessmentPanelStore = AdoptionStore & {
   showMatrix?: Record<string, boolean>;
 };
 
 interface ActionEditorState {
-  lens: string;
+  sourceComponentId: string;
+  sourceLens: string;
   mode: 'create' | 'edit';
   actionId?: string;
   action: DraftAction;
+  targetPickerComponentId: string;
+  targetPickerLens: string;
+}
+
+interface ResolvedLensAction {
+  sourceComponentId: string;
+  sourceLens: string;
+  action: DraftAction;
+  isLinkedView: boolean;
 }
 
 export interface AssessmentPanelProps {
@@ -41,6 +52,16 @@ const SCORE_LABELS: Record<number, string> = {
   3: 'Embedding',
   4: 'Adopted',
   5: 'Thriving'
+};
+
+const STATUS_BADGE_STYLES: Record<string, string> = {
+  Planned: 'bg-slate-100 text-slate-700 border-slate-200',
+  'In Progress': 'bg-blue-100 text-blue-800 border-blue-200',
+  Blocked: 'bg-amber-100 text-amber-800 border-amber-200',
+  Completed: 'bg-green-100 text-green-800 border-green-200',
+  Cancelled: 'bg-slate-200 text-slate-700 border-slate-300',
+  'Overdue start': 'bg-rose-100 text-rose-800 border-rose-200',
+  'Overdue completion': 'bg-red-100 text-red-800 border-red-200'
 };
 
 function InfoIcon(): JSX.Element {
@@ -116,8 +137,28 @@ function createEmptyAction(phase: number, componentId: string, lens: string): Dr
   };
 }
 
-function hasTarget(targets: ActionTargetLink[] | undefined, componentId: string, lens: string): boolean {
-  return (targets || []).some((target) => target.componentId === componentId && target.lens === lens);
+function getNormalizedTargets(
+  action: DraftAction,
+  sourceComponentId: string,
+  sourceLens: string
+): ActionTargetLink[] {
+  const targets = action.linkedTargets || [];
+  if (!targets.length) {
+    return [{ componentId: sourceComponentId, lens: sourceLens }];
+  }
+
+  const seen = new Set<string>();
+  const deduped: ActionTargetLink[] = [];
+  targets.forEach((target) => {
+    const key = `${target.componentId}:${target.lens}`;
+    if (seen.has(key)) {
+      return;
+    }
+    seen.add(key);
+    deduped.push({ componentId: target.componentId, lens: target.lens });
+  });
+
+  return deduped;
 }
 
 export function AssessmentPanel({
@@ -138,18 +179,94 @@ export function AssessmentPanel({
   const pathwayRule = getPathwayRulesForComponent(component.id, pathway);
   const [actionEditor, setActionEditor] = useState<ActionEditorState | null>(null);
 
-  const allTargetCombos = useMemo(
-    () =>
-      components.flatMap((item) =>
-        item.lenses.map((lens) => ({ componentId: item.id, componentLabel: item.label, lens }))
-      ),
-    [components]
-  );
+  const actionsByTarget = useMemo(() => {
+    const map: Record<string, ResolvedLensAction[]> = {};
+
+    Object.keys(store.currentDraft).forEach((sourceComponentId) => {
+      Object.keys(store.currentDraft[sourceComponentId] || {}).forEach((sourceLens) => {
+        const sourceEntry = store.currentDraft[sourceComponentId][sourceLens];
+        (sourceEntry.actions || []).forEach((action) => {
+          const targets = getNormalizedTargets(action, sourceComponentId, sourceLens);
+          targets.forEach((target) => {
+            const key = `${target.componentId}:${target.lens}`;
+            if (!map[key]) {
+              map[key] = [];
+            }
+            map[key].push({
+              sourceComponentId,
+              sourceLens,
+              action,
+              isLinkedView: !(target.componentId === sourceComponentId && target.lens === sourceLens)
+            });
+          });
+        });
+      });
+    });
+
+    return map;
+  }, [store.currentDraft]);
+
+  const componentById = useMemo(() => {
+    const map: Record<string, AssessmentComponent> = {};
+    components.forEach((item) => {
+      map[item.id] = item;
+    });
+    return map;
+  }, [components]);
 
   const componentJustification = useMemo(() => {
     const firstLens = component.lenses[0];
     return firstLens ? getEntry(component.id, firstLens).justification : '';
   }, [component.id, component.lenses, getEntry]);
+
+  const actionEditorSourceLabel = useMemo(() => {
+    if (!actionEditor) {
+      return component.label;
+    }
+    return components.find((item) => item.id === actionEditor.sourceComponentId)?.label || actionEditor.sourceComponentId;
+  }, [actionEditor, component.label, components]);
+
+  useEffect(() => {
+    if (!getComponentHasDefaults(component)) {
+      return;
+    }
+
+    component.lenses.forEach((lens) => {
+      const entry = getEntry(component.id, lens);
+      const defaults = getDefaultActionsForTransition(component.id, lens, entry.score, productName);
+      if (!defaults || !defaults.actions.length) {
+        return;
+      }
+
+      const existingActionTexts = new Set(entry.actions.map((action) => action.text.trim().toLowerCase()));
+      const missingDefaults = defaults.actions.filter(
+        (template) => !existingActionTexts.has(template.text.trim().toLowerCase())
+      );
+
+      if (!missingDefaults.length) {
+        return;
+      }
+
+      const appendedActions = missingDefaults.map((template, index) => ({
+        id: `${template.id}:seeded:${index + 1}`,
+        text: template.text,
+        owner: '',
+        timescale: '',
+        status: 'Planned' as const,
+        phase: component.phase,
+        startDate: '',
+        dueDate: '',
+        notes: '',
+        evidence: '',
+        linkedTargets: [{ componentId: component.id, lens }]
+      }));
+
+      onEntryUpdate(component.id, lens, {
+        ...entry,
+        actions: [...entry.actions, ...appendedActions]
+      });
+    });
+  }, [component, getEntry, onEntryUpdate, productName]);
 
   const handleComponentSelect = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -189,27 +306,35 @@ export function AssessmentPanel({
         seeded.text = seedText;
       }
       setActionEditor({
-        lens,
+        sourceComponentId: component.id,
+        sourceLens: lens,
         mode: 'create',
-        action: seeded
+        action: seeded,
+        targetPickerComponentId: component.id,
+        targetPickerLens: lens
       });
     },
     [component.id, component.phase]
   );
 
-  const openEditActionModal = useCallback((lens: string, action: DraftAction) => {
+  const openEditActionModal = useCallback((sourceComponentId: string, sourceLens: string, action: DraftAction) => {
+    const normalizedTargets = getNormalizedTargets(action, sourceComponentId, sourceLens);
+    const firstTarget = normalizedTargets[0] || { componentId: sourceComponentId, lens: sourceLens };
     setActionEditor({
-      lens,
+      sourceComponentId,
+      sourceLens,
       mode: 'edit',
       actionId: action.id,
       action: {
         ...action,
-        linkedTargets: (action.linkedTargets || []).map((target) => ({ ...target })),
+        linkedTargets: normalizedTargets,
         notes: action.notes || '',
         evidence: action.evidence || '',
         startDate: action.startDate || '',
         dueDate: action.dueDate || ''
-      }
+      },
+      targetPickerComponentId: firstTarget.componentId,
+      targetPickerLens: firstTarget.lens
     });
   }, []);
 
@@ -234,19 +359,21 @@ export function AssessmentPanel({
         actionEditor.action.startDate,
         actionEditor.action.dueDate
       ),
-      linkedTargets: (actionEditor.action.linkedTargets || []).length
-        ? actionEditor.action.linkedTargets
-        : [{ componentId: component.id, lens: actionEditor.lens }],
+      linkedTargets: getNormalizedTargets(
+        actionEditor.action,
+        actionEditor.sourceComponentId,
+        actionEditor.sourceLens
+      ),
       timescale: actionEditor.action.dueDate || actionEditor.action.startDate || actionEditor.action.timescale
     };
 
-    const entry = getEntry(component.id, actionEditor.lens);
+    const entry = getEntry(actionEditor.sourceComponentId, actionEditor.sourceLens);
     const nextActions =
       actionEditor.mode === 'create'
         ? [...entry.actions, normalizedAction]
         : entry.actions.map((item) => (item.id === actionEditor.actionId ? normalizedAction : item));
 
-    onEntryUpdate(component.id, actionEditor.lens, {
+    onEntryUpdate(actionEditor.sourceComponentId, actionEditor.sourceLens, {
       ...entry,
       actions: nextActions
     });
@@ -275,15 +402,67 @@ export function AssessmentPanel({
     });
   };
 
-  const toggleActionTarget = (componentId: string, lens: string, checked: boolean) => {
+  const updateTargetPicker = (componentId: string, lens: string) => {
     setActionEditor((current) => {
       if (!current) {
         return current;
       }
-      const existing = current.action.linkedTargets || [];
-      const nextTargets = checked
-        ? [...existing, { componentId, lens }]
-        : existing.filter((target) => !(target.componentId === componentId && target.lens === lens));
+      return {
+        ...current,
+        targetPickerComponentId: componentId,
+        targetPickerLens: lens
+      };
+    });
+  };
+
+  const addTargetToActionEditor = () => {
+    setActionEditor((current) => {
+      if (!current) {
+        return current;
+      }
+
+      const componentOption = componentById[current.targetPickerComponentId] || component;
+      const lensOption = componentOption.lenses.includes(current.targetPickerLens)
+        ? current.targetPickerLens
+        : componentOption.lenses[0];
+
+      if (!lensOption) {
+        return current;
+      }
+
+      const existingTargets = getNormalizedTargets(
+        current.action,
+        current.sourceComponentId,
+        current.sourceLens
+      );
+
+      if (existingTargets.some((target) => target.componentId === componentOption.id && target.lens === lensOption)) {
+        return current;
+      }
+
+      return {
+        ...current,
+        action: {
+          ...current.action,
+          linkedTargets: [...existingTargets, { componentId: componentOption.id, lens: lensOption }]
+        }
+      };
+    });
+  };
+
+  const removeTargetFromActionEditor = (componentId: string, lens: string) => {
+    setActionEditor((current) => {
+      if (!current) {
+        return current;
+      }
+
+      const existingTargets = getNormalizedTargets(
+        current.action,
+        current.sourceComponentId,
+        current.sourceLens
+      );
+      const nextTargets = existingTargets.filter((target) => !(target.componentId === componentId && target.lens === lens));
+
       return {
         ...current,
         action: {
@@ -293,6 +472,20 @@ export function AssessmentPanel({
       };
     });
   };
+
+  const addSuggestedAction = useCallback((lens: string, text: string) => {
+    const entry = getEntry(component.id, lens);
+    const seeded = createEmptyAction(component.phase, component.id, lens);
+    seeded.text = text;
+    seeded.status = deriveTemporalActionStatus(seeded.status, seeded.startDate, seeded.dueDate);
+
+    onEntryUpdate(component.id, lens, {
+      ...entry,
+      actions: [...entry.actions, seeded]
+    });
+
+    openEditActionModal(component.id, lens, seeded);
+  }, [component.id, component.phase, getEntry, onEntryUpdate, openEditActionModal]);
 
   return (
     <div className="max-w-5xl mx-auto pb-20">
@@ -335,10 +528,10 @@ export function AssessmentPanel({
                 <span className="text-sm text-indigo-900">{resolvePathwayCopy(item.text, productName)}</span>
                 <button
                   type="button"
-                  onClick={() => openCreateActionModal(component.lenses[0], resolvePathwayCopy(item.text, productName))}
+                  onClick={() => addSuggestedAction(component.lenses[0], resolvePathwayCopy(item.text, productName))}
                   className="shrink-0 rounded-md bg-indigo-600 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-indigo-700"
                 >
-                  Create Action
+                  Add To Actions
                 </button>
               </div>
             ))}
@@ -469,49 +662,122 @@ export function AssessmentPanel({
                   </button>
                 </div>
 
-                <div className="space-y-3">
-                  {entry.actions.length ? (
-                    entry.actions.map((action) => {
-                      const temporalStatus = deriveTemporalActionStatus(action.status, action.startDate, action.dueDate);
-                      return (
-                        <div key={action.id} className="bg-slate-50 border border-slate-200 rounded-md p-3">
-                          <div className="flex items-start justify-between gap-3">
-                            <div>
-                              <p className="text-sm font-semibold text-slate-800">{action.text || 'Untitled action'}</p>
-                              <p className="text-xs text-slate-600 mt-1">
-                                Owner: {action.owner || 'Unassigned'} · Status: {temporalStatus}
-                              </p>
-                              <p className="text-xs text-slate-500 mt-1">
-                                Start: {action.startDate || 'N/A'} · End: {action.dueDate || 'N/A'}
-                              </p>
-                              <p className="text-xs text-slate-500 mt-1">
-                                Linked targets: {(action.linkedTargets || []).length || 1}
-                              </p>
-                            </div>
-                            <div className="flex gap-2">
-                              <button
-                                type="button"
-                                onClick={() => openEditActionModal(lens, action)}
-                                className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100"
-                              >
-                                Edit
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => onActionRemove(component.id, lens, action.id)}
-                                className="rounded-md border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100"
-                              >
-                                Remove
-                              </button>
-                            </div>
-                          </div>
-                        </div>
+                {getComponentHasDefaults(component) ? (
+                  <div className="mb-4 rounded-lg border border-cyan-200 bg-cyan-50 p-3">
+                    {(() => {
+                      const defaults = getDefaultActionsForTransition(component.id, lens, entry.score, productName);
+                      if (!defaults) {
+                        return <p className="text-xs text-cyan-900">No default transition actions available for this score.</p>;
+                      }
+
+                      const existingActionTexts = new Set(
+                        entry.actions.map((action) => action.text.trim().toLowerCase()).filter(Boolean)
                       );
-                    })
-                  ) : (
-                    <p className="text-sm text-slate-500">No actions yet for this lens.</p>
-                  )}
-                </div>
+
+                      return (
+                        <>
+                          <p className="text-xs font-semibold uppercase tracking-wider text-cyan-700">Default transition actions</p>
+                          <p className="mt-1 text-sm text-cyan-900">
+                            {getScoreLabel(defaults.from)} ({defaults.from}) to {getScoreLabel(defaults.to)} ({defaults.to})
+                          </p>
+                          <div className="mt-2 divide-y divide-cyan-100 rounded border border-cyan-200 bg-white">
+                            {defaults.actions.map((template) => {
+                              const isAdded = existingActionTexts.has(template.text.trim().toLowerCase());
+                              return (
+                                <div key={template.id} className="grid grid-cols-[1fr,auto] gap-3 p-2.5 items-start">
+                                  <p className="text-sm text-slate-700">{template.text}</p>
+                                  <button
+                                    type="button"
+                                    disabled={isAdded}
+                                    onClick={() => addSuggestedAction(lens, template.text)}
+                                    className="rounded-md border border-cyan-300 bg-cyan-100 px-2.5 py-1.5 text-xs font-semibold text-cyan-800 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-cyan-200"
+                                  >
+                                    {isAdded ? 'Added' : 'Add'}
+                                  </button>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </>
+                      );
+                    })()}
+                  </div>
+                ) : null}
+
+                {(actionsByTarget[`${component.id}:${lens}`] || []).length ? (
+                  <div className="overflow-x-auto rounded-md border border-slate-200">
+                    <table className="min-w-full divide-y divide-slate-200 bg-white">
+                      <thead className="bg-slate-50">
+                        <tr>
+                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Description</th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Current State</th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Owner</th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Start</th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">End</th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Notes</th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Evidence</th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Linked Targets</th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {(actionsByTarget[`${component.id}:${lens}`] || []).map((resolvedAction) => {
+                          const action = resolvedAction.action;
+                          const temporalStatus = deriveTemporalActionStatus(action.status, action.startDate, action.dueDate);
+                          const sourceComponentLabel = componentById[resolvedAction.sourceComponentId]?.label || resolvedAction.sourceComponentId;
+                          const linkedTargets = getNormalizedTargets(action, resolvedAction.sourceComponentId, resolvedAction.sourceLens)
+                            .map((target) => `${componentById[target.componentId]?.label || target.componentId} / ${target.lens}`)
+                            .join(', ');
+                          const badgeStyle = STATUS_BADGE_STYLES[temporalStatus] || STATUS_BADGE_STYLES.Planned;
+
+                          return (
+                            <tr key={`${resolvedAction.sourceComponentId}:${resolvedAction.sourceLens}:${action.id}`}>
+                              <td className="px-3 py-2 text-sm text-slate-800">
+                                <div>{action.text || 'Untitled action'}</div>
+                                {resolvedAction.isLinkedView ? (
+                                  <div className="mt-1 text-xs text-indigo-700">
+                                    Linked from {sourceComponentLabel} / {resolvedAction.sourceLens}
+                                  </div>
+                                ) : null}
+                              </td>
+                              <td className="px-3 py-2">
+                                <span className={`inline-flex rounded-full border px-2 py-1 text-xs font-semibold ${badgeStyle}`}>
+                                  {temporalStatus}
+                                </span>
+                              </td>
+                              <td className="px-3 py-2 text-sm text-slate-700">{action.owner || 'Unassigned'}</td>
+                              <td className="px-3 py-2 text-sm text-slate-600">{action.startDate || '-'}</td>
+                              <td className="px-3 py-2 text-sm text-slate-600">{action.dueDate || '-'}</td>
+                              <td className="px-3 py-2 text-sm text-slate-600">{action.notes || '-'}</td>
+                              <td className="px-3 py-2 text-sm text-slate-600">{action.evidence || '-'}</td>
+                              <td className="px-3 py-2 text-xs text-slate-600">{linkedTargets}</td>
+                              <td className="px-3 py-2">
+                                <div className="flex gap-2">
+                                  <button
+                                    type="button"
+                                    onClick={() => openEditActionModal(resolvedAction.sourceComponentId, resolvedAction.sourceLens, action)}
+                                    className="rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100"
+                                  >
+                                    Edit
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => onActionRemove(resolvedAction.sourceComponentId, resolvedAction.sourceLens, action.id)}
+                                    className="rounded-md border border-red-200 bg-red-50 px-2.5 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100"
+                                  >
+                                    Remove
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <p className="text-sm text-slate-500">No actions yet for this lens.</p>
+                )}
               </div>
             </div>
           );
@@ -523,7 +789,7 @@ export function AssessmentPanel({
           <div className="w-full max-w-3xl rounded-xl border border-slate-200 bg-white p-6 shadow-2xl">
             <div className="flex items-center justify-between gap-3">
               <h3 className="text-lg font-semibold text-slate-900">
-                {actionEditor.mode === 'create' ? 'Create Action' : 'Edit Action'} · {component.label} / {actionEditor.lens}
+                {actionEditor.mode === 'create' ? 'Create Action' : 'Edit Action'} · {actionEditorSourceLabel} / {actionEditor.sourceLens}
               </h3>
               <button
                 type="button"
@@ -608,20 +874,73 @@ export function AssessmentPanel({
 
               <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
                 <p className="text-sm font-semibold text-slate-800">Linked component-lens targets</p>
-                <div className="mt-2 max-h-40 overflow-auto space-y-1">
-                  {allTargetCombos.map((target) => {
-                    const checked = hasTarget(actionEditor.action.linkedTargets, target.componentId, target.lens);
-                    return (
-                      <label key={`${target.componentId}:${target.lens}`} className="flex items-start gap-2 text-sm text-slate-700">
-                        <input
-                          type="checkbox"
-                          checked={checked}
-                          onChange={(event) => toggleActionTarget(target.componentId, target.lens, event.target.checked)}
-                        />
-                        <span>{target.componentLabel} / {target.lens}</span>
-                      </label>
-                    );
-                  })}
+                <div className="mt-2 space-y-2">
+                  <div className="grid grid-cols-1 md:grid-cols-[1fr,1fr,auto] gap-2">
+                    <select
+                      value={actionEditor.targetPickerComponentId}
+                      onChange={(event) => {
+                        const nextComponentId = event.target.value;
+                        const nextComponent = componentById[nextComponentId];
+                        updateTargetPicker(nextComponentId, nextComponent?.lenses[0] || '');
+                      }}
+                      className="rounded-md border border-slate-300 px-2.5 py-2 text-sm"
+                    >
+                      {components.map((item) => (
+                        <option key={item.id} value={item.id}>{item.label}</option>
+                      ))}
+                    </select>
+
+                    <select
+                      value={actionEditor.targetPickerLens}
+                      onChange={(event) => updateTargetPicker(actionEditor.targetPickerComponentId, event.target.value)}
+                      className="rounded-md border border-slate-300 px-2.5 py-2 text-sm"
+                    >
+                      {(componentById[actionEditor.targetPickerComponentId]?.lenses || []).map((lensOption) => (
+                        <option key={lensOption} value={lensOption}>{lensOption}</option>
+                      ))}
+                    </select>
+
+                    <button
+                      type="button"
+                      onClick={addTargetToActionEditor}
+                      className="rounded-md border border-cyan-300 bg-cyan-100 px-3 py-2 text-xs font-semibold text-cyan-900 hover:bg-cyan-200"
+                    >
+                      Add Target
+                    </button>
+                  </div>
+
+                  <div className="overflow-hidden rounded border border-slate-200">
+                    <table className="min-w-full divide-y divide-slate-200 bg-white">
+                      <thead className="bg-slate-50">
+                        <tr>
+                          <th className="px-2.5 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Component</th>
+                          <th className="px-2.5 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Lens</th>
+                          <th className="px-2.5 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Remove</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {getNormalizedTargets(
+                          actionEditor.action,
+                          actionEditor.sourceComponentId,
+                          actionEditor.sourceLens
+                        ).map((target) => (
+                          <tr key={`${target.componentId}:${target.lens}`}>
+                            <td className="px-2.5 py-2 text-sm text-slate-700">{componentById[target.componentId]?.label || target.componentId}</td>
+                            <td className="px-2.5 py-2 text-sm text-slate-700">{target.lens}</td>
+                            <td className="px-2.5 py-2">
+                              <button
+                                type="button"
+                                onClick={() => removeTargetFromActionEditor(target.componentId, target.lens)}
+                                className="rounded border border-red-200 bg-red-50 px-2 py-1 text-xs font-semibold text-red-700 hover:bg-red-100"
+                              >
+                                Remove
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>

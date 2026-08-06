@@ -46,6 +46,7 @@ function createProps(overrides?: {
   const entryByKey: Record<string, DraftEntry> = {
     'vision:Strategic Direction': overrides?.entry || createEntry()
   };
+  const defaultEntry = entryByKey['vision:Strategic Direction'];
 
   return {
     store: {
@@ -65,7 +66,11 @@ function createProps(overrides?: {
           phaseCapability: {}
         }
       },
-      currentDraft: {},
+      currentDraft: {
+        vision: {
+          'Strategic Direction': defaultEntry
+        }
+      },
       history: [],
       phaseOverrides: {},
       pathwayChecks: {},
@@ -153,5 +158,43 @@ describe('AssessmentPanel', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Remove' }));
     expect(props.onActionRemove).toHaveBeenCalledWith('vision', 'Strategic Direction', 'action-1');
+  });
+
+  it('renders linked actions on linked targets and removes from source lens', () => {
+    const sourceEntry = createEntry({
+      actions: [
+        {
+          id: 'linked-vision-action',
+          text: 'Shared action',
+          owner: 'PMO',
+          timescale: 'Q3',
+          status: 'Planned',
+          linkedTargets: [
+            { componentId: 'vision', lens: 'Strategic Direction' },
+            { componentId: 'benefits', lens: 'Strategic Direction' }
+          ]
+        }
+      ]
+    });
+
+    const props = createProps();
+    props.activeComponentId = 'benefits';
+    props.store.currentDraft = {
+      vision: {
+        'Strategic Direction': sourceEntry
+      },
+      benefits: {
+        'Strategic Direction': createEntry({ actions: [] })
+      }
+    };
+    props.getEntry = (componentId: string, lens: string) => props.store.currentDraft[componentId][lens];
+
+    render(<AssessmentPanel {...props} />);
+
+    expect(screen.getByText('Shared action')).toBeTruthy();
+    expect(screen.getByText('Linked from Vision / Strategic Direction')).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Remove' }));
+    expect(props.onActionRemove).toHaveBeenCalledWith('vision', 'Strategic Direction', 'linked-vision-action');
   });
 });

@@ -1,10 +1,26 @@
 {
+  "schemaVersion": "2.0",
+  "exportedAt": "2026-08-05T09:00:00.000Z",
   "orgProfile": {
     "trustName": "North Valley NHS Trust",
     "region": "North West",
     "trustType": "Acute",
     "projectName": "Electronic Patient Record Rollout",
-    "leadName": "Jordan Patel"
+    "leadName": "Jordan Patel",
+    "cst": {
+      "type": "program",
+      "pathway": "pathway-2",
+      "goLiveDate": "2026-10-01",
+      "fullAdoptionDate": "2027-01-15",
+      "benefitRealizationDate": "2027-04-01",
+      "phaseCapability": {
+        "1": { "competence": "C", "confidence": 3, "reason": "initial" },
+        "2": { "competence": "B", "confidence": 4, "reason": "initial" },
+        "3": { "competence": "C", "confidence": 3, "reason": "initial" },
+        "4": { "competence": "D", "confidence": 2, "reason": "initial" },
+        "5": { "competence": "D", "confidence": 2, "reason": "initial" }
+      }
+    }
   },
   "currentDraft": {
     "vision": {
@@ -111,5 +127,26 @@
         }
       }
     }
-  ]
+  ],
+  "phaseOverrides": {},
+  "pathwayChecks": {
+    "vision": {
+      "pathway-2": [
+        "pathway-2:vision:1",
+        "pathway-2:vision:2",
+        "pathway-2:vision:3"
+      ]
+    },
+    "case_for_change": {
+      "pathway-2": [
+        "pathway-2:case-for-change:1",
+        "pathway-2:case-for-change:2"
+      ]
+    },
+    "stakeholder": {
+      "pathway-2": [
+        "pathway-2:stakeholder-engagement-and-communication:1"
+      ]
+    }
+  }
 }

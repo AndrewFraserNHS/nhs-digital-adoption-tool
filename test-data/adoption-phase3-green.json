@@ -1,0 +1,280 @@
+{
+  "schemaVersion": "4.0",
+  "exportedAt": "2026-08-06T16:32:00.000Z",
+  "orgProfile": {
+    "trustName": "Westford NHS Trust",
+    "region": "South West",
+    "trustType": "Acute",
+    "projectName": "AVT Stabilisation - Phase 3",
+    "leadName": "Hannah Lewis",
+    "cst": {
+      "type": "initiative",
+      "pathway": "pathway-3",
+      "goLiveDate": "2026-06-01",
+      "fullAdoptionDate": "2026-12-01",
+      "benefitRealizationDate": "2027-03-01",
+      "phaseCapability": {
+        "1": { "competence": "A", "confidence": 5, "reason": "initial" },
+        "2": { "competence": "B", "confidence": 4, "reason": "initial" },
+        "3": { "competence": "B", "confidence": 4, "reason": "initial" }
+      }
+    }
+  },
+  "currentDraft": {
+    "vision": {
+      "Strategic Direction and Leadership": {
+        "score": 5,
+        "justification": "Vision and outcomes are consistently reinforced at all levels.",
+        "evidence": "Leadership comms and briefings",
+        "actions": [
+          {
+            "id": "p3-vision-1",
+            "text": "Quarterly vision refresh",
+            "owner": "Programme Director",
+            "timescale": "Quarterly",
+            "status": "Completed"
+          }
+        ]
+      },
+      "People Experience and Culture": {
+        "score": 5,
+        "justification": "Teams understand and believe in the value proposition.",
+        "evidence": "Staff engagement trend",
+        "actions": [
+          {
+            "id": "p3-vision-2",
+            "text": "Run peer showcase sessions",
+            "owner": "Change Team",
+            "timescale": "Monthly",
+            "status": "Completed"
+          }
+        ]
+      }
+    },
+    "case_for_change": {
+      "Strategic Direction and Leadership": {
+        "score": 5,
+        "justification": "Case for change is evidenced and actively used in decisions.",
+        "evidence": "Decision logs",
+        "actions": []
+      },
+      "People Experience and Culture": {
+        "score": 5,
+        "justification": "Local teams connect AVT outcomes to daily pain points.",
+        "evidence": "Service workshops",
+        "actions": []
+      }
+    },
+    "sponsorship": {
+      "Strategic Direction and Leadership": {
+        "score": 4,
+        "justification": "Executive and clinical sponsorship is active and visible.",
+        "evidence": "Governance outputs",
+        "actions": [
+          {
+            "id": "p3-sponsor-1",
+            "text": "Maintain monthly adoption escalation forum",
+            "owner": "SRO",
+            "timescale": "Monthly",
+            "status": "Completed"
+          }
+        ]
+      },
+      "People Experience and Culture": {
+        "score": 4,
+        "justification": "Sponsors support local teams in difficult pathways.",
+        "evidence": "Champion feedback",
+        "actions": []
+      },
+      "Planning and Risk": {
+        "score": 4,
+        "justification": "Risk ownership and escalation remain timely.",
+        "evidence": "RAID controls",
+        "actions": []
+      }
+    },
+    "change_network": {
+      "Strategic Direction and Leadership": {
+        "score": 4,
+        "justification": "Network is embedded and supports escalation.",
+        "evidence": "Network cadence",
+        "actions": []
+      },
+      "People Experience and Culture": {
+        "score": 4,
+        "justification": "Champions are trusted by frontline teams.",
+        "evidence": "Survey excerpts",
+        "actions": []
+      }
+    },
+    "benefits": {
+      "Process and Sustainment": {
+        "score": 3,
+        "justification": "Benefits metrics are measured and reviewed monthly.",
+        "evidence": "Benefits dashboard",
+        "actions": [
+          {
+            "id": "p3-benefits-1",
+            "text": "Publish monthly benefits pack",
+            "owner": "Benefits Lead",
+            "timescale": "Monthly",
+            "status": "Completed"
+          }
+        ]
+      },
+      "Planning and Risk": {
+        "score": 3,
+        "justification": "Benefit assumptions are now risk-adjusted.",
+        "evidence": "Benefits assurance",
+        "actions": []
+      }
+    },
+    "change_impact": {
+      "People Experience and Culture": {
+        "score": 4,
+        "justification": "Impact plans in place for high-change cohorts.",
+        "evidence": "Impact playbooks",
+        "actions": [
+          {
+            "id": "p3-impact-1",
+            "text": "Review high-burden specialties fortnightly",
+            "owner": "Operational Lead",
+            "timescale": "Fortnightly",
+            "status": "Completed"
+          }
+        ]
+      },
+      "Planning and Risk": {
+        "score": 4,
+        "justification": "Risks are mitigated with clear owners and dates.",
+        "evidence": "Risk mitigation tracker",
+        "actions": []
+      }
+    },
+    "risk_management": {
+      "Planning and Risk": {
+        "score": 5,
+        "justification": "Risk controls are proactive and consistently applied.",
+        "evidence": "Clinical safety dashboard",
+        "actions": [
+          {
+            "id": "p3-risk-1",
+            "text": "Run monthly risk deep-dive",
+            "owner": "Clinical Safety Officer",
+            "timescale": "Monthly",
+            "status": "Completed"
+          }
+        ]
+      },
+      "Process and Sustainment": {
+        "score": 5,
+        "justification": "Control measures embedded into BAU workflows.",
+        "evidence": "SOP updates",
+        "actions": []
+      }
+    },
+    "cm_readiness": {
+      "Strategic Direction and Leadership": {
+        "score": 4,
+        "justification": "Readiness checkpoints are governed and completed.",
+        "evidence": "Readiness logs",
+        "actions": []
+      },
+      "Planning and Risk": {
+        "score": 4,
+        "justification": "Readiness risks are resolved prior to release windows.",
+        "evidence": "Release readiness reviews",
+        "actions": [
+          {
+            "id": "p3-readiness-1",
+            "text": "Maintain pre-release readiness gate",
+            "owner": "Deployment Lead",
+            "timescale": "Per release",
+            "status": "Completed"
+          }
+        ]
+      }
+    },
+    "stakeholder": {
+      "Strategic Direction and Leadership": {
+        "score": 5,
+        "justification": "Stakeholder channels are active and two-way.",
+        "evidence": "Stakeholder map",
+        "actions": []
+      },
+      "People Experience and Culture": {
+        "score": 5,
+        "justification": "Feedback loops are acted on quickly.",
+        "evidence": "Feedback response tracker",
+        "actions": [
+          {
+            "id": "p3-stakeholder-1",
+            "text": "Monthly Q&A with champions",
+            "owner": "Engagement Lead",
+            "timescale": "Monthly",
+            "status": "Completed"
+          }
+        ]
+      }
+    },
+    "resistance": {
+      "People Experience and Culture": {
+        "score": 4,
+        "justification": "Resistance hotspots are identified and supported.",
+        "evidence": "Heatmap",
+        "actions": [
+          {
+            "id": "p3-resistance-1",
+            "text": "Targeted coaching in low-adoption areas",
+            "owner": "Change Manager",
+            "timescale": "Rolling",
+            "status": "Completed"
+          }
+        ]
+      },
+      "Skills and Behaviour": {
+        "score": 4,
+        "justification": "Behavioural barriers are reducing over time.",
+        "evidence": "Adoption observations",
+        "actions": []
+      }
+    },
+    "skills_learning": {
+      "People Experience and Culture": {
+        "score": 4,
+        "justification": "Learning offer is role-specific and actively used.",
+        "evidence": "Learning analytics",
+        "actions": []
+      },
+      "Skills and Behaviour": {
+        "score": 4,
+        "justification": "Confidence is improving and support demand is dropping.",
+        "evidence": "Support ticket trends",
+        "actions": [
+          {
+            "id": "p3-skills-1",
+            "text": "Refresher training cycle",
+            "owner": "Training Lead",
+            "timescale": "Quarterly",
+            "status": "Completed"
+          }
+        ]
+      }
+    }
+  },
+  "objectives": {},
+  "history": [
+    {
+      "monthLabel": "Jun 2026",
+      "overallPercentage": 58,
+      "data": {}
+    },
+    {
+      "monthLabel": "Jul 2026",
+      "overallPercentage": 69,
+      "data": {}
+    }
+  ],
+  "phaseOverrides": {},
+  "pathwayChecks": {}
+}

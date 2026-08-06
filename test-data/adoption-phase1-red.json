@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "4.0",
+  "exportedAt": "2026-08-06T16:30:00.000Z",
+  "orgProfile": {
+    "trustName": "Northbridge NHS Trust",
+    "region": "North East",
+    "trustType": "Acute",
+    "projectName": "AVT Rollout - Phase 1 Starter",
+    "leadName": "Alex Morgan",
+    "cst": {
+      "type": "project",
+      "pathway": "pathway-1",
+      "goLiveDate": "2026-11-01",
+      "fullAdoptionDate": "",
+      "benefitRealizationDate": "",
+      "phaseCapability": {
+        "1": { "competence": "D", "confidence": 2, "reason": "initial" }
+      }
+    }
+  },
+  "currentDraft": {
+    "vision": {
+      "Strategic Direction and Leadership": {
+        "score": 1,
+        "justification": "Early vision statement drafted but not yet socialised.",
+        "evidence": "Kick-off notes",
+        "actions": [
+          {
+            "id": "p1-vision-1",
+            "text": "Draft and approve vision one-pager",
+            "owner": "Programme Manager",
+            "timescale": "Sep 2026",
+            "status": "Planned"
+          }
+        ]
+      },
+      "People Experience and Culture": {
+        "score": 0,
+        "justification": "",
+        "evidence": "",
+        "actions": []
+      }
+    },
+    "case_for_change": {
+      "Strategic Direction and Leadership": {
+        "score": 1,
+        "justification": "Case for change exists but lacks local quantified evidence.",
+        "evidence": "Draft briefing",
+        "actions": [
+          {
+            "id": "p1-case-1",
+            "text": "Collect baseline turnaround and documentation burden",
+            "owner": "BI Lead",
+            "timescale": "Sep 2026",
+            "status": "In Progress"
+          }
+        ]
+      },
+      "People Experience and Culture": {
+        "score": 0,
+        "justification": "",
+        "evidence": "",
+        "actions": []
+      }
+    }
+  },
+  "objectives": {},
+  "history": [],
+  "phaseOverrides": {},
+  "pathwayChecks": {}
+}

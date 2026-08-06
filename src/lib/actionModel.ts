@@ -10,6 +10,16 @@ export const UNIFIED_ACTION_STATUSES = [
 
 export type UnifiedActionStatus = (typeof UNIFIED_ACTION_STATUSES)[number];
 
+export const ACTION_STATUS_BADGE_STYLES: Record<UnifiedActionStatus, string> = {
+  Planned: 'bg-slate-100 text-slate-700 border-slate-200',
+  'In Progress': 'bg-blue-100 text-blue-800 border-blue-200',
+  Blocked: 'bg-amber-100 text-amber-800 border-amber-200',
+  Completed: 'bg-green-100 text-green-800 border-green-200',
+  Cancelled: 'bg-slate-200 text-slate-700 border-slate-300',
+  'Overdue start': 'bg-rose-100 text-rose-800 border-rose-200',
+  'Overdue completion': 'bg-red-100 text-red-800 border-red-200'
+};
+
 export function normalizeActionStatus(status: string | undefined): UnifiedActionStatus {
   const value = (status || '').trim().toLowerCase();
 

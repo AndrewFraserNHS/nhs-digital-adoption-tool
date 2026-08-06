@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { AssessmentPanel } from './AssessmentPanel';
 import type { DraftEntry } from '@lib/adoptionState';
@@ -87,10 +87,7 @@ function createProps(overrides?: {
     onEntryUpdate: vi.fn(),
     onOpenLensInfo: vi.fn(),
     onMatrixToggle: vi.fn(),
-    onActionRemove: vi.fn(),
-    onObjectivesUpdate: vi.fn(),
-    pathway: 'pathway-1' as const,
-    productName: 'Test Product'
+    onActionRemove: vi.fn()
   };
 }
 
@@ -200,20 +197,32 @@ describe('AssessmentPanel', () => {
     expect(props.onActionRemove).toHaveBeenCalledWith('vision', 'Strategic Direction', 'linked-vision-action');
   });
 
-  it('creates an objective, assigns an existing lens action, and derives its status', () => {
+  it('opens objective details modal with status and linked actions', () => {
     const props = createProps();
+    props.store.objectives = {
+      vision: [
+        {
+          id: 'obj-1',
+          text: 'Vision objective',
+          owner: '',
+          timescale: '',
+          linkedActions: [{ lens: 'Strategic Direction', actionId: 'action-1' }]
+        }
+      ]
+    };
     render(<AssessmentPanel {...props} />);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Add Objective' }));
-    fireEvent.change(screen.getByLabelText('Description'), { target: { value: 'Get sponsors aligned' } });
-    fireEvent.click(screen.getByLabelText(/Run workshop/));
-    fireEvent.click(screen.getByRole('button', { name: 'Save Objective' }));
+    expect(screen.getByText('Vision objective')).toBeTruthy();
+    expect(screen.getAllByText('In Progress').length).toBeGreaterThan(0);
+    fireEvent.click(screen.getByRole('button', { name: 'Vision objective' }));
 
-    expect(props.onObjectivesUpdate).toHaveBeenCalledWith('vision', [
-      expect.objectContaining({
-        text: 'Get sponsors aligned',
-        linkedActions: [{ lens: 'Strategic Direction', actionId: 'action-1' }]
-      })
-    ]);
+    const dialog = screen.getByRole('dialog', { name: 'Objective Details' });
+    expect(within(dialog).getByText('Run workshop')).toBeTruthy();
+    expect(within(dialog).getAllByText('In Progress').length).toBeGreaterThan(0);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }));
+    expect(screen.queryByText('Objective Details')).toBeNull();
+
+    expect(screen.queryByRole('button', { name: 'Add Objective' })).toBeNull();
   });
 });

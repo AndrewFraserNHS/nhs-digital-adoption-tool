@@ -136,7 +136,7 @@ export function MaturityModalManager({
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex justify-between items-center p-4 border-b border-gray-200 shrink-0">
-            <h2 className="text-xl font-bold text-gray-900">{activeComponent} — Matrix</h2>
+            <h2 className="text-xl font-bold text-gray-900">{activeComponent} - Matrix</h2>
             <button
               onClick={onClose}
               className="text-gray-500 hover:text-gray-800 text-2xl leading-none"
@@ -154,7 +154,7 @@ export function MaturityModalManager({
                 }`}
               >
                 <div className="font-semibold mb-1" style={{ color: STAGE_COLORS[i] }}>
-                  {i} — {stage}
+                  {i} - {stage}
                 </div>
                 <p className="text-sm text-gray-700 whitespace-pre-wrap">
                   {rows[i] || 'N/A'}
@@ -202,7 +202,7 @@ export function MaturityModalManager({
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex justify-between items-center p-4 border-b border-gray-200 shrink-0">
-            <h2 className="text-xl font-bold text-gray-900">{activeComponent} — Guidance</h2>
+            <h2 className="text-xl font-bold text-gray-900">{activeComponent} - Guidance</h2>
             <button
               onClick={onClose}
               className="text-gray-500 hover:text-gray-800 text-2xl leading-none"

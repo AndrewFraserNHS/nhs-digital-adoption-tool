@@ -170,7 +170,7 @@ export function generateActionPlanReport(data: ActionPlanReportData): string {
   return `<div class="action-plan-report report-document">
     <div class="report-print-header">
       <div class="report-brand">${CONSTANTS.APP_NAME}</div>
-      <div class="report-meta">Organisation: <strong>${escapeHtml(org)}</strong>${projectName ? ` — Project: <strong>${escapeHtml(projectName)}</strong>` : ''}</div>
+      <div class="report-meta">Organisation: <strong>${escapeHtml(org)}</strong>${projectName ? ` - Project: <strong>${escapeHtml(projectName)}</strong>` : ''}</div>
     </div>
     <h1 class="report-title">Action Plan Report</h1>
     ${bodyHTML}

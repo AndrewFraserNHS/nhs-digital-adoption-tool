@@ -358,7 +358,7 @@ function buildGuidanceData(
         detail.links.length ? `Supporting links recorded: ${detail.links.join(', ')}` : 'Add supporting links or documents to evidence the score.'
       ].join('\n\n'),
       indicators: [
-        `Current stage (${stage} — ${STAGES[stage] || STAGES[0]}): ${currentStageText}`,
+        `Current stage (${stage} - ${STAGES[stage] || STAGES[0]}): ${currentStageText}`,
         `Next stage focus: ${nextStageText}`
       ].join('\n\n'),
       deliverables: [
@@ -472,7 +472,7 @@ export function MaturityApp() {
   const overallText = useCallback(() => {
     const scores = getScoreArray();
     const avg = scores.length ? scores.reduce((a, b) => a + b, 0) / scores.length : 0;
-    return `${avg.toFixed(2)} — ${STAGES[Math.round(avg)] || STAGES[0]}`;
+    return `${avg.toFixed(2)} - ${STAGES[Math.round(avg)] || STAGES[0]}`;
   }, [getScoreArray]);
 
   const overviewRef = useRef<HTMLDivElement>(null);

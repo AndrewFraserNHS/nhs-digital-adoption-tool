@@ -1,7 +1,6 @@
 import React, { JSX, useCallback, useMemo, useState } from 'react';
 import {
   AdoptionStore,
-  ComponentObjective,
   DraftEntry,
   DraftAction,
   deriveObjectiveStatus,
@@ -9,10 +8,12 @@ import {
   type ObjectiveStatus
 } from '@lib/adoptionState';
 import { AssessmentComponent } from '@data/components';
-import { UNIFIED_ACTION_STATUSES, deriveTemporalActionStatus } from '@lib/actionModel';
-import type { CstPathwayKey } from '@data/cst';
-import { PATHWAY_LABELS } from '@data/cst';
-import { getPathwayRulesForComponent, resolvePathwayCopy } from '@data/pathway-rules';
+import {
+  ACTION_STATUS_BADGE_STYLES,
+  UNIFIED_ACTION_STATUSES,
+  deriveTemporalActionStatus,
+  normalizeActionStatus
+} from '@lib/actionModel';
 
 type AssessmentPanelStore = AdoptionStore & {
   showMatrix?: Record<string, boolean>;
@@ -35,10 +36,8 @@ interface ResolvedLensAction {
   isLinkedView: boolean;
 }
 
-interface ObjectiveEditorState {
-  mode: 'create' | 'edit';
-  objectiveId?: string;
-  objective: ComponentObjective;
+interface ObjectiveViewerState {
+  objectiveId: string;
 }
 
 export interface AssessmentPanelProps {
@@ -52,12 +51,9 @@ export interface AssessmentPanelProps {
   onOpenLensInfo: (lensName: string) => void;
   onMatrixToggle: (key: string) => void;
   onActionRemove: (componentId: string, lens: string, actionId: string) => void;
-  onObjectivesUpdate: (componentId: string, objectives: ComponentObjective[]) => void;
-  pathway: CstPathwayKey;
-  productName: string;
 }
 
-const STATUS_OPTIONS = UNIFIED_ACTION_STATUSES;
+const STATUS_OPTIONS = UNIFIED_ACTION_STATUSES.filter((status) => status !== 'Overdue start' && status !== 'Overdue completion');
 const SCORE_LEVELS = [0, 1, 2, 3, 4, 5];
 const SCORE_LABELS: Record<number, string> = {
   0: 'Not Started',
@@ -66,16 +62,6 @@ const SCORE_LABELS: Record<number, string> = {
   3: 'Embedding',
   4: 'Adopted',
   5: 'Thriving'
-};
-
-const STATUS_BADGE_STYLES: Record<string, string> = {
-  Planned: 'bg-slate-100 text-slate-700 border-slate-200',
-  'In Progress': 'bg-blue-100 text-blue-800 border-blue-200',
-  Blocked: 'bg-amber-100 text-amber-800 border-amber-200',
-  Completed: 'bg-green-100 text-green-800 border-green-200',
-  Cancelled: 'bg-slate-200 text-slate-700 border-slate-300',
-  'Overdue start': 'bg-rose-100 text-rose-800 border-rose-200',
-  'Overdue completion': 'bg-red-100 text-red-800 border-red-200'
 };
 
 const OBJECTIVE_STATUS_BADGE_STYLES: Record<ObjectiveStatus, string> = {
@@ -158,18 +144,6 @@ function createEmptyAction(phase: number, componentId: string, lens: string): Dr
   };
 }
 
-function createEmptyObjective(): ComponentObjective {
-  return {
-    id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-    text: '',
-    owner: '',
-    timescale: '',
-    notes: '',
-    evidence: '',
-    linkedActions: []
-  };
-}
-
 function getNormalizedTargets(
   action: DraftAction,
   sourceComponentId: string,
@@ -204,15 +178,11 @@ export function AssessmentPanel({
   onEntryUpdate,
   onOpenLensInfo,
   onMatrixToggle,
-  onActionRemove,
-  onObjectivesUpdate,
-  pathway,
-  productName
+  onActionRemove
 }: AssessmentPanelProps): JSX.Element {
   const component = components.find((c) => c.id === activeComponentId) || components[0];
-  const pathwayRule = getPathwayRulesForComponent(component.id, pathway);
   const [actionEditor, setActionEditor] = useState<ActionEditorState | null>(null);
-  const [objectiveEditor, setObjectiveEditor] = useState<ObjectiveEditorState | null>(null);
+  const [objectiveViewer, setObjectiveViewer] = useState<ObjectiveViewerState | null>(null);
   const objectives = store.objectives?.[component.id] || [];
 
   const componentActionsByLens = useMemo(() => {
@@ -269,6 +239,38 @@ export function AssessmentPanel({
     }
     return components.find((item) => item.id === actionEditor.sourceComponentId)?.label || actionEditor.sourceComponentId;
   }, [actionEditor, component.label, components]);
+
+  const activeObjective = useMemo(
+    () => objectives.find((objective) => objective.id === objectiveViewer?.objectiveId) || null,
+    [objectiveViewer?.objectiveId, objectives]
+  );
+
+  const activeObjectiveStatus = useMemo(() => {
+    if (!activeObjective) {
+      return null;
+    }
+    return deriveObjectiveStatus(activeObjective, componentActionsByLens);
+  }, [activeObjective, componentActionsByLens]);
+
+  const activeObjectiveLinkedActions = useMemo(() => {
+    if (!activeObjective) {
+      return [];
+    }
+
+    return activeObjective.linkedActions.map((link) => {
+      const action = (componentActionsByLens[link.lens] || []).find((candidate) => candidate.id === link.actionId);
+      const status = action ? normalizeActionStatus(action.status) : null;
+      const temporalStatus = action
+        ? deriveTemporalActionStatus(action.status, action.startDate, action.dueDate)
+        : null;
+      return {
+        lens: link.lens,
+        action,
+        status,
+        temporalStatus
+      };
+    });
+  }, [activeObjective, componentActionsByLens]);
 
   const handleComponentSelect = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -356,11 +358,7 @@ export function AssessmentPanel({
 
     const normalizedAction: DraftAction = {
       ...actionEditor.action,
-      status: deriveTemporalActionStatus(
-        actionEditor.action.status,
-        actionEditor.action.startDate,
-        actionEditor.action.dueDate
-      ),
+      status: normalizeActionStatus(actionEditor.action.status),
       linkedTargets: getNormalizedTargets(
         actionEditor.action,
         actionEditor.sourceComponentId,
@@ -395,11 +393,7 @@ export function AssessmentPanel({
           ...updates
         }
       };
-      next.action.status = deriveTemporalActionStatus(
-        next.action.status,
-        next.action.startDate,
-        next.action.dueDate
-      );
+      next.action.status = normalizeActionStatus(next.action.status);
       return next;
     });
   };
@@ -475,104 +469,6 @@ export function AssessmentPanel({
     });
   };
 
-  const addSuggestedAction = useCallback((lens: string, text: string) => {
-    const entry = getEntry(component.id, lens);
-    const seeded = createEmptyAction(component.phase, component.id, lens);
-    seeded.text = text;
-    seeded.status = deriveTemporalActionStatus(seeded.status, seeded.startDate, seeded.dueDate);
-
-    onEntryUpdate(component.id, lens, {
-      ...entry,
-      actions: [...entry.actions, seeded]
-    });
-
-    openEditActionModal(component.id, lens, seeded);
-  }, [component.id, component.phase, getEntry, onEntryUpdate, openEditActionModal]);
-
-  const openCreateObjectiveModal = useCallback(() => {
-    setObjectiveEditor({
-      mode: 'create',
-      objective: createEmptyObjective()
-    });
-  }, []);
-
-  const openEditObjectiveModal = useCallback((objective: ComponentObjective) => {
-    setObjectiveEditor({
-      mode: 'edit',
-      objectiveId: objective.id,
-      objective: {
-        ...objective,
-        notes: objective.notes || '',
-        evidence: objective.evidence || '',
-        linkedActions: objective.linkedActions.map((link) => ({ ...link }))
-      }
-    });
-  }, []);
-
-  const closeObjectiveModal = () => {
-    setObjectiveEditor(null);
-  };
-
-  const updateObjectiveEditor = (updates: Partial<ComponentObjective>) => {
-    setObjectiveEditor((current) => {
-      if (!current) {
-        return current;
-      }
-      return {
-        ...current,
-        objective: {
-          ...current.objective,
-          ...updates
-        }
-      };
-    });
-  };
-
-  const toggleLinkedAction = (lens: string, actionId: string) => {
-    setObjectiveEditor((current) => {
-      if (!current) {
-        return current;
-      }
-      const isLinked = current.objective.linkedActions.some((link) => link.lens === lens && link.actionId === actionId);
-      const nextLinkedActions = isLinked
-        ? current.objective.linkedActions.filter((link) => !(link.lens === lens && link.actionId === actionId))
-        : [...current.objective.linkedActions, { lens, actionId }];
-
-      return {
-        ...current,
-        objective: {
-          ...current.objective,
-          linkedActions: nextLinkedActions
-        }
-      };
-    });
-  };
-
-  const saveObjectiveModal = () => {
-    if (!objectiveEditor) {
-      return;
-    }
-
-    if (!objectiveEditor.objective.text.trim()) {
-      window.alert('Objective description is required.');
-      return;
-    }
-
-    const normalizedObjective: ComponentObjective = { ...objectiveEditor.objective };
-
-    const nextObjectives =
-      objectiveEditor.mode === 'create'
-        ? [...objectives, normalizedObjective]
-        : objectives.map((item) => (item.id === objectiveEditor.objectiveId ? normalizedObjective : item));
-
-    onObjectivesUpdate(component.id, nextObjectives);
-    closeObjectiveModal();
-  };
-
-  const removeObjective = useCallback((objectiveId: string) => {
-    onObjectivesUpdate(component.id, objectives.filter((objective) => objective.id !== objectiveId));
-  }, [component.id, objectives, onObjectivesUpdate]);
-
   return (
     <div className="max-w-5xl mx-auto pb-20">
       <div className="mb-8 flex items-center justify-between gap-4 flex-wrap">
@@ -600,31 +496,6 @@ export function AssessmentPanel({
         </select>
       </div>
 
-      {pathwayRule ? (
-        <div className="mb-8 rounded-lg border border-indigo-200 bg-indigo-50 p-5">
-          <p className="text-xs font-semibold uppercase tracking-wider text-indigo-700">Pathway analysis</p>
-          <p className="mt-1 text-sm font-semibold text-indigo-900">{PATHWAY_LABELS[pathway]}</p>
-          <p className="mt-2 text-sm text-indigo-900">
-            {resolvePathwayCopy(pathwayRule.descriptor, productName)}
-          </p>
-
-          <div className="mt-4 space-y-2">
-            {pathwayRule.checklist.map((item) => (
-              <div key={item.key} className="flex items-start justify-between gap-3 rounded border border-indigo-200 bg-white p-3">
-                <span className="text-sm text-indigo-900">{resolvePathwayCopy(item.text, productName)}</span>
-                <button
-                  type="button"
-                  onClick={() => addSuggestedAction(component.lenses[0], resolvePathwayCopy(item.text, productName))}
-                  className="shrink-0 rounded-md bg-indigo-600 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-indigo-700"
-                >
-                  Add To Actions
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      ) : null}
-
       <div className="mb-8 rounded-lg border border-slate-200 bg-white p-5">
         <label className="block text-sm font-semibold text-slate-700 mb-2">Component Justification</label>
         <textarea
@@ -638,16 +509,10 @@ export function AssessmentPanel({
       <div className="mb-8 rounded-lg border border-slate-200 bg-white p-5">
         <div className="flex items-center justify-between mb-1">
           <h4 className="text-sm font-semibold text-slate-800">Objectives</h4>
-          <button
-            onClick={openCreateObjectiveModal}
-            className="px-3 py-1.5 rounded bg-[#005eb8] text-white text-xs font-semibold shadow-[0_2px_0_#003087] hover:bg-[#00417a] transition-colors focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2"
-          >
-            Add Objective
-          </button>
         </div>
         <p className="text-xs text-slate-500 mb-3">
           Owned by this component as a whole. Status is derived automatically from the lens actions assigned to
-          each objective below — it can't be set manually.
+          each objective below - it can't be set manually.
         </p>
 
         {objectives.length ? (
@@ -657,10 +522,7 @@ export function AssessmentPanel({
                 <tr>
                   <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Description</th>
                   <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Status</th>
-                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Owner</th>
-                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Timescale</th>
                   <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Linked Actions</th>
-                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -669,36 +531,24 @@ export function AssessmentPanel({
                   const badgeStyle = OBJECTIVE_STATUS_BADGE_STYLES[status];
                   return (
                     <tr key={objective.id}>
-                      <td className="px-3 py-2 text-sm text-slate-800">{objective.text || 'Untitled objective'}</td>
+                      <td className="px-3 py-2 text-sm text-slate-800">
+                        <button
+                          type="button"
+                          onClick={() => setObjectiveViewer({ objectiveId: objective.id })}
+                          className="text-left text-[#005eb8] underline underline-offset-2 hover:text-[#003087]"
+                        >
+                          {objective.text || 'Untitled objective'}
+                        </button>
+                      </td>
                       <td className="px-3 py-2">
                         <span className={`inline-flex rounded-full border px-2 py-1 text-xs font-semibold ${badgeStyle}`}>
                           {status}
                         </span>
                       </td>
-                      <td className="px-3 py-2 text-sm text-slate-700">{objective.owner || 'Unassigned'}</td>
-                      <td className="px-3 py-2 text-sm text-slate-600">{objective.timescale || '-'}</td>
                       <td className="px-3 py-2 text-sm text-slate-600">
                         {objective.linkedActions.length
                           ? `${objective.linkedActions.length} action(s)`
                           : 'None assigned'}
-                      </td>
-                      <td className="px-3 py-2">
-                        <div className="flex gap-2">
-                          <button
-                            type="button"
-                            onClick={() => openEditObjectiveModal(objective)}
-                            className="rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => removeObjective(objective.id)}
-                            className="rounded-md border border-red-200 bg-red-50 px-2.5 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100"
-                          >
-                            Remove
-                          </button>
-                        </div>
                       </td>
                     </tr>
                   );
@@ -843,12 +693,17 @@ export function AssessmentPanel({
                       <tbody className="divide-y divide-slate-100">
                         {(actionsByTarget[`${component.id}:${lens}`] || []).map((resolvedAction) => {
                           const action = resolvedAction.action;
+                          const displayStatus = normalizeActionStatus(action.status);
                           const temporalStatus = deriveTemporalActionStatus(action.status, action.startDate, action.dueDate);
+                          const temporalHint =
+                            temporalStatus === 'Overdue start' || temporalStatus === 'Overdue completion'
+                              ? temporalStatus
+                              : null;
                           const sourceComponentLabel = componentById[resolvedAction.sourceComponentId]?.label || resolvedAction.sourceComponentId;
                           const linkedTargets = getNormalizedTargets(action, resolvedAction.sourceComponentId, resolvedAction.sourceLens)
                             .map((target) => `${componentById[target.componentId]?.label || target.componentId} / ${target.lens}`)
                             .join(', ');
-                          const badgeStyle = STATUS_BADGE_STYLES[temporalStatus] || STATUS_BADGE_STYLES.Planned;
+                          const badgeStyle = ACTION_STATUS_BADGE_STYLES[displayStatus] || ACTION_STATUS_BADGE_STYLES.Planned;
 
                           return (
                             <tr key={`${resolvedAction.sourceComponentId}:${resolvedAction.sourceLens}:${action.id}`}>
@@ -862,8 +717,9 @@ export function AssessmentPanel({
                               </td>
                               <td className="px-3 py-2">
                                 <span className={`inline-flex rounded-full border px-2 py-1 text-xs font-semibold ${badgeStyle}`}>
-                                  {temporalStatus}
+                                  {displayStatus}
                                 </span>
+                                {temporalHint ? <div className="mt-1 text-xs text-rose-700">{temporalHint}</div> : null}
                               </td>
                               <td className="px-3 py-2 text-sm text-slate-700">{action.owner || 'Unassigned'}</td>
                               <td className="px-3 py-2 text-sm text-slate-600">{action.startDate || '-'}</td>
@@ -1085,154 +941,84 @@ export function AssessmentPanel({
         </div>
       ) : null}
 
-      {objectiveEditor ? (
+      {objectiveViewer && activeObjective && activeObjectiveStatus ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 p-4">
-          <div className="w-full max-w-2xl rounded-xl border border-slate-200 bg-white p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Objective Details"
+            className="w-full max-w-3xl rounded-xl border border-slate-200 bg-white p-6 shadow-2xl"
+          >
             <div className="flex items-center justify-between gap-3">
-              <h3 className="text-lg font-semibold text-slate-900">
-                {objectiveEditor.mode === 'create' ? 'Create Objective' : 'Edit Objective'} · {component.label}
-              </h3>
+              <h3 className="text-lg font-semibold text-slate-900">Objective Details</h3>
               <button
                 type="button"
-                onClick={closeObjectiveModal}
+                onClick={() => setObjectiveViewer(null)}
                 className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-100"
               >
                 Close
               </button>
             </div>
 
-            {objectiveEditor.mode === 'edit' ? (
-              <div className="mt-3 flex items-center gap-2">
-                <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Status (derived)</span>
-                {(() => {
-                  const status = deriveObjectiveStatus(objectiveEditor.objective, componentActionsByLens);
-                  return (
-                    <span className={`inline-flex rounded-full border px-2 py-1 text-xs font-semibold ${OBJECTIVE_STATUS_BADGE_STYLES[status]}`}>
-                      {status}
-                    </span>
-                  );
-                })()}
-              </div>
-            ) : null}
-
-            <div className="mt-4 grid gap-3">
-              <label className="text-sm text-slate-700">
-                <span className="mb-1 block font-semibold">Description</span>
-                <textarea
-                  value={objectiveEditor.objective.text}
-                  onChange={(event) => updateObjectiveEditor({ text: event.target.value })}
-                  className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm h-20"
-                />
-              </label>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <label className="text-sm text-slate-700">
-                  <span className="mb-1 block font-semibold">Owner</span>
-                  <input
-                    value={objectiveEditor.objective.owner}
-                    onChange={(event) => updateObjectiveEditor({ owner: event.target.value })}
-                    className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
-                  />
-                </label>
-                <label className="text-sm text-slate-700">
-                  <span className="mb-1 block font-semibold">Timescale</span>
-                  <input
-                    value={objectiveEditor.objective.timescale}
-                    onChange={(event) => updateObjectiveEditor({ timescale: event.target.value })}
-                    placeholder="e.g. Q3 2026"
-                    className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
-                  />
-                </label>
+            <div className="mt-4 space-y-4">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Objective</p>
+                <p className="mt-1 text-sm text-slate-900">{activeObjective.text || 'Untitled objective'}</p>
               </div>
 
-              <label className="text-sm text-slate-700">
-                <span className="mb-1 block font-semibold">Notes</span>
-                <textarea
-                  value={objectiveEditor.objective.notes || ''}
-                  onChange={(event) => updateObjectiveEditor({ notes: event.target.value })}
-                  className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm h-20"
-                />
-              </label>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Status</p>
+                <span
+                  className={`mt-1 inline-flex rounded-full border px-2 py-1 text-xs font-semibold ${OBJECTIVE_STATUS_BADGE_STYLES[activeObjectiveStatus]}`}
+                >
+                  {activeObjectiveStatus}
+                </span>
+              </div>
 
-              <label className="text-sm text-slate-700">
-                <span className="mb-1 block font-semibold">Evidence Links / Docs</span>
-                <textarea
-                  value={objectiveEditor.objective.evidence || ''}
-                  onChange={(event) => updateObjectiveEditor({ evidence: event.target.value })}
-                  className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm h-20"
-                />
-              </label>
-
-              <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                <p className="text-sm font-semibold text-slate-800">Assigned lens actions</p>
-                <p className="mt-1 text-xs text-slate-600">
-                  Tick any actions from this component's lenses that count towards this objective. Status above
-                  updates automatically as their statuses change.
-                </p>
-                <div className="mt-2 space-y-3">
-                  {component.lenses.map((lens) => {
-                    const lensActions = componentActionsByLens[lens] || [];
-                    if (!lensActions.length) {
-                      return null;
-                    }
-                    return (
-                      <div key={lens}>
-                        <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">{lens}</p>
-                        <div className="mt-1 space-y-1">
-                          {lensActions.map((action) => {
-                            const isLinked = objectiveEditor.objective.linkedActions.some(
-                              (link) => link.lens === lens && link.actionId === action.id
-                            );
-                            const temporalStatus = deriveTemporalActionStatus(action.status, action.startDate, action.dueDate);
-                            return (
-                              <label
-                                key={action.id}
-                                className="flex items-center justify-between gap-2 rounded border border-slate-200 bg-white p-2 text-sm"
-                              >
-                                <span className="flex items-center gap-2">
-                                  <input
-                                    type="checkbox"
-                                    checked={isLinked}
-                                    onChange={() => toggleLinkedAction(lens, action.id)}
-                                  />
-                                  {action.text || 'Untitled action'}
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Linked Actions</p>
+                {activeObjectiveLinkedActions.length ? (
+                  <div className="mt-2 overflow-x-auto rounded-md border border-slate-200">
+                    <table className="min-w-full divide-y divide-slate-200 bg-white">
+                      <thead className="bg-slate-50">
+                        <tr>
+                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Lens</th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Action</th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Current State</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {activeObjectiveLinkedActions.map((item) => {
+                          const badgeStyle = item.status
+                            ? (ACTION_STATUS_BADGE_STYLES[item.status] || ACTION_STATUS_BADGE_STYLES.Planned)
+                            : ACTION_STATUS_BADGE_STYLES.Planned;
+                          return (
+                            <tr key={`${item.lens}:${item.action?.id || 'missing'}`}>
+                              <td className="px-3 py-2 text-sm text-slate-700">{item.lens}</td>
+                              <td className="px-3 py-2 text-sm text-slate-700">{item.action?.text || 'Linked action not found'}</td>
+                              <td className="px-3 py-2">
+                                <span className={`inline-flex rounded-full border px-2 py-1 text-xs font-semibold ${badgeStyle}`}>
+                                  {item.status || 'Not Started'}
                                 </span>
-                                <span className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-semibold ${STATUS_BADGE_STYLES[temporalStatus] || STATUS_BADGE_STYLES.Planned}`}>
-                                  {temporalStatus}
-                                </span>
-                              </label>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    );
-                  })}
-                  {component.lenses.every((lens) => !(componentActionsByLens[lens] || []).length) ? (
-                    <p className="text-sm text-slate-500">No lens actions exist yet for this component to assign.</p>
-                  ) : null}
-                </div>
+                                {item.temporalStatus === 'Overdue start' || item.temporalStatus === 'Overdue completion' ? (
+                                  <div className="mt-1 text-xs text-rose-700">{item.temporalStatus}</div>
+                                ) : null}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <p className="mt-1 text-sm text-slate-500">No linked actions assigned.</p>
+                )}
               </div>
-            </div>
-
-            <div className="mt-4 flex justify-end gap-2">
-              <button
-                type="button"
-                onClick={closeObjectiveModal}
-                className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={saveObjectiveModal}
-                className="rounded-md bg-[#005eb8] px-4 py-2 text-sm font-semibold text-white shadow-[0_3px_0_#003087] hover:bg-[#00417a] focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2"
-              >
-                Save Objective
-              </button>
             </div>
           </div>
         </div>
       ) : null}
+
     </div>
   );
 }

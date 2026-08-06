@@ -40,7 +40,7 @@ export interface ObjectiveActionLink {
 
 /**
  * An objective owned by a component as a whole, not scoped to any single lens.
- * Its status is always derived from the statuses of its linked lens actions —
+ * Its status is always derived from the statuses of its linked lens actions -
  * it is never set directly by the user.
  */
 export interface ComponentObjective {

@@ -20,7 +20,7 @@ function buildSteps(): Step[] {
       title: 'What is change management, here?',
       body: (
         <p className="text-sm text-slate-700">
-          Going live with a new digital product isn't the finish line — people still need to adopt it, change how
+          Going live with a new digital product isn't the finish line - people still need to adopt it, change how
           they work, and keep using it. This tool tracks that human and process side of adoption after go-live, so
           you can see where your programme is strong and where it needs support.
         </p>
@@ -67,7 +67,7 @@ function buildSteps(): Step[] {
               <strong>lenses</strong>: {ASSESSMENT_LENSES.join(', ')}.
             </li>
             <li>
-              Both components and lenses can have <strong>actions</strong> — things to do to close a gap. A lens
+              Both components and lenses can have <strong>actions</strong> - things to do to close a gap. A lens
               action can also be linked to other lenses it contributes to.
             </li>
           </ol>

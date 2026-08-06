@@ -350,7 +350,7 @@ export function MaturityAssessmentPanel({
               >
                 {STAGES.map((stage, i) => (
                   <option key={i} value={i}>
-                    {i} — {stage}
+                    {i} - {stage}
                   </option>
                 ))}
               </select>

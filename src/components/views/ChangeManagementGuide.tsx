@@ -126,7 +126,7 @@ export function ChangeManagementGuide(): JSX.Element {
     <div className="max-w-5xl mx-auto">
       <h2 className="text-2xl font-bold text-slate-800 mb-2">Change Management Toolkit</h2>
       <p className="text-sm text-slate-500 mb-8">
-        NHS England Programme Delivery Lifecycle — an introduction to the five change phases and the
+        NHS England Programme Delivery Lifecycle - an introduction to the five change phases and the
         role of the Change Manager.
       </p>
 
@@ -141,7 +141,7 @@ export function ChangeManagementGuide(): JSX.Element {
           </p>
           <p className="text-2xl font-bold">Answer: Now!</p>
           <p className="text-sm text-blue-100 mt-1">
-            Change management should be considered from the very start of any project — not as an
+            Change management should be considered from the very start of any project - not as an
             afterthought at go-live.
           </p>
         </div>

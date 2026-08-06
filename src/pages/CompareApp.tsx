@@ -183,7 +183,7 @@ function analyseFile(payload: SavedAdoptionAssessment): AnalysisResult {
     insights.push({
       kind: 'success',
       title: 'Strong tool engagement',
-      detail: `Engagement index of ${engagementIndex}/100 — scores, justifications, evidence, and actions are being used thoroughly across the assessment.`,
+      detail: `Engagement index of ${engagementIndex}/100 - scores, justifications, evidence, and actions are being used thoroughly across the assessment.`,
     });
   }
 
@@ -407,7 +407,7 @@ function DropZone({ onFiles }: { onFiles: (files: File[]) => void }) {
       <span className="text-4xl">📂</span>
       <div className="text-center">
         <p className="font-semibold text-slate-700">Drop 1 or 2 adoption JSON exports here</p>
-        <p className="text-sm text-slate-500 mt-1">or click to browse — exported from the Digital Adoption Tool</p>
+        <p className="text-sm text-slate-500 mt-1">or click to browse - exported from the Digital Adoption Tool</p>
       </div>
       <div className="flex gap-3 mt-2">
         <span className="text-xs bg-white border border-slate-200 rounded px-3 py-1 text-slate-600">1 file → Engagement analysis</span>

@@ -1,5 +1,6 @@
 import { JSX, useCallback, useMemo, useState } from 'react';
 import { ActionRow } from '@lib/adoptionMetrics';
+import { ACTION_STATUS_BADGE_STYLES, normalizeActionStatus } from '@lib/actionModel';
 
 export interface ActionPlanTrackerProps {
   actions: ActionRow[];
@@ -190,8 +191,10 @@ export function ActionPlanTracker({ actions, onComponentClick }: ActionPlanTrack
                     <td className="px-4 py-3 text-sm text-slate-700">{action.owner}</td>
                     <td className="px-4 py-3 text-sm text-slate-700">{action.timescale}</td>
                     <td className="px-4 py-3 text-sm">
-                      <span className="px-2 py-1 rounded bg-slate-100 text-slate-700">
-                        {action.status}
+                      <span
+                        className={`inline-flex rounded-full border px-2 py-1 text-xs font-semibold ${ACTION_STATUS_BADGE_STYLES[normalizeActionStatus(action.status)]}`}
+                      >
+                        {normalizeActionStatus(action.status)}
                       </span>
                     </td>
                   </tr>

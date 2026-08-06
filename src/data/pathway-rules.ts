@@ -19,8 +19,7 @@ const PATHWAY_HEADER_TO_KEY: Record<string, CstPathwayKey> = {
   'Pathway 1 - We are starting product for the first time': 'pathway-1',
   'Pathway 2 - We have piloted AVT and need to scale up': 'pathway-2',
   'Pathway 2 - We have piloted product and need to scale up': 'pathway-2',
-  'Pathway 3 - AVT is live but adoption is patchy': 'pathway-3'
-  ,
+  'Pathway 3 - AVT is live but adoption is patchy': 'pathway-3',
   'Pathway 3 - product is live but adoption is patchy': 'pathway-3'
 };
 

@@ -171,7 +171,7 @@ describe('adoptionMetrics', () => {
     const counts = getComponentObjectiveCounts(storeWithObjectives, 'vision', getEntry);
     expect(counts).toEqual({ total: 2, completed: 0 });
 
-    // metrics/flattenActions must not double-count objective-linked actions — they're already
+    // metrics/flattenActions must not double-count objective-linked actions - they're already
     // counted once via the lens loop
     const metrics = getMetrics(storeWithObjectives, components);
     expect(metrics.totalActions).toBe(2);

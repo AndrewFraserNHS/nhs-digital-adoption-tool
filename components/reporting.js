@@ -3,7 +3,7 @@
     function generateMaturityReportHTML(state){
         const org = state.orgProfile || {};
         const overall = state.history && state.history.length ? state.history[state.history.length-1].overallPercentage : 'N/A';
-        let html = `<div class="component-wrap"><h1>Maturity Assessment Report</h1><p><strong>Organisation:</strong> ${org.trustName||''} — <strong>Project:</strong> ${org.projectName||''}</p><p><strong>Overall:</strong> ${overall}%</p>`;
+        let html = `<div class="component-wrap"><h1>Maturity Assessment Report</h1><p><strong>Organisation:</strong> ${org.trustName||''} - <strong>Project:</strong> ${org.projectName||''}</p><p><strong>Overall:</strong> ${overall}%</p>`;
         html += '<table class="action-plan-table w-full border-collapse"><thead><tr><th>Component</th><th>Lens</th><th>Score</th><th>Justification</th></tr></thead><tbody>';
         const draft = state.currentDraft || {};
         Object.keys(draft).forEach(compId => {

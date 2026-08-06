@@ -1,0 +1,107 @@
+Change Management Highlight Report
+Programme: Adoption Engine Pilot
+Reporting Period: July 2026
+Change Lead: [Name]
+SRO: [Name]
+Overall Change Status: 🟢 Green / 🟠 Amber / 🔴 Red
+ 
+1. Executive Summary
+Overall Position
+🟠 Amber
+The programme continues to progress positively with strong sponsorship and growing engagement across impacted teams. Adoption remains on track overall, however variation exists between services and additional reinforcement activities are required to improve consistency of use.
+Key achievements this period include progression of stakeholder engagement activities, increased training completion rates, expansion of the champion network and positive feedback from early adopters.
+Primary areas requiring attention are sustaining adoption behaviours, addressing local resistance within identified teams and ensuring benefits tracking is embedded into business-as-usual governance.
+ 
+2. Change Dashboard
+Area	Status	Trend	Commentary
+Vision & Case for Change	🟢	▲	Consistently understood by most stakeholder groups
+Senior Sponsorship	🟢	►	Active sponsor engagement maintained
+Stakeholder Engagement	🟢	▲	Good participation in engagement activities
+Communications	🟢	▲	Planned communications delivered
+Change Network	🟢	▲	Champion network continues to expand
+Training & Learning	🟠	▲	Completion improving but some cohorts outstanding
+Business Readiness	🟠	►	Readiness varies across teams
+Adoption & Usage	🟠	▲	Early adoption positive but inconsistent
+Benefits Realisation	🟠	►	Baseline measures established; further evidence required
+Risks & Issues	🟠	▼	Several adoption barriers remain under active management
+ 
+3. Adoption Metrics
+Measure	Target	Current	Trend	Status
+User Activation	95%	91%	▲	Amber
+Active Users	80%	78%	▲	Amber
+Training Completion	90%	87%	▲	Amber
+Stakeholder Engagement Score	80%	84%	▲	Green
+Champion Coverage	1 per team	Achieved	►	Green
+User Satisfaction	80%	82%	▲	Green
+Process Compliance	90%	85%	►	Amber
+Benefits Evidence Submitted	75%	65%	▲	Amber
+ 
+4. What Went Well
+Successes this Period
+✅ Executive sponsors delivered visible support through leadership updates.
+✅ Champion network expanded and is actively supporting frontline teams.
+✅ Positive feedback received regarding training quality and support materials.
+✅ Increase in active users compared with previous reporting period.
+✅ Early benefits emerging, including reduced administration burden and improved user confidence.
+ 
+5. Key Risks and Issues
+Risk / Issue	Impact	Mitigation	Status
+Inconsistent adoption across teams	Benefits may not be realised	Targeted coaching and local engagement sessions	Open
+Competing operational pressures	Reduced attendance at training	Flexible learning options introduced	Open
+Limited manager reinforcement	Adoption may decline post go-live	Manager briefing pack being issued	Open
+Benefits evidence remains limited	Difficult to demonstrate success	Monthly benefits reviews established	Open
+ 
+6. Stakeholder Insights
+Feedback Themes
+Positive
+•	Easier way of working
+•	Increased confidence
+•	Better experience for users
+•	Strong local support
+Concerns
+•	Time available for learning
+•	Uncertainty around future processes
+•	Variation in adoption between teams
+Overall Sentiment
+🟢 Positive: 68%
+🟠 Neutral: 24%
+🔴 Negative: 8%
+ 
+7. Change Interventions Delivered
+Completed This Month
+•	Sponsor briefing sessions
+•	Stakeholder engagement workshops
+•	Communications campaign
+•	Training delivery
+•	Champion network meetings
+•	Adoption data reviews
+•	Local support drop-in clinics
+Effectiveness
+Overall intervention effectiveness assessed as Good, with strongest impact observed from peer-to-peer support and champion-led activity.
+ 
+8. Upcoming Priorities
+Next 30 Days
+1.	Increase adoption within underperforming teams.
+2.	Deliver targeted reinforcement sessions.
+3.	Complete remaining training activity.
+4.	Expand benefits evidence collection.
+5.	Strengthen manager-led adoption conversations.
+6.	Review adoption metrics with governance board.
+7.	Agree BAU ownership and sustainability arrangements.
+ 
+9. Decisions Required
+Decision	Owner	Required By
+Approval for additional adoption support resource	Programme Board	[Date]
+Agreement on ongoing benefits ownership	SRO	[Date]
+Endorsement of Phase 2 rollout	Steering Group	[Date]
+ 
+10. Change Lead Assessment
+Confidence Rating
+Area	Confidence
+Delivery of Change Activities	High
+Stakeholder Engagement	High
+Adoption Achievement	Medium
+Benefits Realisation	Medium
+Sustainability Post Go-Live	Medium
+Overall Assessment
+The programme remains broadly on track. The focus for the next reporting period should shift from preparing people for change to reinforcing adoption behaviours, embedding new ways of working and demonstrating measurable benefits. Continued leadership visibility and local manager reinforcement will be critical to achieving sustainable adoption.

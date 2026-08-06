@@ -148,7 +148,7 @@ export function AdoptionDashboard({
   return (
     <div className="max-w-6xl mx-auto">
 
-      {/* Overdue / due-soon actions — the main daily pull-back signal */}
+      {/* Overdue / due-soon actions - the main daily pull-back signal */}
       {overdueVisible && urgentActions.length > 0 && (
         <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4">
           <div className="flex items-start justify-between gap-3">
@@ -185,7 +185,7 @@ export function AdoptionDashboard({
                   </li>
                 ))}
                 {urgentActions.length > 5 && (
-                  <li className="text-xs text-slate-500 pl-1">+ {urgentActions.length - 5} more — see the Action Tracker for the full list.</li>
+                  <li className="text-xs text-slate-500 pl-1">+ {urgentActions.length - 5} more - see the Action Tracker for the full list.</li>
                 )}
               </ul>
             </div>
@@ -313,7 +313,7 @@ export function AdoptionDashboard({
         )}
       </div>
 
-      {/* Snapshot reminder — only when work exists but this month isn't captured */}
+      {/* Snapshot reminder - only when work exists but this month isn't captured */}
       {snapshotDue && (
         <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 flex items-center gap-3 mb-8">
           <span className="text-blue-400 text-xl shrink-0">📅</span>

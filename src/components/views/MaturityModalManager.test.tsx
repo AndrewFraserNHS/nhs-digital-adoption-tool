@@ -44,7 +44,7 @@ describe('MaturityModalManager', () => {
     const props = buildProps();
     render(<MaturityModalManager {...props} modalType="matrix" />);
 
-    fireEvent.click(screen.getByRole('button', { name: /2\s+—\s+Developing\s+Two/i }));
+    fireEvent.click(screen.getByRole('button', { name: /2\s+-\s+Developing\s+Two/i }));
     expect(props.onSetScore).toHaveBeenCalledWith('Vision', 2);
 
     fireEvent.click(screen.getAllByRole('button', { name: '×' })[0]);

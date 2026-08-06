@@ -19,7 +19,8 @@ import type {
   View,
   DraftEntry,
   AdoptionStore,
-  DraftAction
+  DraftAction,
+  ComponentObjective
 } from '@lib/adoptionState';
 import { initializeStore, createEmptyEntry, cloneEntry } from '@lib/adoptionState';
 import {
@@ -44,6 +45,7 @@ import { AssessmentPanel } from '@components/views/AssessmentPanel';
 import { LensInfoModal } from '@components/views/LensInfoModal';
 import { ChangeManagementGuide } from '@components/views/ChangeManagementGuide';
 import { syncVisionDerivedContent } from '@lib/visionAutomation';
+import { syncPathwayObjectives } from '@lib/pathwayObjectives';
 import { GuidanceLinkMapBuilder } from '@components/views/GuidanceLinkMapBuilder';
 import { GuidanceRoadmapView } from '@components/views/GuidanceRoadmapView';
 import { HighlightBuilderTool } from '@components/views/HighlightBuilderTool';
@@ -238,7 +240,7 @@ export function AdoptionApp() {
     const state = AppState.getInstance();
     state.loadFromWindow();
     const persisted = migrateSavedAdoptionAssessment(load<SavedAdoptionAssessment>(ADOPTION_STORAGE_KEY));
-    return syncVisionDerivedContent(initializeStore({
+    return syncPathwayObjectives(syncVisionDerivedContent(initializeStore({
       view: 'dashboard',
       orgProfile: persisted?.orgProfile || state.adoption?.orgProfile,
       currentDraft: persisted?.currentDraft || state.adoption?.currentDraft,
@@ -246,7 +248,7 @@ export function AdoptionApp() {
       history: persisted?.history || state.adoption?.history,
       phaseOverrides: persisted?.phaseOverrides || state.adoption?.phaseOverrides,
       pathwayChecks: persisted?.pathwayChecks || state.adoption?.pathwayChecks
-    }) as AdoptionStore);
+    }) as AdoptionStore));
   });
 
   const [showMatrix, setShowMatrix] = useState<Record<string, boolean>>({});
@@ -444,38 +446,12 @@ export function AdoptionApp() {
       return;
     }
 
-    const hasOverride = Boolean(store.phaseOverrides[componentId]);
-    const requiresOverride = targetComponent.phase > metrics.currentPhase && !hasOverride;
-
-    if (requiresOverride) {
-      const proceed = window.confirm(
-        `This component is in Phase ${targetComponent.phase}, but your current focus is Phase ${metrics.currentPhase}. Continue with an override?`
-      );
-      if (!proceed) {
-        return;
-      }
-
-      const rationale = window.prompt('Please provide a brief rationale for working ahead of phase.');
-      if (!rationale || !rationale.trim()) {
-        window.alert('Override cancelled. A rationale is required to work ahead of phase.');
-        return;
-      }
-
-      setStore((prev) => ({
-        ...prev,
-        phaseOverrides: {
-          ...prev.phaseOverrides,
-          [componentId]: rationale.trim()
-        }
-      }));
-    }
-
     setActiveComponentId(componentId);
     setView('assessment');
     if (shouldAutoCloseSidebar()) {
       setIsSidebarOpen(false);
     }
-  }, [metrics.currentPhase, store.phaseOverrides]);
+  }, []);
 
   const updateEntry = useCallback((componentId: string, lens: string, entry: DraftEntry) => {
     setStore((prev) => {
@@ -489,8 +465,18 @@ export function AdoptionApp() {
           }
         }
       };
-      return syncVisionDerivedContent(nextStore);
+      return syncPathwayObjectives(syncVisionDerivedContent(nextStore));
     });
+  }, []);
+
+  const updateComponentObjectives = useCallback((componentId: string, objectivesForComponent: ComponentObjective[]) => {
+    setStore((prev) => ({
+      ...prev,
+      objectives: {
+        ...prev.objectives,
+        [componentId]: objectivesForComponent
+      }
+    }));
   }, []);
 
   const confirmIfCstWarnings = useCallback((actionLabel: string): boolean => {
@@ -533,7 +519,7 @@ export function AdoptionApp() {
     try {
       const text = await file.text();
       const parsed = JSON.parse(text) as Partial<SavedAdoptionAssessment>;
-      setStore((prev) => mergeImportedAdoptionState(parsed, prev));
+      setStore((prev) => syncPathwayObjectives(syncVisionDerivedContent(mergeImportedAdoptionState(parsed, prev))));
       setView('dashboard');
     } catch (_error) {
       window.alert('Unable to import adoption assessment. Please verify the file contents.');
@@ -680,7 +666,7 @@ export function AdoptionApp() {
       }
 
       const payload = (await response.json()) as Partial<SavedAdoptionAssessment>;
-      setStore((prev) => syncVisionDerivedContent(mergeImportedAdoptionState(payload, prev)));
+      setStore((prev) => syncPathwayObjectives(syncVisionDerivedContent(mergeImportedAdoptionState(payload, prev))));
       setView('dashboard');
       if (shouldAutoCloseSidebar()) {
         setIsSidebarOpen(false);
@@ -700,7 +686,7 @@ export function AdoptionApp() {
       return;
     }
 
-    const resetStore = syncVisionDerivedContent(initializeStore());
+    const resetStore = syncPathwayObjectives(syncVisionDerivedContent(initializeStore()));
     setStore(resetStore);
     setShowMatrix({});
     setView('dashboard');
@@ -1191,7 +1177,7 @@ export function AdoptionApp() {
             <ProjectDetailsPage
               orgProfile={store.orgProfile}
               onProfileUpdate={(updatedProfile) => {
-                setStore(prev => ({
+                setStore(prev => syncPathwayObjectives({
                   ...prev,
                   orgProfile: updatedProfile
                 }));
@@ -1227,6 +1213,7 @@ export function AdoptionApp() {
                   actions: entry.actions.filter(a => a.id !== actionId).map(cloneAction)
                 });
               }}
+              onObjectivesUpdate={updateComponentObjectives}
             />
           )}
           {view === 'action-plan' && (

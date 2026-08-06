@@ -87,7 +87,8 @@ function createProps(overrides?: {
     onEntryUpdate: vi.fn(),
     onOpenLensInfo: vi.fn(),
     onMatrixToggle: vi.fn(),
-    onActionRemove: vi.fn()
+    onActionRemove: vi.fn(),
+    onObjectivesUpdate: vi.fn()
   };
 }
 
@@ -219,10 +220,46 @@ describe('AssessmentPanel', () => {
     const dialog = screen.getByRole('dialog', { name: 'Objective Details' });
     expect(within(dialog).getByText('Run workshop')).toBeTruthy();
     expect(within(dialog).getAllByText('In Progress').length).toBeGreaterThan(0);
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Open Action' }));
+    expect(screen.getByText('Edit Action · Vision / Strategic Direction')).toBeTruthy();
 
     fireEvent.click(screen.getByRole('button', { name: 'Close' }));
     expect(screen.queryByText('Objective Details')).toBeNull();
 
     expect(screen.queryByRole('button', { name: 'Add Objective' })).toBeNull();
+  });
+
+  it('links actions to objectives from the action editor hierarchy section', () => {
+    const props = createProps();
+    props.store.objectives = {
+      vision: [
+        {
+          id: 'obj-1',
+          text: 'Vision objective',
+          owner: '',
+          timescale: '',
+          linkedActions: []
+        }
+      ]
+    };
+
+    render(<AssessmentPanel {...props} />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Add Action' }));
+    fireEvent.change(screen.getByLabelText('Description'), { target: { value: 'New linked action' } });
+    fireEvent.click(screen.getByRole('checkbox'));
+    fireEvent.click(screen.getByRole('button', { name: 'Save Action' }));
+
+    expect(props.onObjectivesUpdate).toHaveBeenCalledWith(
+      'vision',
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: 'obj-1',
+          linkedActions: expect.arrayContaining([
+            expect.objectContaining({ lens: 'Strategic Direction' })
+          ])
+        })
+      ])
+    );
   });
 });

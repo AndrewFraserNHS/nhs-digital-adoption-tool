@@ -66,9 +66,9 @@ export const CST_TYPE_OPTIONS: Array<{ value: CstType; label: string }> = [
 ];
 
 export const PATHWAY_OPTIONS: Array<{ value: CstPathwayKey; label: string }> = [
-  { value: 'pathway-1', label: 'Pathway 1 - We are starting product for the first time' },
-  { value: 'pathway-2', label: 'Pathway 2 - We have piloted product and need to scale up' },
-  { value: 'pathway-3', label: 'Pathway 3 - Product is live but adoption is patchy' }
+  { value: 'pathway-1', label: 'Pathway 1 - Pilot' },
+  { value: 'pathway-2', label: 'Pathway 2 - Scale up' },
+  { value: 'pathway-3', label: 'Pathway 3 - Reassess' }
 ];
 
 export const PATHWAY_LABELS: Record<CstPathwayKey, string> = PATHWAY_OPTIONS.reduce(

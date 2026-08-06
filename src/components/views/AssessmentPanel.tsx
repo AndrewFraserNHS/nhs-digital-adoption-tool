@@ -1,6 +1,7 @@
 import React, { JSX, useCallback, useMemo, useState } from 'react';
 import {
   AdoptionStore,
+  ComponentObjective,
   DraftEntry,
   DraftAction,
   deriveObjectiveStatus,
@@ -25,6 +26,7 @@ interface ActionEditorState {
   mode: 'create' | 'edit';
   actionId?: string;
   action: DraftAction;
+  linkedObjectiveIds: string[];
   targetPickerComponentId: string;
   targetPickerLens: string;
 }
@@ -51,6 +53,7 @@ export interface AssessmentPanelProps {
   onOpenLensInfo: (lensName: string) => void;
   onMatrixToggle: (key: string) => void;
   onActionRemove: (componentId: string, lens: string, actionId: string) => void;
+  onObjectivesUpdate: (componentId: string, objectives: ComponentObjective[]) => void;
 }
 
 const STATUS_OPTIONS = UNIFIED_ACTION_STATUSES.filter((status) => status !== 'Overdue start' && status !== 'Overdue completion');
@@ -178,7 +181,8 @@ export function AssessmentPanel({
   onEntryUpdate,
   onOpenLensInfo,
   onMatrixToggle,
-  onActionRemove
+  onActionRemove,
+  onObjectivesUpdate
 }: AssessmentPanelProps): JSX.Element {
   const component = components.find((c) => c.id === activeComponentId) || components[0];
   const [actionEditor, setActionEditor] = useState<ActionEditorState | null>(null);
@@ -314,6 +318,7 @@ export function AssessmentPanel({
         sourceLens: lens,
         mode: 'create',
         action: seeded,
+        linkedObjectiveIds: [],
         targetPickerComponentId: component.id,
         targetPickerLens: lens
       });
@@ -324,6 +329,12 @@ export function AssessmentPanel({
   const openEditActionModal = useCallback((sourceComponentId: string, sourceLens: string, action: DraftAction) => {
     const normalizedTargets = getNormalizedTargets(action, sourceComponentId, sourceLens);
     const firstTarget = normalizedTargets[0] || { componentId: sourceComponentId, lens: sourceLens };
+    const linkedObjectiveIds = (store.objectives?.[sourceComponentId] || [])
+      .filter((objective) =>
+        objective.linkedActions.some((link) => link.lens === sourceLens && link.actionId === action.id)
+      )
+      .map((objective) => objective.id);
+
     setActionEditor({
       sourceComponentId,
       sourceLens,
@@ -337,10 +348,11 @@ export function AssessmentPanel({
         startDate: action.startDate || '',
         dueDate: action.dueDate || ''
       },
+      linkedObjectiveIds,
       targetPickerComponentId: firstTarget.componentId,
       targetPickerLens: firstTarget.lens
     });
-  }, []);
+  }, [store.objectives]);
 
   const closeActionModal = () => {
     setActionEditor(null);
@@ -377,6 +389,28 @@ export function AssessmentPanel({
       ...entry,
       actions: nextActions
     });
+
+    const selectedObjectiveIds = new Set(actionEditor.linkedObjectiveIds);
+    const sourceObjectives = store.objectives?.[actionEditor.sourceComponentId] || [];
+    const nextObjectives = sourceObjectives.map((objective) => {
+      const linksWithoutThisAction = objective.linkedActions.filter(
+        (link) => !(link.lens === actionEditor.sourceLens && link.actionId === normalizedAction.id)
+      );
+
+      if (selectedObjectiveIds.has(objective.id)) {
+        return {
+          ...objective,
+          linkedActions: [...linksWithoutThisAction, { lens: actionEditor.sourceLens, actionId: normalizedAction.id }]
+        };
+      }
+
+      return {
+        ...objective,
+        linkedActions: linksWithoutThisAction
+      };
+    });
+
+    onObjectivesUpdate(actionEditor.sourceComponentId, nextObjectives);
 
     closeActionModal();
   };
@@ -469,6 +503,34 @@ export function AssessmentPanel({
     });
   };
 
+  const toggleObjectiveLinkInActionEditor = (objectiveId: string) => {
+    setActionEditor((current) => {
+      if (!current) {
+        return current;
+      }
+
+      const selected = new Set(current.linkedObjectiveIds);
+      if (selected.has(objectiveId)) {
+        selected.delete(objectiveId);
+      } else {
+        selected.add(objectiveId);
+      }
+
+      return {
+        ...current,
+        linkedObjectiveIds: Array.from(selected)
+      };
+    });
+  };
+
+  const openObjectiveActionInEditor = (lens: string, action?: DraftAction) => {
+    if (!action) {
+      return;
+    }
+    setObjectiveViewer(null);
+    openEditActionModal(component.id, lens, action);
+  };
+
   return (
     <div className="max-w-5xl mx-auto pb-20">
       <div className="mb-8 flex items-center justify-between gap-4 flex-wrap">
@@ -541,7 +603,7 @@ export function AssessmentPanel({
                         </button>
                       </td>
                       <td className="px-3 py-2">
-                        <span className={`inline-flex rounded-full border px-2 py-1 text-xs font-semibold ${badgeStyle}`}>
+                        <span className={`inline-flex min-w-[7.5rem] items-center justify-center whitespace-nowrap rounded-full border px-3 py-1 text-center text-xs font-semibold ${badgeStyle}`}>
                           {status}
                         </span>
                       </td>
@@ -665,7 +727,12 @@ export function AssessmentPanel({
 
               <div className="p-6 border-t border-slate-100">
                 <div className="flex items-center justify-between mb-3">
-                  <h4 className="text-sm font-semibold text-slate-800">Lens Actions</h4>
+                  <div>
+                    <h4 className="text-sm font-semibold text-slate-800">Lens Actions</h4>
+                    <p className="mt-1 text-xs text-slate-500">
+                      Hierarchy: Objective (outcome) - Action (delivery item) - Linked Targets (where it applies).
+                    </p>
+                  </div>
                   <button
                     onClick={() => openCreateActionModal(lens)}
                     className="px-3 py-1.5 rounded bg-[#005eb8] text-white text-xs font-semibold shadow-[0_2px_0_#003087] hover:bg-[#00417a] transition-colors focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2"
@@ -716,7 +783,7 @@ export function AssessmentPanel({
                                 ) : null}
                               </td>
                               <td className="px-3 py-2">
-                                <span className={`inline-flex rounded-full border px-2 py-1 text-xs font-semibold ${badgeStyle}`}>
+                                <span className={`inline-flex min-w-[7.5rem] items-center justify-center whitespace-nowrap rounded-full border px-3 py-1 text-center text-xs font-semibold ${badgeStyle}`}>
                                   {displayStatus}
                                 </span>
                                 {temporalHint ? <div className="mt-1 text-xs text-rose-700">{temporalHint}</div> : null}
@@ -762,7 +829,7 @@ export function AssessmentPanel({
 
       {actionEditor ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 p-4">
-          <div className="w-full max-w-3xl rounded-xl border border-slate-200 bg-white p-6 shadow-2xl">
+          <div className="w-full max-w-3xl max-h-[calc(100vh-2rem)] overflow-hidden rounded-xl border border-slate-200 bg-white p-6 shadow-2xl">
             <div className="flex items-center justify-between gap-3">
               <h3 className="text-lg font-semibold text-slate-900">
                 {actionEditor.mode === 'create' ? 'Create Action' : 'Edit Action'} · {actionEditorSourceLabel} / {actionEditor.sourceLens}
@@ -776,7 +843,12 @@ export function AssessmentPanel({
               </button>
             </div>
 
-            <div className="mt-4 grid gap-3">
+            <div className="mt-4 max-h-[calc(100vh-13rem)] overflow-y-auto pr-1 grid gap-3">
+              <div className="rounded-md border border-blue-100 bg-blue-50 px-3 py-2 text-xs text-slate-700">
+                <strong>Linking order:</strong> first attach this action to one or more objectives, then add linked targets
+                (component + lens) where this action should appear.
+              </div>
+
               <label className="text-sm text-slate-700">
                 <span className="mb-1 block font-semibold">Description</span>
                 <textarea
@@ -849,7 +921,34 @@ export function AssessmentPanel({
               </label>
 
               <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                <p className="text-sm font-semibold text-slate-800">Linked component-lens targets</p>
+                <p className="text-sm font-semibold text-slate-800">Objective Links</p>
+                <p className="mt-1 text-xs text-slate-500">
+                  Tick objectives this action contributes to. Objective status is auto-derived from these linked actions.
+                </p>
+                <div className="mt-2 space-y-2 rounded border border-slate-200 bg-white p-2">
+                  {(store.objectives?.[actionEditor.sourceComponentId] || []).length ? (
+                    (store.objectives?.[actionEditor.sourceComponentId] || []).map((objective) => {
+                      const checked = actionEditor.linkedObjectiveIds.includes(objective.id);
+                      return (
+                        <label key={objective.id} className="flex items-start gap-2 rounded px-2 py-1.5 hover:bg-slate-50">
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            onChange={() => toggleObjectiveLinkInActionEditor(objective.id)}
+                            className="mt-0.5"
+                          />
+                          <span className="text-sm text-slate-700">{objective.text || 'Untitled objective'}</span>
+                        </label>
+                      );
+                    })
+                  ) : (
+                    <p className="px-2 py-1 text-sm text-slate-500">No objectives are defined for this component yet.</p>
+                  )}
+                </div>
+              </div>
+
+              <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                <p className="text-sm font-semibold text-slate-800">Linked Targets (component + lens)</p>
                 <div className="mt-2 space-y-2">
                   <div className="grid grid-cols-1 md:grid-cols-[1fr,1fr,auto] gap-2">
                     <select
@@ -947,7 +1046,7 @@ export function AssessmentPanel({
             role="dialog"
             aria-modal="true"
             aria-label="Objective Details"
-            className="w-full max-w-3xl rounded-xl border border-slate-200 bg-white p-6 shadow-2xl"
+            className="w-full max-w-3xl max-h-[calc(100vh-2rem)] overflow-y-auto rounded-xl border border-slate-200 bg-white p-6 shadow-2xl"
           >
             <div className="flex items-center justify-between gap-3">
               <h3 className="text-lg font-semibold text-slate-900">Objective Details</h3>
@@ -969,7 +1068,7 @@ export function AssessmentPanel({
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Status</p>
                 <span
-                  className={`mt-1 inline-flex rounded-full border px-2 py-1 text-xs font-semibold ${OBJECTIVE_STATUS_BADGE_STYLES[activeObjectiveStatus]}`}
+                  className={`mt-1 inline-flex min-w-[7.5rem] items-center justify-center whitespace-nowrap rounded-full border px-3 py-1 text-center text-xs font-semibold ${OBJECTIVE_STATUS_BADGE_STYLES[activeObjectiveStatus]}`}
                 >
                   {activeObjectiveStatus}
                 </span>
@@ -985,6 +1084,7 @@ export function AssessmentPanel({
                           <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Lens</th>
                           <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Action</th>
                           <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Current State</th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Navigate</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100">
@@ -997,12 +1097,25 @@ export function AssessmentPanel({
                               <td className="px-3 py-2 text-sm text-slate-700">{item.lens}</td>
                               <td className="px-3 py-2 text-sm text-slate-700">{item.action?.text || 'Linked action not found'}</td>
                               <td className="px-3 py-2">
-                                <span className={`inline-flex rounded-full border px-2 py-1 text-xs font-semibold ${badgeStyle}`}>
+                                <span className={`inline-flex min-w-[7.5rem] items-center justify-center whitespace-nowrap rounded-full border px-3 py-1 text-center text-xs font-semibold ${badgeStyle}`}>
                                   {item.status || 'Not Started'}
                                 </span>
                                 {item.temporalStatus === 'Overdue start' || item.temporalStatus === 'Overdue completion' ? (
                                   <div className="mt-1 text-xs text-rose-700">{item.temporalStatus}</div>
                                 ) : null}
+                              </td>
+                              <td className="px-3 py-2">
+                                {item.action ? (
+                                  <button
+                                    type="button"
+                                    onClick={() => openObjectiveActionInEditor(item.lens, item.action || undefined)}
+                                    className="rounded-md border border-blue-200 bg-blue-50 px-2.5 py-1.5 text-xs font-semibold text-blue-800 hover:bg-blue-100"
+                                  >
+                                    Open Action
+                                  </button>
+                                ) : (
+                                  <span className="text-xs text-slate-400">Unavailable</span>
+                                )}
                               </td>
                             </tr>
                           );

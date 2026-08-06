@@ -4,6 +4,7 @@ import {
   computeRadarData,
   computeTargetRadarData,
   flattenActions,
+  getComponentObjectiveCounts,
   getMetrics
 } from './adoptionMetrics';
 import type { AdoptionStore, DraftEntry } from './adoptionState';
@@ -61,6 +62,7 @@ const store: AdoptionStore = {
       }
     }
   },
+  objectives: {},
   phaseOverrides: {},
   history: []
 };
@@ -152,6 +154,29 @@ describe('adoptionMetrics', () => {
     expect(rows).toHaveLength(2);
     expect(rows[0]).toMatchObject({ compId: 'vision', component: 'Vision', lens: 'Lens A' });
     expect(rows[1]).toMatchObject({ compId: 'benefits', component: 'Benefits', lens: 'Lens A' });
+  });
+
+  it('counts objectives as completed only once every linked action is completed', () => {
+    const storeWithObjectives: AdoptionStore = {
+      ...store,
+      objectives: {
+        vision: [
+          { id: 'o1', text: 'Fully done', owner: 'PMO', timescale: 'Q3', linkedActions: [{ lens: 'Lens A', actionId: '1' }] },
+          { id: 'o2', text: 'Not linked yet', owner: 'PMO', timescale: 'Q3', linkedActions: [] }
+        ]
+      }
+    };
+
+    // action '1' in Lens A has status 'In Progress' per the base store fixture
+    const counts = getComponentObjectiveCounts(storeWithObjectives, 'vision', getEntry);
+    expect(counts).toEqual({ total: 2, completed: 0 });
+
+    // metrics/flattenActions must not double-count objective-linked actions — they're already
+    // counted once via the lens loop
+    const metrics = getMetrics(storeWithObjectives, components);
+    expect(metrics.totalActions).toBe(2);
+    const rows = flattenActions(storeWithObjectives, (id) => components.find((component) => component.id === id)!, getEntry);
+    expect(rows).toHaveLength(2);
   });
 
   it('expands linked actions across every linked target row', () => {

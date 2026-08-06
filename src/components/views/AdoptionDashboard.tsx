@@ -1,4 +1,4 @@
-import { AdoptionStore, DraftAction, DraftEntry } from '@lib/adoptionState';
+import { AdoptionStore, DraftAction, DraftEntry, View } from '@lib/adoptionState';
 import { Metrics } from '@lib/adoptionMetrics';
 import { AssessmentComponent } from '@data/components';
 import { JSX, useMemo, useState } from 'react';
@@ -16,6 +16,8 @@ export interface DashboardProps {
   onComponentClick: (componentId: string) => void;
   pathway: CstPathwayKey;
   pathwayChecks: AdoptionStore['pathwayChecks'];
+  onNavigate?: (view: View) => void;
+  onOpenLensInfo?: (lensName: string) => void;
 }
 
 export function AdoptionDashboard({
@@ -26,7 +28,9 @@ export function AdoptionDashboard({
   getEntry,
   onComponentClick,
   pathway,
-  pathwayChecks
+  pathwayChecks,
+  onNavigate,
+  onOpenLensInfo
 }: DashboardProps): JSX.Element {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'not-started' | 'below-target' | 'on-track'>('all');
@@ -196,7 +200,11 @@ export function AdoptionDashboard({
         </div>
       )}
 
-      <h2 className="text-2xl font-bold text-slate-800 mb-6">Adoption Delivery Dashboard</h2>
+      <h2 className="text-2xl font-bold text-slate-800 mb-1">Adoption Delivery Dashboard</h2>
+      <p className="text-sm text-slate-600 mb-6">
+        This tracks how ready {store.orgProfile.projectName || 'your programme'} is for adoption, based on{' '}
+        {components.length} change-management components, each assessed through up to {lenses.length} lenses.
+      </p>
 
       <div className="mb-6 rounded-lg border border-indigo-200 bg-indigo-50 p-4">
         <p className="text-xs font-semibold uppercase tracking-wider text-indigo-700">Current CST pathway</p>
@@ -261,6 +269,9 @@ export function AdoptionDashboard({
           <h3 className="text-lg font-semibold text-slate-800">What To Do Next</h3>
           <span className="text-xs text-slate-500">Prioritised for live delivery</span>
         </div>
+        <p className="text-sm text-slate-500 mb-4">
+          These are the biggest gaps to target for your current phase, largest gap first.
+        </p>
         {metrics.nextSteps.length > 0 ? (
           <div className="space-y-3">
             {metrics.nextSteps.map((step) => (
@@ -313,9 +324,51 @@ export function AdoptionDashboard({
         </div>
       )}
 
+      {metrics.assessedCount === 0 ? (
+        <div className="bg-white rounded-lg shadow-sm p-8 border border-slate-200 mb-8 text-center">
+          <h3 className="text-lg font-semibold text-slate-800">Getting started</h3>
+          <p className="text-sm text-slate-600 mt-2 max-w-xl mx-auto">
+            Nothing has been assessed yet, so there's nothing to chart. Set up your project details first, then start
+            scoring your first component to see your readiness build up here.
+          </p>
+          <div className="mt-4 flex items-center justify-center gap-3">
+            {onNavigate ? (
+              <button
+                type="button"
+                onClick={() => onNavigate('project-details')}
+                className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+              >
+                Set up your project details
+              </button>
+            ) : null}
+            {components[0] ? (
+              <button
+                type="button"
+                onClick={() => onComponentClick(components[0].id)}
+                className="rounded-md bg-[#005eb8] px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+              >
+                Start your first assessment
+              </button>
+            ) : null}
+          </div>
+        </div>
+      ) : (
+      <>
       {/* Phase Progress */}
       <div className="bg-white rounded-lg shadow-sm p-6 border border-slate-200 mb-8">
-        <h3 className="text-lg font-semibold text-slate-800 mb-4">Phase Progress (RAG)</h3>
+        <h3 className="text-lg font-semibold text-slate-800 mb-1">Phase Progress (RAG)</h3>
+        <p className="text-sm text-slate-500 mb-4">
+          Phases run 1 to 5, from early readiness at go-live through to fully embedding the change.{' '}
+          {onNavigate ? (
+            <button
+              type="button"
+              onClick={() => onNavigate('cm-guide')}
+              className="font-medium text-[#005eb8] hover:underline"
+            >
+              See the CM Toolkit Guide
+            </button>
+          ) : null}
+        </p>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {metrics.phaseSummaries.map((phaseSummary) => {
             const ragClass =
@@ -365,7 +418,18 @@ export function AdoptionDashboard({
         </div>
 
         <div className="bg-white rounded-lg shadow-sm p-6 border border-slate-200 flex flex-col">
-          <h3 className="text-lg font-semibold text-slate-800 mb-4">Strategic Lenses Spread</h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-slate-800">Strategic Lenses Spread</h3>
+            {onOpenLensInfo && lenses[0] ? (
+              <button
+                type="button"
+                onClick={() => onOpenLensInfo(lenses[0])}
+                className="text-xs font-medium text-[#005eb8] hover:underline"
+              >
+                What's a lens?
+              </button>
+            ) : null}
+          </div>
           <div className="flex-1 min-h-[400px] flex items-center justify-center bg-slate-50 rounded border border-slate-100 p-2">
             <canvas id="adoption-radar-chart" />
           </div>
@@ -379,7 +443,14 @@ export function AdoptionDashboard({
       {/* Component Overview */}
       <div className="bg-white rounded-lg shadow-sm p-6 border border-slate-200 mb-8">
         <div className="flex flex-col gap-4 mb-4 xl:flex-row xl:items-center xl:justify-between">
-          <h3 className="text-lg font-semibold text-slate-800">Overall Average by Component</h3>
+          <div>
+            <h3 className="text-lg font-semibold text-slate-800">Overall Average by Component</h3>
+            <p className="text-xs text-slate-500 mt-1">
+              Each component is scored 0-5. <span className="px-1.5 py-0.5 rounded bg-slate-200 text-slate-500">Grey</span> = not started,{' '}
+              <span className="px-1.5 py-0.5 rounded bg-amber-100 text-amber-700">amber</span> = below target,{' '}
+              <span className="px-1.5 py-0.5 rounded bg-green-100 text-green-700">green</span> = at or above target.
+            </p>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-3 xl:w-[65rem]">
             <input
               type="search"
@@ -527,6 +598,8 @@ export function AdoptionDashboard({
           })}
         </div>
       </div>
+      </>
+      )}
     </div>
   );
 }

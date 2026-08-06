@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
+  cloneObjectivesMap,
   cloneDraft,
   cloneEntry,
   createEmptyEntry,
   createReactiveAdoptionStore,
+  deriveObjectiveStatus,
   initializeStore
 } from './adoptionState';
 
@@ -15,6 +17,7 @@ describe('adoptionState', () => {
     expect(defaults.orgProfile.cst.pathway).toBe('pathway-1');
     expect(defaults.phaseOverrides).toEqual({});
     expect(defaults.pathwayChecks).toEqual({});
+    expect(defaults.objectives).toEqual({});
 
     const persisted = initializeStore({
       view: 'settings',
@@ -56,6 +59,48 @@ describe('adoptionState', () => {
     const cloned = cloneDraft(draft);
     cloned.vision.LensA.actions[0].text = 'Changed';
     expect(draft.vision.LensA.actions[0].text).toBe('One');
+  });
+
+  it('deep clones objective maps and does not mutate the original', () => {
+    const map = {
+      vision: [{ id: '1', text: 'Publish comms plan', owner: 'Lead', timescale: 'Q1', linkedActions: [{ lens: 'Lens A', actionId: 'a1' }] }]
+    };
+
+    const cloned = cloneObjectivesMap(map);
+    cloned.vision[0].text = 'Changed';
+    cloned.vision[0].linkedActions[0].lens = 'Lens B';
+    expect(map.vision[0].text).toBe('Publish comms plan');
+    expect(map.vision[0].linkedActions[0].lens).toBe('Lens A');
+  });
+
+  it('derives objective status from linked lens action statuses', () => {
+    const objective = {
+      id: 'o1',
+      text: 'Ready for go-live',
+      owner: 'Lead',
+      timescale: 'Q3',
+      linkedActions: [{ lens: 'Lens A', actionId: 'a1' }, { lens: 'Lens A', actionId: 'a2' }]
+    };
+
+    expect(deriveObjectiveStatus({ ...objective, linkedActions: [] }, {})).toBe('Not Started');
+
+    const actionsByLens = {
+      'Lens A': [
+        { id: 'a1', text: '', owner: '', timescale: '', status: 'Planned' as const },
+        { id: 'a2', text: '', owner: '', timescale: '', status: 'Planned' as const }
+      ]
+    };
+    expect(deriveObjectiveStatus(objective, actionsByLens)).toBe('Not Started');
+
+    actionsByLens['Lens A'][0].status = 'In Progress';
+    expect(deriveObjectiveStatus(objective, actionsByLens)).toBe('In Progress');
+
+    actionsByLens['Lens A'][0].status = 'Blocked';
+    expect(deriveObjectiveStatus(objective, actionsByLens)).toBe('Blocked');
+
+    actionsByLens['Lens A'][0].status = 'Completed';
+    actionsByLens['Lens A'][1].status = 'Completed';
+    expect(deriveObjectiveStatus(objective, actionsByLens)).toBe('Completed');
   });
 
   it('supports reactive store updates and subscriptions', () => {

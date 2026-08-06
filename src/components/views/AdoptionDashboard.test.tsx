@@ -57,6 +57,7 @@ const store: AdoptionStore = {
       }
     }
   },
+  objectives: {},
   phaseOverrides: {},
   pathwayChecks: {},
   history: [
@@ -160,5 +161,54 @@ describe('AdoptionDashboard', () => {
 
     fireEvent.click(screen.getAllByText('Vision')[0]);
     expect(onComponentClick).toHaveBeenCalledWith('vision');
+  });
+
+  it('shows a getting-started empty state when nothing has been assessed', () => {
+    const onNavigate = vi.fn();
+    const onComponentClick = vi.fn();
+    const emptyMetrics: Metrics = { ...metrics, assessedCount: 0 };
+
+    render(
+      <AdoptionDashboard
+        store={store}
+        components={components}
+        lenses={['Strategic Lens']}
+        metrics={emptyMetrics}
+        getEntry={getEntry}
+        onComponentClick={onComponentClick}
+        pathway="pathway-1"
+        pathwayChecks={{}}
+        onNavigate={onNavigate}
+      />
+    );
+
+    expect(screen.getByText('Getting started')).toBeInTheDocument();
+    expect(screen.queryByText('Phase Progress (RAG)')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Set up your project details' }));
+    expect(onNavigate).toHaveBeenCalledWith('project-details');
+
+    fireEvent.click(screen.getByRole('button', { name: 'Start your first assessment' }));
+    expect(onComponentClick).toHaveBeenCalledWith('vision');
+  });
+
+  it('calls onOpenLensInfo when the lens explainer is clicked', () => {
+    const onOpenLensInfo = vi.fn();
+    render(
+      <AdoptionDashboard
+        store={store}
+        components={components}
+        lenses={['Strategic Lens']}
+        metrics={metrics}
+        getEntry={getEntry}
+        onComponentClick={vi.fn()}
+        pathway="pathway-1"
+        pathwayChecks={{}}
+        onOpenLensInfo={onOpenLensInfo}
+      />
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: "What's a lens?" }));
+    expect(onOpenLensInfo).toHaveBeenCalledWith('Strategic Lens');
   });
 });

@@ -26,6 +26,7 @@ export interface AdoptionState {
     };
   };
   currentDraft?: Record<string, Record<string, any>>;
+  objectives?: Record<string, any[]>;
   history?: Array<{
     monthLabel: string;
     overallPercentage: number;

@@ -3,7 +3,7 @@
  * Computes readiness scores, radar data, and progress tracking
  */
 
-import { AdoptionStore, DraftEntry } from './adoptionState';
+import { AdoptionStore, DraftEntry, deriveObjectiveStatus } from './adoptionState';
 import { AssessmentComponent } from '@data/components';
 import { isCompletedActionStatus } from './actionModel';
 
@@ -342,5 +342,31 @@ export function flattenActions(
       });
     });
   });
+
   return rows;
+}
+
+/**
+ * Count total/completed objectives for a single component. An objective counts as
+ * completed once its derived status (from its linked lens actions) is 'Completed'.
+ */
+export function getComponentObjectiveCounts(
+  store: AdoptionStore,
+  componentId: string,
+  getEntry: (componentId: string, lens: string) => DraftEntry
+): { total: number; completed: number } {
+  const objectives = store.objectives?.[componentId] || [];
+
+  const actionsByLens = (lenses: string[]): Record<string, ReturnType<typeof getEntry>['actions']> =>
+    lenses.reduce<Record<string, ReturnType<typeof getEntry>['actions']>>((byLens, lens) => {
+      byLens[lens] = getEntry(componentId, lens).actions;
+      return byLens;
+    }, {});
+
+  const lensesUsed = Array.from(new Set(objectives.flatMap((objective) => objective.linkedActions.map((link) => link.lens))));
+  const byLens = actionsByLens(lensesUsed);
+
+  const completed = objectives.filter((objective) => deriveObjectiveStatus(objective, byLens) === 'Completed').length;
+
+  return { total: objectives.length, completed };
 }

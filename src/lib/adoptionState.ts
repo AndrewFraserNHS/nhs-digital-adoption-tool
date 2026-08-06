@@ -12,7 +12,7 @@ export interface ActionTargetLink {
   lens: string;
 }
 
-export interface DraftAction {
+export interface BaseAction {
   id: string;
   text: string;
   owner: string;
@@ -24,7 +24,64 @@ export interface DraftAction {
   dueDate?: string;
   notes?: string;
   evidence?: string;
+}
+
+export interface DraftAction extends BaseAction {
   linkedTargets?: ActionTargetLink[];
+}
+
+export type ObjectiveStatus = 'Not Started' | 'In Progress' | 'Blocked' | 'Completed';
+
+/** A reference to one existing lens-level action within the same component. */
+export interface ObjectiveActionLink {
+  lens: string;
+  actionId: string;
+}
+
+/**
+ * An objective owned by a component as a whole, not scoped to any single lens.
+ * Its status is always derived from the statuses of its linked lens actions —
+ * it is never set directly by the user.
+ */
+export interface ComponentObjective {
+  id: string;
+  text: string;
+  owner: string;
+  timescale: string;
+  notes?: string;
+  evidence?: string;
+  linkedActions: ObjectiveActionLink[];
+}
+
+/**
+ * Derive an objective's status from the current statuses of its linked lens actions.
+ * Blocked takes priority (something needs attention), then Completed only once every
+ * linked action is done, then In Progress once anything has moved past Planned,
+ * otherwise Not Started (including when nothing is linked yet).
+ */
+export function deriveObjectiveStatus(
+  objective: ComponentObjective,
+  actionsByLens: Record<string, DraftAction[]>
+): ObjectiveStatus {
+  if (!objective.linkedActions.length) {
+    return 'Not Started';
+  }
+
+  const statuses = objective.linkedActions.map((link) => {
+    const action = (actionsByLens[link.lens] || []).find((candidate) => candidate.id === link.actionId);
+    return action?.status || 'Planned';
+  });
+
+  if (statuses.some((status) => status === 'Blocked')) {
+    return 'Blocked';
+  }
+  if (statuses.every((status) => status === 'Completed')) {
+    return 'Completed';
+  }
+  if (statuses.some((status) => status !== 'Planned')) {
+    return 'In Progress';
+  }
+  return 'Not Started';
 }
 
 export interface DraftEntry {
@@ -51,16 +108,21 @@ export interface HistorySnapshot {
   data: Record<string, Record<string, DraftEntry>>;
 }
 
-export type View = 'dashboard' | 'assessment' | 'action-plan' | 'cm-guide' | 'guidance-builder' | 'roadmap-view' | 'highlight-builder' | 'settings';
+export type View = 'dashboard' | 'assessment' | 'action-plan' | 'cm-guide' | 'guidance-builder' | 'roadmap-view' | 'highlight-builder' | 'project-details' | 'settings';
 
 export interface AdoptionStore {
   view: View;
   orgProfile: OrgProfile;
   currentDraft: Record<string, Record<string, DraftEntry>>;
+  objectives: Record<string, ComponentObjective[]>;
   history: HistorySnapshot[];
   phaseOverrides: Record<string, string>;
   pathwayChecks: PathwayChecklistState;
 }
+
+/** The CST: the single persisted document describing this program/project/initiative. */
+export type CstDocument = AdoptionStore;
+export type ProgramProfile = OrgProfile;
 
 export function normalizeOrgProfile(profile?: Partial<OrgProfile>): OrgProfile {
   return {
@@ -100,6 +162,9 @@ export function initializeStore(persisted?: Partial<AdoptionStore>): AdoptionSto
     view: persisted?.view || 'dashboard',
     orgProfile: normalizeOrgProfile(persisted?.orgProfile),
     currentDraft: persisted?.currentDraft || {},
+    objectives: persisted?.objectives
+      ? cloneObjectivesMap(persisted.objectives)
+      : {},
     history: persisted?.history || [],
     phaseOverrides: persisted?.phaseOverrides || {},
     pathwayChecks: clonePathwayChecks(persisted?.pathwayChecks)
@@ -165,5 +230,24 @@ export function cloneDraft(
       return lenses;
     }, {});
     return components;
+  }, {});
+}
+
+/**
+ * Clone a component objective to avoid mutations
+ */
+export function cloneObjective(objective: ComponentObjective): ComponentObjective {
+  return {
+    ...objective,
+    linkedActions: objective.linkedActions.map((link) => ({ ...link }))
+  };
+}
+
+export function cloneObjectivesMap(
+  map: Record<string, ComponentObjective[]>
+): Record<string, ComponentObjective[]> {
+  return Object.keys(map).reduce<Record<string, ComponentObjective[]>>((next, componentId) => {
+    next[componentId] = (map[componentId] || []).map(cloneObjective);
+    return next;
   }, {});
 }

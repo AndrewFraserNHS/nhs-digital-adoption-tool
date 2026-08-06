@@ -1,5 +1,5 @@
-import type { AdoptionStore, DraftEntry, HistorySnapshot, OrgProfile, PathwayChecklistState } from './adoptionState';
-import { cloneDraft, initializeStore, normalizeOrgProfile } from './adoptionState';
+import type { AdoptionStore, ComponentObjective, DraftEntry, HistorySnapshot, OrgProfile, PathwayChecklistState } from './adoptionState';
+import { cloneObjectivesMap, cloneDraft, initializeStore, normalizeOrgProfile } from './adoptionState';
 import { deriveTemporalActionStatus, normalizeActionStatus } from './actionModel';
 
 export const ADOPTION_STORAGE_KEY = 'nhs-digital-adoption-store';
@@ -9,6 +9,7 @@ export interface SavedAdoptionAssessment {
   exportedAt?: string;
   orgProfile: OrgProfile;
   currentDraft: Record<string, Record<string, DraftEntry>>;
+  objectives?: Record<string, ComponentObjective[]>;
   history: HistorySnapshot[];
   phaseOverrides: Record<string, string>;
   pathwayChecks: PathwayChecklistState;
@@ -20,10 +21,11 @@ export function buildSnapshotLabel(date = new Date()): string {
 
 export function buildAdoptionExportPayload(store: AdoptionStore): SavedAdoptionAssessment {
   return {
-    schemaVersion: '2.0',
+    schemaVersion: '4.0',
     exportedAt: new Date().toISOString(),
     orgProfile: { ...store.orgProfile },
     currentDraft: cloneAndNormaliseDraft(store.currentDraft),
+    objectives: normaliseObjectivesMap(store.objectives),
     history: store.history.map((snapshot) => ({
       ...snapshot,
       data: cloneAndNormaliseDraft(snapshot.data)
@@ -31,6 +33,33 @@ export function buildAdoptionExportPayload(store: AdoptionStore): SavedAdoptionA
     phaseOverrides: { ...store.phaseOverrides },
     pathwayChecks: clonePathwayChecks(store.pathwayChecks)
   };
+}
+
+/**
+ * Schema 3.0 payloads had a `componentActions` map (independent actions with their
+ * own status). That concept became objectives whose status derives from linked lens
+ * actions, so a legacy component action becomes an objective with no linked actions yet.
+ */
+function migrateLegacyComponentActionsToObjectives(
+  payload: Record<string, unknown>
+): Record<string, ComponentObjective[]> | undefined {
+  const legacy = payload.componentActions as Record<string, Array<Record<string, unknown>>> | undefined;
+  if (!legacy) {
+    return undefined;
+  }
+
+  return Object.keys(legacy).reduce<Record<string, ComponentObjective[]>>((next, componentId) => {
+    next[componentId] = (legacy[componentId] || []).map((action) => ({
+      id: String(action.id ?? `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`),
+      text: String(action.text || ''),
+      owner: String(action.owner || ''),
+      timescale: String(action.timescale || ''),
+      notes: String(action.notes || ''),
+      evidence: String(action.evidence || ''),
+      linkedActions: []
+    }));
+    return next;
+  }, {});
 }
 
 export function migrateSavedAdoptionAssessment(
@@ -45,10 +74,13 @@ export function migrateSavedAdoptionAssessment(
     migratedProfile.cst.pathway = 'pathway-1';
   }
 
+  const objectivesSource = payload.objectives || migrateLegacyComponentActionsToObjectives(payload);
+
   return {
     ...payload,
     schemaVersion: payload.schemaVersion || '2.0',
     orgProfile: migratedProfile,
+    objectives: normaliseObjectivesMap(objectivesSource),
     pathwayChecks: clonePathwayChecks(payload.pathwayChecks)
   };
 }
@@ -58,6 +90,7 @@ export function mergeImportedAdoptionState(
   fallbackStore: AdoptionStore
 ): AdoptionStore {
   const migrated = migrateSavedAdoptionAssessment(payload);
+  const hasImportedObjectives = Boolean(payload.objectives || (payload as Record<string, unknown>).componentActions);
 
   return initializeStore({
     ...fallbackStore,
@@ -65,6 +98,7 @@ export function mergeImportedAdoptionState(
     currentDraft: migrated.currentDraft
       ? cloneAndNormaliseDraft(migrated.currentDraft)
       : cloneAndNormaliseDraft(fallbackStore.currentDraft),
+    objectives: hasImportedObjectives ? migrated.objectives : fallbackStore.objectives,
     history: (migrated.history || fallbackStore.history).map((snapshot) => ({
       ...snapshot,
       data: cloneAndNormaliseDraft(snapshot.data)
@@ -103,6 +137,26 @@ function cloneAndNormaliseDraft(
         }))
       }));
     });
+  });
+  return cloned;
+}
+
+function normaliseObjectivesMap(
+  map?: Record<string, ComponentObjective[]>
+): Record<string, ComponentObjective[]> {
+  const cloned = cloneObjectivesMap(map || {});
+  Object.keys(cloned).forEach((componentId) => {
+    cloned[componentId] = cloned[componentId].map((objective) => ({
+      ...objective,
+      owner: objective.owner || '',
+      timescale: objective.timescale || '',
+      notes: objective.notes || '',
+      evidence: objective.evidence || '',
+      linkedActions: (objective.linkedActions || []).map((link) => ({
+        lens: link.lens,
+        actionId: link.actionId
+      }))
+    }));
   });
   return cloned;
 }

@@ -19,9 +19,10 @@ import type {
   View,
   DraftEntry,
   AdoptionStore,
-  DraftAction
+  DraftAction,
+  ComponentObjective
 } from '@lib/adoptionState';
-import { initializeStore, createEmptyEntry, cloneEntry } from '@lib/adoptionState';
+import { initializeStore, createEmptyEntry, cloneEntry, cloneObjective } from '@lib/adoptionState';
 import {
   getMetrics as computeMetrics,
   buildRadarChartData,
@@ -46,10 +47,14 @@ import { ChangeManagementGuide } from '@components/views/ChangeManagementGuide';
 import { GuidanceLinkMapBuilder } from '@components/views/GuidanceLinkMapBuilder';
 import { GuidanceRoadmapView } from '@components/views/GuidanceRoadmapView';
 import { HighlightBuilderTool } from '@components/views/HighlightBuilderTool';
+import { ProjectDetailsPage } from '@components/views/ProjectDetailsPage';
+import { OnboardingIntro } from '@components/onboarding/OnboardingIntro';
+import { nhsButtonPrimary, nhsButtonSecondary, nhsFocusRing } from '../styles/nhsTheme';
 
 const ADOPTION_USER_SETTINGS_KEY = 'nhs-digital-adoption-user-settings';
 const ADOPTION_REPORT_REMINDER_DISMISS_KEY = 'nhs-digital-adoption-report-reminder-dismissed';
 const ADOPTION_ENGAGEMENT_KEY = 'nhs-digital-adoption-engagement';
+const ADOPTION_ONBOARDING_SEEN_KEY = 'nhs-digital-adoption-onboarding-seen';
 const DEFAULT_GUIDANCE_TARGET: MaturityGuidanceTarget = 'Default';
 
 const THEME_PRESET_COLORS = ['#005eb8', '#003366', '#009b8a', '#6c28d9', '#059669', '#dc2626'];
@@ -237,6 +242,7 @@ export function AdoptionApp() {
       view: 'dashboard',
       orgProfile: persisted?.orgProfile || state.adoption?.orgProfile,
       currentDraft: persisted?.currentDraft || state.adoption?.currentDraft,
+      objectives: persisted?.objectives || state.adoption?.objectives,
       history: persisted?.history || state.adoption?.history,
       phaseOverrides: persisted?.phaseOverrides || state.adoption?.phaseOverrides,
       pathwayChecks: persisted?.pathwayChecks || state.adoption?.pathwayChecks
@@ -269,6 +275,16 @@ export function AdoptionApp() {
     const persisted = load<Record<string, boolean>>(ADOPTION_REPORT_REMINDER_DISMISS_KEY);
     return persisted || {};
   });
+  const [hasSeenOnboarding, setHasSeenOnboarding] = useState<boolean>(() => Boolean(load<boolean>(ADOPTION_ONBOARDING_SEEN_KEY)));
+  const [showOnboarding, setShowOnboarding] = useState<boolean>(() => !load<boolean>(ADOPTION_ONBOARDING_SEEN_KEY));
+
+  const dismissOnboarding = useCallback(() => {
+    setShowOnboarding(false);
+    if (!hasSeenOnboarding) {
+      setHasSeenOnboarding(true);
+      save(ADOPTION_ONBOARDING_SEEN_KEY, true);
+    }
+  }, [hasSeenOnboarding]);
 
   const reportReminder = useMemo(() => {
     const today = new Date();
@@ -331,6 +347,7 @@ export function AdoptionApp() {
     appState.adoption = {
       orgProfile: store.orgProfile,
       currentDraft: store.currentDraft,
+      objectives: store.objectives,
       history: store.history,
       phaseOverrides: store.phaseOverrides,
       pathwayChecks: store.pathwayChecks
@@ -468,6 +485,16 @@ export function AdoptionApp() {
           ...prev.currentDraft[componentId],
           [lens]: cloneEntry(entry)
         }
+      }
+    }));
+  }, []);
+
+  const updateObjectives = useCallback((componentId: string, objectives: ComponentObjective[]) => {
+    setStore((prev) => ({
+      ...prev,
+      objectives: {
+        ...prev.objectives,
+        [componentId]: objectives.map(cloneObjective)
       }
     }));
   }, []);
@@ -900,7 +927,7 @@ export function AdoptionApp() {
         <div className="flex-1 overflow-y-auto py-4">
           <div className="px-4 mb-2 text-xs font-semibold text-blue-300 uppercase tracking-wider">Navigation</div>
           <nav className="space-y-1 mb-8">
-            {(['dashboard', 'action-plan', 'cm-guide', 'guidance-builder', 'roadmap-view', 'highlight-builder', 'settings'] as View[]).map(v => (
+            {(['dashboard', 'project-details', 'action-plan', 'cm-guide', 'guidance-builder', 'roadmap-view', 'highlight-builder', 'settings'] as View[]).map(v => (
               <button
                 key={v}
                 onClick={() => handleViewChange(v)}
@@ -910,7 +937,7 @@ export function AdoptionApp() {
                     : 'text-blue-100 hover:bg-blue-800 border-l-4 border-transparent'
                 }`}
               >
-                {v === 'dashboard' ? 'Dashboard' : v === 'action-plan' ? 'Action Tracker' : v === 'cm-guide' ? 'CM Toolkit Guide' : v === 'guidance-builder' ? 'Guidance Link Builder' : v === 'roadmap-view' ? 'Roadmap View' : v === 'highlight-builder' ? 'Highlight Builder Tool' : 'Settings & Profile'}
+                {v === 'dashboard' ? 'Dashboard' : v === 'project-details' ? 'Project Details' : v === 'action-plan' ? 'Action Tracker' : v === 'cm-guide' ? 'CM Toolkit Guide' : v === 'guidance-builder' ? 'Guidance Link Builder' : v === 'roadmap-view' ? 'Roadmap View' : v === 'highlight-builder' ? 'Highlight Builder Tool' : 'Settings & Profile'}
               </button>
             ))}
           </nav>
@@ -980,20 +1007,28 @@ export function AdoptionApp() {
           </div>
           <div className="flex items-center space-x-3">
             <button
+              onClick={() => setShowOnboarding(true)}
+              aria-label="Show introduction"
+              title="Show introduction"
+              className={`text-sm w-9 h-9 flex items-center justify-center bg-white text-[#425563] border border-[#768692] hover:bg-[#f0f4f5] rounded-full font-semibold transition-colors ${nhsFocusRing}`}
+            >
+              ?
+            </button>
+            <button
               onClick={handleImportClick}
-              className="text-sm px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-md font-medium transition-colors"
+              className={nhsButtonSecondary}
             >
               Import
             </button>
             <button
               onClick={handleExport}
-              className="text-sm px-4 py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-md font-medium transition-colors"
+              className={nhsButtonSecondary}
             >
               Export JSON
             </button>
             <button
               onClick={handleFinaliseMonth}
-              className="text-sm px-4 py-2 text-white rounded-md font-medium shadow-sm transition-colors"
+              className={`${nhsButtonPrimary} shadow-[0_3px_0_rgba(0,0,0,0.2)]`}
               style={{ backgroundColor: userSettings.themeColor }}
             >
               Finalise Month
@@ -1141,8 +1176,27 @@ export function AdoptionApp() {
                 onComponentClick={openComponentAssessment}
                 pathway={store.orgProfile.cst.pathway}
                 pathwayChecks={store.pathwayChecks}
+                onNavigate={handleViewChange}
+                onOpenLensInfo={setActiveLensInfo}
               />
             </div>
+          )}
+          {view === 'project-details' && (
+            <ProjectDetailsPage
+              orgProfile={store.orgProfile}
+              onProfileUpdate={(updatedProfile) => {
+                setStore(prev => ({
+                  ...prev,
+                  orgProfile: updatedProfile
+                }));
+              }}
+              components={COMPONENTS}
+              lenses={LENSES}
+              store={store}
+              getEntry={getEntry}
+              onComponentClick={openComponentAssessment}
+              onOpenOnboarding={() => setShowOnboarding(true)}
+            />
           )}
           {view === 'assessment' && (
             <AssessmentPanel
@@ -1167,6 +1221,7 @@ export function AdoptionApp() {
                   actions: entry.actions.filter(a => a.id !== actionId).map(cloneAction)
                 });
               }}
+              onObjectivesUpdate={updateObjectives}
               pathway={store.orgProfile.cst.pathway}
               productName={store.orgProfile.projectName || 'product name'}
             />
@@ -1208,14 +1263,7 @@ export function AdoptionApp() {
           )}
           {view === 'settings' && (
             <SettingsPanel
-              orgProfile={store.orgProfile}
               userSettings={userSettings}
-              onProfileUpdate={(updatedProfile) => {
-                setStore(prev => ({
-                  ...prev,
-                  orgProfile: updatedProfile
-                }));
-              }}
               onUserSettingsUpdate={handleUserSettingsUpdate}
               onLoadExampleData={handleLoadExampleData}
               onResetData={handleResetData}
@@ -1230,6 +1278,15 @@ export function AdoptionApp() {
         {activeLensInfo ? (
           <LensInfoModal lensName={activeLensInfo} onClose={() => setActiveLensInfo('')} />
         ) : null}
+
+        <OnboardingIntro
+          open={showOnboarding}
+          onClose={dismissOnboarding}
+          onNavigateToProjectDetails={() => {
+            setView('project-details');
+            dismissOnboarding();
+          }}
+        />
       </div>
     </div>
   );

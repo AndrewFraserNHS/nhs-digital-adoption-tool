@@ -91,12 +91,12 @@ export function ActionPlanTracker({ actions, onComponentClick }: ActionPlanTrack
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search actions, owners, lenses..."
-          className="xl:col-span-2 rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:ring-blue-500"
+          className="xl:col-span-2 rounded-md border border-[#768692] px-3 py-2 text-sm text-slate-900 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8]"
         />
         <select
           value={componentFilter}
           onChange={(e) => setComponentFilter(e.target.value)}
-          className="rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:ring-blue-500"
+          className="rounded-md border border-[#768692] px-3 py-2 text-sm text-slate-900 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8]"
         >
           <option value="all">All components</option>
           {componentOptions.map((component) => (
@@ -108,7 +108,7 @@ export function ActionPlanTracker({ actions, onComponentClick }: ActionPlanTrack
         <select
           value={ownerFilter}
           onChange={(e) => setOwnerFilter(e.target.value)}
-          className="rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:ring-blue-500"
+          className="rounded-md border border-[#768692] px-3 py-2 text-sm text-slate-900 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8]"
         >
           <option value="all">All owners</option>
           {ownerOptions.map((owner) => (
@@ -120,7 +120,7 @@ export function ActionPlanTracker({ actions, onComponentClick }: ActionPlanTrack
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:ring-blue-500"
+          className="rounded-md border border-[#768692] px-3 py-2 text-sm text-slate-900 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8]"
         >
           <option value="all">All statuses</option>
           {statusOptions.map((status) => (
@@ -133,7 +133,7 @@ export function ActionPlanTracker({ actions, onComponentClick }: ActionPlanTrack
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as 'component' | 'lens' | 'owner' | 'status')}
-            className="flex-1 rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:ring-blue-500"
+            className="flex-1 rounded-md border border-[#768692] px-3 py-2 text-sm text-slate-900 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8]"
           >
             <option value="component">Sort: Component</option>
             <option value="lens">Sort: Lens</option>

@@ -1,20 +1,5 @@
 import { useState, useCallback, JSX, useEffect, useRef } from 'react';
-import { OrgProfile } from '@lib/adoptionState';
-import { validateOrgProfile } from '@lib/adoptionValidator';
-import {
-  COMPETENCE_OPTIONS,
-  CONFIDENCE_OPTIONS,
-  CST_TYPE_OPTIONS,
-  OVERARCHING_PHASES,
-  PATHWAY_OPTIONS,
-  getCombinedCapabilityScore,
-  getOverallCapabilityScore,
-  type CompetenceGrade,
-  type ConfidenceScore,
-  type CstPathwayKey,
-  type CstType,
-  type OverarchingPhase
-} from '@data/cst';
+import { nhsButtonPrimary, nhsFocusRing } from '../../styles/nhsTheme';
 
 export interface AdoptionUserSettings {
   name: string;
@@ -24,9 +9,7 @@ export interface AdoptionUserSettings {
 }
 
 export interface SettingsPanelProps {
-  orgProfile: OrgProfile;
   userSettings: AdoptionUserSettings;
-  onProfileUpdate: (profile: OrgProfile) => void;
   onUserSettingsUpdate: (settings: AdoptionUserSettings) => void;
   onLoadExampleData: () => void;
   onResetData: () => void;
@@ -46,9 +29,7 @@ const PRESET_THEMES = [
 ];
 
 export function SettingsPanel({
-  orgProfile,
   userSettings,
-  onProfileUpdate,
   onUserSettingsUpdate,
   onLoadExampleData,
   onResetData,
@@ -57,105 +38,13 @@ export function SettingsPanel({
   engagementLevel,
   engagementXp
 }: SettingsPanelProps): JSX.Element {
-  const [profile, setProfile] = useState<OrgProfile>(orgProfile);
   const [settings, setSettings] = useState<AdoptionUserSettings>(userSettings);
   const [fileInputKey, setFileInputKey] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const profileValidation = validateOrgProfile(profile);
-  const overallCapabilityScore = getOverallCapabilityScore(profile.cst.phaseCapability);
-
-  useEffect(() => {
-    setProfile(orgProfile);
-  }, [orgProfile]);
 
   useEffect(() => {
     setSettings(userSettings);
   }, [userSettings]);
-
-  const handleTrustChange = useCallback((value: string) => {
-    const updated = { ...profile, trustName: value };
-    setProfile(updated);
-
-    const validation = validateOrgProfile(updated);
-    if (!validation.isValid) {
-      console.warn('Organization profile validation errors:', validation.errors);
-    }
-
-    onProfileUpdate(updated);
-  }, [profile, onProfileUpdate]);
-
-  const handleProjectChange = useCallback((value: string) => {
-    const updated = { ...profile, projectName: value };
-    setProfile(updated);
-    onProfileUpdate(updated);
-  }, [profile, onProfileUpdate]);
-
-  const handleLeadChange = useCallback((value: string) => {
-    const updated = { ...profile, leadName: value };
-    setProfile(updated);
-    onProfileUpdate(updated);
-  }, [profile, onProfileUpdate]);
-
-  const handleCstTypeChange = useCallback((value: CstType) => {
-    const updated = {
-      ...profile,
-      cst: {
-        ...profile.cst,
-        type: value
-      }
-    };
-    setProfile(updated);
-    onProfileUpdate(updated);
-  }, [profile, onProfileUpdate]);
-
-  const handlePathwayChange = useCallback((value: CstPathwayKey) => {
-    const updated = {
-      ...profile,
-      cst: {
-        ...profile.cst,
-        pathway: value
-      }
-    };
-    setProfile(updated);
-    onProfileUpdate(updated);
-  }, [profile, onProfileUpdate]);
-
-  const handleCstDateChange = useCallback((field: 'goLiveDate' | 'fullAdoptionDate' | 'benefitRealizationDate', value: string) => {
-    const updated = {
-      ...profile,
-      cst: {
-        ...profile.cst,
-        [field]: value
-      }
-    };
-    setProfile(updated);
-    onProfileUpdate(updated);
-  }, [profile, onProfileUpdate]);
-
-  const handlePhaseCapabilityChange = useCallback(
-    (phase: OverarchingPhase, field: 'competence' | 'confidence', value: CompetenceGrade | ConfidenceScore) => {
-      const current = profile.cst.phaseCapability[phase] || { competence: 'C', confidence: 3 };
-      const updated = {
-        ...profile,
-        cst: {
-          ...profile.cst,
-          phaseCapability: {
-            ...profile.cst.phaseCapability,
-            [phase]: {
-              competence: current.competence,
-              confidence: current.confidence,
-              assessedAt: new Date().toISOString(),
-              reason: 'manual',
-              [field]: value
-            }
-          }
-        }
-      };
-      setProfile(updated);
-      onProfileUpdate(updated);
-    },
-    [profile, onProfileUpdate]
-  );
 
   const updateUserSettings = useCallback((updates: Partial<AdoptionUserSettings>) => {
     const updated = { ...settings, ...updates };
@@ -192,193 +81,6 @@ export function SettingsPanel({
     <div className="max-w-3xl mx-auto space-y-6">
       <h2 className="text-2xl font-bold text-slate-800">Settings</h2>
 
-      <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 space-y-6">
-        <h3 className="text-lg font-semibold text-slate-800">Organisation Settings</h3>
-        <div>
-          <label htmlFor="org-trust-name" className="block text-sm font-medium text-slate-700 mb-1">
-           Organisation Name
-          </label>
-          <input
-            id="org-trust-name"
-            type="text"
-            className="w-full rounded-md border border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2"
-            value={profile.trustName}
-            onChange={(e) => handleTrustChange(e.target.value)}
-          />
-        </div>
-        <div>
-          <label htmlFor="org-project-name" className="block text-sm font-medium text-slate-700 mb-1">
-            Programme / Project Name
-          </label>
-          <input
-            id="org-project-name"
-            type="text"
-            className="w-full rounded-md border border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2"
-            value={profile.projectName || ''}
-            onChange={(e) => handleProjectChange(e.target.value)}
-          />
-        </div>
-        <div>
-          <label htmlFor="org-lead-name" className="block text-sm font-medium text-slate-700 mb-1">
-            Lead Submitter (Change Lead)
-          </label>
-          <input
-            id="org-lead-name"
-            type="text"
-            className="w-full rounded-md border border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2"
-            value={profile.leadName || ''}
-            onChange={(e) => handleLeadChange(e.target.value)}
-          />
-        </div>
-
-        <div className="rounded-md border border-slate-200 bg-slate-50 p-4 space-y-4">
-          <h4 className="text-sm font-semibold text-slate-800">Context Specific Template (CST)</h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="cst-type" className="block text-sm font-medium text-slate-700 mb-1">
-                CST Type
-              </label>
-              <select
-                id="cst-type"
-                className="w-full rounded-md border border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2"
-                value={profile.cst.type}
-                onChange={(event) => handleCstTypeChange(event.target.value as CstType)}
-              >
-                {CST_TYPE_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>{option.label}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label htmlFor="cst-pathway" className="block text-sm font-medium text-slate-700 mb-1">
-                Pathway
-              </label>
-              <select
-                id="cst-pathway"
-                className="w-full rounded-md border border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2"
-                value={profile.cst.pathway}
-                onChange={(event) => handlePathwayChange(event.target.value as CstPathwayKey)}
-              >
-                {PATHWAY_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>{option.label}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label htmlFor="cst-go-live" className="block text-sm font-medium text-slate-700 mb-1">
-                Go Live Date (required)
-              </label>
-              <input
-                id="cst-go-live"
-                type="date"
-                className="w-full rounded-md border border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2"
-                value={profile.cst.goLiveDate}
-                onChange={(event) => handleCstDateChange('goLiveDate', event.target.value)}
-              />
-            </div>
-            <div>
-              <label htmlFor="cst-full-adoption" className="block text-sm font-medium text-slate-700 mb-1">
-                Full Adoption Date (optional)
-              </label>
-              <input
-                id="cst-full-adoption"
-                type="date"
-                className="w-full rounded-md border border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2"
-                value={profile.cst.fullAdoptionDate}
-                onChange={(event) => handleCstDateChange('fullAdoptionDate', event.target.value)}
-              />
-            </div>
-            <div>
-              <label htmlFor="cst-benefit" className="block text-sm font-medium text-slate-700 mb-1">
-                Benefit Realisation Date (optional)
-              </label>
-              <input
-                id="cst-benefit"
-                type="date"
-                className="w-full rounded-md border border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2"
-                value={profile.cst.benefitRealizationDate}
-                onChange={(event) => handleCstDateChange('benefitRealizationDate', event.target.value)}
-              />
-            </div>
-          </div>
-
-          <div className="rounded-md border border-slate-200 bg-white p-3">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <p className="text-sm font-semibold text-slate-800">Confidence and competence by phase</p>
-              <p className="text-sm font-semibold text-slate-700">
-                Overall Score: {overallCapabilityScore ?? 'N/A'}{overallCapabilityScore !== null ? '%' : ''}
-              </p>
-            </div>
-            <p className="mt-1 text-xs text-slate-600">
-              Capture baseline at CST start, then refresh when readiness phase changes.
-            </p>
-
-            <div className="mt-3 space-y-2">
-              {OVERARCHING_PHASES.map((phase) => {
-                const value = profile.cst.phaseCapability[phase] || { competence: 'C', confidence: 3 };
-                const combined = getCombinedCapabilityScore({
-                  competence: value.competence,
-                  confidence: value.confidence
-                });
-
-                return (
-                  <div key={`phase-capability-${phase}`} className="grid grid-cols-[90px,1fr,1fr,90px] gap-2 items-center text-sm">
-                    <span className="font-semibold text-slate-700">Phase {phase}</span>
-                    <select
-                      value={value.competence}
-                      onChange={(event) =>
-                        handlePhaseCapabilityChange(
-                          phase,
-                          'competence',
-                          event.target.value as CompetenceGrade
-                        )
-                      }
-                      className="rounded-md border border-slate-300 px-2 py-1.5"
-                    >
-                      {COMPETENCE_OPTIONS.map((option) => (
-                        <option key={`${phase}-competence-${option}`} value={option}>Competence {option}</option>
-                      ))}
-                    </select>
-                    <select
-                      value={value.confidence}
-                      onChange={(event) =>
-                        handlePhaseCapabilityChange(
-                          phase,
-                          'confidence',
-                          Number(event.target.value) as ConfidenceScore
-                        )
-                      }
-                      className="rounded-md border border-slate-300 px-2 py-1.5"
-                    >
-                      {CONFIDENCE_OPTIONS.map((option) => (
-                        <option key={`${phase}-confidence-${option}`} value={option}>Confidence {option}</option>
-                      ))}
-                    </select>
-                    <span className="text-right font-semibold text-slate-700">{combined}%</span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {profileValidation.errors.filter((error) => error.field.startsWith('cst.')).length > 0 ? (
-            <div className="rounded-md border border-amber-300 bg-amber-50 p-3">
-              <p className="text-xs font-semibold uppercase tracking-wider text-amber-800">CST validation warnings</p>
-              <ul className="mt-2 space-y-1 text-sm text-amber-900">
-                {profileValidation.errors
-                  .filter((error) => error.field.startsWith('cst.'))
-                  .map((error) => (
-                    <li key={error.field + error.message}>- {error.message}</li>
-                  ))}
-              </ul>
-            </div>
-          ) : null}
-        </div>
-      </div>
-
       <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 space-y-5">
         <h3 className="text-lg font-semibold text-slate-800">User Settings</h3>
 
@@ -409,7 +111,7 @@ export function SettingsPanel({
           <input
             id="user-name"
             type="text"
-            className="w-full rounded-md border border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2"
+            className="w-full rounded-md border border-[#768692] shadow-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8] sm:text-sm p-2"
             value={settings.name}
             onChange={(e) => updateUserSettings({ name: e.target.value })}
           />
@@ -420,7 +122,7 @@ export function SettingsPanel({
           </label>
           <textarea
             id="user-preferences"
-            className="w-full rounded-md border border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 h-24"
+            className="w-full rounded-md border border-[#768692] shadow-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8] sm:text-sm p-2 h-24"
             value={settings.preferences}
             onChange={(e) => updateUserSettings({ preferences: e.target.value })}
           />
@@ -510,13 +212,13 @@ export function SettingsPanel({
           <div className="flex flex-wrap gap-3">
             <button
               onClick={onLoadExampleData}
-              className="text-sm px-4 py-2 bg-[#005eb8] text-white hover:bg-blue-700 rounded-md font-medium transition-colors"
+              className={nhsButtonPrimary}
             >
               Example Data
             </button>
             <button
               onClick={onResetData}
-              className="text-sm px-4 py-2 bg-red-50 text-red-700 hover:bg-red-100 border border-red-200 rounded-md font-medium transition-colors"
+              className={`inline-flex items-center justify-center rounded-md bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 border border-red-200 shadow-[0_3px_0_#fecaca] hover:bg-red-100 transition-colors ${nhsFocusRing}`}
             >
               Reset Data
             </button>

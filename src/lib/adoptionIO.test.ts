@@ -34,14 +34,19 @@ describe('adoptionIO', () => {
           }
         }
       },
+      objectives: {
+        vision: [{ id: 'o1', text: 'Publish plan', owner: 'PMO', timescale: 'Q3', linkedActions: [{ lens: 'Strategic Direction and Leadership', actionId: '1' }] }]
+      },
       history: []
     });
 
     const payload = buildAdoptionExportPayload(store);
-    expect(payload.schemaVersion).toBe('2.0');
+    expect(payload.schemaVersion).toBe('4.0');
     payload.currentDraft.vision['Strategic Direction and Leadership'].actions[0].text = 'Changed';
+    payload.objectives!.vision[0].text = 'Changed';
 
     expect(store.currentDraft.vision['Strategic Direction and Leadership'].actions[0].text).toBe('Run workshop');
+    expect(store.objectives.vision[0].text).toBe('Publish plan');
   });
 
   it('merges imported state over the current store', () => {
@@ -62,6 +67,9 @@ describe('adoptionIO', () => {
         }
       },
       currentDraft: {},
+      objectives: {
+        vision: [{ id: 'existing', text: 'Existing objective', owner: 'PMO', timescale: 'Q1', linkedActions: [] }]
+      },
       history: []
     });
 
@@ -86,9 +94,10 @@ describe('adoptionIO', () => {
     expect(merged.orgProfile.trustName).toBe('Imported');
     expect(merged.orgProfile.projectName).toBe('Portal');
     expect(merged.orgProfile.cst.pathway).toBe('pathway-3');
+    expect(merged.objectives.vision[0].text).toBe('Existing objective');
   });
 
-  it('migrates legacy payloads by adding CST defaults and pathway-1', () => {
+  it('migrates legacy payloads by adding CST defaults, pathway-1, and empty objectives', () => {
     const migrated = migrateSavedAdoptionAssessment({
       orgProfile: {
         trustName: 'Legacy Trust',
@@ -99,6 +108,29 @@ describe('adoptionIO', () => {
 
     expect(migrated.orgProfile?.cst.pathway).toBe('pathway-1');
     expect(migrated.schemaVersion).toBe('2.0');
+    expect(migrated.objectives).toEqual({});
+  });
+
+  it('migrates legacy schema 3.0 componentActions into objectives with no linked actions', () => {
+    const migrated = migrateSavedAdoptionAssessment({
+      schemaVersion: '3.0',
+      orgProfile: { trustName: 'Legacy Trust', region: '', trustType: '' },
+      componentActions: {
+        vision: [{ id: 'c1', text: 'Old component action', owner: 'PMO', timescale: 'Q3', status: 'In Progress' }]
+      }
+    } as any);
+
+    expect(migrated.objectives?.vision).toEqual([
+      {
+        id: 'c1',
+        text: 'Old component action',
+        owner: 'PMO',
+        timescale: 'Q3',
+        notes: '',
+        evidence: '',
+        linkedActions: []
+      }
+    ]);
   });
 
   it('builds history snapshots with cloned draft data', () => {

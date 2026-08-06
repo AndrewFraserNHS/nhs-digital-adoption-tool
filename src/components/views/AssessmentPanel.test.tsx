@@ -71,6 +71,7 @@ function createProps(overrides?: {
           'Strategic Direction': defaultEntry
         }
       },
+      objectives: {},
       history: [],
       phaseOverrides: {},
       pathwayChecks: {},
@@ -87,6 +88,7 @@ function createProps(overrides?: {
     onOpenLensInfo: vi.fn(),
     onMatrixToggle: vi.fn(),
     onActionRemove: vi.fn(),
+    onObjectivesUpdate: vi.fn(),
     pathway: 'pathway-1' as const,
     productName: 'Test Product'
   };
@@ -196,5 +198,22 @@ describe('AssessmentPanel', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Remove' }));
     expect(props.onActionRemove).toHaveBeenCalledWith('vision', 'Strategic Direction', 'linked-vision-action');
+  });
+
+  it('creates an objective, assigns an existing lens action, and derives its status', () => {
+    const props = createProps();
+    render(<AssessmentPanel {...props} />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Add Objective' }));
+    fireEvent.change(screen.getByLabelText('Description'), { target: { value: 'Get sponsors aligned' } });
+    fireEvent.click(screen.getByLabelText(/Run workshop/));
+    fireEvent.click(screen.getByRole('button', { name: 'Save Objective' }));
+
+    expect(props.onObjectivesUpdate).toHaveBeenCalledWith('vision', [
+      expect.objectContaining({
+        text: 'Get sponsors aligned',
+        linkedActions: [{ lens: 'Strategic Direction', actionId: 'action-1' }]
+      })
+    ]);
   });
 });

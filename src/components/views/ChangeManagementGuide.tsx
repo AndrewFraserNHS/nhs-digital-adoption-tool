@@ -1,4 +1,12 @@
 import { JSX, useState } from 'react';
+import { getComponentById } from '@data/components';
+import { resolveGuidanceLinksForAdoptionComponent, type MaturityGuidanceTarget } from '@data/maturity-guidance-links';
+import { KEY_QUESTIONS } from '@data/key-questions';
+
+export interface ChangeManagementGuideProps {
+  onComponentClick: (componentId: string) => void;
+  guidanceTarget?: MaturityGuidanceTarget;
+}
 
 interface PhaseData {
   phase: number;
@@ -115,7 +123,7 @@ const CM_RESPONSIBILITIES = [
   }
 ];
 
-export function ChangeManagementGuide(): JSX.Element {
+export function ChangeManagementGuide({ onComponentClick, guidanceTarget = 'Default' }: ChangeManagementGuideProps): JSX.Element {
   const [expandedPhase, setExpandedPhase] = useState<number | null>(null);
 
   const togglePhase = (phase: number) => {
@@ -146,6 +154,77 @@ export function ChangeManagementGuide(): JSX.Element {
           </p>
         </div>
       </div>
+
+      {/* The 6 Key Questions */}
+      <section className="mb-10">
+        <h3 className="text-lg font-semibold text-slate-800 mb-1">The 6 Key Questions</h3>
+        <p className="text-sm text-slate-500 mb-5">
+          Six questions worth returning to throughout the life of the programme, each backed by a change
+          model and linked to where you can act on it.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {KEY_QUESTIONS.map((keyQuestion, index) => {
+            const toolkitLinks = resolveGuidanceLinksForAdoptionComponent(
+              guidanceTarget,
+              keyQuestion.componentIds[0],
+              'inputs'
+            ).slice(0, 2);
+
+            return (
+              <div key={keyQuestion.id} className="rounded-md border border-slate-200 bg-white p-4">
+                <div className="flex items-start gap-3">
+                  <span className="shrink-0 w-7 h-7 rounded-full bg-blue-100 text-[#005eb8] text-xs font-bold flex items-center justify-center">
+                    Q{index + 1}
+                  </span>
+                  <div>
+                    <p className="text-sm font-semibold text-slate-800">{keyQuestion.question}</p>
+                    <span className="inline-block mt-1 text-xs font-medium text-indigo-700 bg-indigo-50 border border-indigo-200 rounded px-2 py-0.5">
+                      {keyQuestion.framework}
+                    </span>
+                  </div>
+                </div>
+
+                <p className="mt-3 text-xs text-slate-600 leading-relaxed">{keyQuestion.description}</p>
+
+                {toolkitLinks.length ? (
+                  <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1">
+                    {toolkitLinks.map((link) => (
+                      <a
+                        key={`${keyQuestion.id}-${link.url}`}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs font-medium text-[#005eb8] underline"
+                      >
+                        {link.label}
+                      </a>
+                    ))}
+                  </div>
+                ) : null}
+
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {keyQuestion.componentIds.map((componentId) => {
+                    const component = getComponentById(componentId);
+                    if (!component) {
+                      return null;
+                    }
+                    return (
+                      <button
+                        key={componentId}
+                        type="button"
+                        onClick={() => onComponentClick(componentId)}
+                        className="rounded-md border border-blue-200 bg-blue-50 px-2.5 py-1.5 text-xs font-semibold text-[#005eb8] hover:bg-blue-100"
+                      >
+                        Go to {component.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
 
       {/* Phase timeline */}
       <section className="mb-10">

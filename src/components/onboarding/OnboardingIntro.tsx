@@ -7,6 +7,7 @@ export interface OnboardingIntroProps {
   open: boolean;
   onClose: () => void;
   onNavigateToProjectDetails?: () => void;
+  onNavigateToGuide?: () => void;
 }
 
 interface Step {
@@ -85,7 +86,7 @@ function buildSteps(): Step[] {
   ];
 }
 
-export function OnboardingIntro({ open, onClose, onNavigateToProjectDetails }: OnboardingIntroProps): JSX.Element | null {
+export function OnboardingIntro({ open, onClose, onNavigateToProjectDetails, onNavigateToGuide }: OnboardingIntroProps): JSX.Element | null {
   const [stepIndex, setStepIndex] = useState(0);
   const steps = buildSteps();
 
@@ -141,6 +142,15 @@ export function OnboardingIntro({ open, onClose, onNavigateToProjectDetails }: O
                   className="rounded-md border border-blue-300 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-800 hover:bg-blue-100"
                 >
                   Set up your project details
+                </button>
+              ) : null}
+              {onNavigateToGuide ? (
+                <button
+                  type="button"
+                  onClick={onNavigateToGuide}
+                  className="rounded-md border border-blue-300 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-800 hover:bg-blue-100"
+                >
+                  See the 6 Key Questions
                 </button>
               ) : null}
               <button

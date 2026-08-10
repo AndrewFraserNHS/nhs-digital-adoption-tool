@@ -1253,7 +1253,7 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
             />
           )}
           {view === 'cm-guide' && (
-            <ChangeManagementGuide />
+            <ChangeManagementGuide onComponentClick={openComponentAssessment} guidanceTarget={DEFAULT_GUIDANCE_TARGET} />
           )}
           {view === 'roadmap-view' && (
             <GuidanceRoadmapView
@@ -1301,6 +1301,10 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
           onClose={dismissOnboarding}
           onNavigateToProjectDetails={() => {
             setView('project-details');
+            dismissOnboarding();
+          }}
+          onNavigateToGuide={() => {
+            setView('cm-guide');
             dismissOnboarding();
           }}
         />

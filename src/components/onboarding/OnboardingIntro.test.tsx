@@ -44,4 +44,17 @@ describe('OnboardingIntro', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Set up your project details' }));
     expect(onNavigateToProjectDetails).toHaveBeenCalled();
   });
+
+  it('calls onNavigateToGuide from the final step', () => {
+    const onNavigateToGuide = vi.fn();
+    render(<OnboardingIntro open onClose={vi.fn()} onNavigateToGuide={onNavigateToGuide} />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+
+    fireEvent.click(screen.getByRole('button', { name: 'See the 6 Key Questions' }));
+    expect(onNavigateToGuide).toHaveBeenCalled();
+  });
 });

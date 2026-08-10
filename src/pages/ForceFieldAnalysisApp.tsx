@@ -1,4 +1,5 @@
-import { JSX, useEffect, useState } from 'react';
+import { JSX, useEffect, useRef, useState, type ChangeEvent } from 'react';
+import { downloadFile } from '@lib/utils';
 
 type ForceSide = 'driving' | 'restraining';
 type ForceActionStatus = 'Planned' | 'In Progress' | 'Blocked' | 'Completed';
@@ -8,7 +9,6 @@ interface Force {
   text: string;
   side: ForceSide;
   score: number;
-  mitigatedScore: number | null;
 }
 
 interface ForceAction {
@@ -18,6 +18,8 @@ interface ForceAction {
   owner: string;
   dueDate: string;
   status: ForceActionStatus;
+  /** Points this action shifts its force's score by once marked Completed. */
+  impact: number;
 }
 
 interface ForceFieldAnalysisState {
@@ -41,11 +43,48 @@ function createId(): string {
 }
 
 function createForce(side: ForceSide): Force {
-  return { id: createId(), text: '', side, score: 5, mitigatedScore: null };
+  return { id: createId(), text: '', side, score: 5 };
 }
 
 function createAction(forceId: string): ForceAction {
-  return { id: createId(), forceId, text: '', owner: '', dueDate: '', status: 'Planned' };
+  return { id: createId(), forceId, text: '', owner: '', dueDate: '', status: 'Planned', impact: 0 };
+}
+
+function normaliseState(parsed: Partial<ForceFieldAnalysisState> | null | undefined): ForceFieldAnalysisState {
+  if (!parsed) {
+    return DEFAULT_STATE;
+  }
+
+  const forces = Array.isArray(parsed.forces)
+    ? parsed.forces
+        .filter((force): force is Force => Boolean(force) && typeof force === 'object')
+        .map((force): Force => ({
+          id: force.id || createId(),
+          text: force.text || '',
+          side: force.side === 'restraining' ? 'restraining' : 'driving',
+          score: Number.isFinite(force.score) ? Math.max(0, Math.min(10, force.score)) : 5
+        }))
+    : [];
+
+  const actions = Array.isArray(parsed.actions)
+    ? parsed.actions
+        .filter((action): action is ForceAction => Boolean(action) && typeof action === 'object')
+        .map((action) => ({
+          id: action.id || createId(),
+          forceId: action.forceId || '',
+          text: action.text || '',
+          owner: action.owner || '',
+          dueDate: action.dueDate || '',
+          status: STATUS_OPTIONS.includes(action.status) ? action.status : 'Planned',
+          impact: Number.isFinite(action.impact) ? action.impact : 0
+        }))
+    : [];
+
+  return {
+    projectName: parsed.projectName || '',
+    forces,
+    actions
+  };
 }
 
 function readStoredState(): ForceFieldAnalysisState {
@@ -57,12 +96,7 @@ function readStoredState(): ForceFieldAnalysisState {
     return DEFAULT_STATE;
   }
   try {
-    const parsed = JSON.parse(raw) as Partial<ForceFieldAnalysisState>;
-    return {
-      projectName: parsed.projectName || '',
-      forces: Array.isArray(parsed.forces) ? parsed.forces : [],
-      actions: Array.isArray(parsed.actions) ? parsed.actions : []
-    };
+    return normaliseState(JSON.parse(raw) as Partial<ForceFieldAnalysisState>);
   } catch {
     return DEFAULT_STATE;
   }
@@ -91,10 +125,25 @@ function scoreBadgeClass(score: number, side: ForceSide): string {
   return midClass;
 }
 
-function sumScores(forces: Force[], side: ForceSide, useMitigated: boolean): number {
+function sumOriginalScores(forces: Force[], side: ForceSide): number {
+  return forces.filter((force) => force.side === side).reduce((total, force) => total + force.score, 0);
+}
+
+/**
+ * A force's mitigated score is derived, not set directly: its original score adjusted by the
+ * impact of every action linked to it that's currently marked Completed.
+ */
+function deriveMitigatedScore(force: Force, actions: ForceAction[]): number {
+  const completedImpact = actions
+    .filter((action) => action.forceId === force.id && action.status === 'Completed')
+    .reduce((total, action) => total + action.impact, 0);
+  return Math.max(0, Math.min(10, force.score + completedImpact));
+}
+
+function sumMitigatedScores(forces: Force[], actions: ForceAction[], side: ForceSide): number {
   return forces
     .filter((force) => force.side === side)
-    .reduce((total, force) => total + (useMitigated ? force.mitigatedScore ?? force.score : force.score), 0);
+    .reduce((total, force) => total + deriveMitigatedScore(force, actions), 0);
 }
 
 function ForcePanel({
@@ -114,7 +163,7 @@ function ForcePanel({
 }): JSX.Element {
   const isDriving = side === 'driving';
   const sideForces = forces.filter((force) => force.side === side);
-  const total = sumScores(forces, side, false);
+  const total = sumOriginalScores(forces, side);
 
   return (
     <div className={`rounded-lg border p-5 ${isDriving ? 'border-green-200 bg-green-50/40' : 'border-red-200 bg-red-50/40'}`}>
@@ -196,8 +245,8 @@ function ForcesScreen({
   onRemoveForce: (id: string) => void;
   onContinue: () => void;
 }): JSX.Element {
-  const drivingTotal = sumScores(state.forces, 'driving', false);
-  const restrainingTotal = sumScores(state.forces, 'restraining', false);
+  const drivingTotal = sumOriginalScores(state.forces, 'driving');
+  const restrainingTotal = sumOriginalScores(state.forces, 'restraining');
   const netScore = drivingTotal - restrainingTotal;
 
   return (
@@ -259,18 +308,16 @@ function ActionsScreen({
   onUpdateAction,
   onAddAction,
   onRemoveAction,
-  onUpdateMitigatedScore,
   onBack
 }: {
   state: ForceFieldAnalysisState;
   onUpdateAction: (id: string, updates: Partial<ForceAction>) => void;
   onAddAction: (forceId: string) => void;
   onRemoveAction: (id: string) => void;
-  onUpdateMitigatedScore: (forceId: string, score: number | null) => void;
   onBack: () => void;
 }): JSX.Element {
-  const drivingMitigated = sumScores(state.forces, 'driving', true);
-  const restrainingMitigated = sumScores(state.forces, 'restraining', true);
+  const drivingMitigated = sumMitigatedScores(state.forces, state.actions, 'driving');
+  const restrainingMitigated = sumMitigatedScores(state.forces, state.actions, 'restraining');
   const finalMitigatedScore = drivingMitigated - restrainingMitigated;
 
   return (
@@ -280,7 +327,7 @@ function ActionsScreen({
           <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Finalised Mitigated Score</p>
           <p className="text-sm text-slate-600 mt-0.5">
             Driving mitigated total ({drivingMitigated}) minus restraining mitigated total ({restrainingMitigated}).
-            Forces without a mitigated score yet use their original score.
+            A force's mitigated score is its original score plus the impact of its Completed actions.
           </p>
         </div>
         <p className={`text-3xl font-bold ${finalMitigatedScore >= 0 ? 'text-green-700' : 'text-red-700'}`}>
@@ -291,7 +338,7 @@ function ActionsScreen({
       <div className="rounded-lg border border-slate-200 bg-white p-5">
         <h3 className="text-lg font-semibold text-slate-800 mb-1">Force Mitigation</h3>
         <p className="text-sm text-slate-500 mb-4">
-          Give each force a new mitigated score once its actions are expected to take effect.
+          Each force's mitigated score is derived automatically from its Completed actions below - it can't be set directly.
         </p>
         <div className="overflow-x-auto rounded-md border border-slate-200">
           <table className="min-w-full divide-y divide-slate-200 bg-white">
@@ -306,7 +353,9 @@ function ActionsScreen({
             </thead>
             <tbody className="divide-y divide-slate-100">
               {state.forces.map((force) => {
-                const actionCount = state.actions.filter((action) => action.forceId === force.id).length;
+                const forceActions = state.actions.filter((action) => action.forceId === force.id);
+                const completedCount = forceActions.filter((action) => action.status === 'Completed').length;
+                const mitigatedScore = deriveMitigatedScore(force, state.actions);
                 return (
                   <tr key={force.id}>
                     <td className="px-3 py-2 text-sm text-slate-800">{force.text || 'Untitled force'}</td>
@@ -321,18 +370,11 @@ function ActionsScreen({
                       </span>
                     </td>
                     <td className="px-3 py-2">
-                      <select
-                        value={force.mitigatedScore ?? ''}
-                        onChange={(event) => onUpdateMitigatedScore(force.id, event.target.value === '' ? null : Number(event.target.value))}
-                        className="rounded-md border border-slate-300 px-2 py-1 text-xs font-semibold"
-                      >
-                        <option value="">Not set</option>
-                        {SCORE_OPTIONS.map((option) => (
-                          <option key={option} value={option}>{option}</option>
-                        ))}
-                      </select>
+                      <span className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-bold ${scoreBadgeClass(mitigatedScore, force.side)}`}>
+                        {mitigatedScore}
+                      </span>
                     </td>
-                    <td className="px-3 py-2 text-sm text-slate-600">{actionCount} action(s)</td>
+                    <td className="px-3 py-2 text-sm text-slate-600">{completedCount}/{forceActions.length} complete</td>
                   </tr>
                 );
               })}
@@ -351,7 +393,8 @@ function ActionsScreen({
           <h3 className="text-lg font-semibold text-slate-800">Mitigation Actions</h3>
         </div>
         <p className="text-sm text-slate-500 mb-4">
-          Actions to strengthen driving forces or weaken restraining forces, each owned and dated.
+          Actions to strengthen driving forces or weaken restraining forces, each owned and dated. Set how many
+          points an action shifts its force by once Completed - positive to strengthen, negative to weaken.
         </p>
 
         <div className="overflow-x-auto rounded-md border border-slate-200">
@@ -363,6 +406,7 @@ function ActionsScreen({
                 <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Owner</th>
                 <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Due Date</th>
                 <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Status</th>
+                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Score Impact</th>
                 <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500"></th>
               </tr>
             </thead>
@@ -414,6 +458,16 @@ function ActionsScreen({
                     </select>
                   </td>
                   <td className="px-3 py-2">
+                    <input
+                      type="number"
+                      min={-10}
+                      max={10}
+                      value={action.impact}
+                      onChange={(event) => onUpdateAction(action.id, { impact: Number(event.target.value) })}
+                      className="w-16 rounded-md border border-slate-300 px-2 py-1 text-sm"
+                    />
+                  </td>
+                  <td className="px-3 py-2">
                     <button
                       type="button"
                       onClick={() => onRemoveAction(action.id)}
@@ -426,7 +480,7 @@ function ActionsScreen({
               ))}
               {!state.actions.length ? (
                 <tr>
-                  <td className="px-3 py-2 text-sm text-slate-500" colSpan={6}>No actions yet.</td>
+                  <td className="px-3 py-2 text-sm text-slate-500" colSpan={7}>No actions yet.</td>
                 </tr>
               ) : null}
             </tbody>
@@ -462,6 +516,8 @@ function ActionsScreen({
 export default function ForceFieldAnalysisApp(): JSX.Element {
   const [state, setState] = useState<ForceFieldAnalysisState>(() => readStoredState());
   const [screen, setScreen] = useState<'forces' | 'actions'>('forces');
+  const [importError, setImportError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -486,13 +542,6 @@ export default function ForceFieldAnalysisApp(): JSX.Element {
     setState((current) => ({
       ...current,
       forces: current.forces.map((force) => (force.id === id ? { ...force, score } : force))
-    }));
-  };
-
-  const updateMitigatedScore = (forceId: string, mitigatedScore: number | null) => {
-    setState((current) => ({
-      ...current,
-      forces: current.forces.map((force) => (force.id === forceId ? { ...force, mitigatedScore } : force))
     }));
   };
 
@@ -522,9 +571,45 @@ export default function ForceFieldAnalysisApp(): JSX.Element {
     setState((current) => ({ ...current, actions: current.actions.filter((action) => action.id !== id) }));
   };
 
+  const handleExport = () => {
+    const filename = `force-field-analysis-${(state.projectName || 'export').trim().replace(/\s+/g, '_') || 'export'}.json`;
+    downloadFile(filename, JSON.stringify(state, null, 2), 'application/json');
+  };
+
+  const handleImportClick = () => {
+    setImportError(null);
+    fileInputRef.current?.click();
+  };
+
+  const handleImportFile = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    try {
+      const text = await file.text();
+      const parsed = JSON.parse(text) as Partial<ForceFieldAnalysisState>;
+      setState(normaliseState(parsed));
+      setScreen('forces');
+      setImportError(null);
+    } catch {
+      setImportError('Unable to import this file. Please check it is a valid Force Field Analysis export.');
+    } finally {
+      event.target.value = '';
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800">
-      <header className="bg-white border-b border-slate-200 shadow-sm px-6 py-4 flex items-center justify-between">
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="application/json"
+        className="hidden"
+        onChange={handleImportFile}
+      />
+      <header className="bg-white border-b border-slate-200 shadow-sm px-6 py-4 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-4">
           <button
             onClick={() => { window.location.hash = '#/'; }}
@@ -537,27 +622,49 @@ export default function ForceFieldAnalysisApp(): JSX.Element {
             <p className="text-xs text-slate-500">Weigh driving vs restraining forces and plan mitigation actions</p>
           </div>
         </div>
-        <div className="flex items-center rounded-md border border-slate-300 overflow-hidden text-sm font-semibold" role="group" aria-label="Force field analysis screen">
+        <div className="flex flex-wrap items-center gap-3">
           <button
             type="button"
-            onClick={() => setScreen('forces')}
-            aria-pressed={screen === 'forces'}
-            className={`px-4 py-2 transition-colors ${screen === 'forces' ? 'bg-[#005eb8] text-white' : 'bg-white text-slate-600 hover:bg-slate-100'}`}
+            onClick={handleImportClick}
+            className="text-sm px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-md font-medium transition-colors"
           >
-            1. Forces
+            Import JSON
           </button>
           <button
             type="button"
-            onClick={() => setScreen('actions')}
-            aria-pressed={screen === 'actions'}
-            className={`px-4 py-2 transition-colors border-l border-slate-300 ${screen === 'actions' ? 'bg-[#005eb8] text-white' : 'bg-white text-slate-600 hover:bg-slate-100'}`}
+            onClick={handleExport}
+            className="text-sm px-4 py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-md font-medium transition-colors"
           >
-            2. Actions &amp; Mitigation
+            Export JSON
           </button>
+          <div className="flex items-center rounded-md border border-slate-300 overflow-hidden text-sm font-semibold" role="group" aria-label="Force field analysis screen">
+            <button
+              type="button"
+              onClick={() => setScreen('forces')}
+              aria-pressed={screen === 'forces'}
+              className={`px-4 py-2 transition-colors ${screen === 'forces' ? 'bg-[#005eb8] text-white' : 'bg-white text-slate-600 hover:bg-slate-100'}`}
+            >
+              1. Forces
+            </button>
+            <button
+              type="button"
+              onClick={() => setScreen('actions')}
+              aria-pressed={screen === 'actions'}
+              className={`px-4 py-2 transition-colors border-l border-slate-300 ${screen === 'actions' ? 'bg-[#005eb8] text-white' : 'bg-white text-slate-600 hover:bg-slate-100'}`}
+            >
+              2. Actions &amp; Mitigation
+            </button>
+          </div>
         </div>
       </header>
 
       <main className="max-w-5xl mx-auto px-6 py-8">
+        {importError ? (
+          <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+            {importError}
+          </div>
+        ) : null}
+
         {screen === 'forces' ? (
           <ForcesScreen
             state={state}
@@ -574,7 +681,6 @@ export default function ForceFieldAnalysisApp(): JSX.Element {
             onUpdateAction={updateAction}
             onAddAction={addAction}
             onRemoveAction={removeAction}
-            onUpdateMitigatedScore={updateMitigatedScore}
             onBack={() => setScreen('forces')}
           />
         )}

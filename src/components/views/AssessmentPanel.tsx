@@ -591,17 +591,21 @@ export function AssessmentPanel({
                 {objectives.map((objective) => {
                   const status = deriveObjectiveStatus(objective, componentActionsByLens);
                   const badgeStyle = OBJECTIVE_STATUS_BADGE_STYLES[status];
+                  const openViewer = () => setObjectiveViewer({ objectiveId: objective.id });
                   return (
-                    <tr key={objective.id}>
-                      <td className="px-3 py-2 text-sm text-slate-800">
-                        <button
-                          type="button"
-                          onClick={() => setObjectiveViewer({ objectiveId: objective.id })}
-                          className="text-left text-[#005eb8] underline underline-offset-2 hover:text-[#003087]"
-                        >
-                          {objective.text || 'Untitled objective'}
-                        </button>
-                      </td>
+                    <tr
+                      key={objective.id}
+                      onClick={openViewer}
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                          event.preventDefault();
+                          openViewer();
+                        }
+                      }}
+                      tabIndex={0}
+                      className="cursor-pointer hover:bg-slate-50 focus:outline-none focus-visible:bg-slate-50"
+                    >
+                      <td className="px-3 py-2 text-sm text-slate-800">{objective.text || 'Untitled objective'}</td>
                       <td className="px-3 py-2">
                         <span className={`inline-flex min-w-[7.5rem] items-center justify-center whitespace-nowrap rounded-full border px-3 py-1 text-center text-xs font-semibold ${badgeStyle}`}>
                           {status}

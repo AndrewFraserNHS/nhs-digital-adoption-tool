@@ -14,6 +14,7 @@ interface HighlightBuilderLayout {
   changeLeadName: string;
   sroName: string;
   overallStatus: 'Green' | 'Amber' | 'Red';
+  orientation: 'portrait' | 'landscape';
   sections: string[];
   sectionNarratives: Record<string, string>;
 }
@@ -44,6 +45,7 @@ const DEFAULT_LAYOUT: HighlightBuilderLayout = {
   changeLeadName: '',
   sroName: '',
   overallStatus: 'Amber',
+  orientation: 'landscape',
   sections: [
     'executive-summary',
     'change-dashboard',
@@ -59,11 +61,34 @@ const DEFAULT_LAYOUT: HighlightBuilderLayout = {
   sectionNarratives: {}
 };
 
-const STATUS_ICON: Record<HighlightBuilderLayout['overallStatus'], string> = {
-  Green: '🟢',
-  Amber: '🟠',
-  Red: '🔴'
+const STATUS_BADGE_CLASSES: Record<HighlightBuilderLayout['overallStatus'], string> = {
+  Green: 'bg-green-100 text-green-800 border-green-200',
+  Amber: 'bg-amber-100 text-amber-800 border-amber-200',
+  Red: 'bg-red-100 text-red-800 border-red-200'
 };
+
+const STATUS_DOT_CLASSES: Record<HighlightBuilderLayout['overallStatus'], string> = {
+  Green: 'bg-green-500',
+  Amber: 'bg-amber-500',
+  Red: 'bg-red-500'
+};
+
+function StatusBadge({ status }: { status: HighlightBuilderLayout['overallStatus'] }): JSX.Element {
+  return (
+    <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold ${STATUS_BADGE_CLASSES[status]}`}>
+      <span className={`h-2 w-2 rounded-full ${STATUS_DOT_CLASSES[status]}`} />
+      {status}
+    </span>
+  );
+}
+
+function ChecklistIcon(): JSX.Element {
+  return (
+    <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded bg-green-500 text-[10px] font-bold text-white">
+      ✓
+    </span>
+  );
+}
 
 function withSectionNumber(index: number, label: string): string {
   return `${index + 1}. ${label}`;
@@ -87,6 +112,9 @@ function readStoredLayout(): HighlightBuilderLayout {
       overallStatus: parsed.overallStatus === 'Green' || parsed.overallStatus === 'Amber' || parsed.overallStatus === 'Red'
         ? parsed.overallStatus
         : DEFAULT_LAYOUT.overallStatus,
+      orientation: parsed.orientation === 'portrait' || parsed.orientation === 'landscape'
+        ? parsed.orientation
+        : DEFAULT_LAYOUT.orientation,
       sections: Array.isArray(parsed.sections) && parsed.sections.length > 0
         ? parsed.sections
         : DEFAULT_LAYOUT.sections
@@ -254,6 +282,9 @@ export function HighlightBuilderTool({
         overallStatus: parsed.overallStatus === 'Green' || parsed.overallStatus === 'Amber' || parsed.overallStatus === 'Red'
           ? parsed.overallStatus
           : DEFAULT_LAYOUT.overallStatus,
+        orientation: parsed.orientation === 'portrait' || parsed.orientation === 'landscape'
+          ? parsed.orientation
+          : DEFAULT_LAYOUT.orientation,
         sections: Array.isArray(parsed.sections) && parsed.sections.length > 0
           ? parsed.sections
           : DEFAULT_LAYOUT.sections,
@@ -284,7 +315,8 @@ export function HighlightBuilderTool({
         : item.average;
 
       const trend = item.average > previousAverage ? '▲' : item.average < previousAverage ? '▼' : '►';
-      const status = item.average >= item.target ? '🟢' : item.average >= Math.max(1, item.target - 1) ? '🟠' : '🔴';
+      const status: HighlightBuilderLayout['overallStatus'] =
+        item.average >= item.target ? 'Green' : item.average >= Math.max(1, item.target - 1) ? 'Amber' : 'Red';
       const commentary =
         item.average >= item.target
           ? 'Consistently understood by most stakeholder groups.'
@@ -349,7 +381,7 @@ export function HighlightBuilderTool({
 
     switch (sectionId) {
       case 'executive-summary':
-        return `${STATUS_ICON[layout.overallStatus]} ${layout.overallStatus}. The programme continues to progress across ${components.length} components and ${lenses.length} lenses, with overall delivery at ${metrics.overallPct}%.`;
+        return `${layout.overallStatus}. The programme continues to progress across ${components.length} components and ${lenses.length} lenses, with overall delivery at ${metrics.overallPct}%.`;
       case 'change-dashboard':
         return 'Dashboard status is derived from current component averages versus targets, with trend based on the most recent finalised snapshot.';
       case 'adoption-metrics':
@@ -394,7 +426,7 @@ export function HighlightBuilderTool({
                 {dashboardRows.map((row) => (
                   <tr key={row.area}>
                     <td className="px-3 py-2 text-sm text-slate-700">{row.area}</td>
-                    <td className="px-3 py-2 text-sm">{row.status}</td>
+                    <td className="px-3 py-2 text-sm"><StatusBadge status={row.status} /></td>
                     <td className="px-3 py-2 text-sm">{row.trend}</td>
                     <td className="px-3 py-2 text-sm text-slate-600">{row.commentary}</td>
                   </tr>
@@ -428,7 +460,7 @@ export function HighlightBuilderTool({
                     <td className="px-3 py-2 text-sm text-slate-600">{row.target}</td>
                     <td className="px-3 py-2 text-sm text-slate-700">{row.current}</td>
                     <td className="px-3 py-2 text-sm">{row.trend}</td>
-                    <td className="px-3 py-2 text-sm">{row.status}</td>
+                    <td className="px-3 py-2 text-sm"><StatusBadge status={row.status as HighlightBuilderLayout['overallStatus']} /></td>
                   </tr>
                 ))}
               </tbody>
@@ -489,9 +521,12 @@ export function HighlightBuilderTool({
       return (
         <>
           <p className="mt-2 text-sm whitespace-pre-line text-slate-700">{narrative}</p>
-          <ul className="mt-3 space-y-1 text-sm text-slate-700">
+          <ul className="mt-3 space-y-1.5 text-sm text-slate-700">
             {componentPreview.slice(0, 5).map((item) => (
-              <li key={item.component.id}>✅ {item.component.label} is tracking at {item.average} against target {item.target}.</li>
+              <li key={item.component.id} className="flex items-center gap-2">
+                <ChecklistIcon />
+                {item.component.label} is tracking at {item.average} against target {item.target}.
+              </li>
             ))}
           </ul>
         </>
@@ -507,9 +542,18 @@ export function HighlightBuilderTool({
         <>
           <p className="mt-2 text-sm whitespace-pre-line text-slate-700">{narrative}</p>
           <div className="mt-3 grid gap-2 md:grid-cols-3 text-sm">
-            <div className="rounded border border-green-200 bg-green-50 p-3">🟢 Positive: {positive}%</div>
-            <div className="rounded border border-amber-200 bg-amber-50 p-3">🟠 Neutral: {neutral}%</div>
-            <div className="rounded border border-red-200 bg-red-50 p-3">🔴 Negative: {negative}%</div>
+            <div className="flex items-center gap-2 rounded border border-green-200 bg-green-50 p-3">
+              <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-green-500" />
+              Positive: {positive}%
+            </div>
+            <div className="flex items-center gap-2 rounded border border-amber-200 bg-amber-50 p-3">
+              <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-amber-500" />
+              Neutral: {neutral}%
+            </div>
+            <div className="flex items-center gap-2 rounded border border-red-200 bg-red-50 p-3">
+              <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-red-500" />
+              Negative: {negative}%
+            </div>
           </div>
         </>
       );
@@ -619,7 +663,7 @@ export function HighlightBuilderTool({
 
     const printStyles = win.document.createElement('style');
     printStyles.textContent = `
-      @page { margin: 8mm; size: A4 portrait; }
+      @page { margin: 8mm; size: A4 ${layout.orientation}; }
       html, body { margin: 0 !important; padding: 0 !important; background: #ffffff !important; }
       body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       .printable-report {
@@ -670,13 +714,31 @@ export function HighlightBuilderTool({
               Load JSON Layout
               <input key={fileInputKey} type="file" accept="application/json" className="hidden" onChange={handleLoadLayout} />
             </label>
+            <div className="flex items-center rounded-md border border-slate-300 overflow-hidden text-sm font-semibold" role="group" aria-label="PDF export orientation">
+              <button
+                type="button"
+                onClick={() => updateLayout({ orientation: 'portrait' })}
+                aria-pressed={layout.orientation === 'portrait'}
+                className={`px-3 py-2 transition-colors ${layout.orientation === 'portrait' ? 'bg-slate-800 text-white' : 'bg-white text-slate-600 hover:bg-slate-100'}`}
+              >
+                Portrait
+              </button>
+              <button
+                type="button"
+                onClick={() => updateLayout({ orientation: 'landscape' })}
+                aria-pressed={layout.orientation === 'landscape'}
+                className={`px-3 py-2 transition-colors border-l border-slate-300 ${layout.orientation === 'landscape' ? 'bg-slate-800 text-white' : 'bg-white text-slate-600 hover:bg-slate-100'}`}
+              >
+                Landscape
+              </button>
+            </div>
             <button
               type="button"
               onClick={handlePrintPreview}
               className="rounded-md px-4 py-2 text-sm font-semibold text-white shadow-sm"
               style={{ backgroundColor: layout.themeColor }}
             >
-              Print / Save PDF
+              Print / Save PDF ({layout.orientation === 'landscape' ? 'Landscape' : 'Portrait'})
             </button>
           </div>
         </div>
@@ -739,9 +801,9 @@ export function HighlightBuilderTool({
                 onChange={(event) => updateLayout({ overallStatus: event.target.value as HighlightBuilderLayout['overallStatus'] })}
                 className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
               >
-                <option value="Green">🟢 Green</option>
-                <option value="Amber">🟠 Amber</option>
-                <option value="Red">🔴 Red</option>
+                <option value="Green">Green</option>
+                <option value="Amber">Amber</option>
+                <option value="Red">Red</option>
               </select>
             </div>
 
@@ -828,8 +890,8 @@ export function HighlightBuilderTool({
               <div className="text-sm text-slate-600 mt-1">
                 {layout.programmeName || projectName || 'Unnamed Programme'} · {layout.reportingPeriod || 'Reporting period not set'}
               </div>
-              <div className="text-sm text-slate-600 mt-0.5">
-                Overall Status: {STATUS_ICON[layout.overallStatus]} {layout.overallStatus}
+              <div className="mt-1 flex items-center gap-2 text-sm text-slate-600">
+                Overall Status: <StatusBadge status={layout.overallStatus} />
               </div>
               <div className="text-sm text-slate-600 mt-0.5">
                 {trustName || 'Unconfigured Trust'}

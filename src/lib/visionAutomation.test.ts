@@ -36,4 +36,36 @@ describe('syncVisionDerivedContent', () => {
     expect(strategicObjective?.linkedActions.length).toBeGreaterThan(0);
     expect(strategicObjective?.linkedActions.every((link) => link.lens === 'Strategic Direction and Leadership')).toBe(true);
   });
+
+  it('gives every score-transition objective at least one linked action even when the lens is not currently at that transition score', () => {
+    const store = initializeStore({
+      currentDraft: {
+        vision: {
+          'Strategic Direction and Leadership': {
+            score: 4,
+            justification: '',
+            evidence: '',
+            actions: []
+          },
+          'People Experience and Culture': {
+            score: 4,
+            justification: '',
+            evidence: '',
+            actions: []
+          }
+        }
+      },
+      objectives: {}
+    });
+
+    const nextStore = syncVisionDerivedContent(store);
+    const scoreTransitionObjectives = (nextStore.objectives.vision || []).filter((objective) =>
+      /^vision:auto-objective:.+:\d-\d$/.test(objective.id)
+    );
+
+    expect(scoreTransitionObjectives.length).toBeGreaterThan(0);
+    scoreTransitionObjectives.forEach((objective) => {
+      expect(objective.linkedActions.length).toBeGreaterThan(0);
+    });
+  });
 });

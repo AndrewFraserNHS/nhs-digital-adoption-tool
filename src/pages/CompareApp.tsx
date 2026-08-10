@@ -304,6 +304,157 @@ function analyseFile(payload: SavedAdoptionAssessment): AnalysisResult {
   };
 }
 
+// ─── Timeline (single file, across finalised months) ──────────────────────────
+
+interface TimelineSnapshot {
+  label: string;
+  overallPercentage: number;
+  componentAverages: Record<string, number>;
+  isCurrent: boolean;
+}
+
+function buildTimelineColumns(payload: SavedAdoptionAssessment, result: AnalysisResult): TimelineSnapshot[] {
+  const history = (payload.history || []).map((snapshot) => {
+    const componentAverages: Record<string, number> = {};
+    ASSESSMENT_COMPONENTS.forEach((comp) => {
+      let total = 0;
+      comp.lenses.forEach((lens) => {
+        total += Number(snapshot.data[comp.id]?.[lens]?.score || 0);
+      });
+      componentAverages[comp.id] = comp.lenses.length ? Number((total / comp.lenses.length).toFixed(1)) : 0;
+    });
+    return {
+      label: snapshot.monthLabel,
+      overallPercentage: snapshot.overallPercentage,
+      componentAverages,
+      isCurrent: false
+    };
+  });
+
+  return [
+    ...history,
+    {
+      label: 'Now',
+      overallPercentage: result.overallPct,
+      componentAverages: result.components.reduce<Record<string, number>>((acc, c) => {
+        acc[c.id] = c.avgScore;
+        return acc;
+      }, {}),
+      isCurrent: true
+    }
+  ];
+}
+
+function TimelineView({ payload, result, fileName }: { payload: SavedAdoptionAssessment; result: AnalysisResult; fileName: string }) {
+  const [phaseFilter, setPhaseFilter] = useState<number | 'all'>('all');
+  const phases = [...new Set(ASSESSMENT_COMPONENTS.map((c) => c.phase))].sort((a, b) => a - b);
+
+  const columns = buildTimelineColumns(payload, result);
+  const visibleComponents = phaseFilter === 'all' ? ASSESSMENT_COMPONENTS : ASSESSMENT_COMPONENTS.filter((c) => c.phase === phaseFilter);
+  const finalisedCount = columns.filter((col) => !col.isCurrent).length;
+
+  return (
+    <div className="space-y-8">
+      <div className="bg-[#005eb8] text-white rounded-lg p-5 flex flex-col sm:flex-row sm:items-center gap-4">
+        <div className="flex-1">
+          <p className="text-xs text-blue-200 font-semibold uppercase tracking-wide mb-1">{fileName}</p>
+          <h3 className="text-xl font-bold">{result.orgProfile.trustName || 'Unknown Organisation'}</h3>
+          {result.orgProfile.projectName && <p className="text-sm text-blue-100 mt-0.5">{result.orgProfile.projectName}</p>}
+        </div>
+        <div className="text-center shrink-0">
+          <p className="text-3xl font-bold">{finalisedCount}</p>
+          <p className="text-xs text-blue-200">Finalised snapshots</p>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-6">
+        <h3 className="text-lg font-semibold text-slate-800 mb-1">Overall Score Trend</h3>
+        <p className="text-sm text-slate-500 mb-4">
+          Overall percentage at each finalised month, plus the current unfinalised position.
+        </p>
+        <div className="flex gap-3 overflow-x-auto pb-2">
+          {columns.map((col, index) => {
+            const prev = columns[index - 1];
+            const delta = prev ? Number((col.overallPercentage - prev.overallPercentage).toFixed(1)) : null;
+            return (
+              <div
+                key={`${col.label}-${index}`}
+                className={`shrink-0 w-36 rounded-lg border p-3 ${col.isCurrent ? 'border-[#005eb8] bg-blue-50' : 'border-slate-200 bg-slate-50'}`}
+              >
+                <p className="text-xs font-semibold text-slate-500 truncate">{col.label}</p>
+                <p className="text-2xl font-bold text-slate-800 mt-1">{col.overallPercentage}%</p>
+                {delta !== null ? (
+                  <p className={`text-xs font-semibold mt-1 ${delta > 0 ? 'text-green-600' : delta < 0 ? 'text-red-600' : 'text-slate-400'}`}>
+                    {delta > 0 ? '+' : ''}{delta}% vs prior
+                  </p>
+                ) : (
+                  <p className="text-xs text-slate-400 mt-1">Baseline</p>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-5">
+          <div>
+            <h3 className="text-lg font-semibold text-slate-800">Component Scores Over Time</h3>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Each cell is the average lens score for that component that month. Colour shows the change versus the previous column.
+            </p>
+          </div>
+          <select
+            value={phaseFilter}
+            onChange={(e) => setPhaseFilter(e.target.value === 'all' ? 'all' : Number(e.target.value))}
+            className="rounded-md border border-slate-300 px-3 py-2 text-sm sm:w-36"
+          >
+            <option value="all">All phases</option>
+            {phases.map((p) => <option key={p} value={p}>Phase {p}</option>)}
+          </select>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-slate-200 text-left text-xs text-slate-500 uppercase tracking-wide">
+                <th className="pb-2 font-semibold sticky left-0 bg-white pr-3">Component</th>
+                {columns.map((col, index) => (
+                  <th key={`${col.label}-${index}`} className="pb-2 font-semibold text-center px-2">{col.label}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {visibleComponents.map((comp) => (
+                <tr key={comp.id} className="hover:bg-slate-50">
+                  <td className="py-2.5 pr-3 font-medium text-slate-700 sticky left-0 bg-white">{comp.label}</td>
+                  {columns.map((col, index) => {
+                    const score = col.componentAverages[comp.id] || 0;
+                    const prevScore = index > 0 ? columns[index - 1].componentAverages[comp.id] || 0 : null;
+                    const delta = prevScore !== null ? Number((score - prevScore).toFixed(1)) : null;
+                    const cellClass =
+                      delta === null || delta === 0
+                        ? 'bg-slate-50 text-slate-600'
+                        : delta > 0
+                          ? 'bg-green-50 text-green-700'
+                          : 'bg-red-50 text-red-600';
+                    return (
+                      <td key={`${comp.id}-${col.label}-${index}`} className="py-2.5 px-2 text-center">
+                        <span className={`inline-flex min-w-[2.5rem] justify-center rounded px-2 py-0.5 text-xs font-bold ${cellClass}`}>
+                          {score > 0 ? score.toFixed(1) : '–'}
+                        </span>
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── UI helpers ───────────────────────────────────────────────────────────────
 
 const ENGAGEMENT_LABEL: Record<ComponentAnalysis['engagement'], string> = {
@@ -777,11 +928,13 @@ function ScoreBadge({ score, target }: { score: number; target: number }) {
 interface LoadedFile {
   name: string;
   result: AnalysisResult;
+  payload: SavedAdoptionAssessment;
 }
 
 export default function CompareApp(): JSX.Element {
   const [files, setFiles] = useState<LoadedFile[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [singleFileView, setSingleFileView] = useState<'engagement' | 'timeline'>('engagement');
 
   const handleFiles = useCallback(async (incoming: File[]) => {
     setError(null);
@@ -789,16 +942,17 @@ export default function CompareApp(): JSX.Element {
       const parsed = await Promise.all(
         incoming.map(async (f) => {
           const payload = await parseFile(f);
-          return { name: f.name, result: analyseFile(payload) };
+          return { name: f.name, result: analyseFile(payload), payload };
         })
       );
       setFiles(parsed.slice(0, 2));
+      setSingleFileView('engagement');
     } catch {
       setError('Could not parse one or more files. Please check they are valid Digital Adoption Tool exports.');
     }
   }, []);
 
-  const reset = () => { setFiles([]); setError(null); };
+  const reset = () => { setFiles([]); setError(null); setSingleFileView('engagement'); };
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800">
@@ -834,7 +988,34 @@ export default function CompareApp(): JSX.Element {
         )}
 
         {files.length === 1 && (
-          <SingleAnalysis result={files[0].result} fileName={files[0].name} />
+          <>
+            {(files[0].payload.history || []).length > 0 && (
+              <div className="mb-6 inline-flex rounded-md border border-slate-300 overflow-hidden text-sm font-semibold" role="group" aria-label="Single file view">
+                <button
+                  type="button"
+                  onClick={() => setSingleFileView('engagement')}
+                  aria-pressed={singleFileView === 'engagement'}
+                  className={`px-4 py-2 transition-colors ${singleFileView === 'engagement' ? 'bg-[#005eb8] text-white' : 'bg-white text-slate-600 hover:bg-slate-100'}`}
+                >
+                  Engagement Analysis
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSingleFileView('timeline')}
+                  aria-pressed={singleFileView === 'timeline'}
+                  className={`px-4 py-2 transition-colors border-l border-slate-300 ${singleFileView === 'timeline' ? 'bg-[#005eb8] text-white' : 'bg-white text-slate-600 hover:bg-slate-100'}`}
+                >
+                  Timeline ({(files[0].payload.history || []).length})
+                </button>
+              </div>
+            )}
+
+            {singleFileView === 'timeline' && (files[0].payload.history || []).length > 0 ? (
+              <TimelineView payload={files[0].payload} result={files[0].result} fileName={files[0].name} />
+            ) : (
+              <SingleAnalysis result={files[0].result} fileName={files[0].name} />
+            )}
+          </>
         )}
 
         {files.length === 2 && (

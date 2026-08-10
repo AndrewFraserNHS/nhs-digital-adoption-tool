@@ -215,7 +215,7 @@ describe('AssessmentPanel', () => {
 
     expect(screen.getByText('Vision objective')).toBeTruthy();
     expect(screen.getAllByText('In Progress').length).toBeGreaterThan(0);
-    fireEvent.click(screen.getByRole('button', { name: 'Vision objective' }));
+    fireEvent.click(screen.getByText('Vision objective').closest('tr')!);
 
     const dialog = screen.getByRole('dialog', { name: 'Objective Details' });
     expect(within(dialog).getByText('Run workshop')).toBeTruthy();

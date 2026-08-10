@@ -55,4 +55,32 @@ describe('syncPathwayObjectives', () => {
     const visionObjectives = next.objectives.vision || [];
     expect(visionObjectives.some((objective) => objective.id === 'custom-objective')).toBe(true);
   });
+
+  it('auto-links every vision pathway objective to at least one action', () => {
+    const store = createStore();
+    const next = syncPathwayObjectives(store);
+
+    const visionObjectives = (next.objectives.vision || []).filter((objective) =>
+      objective.id.startsWith('pathway:auto-objective:')
+    );
+    expect(visionObjectives.length).toBeGreaterThan(0);
+
+    visionObjectives.forEach((objective) => {
+      expect(objective.linkedActions.length).toBeGreaterThan(0);
+      const link = objective.linkedActions[0];
+      const lensEntry = next.currentDraft.vision?.[link.lens];
+      expect(lensEntry?.actions.some((action) => action.id === link.actionId)).toBe(true);
+    });
+  });
+
+  it('does not auto-link actions for non-vision components', () => {
+    const store = createStore();
+    const next = syncPathwayObjectives(store);
+
+    const caseForChangeObjectives = (next.objectives.case_for_change || []).filter((objective) =>
+      objective.id.startsWith('pathway:auto-objective:')
+    );
+    expect(caseForChangeObjectives.length).toBeGreaterThan(0);
+    expect(caseForChangeObjectives.every((objective) => objective.linkedActions.length === 0)).toBe(true);
+  });
 });

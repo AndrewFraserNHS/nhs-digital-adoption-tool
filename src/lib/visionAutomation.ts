@@ -215,11 +215,10 @@ export function syncVisionDerivedContent(store: AdoptionStore): AdoptionStore {
     }
 
     const lensEntry = nextVisionDraft[template.lens] || createEmptyVisionEntry();
-    const score = lensEntry.score || 0;
-    if (score !== template.fromScore) {
-      return;
-    }
 
+    // Every auto-generated objective must always have at least one linked action, regardless of the
+    // lens's current score, so actions are seeded for all score-transition templates up front rather
+    // than only once the score happens to reach that transition's starting point.
     template.actionTexts.forEach((actionText, index) => {
       const actionId = getActionId(template, index);
       const alreadyHasAction = (lensEntry.actions || []).some((action) => action.id === actionId);

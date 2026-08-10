@@ -1,4 +1,4 @@
-import { JSX, useState } from 'react';
+import { JSX, useState, type ReactNode } from 'react';
 import { getComponentById } from '@data/components';
 import { resolveGuidanceLinksForAdoptionComponent, type MaturityGuidanceTarget } from '@data/maturity-guidance-links';
 import { KEY_QUESTIONS } from '@data/key-questions';
@@ -123,8 +123,49 @@ const CM_RESPONSIBILITIES = [
   }
 ];
 
+type GuideSectionId = 'questions' | 'phases' | 'role';
+
+function AccordionSection({
+  title,
+  description,
+  isOpen,
+  onToggle,
+  children
+}: {
+  title: string;
+  description?: string;
+  isOpen: boolean;
+  onToggle: () => void;
+  children: ReactNode;
+}): JSX.Element {
+  return (
+    <section className="mb-4 rounded-lg border border-slate-200 overflow-hidden">
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={isOpen}
+        className="w-full flex items-center justify-between gap-4 p-4 text-left bg-white hover:bg-slate-50 transition-colors"
+      >
+        <div>
+          <h3 className="text-lg font-semibold text-slate-800">{title}</h3>
+          {description ? <p className="text-sm text-slate-500 mt-0.5">{description}</p> : null}
+        </div>
+        <span className={`shrink-0 text-xl font-bold text-slate-400 transition-transform ${isOpen ? 'rotate-45' : ''}`}>
+          +
+        </span>
+      </button>
+      {isOpen ? <div className="p-5 pt-0 bg-white border-t border-slate-100">{children}</div> : null}
+    </section>
+  );
+}
+
 export function ChangeManagementGuide({ onComponentClick, guidanceTarget = 'Default' }: ChangeManagementGuideProps): JSX.Element {
+  const [expandedSection, setExpandedSection] = useState<GuideSectionId | null>('questions');
   const [expandedPhase, setExpandedPhase] = useState<number | null>(null);
+
+  const toggleSection = (id: GuideSectionId) => {
+    setExpandedSection((prev) => (prev === id ? null : id));
+  };
 
   const togglePhase = (phase: number) => {
     setExpandedPhase((prev) => (prev === phase ? null : phase));
@@ -156,12 +197,12 @@ export function ChangeManagementGuide({ onComponentClick, guidanceTarget = 'Defa
       </div>
 
       {/* The 6 Key Questions */}
-      <section className="mb-10">
-        <h3 className="text-lg font-semibold text-slate-800 mb-1">The 6 Key Questions</h3>
-        <p className="text-sm text-slate-500 mb-5">
-          Six questions worth returning to throughout the life of the programme, each backed by a change
-          model and linked to where you can act on it.
-        </p>
+      <AccordionSection
+        title="The 6 Key Questions"
+        description="Six questions worth returning to throughout the life of the programme, each backed by a change model and linked to where you can act on it."
+        isOpen={expandedSection === 'questions'}
+        onToggle={() => toggleSection('questions')}
+      >
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {KEY_QUESTIONS.map((keyQuestion, index) => {
             const toolkitLinks = resolveGuidanceLinksForAdoptionComponent(
@@ -224,15 +265,15 @@ export function ChangeManagementGuide({ onComponentClick, guidanceTarget = 'Defa
             );
           })}
         </div>
-      </section>
+      </AccordionSection>
 
       {/* Phase timeline */}
-      <section className="mb-10">
-        <h3 className="text-lg font-semibold text-slate-800 mb-1">The Five Change Phases</h3>
-        <p className="text-sm text-slate-500 mb-5">
-          Select a phase to see the key deliverables expected at that stage.
-        </p>
-
+      <AccordionSection
+        title="The Five Change Phases"
+        description="Select a phase to see the key deliverables expected at that stage."
+        isOpen={expandedSection === 'phases'}
+        onToggle={() => toggleSection('phases')}
+      >
         {/* Lifecycle bar */}
         <div className="hidden md:grid grid-cols-5 gap-1 mb-6 rounded-lg overflow-hidden border border-slate-200 text-xs font-semibold text-center">
           {PHASES.map((p) => (
@@ -303,15 +344,15 @@ export function ChangeManagementGuide({ onComponentClick, guidanceTarget = 'Defa
             );
           })}
         </div>
-      </section>
+      </AccordionSection>
 
       {/* Role of the Change Manager */}
-      <section className="bg-white rounded-lg border border-slate-200 shadow-sm p-6 mb-8">
-        <h3 className="text-lg font-semibold text-slate-800 mb-1">The Role of the Change Manager</h3>
-        <p className="text-sm text-slate-500 mb-5">
-          Change management (and change managers) provide essential assistance to project managers
-          through:
-        </p>
+      <AccordionSection
+        title="The Role of the Change Manager"
+        description="Change management (and change managers) provide essential assistance to project managers through:"
+        isOpen={expandedSection === 'role'}
+        onToggle={() => toggleSection('role')}
+      >
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {CM_RESPONSIBILITIES.map((r) => (
             <div key={r.title} className="rounded-md border border-slate-100 bg-slate-50 p-4">
@@ -320,7 +361,7 @@ export function ChangeManagementGuide({ onComponentClick, guidanceTarget = 'Defa
             </div>
           ))}
         </div>
-      </section>
+      </AccordionSection>
 
       {/* Toolkit link */}
       <div className="rounded-lg border border-slate-200 bg-slate-50 p-5 flex flex-col sm:flex-row sm:items-center gap-4">

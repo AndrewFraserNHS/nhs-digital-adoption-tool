@@ -11,7 +11,7 @@ describe('OnboardingIntro', () => {
   it('steps through the intro and reaches the final step', () => {
     render(<OnboardingIntro open onClose={vi.fn()} />);
 
-    expect(screen.getByText('What is change management, here?')).toBeInTheDocument();
+    expect(screen.getByText('What is the Adoption Engine?')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     expect(screen.getByText('What is a CST?')).toBeInTheDocument();
@@ -20,7 +20,7 @@ describe('OnboardingIntro', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
 
-    expect(screen.getByText('Where to go next')).toBeInTheDocument();
+    expect(screen.getByText('Getting Started')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Go to dashboard' })).toBeInTheDocument();
   });
 

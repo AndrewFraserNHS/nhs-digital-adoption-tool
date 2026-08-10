@@ -86,6 +86,10 @@ body {
   border-left-color: #7b5ea7;
 }
 
+.tool-card.ffa {
+  border-left-color: #d97706;
+}
+
 .tool-kicker {
   display: inline-block;
   font-size: 0.72rem;
@@ -130,6 +134,11 @@ body {
 
 .tool-card.compare .tool-cta {
   color: #7b5ea7;
+}
+
+.tool-card.ffa .tool-kicker,
+.tool-card.ffa .tool-cta {
+  color: #d97706;
 }
 
 .home-footer {

@@ -3,6 +3,7 @@ import { HashRouter, Navigate, Route, Routes } from 'react-router-dom';
 import AdoptionApp from '@pages/AdoptionApp';
 import MaturityApp from './legacy/MaturityApp';
 import CompareApp from '@pages/CompareApp';
+import ForceFieldAnalysisApp from '@pages/ForceFieldAnalysisApp';
 
 function HomePage(): JSX.Element {
   return (
@@ -45,6 +46,16 @@ function HomePage(): JSX.Element {
           </p>
           <span className="tool-cta">Open analysis tool -&gt;</span>
         </a>
+
+        <a className="tool-card ffa" href="#/force-field-analysis">
+          <span className="tool-kicker">Planning</span>
+          <h2 className="tool-title">Force Field Analysis</h2>
+          <p className="tool-desc">
+            Weigh up the driving and restraining forces around your change, score them, and turn
+            the biggest ones into owned mitigation actions.
+          </p>
+          <span className="tool-cta">Open force field tool -&gt;</span>
+        </a>
       </section>
 
       <p className="home-footer">Copyright NHS Digital Adoption</p>
@@ -60,6 +71,7 @@ export default function App(): JSX.Element {
         <Route path="/adoption" element={<AdoptionApp />} />
         <Route path="/maturity" element={<MaturityApp />} />
         <Route path="/compare" element={<CompareApp />} />
+        <Route path="/force-field-analysis" element={<ForceFieldAnalysisApp />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </HashRouter>

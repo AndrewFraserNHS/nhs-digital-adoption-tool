@@ -187,6 +187,9 @@ export function AssessmentPanel({
   const component = components.find((c) => c.id === activeComponentId) || components[0];
   const [actionEditor, setActionEditor] = useState<ActionEditorState | null>(null);
   const [objectiveViewer, setObjectiveViewer] = useState<ObjectiveViewerState | null>(null);
+  const [showScoringSection, setShowScoringSection] = useState(true);
+  const [showObjectivesSection, setShowObjectivesSection] = useState(true);
+  const [showActionsSection, setShowActionsSection] = useState(true);
   const objectives = store.objectives?.[component.id] || [];
 
   const componentActionsByLens = useMemo(() => {
@@ -196,6 +199,20 @@ export function AssessmentPanel({
     });
     return map;
   }, [component.id, component.lenses, getEntry]);
+
+  const totalLensActions = useMemo(
+    () => component.lenses.reduce((sum, lens) => sum + (getEntry(component.id, lens).actions || []).length, 0),
+    [component.id, component.lenses, getEntry]
+  );
+
+  const completedLensActions = useMemo(
+    () =>
+      component.lenses.reduce(
+        (sum, lens) => sum + (getEntry(component.id, lens).actions || []).filter((action) => normalizeActionStatus(action.status) === 'Completed').length,
+        0
+      ),
+    [component.id, component.lenses, getEntry]
+  );
 
   const actionsByTarget = useMemo(() => {
     const map: Record<string, ResolvedLensAction[]> = {};
@@ -531,6 +548,11 @@ export function AssessmentPanel({
     openEditActionModal(component.id, lens, action);
   };
 
+  const scrollToSection = (sectionId: 'assessment-scoring' | 'assessment-objectives' | 'assessment-actions') => {
+    const target = document.getElementById(sectionId);
+    target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   return (
     <div className="max-w-5xl mx-auto pb-20">
       <div className="mb-8 flex items-center justify-between gap-4 flex-wrap">
@@ -558,76 +580,147 @@ export function AssessmentPanel({
         </select>
       </div>
 
-      <div className="mb-8 rounded-lg border border-slate-200 bg-white p-5">
-        <label className="block text-sm font-semibold text-slate-700 mb-2">Component Justification</label>
-        <textarea
-          value={componentJustification}
-          onChange={(event) => handleComponentJustificationChange(event.target.value)}
-          className="w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm h-24 p-2 border"
-          placeholder="Record rationale for this component."
-        />
+      <div className="mb-6 rounded-lg border border-slate-200 bg-slate-50 p-4">
+        <p className="text-xs font-semibold uppercase tracking-wider text-slate-600">Guided workflow</p>
+        <div className="mt-2 flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => scrollToSection('assessment-scoring')}
+            className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100"
+          >
+            1. Score and justify
+          </button>
+          <button
+            type="button"
+            onClick={() => scrollToSection('assessment-objectives')}
+            className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100"
+          >
+            2. Review objectives
+          </button>
+          <button
+            type="button"
+            onClick={() => scrollToSection('assessment-actions')}
+            className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100"
+          >
+            3. Plan lens actions
+          </button>
+        </div>
       </div>
 
-      <div className="mb-8 rounded-lg border border-slate-200 bg-white p-5">
-        <div className="flex items-center justify-between mb-1">
-          <h4 className="text-sm font-semibold text-slate-800">Objectives</h4>
+      <div id="assessment-scoring" className="mb-8 rounded-lg border border-slate-200 bg-white p-5">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <h3 className="text-sm font-semibold text-slate-800">Step 1: Score and justify</h3>
+          <button
+            type="button"
+            onClick={() => setShowScoringSection((current) => !current)}
+            className="rounded-md border border-slate-300 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-100"
+          >
+            {showScoringSection ? 'Hide' : 'Show'}
+          </button>
+        </div>
+        {showScoringSection ? (
+          <>
+            <label className="block text-sm font-semibold text-slate-700 mb-2">Component Justification</label>
+            <textarea
+              value={componentJustification}
+              onChange={(event) => handleComponentJustificationChange(event.target.value)}
+              className="w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm h-24 p-2 border"
+              placeholder="Record rationale for this component."
+            />
+          </>
+        ) : null}
+      </div>
+
+      <div id="assessment-objectives" className="mb-8 rounded-lg border border-slate-200 bg-white p-5">
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
+          <h3 className="text-sm font-semibold text-slate-800">Step 2: Review objectives</h3>
+          <button
+            type="button"
+            onClick={() => setShowObjectivesSection((current) => !current)}
+            className="rounded-md border border-slate-300 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-100"
+          >
+            {showObjectivesSection ? 'Hide' : 'Show'}
+          </button>
         </div>
         <p className="text-xs text-slate-500 mb-3">
           Owned by this component as a whole. Status is derived automatically from the lens actions assigned to
           each objective below - it can't be set manually.
         </p>
 
-        {objectives.length ? (
-          <div className="overflow-x-auto rounded-md border border-slate-200">
-            <table className="min-w-full divide-y divide-slate-200 bg-white">
-              <thead className="bg-slate-50">
-                <tr>
-                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Description</th>
-                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Status</th>
-                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Linked Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {objectives.map((objective) => {
-                  const status = deriveObjectiveStatus(objective, componentActionsByLens);
-                  const badgeStyle = OBJECTIVE_STATUS_BADGE_STYLES[status];
-                  const openViewer = () => setObjectiveViewer({ objectiveId: objective.id });
-                  return (
-                    <tr
-                      key={objective.id}
-                      onClick={openViewer}
-                      onKeyDown={(event) => {
-                        if (event.key === 'Enter' || event.key === ' ') {
-                          event.preventDefault();
-                          openViewer();
-                        }
-                      }}
-                      tabIndex={0}
-                      className="cursor-pointer hover:bg-slate-50 focus:outline-none focus-visible:bg-slate-50"
-                    >
-                      <td className="px-3 py-2 text-sm text-slate-800">{objective.text || 'Untitled objective'}</td>
-                      <td className="px-3 py-2">
-                        <span className={`inline-flex min-w-[7.5rem] items-center justify-center whitespace-nowrap rounded-full border px-3 py-1 text-center text-xs font-semibold ${badgeStyle}`}>
-                          {status}
-                        </span>
-                      </td>
-                      <td className="px-3 py-2 text-sm text-slate-600">
-                        {objective.linkedActions.length
-                          ? `${objective.linkedActions.length} action(s)`
-                          : 'None assigned'}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <p className="text-sm text-slate-500">No objectives yet.</p>
-        )}
+        {showObjectivesSection ? (
+          objectives.length ? (
+            <div className="overflow-x-auto rounded-md border border-slate-200">
+              <table className="min-w-full divide-y divide-slate-200 bg-white">
+                <thead className="bg-slate-50">
+                  <tr>
+                    <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Description</th>
+                    <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Status</th>
+                    <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Linked Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {objectives.map((objective) => {
+                    const status = deriveObjectiveStatus(objective, componentActionsByLens);
+                    const badgeStyle = OBJECTIVE_STATUS_BADGE_STYLES[status];
+                    const openViewer = () => setObjectiveViewer({ objectiveId: objective.id });
+                    return (
+                      <tr
+                        key={objective.id}
+                        onClick={openViewer}
+                        onKeyDown={(event) => {
+                          if (event.key === 'Enter' || event.key === ' ') {
+                            event.preventDefault();
+                            openViewer();
+                          }
+                        }}
+                        tabIndex={0}
+                        className="cursor-pointer hover:bg-slate-50 focus:outline-none focus-visible:bg-slate-50"
+                      >
+                        <td className="px-3 py-2 text-sm text-slate-800">{objective.text || 'Untitled objective'}</td>
+                        <td className="px-3 py-2">
+                          <span className={`inline-flex min-w-[7.5rem] items-center justify-center whitespace-nowrap rounded-full border px-3 py-1 text-center text-xs font-semibold ${badgeStyle}`}>
+                            {status}
+                          </span>
+                        </td>
+                        <td className="px-3 py-2 text-sm text-slate-600">
+                          {objective.linkedActions.length
+                            ? `${objective.linkedActions.length} action(s)`
+                            : 'None assigned'}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p className="text-sm text-slate-500">No objectives yet.</p>
+          )
+        ) : null}
       </div>
 
-      <div className="space-y-8">
+      <div id="assessment-actions" className="mb-3 rounded-lg border border-slate-200 bg-slate-50 p-4">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h3 className="text-sm font-semibold text-slate-800">Step 3: Plan lens actions</h3>
+            <p className="mt-1 text-xs text-slate-600">Track delivery actions for each lens and link them to objectives and targets.</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="rounded-full bg-white border border-slate-300 px-2 py-1 text-xs text-slate-700">
+              {completedLensActions}/{totalLensActions} completed
+            </span>
+            <button
+              type="button"
+              onClick={() => setShowActionsSection((current) => !current)}
+              className="rounded-md border border-slate-300 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-100"
+            >
+              {showActionsSection ? 'Hide' : 'Show'}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {showActionsSection ? <div className="space-y-8">
         {component.lenses.map((lens) => {
           const entry = getEntry(component.id, lens);
           const showMatrix = !!store.showMatrix?.[`${component.id}:${lens}`];
@@ -829,7 +922,7 @@ export function AssessmentPanel({
             </div>
           );
         })}
-      </div>
+      </div> : null}
 
       {actionEditor ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 p-4">

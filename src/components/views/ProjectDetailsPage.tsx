@@ -132,31 +132,38 @@ export function ProjectDetailsPage({
       </p>
 
       <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 space-y-6">
-        <h3 className="text-lg font-semibold text-slate-800">Organisation Settings</h3>
-        <div>
-          <label htmlFor="org-trust-name" className="block text-sm font-medium text-slate-700 mb-1">
-            Organisation Name
-          </label>
-          <input
-            id="org-trust-name"
-            type="text"
-            className="w-full rounded-md border border-[#768692] shadow-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8] sm:text-sm p-2"
-            value={profile.trustName}
-            onChange={(e) => handleTrustChange(e.target.value)}
-          />
+        <div className="space-y-1">
+          <h3 className="text-lg font-semibold text-slate-800">Step 1: Organisation profile</h3>
+          <p className="text-sm text-slate-600">Complete these core details first. Then open the sections below for CST setup and readiness capability.</p>
         </div>
-        <div>
-          <label htmlFor="org-project-name" className="block text-sm font-medium text-slate-700 mb-1">
-            Programme / Project Name
-          </label>
-          <input
-            id="org-project-name"
-            type="text"
-            className="w-full rounded-md border border-[#768692] shadow-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8] sm:text-sm p-2"
-            value={profile.projectName || ''}
-            onChange={(e) => handleProjectChange(e.target.value)}
-          />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="org-trust-name" className="block text-sm font-medium text-slate-700 mb-1">
+              Organisation Name
+            </label>
+            <input
+              id="org-trust-name"
+              type="text"
+              className="w-full rounded-md border border-[#768692] shadow-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8] sm:text-sm p-2"
+              value={profile.trustName}
+              onChange={(e) => handleTrustChange(e.target.value)}
+            />
+          </div>
+          <div>
+            <label htmlFor="org-project-name" className="block text-sm font-medium text-slate-700 mb-1">
+              Programme / Project Name
+            </label>
+            <input
+              id="org-project-name"
+              type="text"
+              className="w-full rounded-md border border-[#768692] shadow-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8] sm:text-sm p-2"
+              value={profile.projectName || ''}
+              onChange={(e) => handleProjectChange(e.target.value)}
+            />
+          </div>
         </div>
+
         <div>
           <label htmlFor="org-lead-name" className="block text-sm font-medium text-slate-700 mb-1">
             Lead Submitter (Change Lead)
@@ -170,9 +177,11 @@ export function ProjectDetailsPage({
           />
         </div>
 
-        <div className="rounded-md border border-slate-200 bg-slate-50 p-4 space-y-4">
-          <h4 className="text-sm font-semibold text-slate-800">Context Specific Template (CST)</h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <details className="rounded-md border border-slate-200 bg-slate-50 p-4" open>
+          <summary className="cursor-pointer text-sm font-semibold text-slate-800">Step 2: Context Specific Template (CST)</summary>
+          <p className="mt-2 text-xs text-slate-600">Set the pathway and timeline dates for this programme.</p>
+
+          <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label htmlFor="cst-type" className="block text-sm font-medium text-slate-700 mb-1">
                 CST Type
@@ -205,7 +214,7 @@ export function ProjectDetailsPage({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label htmlFor="cst-go-live" className="block text-sm font-medium text-slate-700 mb-1">
                 Go Live Date (required)
@@ -244,59 +253,8 @@ export function ProjectDetailsPage({
             </div>
           </div>
 
-          <div className="rounded-md border border-slate-200 bg-white p-3">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <p className="text-sm font-semibold text-slate-800">Confidence and competence by phase</p>
-              <p className="text-sm font-semibold text-slate-700">
-                Overall Score: {overallCapabilityScore ?? 'N/A'}{overallCapabilityScore !== null ? '%' : ''}
-              </p>
-            </div>
-            <p className="mt-1 text-xs text-slate-600">
-              Capture baseline at CST start, then refresh when readiness phase changes.
-            </p>
-
-            <div className="mt-3 space-y-2">
-              {OVERARCHING_PHASES.map((phase) => {
-                const value = profile.cst.phaseCapability[phase] || { competence: 'C', confidence: 3 };
-                const combined = getCombinedCapabilityScore({
-                  competence: value.competence,
-                  confidence: value.confidence
-                });
-
-                return (
-                  <div key={`phase-capability-${phase}`} className="grid grid-cols-[90px,1fr,1fr,90px] gap-2 items-center text-sm">
-                    <span className="font-semibold text-slate-700">Phase {phase}</span>
-                    <select
-                      value={value.competence}
-                      onChange={(event) =>
-                        handlePhaseCapabilityChange(phase, 'competence', event.target.value as CompetenceGrade)
-                      }
-                      className="rounded-md border border-slate-300 px-2 py-1.5"
-                    >
-                      {COMPETENCE_OPTIONS.map((option) => (
-                        <option key={`${phase}-competence-${option}`} value={option}>Competence {option}</option>
-                      ))}
-                    </select>
-                    <select
-                      value={value.confidence}
-                      onChange={(event) =>
-                        handlePhaseCapabilityChange(phase, 'confidence', Number(event.target.value) as ConfidenceScore)
-                      }
-                      className="rounded-md border border-slate-300 px-2 py-1.5"
-                    >
-                      {CONFIDENCE_OPTIONS.map((option) => (
-                        <option key={`${phase}-confidence-${option}`} value={option}>Confidence {option}</option>
-                      ))}
-                    </select>
-                    <span className="text-right font-semibold text-slate-700">{combined}%</span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
           {profileValidation.errors.filter((error) => error.field.startsWith('cst.')).length > 0 ? (
-            <div className="rounded-md border border-amber-300 bg-amber-50 p-3">
+            <div className="mt-4 rounded-md border border-amber-300 bg-amber-50 p-3">
               <p className="text-xs font-semibold uppercase tracking-wider text-amber-800">CST validation warnings</p>
               <ul className="mt-2 space-y-1 text-sm text-amber-900">
                 {profileValidation.errors
@@ -307,7 +265,60 @@ export function ProjectDetailsPage({
               </ul>
             </div>
           ) : null}
-        </div>
+        </details>
+
+        <details className="rounded-md border border-slate-200 bg-slate-50 p-4">
+          <summary className="cursor-pointer text-sm font-semibold text-slate-800">Step 3: Phase capability</summary>
+          <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+            <p className="text-xs text-slate-600">Capture baseline at CST start, then refresh when readiness phase changes.</p>
+            <p className="text-sm font-semibold text-slate-700">
+              Overall Score: {overallCapabilityScore ?? 'N/A'}{overallCapabilityScore !== null ? '%' : ''}
+            </p>
+          </div>
+
+          <div className="mt-3 space-y-3">
+            {OVERARCHING_PHASES.map((phase) => {
+              const value = profile.cst.phaseCapability[phase] || { competence: 'C', confidence: 3 };
+              const combined = getCombinedCapabilityScore({
+                competence: value.competence,
+                confidence: value.confidence
+              });
+
+              return (
+                <div key={`phase-capability-${phase}`} className="rounded-md border border-slate-200 bg-white p-3">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span className="font-semibold text-slate-700">Phase {phase}</span>
+                    <span className="text-sm font-semibold text-slate-700">{combined}%</span>
+                  </div>
+                  <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                    <select
+                      value={value.competence}
+                      onChange={(event) =>
+                        handlePhaseCapabilityChange(phase, 'competence', event.target.value as CompetenceGrade)
+                      }
+                      className="rounded-md border border-slate-300 px-2 py-2"
+                    >
+                      {COMPETENCE_OPTIONS.map((option) => (
+                        <option key={`${phase}-competence-${option}`} value={option}>Competence {option}</option>
+                      ))}
+                    </select>
+                    <select
+                      value={value.confidence}
+                      onChange={(event) =>
+                        handlePhaseCapabilityChange(phase, 'confidence', Number(event.target.value) as ConfidenceScore)
+                      }
+                      className="rounded-md border border-slate-300 px-2 py-2"
+                    >
+                      {CONFIDENCE_OPTIONS.map((option) => (
+                        <option key={`${phase}-confidence-${option}`} value={option}>Confidence {option}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </details>
       </div>
 
       <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 space-y-5">

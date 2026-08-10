@@ -126,7 +126,53 @@ export function GuidanceRoadmapView({
         </p>
       </div>
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm overflow-x-auto">
+      <div className="lg:hidden space-y-3">
+        {rows.map(({ component, average, status }) => (
+          <button
+            key={`mobile-${component.id}`}
+            type="button"
+            onClick={() => onComponentClick(component.id)}
+            className={`w-full rounded-xl border p-4 text-left transition-colors hover:border-slate-300 ${status.rowClass}`}
+          >
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <div className="text-sm font-semibold text-slate-800">{component.label}</div>
+                <div className="mt-1 text-xs text-slate-500">Target {component.target} · completes by Phase {component.phase}</div>
+              </div>
+              <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${status.chipClass}`}>
+                {status.label}
+              </span>
+            </div>
+            <div className="mt-3">
+              <div className="flex items-center justify-between text-xs text-slate-600 mb-1">
+                <span>Timeline</span>
+                <span>Average {average}</span>
+              </div>
+              <div className="grid grid-cols-5 gap-1">
+                {PHASES.map((phase) => {
+                  const isPlannedSpan = phase <= component.phase;
+                  const isCompletionPhase = phase === component.phase;
+                  return (
+                    <div key={`${component.id}-mobile-${phase}`}>
+                      <div className="h-2 rounded-full bg-white/80">
+                        {isPlannedSpan ? (
+                          <div
+                            className={`h-full rounded-full ${status.barClass} ${isCompletionPhase ? 'opacity-100' : 'opacity-35'}`}
+                            title={isCompletionPhase ? 'Expected completion phase' : 'Planned timeline'}
+                          />
+                        ) : null}
+                      </div>
+                      <div className="mt-1 text-[10px] text-center text-slate-500">P{phase}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </button>
+        ))}
+      </div>
+
+      <div className="hidden lg:block rounded-2xl border border-slate-200 bg-white p-6 shadow-sm overflow-x-auto">
         <div className="min-w-[920px]">
           <div className="grid grid-cols-[280px_repeat(5,minmax(110px,1fr))_120px_120px] gap-3 border-b border-slate-200 pb-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
             <div>Component</div>

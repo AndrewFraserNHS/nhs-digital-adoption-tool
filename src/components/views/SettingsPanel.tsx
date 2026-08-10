@@ -86,14 +86,19 @@ export function SettingsPanel({
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <h2 className="text-2xl font-bold text-slate-800">Settings</h2>
+      <p className="text-sm text-slate-600">
+        Use this page to manage your profile, personal preferences, and support options.
+      </p>
 
-      <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 space-y-5">
-        <h3 className="text-lg font-semibold text-slate-800">User Settings</h3>
-
-        {(engagementGrade || engagementLevel || engagementXp !== undefined) && (
+      {(engagementGrade || engagementLevel || engagementXp !== undefined) && (
+        <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 space-y-4">
+          <div>
+            <h3 className="text-lg font-semibold text-slate-800">Engagement and Progress</h3>
+            <p className="mt-1 text-sm text-slate-600">A simple view of your current progress. This updates as you keep using the tool.</p>
+          </div>
           <div className="rounded-md border border-slate-200 bg-slate-50 p-4">
             <h4 className="text-sm font-semibold text-slate-800 mb-2">Engagement Summary</h4>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {[
                 {
                   key: 'grade',
@@ -130,10 +135,17 @@ export function SettingsPanel({
               ))}
             </div>
             <p className="mt-3 text-xs text-slate-500">
-              You’re making good progress — this reflects consistency over time, not perfection.
+              You’re making good progress - this reflects consistency over time, not perfection.
             </p>
           </div>
-        )}
+        </div>
+      )}
+
+      <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 space-y-5">
+        <div>
+          <h3 className="text-lg font-semibold text-slate-800">Your Profile</h3>
+          <p className="mt-1 text-sm text-slate-600">These details personalise your experience and reports.</p>
+        </div>
 
         <div>
           <label htmlFor="user-name" className="block text-sm font-medium text-slate-700 mb-1">
@@ -147,6 +159,7 @@ export function SettingsPanel({
             onChange={(e) => updateUserSettings({ name: e.target.value })}
           />
         </div>
+
         <div>
           <label htmlFor="user-preferences" className="block text-sm font-medium text-slate-700 mb-1">
             Preferences
@@ -201,7 +214,13 @@ export function SettingsPanel({
             </div>
           </div>
         </div>
+      </div>
 
+      <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 space-y-4">
+        <div>
+          <h3 className="text-lg font-semibold text-slate-800">Appearance</h3>
+          <p className="mt-1 text-sm text-slate-600">Choose the theme colour you want to use throughout the app.</p>
+        </div>
         <div>
           <label htmlFor="user-theme-colour" className="block text-sm font-medium text-slate-700 mb-1">
             Theme Colour
@@ -226,21 +245,30 @@ export function SettingsPanel({
             </div>
 
             <div className="flex items-center gap-3">
-            <input
-              id="user-theme-colour"
-              type="color"
-              className="h-10 w-14 rounded border border-slate-300 p-1 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-              value={settings.themeColor}
-              onChange={(e) => updateUserSettings({ themeColor: e.target.value })}
-              disabled={!canUseCustomTheme}
-            />
-            <span className="text-sm text-slate-600 font-mono">{settings.themeColor}</span>
-            {!canUseCustomTheme ? <span className="text-xs text-slate-500">Unlocks at level 3</span> : null}
+              <input
+                id="user-theme-colour"
+                type="color"
+                className="h-10 w-14 rounded border border-slate-300 p-1 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                value={settings.themeColor}
+                onChange={(e) => updateUserSettings({ themeColor: e.target.value })}
+                disabled={!canUseCustomTheme}
+              />
+              <span className="text-sm text-slate-600 font-mono">{settings.themeColor}</span>
+              {!canUseCustomTheme ? <span className="text-xs text-slate-500">Unlocks at level 3</span> : null}
             </div>
           </div>
         </div>
-        <div className="pt-2">
-          <div className="flex flex-wrap gap-3">
+      </div>
+
+      <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 space-y-4">
+        <div>
+          <h3 className="text-lg font-semibold text-slate-800">Data and Support</h3>
+          <p className="mt-1 text-sm text-slate-600">Load sample data, reset local data, read FAQs, or report an issue.</p>
+        </div>
+
+        <div className="rounded-md border border-slate-200 bg-slate-50 p-4">
+          <h4 className="text-sm font-semibold text-slate-800">Data Tools</h4>
+          <div className="mt-3 flex flex-wrap gap-3">
             <button
               onClick={onLoadExampleData}
               className={nhsButtonPrimary}
@@ -255,13 +283,10 @@ export function SettingsPanel({
             </button>
           </div>
           <p className="mt-2 text-xs text-slate-500">
-            Loads existing sample assessment data from the repository.
+            Example Data loads sample assessment content so you can explore the dashboards quickly.
           </p>
         </div>
-      </div>
 
-      <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 space-y-4">
-        <h3 className="text-lg font-semibold text-slate-800">FAQs</h3>
         <details className="border border-slate-200 rounded-md p-3">
           <summary className="cursor-pointer text-sm font-medium text-slate-700">How is my data stored?</summary>
           <p className="mt-2 text-sm text-slate-600">Your settings and assessment state are stored locally in your browser using local storage.</p>
@@ -274,17 +299,17 @@ export function SettingsPanel({
           <summary className="cursor-pointer text-sm font-medium text-slate-700">Can I change the theme colour later?</summary>
           <p className="mt-2 text-sm text-slate-600">Yes. Update the theme colour at any time in User Settings and it is applied immediately.</p>
         </details>
-      </div>
 
-      <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-        <h3 className="text-lg font-semibold text-slate-800 mb-2">Submit a Bug</h3>
-        <p className="text-sm text-slate-600 mb-4">Found an issue? Send details directly via email.</p>
-        <a
-          href="mailto:andrew.fraser22@kpmg.co.uk?subject=NHS%20Digital%20Adoption%20Tool%20Bug"
-          className="inline-flex text-sm px-4 py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-md font-medium transition-colors"
-        >
-          Report Bug
-        </a>
+        <div className="rounded-md border border-slate-200 p-4">
+          <h4 className="text-sm font-semibold text-slate-800 mb-2">Submit a Bug</h4>
+          <p className="text-sm text-slate-600 mb-3">Found an issue? Send details directly via email.</p>
+          <a
+            href="mailto:andrew.fraser22@kpmg.co.uk?subject=NHS%20Digital%20Adoption%20Tool%20Bug"
+            className="inline-flex text-sm px-4 py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-md font-medium transition-colors"
+          >
+            Report Bug
+          </a>
+        </div>
       </div>
     </div>
   );

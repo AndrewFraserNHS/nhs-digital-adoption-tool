@@ -1,6 +1,7 @@
 import { JSX, useCallback, useMemo, useState } from 'react';
 import { ActionRow } from '@lib/adoptionMetrics';
 import { ACTION_STATUS_BADGE_STYLES, normalizeActionStatus } from '@lib/actionModel';
+import { FilterSummaryBar } from '@components/ui/FilterSummaryBar';
 
 export interface ActionPlanTrackerProps {
   actions: ActionRow[];
@@ -14,6 +15,7 @@ export function ActionPlanTracker({ actions, onComponentClick }: ActionPlanTrack
   const [statusFilter, setStatusFilter] = useState('all');
   const [sortBy, setSortBy] = useState<'component' | 'lens' | 'owner' | 'status'>('component');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [showAdvancedControls, setShowAdvancedControls] = useState(false);
 
   const handleComponentClick = useCallback(
     (componentId: string) => {
@@ -83,72 +85,117 @@ export function ActionPlanTracker({ actions, onComponentClick }: ActionPlanTrack
     });
   }, [actions, componentFilter, ownerFilter, searchTerm, sortBy, sortDirection, statusFilter]);
 
+  const activeFilters = useMemo(() => {
+    const chips: string[] = [];
+    if (searchTerm.trim()) {
+      chips.push(`Search: ${searchTerm.trim()}`);
+    }
+    if (componentFilter !== 'all') {
+      chips.push(`Component: ${componentFilter}`);
+    }
+    if (statusFilter !== 'all') {
+      chips.push(`Status: ${statusFilter}`);
+    }
+    if (ownerFilter !== 'all') {
+      chips.push(`Owner: ${ownerFilter}`);
+    }
+    if (sortBy !== 'component' || sortDirection !== 'asc') {
+      chips.push(`Sort: ${sortBy} (${sortDirection})`);
+    }
+    return chips;
+  }, [componentFilter, ownerFilter, searchTerm, sortBy, sortDirection, statusFilter]);
+
+  const resetFilters = () => {
+    setSearchTerm('');
+    setComponentFilter('all');
+    setOwnerFilter('all');
+    setStatusFilter('all');
+    setSortBy('component');
+    setSortDirection('asc');
+    setShowAdvancedControls(false);
+  };
+
   return (
     <div className="max-w-6xl mx-auto">
       <h2 className="text-2xl font-bold text-slate-800 mb-6">Action Tracker</h2>
-      <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-4 mb-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-7 gap-3">
-        <input
-          type="search"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Search actions, owners, lenses..."
-          className="xl:col-span-2 rounded-md border border-[#768692] px-3 py-2 text-sm text-slate-900 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8]"
-        />
-        <select
-          value={componentFilter}
-          onChange={(e) => setComponentFilter(e.target.value)}
-          className="rounded-md border border-[#768692] px-3 py-2 text-sm text-slate-900 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8]"
-        >
-          <option value="all">All components</option>
-          {componentOptions.map((component) => (
-            <option key={component} value={component}>
-              {component}
-            </option>
-          ))}
-        </select>
-        <select
-          value={ownerFilter}
-          onChange={(e) => setOwnerFilter(e.target.value)}
-          className="rounded-md border border-[#768692] px-3 py-2 text-sm text-slate-900 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8]"
-        >
-          <option value="all">All owners</option>
-          {ownerOptions.map((owner) => (
-            <option key={owner} value={owner}>
-              {owner}
-            </option>
-          ))}
-        </select>
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="rounded-md border border-[#768692] px-3 py-2 text-sm text-slate-900 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8]"
-        >
-          <option value="all">All statuses</option>
-          {statusOptions.map((status) => (
-            <option key={status} value={status}>
-              {status}
-            </option>
-          ))}
-        </select>
-        {/* <div className="flex gap-2"> */}
+      <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-4 mb-6 space-y-3">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <input
+            type="search"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search actions, owners, lenses..."
+            className="rounded-md border border-[#768692] px-3 py-2 text-sm text-slate-900 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8]"
+          />
           <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as 'component' | 'lens' | 'owner' | 'status')}
-            className="flex-1 rounded-md border border-[#768692] px-3 py-2 text-sm text-slate-900 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8]"
+            value={componentFilter}
+            onChange={(e) => setComponentFilter(e.target.value)}
+            className="rounded-md border border-[#768692] px-3 py-2 text-sm text-slate-900 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8]"
           >
-            <option value="component">Sort: Component</option>
-            <option value="lens">Sort: Lens</option>
-            <option value="owner">Sort: Owner</option>
-            <option value="status">Sort: Status</option>
+            <option value="all">All components</option>
+            {componentOptions.map((component) => (
+              <option key={component} value={component}>
+                {component}
+              </option>
+            ))}
           </select>
-          <button
-            onClick={() => setSortDirection((current) => current === 'asc' ? 'desc' : 'asc')}
-            className="rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="rounded-md border border-[#768692] px-3 py-2 text-sm text-slate-900 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8]"
           >
-            {sortDirection === 'asc' ? 'A-Z' : 'Z-A'}
-          </button>
+            <option value="all">All statuses</option>
+            {statusOptions.map((status) => (
+              <option key={status} value={status}>
+                {status}
+              </option>
+            ))}
+          </select>
         </div>
-      {/* </div> */}
+
+        <FilterSummaryBar
+          showAdvancedControls={showAdvancedControls}
+          onToggleAdvanced={() => setShowAdvancedControls((current) => !current)}
+          onReset={resetFilters}
+          resultText={`Showing ${filteredActions.length} actions`}
+          activeFilters={activeFilters}
+          activeFiltersAriaLabel="Active action tracker filters"
+        />
+
+        {showAdvancedControls ? (
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 rounded-md border border-slate-200 bg-slate-50 p-3">
+            <select
+              value={ownerFilter}
+              onChange={(e) => setOwnerFilter(e.target.value)}
+              className="rounded-md border border-[#768692] px-3 py-2 text-sm text-slate-900 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8]"
+            >
+              <option value="all">All owners</option>
+              {ownerOptions.map((owner) => (
+                <option key={owner} value={owner}>
+                  {owner}
+                </option>
+              ))}
+            </select>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as 'component' | 'lens' | 'owner' | 'status')}
+              className="rounded-md border border-[#768692] px-3 py-2 text-sm text-slate-900 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8]"
+            >
+              <option value="component">Sort: Component</option>
+              <option value="lens">Sort: Lens</option>
+              <option value="owner">Sort: Owner</option>
+              <option value="status">Sort: Status</option>
+            </select>
+            <button
+              type="button"
+              onClick={() => setSortDirection((current) => current === 'asc' ? 'desc' : 'asc')}
+              className="rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-white transition-colors"
+            >
+              {sortDirection === 'asc' ? 'A-Z' : 'Z-A'}
+            </button>
+          </div>
+        ) : null}
+      </div>
       <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
         {filteredActions.length ? (
           <div className="overflow-x-auto">

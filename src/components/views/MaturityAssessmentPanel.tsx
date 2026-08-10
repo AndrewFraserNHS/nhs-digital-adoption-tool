@@ -267,6 +267,28 @@ export function MaturityAssessmentPanel({
               </option>
             ))}
           </select>
+          <div className="mt-3">
+            <p className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">Quick theme picks</p>
+            <div className="flex gap-2 overflow-x-auto pb-1">
+              {sortedComponents.slice(0, 8).map((name) => {
+                const isActive = name === activeComponent;
+                return (
+                  <button
+                    key={`mobile-theme-${name}`}
+                    type="button"
+                    onClick={() => onComponentChange(name)}
+                    className={`shrink-0 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+                      isActive
+                        ? 'bg-blue-100 border-blue-300 text-blue-800'
+                        : 'bg-white border-gray-300 text-gray-700'
+                    }`}
+                  >
+                    {name}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[320px_minmax(0,1fr)] gap-6">

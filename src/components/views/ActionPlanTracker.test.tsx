@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { ActionPlanTracker } from './ActionPlanTracker';
 import type { ActionRow } from '@lib/adoptionMetrics';
@@ -34,8 +34,12 @@ describe('ActionPlanTracker', () => {
   it('filters rows by selected status', () => {
     render(<ActionPlanTracker actions={actions} onComponentClick={vi.fn()} />);
 
-    const selects = screen.getAllByRole('combobox');
-    fireEvent.change(selects[2], { target: { value: 'Completed' } });
+    const statusSelect = screen
+      .getAllByRole('combobox')
+      .find((combobox) => within(combobox).queryByRole('option', { name: 'All statuses' }));
+
+    expect(statusSelect).toBeTruthy();
+    fireEvent.change(statusSelect as HTMLSelectElement, { target: { value: 'Completed' } });
 
     expect(screen.getByText('Publish baseline metrics')).toBeInTheDocument();
     expect(screen.queryByText('Run clinical workshop')).not.toBeInTheDocument();

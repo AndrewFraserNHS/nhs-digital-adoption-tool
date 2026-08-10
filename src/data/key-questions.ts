@@ -16,8 +16,8 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
   {
     id: 'why',
     question: 'Why are we doing this?',
-    framework: 'Force Field Analysis — Driving Forces',
-    description: 'The forces pushing for change — the case that makes it worth doing.',
+    framework: 'Force Field Analysis - Driving Forces',
+    description: 'The forces pushing for change - the case that makes it worth doing.',
     componentIds: ['case_for_change']
   },
   {
@@ -30,8 +30,8 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
   {
     id: 'barriers',
     question: 'What might prevent us from achieving the vision?',
-    framework: 'Force Field Analysis — Restraining Forces',
-    description: 'The forces working against change — risks, resistance and blockers to plan for.',
+    framework: 'Force Field Analysis - Restraining Forces',
+    description: 'The forces working against change - risks, resistance and blockers to plan for.',
     componentIds: ['case_for_change', 'resistance']
   },
   {

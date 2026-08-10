@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { AdoptionDashboard } from './AdoptionDashboard';
 import type { AdoptionStore, DraftEntry } from '@lib/adoptionState';
@@ -190,6 +190,39 @@ describe('AdoptionDashboard', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Start your first assessment' }));
     expect(onComponentClick).toHaveBeenCalledWith('vision');
+  });
+
+  it('shows Blue for fully on-target, complete work in the dashboard focus list', () => {
+    const completeMetrics: Metrics = {
+      ...metrics,
+      nextSteps: [
+        {
+          ...metrics.nextSteps[0],
+          gapToTarget: 0,
+          message: 'Benefits are fully on target and complete.'
+        }
+      ]
+    };
+
+    render(
+      <AdoptionDashboard
+        store={store}
+        components={components}
+        lenses={['Strategic Lens']}
+        metrics={completeMetrics}
+        getEntry={getEntry}
+        onComponentClick={vi.fn()}
+        pathway="pathway-1"
+        pathwayChecks={{}}
+      />
+    );
+
+    const focusCards = screen.getAllByRole('button', { name: /Benefits/i });
+    const focusCard = focusCards.find((button) => button.textContent?.includes('Benefits are fully on target and complete.'));
+
+    expect(focusCard).toBeTruthy();
+    expect(focusCard && within(focusCard).getByText('Blue')).toBeInTheDocument();
+    expect(focusCard && within(focusCard).queryByText('Green')).not.toBeInTheDocument();
   });
 
   it('calls onOpenLensInfo when the lens explainer is clicked', () => {

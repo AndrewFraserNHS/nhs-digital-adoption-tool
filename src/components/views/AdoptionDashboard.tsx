@@ -47,7 +47,7 @@ function getBragStatusFromGap(gapToTarget: number): BragStatus {
   if (gapToTarget >= 1) {
     return 'Amber';
   }
-  return 'Green';
+  return 'Blue';
 }
 
 function getBragStatusFromAverage(avgScore: number, targetScore: number): BragStatus {
@@ -62,7 +62,7 @@ function getBragStatusFromAverage(avgScore: number, targetScore: number): BragSt
   if (gap > 0) {
     return 'Amber';
   }
-  return 'Green';
+  return 'Blue';
 }
 
 function getDeliveryStatusFromAverage(avgScore: number, targetScore: number, actionCount: number): DeliveryStatus {
@@ -529,10 +529,11 @@ export function AdoptionDashboard({
           <div>
             <h3 className="text-lg font-semibold text-slate-800">Overall Average by Component</h3>
             <p className="text-xs text-slate-500 mt-1">
-              BRAG scoring is used for components: <span className="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800">Blue</span> = not started,{' '}
+                    BRAG scoring is used for components:
+              <span className="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800">Blue</span> = on target / complete,{' '}
+              <span className="px-1.5 py-0.5 rounded bg-green-100 text-green-800">Green</span> = at/above target,{' '}
               <span className="px-1.5 py-0.5 rounded bg-red-100 text-red-800">Red</span> = materially below target,{' '}
-              <span className="px-1.5 py-0.5 rounded bg-amber-100 text-amber-800">Amber</span> = slightly below target,{' '}
-              <span className="px-1.5 py-0.5 rounded bg-green-100 text-green-800">Green</span> = at/above target.
+              <span className="px-1.5 py-0.5 rounded bg-amber-100 text-amber-800">Amber</span> = slightly below target.
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-3 xl:w-[65rem]">

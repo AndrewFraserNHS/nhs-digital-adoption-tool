@@ -77,6 +77,12 @@ export function SettingsPanel({
     updateUserSettings({ themeColor: color });
   };
 
+  const engagementHelp = {
+    grade: 'Your grade shows your overall engagement trend. S = excellent, A = strong, B = solid, C = steady, D = building, E = starting out.',
+    level: 'Your level reflects cumulative XP gained through consistent engagement. Higher levels unlock more personalised options and features.',
+    xp: 'XP increases as you complete important actions, finalise months on time, and keep returning to the tool.'
+  };
+
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <h2 className="text-2xl font-bold text-slate-800">Settings</h2>
@@ -88,19 +94,44 @@ export function SettingsPanel({
           <div className="rounded-md border border-slate-200 bg-slate-50 p-4">
             <h4 className="text-sm font-semibold text-slate-800 mb-2">Engagement Summary</h4>
             <div className="grid grid-cols-3 gap-3">
-              <div>
-                <p className="text-xs text-slate-600">Grade</p>
-                <p className="text-lg font-bold text-slate-800">{engagementGrade || 'N/A'}</p>
-              </div>
-              <div>
-                <p className="text-xs text-slate-600">Level</p>
-                <p className="text-lg font-bold text-slate-800">{engagementLevel ?? 1}</p>
-              </div>
-              <div>
-                <p className="text-xs text-slate-600">XP</p>
-                <p className="text-lg font-bold text-slate-800">{engagementXp ?? 0}</p>
-              </div>
+              {[
+                {
+                  key: 'grade',
+                  label: 'Grade',
+                  value: engagementGrade || 'N/A',
+                  tooltip: engagementHelp.grade
+                },
+                {
+                  key: 'level',
+                  label: 'Level',
+                  value: engagementLevel ?? 1,
+                  tooltip: engagementHelp.level
+                },
+                {
+                  key: 'xp',
+                  label: 'XP',
+                  value: engagementXp ?? 0,
+                  tooltip: engagementHelp.xp
+                }
+              ].map((metric) => (
+                <div key={metric.key}>
+                  <div className="flex items-center gap-1">
+                    <p className="text-xs text-slate-600">{metric.label}</p>
+                    <span
+                      title={metric.tooltip}
+                      aria-label={`${metric.label} information`}
+                      className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-[#005eb8] bg-[#e8f1fb] text-[9px] font-bold text-[#005eb8]"
+                    >
+                      i
+                    </span>
+                  </div>
+                  <p className="text-lg font-bold text-slate-800">{metric.value}</p>
+                </div>
+              ))}
             </div>
+            <p className="mt-3 text-xs text-slate-500">
+              You’re making good progress — this reflects consistency over time, not perfection.
+            </p>
           </div>
         )}
 

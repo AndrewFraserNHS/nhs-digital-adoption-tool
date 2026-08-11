@@ -4,6 +4,7 @@ import { JSX } from 'react';
 export interface LensInfoModalProps {
   lensName: string;
   onClose: () => void;
+  darkMode?: boolean;
 }
 
 function InfoIcon(): JSX.Element {
@@ -24,7 +25,7 @@ function isAssessmentLens(lensName: string): lensName is AssessmentLens {
   return lensName in LENS_INFO;
 }
 
-export function LensInfoModal({ lensName, onClose }: LensInfoModalProps): JSX.Element | null {
+export function LensInfoModal({ lensName, onClose, darkMode = false }: LensInfoModalProps): JSX.Element | null {
   if (!lensName || !isAssessmentLens(lensName)) {
     return null;
   }
@@ -41,12 +42,12 @@ export function LensInfoModal({ lensName, onClose }: LensInfoModalProps): JSX.El
         }
       }}
     >
-      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-slate-50 border-b border-slate-200 p-6 flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-slate-800">{lensName}</h2>
+      <div className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white'} rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border`}>
+        <div className={`${darkMode ? 'bg-slate-900 border-slate-700' : 'bg-slate-50 border-slate-200'} sticky top-0 border-b p-6 flex items-center justify-between`}>
+          <h2 className={`text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>{lensName}</h2>
           <button
             onClick={onClose}
-            className="text-slate-500 hover:text-slate-700"
+            className={`${darkMode ? 'text-slate-300 hover:text-slate-100' : 'text-slate-500 hover:text-slate-700'}`}
           >
             <svg
               className="w-6 h-6"
@@ -63,16 +64,16 @@ export function LensInfoModal({ lensName, onClose }: LensInfoModalProps): JSX.El
             </svg>
           </button>
         </div>
-        <div className="p-6 space-y-4 text-slate-700">
+        <div className={`p-6 space-y-4 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>
           <div>
-            <h3 className="font-bold text-lg text-slate-800 mb-2 flex items-center">
+            <h3 className={`font-bold text-lg mb-2 flex items-center ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
               <InfoIcon />
               Outcome
             </h3>
             <p className="whitespace-pre-wrap">{info.outcome}</p>
           </div>
           <div>
-            <h3 className="font-bold text-lg text-slate-800 mb-2 flex items-center">
+            <h3 className={`font-bold text-lg mb-2 flex items-center ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
               <InfoIcon />
               What Good Looks Like
             </h3>

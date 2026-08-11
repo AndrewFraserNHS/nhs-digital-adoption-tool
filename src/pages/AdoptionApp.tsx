@@ -74,7 +74,9 @@ const DEFAULT_USER_SETTINGS: AdoptionUserSettings = {
   name: '',
   preferences: '',
   themeColor: '#005eb8',
-  profileImageDataUrl: ''
+  profileImageDataUrl: '',
+  darkMode: false,
+  colorAccessibilityMode: 'standard'
 };
 
 const DEFAULT_ENGAGEMENT_STATE: EngagementState = {
@@ -301,6 +303,7 @@ export function AdoptionApp() {
   const [showEngagementCard, setShowEngagementCard] = useState<boolean>(true);
   const [viewHistory, setViewHistory] = useState<View[]>([]);
   const [showFinaliseModal, setShowFinaliseModal] = useState(false);
+  const navItemRefs = React.useRef<Record<string, HTMLButtonElement | null>>({});
 
   const dismissOnboarding = useCallback(() => {
     setShowOnboarding(false);
@@ -446,6 +449,17 @@ export function AdoptionApp() {
       window.removeEventListener('resize', syncSidebarWithViewport);
     };
   }, []);
+
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.dataset.nhsThemeMode = userSettings.darkMode ? 'dark' : 'light';
+    }
+  }, [userSettings.darkMode]);
+
+  useEffect(() => {
+    const navKey = view === 'assessment' ? `component:${activeComponentId}` : `view:${view}`;
+    navItemRefs.current[navKey]?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }, [activeComponentId, view]);
 
   // Dashboard rendering now handled by React component below
 
@@ -949,7 +963,7 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
   const compactPathwayLabel = fullPathwayLabel.split(' - ')[0] || fullPathwayLabel;
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50 text-slate-800">
+    <div className={`flex h-screen overflow-hidden ${userSettings.darkMode ? 'bg-slate-900 text-slate-100' : 'bg-slate-50 text-slate-800'}`}>
       <input
         ref={fileInputRef}
         type="file"
@@ -1002,6 +1016,9 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
             {(['project-details', 'cm-guide'] as View[]).map((v) => (
               <button
                 key={v}
+                ref={(el) => {
+                  navItemRefs.current[`view:${v}`] = el;
+                }}
                 onClick={() => handleViewChange(v)}
                 className={`w-full flex items-center px-4 py-2.5 text-sm transition-colors ${
                   view === v
@@ -1019,6 +1036,9 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
             {(['dashboard', 'action-plan', 'roadmap-view'] as View[]).map((v) => (
               <button
                 key={v}
+                ref={(el) => {
+                  navItemRefs.current[`view:${v}`] = el;
+                }}
                 onClick={() => handleViewChange(v)}
                 className={`w-full flex items-center px-4 py-2.5 text-sm transition-colors ${
                   view === v
@@ -1036,6 +1056,9 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
             {(['highlight-builder', 'settings'] as View[]).map((v) => (
               <button
                 key={v}
+                ref={(el) => {
+                  navItemRefs.current[`view:${v}`] = el;
+                }}
                 onClick={() => handleViewChange(v)}
                 className={`w-full flex items-center px-4 py-2.5 text-sm transition-colors ${
                   view === v
@@ -1056,6 +1079,9 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
               return (
                 <button
                   key={comp.id}
+                  ref={(el) => {
+                    navItemRefs.current[`component:${comp.id}`] = el;
+                  }}
                   onClick={() => {
                     openComponentAssessment(comp.id);
                   }}
@@ -1085,7 +1111,7 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
       {/* Main Content */}
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
         {/* Header */}
-        <header className="bg-white border-b border-slate-200 px-3 py-2 sm:px-6 shrink-0 z-10 shadow-sm" style={{ borderTop: `3px solid ${userSettings.themeColor}` }}>
+        <header className={`${userSettings.darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} border-b px-3 py-2 sm:px-6 shrink-0 z-10 shadow-sm`} style={{ borderTop: `3px solid ${userSettings.themeColor}` }}>
           <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
             <div className="min-w-0 flex items-start gap-2 sm:gap-3">
               <button
@@ -1102,20 +1128,24 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
                 onClick={handleBackNavigation}
                 disabled={viewHistory.length === 0}
                 title={viewHistory.length === 0 ? 'No previous in-app page' : 'Back to previous page'}
-                className="h-9 text-sm px-3 text-slate-600 hover:bg-slate-100 rounded-md font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                className={`h-9 text-sm px-3 rounded-md font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
+                  userSettings.darkMode ? 'text-slate-100 hover:bg-slate-700' : 'text-slate-600 hover:bg-slate-100'
+                }`}
               >
                 ← Back
               </button>
 
               <div className="min-w-0">
                 <div className="flex min-w-0 items-center gap-1 text-sm">
-                  <span className="truncate font-semibold text-slate-700" title={trustLabel}>{trustLabel}</span>
-                  <span className="text-slate-400">/</span>
-                  <span className="truncate text-slate-600" title={projectLabel}>{projectLabel}</span>
+                  <span className={`truncate font-semibold ${userSettings.darkMode ? 'text-slate-100' : 'text-slate-700'}`} title={trustLabel}>{trustLabel}</span>
+                  <span className={`${userSettings.darkMode ? 'text-slate-300' : 'text-slate-400'}`}>/</span>
+                  <span className={`truncate ${userSettings.darkMode ? 'text-slate-100' : 'text-slate-600'}`} title={projectLabel}>{projectLabel}</span>
                 </div>
                 <div className="mt-1 flex min-w-0 items-center gap-1.5">
                   <span
-                    className="truncate rounded-full bg-slate-100 px-2 py-1 text-[11px] font-semibold text-slate-600"
+                    className={`truncate rounded-full px-2 py-1 text-[11px] font-semibold ${
+                      userSettings.darkMode ? 'bg-slate-700 text-slate-100' : 'bg-slate-100 text-slate-600'
+                    }`}
                     title={`${store.orgProfile.cst.type.toUpperCase()} · ${fullPathwayLabel}`}
                   >
                     {store.orgProfile.cst.type.toUpperCase()} · <span className="sm:hidden">{compactPathwayLabel}</span><span className="hidden sm:inline">{fullPathwayLabel}</span>
@@ -1171,11 +1201,11 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
         {/* Main Content Area */}
         <main ref={mainContentRef} className="flex-1 overflow-y-auto p-8">
           {view === 'dashboard' && showEngagementCard ? (
-            <section className="mb-6 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+            <section className={`${userSettings.darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'} mb-6 rounded-xl border p-4 shadow-sm`}>
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Engagement</p>
-                  <p className="text-sm text-slate-700 mt-1">
+                  <p className={`text-xs font-semibold uppercase tracking-wider ${userSettings.darkMode ? 'text-slate-300' : 'text-slate-500'}`}>Engagement</p>
+                  <p className={`text-sm mt-1 ${userSettings.darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
                     Level {engagement.level} · Grade {engagementGrade} · On-time finalisations {engagement.onTimeFinalisations} · Email opens {engagement.emailDraftOpens}
                   </p>
                 </div>
@@ -1192,7 +1222,7 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
                   <button
                     type="button"
                     onClick={() => setShowEngagementCard(false)}
-                    className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
+                    className={`${userSettings.darkMode ? 'border-slate-600 bg-slate-900 text-slate-100 hover:bg-slate-700' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'} rounded-md border px-3 py-2 text-sm font-medium`}
                     aria-label="Dismiss engagement card"
                   >
                     Dismiss
@@ -1207,16 +1237,18 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
                     className={`rounded-lg border p-3 ${
                       achievement.unlocked
                         ? 'border-green-200 bg-green-50'
-                        : 'border-slate-200 bg-slate-50'
+                        : userSettings.darkMode
+                          ? 'border-slate-700 bg-slate-900'
+                          : 'border-slate-200 bg-slate-50'
                     }`}
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <p className="text-sm font-semibold text-slate-800">{achievement.name}</p>
+                      <p className={`text-sm font-semibold ${userSettings.darkMode ? 'text-slate-100' : 'text-slate-800'}`}>{achievement.name}</p>
                       <span className="text-xs font-bold">
                         {achievement.unlocked ? 'Unlocked' : achievement.progress}
                       </span>
                     </div>
-                    <p className="mt-1 text-xs text-slate-600">{achievement.description}</p>
+                    <p className={`mt-1 text-xs ${userSettings.darkMode ? 'text-slate-300' : 'text-slate-600'}`}>{achievement.description}</p>
                   </div>
                 ))}
               </div>
@@ -1224,7 +1256,7 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
           ) : null}
 
           {shouldShowReportReminder && (
-            <section className="mb-8 rounded-xl border border-amber-300 bg-amber-50 p-5 shadow-sm">
+            <section className={`${userSettings.darkMode ? 'border-amber-700 bg-slate-800' : 'border-amber-300 bg-amber-50'} mb-8 rounded-xl border p-5 shadow-sm`}>
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wider text-amber-700">First Day Reminder</p>
@@ -1251,7 +1283,7 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
                     type="email"
                     value={emailTo}
                     onChange={(event) => setEmailTo(event.target.value)}
-                    className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2"
+                    className={`${userSettings.darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-900'} mt-1 w-full rounded-md border px-3 py-2`}
                   />
                 </label>
                 <label className="text-sm text-slate-700">
@@ -1260,7 +1292,7 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
                     type="text"
                     value={emailSubject}
                     onChange={(event) => setEmailSubject(event.target.value)}
-                    className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2"
+                    className={`${userSettings.darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-900'} mt-1 w-full rounded-md border px-3 py-2`}
                   />
                 </label>
               </div>
@@ -1271,7 +1303,7 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
                   value={emailBody}
                   onChange={(event) => setEmailBody(event.target.value)}
                   rows={9}
-                  className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 font-mono text-xs"
+                  className={`${userSettings.darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-900'} mt-1 w-full rounded-md border px-3 py-2 font-mono text-xs`}
                 />
               </label>
 
@@ -1323,6 +1355,8 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
                 onNavigate={handleViewChange}
                 onOpenLensInfo={setActiveLensInfo}
                 onOpenOnboarding={() => setShowOnboarding(true)}
+                colorAccessibilityMode={userSettings.colorAccessibilityMode || 'standard'}
+                darkMode={Boolean(userSettings.darkMode)}
               />
             </div>
           )}
@@ -1341,6 +1375,7 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
               getEntry={getEntry}
               onComponentClick={openComponentAssessment}
               onOpenOnboarding={() => setShowOnboarding(true)}
+              darkMode={Boolean(userSettings.darkMode)}
             />
           )}
           {view === 'assessment' && (
@@ -1367,16 +1402,22 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
                 });
               }}
               onObjectivesUpdate={updateComponentObjectives}
+              darkMode={Boolean(userSettings.darkMode)}
             />
           )}
           {view === 'action-plan' && (
             <ActionPlanTracker
               actions={actionRows}
               onComponentClick={openComponentAssessment}
+              darkMode={Boolean(userSettings.darkMode)}
             />
           )}
           {view === 'cm-guide' && (
-            <ChangeManagementGuide onComponentClick={openComponentAssessment} guidanceTarget={DEFAULT_GUIDANCE_TARGET} />
+            <ChangeManagementGuide
+              onComponentClick={openComponentAssessment}
+              guidanceTarget={DEFAULT_GUIDANCE_TARGET}
+              darkMode={Boolean(userSettings.darkMode)}
+            />
           )}
           {view === 'roadmap-view' && (
             <GuidanceRoadmapView
@@ -1386,6 +1427,7 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
               onComponentClick={openComponentAssessment}
               pathway={store.orgProfile.cst.pathway}
               pathwayChecks={store.pathwayChecks}
+              darkMode={Boolean(userSettings.darkMode)}
             />
           )}
           {view === 'highlight-builder' && (
@@ -1399,6 +1441,7 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
               projectName={store.orgProfile.projectName}
               themeColor={userSettings.themeColor}
               onLayoutSaved={handleHighlightLayoutSaved}
+              darkMode={Boolean(userSettings.darkMode)}
             />
           )}
           {view === 'settings' && (
@@ -1411,29 +1454,30 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
               engagementGrade={engagementGrade}
               engagementLevel={engagement.level}
               engagementXp={engagement.xp}
+              darkMode={Boolean(userSettings.darkMode)}
             />
           )}
         </main>
 
         {activeLensInfo ? (
-          <LensInfoModal lensName={activeLensInfo} onClose={() => setActiveLensInfo('')} />
+          <LensInfoModal lensName={activeLensInfo} onClose={() => setActiveLensInfo('')} darkMode={Boolean(userSettings.darkMode)} />
         ) : null}
 
         {showFinaliseModal ? (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 p-4">
-            <div className="w-full max-w-2xl rounded-xl border border-slate-200 bg-white p-6 shadow-2xl">
+            <div className={`${userSettings.darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'} w-full max-w-2xl rounded-xl border p-6 shadow-2xl`}>
               <div className="flex items-center justify-between gap-3">
-                <h3 className="text-lg font-semibold text-slate-900">Finalise Month</h3>
+                <h3 className={`text-lg font-semibold ${userSettings.darkMode ? 'text-slate-100' : 'text-slate-900'}`}>Finalise Month</h3>
                 <button
                   type="button"
                   onClick={() => setShowFinaliseModal(false)}
-                  className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-100"
+                  className={`${userSettings.darkMode ? 'border-slate-600 bg-slate-900 text-slate-100 hover:bg-slate-700' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'} rounded-md border px-3 py-1.5 text-sm`}
                 >
                   Close
                 </button>
               </div>
 
-              <div className="mt-4 space-y-3 text-sm text-slate-700">
+              <div className={`mt-4 space-y-3 text-sm ${userSettings.darkMode ? 'text-slate-200' : 'text-slate-700'}`}>
                 <p>
                   Finalising creates a point-in-time snapshot for <strong>{finaliseSummary.currentMonthLabel}</strong>.
                   A new reporting month starts on the 1st day of each month.
@@ -1450,9 +1494,9 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
                 ) : null}
               </div>
 
-              <div className="mt-4 rounded-md border border-slate-200 bg-slate-50 p-3 text-sm">
-                <p className="font-semibold text-slate-800">Current summary</p>
-                <ul className="mt-2 space-y-1 text-slate-700">
+              <div className={`${userSettings.darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} mt-4 rounded-md border p-3 text-sm`}>
+                <p className={`font-semibold ${userSettings.darkMode ? 'text-slate-100' : 'text-slate-800'}`}>Current summary</p>
+                <ul className={`mt-2 space-y-1 ${userSettings.darkMode ? 'text-slate-200' : 'text-slate-700'}`}>
                   <li>Baseline snapshot: {finaliseSummary.baselineLabel}</li>
                   <li>Overall readiness: {metrics.overallPct}% ({finaliseSummary.deltaOverall >= 0 ? '+' : ''}{finaliseSummary.deltaOverall}% vs baseline)</li>
                   <li>Components assessed: {finaliseSummary.assessedCount}</li>

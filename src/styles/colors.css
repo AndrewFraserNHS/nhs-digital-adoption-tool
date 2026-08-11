@@ -1,0 +1,172 @@
+:root {
+  --dashboard-pathway-border-light: #c7d2fe;
+  --dashboard-pathway-bg-light: #eef2ff;
+  --dashboard-pathway-eyebrow-light: #4338ca;
+  --dashboard-pathway-title-light: #312e81;
+  --dashboard-pathway-body-light: #3730a3;
+
+  --dashboard-pathway-border-dark: #3730a3;
+  --dashboard-pathway-bg-dark: #1e1b4b;
+  --dashboard-pathway-eyebrow-dark: #c7d2fe;
+  --dashboard-pathway-title-dark: #e0e7ff;
+  --dashboard-pathway-body-dark: #c7d2fe;
+
+  --dashboard-snapshot-border-light: #bfdbfe;
+  --dashboard-snapshot-bg-light: #eff6ff;
+  --dashboard-snapshot-icon-light: #60a5fa;
+  --dashboard-snapshot-body-light: #1e40af;
+
+  --dashboard-snapshot-border-dark: #1d4ed8;
+  --dashboard-snapshot-bg-dark: #172554;
+  --dashboard-snapshot-icon-dark: #93c5fd;
+  --dashboard-snapshot-body-dark: #dbeafe;
+
+  --dashboard-phase-red-border-light: #fecaca;
+  --dashboard-phase-red-bg-light: #fef2f2;
+  --dashboard-phase-red-text-light: #991b1b;
+  --dashboard-phase-red-border-dark: #7f1d1d;
+  --dashboard-phase-red-bg-dark: #450a0a;
+  --dashboard-phase-red-text-dark: #fecaca;
+
+  --dashboard-phase-amber-border-light: #fde68a;
+  --dashboard-phase-amber-bg-light: #fffbeb;
+  --dashboard-phase-amber-text-light: #92400e;
+  --dashboard-phase-amber-border-dark: #92400e;
+  --dashboard-phase-amber-bg-dark: #451a03;
+  --dashboard-phase-amber-text-dark: #fde68a;
+
+  --dashboard-phase-green-border-light: #bbf7d0;
+  --dashboard-phase-green-bg-light: #f0fdf4;
+  --dashboard-phase-green-text-light: #166534;
+  --dashboard-phase-green-border-dark: #166534;
+  --dashboard-phase-green-bg-dark: #052e16;
+  --dashboard-phase-green-text-dark: #bbf7d0;
+}
+
+.adoption-dashboard .dashboard-callout--pathway {
+  border-color: var(--dashboard-pathway-border-light);
+  background-color: var(--dashboard-pathway-bg-light);
+}
+
+.adoption-dashboard .dashboard-callout--pathway .dashboard-callout__eyebrow {
+  color: var(--dashboard-pathway-eyebrow-light);
+}
+
+.adoption-dashboard .dashboard-callout--pathway .dashboard-callout__title {
+  color: var(--dashboard-pathway-title-light);
+}
+
+.adoption-dashboard .dashboard-callout--pathway .dashboard-callout__body {
+  color: var(--dashboard-pathway-body-light);
+}
+
+.adoption-dashboard .dashboard-callout--snapshot {
+  border-color: var(--dashboard-snapshot-border-light);
+  background-color: var(--dashboard-snapshot-bg-light);
+}
+
+.adoption-dashboard .dashboard-callout--snapshot .dashboard-callout__icon {
+  color: var(--dashboard-snapshot-icon-light);
+}
+
+.adoption-dashboard .dashboard-callout--snapshot .dashboard-callout__body {
+  color: var(--dashboard-snapshot-body-light);
+}
+
+.adoption-dashboard .dashboard-metric-card--phase.dashboard-metric-card--red {
+  border-color: var(--dashboard-phase-red-border-light);
+  background-color: var(--dashboard-phase-red-bg-light);
+}
+
+.adoption-dashboard .dashboard-metric-card--phase.dashboard-metric-card--amber {
+  border-color: var(--dashboard-phase-amber-border-light);
+  background-color: var(--dashboard-phase-amber-bg-light);
+}
+
+.adoption-dashboard .dashboard-metric-card--phase.dashboard-metric-card--green {
+  border-color: var(--dashboard-phase-green-border-light);
+  background-color: var(--dashboard-phase-green-bg-light);
+}
+
+.adoption-dashboard .dashboard-metric-card--phase .dashboard-metric-card__label {
+  color: #64748b;
+}
+
+.adoption-dashboard .dashboard-metric-card--phase.dashboard-metric-card--red .dashboard-metric-card__headline,
+.adoption-dashboard .dashboard-metric-card--phase.dashboard-metric-card--red .dashboard-metric-card__description {
+  color: var(--dashboard-phase-red-text-light);
+}
+
+.adoption-dashboard .dashboard-metric-card--phase.dashboard-metric-card--amber .dashboard-metric-card__headline,
+.adoption-dashboard .dashboard-metric-card--phase.dashboard-metric-card--amber .dashboard-metric-card__description {
+  color: var(--dashboard-phase-amber-text-light);
+}
+
+.adoption-dashboard .dashboard-metric-card--phase.dashboard-metric-card--green .dashboard-metric-card__headline,
+.adoption-dashboard .dashboard-metric-card--phase.dashboard-metric-card--green .dashboard-metric-card__description {
+  color: var(--dashboard-phase-green-text-light);
+}
+
+.adoption-dashboard.theme-dark .dashboard-callout--pathway {
+  border-color: var(--dashboard-pathway-border-dark);
+  background-color: var(--dashboard-pathway-bg-dark);
+}
+
+.adoption-dashboard.theme-dark .dashboard-callout--pathway .dashboard-callout__eyebrow {
+  color: var(--dashboard-pathway-eyebrow-dark);
+}
+
+.adoption-dashboard.theme-dark .dashboard-callout--pathway .dashboard-callout__title {
+  color: var(--dashboard-pathway-title-dark);
+}
+
+.adoption-dashboard.theme-dark .dashboard-callout--pathway .dashboard-callout__body {
+  color: var(--dashboard-pathway-body-dark);
+}
+
+.adoption-dashboard.theme-dark .dashboard-callout--snapshot {
+  border-color: var(--dashboard-snapshot-border-dark);
+  background-color: var(--dashboard-snapshot-bg-dark);
+}
+
+.adoption-dashboard.theme-dark .dashboard-callout--snapshot .dashboard-callout__icon {
+  color: var(--dashboard-snapshot-icon-dark);
+}
+
+.adoption-dashboard.theme-dark .dashboard-callout--snapshot .dashboard-callout__body {
+  color: var(--dashboard-snapshot-body-dark);
+}
+
+.adoption-dashboard.theme-dark .dashboard-metric-card--phase.dashboard-metric-card--red {
+  border-color: var(--dashboard-phase-red-border-dark);
+  background-color: var(--dashboard-phase-red-bg-dark);
+}
+
+.adoption-dashboard.theme-dark .dashboard-metric-card--phase.dashboard-metric-card--amber {
+  border-color: var(--dashboard-phase-amber-border-dark);
+  background-color: var(--dashboard-phase-amber-bg-dark);
+}
+
+.adoption-dashboard.theme-dark .dashboard-metric-card--phase.dashboard-metric-card--green {
+  border-color: var(--dashboard-phase-green-border-dark);
+  background-color: var(--dashboard-phase-green-bg-dark);
+}
+
+.adoption-dashboard.theme-dark .dashboard-metric-card--phase .dashboard-metric-card__label {
+  color: #cbd5e1;
+}
+
+.adoption-dashboard.theme-dark .dashboard-metric-card--phase.dashboard-metric-card--red .dashboard-metric-card__headline,
+.adoption-dashboard.theme-dark .dashboard-metric-card--phase.dashboard-metric-card--red .dashboard-metric-card__description {
+  color: var(--dashboard-phase-red-text-dark);
+}
+
+.adoption-dashboard.theme-dark .dashboard-metric-card--phase.dashboard-metric-card--amber .dashboard-metric-card__headline,
+.adoption-dashboard.theme-dark .dashboard-metric-card--phase.dashboard-metric-card--amber .dashboard-metric-card__description {
+  color: var(--dashboard-phase-amber-text-dark);
+}
+
+.adoption-dashboard.theme-dark .dashboard-metric-card--phase.dashboard-metric-card--green .dashboard-metric-card__headline,
+.adoption-dashboard.theme-dark .dashboard-metric-card--phase.dashboard-metric-card--green .dashboard-metric-card__description {
+  color: var(--dashboard-phase-green-text-dark);
+}

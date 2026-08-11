@@ -21,6 +21,8 @@ export interface DashboardProps {
   onNavigate?: (view: View) => void;
   onOpenLensInfo?: (lensName: string) => void;
   onOpenOnboarding?: () => void;
+  colorAccessibilityMode?: 'standard' | 'color-blind-friendly';
+  darkMode?: boolean;
 }
 
 type BragStatus = 'Blue' | 'Red' | 'Amber' | 'Green';
@@ -114,7 +116,9 @@ export function AdoptionDashboard({
   pathwayChecks,
   onNavigate,
   onOpenLensInfo,
-  onOpenOnboarding
+  onOpenOnboarding,
+  colorAccessibilityMode = 'standard',
+  darkMode = false
 }: DashboardProps): JSX.Element {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'not-started' | 'below-target' | 'on-track'>('all');
@@ -265,21 +269,29 @@ export function AdoptionDashboard({
 
   const currentPhaseSummary = metrics.phaseSummaries.find((phaseSummary) => phaseSummary.phase === metrics.currentPhase);
   const currentPhaseRag = currentPhaseSummary?.rag || 'Red';
-  const currentPhaseCardStyle =
-    currentPhaseRag === 'Green'
-      ? 'border-green-200 bg-green-50'
-      : currentPhaseRag === 'Amber'
-        ? 'border-amber-200 bg-amber-50'
-        : 'border-red-200 bg-red-50';
-  const currentPhaseHeadlineStyle =
-    currentPhaseRag === 'Green'
-      ? 'text-green-800'
-      : currentPhaseRag === 'Amber'
-        ? 'text-amber-800'
-        : 'text-red-800';
+  const currentPhaseTone = currentPhaseRag.toLowerCase();
+
+  const deliveryBadgeStyles = colorAccessibilityMode === 'color-blind-friendly'
+    ? {
+        'N/A': 'text-slate-700 bg-slate-200',
+        Blue: 'text-cyan-900 bg-cyan-100',
+        Red: 'text-rose-900 bg-rose-100',
+        Amber: 'text-orange-900 bg-orange-100',
+        Green: 'text-teal-900 bg-teal-100'
+      }
+    : DELIVERY_BADGE_STYLES;
+
+  const bragBadgeStyles = colorAccessibilityMode === 'color-blind-friendly'
+    ? {
+        Blue: 'text-cyan-900 bg-cyan-100',
+        Red: 'text-rose-900 bg-rose-100',
+        Amber: 'text-orange-900 bg-orange-100',
+        Green: 'text-teal-900 bg-teal-100'
+      }
+    : BRAG_BADGE_STYLES;
 
   return (
-    <div className="max-w-6xl mx-auto">
+    <div className={`adoption-dashboard max-w-6xl mx-auto ${darkMode ? 'theme-dark' : 'theme-light'}`}>
 
       {/* Overdue / due-soon actions - the main daily pull-back signal */}
       {overdueVisible && urgentActions.length > 0 && (
@@ -295,8 +307,8 @@ export function AdoptionDashboard({
               </p>
               <ul className="space-y-1.5">
                 {urgentActions.slice(0, 3).map((item) => (
-                  <li key={item.action.id} className="flex items-start gap-2">
-                    <span className={`mt-0.5 shrink-0 text-xs font-bold px-1.5 py-0.5 rounded ${
+                  <li key={item.action.id} className="flex items-center gap-2">
+                    <span className={`shrink-0 text-xs font-bold px-1.5 py-0.5 rounded ${
                       item.isOverdue ? 'bg-red-200 text-red-800' : 'bg-amber-100 text-amber-800'
                     }`}>
                       {item.isOverdue ? 'Overdue' : 'Due soon'}
@@ -334,7 +346,7 @@ export function AdoptionDashboard({
       )}
 
       <div className="mb-1 flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-2xl font-bold text-slate-800">Adoption Engine Dashboard</h2>
+        <h2 className={`text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>Adoption Engine Dashboard</h2>
         {onOpenOnboarding ? (
           <button
             type="button"
@@ -345,23 +357,23 @@ export function AdoptionDashboard({
           </button>
         ) : null}
       </div>
-      <p className="text-sm text-slate-600 mb-6">
+      <p className={`text-sm mb-6 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
         This tracks how ready {store.orgProfile.projectName || 'your programme'} is for adoption, based on{' '}
         {components.length} change-management components, each assessed through up to {lenses.length} lenses.
       </p>
 
-      <div className="mb-6 rounded-lg border border-indigo-200 bg-indigo-50 p-4">
-        <p className="text-xs font-semibold uppercase tracking-wider text-indigo-700">Current CST pathway</p>
-        <p className="mt-1 text-sm font-semibold text-indigo-900">{PATHWAY_LABELS[pathway]}</p>
-        <p className="mt-1 text-sm text-indigo-800">
+      <div className="dashboard-callout dashboard-callout--pathway mb-6 rounded-lg border p-4">
+        <p className="dashboard-callout__eyebrow text-xs font-semibold uppercase tracking-wider">Current CST pathway</p>
+        <p className="dashboard-callout__title mt-1 text-sm font-semibold">{PATHWAY_LABELS[pathway]}</p>
+        <p className="dashboard-callout__body mt-1 text-sm">
           Pathway checklist completion: {pathwaySummary.checked}/{pathwaySummary.required} ({pathwaySummary.pct}%).
         </p>
       </div>
       
       {/* Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow-sm p-6 border border-slate-200">
-          <h3 className="text-sm font-medium text-slate-500 mb-1">
+        <div className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm p-6 border`}>
+          <h3 className={`text-sm font-medium mb-1 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
             Live Delivery Progress
           </h3>
           <div className="flex items-end gap-3">
@@ -381,39 +393,39 @@ export function AdoptionDashboard({
               style={{ width: `${metrics.overallPct}%` }}
             />
           </div>
-          <div className="flex justify-between text-xs text-slate-400 mt-2">
+          <div className={`flex justify-between text-xs mt-2 ${darkMode ? 'text-slate-400' : 'text-slate-400'}`}>
             <span>Derived from current working data across all components.</span>
           </div>
         </div>
 
-        <div className={`rounded-lg shadow-sm p-6 border ${currentPhaseCardStyle}`}>
-          <h3 className="text-sm font-medium text-slate-500 mb-1">Current Phase Focus</h3>
+        <div className={`dashboard-metric-card dashboard-metric-card--phase dashboard-metric-card--${currentPhaseTone} rounded-lg shadow-sm p-6 border`}>
+          <h3 className="dashboard-metric-card__label text-sm font-medium mb-1">Current Phase Focus</h3>
           <div className="flex items-end space-x-2">
-            <span className={`text-4xl font-bold ${currentPhaseHeadlineStyle}`}>Phase {metrics.currentPhase}</span>
+            <span className="dashboard-metric-card__headline text-4xl font-bold">Phase {metrics.currentPhase}</span>
           </div>
-          <p className={`text-sm mt-2 ${currentPhaseHeadlineStyle}`}>
+          <p className="dashboard-metric-card__description text-sm mt-2">
             {currentPhaseRag} status based on delivery progress and action completion.
           </p>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm p-6 border border-slate-200">
-          <h3 className="text-sm font-medium text-slate-500 mb-1">Action Completion</h3>
+        <div className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm p-6 border`}>
+          <h3 className={`text-sm font-medium mb-1 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>Action Completion</h3>
           <div className="flex items-end space-x-2">
-            <span className="text-4xl font-bold text-slate-700">{metrics.actionCompletionPct}%</span>
+            <span className={`text-4xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>{metrics.actionCompletionPct}%</span>
           </div>
-          <p className="text-sm text-slate-500 mt-2">
+          <p className={`text-sm mt-2 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
             {metrics.completedActions} of {metrics.totalActions} actions completed.
           </p>
         </div>
       </div>
 
       {/* Guided Next Steps */}
-      <div className="bg-white rounded-lg shadow-sm p-6 border border-slate-200 mb-8">
+      <div className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm p-6 border mb-8`}>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-slate-800">What To Do Next</h3>
-          <span className="text-xs text-slate-500">Prioritised for live delivery</span>
+          <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>What To Do Next</h3>
+          <span className={`text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>Prioritised for live delivery</span>
         </div>
-        <p className="text-sm text-slate-500 mb-4">
+        <p className={`text-sm mb-4 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
           These are the biggest gaps to target for your current phase, largest gap first.
         </p>
         {metrics.nextSteps.length > 0 ? (
@@ -424,16 +436,16 @@ export function AdoptionDashboard({
                 <button
                   key={`${step.componentId}-${step.phase}`}
                   onClick={() => onComponentClick(step.componentId)}
-                  className="w-full text-left rounded-md border border-slate-200 bg-slate-50 p-3 hover:border-blue-300 transition-colors"
+                  className={`w-full text-left rounded-md border p-3 hover:border-blue-300 transition-colors ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
                 >
                 <div className="flex items-center justify-between gap-3">
-                  <span className="text-sm font-semibold text-slate-800">{step.componentLabel}</span>
-                  <span className={`text-xs font-semibold rounded px-2.5 py-0.5 ${BRAG_BADGE_STYLES[bragStatus]}`}>
+                  <span className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>{step.componentLabel}</span>
+                  <span className={`text-xs font-semibold rounded px-2.5 py-0.5 ${bragBadgeStyles[bragStatus]}`}>
                     {bragStatus}
                   </span>
                 </div>
                 
-                <p className="text-sm text-slate-600 mt-1">{step.message}</p>
+                <p className={`text-sm mt-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>{step.message}</p>
                 {step.toolkitLinks?.length ? (
                   <div className="mt-2 flex flex-wrap gap-2">
                     {step.toolkitLinks.map((link) => (
@@ -463,9 +475,9 @@ export function AdoptionDashboard({
 
       {/* Snapshot reminder - only when work exists but this month isn't captured */}
       {snapshotDue && (
-        <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 flex items-center gap-3 mb-8">
-          <span className="text-blue-400 text-xl shrink-0">📅</span>
-          <p className="text-sm text-blue-800">
+        <div className="dashboard-callout dashboard-callout--snapshot rounded-lg border p-4 flex items-center gap-3 mb-8">
+          <span className="dashboard-callout__icon text-xl shrink-0">📅</span>
+          <p className="dashboard-callout__body text-sm">
             <strong>This month hasn't been recorded yet.</strong>{' '}
             Use <span className="font-semibold">'Finalise Month'</span> in the header to snapshot today's progress and build your delivery trajectory.
           </p>
@@ -503,9 +515,9 @@ export function AdoptionDashboard({
       ) : (
       <>
       {/* Phase Progress */}
-      <div className="bg-white rounded-lg shadow-sm p-6 border border-slate-200 mb-8">
-        <h3 className="text-lg font-semibold text-slate-800 mb-1">Phase Progress (RAG)</h3>
-        <p className="text-sm text-slate-500 mb-4">
+      <div className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm p-6 border mb-8`}>
+        <h3 className={`text-lg font-semibold mb-1 ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>Phase Progress (RAG)</h3>
+        <p className={`text-sm mb-4 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
           Phases run 1 to 5, from early readiness at go-live through to fully embedding the change.{' '}
           {onNavigate ? (
             <button
@@ -531,17 +543,20 @@ export function AdoptionDashboard({
               : 0;
 
             return (
-              <div key={phaseSummary.phase} className="rounded-md border border-slate-200 bg-slate-50 p-4">
+              <div
+                key={phaseSummary.phase}
+                className={`rounded-md border p-4 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
+              >
                 <div className="flex items-center justify-between mb-2">
-                  <h4 className="font-semibold text-slate-800">Phase {phaseSummary.phase}</h4>
+                  <h4 className={`font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>Phase {phaseSummary.phase}</h4>
                   <span className={`text-xs font-semibold px-2 py-0.5 rounded ${ragClass}`}>
                     {phaseSummary.rag}
                   </span>
                 </div>
-                <p className="text-xs text-slate-600">
+                <p className={`text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
                   {phaseSummary.onTrackComponents}/{phaseSummary.componentCount} components on target
                 </p>
-                <p className="text-xs text-slate-600 mt-1">
+                <p className={`text-xs mt-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
                   {lensPct}% lens coverage, {phaseSummary.actionCompletionPct}% actions complete
                 </p>
               </div>
@@ -552,9 +567,9 @@ export function AdoptionDashboard({
 
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-        <div className="bg-white rounded-lg shadow-sm p-6 border border-slate-200 flex flex-col">
-          <h3 className="text-lg font-semibold text-slate-800 mb-4">Readiness Trajectory</h3>
-          <div className="flex-1 min-h-[400px] flex items-center justify-center bg-slate-50 rounded border border-slate-100 p-2">
+        <div className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm p-6 border flex flex-col`}>
+          <h3 className={`text-lg font-semibold mb-4 ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>Readiness Trajectory</h3>
+          <div className={`flex-1 min-h-[400px] flex items-center justify-center rounded border p-2 ${darkMode ? 'bg-slate-900 border-slate-700' : 'bg-slate-50 border-slate-100'}`}>
             {store.history.length > 0 ? (
               <canvas id="adoption-line-chart" />
             ) : (
@@ -565,9 +580,9 @@ export function AdoptionDashboard({
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm p-6 border border-slate-200 flex flex-col">
+        <div className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm p-6 border flex flex-col`}>
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-slate-800">Strategic Lenses Spread</h3>
+            <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>Strategic Lenses Spread</h3>
             {onOpenLensInfo && lenses[0] ? (
               <button
                 type="button"
@@ -578,14 +593,14 @@ export function AdoptionDashboard({
               </button>
             ) : null}
           </div>
-          <div className="flex-1 min-h-[400px] flex items-center justify-center bg-slate-50 rounded border border-slate-100 p-2">
+          <div className={`flex-1 min-h-[400px] flex items-center justify-center rounded border p-2 ${darkMode ? 'bg-slate-900 border-slate-700' : 'bg-slate-50 border-slate-100'}`}>
             <canvas id="adoption-radar-chart" />
           </div>
-          <div className="mt-4 rounded-md border border-slate-200 bg-slate-50 p-3">
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-600">Lens key</p>
+          <div className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} mt-4 rounded-md border p-3`}>
+            <p className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>Lens key</p>
             <div className="mt-2 grid grid-cols-1 gap-1 sm:grid-cols-2">
               {lenses.map((lens, index) => (
-                <div key={`lens-key-${lens}`} className="flex items-center gap-2 text-xs text-slate-700">
+                <div key={`lens-key-${lens}`} className={`flex items-center gap-2 text-xs ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>
                   <span
                     className="inline-block h-2.5 w-2.5 rounded-full"
                     style={{ backgroundColor: LENS_KEY_COLORS[index % LENS_KEY_COLORS.length] }}
@@ -596,7 +611,7 @@ export function AdoptionDashboard({
               ))}
             </div>
           </div>
-          <p className="text-xs text-center text-slate-500 mt-4">
+          <p className={`text-xs text-center mt-4 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
             Visualises your current draft readiness score averaged across the 5 strategic lenses
             against their specific target reiquirements.
           </p>
@@ -604,16 +619,16 @@ export function AdoptionDashboard({
       </div>
 
       {/* Component Overview */}
-      <div className="bg-white rounded-lg shadow-sm p-6 border border-slate-200 mb-8">
+      <div className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm p-6 border mb-8`}>
         <div className="flex flex-col gap-4 mb-4 xl:flex-row xl:items-center xl:justify-between">
           <div>
-            <h3 className="text-lg font-semibold text-slate-800">Component Status</h3>
-            <p className="text-xs text-slate-500 mt-1">
-                    BRAG scoring is used for components:
-              <span className="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800">Blue</span> = on target / complete,{' '}
-              <span className="px-1.5 py-0.5 rounded bg-green-100 text-green-800">Green</span> = at/above target,{' '}
-              <span className="px-1.5 py-0.5 rounded bg-red-100 text-red-800">Red</span> = significantly below target,{' '}
-              <span className="px-1.5 py-0.5 rounded bg-amber-100 text-amber-800">Amber</span> = slightly below target.
+            <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>Component Status</h3>
+            <p className={`text-xs mt-1 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
+                    BRAG scoring is used for component status:
+              <span className="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800">Blue</span> = actions exist and all are complete,{' '}
+              <span className="px-1.5 py-0.5 rounded bg-green-100 text-green-800">Green</span> = on target,{' '}
+              <span className="px-1.5 py-0.5 rounded bg-red-100 text-red-800">Red</span> = behind target dates,{' '}
+              <span className="px-1.5 py-0.5 rounded bg-amber-100 text-amber-800">Amber</span> = at risk / nearing deadline.
             </p>
           </div>
           <div className="w-full max-w-4xl space-y-3">
@@ -654,6 +669,7 @@ export function AdoptionDashboard({
               resultText={`Showing ${componentRows.length} components`}
               activeFilters={activeComponentFilters}
               activeFiltersAriaLabel="Active component filters"
+              darkMode={darkMode}
             />
 
             {showAdvancedComponentControls ? (
@@ -687,9 +703,13 @@ export function AdoptionDashboard({
                 key={component.id}
                 onClick={() => onComponentClick(component.id)}
                 title={getComponentDescription(component.id)}
-                className="flex justify-between items-center p-3 bg-slate-50 border border-slate-100 rounded-md hover:border-blue-300 transition-colors group text-left"
+                className={`flex justify-between items-center p-3 rounded-md transition-colors group text-left ${
+                  darkMode
+                    ? 'bg-slate-900 border border-slate-700 hover:border-blue-400'
+                    : 'bg-slate-50 border border-slate-100 hover:border-blue-300'
+                }`}
               >
-                <span className="text-sm font-medium text-slate-700 truncate pr-2 group-hover:text-[#005eb8]">
+                <span className={`text-sm font-medium truncate pr-2 group-hover:text-[#005eb8] ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
                   {component.label}
                 </span>
                 <div className="flex items-center gap-1 shrink-0">
@@ -700,7 +720,7 @@ export function AdoptionDashboard({
                       {delta > 0 ? '↑' : '↓'}
                     </span>
                   )}
-                  <span className={`text-xs font-bold px-2.5 py-1 rounded ${DELIVERY_BADGE_STYLES[deliveryStatus]}`}>
+                  <span className={`text-xs font-bold px-2.5 py-1 rounded ${deliveryBadgeStyles[deliveryStatus]}`}>
                     {deliveryStatus}
                   </span>
                 </div>
@@ -708,7 +728,7 @@ export function AdoptionDashboard({
             );
           })}
           {!componentRows.length && (
-            <div className="col-span-full rounded-md border border-dashed border-slate-200 bg-slate-50 p-6 text-sm text-slate-500">
+            <div className={`col-span-full rounded-md border border-dashed p-6 text-sm ${darkMode ? 'border-slate-700 bg-slate-900 text-slate-300' : 'border-slate-200 bg-slate-50 text-slate-500'}`}>
               No components match the current filters.
             </div>
           )}
@@ -716,11 +736,11 @@ export function AdoptionDashboard({
       </div>
 
       {/* Lens & Component Breakdown */}
-      <div className="bg-white rounded-lg shadow-sm p-6 border border-slate-200 mb-8">
+      <div className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm p-6 border mb-8`}>
         <div className="flex flex-col gap-3 mb-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-lg font-semibold text-slate-800">Lenses and which components they apply to</h3>
+              <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>Lenses and which components they apply to</h3>
               <button
                 type="button"
                 onClick={() => setShowLensBreakdownHelp((current) => !current)}
@@ -761,9 +781,12 @@ export function AdoptionDashboard({
             }
 
             return (
-              <div key={lens} className="border border-slate-100 rounded-md p-4 bg-slate-50">
+              <div
+                key={lens}
+                className={`rounded-md p-4 ${darkMode ? 'border border-slate-700 bg-slate-900' : 'border border-slate-100 bg-slate-50'}`}
+              >
                 <h4 className="font-bold text-sm text-[#005eb8] mb-3">{lens}</h4>
-                <p className="mb-3 text-xs text-slate-600">{getLensDescription(lens)}</p>
+                <p className={`mb-3 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>{getLensDescription(lens)}</p>
                 <ul className="space-y-2">
                   {mapped.map((component) => {
                     const entry = getEntry(component.id, lens);
@@ -779,14 +802,16 @@ export function AdoptionDashboard({
                     return (
                       <li
                         key={component.id}
-                        className="text-xs flex justify-between items-center bg-white p-2 rounded border border-slate-100"
+                        className={`text-xs flex justify-between items-center p-2 rounded ${
+                          darkMode ? 'bg-slate-800 border border-slate-700' : 'bg-white border border-slate-100'
+                        }`}
                       >
-                        <span className="truncate pr-2 font-medium text-slate-700">
+                        <span className={`truncate pr-2 font-medium ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
                           {component.label}
                         </span>
                         <button
                           onClick={() => onComponentClick(component.id)}
-                          className={`px-2.5 py-0.5 rounded font-bold ${DELIVERY_BADGE_STYLES[deliveryStatus]}`}
+                          className={`px-2.5 py-0.5 rounded font-bold ${deliveryBadgeStyles[deliveryStatus]}`}
                         >
                           {deliveryStatus}
                         </button>

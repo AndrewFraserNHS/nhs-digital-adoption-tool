@@ -13,6 +13,7 @@ interface GuidanceRoadmapViewProps {
   onComponentClick: (componentId: string) => void;
   pathway: CstPathwayKey;
   pathwayChecks: Record<string, Partial<Record<CstPathwayKey, string[]>>>;
+  darkMode?: boolean;
 }
 
 const PHASES = [1, 2, 3, 4, 5];
@@ -27,7 +28,8 @@ function getRoadmapStatus(
   average: number,
   currentPhase: number,
   pathway: CstPathwayKey,
-  checkedItemKeys: string[]
+  checkedItemKeys: string[],
+  darkMode: boolean
 ): {
   label: string;
   rowClass: string;
@@ -37,8 +39,8 @@ function getRoadmapStatus(
   if (component.phase > currentPhase) {
     return {
       label: 'Not in current phase yet',
-      rowClass: 'border-slate-200 bg-slate-50',
-      chipClass: 'bg-slate-200 text-slate-700',
+      rowClass: darkMode ? 'border-slate-600 bg-slate-800/80' : 'border-slate-200 bg-slate-50',
+      chipClass: darkMode ? 'bg-slate-700 text-slate-100' : 'bg-slate-200 text-slate-700',
       barClass: 'bg-slate-400'
     };
   }
@@ -55,8 +57,8 @@ function getRoadmapStatus(
   if (pathwayStatus.status === 'off-track') {
     return {
       label: `Off track (${pathwayStatus.completionPct}% checklist)`,
-      rowClass: 'border-red-200 bg-red-50',
-      chipClass: 'bg-red-100 text-red-700',
+      rowClass: darkMode ? 'border-red-700 bg-red-950/45' : 'border-red-200 bg-red-50',
+      chipClass: darkMode ? 'bg-red-900 text-red-100' : 'bg-red-100 text-red-700',
       barClass: 'bg-red-500'
     };
   }
@@ -64,8 +66,8 @@ function getRoadmapStatus(
   if (pathwayStatus.status === 'attention') {
     return {
       label: `Needs attention (${pathwayStatus.completionPct}% checklist)`,
-      rowClass: 'border-amber-200 bg-amber-50',
-      chipClass: 'bg-amber-100 text-amber-700',
+      rowClass: darkMode ? 'border-amber-700 bg-amber-950/45' : 'border-amber-200 bg-amber-50',
+      chipClass: darkMode ? 'bg-amber-900 text-amber-100' : 'bg-amber-100 text-amber-700',
       barClass: 'bg-amber-500'
     };
   }
@@ -73,8 +75,8 @@ function getRoadmapStatus(
   if (average >= component.target) {
     return {
       label: `On track (${pathwayStatus.completionPct}% checklist)`,
-      rowClass: 'border-green-200 bg-green-50',
-      chipClass: 'bg-green-100 text-green-700',
+      rowClass: darkMode ? 'border-green-700 bg-green-950/45' : 'border-green-200 bg-green-50',
+      chipClass: darkMode ? 'bg-green-900 text-green-100' : 'bg-green-100 text-green-700',
       barClass: 'bg-green-500'
     };
   }
@@ -82,8 +84,8 @@ function getRoadmapStatus(
   if (component.phase < currentPhase) {
     return {
       label: 'Behind timeline',
-      rowClass: 'border-red-200 bg-red-50',
-      chipClass: 'bg-red-100 text-red-700',
+      rowClass: darkMode ? 'border-red-700 bg-red-950/45' : 'border-red-200 bg-red-50',
+      chipClass: darkMode ? 'bg-red-900 text-red-100' : 'bg-red-100 text-red-700',
       barClass: 'bg-red-500'
     };
   }
@@ -91,16 +93,16 @@ function getRoadmapStatus(
   if (component.phase === currentPhase) {
     return {
       label: 'Due this phase',
-      rowClass: 'border-amber-200 bg-amber-50',
-      chipClass: 'bg-amber-100 text-amber-700',
+      rowClass: darkMode ? 'border-amber-700 bg-amber-950/45' : 'border-amber-200 bg-amber-50',
+      chipClass: darkMode ? 'bg-amber-900 text-amber-100' : 'bg-amber-100 text-amber-700',
       barClass: 'bg-amber-500'
     };
   }
 
   return {
     label: 'In progress',
-    rowClass: 'border-blue-200 bg-blue-50',
-    chipClass: 'bg-blue-100 text-blue-700',
+    rowClass: darkMode ? 'border-blue-700 bg-blue-950/45' : 'border-blue-200 bg-blue-50',
+    chipClass: darkMode ? 'bg-blue-900 text-blue-100' : 'bg-blue-100 text-blue-700',
     barClass: 'bg-blue-500'
   };
 }
@@ -111,7 +113,8 @@ export function GuidanceRoadmapView({
   getEntry,
   onComponentClick,
   pathway,
-  pathwayChecks
+  pathwayChecks,
+  darkMode = false
 }: GuidanceRoadmapViewProps): JSX.Element {
   const rows = components.map((component) => {
     const average = getComponentAverage(component, getEntry);
@@ -119,16 +122,16 @@ export function GuidanceRoadmapView({
     return {
       component,
       average,
-      status: getRoadmapStatus(component, average, metrics.currentPhase, pathway, checkedItemKeys)
+      status: getRoadmapStatus(component, average, metrics.currentPhase, pathway, checkedItemKeys, darkMode)
     };
   });
 
   return (
     <section className="max-w-6xl mx-auto space-y-6">
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">Roadmap View</p>
-        <h2 className="mt-2 text-2xl font-bold text-slate-900">Component delivery timeline</h2>
-        <p className="mt-2 text-sm text-slate-600">
+      <div className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-2xl border p-6 shadow-sm`}>
+        <p className={`text-sm font-semibold uppercase tracking-[0.18em] ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>Roadmap View</p>
+        <h2 className={`mt-2 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>Component delivery timeline</h2>
+        <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
           This gantt-style view shows when each component should be completed by phase. Components are
           coloured by whether they are on track against the current phase. Select a row to jump into
           the matching assessment tab.
@@ -141,19 +144,19 @@ export function GuidanceRoadmapView({
             key={`mobile-${component.id}`}
             type="button"
             onClick={() => onComponentClick(component.id)}
-            className={`w-full rounded-xl border p-4 text-left transition-colors hover:border-slate-300 ${status.rowClass}`}
+            className={`w-full rounded-xl border p-4 text-left transition-colors ${darkMode ? 'hover:border-slate-500' : 'hover:border-slate-300'} ${status.rowClass}`}
           >
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
-                <div className="text-sm font-semibold text-slate-800">{component.label}</div>
-                <div className="mt-1 text-xs text-slate-500">Target {component.target} · completes by Phase {component.phase}</div>
+                <div className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>{component.label}</div>
+                <div className={`mt-1 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>Target {component.target} · completes by Phase {component.phase}</div>
               </div>
               <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${status.chipClass}`}>
                 {status.label}
               </span>
             </div>
             <div className="mt-3">
-              <div className="flex items-center justify-between text-xs text-slate-600 mb-1">
+              <div className={`mb-1 flex items-center justify-between text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
                 <span>Timeline</span>
                 <span>Average {average}</span>
               </div>
@@ -163,7 +166,7 @@ export function GuidanceRoadmapView({
                   const isCompletionPhase = phase === component.phase;
                   return (
                     <div key={`${component.id}-mobile-${phase}`}>
-                      <div className="h-2 rounded-full bg-white/80">
+                      <div className={`h-2 rounded-full ${darkMode ? 'bg-slate-700/70' : 'bg-white/80'}`}>
                         {isPlannedSpan ? (
                           <div
                             className={`h-full rounded-full ${status.barClass} ${isCompletionPhase ? 'opacity-100' : 'opacity-35'}`}
@@ -171,7 +174,7 @@ export function GuidanceRoadmapView({
                           />
                         ) : null}
                       </div>
-                      <div className="mt-1 text-[10px] text-center text-slate-500">P{phase}</div>
+                      <div className={`mt-1 text-center text-[10px] ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>P{phase}</div>
                     </div>
                   );
                 })}
@@ -181,9 +184,9 @@ export function GuidanceRoadmapView({
         ))}
       </div>
 
-      <div className="hidden lg:block rounded-2xl border border-slate-200 bg-white p-5 shadow-sm overflow-x-auto">
+      <div className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} hidden lg:block rounded-2xl border p-5 shadow-sm overflow-x-auto`}>
         <div className="min-w-[860px]">
-          <div className="grid grid-cols-[230px_repeat(5,minmax(92px,1fr))_90px_115px] gap-2 border-b border-slate-200 pb-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
+          <div className={`grid grid-cols-[230px_repeat(5,minmax(92px,1fr))_90px_115px] gap-2 border-b pb-3 text-xs font-semibold uppercase tracking-wider ${darkMode ? 'border-slate-700 text-slate-400' : 'border-slate-200 text-slate-500'}`}>
             <div>Component</div>
             {PHASES.map((phase) => (
               <div key={phase} className="text-center">Phase {phase}</div>
@@ -198,11 +201,11 @@ export function GuidanceRoadmapView({
                 key={component.id}
                 type="button"
                 onClick={() => onComponentClick(component.id)}
-                className={`grid w-full grid-cols-[230px_repeat(5,minmax(92px,1fr))_90px_115px] gap-2 rounded-xl border p-2.5 text-left transition-colors hover:border-slate-300 ${status.rowClass}`}
+                className={`grid w-full grid-cols-[230px_repeat(5,minmax(92px,1fr))_90px_115px] gap-2 rounded-xl border p-2.5 text-left transition-colors ${darkMode ? 'hover:border-slate-500' : 'hover:border-slate-300'} ${status.rowClass}`}
               >
                 <div>
-                  <div className="text-sm font-semibold text-slate-800">{component.label}</div>
-                  <div className="mt-1 text-xs text-slate-500">Target score {component.target} · completes by Phase {component.phase}</div>
+                  <div className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>{component.label}</div>
+                  <div className={`mt-1 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>Target score {component.target} · completes by Phase {component.phase}</div>
                 </div>
 
                 {PHASES.map((phase) => {
@@ -210,7 +213,7 @@ export function GuidanceRoadmapView({
                   const isCompletionPhase = phase === component.phase;
                   return (
                     <div key={`${component.id}-${phase}`} className="flex items-center justify-center">
-                      <div className="h-7 w-full rounded-full bg-white/70 px-1 py-1">
+                      <div className={`h-7 w-full rounded-full px-1 py-1 ${darkMode ? 'bg-slate-700/70' : 'bg-white/70'}`}>
                         {isPlannedSpan ? (
                           <div
                             className={`h-full rounded-full ${status.barClass} ${isCompletionPhase ? 'opacity-100' : 'opacity-35'}`}
@@ -222,7 +225,7 @@ export function GuidanceRoadmapView({
                   );
                 })}
 
-                <div className="flex items-center justify-center text-sm font-semibold text-slate-700">{average}</div>
+                <div className={`flex items-center justify-center text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>{average}</div>
                 <div className="flex items-center justify-center">
                   <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${status.chipClass}`}>
                     {status.label}
@@ -232,7 +235,7 @@ export function GuidanceRoadmapView({
             ))}
           </div>
 
-          <div className="mt-4 rounded-md border border-slate-200 bg-slate-50 p-3 text-xs text-slate-700">
+          <div className={`mt-4 rounded-md border p-3 text-xs ${darkMode ? 'border-slate-700 bg-slate-900 text-slate-300' : 'border-slate-200 bg-slate-50 text-slate-700'}`}>
             <span className="font-semibold">Key:</span> Grey rows are not yet due for the current phase. Red rows indicate overdue or off-track work.
           </div>
         </div>

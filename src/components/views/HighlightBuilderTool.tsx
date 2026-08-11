@@ -133,7 +133,8 @@ export function HighlightBuilderTool({
   trustName,
   projectName,
   themeColor,
-  onLayoutSaved
+  onLayoutSaved,
+  darkMode = false
 }: {
   store: AdoptionStore;
   metrics: Metrics;
@@ -144,6 +145,7 @@ export function HighlightBuilderTool({
   projectName?: string;
   themeColor?: string;
   onLayoutSaved?: () => void;
+  darkMode?: boolean;
 }): JSX.Element {
   const [layout, setLayout] = useState<HighlightBuilderLayout>(() => {
     const stored = readStoredLayout();
@@ -699,6 +701,11 @@ export function HighlightBuilderTool({
 
   return (
     <section className="space-y-6">
+      {darkMode ? (
+        <div className="rounded-lg border border-red-300 bg-red-100 px-4 py-3 text-sm font-semibold text-red-900">
+          Dark mode not compatible for Highlight Report due to print/save functionality.
+        </div>
+      ) : null}
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>

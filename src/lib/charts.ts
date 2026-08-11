@@ -22,6 +22,13 @@ function resolveCanvas(ctx: CanvasRenderingContext2D | HTMLCanvasElement) {
   return (ctx as CanvasRenderingContext2D).canvas as HTMLCanvasElement;
 }
 
+function isDarkThemeEnabled(): boolean {
+  if (typeof document === 'undefined') {
+    return false;
+  }
+  return document.documentElement.dataset.nhsThemeMode === 'dark';
+}
+
 export function createChart(type: ChartType, ctx: CanvasRenderingContext2D | HTMLCanvasElement, data: any, options: any = {}) {
   const canvas = resolveCanvas(ctx);
   const existingChart = (Chart as typeof Chart & { getChart?: (canvas: HTMLCanvasElement) => Chart | null }).getChart?.(canvas);
@@ -42,27 +49,35 @@ export function createRadarChart(ctx: CanvasRenderingContext2D | HTMLCanvasEleme
   Chart.defaults.elements.point.radius = 4;
   Chart.defaults.elements.point.hoverRadius = 6;
 
+  const darkMode = isDarkThemeEnabled();
+  const labelColor = darkMode ? '#e2e8f0' : '#0b1220';
+  const gridColor = darkMode ? 'rgba(226,232,240,0.12)' : 'rgba(11,18,32,0.06)';
+  const angleColor = darkMode ? 'rgba(226,232,240,0.18)' : 'rgba(11,18,32,0.10)';
+  const lineBorder = darkMode ? '#63b3ff' : '#005EB8';
+  const lineFill = darkMode ? 'rgba(99,179,255,0.12)' : 'rgba(0,94,184,0.06)';
+  const pointColor = darkMode ? 'rgba(144,205,244,0.95)' : 'rgba(11,122,184,0.95)';
+
   const defaultOpts = {
     maintainAspectRatio: true,
     responsive: true,
     plugins: {
       legend: { display: false },
-      tooltip: { enabled: true, backgroundColor: 'rgba(11,18,32,0.95)', titleColor: '#fff', bodyColor: '#fff' },
+      tooltip: { enabled: true, backgroundColor: darkMode ? 'rgba(15,23,42,0.98)' : 'rgba(11,18,32,0.95)', titleColor: '#fff', bodyColor: '#fff' },
       centerText: '',
     },
     elements: {
-      line: { borderWidth: 3, tension: 0.2, borderColor: '#005EB8', backgroundColor: 'rgba(0,94,184,0.06)' },
-      point: { radius: 4, hoverRadius: 6, backgroundColor: 'rgba(11,122,184,0.95)' }
+      line: { borderWidth: 3, tension: 0.2, borderColor: lineBorder, backgroundColor: lineFill },
+      point: { radius: 4, hoverRadius: 6, backgroundColor: pointColor }
     },
     scales: {
       r: {
         beginAtZero: true,
-        grid: { color: 'rgba(11,18,32,0.06)', lineWidth: 1 },
-        angleLines: { color: 'rgba(11,18,32,0.10)', lineWidth: 1 },
+        grid: { color: gridColor, lineWidth: 1 },
+        angleLines: { color: angleColor, lineWidth: 1 },
         ticks: { display: false },
         pointLabels: {
           display: false,
-          color: '#0b1220',
+          color: labelColor,
           font: { size: 12, family: Chart.defaults.font.family },
           padding: 14,
           callback: (value: string) => wrapChartLabel(value).join('\n')
@@ -94,14 +109,20 @@ export function createRadarChart(ctx: CanvasRenderingContext2D | HTMLCanvasEleme
 }
 
 export function createLineChart(ctx: CanvasRenderingContext2D | HTMLCanvasElement, data: any, options: any = {}) {
+  const darkMode = isDarkThemeEnabled();
+  const tickColor = darkMode ? '#e2e8f0' : '#0b1220';
+  const xGridColor = darkMode ? 'rgba(226,232,240,0.08)' : 'rgba(11,18,32,0.04)';
+  const yGridColor = darkMode ? 'rgba(226,232,240,0.10)' : 'rgba(11,18,32,0.06)';
+  const lineBorder = darkMode ? '#63b3ff' : '#005EB8';
+  const lineFill = darkMode ? 'rgba(99,179,255,0.14)' : 'rgba(0,94,184,0.06)';
   const defaultOpts = {
     elements: {
-      line: { borderWidth: 2, tension: 0.2, borderColor: '#005EB8', backgroundColor: 'rgba(0,94,184,0.06)' },
-      point: { radius: 3, hoverRadius: 5, backgroundColor: '#005EB8' }
+      line: { borderWidth: 2, tension: 0.2, borderColor: lineBorder, backgroundColor: lineFill },
+      point: { radius: 3, hoverRadius: 5, backgroundColor: lineBorder }
     },
     scales: {
-      x: { display: true, grid: { color: 'rgba(11,18,32,0.04)' }, ticks: { color: '#0b1220', font: { size: 11 } } },
-      y: { beginAtZero: true, grid: { color: 'rgba(11,18,32,0.06)' }, ticks: { color: '#0b1220', font: { size: 11 } } }
+      x: { display: true, grid: { color: xGridColor }, ticks: { color: tickColor, font: { size: 11 } } },
+      y: { beginAtZero: true, grid: { color: yGridColor }, ticks: { color: tickColor, font: { size: 11 } } }
     }
   };
   return createChart('line', ctx, data, { ...defaultOpts, ...options });
@@ -151,7 +172,7 @@ return;
         const size = Math.max(12, Math.round(Math.min(chart.width, chart.height) * 0.065));
         const font = `${size}px ${Chart.defaults.font.family}`;
         ctx.font = font;
-        ctx.fillStyle = centerCfg?.color || '#0b1220';
+        ctx.fillStyle = centerCfg?.color || (isDarkThemeEnabled() ? '#e2e8f0' : '#0b1220');
         const lines = String(txt).split('\n');
         const lineHeight = size * 1.05;
         const offset = (lines.length - 1) * -lineHeight / 2;
@@ -179,7 +200,7 @@ const radarPointLabelPlugin: Plugin = {
       const ctx = chart.ctx;
       const fontSize = Number(pointLabels.font?.size || Chart.defaults.font.size || 12);
       const fontFamily = pointLabels.font?.family || Chart.defaults.font.family || 'Inter, sans-serif';
-      const color = pointLabels.color || '#0b1220';
+      const color = pointLabels.color || (isDarkThemeEnabled() ? '#e2e8f0' : '#0b1220');
       const padding = Number(pointLabels.padding ?? 14);
       const labels = Array.isArray(scale._pointLabels) ? scale._pointLabels : [];
 

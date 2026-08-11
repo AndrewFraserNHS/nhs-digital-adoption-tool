@@ -74,6 +74,101 @@ const OBJECTIVE_STATUS_BADGE_STYLES: Record<ObjectiveStatus, string> = {
   Completed: 'bg-green-100 text-green-800 border-green-200'
 };
 
+const EVIDENCE_JSON_PREFIX = '__evidence_json__:';
+const MAX_EMBEDDED_EVIDENCE_FILE_BYTES = 1024 * 1024;
+
+interface EvidenceItem {
+  type: 'url' | 'file';
+  label: string;
+  href: string;
+}
+
+function normalizeUrl(value: string): string {
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return '';
+  }
+  if (/^https?:\/\//i.test(trimmed)) {
+    return trimmed;
+  }
+  if (/^www\./i.test(trimmed)) {
+    return `https://${trimmed}`;
+  }
+  return trimmed;
+}
+
+function isHttpUrl(value: string): boolean {
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+  } catch (_error) {
+    return false;
+  }
+}
+
+function parseEvidenceItems(evidenceValue: string): EvidenceItem[] {
+  const raw = evidenceValue?.trim() || '';
+  if (!raw) {
+    return [];
+  }
+
+  if (raw.startsWith(EVIDENCE_JSON_PREFIX)) {
+    try {
+      const parsed = JSON.parse(raw.slice(EVIDENCE_JSON_PREFIX.length)) as EvidenceItem[];
+      return Array.isArray(parsed)
+        ? parsed
+            .filter((item) => item && (item.type === 'url' || item.type === 'file'))
+            .map((item) => ({
+              type: item.type,
+              label: String(item.label || '').trim(),
+              href: String(item.href || '').trim()
+            }))
+            .filter((item) => item.label || item.href)
+        : [];
+    } catch (_error) {
+      return [];
+    }
+  }
+
+  return raw
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const href = normalizeUrl(line);
+      return {
+        type: 'url' as const,
+        label: line,
+        href
+      };
+    });
+}
+
+function serializeEvidenceItems(items: EvidenceItem[]): string {
+  const normalized = items
+    .map((item) => ({
+      type: item.type,
+      label: item.label.trim(),
+      href: item.href.trim()
+    }))
+    .filter((item) => item.label || item.href);
+
+  if (!normalized.length) {
+    return '';
+  }
+
+  return `${EVIDENCE_JSON_PREFIX}${JSON.stringify(normalized)}`;
+}
+
+function readFileAsDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ''));
+    reader.onerror = () => reject(new Error('Unable to read file.'));
+    reader.readAsDataURL(file);
+  });
+}
+
 function InfoIcon(): JSX.Element {
   return (
     <svg
@@ -261,6 +356,14 @@ export function AssessmentPanel({
     return components.find((item) => item.id === actionEditor.sourceComponentId)?.label || actionEditor.sourceComponentId;
   }, [actionEditor, component.label, components]);
 
+  const actionEditorTitleSummary = useMemo(() => {
+    if (!actionEditor?.action.text?.trim()) {
+      return 'New action';
+    }
+    const compact = actionEditor.action.text.trim().replace(/\s+/g, ' ');
+    return compact.length > 70 ? `${compact.slice(0, 70)}...` : compact;
+  }, [actionEditor]);
+
   const activeObjective = useMemo(
     () => objectives.find((objective) => objective.id === objectiveViewer?.objectiveId) || null,
     [objectiveViewer?.objectiveId, objectives]
@@ -348,7 +451,7 @@ export function AssessmentPanel({
     const firstTarget = normalizedTargets[0] || { componentId: sourceComponentId, lens: sourceLens };
     const linkedObjectiveIds = (store.objectives?.[sourceComponentId] || [])
       .filter((objective) =>
-        objective.linkedActions.some((link) => link.lens === sourceLens && link.actionId === action.id)
+        objective.linkedActions.some((link) => link.actionId === action.id)
       )
       .map((objective) => objective.id);
 
@@ -540,6 +643,78 @@ export function AssessmentPanel({
     });
   };
 
+  const updateEvidenceItemsInActionEditor = (nextItems: EvidenceItem[]) => {
+    updateActionEditor({ evidence: serializeEvidenceItems(nextItems) });
+  };
+
+  const addEvidenceLinkRow = () => {
+    if (!actionEditor) {
+      return;
+    }
+    const existing = parseEvidenceItems(actionEditor.action.evidence || '');
+    updateEvidenceItemsInActionEditor([...existing, { type: 'url', label: '', href: '' }]);
+  };
+
+  const updateEvidenceItem = (index: number, field: 'label' | 'href', value: string) => {
+    if (!actionEditor) {
+      return;
+    }
+    const existing = parseEvidenceItems(actionEditor.action.evidence || '');
+    if (!existing[index]) {
+      return;
+    }
+    const next = [...existing];
+    if (field === 'href') {
+      next[index] = { ...next[index], href: normalizeUrl(value) };
+    } else {
+      next[index] = { ...next[index], label: value };
+    }
+    updateEvidenceItemsInActionEditor(next);
+  };
+
+  const removeEvidenceItem = (index: number) => {
+    if (!actionEditor) {
+      return;
+    }
+    const existing = parseEvidenceItems(actionEditor.action.evidence || '');
+    updateEvidenceItemsInActionEditor(existing.filter((_, itemIndex) => itemIndex !== index));
+  };
+
+  const uploadEvidenceFiles = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!actionEditor) {
+      return;
+    }
+
+    const fileList = event.target.files;
+    if (!fileList?.length) {
+      return;
+    }
+
+    const existing = parseEvidenceItems(actionEditor.action.evidence || '');
+    const next = [...existing];
+
+    for (const file of Array.from(fileList)) {
+      if (file.size > MAX_EMBEDDED_EVIDENCE_FILE_BYTES) {
+        window.alert(`"${file.name}" is larger than 1MB. Please attach a URL instead.`);
+        continue;
+      }
+
+      try {
+        const dataUrl = await readFileAsDataUrl(file);
+        next.push({
+          type: 'file',
+          label: file.name,
+          href: dataUrl
+        });
+      } catch (_error) {
+        window.alert(`Unable to upload "${file.name}".`);
+      }
+    }
+
+    updateEvidenceItemsInActionEditor(next);
+    event.target.value = '';
+  };
+
   const openObjectiveActionInEditor = (lens: string, action?: DraftAction) => {
     if (!action) {
       return;
@@ -605,6 +780,11 @@ export function AssessmentPanel({
             3. Plan lens actions
           </button>
         </div>
+      </div>
+
+      <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-800">
+        <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" aria-hidden="true" />
+        Auto-save is on for scoring and component notes.
       </div>
 
       <div id="assessment-scoring" className="mb-8 rounded-lg border border-slate-200 bg-white p-5">
@@ -735,10 +915,10 @@ export function AssessmentPanel({
             <div key={lens} className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
               <div className="bg-slate-50 p-6 border-b border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-blue-600 block mb-1">Lens</span>
+                  <span className="text-sm font-bold uppercase tracking-wider text-blue-600 block mb-1">Lens</span>
                   <button
                     onClick={() => onOpenLensInfo(lens)}
-                    className="flex items-center text-xl font-semibold text-slate-800 hover:text-[#005eb8] transition-colors group text-left"
+                    className="flex items-center text-2xl font-semibold text-slate-800 hover:text-[#005eb8] transition-colors group text-left"
                     title="View Lens Information"
                   >
                     {lens}
@@ -778,7 +958,7 @@ export function AssessmentPanel({
                     className="shrink-0 text-xs font-semibold text-[#005eb8] hover:text-blue-800 flex items-center bg-white px-3 py-1.5 border border-blue-200 rounded shadow-sm transition-colors"
                   >
                     {showMatrix ? <EyeOffIcon /> : <EyeIcon />}
-                    {showMatrix ? 'Hide Matrix Guidance' : 'View Full Matrix'}
+                    {showMatrix ? 'Hide Full Guidance' : 'View Full Guidance'}
                   </button>
                 </div>
               </div>
@@ -893,7 +1073,32 @@ export function AssessmentPanel({
                               <td className="px-3 py-2 text-sm text-slate-600">{action.startDate || '-'}</td>
                               <td className="px-3 py-2 text-sm text-slate-600">{action.dueDate || '-'}</td>
                               <td className="px-3 py-2 text-sm text-slate-600">{action.notes || '-'}</td>
-                              <td className="px-3 py-2 text-sm text-slate-600">{action.evidence || '-'}</td>
+                              <td className="px-3 py-2 text-sm text-slate-600">
+                                {parseEvidenceItems(action.evidence || '').length ? (
+                                  <div className="space-y-1">
+                                    {parseEvidenceItems(action.evidence || '').map((item, index) => {
+                                      const canOpen = item.type === 'file' || isHttpUrl(item.href);
+                                      return canOpen ? (
+                                        <a
+                                          key={`${action.id}-evidence-${index}`}
+                                          href={item.href}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="block text-xs font-medium text-[#005eb8] underline"
+                                        >
+                                          {item.label || `Evidence ${index + 1}`}
+                                        </a>
+                                      ) : (
+                                        <span key={`${action.id}-evidence-${index}`} className="block text-xs text-slate-600">
+                                          {item.label || item.href}
+                                        </span>
+                                      );
+                                    })}
+                                  </div>
+                                ) : (
+                                  '-'
+                                )}
+                              </td>
                               <td className="px-3 py-2 text-xs text-slate-600">{linkedTargets}</td>
                               <td className="px-3 py-2">
                                 <div className="flex gap-2">
@@ -933,7 +1138,7 @@ export function AssessmentPanel({
           <div className="w-full max-w-3xl max-h-[calc(100vh-2rem)] overflow-hidden rounded-xl border border-slate-200 bg-white p-6 shadow-2xl">
             <div className="flex items-center justify-between gap-3">
               <h3 className="text-lg font-semibold text-slate-900">
-                {actionEditor.mode === 'create' ? 'Create Action' : 'Edit Action'} · {actionEditorSourceLabel} / {actionEditor.sourceLens}
+                {actionEditor.mode === 'create' ? 'Create Action' : 'Edit Action'} · {actionEditorSourceLabel} / {actionEditor.sourceLens} · {actionEditorTitleSummary}
               </h3>
               <button
                 type="button"
@@ -945,19 +1150,21 @@ export function AssessmentPanel({
             </div>
 
             <div className="mt-4 max-h-[calc(100vh-13rem)] overflow-y-auto pr-1 grid gap-3">
+              <div className="sticky top-0 z-10 rounded-md border border-blue-100 bg-white px-3 py-2 shadow-sm">
+                <label className="text-sm text-slate-700">
+                  <span className="mb-1 block font-semibold">Description</span>
+                  <textarea
+                    value={actionEditor.action.text}
+                    onChange={(event) => updateActionEditor({ text: event.target.value })}
+                    className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm h-20"
+                  />
+                </label>
+              </div>
+
               <div className="rounded-md border border-blue-100 bg-blue-50 px-3 py-2 text-xs text-slate-700">
                 <strong>Linking order:</strong> first attach this action to one or more objectives, then add linked targets
                 (component + lens) where this action should appear.
               </div>
-
-              <label className="text-sm text-slate-700">
-                <span className="mb-1 block font-semibold">Description</span>
-                <textarea
-                  value={actionEditor.action.text}
-                  onChange={(event) => updateActionEditor({ text: event.target.value })}
-                  className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm h-20"
-                />
-              </label>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <label className="text-sm text-slate-700">
@@ -1012,19 +1219,67 @@ export function AssessmentPanel({
                 />
               </label>
 
-              <label className="text-sm text-slate-700">
-                <span className="mb-1 block font-semibold">Evidence Links / Docs</span>
-                <textarea
-                  value={actionEditor.action.evidence || ''}
-                  onChange={(event) => updateActionEditor({ evidence: event.target.value })}
-                  className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm h-20"
-                />
-              </label>
+              <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-sm font-semibold text-slate-800">Evidence Links / Docs</p>
+                  <button
+                    type="button"
+                    onClick={addEvidenceLinkRow}
+                    className="rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100"
+                  >
+                    Add Link
+                  </button>
+                </div>
+                <p className="mt-1 text-xs text-slate-500">Add one or more URLs, or upload small local files (embedded into the export JSON).</p>
+
+                <div className="mt-2 space-y-2 rounded border border-slate-200 bg-white p-2">
+                  {parseEvidenceItems(actionEditor.action.evidence || '').length ? (
+                    parseEvidenceItems(actionEditor.action.evidence || '').map((item, index) => (
+                      <div key={`${item.type}-${index}`} className="grid grid-cols-1 gap-2 rounded border border-slate-200 bg-slate-50 p-2 md:grid-cols-[1fr,1fr,auto]">
+                        <input
+                          value={item.label}
+                          onChange={(event) => updateEvidenceItem(index, 'label', event.target.value)}
+                          placeholder={item.type === 'file' ? 'Document label' : 'Link label'}
+                          className="rounded-md border border-slate-300 px-2.5 py-2 text-sm"
+                        />
+                        <input
+                          value={item.href}
+                          onChange={(event) => updateEvidenceItem(index, 'href', event.target.value)}
+                          placeholder={item.type === 'file' ? 'Embedded file URL (auto generated)' : 'https://...'}
+                          className="rounded-md border border-slate-300 px-2.5 py-2 text-sm"
+                          disabled={item.type === 'file'}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeEvidenceItem(index)}
+                          className="rounded border border-red-200 bg-red-50 px-2 py-1 text-xs font-semibold text-red-700 hover:bg-red-100"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="px-2 py-1 text-sm text-slate-500">No evidence links or documents added yet.</p>
+                  )}
+                </div>
+
+                <div className="mt-2">
+                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100">
+                    Upload file(s)
+                    <input
+                      type="file"
+                      multiple
+                      className="hidden"
+                      onChange={uploadEvidenceFiles}
+                    />
+                  </label>
+                </div>
+              </div>
 
               <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
                 <p className="text-sm font-semibold text-slate-800">Objective Links</p>
                 <p className="mt-1 text-xs text-slate-500">
-                  Tick objectives this action contributes to. Objective status is auto-derived from these linked actions.
+                  Tick 1-3 objectives directly impacted by this action. Objective status is auto-derived from these linked actions.
                 </p>
                 <div className="mt-2 space-y-2 rounded border border-slate-200 bg-white p-2">
                   {(store.objectives?.[actionEditor.sourceComponentId] || []).length ? (
@@ -1049,7 +1304,15 @@ export function AssessmentPanel({
               </div>
 
               <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                <p className="text-sm font-semibold text-slate-800">Linked Targets (component + lens)</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-semibold text-slate-800">What other Component Lens is this an action for?</p>
+                  <span
+                    className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-slate-300 text-xs font-semibold text-slate-600"
+                    title="Actions often contribute to other component lenses. Add those targets here so the same action is visible in each relevant lens."
+                  >
+                    i
+                  </span>
+                </div>
                 <div className="mt-2 space-y-2">
                   <div className="grid grid-cols-1 md:grid-cols-[1fr,1fr,auto] gap-2">
                     <select

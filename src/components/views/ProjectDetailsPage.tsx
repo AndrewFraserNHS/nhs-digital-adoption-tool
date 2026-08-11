@@ -66,6 +66,12 @@ export function ProjectDetailsPage({
   const [profile, setProfile] = useState<OrgProfile>(orgProfile);
   const profileValidation = validateOrgProfile(profile);
   const overallCapabilityScore = getOverallCapabilityScore(profile.cst.phaseCapability);
+  const stageOneComplete = Boolean(
+    profile.trustName.trim() &&
+      (profile.projectName || '').trim() &&
+      (profile.leadName || '').trim() &&
+      profile.cst.goLiveDate.trim()
+  );
 
   useEffect(() => {
     setProfile(orgProfile);
@@ -155,10 +161,15 @@ export function ProjectDetailsPage({
         it follows, and how it's tracking against its readiness phases.
       </p>
 
+      <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-800">
+        <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" aria-hidden="true" />
+        Auto-save is on for Project Details.
+      </div>
+
       <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 space-y-6">
         <div className="space-y-1">
           <h3 className="text-lg font-semibold text-slate-800">Step 1: Organisation profile</h3>
-          <p className="text-sm text-slate-600">Complete these core details first. Then open the sections below for CST setup and readiness capability.</p>
+          <p className="text-sm text-slate-600">Complete these core details first. After this stage is complete, move straight into assigning actions.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -200,6 +211,28 @@ export function ProjectDetailsPage({
             onChange={(e) => handleLeadChange(e.target.value)}
           />
         </div>
+
+        {stageOneComplete ? (
+          <div className="rounded-md border border-green-200 bg-green-50 p-4">
+            <p className="text-sm font-semibold text-green-900">Stage 1 complete: Project details captured.</p>
+            <p className="mt-1 text-xs text-green-800">Your details are saved. Continue to assign delivery actions against component lenses.</p>
+            <button
+              type="button"
+              onClick={() => {
+                if (components[0]) {
+                  onComponentClick(components[0].id);
+                }
+              }}
+              className="mt-3 rounded-md bg-[#005eb8] px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+            >
+              Continue to assigning actions
+            </button>
+          </div>
+        ) : (
+          <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
+            Stage 1 in progress: add organisation name, programme name, lead name, and go-live date to complete this step.
+          </div>
+        )}
 
         <details className="rounded-md border border-slate-200 bg-slate-50 p-4" open>
           <summary className="cursor-pointer text-sm font-semibold text-slate-800">Step 2: Pathway and timeline (Context Specific Template)</summary>

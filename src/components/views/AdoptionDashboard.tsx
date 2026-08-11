@@ -97,6 +97,8 @@ const LENS_EXPLANATIONS: Record<string, string> = {
   'Process and Sustainment': 'This lens checks whether new workflows are embedded into BAU so gains are sustained and continuously improved.'
 };
 
+const LENS_KEY_COLORS = ['#0f766e', '#0369a1', '#7c3aed', '#b45309', '#be123c'];
+
 export function AdoptionDashboard({
   store,
   components,
@@ -571,6 +573,21 @@ export function AdoptionDashboard({
           </div>
           <div className="flex-1 min-h-[400px] flex items-center justify-center bg-slate-50 rounded border border-slate-100 p-2">
             <canvas id="adoption-radar-chart" />
+          </div>
+          <div className="mt-4 rounded-md border border-slate-200 bg-slate-50 p-3">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-600">Lens key</p>
+            <div className="mt-2 grid grid-cols-1 gap-1 sm:grid-cols-2">
+              {lenses.map((lens, index) => (
+                <div key={`lens-key-${lens}`} className="flex items-center gap-2 text-xs text-slate-700">
+                  <span
+                    className="inline-block h-2.5 w-2.5 rounded-full"
+                    style={{ backgroundColor: LENS_KEY_COLORS[index % LENS_KEY_COLORS.length] }}
+                    aria-hidden="true"
+                  />
+                  <span>{lens}</span>
+                </div>
+              ))}
+            </div>
           </div>
           <p className="text-xs text-center text-slate-500 mt-4">
             Visualises your current draft readiness score averaged across the 5 strategic lenses

@@ -1052,6 +1052,10 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
             <span className="ml-2 rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600">
               {store.orgProfile.cst.type.toUpperCase()} · {PATHWAY_LABELS[store.orgProfile.cst.pathway]}
             </span>
+            <span className="ml-1 inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-1 text-[11px] font-semibold text-emerald-800">
+              <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" aria-hidden="true" />
+              Auto-save on
+            </span>
           </div>
           <div className="flex items-center space-x-3">
             <button

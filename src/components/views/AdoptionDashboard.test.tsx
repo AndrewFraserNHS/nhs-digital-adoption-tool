@@ -122,6 +122,7 @@ describe('AdoptionDashboard', () => {
     expect(screen.getByText('60%')).toBeInTheDocument();
     expect(screen.getAllByText('Phase 1').length).toBeGreaterThan(0);
     expect(screen.getByText('0 of 0 actions completed.')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Hide component radar' })).toBeInTheDocument();
   });
 
   it('filters component cards by status', () => {

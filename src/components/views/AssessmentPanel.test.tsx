@@ -122,7 +122,7 @@ describe('AssessmentPanel', () => {
     const props = createProps({ showMatrix: true });
     render(<AssessmentPanel {...props} />);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Hide Matrix Guidance' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Hide Full Guidance' }));
     expect(props.onMatrixToggle).toHaveBeenCalledWith('vision:Strategic Direction');
 
     const levelFiveLabel = screen.getAllByText('Level 5')[0];
@@ -198,7 +198,7 @@ describe('AssessmentPanel', () => {
     expect(props.onActionRemove).toHaveBeenCalledWith('vision', 'Strategic Direction', 'linked-vision-action');
   });
 
-  it('opens objective details modal with status and linked actions', () => {
+  it('opens outcome details modal with status and linked actions', () => {
     const props = createProps();
     props.store.objectives = {
       vision: [
@@ -217,14 +217,14 @@ describe('AssessmentPanel', () => {
     expect(screen.getAllByText('In Progress').length).toBeGreaterThan(0);
     fireEvent.click(screen.getByText('Vision objective').closest('tr')!);
 
-    const dialog = screen.getByRole('dialog', { name: 'Objective Details' });
+    const dialog = screen.getByRole('dialog', { name: 'Outcome Details' });
     expect(within(dialog).getByText('Run workshop')).toBeTruthy();
     expect(within(dialog).getAllByText('In Progress').length).toBeGreaterThan(0);
     fireEvent.click(within(dialog).getByRole('button', { name: 'Open Action' }));
-    expect(screen.getByText('Edit Action · Vision / Strategic Direction')).toBeTruthy();
+    expect(screen.getByText(/Edit Action · Vision \/ Strategic Direction/)).toBeTruthy();
 
     fireEvent.click(screen.getByRole('button', { name: 'Close' }));
-    expect(screen.queryByText('Objective Details')).toBeNull();
+    expect(screen.queryByText('Outcome Details')).toBeNull();
 
     expect(screen.queryByRole('button', { name: 'Add Objective' })).toBeNull();
   });

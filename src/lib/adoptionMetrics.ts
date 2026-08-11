@@ -46,6 +46,7 @@ export interface ActionRow {
   action: {
     id: string;
     text: string;
+    actionType?: string;
     owner: string;
     timescale: string;
     status: string;
@@ -298,6 +299,39 @@ export function buildRadarChartData(
         data: targets,
         borderColor: '#00A499',
         backgroundColor: 'rgba(0, 164, 153, 0.05)',
+        borderWidth: 2,
+        borderDash: [5, 5],
+        pointRadius: 3,
+        pointHoverRadius: 5
+      }
+    ]
+  };
+}
+
+export function buildComponentRadarChartData(
+  components: AssessmentComponent[],
+  getEntry: (componentId: string, lens: string) => DraftEntry
+): any {
+  return {
+    labels: components.map((component) => component.label),
+    datasets: [
+      {
+        label: 'Current Average Readiness',
+        data: components.map((component) => {
+          const total = component.lenses.reduce((sum, lens) => sum + Number(getEntry(component.id, lens).score || 0), 0);
+          return Number((total / component.lenses.length).toFixed(1));
+        }),
+        borderColor: '#005EB8',
+        backgroundColor: 'rgba(0, 94, 184, 0.12)',
+        borderWidth: 2,
+        pointRadius: 4,
+        pointHoverRadius: 6
+      },
+      {
+        label: 'Target Average',
+        data: components.map((component) => component.target),
+        borderColor: '#94a3b8',
+        backgroundColor: 'rgba(148, 163, 184, 0.06)',
         borderWidth: 2,
         borderDash: [5, 5],
         pointRadius: 3,

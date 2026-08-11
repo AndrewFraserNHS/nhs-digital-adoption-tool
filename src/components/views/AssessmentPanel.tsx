@@ -11,6 +11,7 @@ import {
 import { AssessmentComponent } from '@data/components';
 import {
   ACTION_STATUS_BADGE_STYLES,
+  ACTION_TYPES,
   UNIFIED_ACTION_STATUSES,
   deriveTemporalActionStatus,
   normalizeActionStatus
@@ -77,6 +78,16 @@ const OBJECTIVE_STATUS_BADGE_STYLES: Record<ObjectiveStatus, string> = {
 
 const EVIDENCE_JSON_PREFIX = '__evidence_json__:';
 const MAX_EMBEDDED_EVIDENCE_FILE_BYTES = 1024 * 1024;
+
+function getActionOutcomeLinks(
+  sourceComponentId: string,
+  actionId: string,
+  objectives: Record<string, ComponentObjective[]>
+): ComponentObjective[] {
+  return (objectives[sourceComponentId] || []).filter((objective) =>
+    objective.linkedActions.some((link) => link.actionId === actionId)
+  );
+}
 
 interface EvidenceItem {
   type: 'url' | 'file';
@@ -231,6 +242,7 @@ function createEmptyAction(phase: number, componentId: string, lens: string): Dr
   return {
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     text: '',
+    actionType: 'Admin',
     owner: '',
     timescale: '',
     status: 'Planned',
@@ -747,7 +759,7 @@ export function AssessmentPanel({
             </span>
           </h2>
           <p className={`mt-2 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-            Score readiness at lens level. Component-level justification and actions are tracked below.
+            Score readiness at lens level. Component-level justification, outcomes, and actions are tracked below.
           </p>
         </div>
         <select
@@ -778,7 +790,7 @@ export function AssessmentPanel({
             onClick={() => scrollToSection('assessment-objectives')}
             className={`${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 hover:bg-slate-700' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'} rounded-md border px-3 py-1.5 text-xs font-semibold`}
           >
-            2. Review objectives
+            2. Review outcomes
           </button>
           <button
             type="button"
@@ -825,7 +837,7 @@ export function AssessmentPanel({
 
       <div id="assessment-objectives" className={`${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'} mb-8 rounded-lg border p-5`}>
         <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
-          <h3 className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>Step 2: Review objectives</h3>
+          <h3 className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>Step 2: Review outcomes</h3>
           <button
             type="button"
             onClick={() => setShowObjectivesSection((current) => !current)}
@@ -836,7 +848,7 @@ export function AssessmentPanel({
         </div>
         <p className={`text-xs mb-3 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
           Owned by this component as a whole. Status is derived automatically from the lens actions assigned to
-          each objective below - it can't be set manually.
+          each outcome below and cannot be set manually.
         </p>
 
         {showObjectivesSection ? (
@@ -868,7 +880,7 @@ export function AssessmentPanel({
                         tabIndex={0}
                         className={`${darkMode ? 'hover:bg-slate-700 focus-visible:bg-slate-700' : 'hover:bg-slate-50 focus-visible:bg-slate-50'} cursor-pointer focus:outline-none`}
                       >
-                        <td className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>{objective.text || 'Untitled objective'}</td>
+                        <td className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>{objective.text || 'Untitled outcome'}</td>
                         <td className="px-3 py-2">
                           <span className={`inline-flex min-w-[7.5rem] items-center justify-center whitespace-nowrap rounded-full border px-3 py-1 text-center text-xs font-semibold ${badgeStyle}`}>
                             {status}
@@ -886,7 +898,7 @@ export function AssessmentPanel({
               </table>
             </div>
           ) : (
-            <p className="text-sm text-slate-500">No objectives yet.</p>
+            <p className="text-sm text-slate-500">No outcomes yet.</p>
           )
         ) : null}
       </div>
@@ -895,7 +907,7 @@ export function AssessmentPanel({
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
             <h3 className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>Step 3: Plan lens actions</h3>
-            <p className={`mt-1 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>Track delivery actions for each lens and link them to objectives and targets.</p>
+            <p className={`mt-1 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>Track delivery actions for each lens and link them to outcomes and affected component lenses.</p>
           </div>
           <div className="flex items-center gap-2">
             <span className={`${darkMode ? 'bg-slate-800 border-slate-600 text-slate-100' : 'bg-white border-slate-300 text-slate-700'} rounded-full border px-2 py-1 text-xs`}>
@@ -1030,7 +1042,7 @@ export function AssessmentPanel({
                   <div>
                     <h4 className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>Lens Actions</h4>
                     <p className={`mt-1 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-                      Hierarchy: Objective (outcome) - Action (delivery item) - Linked Targets (where it applies).
+                      Hierarchy: Outcome - Action - Affected component lenses.
                     </p>
                   </div>
                   <button
@@ -1048,12 +1060,13 @@ export function AssessmentPanel({
                         <tr>
                           <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Description</th>
                           <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Current State</th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Action Type</th>
                           <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Owner</th>
                           <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Start</th>
                           <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">End</th>
                           <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Notes</th>
                           <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Evidence</th>
-                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Linked Targets</th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Affected Component Lenses</th>
                           <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Actions</th>
                         </tr>
                       </thead>
@@ -1070,6 +1083,7 @@ export function AssessmentPanel({
                               ? temporalStatus
                               : null;
                           const sourceComponentLabel = componentById[resolvedAction.sourceComponentId]?.label || resolvedAction.sourceComponentId;
+                          const linkedOutcomes = getActionOutcomeLinks(resolvedAction.sourceComponentId, action.id, store.objectives || {});
                           const linkedTargets = getNormalizedTargets(action, resolvedAction.sourceComponentId, resolvedAction.sourceLens)
                             .map((target) => `${componentById[target.componentId]?.label || target.componentId} / ${target.lens}`)
                             .join(', ');
@@ -1090,7 +1104,15 @@ export function AssessmentPanel({
                                   {displayStatus}
                                 </span>
                                 {temporalHint ? <div className="mt-1 text-xs text-rose-700">{temporalHint}</div> : null}
+                                {!linkedOutcomes.length ? (
+                                  <div className={`mt-1 text-xs ${darkMode ? 'text-amber-200' : 'text-amber-700'}`}>Not yet linked</div>
+                                ) : (
+                                  <div className={`mt-1 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
+                                    {linkedOutcomes.length} affected outcome{linkedOutcomes.length === 1 ? '' : 's'}
+                                  </div>
+                                )}
                               </td>
+                              <td className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>{action.actionType || 'Unassigned'}</td>
                               <td className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>{action.owner || 'Unassigned'}</td>
                               <td className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>{action.startDate || '-'}</td>
                               <td className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>{action.dueDate || '-'}</td>
@@ -1201,11 +1223,23 @@ export function AssessmentPanel({
               </div>
 
               <div className={`${darkMode ? 'border-slate-700 bg-slate-900 text-slate-200' : 'border-blue-100 bg-blue-50 text-slate-700'} rounded-md border px-3 py-2 text-xs`}>
-                <strong>Linking order:</strong> first attach this action to one or more objectives, then add linked targets
+                <strong>Linking order:</strong> first attach this action to one or more outcomes, then add affected component lenses
                 (component + lens) where this action should appear.
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <label className={`text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
+                  <span className="mb-1 block font-semibold">Action Type</span>
+                  <select
+                    value={actionEditor.action.actionType || 'Admin'}
+                    onChange={(event) => updateActionEditor({ actionType: event.target.value as DraftAction['actionType'] })}
+                    className={`w-full rounded-md border px-3 py-2 text-sm ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
+                  >
+                    {ACTION_TYPES.map((actionType) => (
+                      <option key={actionType} value={actionType}>{actionType}</option>
+                    ))}
+                  </select>
+                </label>
                 <label className={`text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
                   <span className="mb-1 block font-semibold">Owner</span>
                   <input
@@ -1316,9 +1350,9 @@ export function AssessmentPanel({
               </div>
 
               <div className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} rounded-lg border p-3`}>
-                <p className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>Objective Links</p>
+                <p className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>Affected Outcomes</p>
                 <p className={`mt-1 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-                  Tick 1-3 objectives directly impacted by this action. Objective status is auto-derived from these linked actions.
+                  Tick 1-3 outcomes directly impacted by this action. Outcome status is auto-derived from these linked actions.
                 </p>
                 <div className={`${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'} mt-2 space-y-2 rounded border p-2`}>
                   {(store.objectives?.[actionEditor.sourceComponentId] || []).length ? (
@@ -1332,19 +1366,19 @@ export function AssessmentPanel({
                             onChange={() => toggleObjectiveLinkInActionEditor(objective.id)}
                             className="mt-0.5"
                           />
-                          <span className={`text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>{objective.text || 'Untitled objective'}</span>
+                          <span className={`text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>{objective.text || 'Untitled outcome'}</span>
                         </label>
                       );
                     })
                   ) : (
-                    <p className={`px-2 py-1 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>No objectives are defined for this component yet.</p>
+                    <p className={`px-2 py-1 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>No outcomes are defined for this component yet.</p>
                   )}
                 </div>
               </div>
 
               <div className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} rounded-lg border p-3`}>
                 <div className="flex items-center gap-2">
-                  <p className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>What other Component Lens is this an action for?</p>
+                  <p className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>Affected Component Lenses</p>
                   <span
                     className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-slate-300 text-xs font-semibold text-slate-600"
                     title="Actions often contribute to other component lenses. Add those targets here so the same action is visible in each relevant lens."
@@ -1398,10 +1432,10 @@ export function AssessmentPanel({
                         (target) =>
                           target.componentId === actionEditor.targetPickerComponentId &&
                           target.lens === actionEditor.targetPickerLens
-                      ) ? 'Already added' : 'Add selected target'}
+                      ) ? 'Already added' : 'Add selected affected lens'}
                       className={`${darkMode ? 'border-cyan-500/50 bg-cyan-500/15 text-cyan-100 hover:bg-cyan-500/25' : 'border-cyan-300 bg-cyan-100 text-cyan-900 hover:bg-cyan-200'} rounded-md border px-3 py-2 text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-60`}
                     >
-                      Add Target
+                      Add Lens
                     </button>
                   </div>
 
@@ -1466,11 +1500,11 @@ export function AssessmentPanel({
           <div
             role="dialog"
             aria-modal="true"
-            aria-label="Objective Details"
+            aria-label="Outcome Details"
             className={`w-full max-w-3xl max-h-[calc(100vh-2rem)] overflow-y-auto rounded-xl border p-6 shadow-2xl ${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'}`}
           >
             <div className="flex items-center justify-between gap-3">
-              <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>Objective Details</h3>
+              <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>Outcome Details</h3>
               <button
                 type="button"
                 onClick={() => setObjectiveViewer(null)}
@@ -1482,8 +1516,8 @@ export function AssessmentPanel({
 
             <div className="mt-4 space-y-4">
               <div>
-                <p className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>Objective</p>
-                <p className={`mt-1 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>{activeObjective.text || 'Untitled objective'}</p>
+                <p className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>Outcome</p>
+                <p className={`mt-1 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>{activeObjective.text || 'Untitled outcome'}</p>
               </div>
 
               <div>

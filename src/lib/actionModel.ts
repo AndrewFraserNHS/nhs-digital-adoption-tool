@@ -8,7 +8,24 @@ export const UNIFIED_ACTION_STATUSES = [
   'Overdue completion'
 ] as const;
 
+export const ACTION_TYPES = [
+  'Admin',
+  'Meetings',
+  'Research',
+  'Testing',
+  'Reflection',
+  'Communication',
+  'Training',
+  'Design',
+  'Delivery',
+  'Decision',
+  'Dependency',
+  'Risk',
+  'Documentation'
+] as const;
+
 export type UnifiedActionStatus = (typeof UNIFIED_ACTION_STATUSES)[number];
+export type ActionType = (typeof ACTION_TYPES)[number];
 
 export const ACTION_STATUS_BADGE_STYLES: Record<UnifiedActionStatus, string> = {
   Planned: 'bg-slate-100 text-slate-700 border-slate-200',

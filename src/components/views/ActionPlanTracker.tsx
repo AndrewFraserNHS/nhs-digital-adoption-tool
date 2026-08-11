@@ -1,6 +1,6 @@
 import { JSX, useCallback, useMemo, useState } from 'react';
 import { ActionRow } from '@lib/adoptionMetrics';
-import { ACTION_STATUS_BADGE_STYLES, normalizeActionStatus } from '@lib/actionModel';
+import { ACTION_STATUS_BADGE_STYLES, ACTION_TYPES, normalizeActionStatus } from '@lib/actionModel';
 import { FilterSummaryBar } from '@components/ui/FilterSummaryBar';
 
 export interface ActionPlanTrackerProps {
@@ -14,7 +14,8 @@ export function ActionPlanTracker({ actions, onComponentClick, darkMode = false 
   const [componentFilter, setComponentFilter] = useState('all');
   const [ownerFilter, setOwnerFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [sortBy, setSortBy] = useState<'component' | 'lens' | 'owner' | 'status'>('component');
+  const [actionTypeFilter, setActionTypeFilter] = useState('all');
+  const [sortBy, setSortBy] = useState<'component' | 'lens' | 'owner' | 'status' | 'actionType'>('component');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [showAdvancedControls, setShowAdvancedControls] = useState(false);
 
@@ -40,6 +41,13 @@ export function ActionPlanTracker({ actions, onComponentClick, darkMode = false 
     [actions]
   );
 
+  const actionTypeOptions = useMemo(() => {
+    const used = actions
+      .map((row) => row.action.actionType)
+      .filter((value): value is string => Boolean(value));
+    return Array.from(new Set([...ACTION_TYPES, ...used])).sort((left, right) => left.localeCompare(right));
+  }, [actions]);
+
   const filteredActions = useMemo(() => {
     const query = searchTerm.trim().toLowerCase();
 
@@ -56,11 +64,15 @@ export function ActionPlanTracker({ actions, onComponentClick, darkMode = false 
         return false;
       }
 
+      if (actionTypeFilter !== 'all' && (row.action.actionType || '') !== actionTypeFilter) {
+        return false;
+      }
+
       if (!query) {
         return true;
       }
 
-      return [row.component, row.lens, row.action.text, row.action.owner, row.action.timescale, row.action.status]
+      return [row.component, row.lens, row.action.text, row.action.actionType || '', row.action.owner, row.action.timescale, row.action.status]
         .join(' ')
         .toLowerCase()
         .includes(query);
@@ -75,6 +87,8 @@ export function ActionPlanTracker({ actions, onComponentClick, darkMode = false 
             return row.action.owner || 'Unassigned';
           case 'status':
             return row.action.status;
+          case 'actionType':
+            return row.action.actionType || 'Unassigned';
           case 'component':
           default:
             return row.component;
@@ -84,7 +98,7 @@ export function ActionPlanTracker({ actions, onComponentClick, darkMode = false 
       const comparison = getValue(left).localeCompare(getValue(right));
       return sortDirection === 'asc' ? comparison : -comparison;
     });
-  }, [actions, componentFilter, ownerFilter, searchTerm, sortBy, sortDirection, statusFilter]);
+  }, [actionTypeFilter, actions, componentFilter, ownerFilter, searchTerm, sortBy, sortDirection, statusFilter]);
 
   const activeFilters = useMemo(() => {
     const chips: string[] = [];
@@ -97,6 +111,9 @@ export function ActionPlanTracker({ actions, onComponentClick, darkMode = false 
     if (statusFilter !== 'all') {
       chips.push(`Status: ${statusFilter}`);
     }
+    if (actionTypeFilter !== 'all') {
+      chips.push(`Action type: ${actionTypeFilter}`);
+    }
     if (ownerFilter !== 'all') {
       chips.push(`Owner: ${ownerFilter}`);
     }
@@ -104,13 +121,14 @@ export function ActionPlanTracker({ actions, onComponentClick, darkMode = false 
       chips.push(`Sort: ${sortBy} (${sortDirection})`);
     }
     return chips;
-  }, [componentFilter, ownerFilter, searchTerm, sortBy, sortDirection, statusFilter]);
+  }, [actionTypeFilter, componentFilter, ownerFilter, searchTerm, sortBy, sortDirection, statusFilter]);
 
   const resetFilters = () => {
     setSearchTerm('');
     setComponentFilter('all');
     setOwnerFilter('all');
     setStatusFilter('all');
+    setActionTypeFilter('all');
     setSortBy('component');
     setSortDirection('asc');
     setShowAdvancedControls(false);
@@ -171,7 +189,7 @@ export function ActionPlanTracker({ actions, onComponentClick, darkMode = false 
         />
 
         {showAdvancedControls ? (
-          <div className={`grid grid-cols-1 sm:grid-cols-3 gap-3 rounded-md border p-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}>
+          <div className={`grid grid-cols-1 sm:grid-cols-4 gap-3 rounded-md border p-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}>
             <select
               value={ownerFilter}
               onChange={(e) => setOwnerFilter(e.target.value)}
@@ -187,8 +205,22 @@ export function ActionPlanTracker({ actions, onComponentClick, darkMode = false 
               ))}
             </select>
             <select
+              value={actionTypeFilter}
+              onChange={(e) => setActionTypeFilter(e.target.value)}
+              className={`rounded-md border border-[#768692] px-3 py-2 text-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8] ${
+                darkMode ? 'bg-slate-800 text-slate-100' : 'text-slate-900'
+              }`}
+            >
+              <option value="all">All action types</option>
+              {actionTypeOptions.map((actionType) => (
+                <option key={actionType} value={actionType}>
+                  {actionType}
+                </option>
+              ))}
+            </select>
+            <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as 'component' | 'lens' | 'owner' | 'status')}
+              onChange={(e) => setSortBy(e.target.value as 'component' | 'lens' | 'owner' | 'status' | 'actionType')}
               className={`rounded-md border border-[#768692] px-3 py-2 text-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8] ${
                 darkMode ? 'bg-slate-800 text-slate-100' : 'text-slate-900'
               }`}
@@ -196,6 +228,7 @@ export function ActionPlanTracker({ actions, onComponentClick, darkMode = false 
               <option value="component">Sort: Component</option>
               <option value="lens">Sort: Lens</option>
               <option value="owner">Sort: Owner</option>
+              <option value="actionType">Sort: Action Type</option>
               <option value="status">Sort: Status</option>
             </select>
             <button
@@ -228,6 +261,9 @@ export function ActionPlanTracker({ actions, onComponentClick, darkMode = false 
                     Action
                   </th>
                   <th className={`px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
+                    Action Type
+                  </th>
+                  <th className={`px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
                     Owner
                   </th>
                   <th className={`px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
@@ -251,6 +287,7 @@ export function ActionPlanTracker({ actions, onComponentClick, darkMode = false 
                     </td>
                     <td className={`px-4 py-3 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>{lens}</td>
                     <td className={`px-4 py-3 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>{action.text}</td>
+                    <td className={`px-4 py-3 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>{action.actionType || 'Unassigned'}</td>
                     <td className={`px-4 py-3 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>{action.owner}</td>
                     <td className={`px-4 py-3 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>{action.timescale}</td>
                     <td className="px-4 py-3 text-sm">

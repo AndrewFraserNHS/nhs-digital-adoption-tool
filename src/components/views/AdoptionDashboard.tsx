@@ -104,6 +104,14 @@ const BRAG_BADGE_STYLES: Record<BragStatus, string> = {
 };
 
 const LENS_KEY_COLORS = ['#0f766e', '#0369a1', '#7c3aed', '#b45309', '#be123c'];
+const SCORE_LEGEND_ITEMS = [
+  { score: 0, label: 'Pre-Emergent', color: '#768692' },
+  { score: 1, label: 'Emerging', color: '#AE2521' },
+  { score: 2, label: 'Developing', color: '#FFB81C' },
+  { score: 3, label: 'Maturing', color: '#005EB8' },
+  { score: 4, label: 'Embedding', color: '#330072' },
+  { score: 5, label: 'Thriving', color: '#00A499' }
+] as const;
 
 export function AdoptionDashboard({
   store,
@@ -127,6 +135,7 @@ export function AdoptionDashboard({
   const [sortBy, setSortBy] = useState<'name' | 'score' | 'target'>('score');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [showAdvancedComponentControls, setShowAdvancedComponentControls] = useState(false);
+  const [showComponentRadar, setShowComponentRadar] = useState(true);
   const [showLensBreakdownHelp, setShowLensBreakdownHelp] = useState(false);
 
   const phases = useMemo(() => [...new Set(components.map((c) => c.phase))].sort((a, b) => a - b), [components]);
@@ -622,16 +631,49 @@ export function AdoptionDashboard({
       <div className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm p-6 border mb-8`}>
         <div className="flex flex-col gap-4 mb-4 xl:flex-row xl:items-center xl:justify-between">
           <div>
-            <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>Component Status</h3>
+            <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>Component Radar</h3>
             <p className={`text-xs mt-1 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-                    BRAG scoring is used for component status:
+              Show or hide the component-level readiness radar, then use the overview list below to drill into delivery status.
+            </p>
+          </div>
+          <div className="w-full max-w-4xl space-y-3">
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={() => setShowComponentRadar((current) => !current)}
+                className="rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-white"
+              >
+                {showComponentRadar ? 'Hide component radar' : 'Show component radar'}
+              </button>
+            </div>
+
+            {showComponentRadar ? (
+              <div className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} rounded-md border p-4`}>
+                <div className={`flex min-h-[420px] items-center justify-center rounded border p-2 ${darkMode ? 'border-slate-700 bg-slate-950' : 'border-slate-100 bg-white'}`}>
+                  <canvas id="adoption-component-radar-chart" />
+                </div>
+                <div id="radar-legend" className={`mt-4 flex flex-wrap justify-center gap-x-4 gap-y-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                  {SCORE_LEGEND_ITEMS.map((item) => (
+                    <div key={item.score} className="flex items-center">
+                      <span className="mr-2 h-3 w-3 rounded-full" style={{ backgroundColor: item.color }} />
+                      <span>{item.score} = {item.label}</span>
+                    </div>
+                  ))}
+                </div>
+                <p className={`mt-4 text-center text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
+                  Visualises the average readiness score for each component against its target score.
+                </p>
+              </div>
+            ) : null}
+
+            <p className={`text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
+              BRAG scoring is used for the component overview:
               <span className="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800">Blue</span> = actions exist and all are complete,{' '}
               <span className="px-1.5 py-0.5 rounded bg-green-100 text-green-800">Green</span> = on target,{' '}
               <span className="px-1.5 py-0.5 rounded bg-red-100 text-red-800">Red</span> = behind target dates,{' '}
               <span className="px-1.5 py-0.5 rounded bg-amber-100 text-amber-800">Amber</span> = at risk / nearing deadline.
             </p>
-          </div>
-          <div className="w-full max-w-4xl space-y-3">
+
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               <input
                 type="search"

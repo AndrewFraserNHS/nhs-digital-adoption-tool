@@ -24,6 +24,7 @@ import type {
 } from '@lib/adoptionState';
 import { initializeStore, createEmptyEntry, cloneEntry } from '@lib/adoptionState';
 import {
+  buildComponentRadarChartData,
   getMetrics as computeMetrics,
   buildRadarChartData,
   flattenActions
@@ -414,6 +415,18 @@ export function AdoptionApp() {
         if (radarCanvas) {
           const radarData = buildRadarChartData(store, MUTABLE_LENSES, COMPONENTS, getEntry);
           createRadarChart(radarCanvas, radarData);
+        }
+
+        const componentRadarCanvas = dashboardRef.current?.querySelector('#adoption-component-radar-chart') as HTMLCanvasElement;
+        if (componentRadarCanvas) {
+          const componentRadarData = buildComponentRadarChartData(COMPONENTS, getEntry);
+          createRadarChart(componentRadarCanvas, componentRadarData, {
+            scales: {
+              r: {
+                ticks: { display: true, min: 0, max: 5, stepSize: 1, backdropColor: 'transparent' }
+              }
+            }
+          });
         }
         
         if (store.history.length > 0) {

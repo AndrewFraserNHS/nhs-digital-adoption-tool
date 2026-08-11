@@ -4,7 +4,7 @@
  */
 
 import { Store, type StateListener } from './observable';
-import type { UnifiedActionStatus } from './actionModel';
+import type { ActionType, UnifiedActionStatus } from './actionModel';
 import { DEFAULT_CST_PROFILE, type CstPathwayKey, type CstProfile } from '@data/cst';
 
 export interface ActionTargetLink {
@@ -15,6 +15,7 @@ export interface ActionTargetLink {
 export interface BaseAction {
   id: string;
   text: string;
+  actionType?: ActionType;
   owner: string;
   timescale: string;
   status: UnifiedActionStatus;

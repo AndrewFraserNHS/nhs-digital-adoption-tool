@@ -61,7 +61,7 @@ export function createRadarChart(ctx: CanvasRenderingContext2D | HTMLCanvasEleme
     maintainAspectRatio: true,
     responsive: true,
     plugins: {
-      legend: { display: false },
+      legend: { display: true, position: 'bottom' },
       tooltip: { enabled: true, backgroundColor: darkMode ? 'rgba(15,23,42,0.98)' : 'rgba(11,18,32,0.95)', titleColor: '#fff', bodyColor: '#fff' },
       centerText: '',
     },
@@ -76,7 +76,7 @@ export function createRadarChart(ctx: CanvasRenderingContext2D | HTMLCanvasEleme
         angleLines: { color: angleColor, lineWidth: 1 },
         ticks: { display: false },
         pointLabels: {
-          display: false,
+          display: true,
           color: labelColor,
           font: { size: 12, family: Chart.defaults.font.family },
           padding: 14,
@@ -98,7 +98,7 @@ export function createRadarChart(ctx: CanvasRenderingContext2D | HTMLCanvasEleme
         pointLabels: {
           ...(defaultOpts.scales?.r?.pointLabels || {}),
           ...(options.scales?.r?.pointLabels || {}),
-          display: false,
+          display: true,
           callback: (value: string) => wrapChartLabel(value).join('\n')
         }
       }

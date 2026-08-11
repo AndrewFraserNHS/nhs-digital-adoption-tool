@@ -486,7 +486,7 @@ export function ProjectDetailsPage({
                       })}
                     </div>
                     <p className={`mt-2 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-                      Lens actions: {lensActionCounts.completed}/{lensActionCounts.total} complete · Objectives: {objectiveCounts.completed}/{objectiveCounts.total} complete
+                      Lens actions: {lensActionCounts.completed}/{lensActionCounts.total} complete · Outcomes: {objectiveCounts.completed}/{objectiveCounts.total} complete
                     </p>
                   </button>
                 );

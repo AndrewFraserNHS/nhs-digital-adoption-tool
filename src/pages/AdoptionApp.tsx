@@ -200,7 +200,7 @@ function calculateCheckInStreak(checkIns: Record<string, boolean>, anchor = new 
 
 function promptPhaseCapability(phase: OverarchingPhase): { competence: CompetenceGrade; confidence: ConfidenceScore } | null {
   const competenceInput = window.prompt(
-    `Phase ${phase} readiness changed. Enter competence grade (${COMPETENCE_OPTIONS.join('/')}).`,
+    `Phase ${phase} has changed. Enter delivery readiness grade (${COMPETENCE_OPTIONS.join('/')}).`,
     'C'
   );
   if (!competenceInput) {
@@ -214,7 +214,7 @@ function promptPhaseCapability(phase: OverarchingPhase): { competence: Competenc
   }
 
   const confidenceInput = window.prompt(
-    `Enter confidence score for Phase ${phase} (${CONFIDENCE_OPTIONS.join('-')}).`,
+    `Enter confidence score for Phase ${phase} (${CONFIDENCE_OPTIONS.join('-')}, where 1 is low and 5 is very high).`,
     '3'
   );
   if (!confidenceInput) {
@@ -278,6 +278,7 @@ export function AdoptionApp() {
     };
   });
   const dashboardRef = React.useRef<HTMLDivElement>(null);
+  const mainContentRef = React.useRef<HTMLElement>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const currentReminderMonthKey = useMemo(() => getMonthStorageKey(), []);
   const todayKey = useMemo(() => getTodayKey(), []);
@@ -288,6 +289,7 @@ export function AdoptionApp() {
   const [hasSeenOnboarding, setHasSeenOnboarding] = useState<boolean>(() => Boolean(load<boolean>(ADOPTION_ONBOARDING_SEEN_KEY)));
   const [showOnboarding, setShowOnboarding] = useState<boolean>(() => !load<boolean>(ADOPTION_ONBOARDING_SEEN_KEY));
   const [showEngagementCard, setShowEngagementCard] = useState<boolean>(true);
+  const [viewHistory, setViewHistory] = useState<View[]>([]);
 
   const dismissOnboarding = useCallback(() => {
     setShowOnboarding(false);
@@ -441,12 +443,43 @@ export function AdoptionApp() {
     return window.innerWidth < 1024;
   };
 
-  const handleViewChange = (newView: View) => {
-    setView(newView);
+  const scrollMainToTop = useCallback(() => {
+    mainContentRef.current?.scrollTo({ top: 0, behavior: 'auto' });
+  }, []);
+
+  const navigateToView = useCallback((newView: View) => {
+    setView((current) => {
+      if (current === newView) {
+        return current;
+      }
+      setViewHistory((prev) => [current, ...prev].slice(0, 20));
+      return newView;
+    });
+
     if (shouldAutoCloseSidebar()) {
       setIsSidebarOpen(false);
     }
+  }, []);
+
+  const handleViewChange = (newView: View) => {
+    navigateToView(newView);
   };
+
+  const handleBackNavigation = useCallback(() => {
+    setViewHistory((prev) => {
+      const [previousView, ...remaining] = prev;
+      if (previousView) {
+        setView(previousView);
+        if (window.innerWidth < 1024) {
+          setIsSidebarOpen(false);
+        }
+        return remaining;
+      }
+
+      window.location.hash = '#/';
+      return prev;
+    });
+  }, []);
 
   const openComponentAssessment = useCallback((componentId: string) => {
     const targetComponent = getComponentById(componentId);
@@ -455,11 +488,13 @@ export function AdoptionApp() {
     }
 
     setActiveComponentId(componentId);
-    setView('assessment');
-    if (shouldAutoCloseSidebar()) {
-      setIsSidebarOpen(false);
-    }
-  }, []);
+    navigateToView('assessment');
+    scrollMainToTop();
+  }, [navigateToView, scrollMainToTop]);
+
+  useEffect(() => {
+    scrollMainToTop();
+  }, [scrollMainToTop, view]);
 
   const updateEntry = useCallback((componentId: string, lens: string, entry: DraftEntry) => {
     setStore((prev) => {
@@ -999,9 +1034,12 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
               <span aria-hidden="true" className="text-lg leading-none">{isSidebarOpen ? '«' : '»'}</span>
               <span className="sr-only">{isSidebarOpen ? 'Collapse side navigation' : 'Expand side navigation'}</span>
             </button>
-            <button onClick={() => {
- window.location.hash = '#/'; 
-}} className="text-sm px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-md font-medium transition-colors">
+            <button
+              onClick={handleBackNavigation}
+              disabled={viewHistory.length === 0}
+              title={viewHistory.length === 0 ? 'No previous in-app page' : 'Back to previous page'}
+              className="text-sm px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-md font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+            >
               ← Back
             </button>
             <span className="font-semibold text-slate-700 mr-2">
@@ -1047,8 +1085,8 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
         </header>
 
         {/* Main Content Area */}
-        <main className="flex-1 overflow-y-auto p-8">
-          {showEngagementCard ? (
+        <main ref={mainContentRef} className="flex-1 overflow-y-auto p-8">
+          {view === 'dashboard' && showEngagementCard ? (
             <section className="mb-6 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
@@ -1200,6 +1238,7 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
                 pathwayChecks={store.pathwayChecks}
                 onNavigate={handleViewChange}
                 onOpenLensInfo={setActiveLensInfo}
+                onOpenOnboarding={() => setShowOnboarding(true)}
               />
             </div>
           )}

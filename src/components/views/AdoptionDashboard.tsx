@@ -19,6 +19,7 @@ export interface DashboardProps {
   pathwayChecks: AdoptionStore['pathwayChecks'];
   onNavigate?: (view: View) => void;
   onOpenLensInfo?: (lensName: string) => void;
+  onOpenOnboarding?: () => void;
 }
 
 type BragStatus = 'Blue' | 'Red' | 'Amber' | 'Green';
@@ -106,7 +107,8 @@ export function AdoptionDashboard({
   pathway,
   pathwayChecks,
   onNavigate,
-  onOpenLensInfo
+  onOpenLensInfo,
+  onOpenOnboarding
 }: DashboardProps): JSX.Element {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'not-started' | 'below-target' | 'on-track'>('all');
@@ -252,6 +254,21 @@ export function AdoptionDashboard({
     setShowAdvancedComponentControls(false);
   };
 
+  const currentPhaseSummary = metrics.phaseSummaries.find((phaseSummary) => phaseSummary.phase === metrics.currentPhase);
+  const currentPhaseRag = currentPhaseSummary?.rag || 'Red';
+  const currentPhaseCardStyle =
+    currentPhaseRag === 'Green'
+      ? 'border-green-200 bg-green-50'
+      : currentPhaseRag === 'Amber'
+        ? 'border-amber-200 bg-amber-50'
+        : 'border-red-200 bg-red-50';
+  const currentPhaseHeadlineStyle =
+    currentPhaseRag === 'Green'
+      ? 'text-green-800'
+      : currentPhaseRag === 'Amber'
+        ? 'text-amber-800'
+        : 'text-red-800';
+
   return (
     <div className="max-w-6xl mx-auto">
 
@@ -307,7 +324,18 @@ export function AdoptionDashboard({
         </div>
       )}
 
-      <h2 className="text-2xl font-bold text-slate-800 mb-1">Adoption Delivery Dashboard</h2>
+      <div className="mb-1 flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-2xl font-bold text-slate-800">Adoption Engine Dashboard</h2>
+        {onOpenOnboarding ? (
+          <button
+            type="button"
+            onClick={onOpenOnboarding}
+            className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+          >
+            Show introduction again
+          </button>
+        ) : null}
+      </div>
       <p className="text-sm text-slate-600 mb-6">
         This tracks how ready {store.orgProfile.projectName || 'your programme'} is for adoption, based on{' '}
         {components.length} change-management components, each assessed through up to {lenses.length} lenses.
@@ -349,13 +377,13 @@ export function AdoptionDashboard({
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm p-6 border border-slate-200">
+        <div className={`rounded-lg shadow-sm p-6 border ${currentPhaseCardStyle}`}>
           <h3 className="text-sm font-medium text-slate-500 mb-1">Current Phase Focus</h3>
           <div className="flex items-end space-x-2">
-            <span className="text-4xl font-bold text-slate-700">Phase {metrics.currentPhase}</span>
+            <span className={`text-4xl font-bold ${currentPhaseHeadlineStyle}`}>Phase {metrics.currentPhase}</span>
           </div>
-          <p className="text-sm text-slate-500 mt-2">
-            {metrics.phaseSummaries.find((phaseSummary) => phaseSummary.phase === metrics.currentPhase)?.rag || 'Red'} status based on delivery progress and action completion.
+          <p className={`text-sm mt-2 ${currentPhaseHeadlineStyle}`}>
+            {currentPhaseRag} status based on delivery progress and action completion.
           </p>
         </div>
 
@@ -546,7 +574,7 @@ export function AdoptionDashboard({
           </div>
           <p className="text-xs text-center text-slate-500 mt-4">
             Visualises your current draft readiness score averaged across the 5 strategic lenses
-            against their specific target requirements.
+            against their specific target reiquirements.
           </p>
         </div>
       </div>

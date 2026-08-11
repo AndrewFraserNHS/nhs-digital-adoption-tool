@@ -19,6 +19,30 @@ import {
   type OverarchingPhase
 } from '@data/cst';
 
+const PHASE_SUMMARY: Record<OverarchingPhase, string> = {
+  1: 'Pre go-live planning and early mobilisation.',
+  2: 'Go-live readiness and immediate launch support.',
+  3: 'Early adoption reinforcement and consistency.',
+  4: 'Embedding new ways of working across teams.',
+  5: 'Sustained adoption and benefits realisation at scale.'
+};
+
+const CONFIDENCE_LABELS: Record<ConfidenceScore, string> = {
+  1: 'Low confidence',
+  2: 'Some confidence',
+  3: 'Moderate confidence',
+  4: 'High confidence',
+  5: 'Very high confidence'
+};
+
+const COMPETENCE_LABELS: Record<CompetenceGrade, string> = {
+  A: 'Well embedded in practice',
+  B: 'Mostly embedded in practice',
+  C: 'Partly embedded in practice',
+  D: 'Early adoption in practice',
+  E: 'Not yet embedded in practice'
+};
+
 export interface ProjectDetailsPageProps {
   orgProfile: OrgProfile;
   onProfileUpdate: (profile: OrgProfile) => void;
@@ -178,8 +202,8 @@ export function ProjectDetailsPage({
         </div>
 
         <details className="rounded-md border border-slate-200 bg-slate-50 p-4" open>
-          <summary className="cursor-pointer text-sm font-semibold text-slate-800">Step 2: Context Specific Template (CST)</summary>
-          <p className="mt-2 text-xs text-slate-600">Set the pathway and timeline dates for this programme.</p>
+          <summary className="cursor-pointer text-sm font-semibold text-slate-800">Step 2: Pathway and timeline (Context Specific Template)</summary>
+          <p className="mt-2 text-xs text-slate-600">Choose the full pathway title for your programme, then set key timeline dates.</p>
 
           <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -268,9 +292,9 @@ export function ProjectDetailsPage({
         </details>
 
         <details className="rounded-md border border-slate-200 bg-slate-50 p-4">
-          <summary className="cursor-pointer text-sm font-semibold text-slate-800">Step 3: Phase capability</summary>
+          <summary className="cursor-pointer text-sm font-semibold text-slate-800">Step 3: Confidence and capability by phase</summary>
           <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
-            <p className="text-xs text-slate-600">Capture baseline at CST start, then refresh when readiness phase changes.</p>
+            <p className="text-xs text-slate-600">Capture your starting position, then refresh when readiness phase changes or after major milestones.</p>
             <p className="text-sm font-semibold text-slate-700">
               Overall Score: {overallCapabilityScore ?? 'N/A'}{overallCapabilityScore !== null ? '%' : ''}
             </p>
@@ -287,32 +311,49 @@ export function ProjectDetailsPage({
               return (
                 <div key={`phase-capability-${phase}`} className="rounded-md border border-slate-200 bg-white p-3">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <span className="font-semibold text-slate-700">Phase {phase}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-slate-700">Phase {phase}</span>
+                      <button
+                        type="button"
+                        className="h-5 w-5 rounded-full border border-slate-300 text-xs font-semibold text-slate-600"
+                        title={PHASE_SUMMARY[phase]}
+                        aria-label={`Phase ${phase} guidance`}
+                      >
+                        i
+                      </button>
+                    </div>
                     <span className="text-sm font-semibold text-slate-700">{combined}%</span>
                   </div>
+                  <p className="mt-1 text-xs text-slate-600">{PHASE_SUMMARY[phase]}</p>
                   <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                    <select
-                      value={value.competence}
-                      onChange={(event) =>
-                        handlePhaseCapabilityChange(phase, 'competence', event.target.value as CompetenceGrade)
-                      }
-                      className="rounded-md border border-slate-300 px-2 py-2"
-                    >
-                      {COMPETENCE_OPTIONS.map((option) => (
-                        <option key={`${phase}-competence-${option}`} value={option}>Competence {option}</option>
-                      ))}
-                    </select>
-                    <select
-                      value={value.confidence}
-                      onChange={(event) =>
-                        handlePhaseCapabilityChange(phase, 'confidence', Number(event.target.value) as ConfidenceScore)
-                      }
-                      className="rounded-md border border-slate-300 px-2 py-2"
-                    >
-                      {CONFIDENCE_OPTIONS.map((option) => (
-                        <option key={`${phase}-confidence-${option}`} value={option}>Confidence {option}</option>
-                      ))}
-                    </select>
+                    <label className="space-y-1">
+                      <span className="text-xs font-medium text-slate-600">Delivery readiness</span>
+                      <select
+                        value={value.competence}
+                        onChange={(event) =>
+                          handlePhaseCapabilityChange(phase, 'competence', event.target.value as CompetenceGrade)
+                        }
+                        className="w-full rounded-md border border-slate-300 px-2 py-2"
+                      >
+                        {COMPETENCE_OPTIONS.map((option) => (
+                          <option key={`${phase}-competence-${option}`} value={option}>{COMPETENCE_LABELS[option]} ({option})</option>
+                        ))}
+                      </select>
+                    </label>
+                    <label className="space-y-1">
+                      <span className="text-xs font-medium text-slate-600">Confidence</span>
+                      <select
+                        value={value.confidence}
+                        onChange={(event) =>
+                          handlePhaseCapabilityChange(phase, 'confidence', Number(event.target.value) as ConfidenceScore)
+                        }
+                        className="w-full rounded-md border border-slate-300 px-2 py-2"
+                      >
+                        {CONFIDENCE_OPTIONS.map((option) => (
+                          <option key={`${phase}-confidence-${option}`} value={option}>{CONFIDENCE_LABELS[option]} ({option})</option>
+                        ))}
+                      </select>
+                    </label>
                   </div>
                 </div>
               );

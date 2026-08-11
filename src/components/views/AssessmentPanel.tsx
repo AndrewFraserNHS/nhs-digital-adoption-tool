@@ -621,11 +621,15 @@ export function AssessmentPanel({
         {showScoringSection ? (
           <>
             <label className="block text-sm font-semibold text-slate-700 mb-2">Component Justification</label>
+            <p className="text-xs text-slate-500 mb-2">
+              Explain why this component is scored as it is, what evidence supports that view, and where the biggest gap sits.
+              Example: "Score is 2 because sponsorship is visible only in two services; no monthly steering update yet; next step is to agree a trust-wide sponsor cadence."
+            </p>
             <textarea
               value={componentJustification}
               onChange={(event) => handleComponentJustificationChange(event.target.value)}
               className="w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm h-24 p-2 border"
-              placeholder="Record rationale for this component."
+              placeholder="Record why this component received its current score, the evidence behind it, and the key improvement needed next."
             />
           </>
         ) : null}

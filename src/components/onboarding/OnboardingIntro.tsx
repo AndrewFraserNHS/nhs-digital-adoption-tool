@@ -1,5 +1,4 @@
 import { useEffect, useState, type JSX } from 'react';
-import { PATHWAY_OPTIONS } from '@data/cst';
 
 export interface OnboardingIntroProps {
   open: boolean;
@@ -22,9 +21,9 @@ function buildSteps(): Step[] {
         <p className="text-sm text-slate-700">
           Going live with a new digital product isn't the finish line - people still need to adopt
           it, change how they work, and keep using it.   </p>
-          <p className="text-sm text-slate-700">The Adoption Engine tracks that human and
-          process side of adoption up to, including and post go-live, turning your change into
-          successful adoption and measurable outcomes. </p>
+          <p className="text-sm text-slate-700">The Adoption Engine helps you track how people and
+          teams are adopting the change before go-live, during rollout, and after launch so progress
+          is visible and outcomes are measurable.</p>
           <p className="text-sm text-slate-700"> It helps you answer four simple questions:</p>
           <ul className="list-decimal pl-5 space-y-1">
             <li>Where are we going?</li>

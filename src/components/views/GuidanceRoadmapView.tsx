@@ -34,6 +34,15 @@ function getRoadmapStatus(
   chipClass: string;
   barClass: string;
 } {
+  if (component.phase > currentPhase) {
+    return {
+      label: 'Not in current phase yet',
+      rowClass: 'border-slate-200 bg-slate-50',
+      chipClass: 'bg-slate-200 text-slate-700',
+      barClass: 'bg-slate-400'
+    };
+  }
+
   const rule = getPathwayRulesForComponent(component.id, pathway);
   const pathwayStatus = evaluatePathwayTrackStatus({
     averageScore: average,
@@ -89,7 +98,7 @@ function getRoadmapStatus(
   }
 
   return {
-    label: 'Upcoming',
+    label: 'In progress',
     rowClass: 'border-blue-200 bg-blue-50',
     chipClass: 'bg-blue-100 text-blue-700',
     barClass: 'bg-blue-500'
@@ -172,9 +181,9 @@ export function GuidanceRoadmapView({
         ))}
       </div>
 
-      <div className="hidden lg:block rounded-2xl border border-slate-200 bg-white p-6 shadow-sm overflow-x-auto">
-        <div className="min-w-[920px]">
-          <div className="grid grid-cols-[280px_repeat(5,minmax(110px,1fr))_120px_120px] gap-3 border-b border-slate-200 pb-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
+      <div className="hidden lg:block rounded-2xl border border-slate-200 bg-white p-5 shadow-sm overflow-x-auto">
+        <div className="min-w-[860px]">
+          <div className="grid grid-cols-[230px_repeat(5,minmax(92px,1fr))_90px_115px] gap-2 border-b border-slate-200 pb-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
             <div>Component</div>
             {PHASES.map((phase) => (
               <div key={phase} className="text-center">Phase {phase}</div>
@@ -189,7 +198,7 @@ export function GuidanceRoadmapView({
                 key={component.id}
                 type="button"
                 onClick={() => onComponentClick(component.id)}
-                className={`grid w-full grid-cols-[280px_repeat(5,minmax(110px,1fr))_120px_120px] gap-3 rounded-xl border p-3 text-left transition-colors hover:border-slate-300 ${status.rowClass}`}
+                className={`grid w-full grid-cols-[230px_repeat(5,minmax(92px,1fr))_90px_115px] gap-2 rounded-xl border p-2.5 text-left transition-colors hover:border-slate-300 ${status.rowClass}`}
               >
                 <div>
                   <div className="text-sm font-semibold text-slate-800">{component.label}</div>
@@ -221,6 +230,10 @@ export function GuidanceRoadmapView({
                 </div>
               </button>
             ))}
+          </div>
+
+          <div className="mt-4 rounded-md border border-slate-200 bg-slate-50 p-3 text-xs text-slate-700">
+            <span className="font-semibold">Key:</span> Grey rows are not yet due for the current phase. Red rows indicate overdue or off-track work.
           </div>
         </div>
       </div>

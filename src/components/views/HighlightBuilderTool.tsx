@@ -336,12 +336,15 @@ export function HighlightBuilderTool({
   const adoptionMetricRows = useMemo(() => {
     const completedActions = topActions.filter((row) => normalizeActionStatus(row.action.status) === 'Completed').length;
     const completionFromActions = topActions.length ? Math.round((completedActions / topActions.length) * 100) : 0;
+    const championActionCount = topActions.filter((row) => /champion|change network/i.test(row.action.text || '')).length;
+    const inferredChampionCoverage =
+      championActionCount >= 5 ? 2 : championActionCount >= 1 ? 1 : 0;
     return [
       { measure: 'User Activation', target: '95%', current: `${Math.min(100, metrics.overallPct + 6)}%` },
       { measure: 'Active Users', target: '80%', current: `${Math.min(100, metrics.overallPct)}%` },
       { measure: 'Training Completion', target: '90%', current: `${Math.min(100, metrics.actionCompletionPct)}%` },
       { measure: 'Stakeholder Engagement Score', target: '80%', current: `${Math.min(100, metrics.overallPct + 4)}%` },
-      { measure: 'Champion Coverage', target: '1 per team', current: `${Math.max(1, Math.round(componentPreview.length / 2))} per team` },
+      { measure: 'Champion Coverage', target: '1 per team', current: `${inferredChampionCoverage} per team` },
       { measure: 'User Satisfaction', target: '80%', current: `${Math.min(100, metrics.overallPct + 2)}%` },
       { measure: 'Process Compliance', target: '90%', current: `${Math.min(100, metrics.overallPct - 3)}%` },
       { measure: 'Benefits Evidence Submitted', target: '75%', current: `${Math.min(100, completionFromActions)}%` }
@@ -356,7 +359,7 @@ export function HighlightBuilderTool({
         status
       };
     });
-  }, [componentPreview.length, metrics.actionCompletionPct, metrics.overallPct, topActions]);
+  }, [metrics.actionCompletionPct, metrics.overallPct, topActions]);
 
   const riskRows = useMemo(() => {
     return componentScores

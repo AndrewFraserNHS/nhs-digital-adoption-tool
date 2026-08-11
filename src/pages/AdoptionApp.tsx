@@ -151,6 +151,16 @@ function getTodayKey(date = new Date()): string {
   return date.toISOString().slice(0, 10);
 }
 
+function isFinaliseWindowOpen(date = new Date()): boolean {
+  const currentDay = date.getDate();
+  const lastDayOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+  return currentDay >= lastDayOfMonth - 6;
+}
+
+function getCurrentMonthLabel(date = new Date()): string {
+  return date.toLocaleString('en-GB', { month: 'short', year: 'numeric' });
+}
+
 function calculateLevelFromXp(xp: number): number {
   return Math.max(1, Math.min(12, Math.floor(xp / 120) + 1));
 }
@@ -290,6 +300,7 @@ export function AdoptionApp() {
   const [showOnboarding, setShowOnboarding] = useState<boolean>(() => !load<boolean>(ADOPTION_ONBOARDING_SEEN_KEY));
   const [showEngagementCard, setShowEngagementCard] = useState<boolean>(true);
   const [viewHistory, setViewHistory] = useState<View[]>([]);
+  const [showFinaliseModal, setShowFinaliseModal] = useState(false);
 
   const dismissOnboarding = useCallback(() => {
     setShowOnboarding(false);
@@ -317,6 +328,8 @@ export function AdoptionApp() {
   const [emailTo, setEmailTo] = useState('test@test.com');
   const [emailSubject, setEmailSubject] = useState('');
   const [emailBody, setEmailBody] = useState('');
+  const currentMonthLabel = useMemo(() => getCurrentMonthLabel(), []);
+  const finaliseWindowOpen = useMemo(() => isFinaliseWindowOpen(), []);
 
   const getEntry = useCallback((componentId: string, lens: string): DraftEntry => {
     if (!store.currentDraft[componentId]) {
@@ -571,7 +584,8 @@ export function AdoptionApp() {
     }
   }, []);
 
-  const handleFinaliseMonth = useCallback(() => {
+  const handleFinaliseMonth = useCallback((options?: { replaceExisting?: boolean }) => {
+    const replaceExisting = Boolean(options?.replaceExisting);
     const proceedWithWarnings = confirmIfCstWarnings('Finalise Month');
     if (!proceedWithWarnings) {
       return;
@@ -659,7 +673,9 @@ export function AdoptionApp() {
 
     setStore((prev) => ({
       ...prev,
-      history: [...prev.history, snapshot]
+      history: replaceExisting
+        ? prev.history.map((item) => (item.monthLabel === snapshot.monthLabel ? snapshot : item))
+        : [...prev.history, snapshot]
     }));
     setEngagement((prev) => addEngagementXp(prev, 25));
     setView('dashboard');
@@ -838,6 +854,26 @@ export function AdoptionApp() {
 
   const shouldShowReportReminder =
     reportReminder.shouldNotify && !dismissedReminderMonths[currentReminderMonthKey];
+  const currentMonthSnapshot = useMemo(
+    () => store.history.find((snapshot) => snapshot.monthLabel === currentMonthLabel) || null,
+    [currentMonthLabel, store.history]
+  );
+  const canCreateNewFinalisation = finaliseWindowOpen;
+  const canOpenFinaliseModal = canCreateNewFinalisation || Boolean(currentMonthSnapshot);
+  const finaliseSummary = useMemo(() => {
+    const baselineSnapshot = currentMonthSnapshot || (store.history.length > 0 ? store.history[store.history.length - 1] : null);
+    const baselineOverall = baselineSnapshot?.overallPercentage || 0;
+    const deltaOverall = metrics.overallPct - baselineOverall;
+    return {
+      currentMonthLabel,
+      baselineLabel: baselineSnapshot?.monthLabel || 'No previous snapshot',
+      baselineOverall,
+      deltaOverall,
+      assessedCount: metrics.assessedCount,
+      totalActions: metrics.totalActions,
+      completedActions: metrics.completedActions
+    };
+  }, [currentMonthLabel, currentMonthSnapshot, metrics.assessedCount, metrics.completedActions, metrics.overallPct, metrics.totalActions, store.history]);
   const themeUnlocked = engagement.level >= 3;
   const engagementGrade = useMemo(
     () => calculateEngagementGrade(engagement.onTimeFinalisations, engagement.emailDraftOpens),
@@ -956,9 +992,9 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
         </div>
 
         <div className="flex-1 overflow-y-auto py-4">
-          <div className="px-4 mb-2 text-xs font-semibold text-blue-300 uppercase tracking-wider">Navigation</div>
-          <nav className="space-y-1 mb-8">
-            {(['dashboard', 'project-details', 'action-plan', 'cm-guide', 'roadmap-view', 'highlight-builder', 'settings'] as View[]).map(v => (
+          <div className="px-4 mb-2 text-xs font-semibold text-blue-300 uppercase tracking-wider">Intro</div>
+          <nav className="space-y-1 mb-4">
+            {(['project-details', 'cm-guide'] as View[]).map((v) => (
               <button
                 key={v}
                 onClick={() => handleViewChange(v)}
@@ -968,19 +1004,41 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
                     : 'text-blue-100 hover:bg-blue-800 border-l-4 border-transparent'
                 }`}
               >
-                {v === 'dashboard'
-                  ? 'Dashboard'
-                  : v === 'project-details'
-                    ? 'Project Details'
-                    : v === 'action-plan'
-                      ? 'Action Tracker'
-                      : v === 'cm-guide'
-                        ? 'CM Toolkit Guide'
-                        : v === 'roadmap-view'
-                          ? 'Roadmap View'
-                          : v === 'highlight-builder'
-                            ? 'Highlight Builder Tool'
-                            : 'Settings & Profile'}
+                {v === 'project-details' ? 'Project Details' : 'Adoption Engine Onboarding'}
+              </button>
+            ))}
+          </nav>
+
+          <div className="px-4 mb-2 text-xs font-semibold text-blue-300 uppercase tracking-wider">Overview</div>
+          <nav className="space-y-1 mb-4">
+            {(['dashboard', 'action-plan', 'roadmap-view'] as View[]).map((v) => (
+              <button
+                key={v}
+                onClick={() => handleViewChange(v)}
+                className={`w-full flex items-center px-4 py-2.5 text-sm transition-colors ${
+                  view === v
+                    ? 'bg-blue-800 text-white font-medium border-l-4 border-white'
+                    : 'text-blue-100 hover:bg-blue-800 border-l-4 border-transparent'
+                }`}
+              >
+                {v === 'dashboard' ? 'Dashboard' : v === 'action-plan' ? 'Action Tracker' : 'Roadmap View'}
+              </button>
+            ))}
+          </nav>
+
+          <div className="px-4 mb-2 text-xs font-semibold text-blue-300 uppercase tracking-wider">Tools</div>
+          <nav className="space-y-1 mb-8">
+            {(['highlight-builder', 'settings'] as View[]).map((v) => (
+              <button
+                key={v}
+                onClick={() => handleViewChange(v)}
+                className={`w-full flex items-center px-4 py-2.5 text-sm transition-colors ${
+                  view === v
+                    ? 'bg-blue-800 text-white font-medium border-l-4 border-white'
+                    : 'text-blue-100 hover:bg-blue-800 border-l-4 border-transparent'
+                }`}
+              >
+                {v === 'highlight-builder' ? 'Highlight Builder' : 'Settings & Profile'}
               </button>
             ))}
           </nav>
@@ -1001,7 +1059,7 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
                   }`}
                 >
                   <span className="truncate pr-2">{escapeHtml(comp.label)}</span>
-                  <span className="text-xs flex-shrink-0">{status.icon}</span>
+                  <span className="text-xs flex-shrink-0" title={status.label} aria-label={status.label}>{status.icon}</span>
                 </button>
               );
             })}
@@ -1079,7 +1137,13 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
               Export JSON
             </button>
             <button
-              onClick={handleFinaliseMonth}
+              onClick={() => setShowFinaliseModal(true)}
+              disabled={!canOpenFinaliseModal}
+              title={
+                canOpenFinaliseModal
+                  ? 'Review and finalise monthly snapshot'
+                  : 'Finalise Month unlocks from the final week of each month.'
+              }
               className={`${nhsButtonPrimary} shadow-[0_3px_0_rgba(0,0,0,0.2)]`}
               style={{ backgroundColor: userSettings.themeColor }}
             >
@@ -1337,6 +1401,83 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
 
         {activeLensInfo ? (
           <LensInfoModal lensName={activeLensInfo} onClose={() => setActiveLensInfo('')} />
+        ) : null}
+
+        {showFinaliseModal ? (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 p-4">
+            <div className="w-full max-w-2xl rounded-xl border border-slate-200 bg-white p-6 shadow-2xl">
+              <div className="flex items-center justify-between gap-3">
+                <h3 className="text-lg font-semibold text-slate-900">Finalise Month</h3>
+                <button
+                  type="button"
+                  onClick={() => setShowFinaliseModal(false)}
+                  className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-100"
+                >
+                  Close
+                </button>
+              </div>
+
+              <div className="mt-4 space-y-3 text-sm text-slate-700">
+                <p>
+                  Finalising creates a point-in-time snapshot for <strong>{finaliseSummary.currentMonthLabel}</strong>.
+                  A new reporting month starts on the 1st day of each month.
+                </p>
+                <p>
+                  {finaliseWindowOpen
+                    ? 'Finalise window is open (last week of the month).'
+                    : 'Finalise window is currently closed. You can finalise from the final week of each month.'}
+                </p>
+                {currentMonthSnapshot ? (
+                  <p className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-amber-900">
+                    A snapshot already exists for {finaliseSummary.currentMonthLabel}. Re-finalise will replace this month only.
+                  </p>
+                ) : null}
+              </div>
+
+              <div className="mt-4 rounded-md border border-slate-200 bg-slate-50 p-3 text-sm">
+                <p className="font-semibold text-slate-800">Current summary</p>
+                <ul className="mt-2 space-y-1 text-slate-700">
+                  <li>Baseline snapshot: {finaliseSummary.baselineLabel}</li>
+                  <li>Overall readiness: {metrics.overallPct}% ({finaliseSummary.deltaOverall >= 0 ? '+' : ''}{finaliseSummary.deltaOverall}% vs baseline)</li>
+                  <li>Components assessed: {finaliseSummary.assessedCount}</li>
+                  <li>Actions complete: {finaliseSummary.completedActions}/{finaliseSummary.totalActions}</li>
+                </ul>
+              </div>
+
+              <div className="mt-5 flex flex-wrap justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowFinaliseModal(false)}
+                  className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+                >
+                  Cancel
+                </button>
+                {currentMonthSnapshot ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowFinaliseModal(false);
+                      handleFinaliseMonth({ replaceExisting: true });
+                    }}
+                    className="rounded-md border border-amber-300 bg-amber-50 px-4 py-2 text-sm font-semibold text-amber-900 hover:bg-amber-100"
+                  >
+                    Re-finalise This Month
+                  </button>
+                ) : null}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowFinaliseModal(false);
+                    handleFinaliseMonth();
+                  }}
+                  disabled={!finaliseWindowOpen && !currentMonthSnapshot}
+                  className="rounded-md bg-[#005eb8] px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Finalise Snapshot
+                </button>
+              </div>
+            </div>
+          </div>
         ) : null}
 
         <OnboardingIntro

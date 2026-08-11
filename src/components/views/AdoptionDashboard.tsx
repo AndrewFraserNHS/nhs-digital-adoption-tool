@@ -7,6 +7,7 @@ import { PATHWAY_LABELS } from '@data/cst';
 import { getPathwayRulesForComponent } from '@data/pathway-rules';
 import { calculateChecklistCompletion } from '@lib/pathwayAnalysis';
 import { FilterSummaryBar } from '@components/ui/FilterSummaryBar';
+import { getComponentDescription, getLensDescription } from '@data/descriptions';
 
 export interface DashboardProps {
   store: AdoptionStore;
@@ -67,9 +68,20 @@ function getBragStatusFromAverage(avgScore: number, targetScore: number): BragSt
   return 'Blue';
 }
 
-function getDeliveryStatusFromAverage(avgScore: number, targetScore: number, actionCount: number): DeliveryStatus {
+function getDeliveryStatusFromAverage(
+  avgScore: number,
+  targetScore: number,
+  actionCount: number,
+  completedActionCount: number
+): DeliveryStatus {
   if (actionCount <= 0) {
     return 'N/A';
+  }
+  if (completedActionCount <= 0) {
+    return 'Amber';
+  }
+  if (avgScore >= targetScore && completedActionCount < actionCount) {
+    return 'Green';
   }
   return getBragStatusFromAverage(avgScore, targetScore);
 }
@@ -87,14 +99,6 @@ const BRAG_BADGE_STYLES: Record<BragStatus, string> = {
   Red: 'text-red-800 bg-red-100',
   Amber: 'text-amber-800 bg-amber-100',
   Green: 'text-green-800 bg-green-100'
-};
-
-const LENS_EXPLANATIONS: Record<string, string> = {
-  'Strategic Direction and Leadership': 'This checks whether the vision has clear leadership direction. For example, Vision is a component assessed through this lens to test whether leaders are aligned and actively backing it.',
-  'People Experience and Culture': "It is all well and good making a vision, but has it been communicated and do people believe in it? This lens checks staff belief, trust, engagement, and cultural buy-in.",
-  'Planning and Risk': 'This lens checks whether plans are realistic, risks are visible, and delivery decisions are based on evidence rather than assumption.',
-  'Skills and Behaviour': 'This lens checks whether people have the capability and confidence to use the change in day-to-day practice, not just attend training.',
-  'Process and Sustainment': 'This lens checks whether new workflows are embedded into BAU so gains are sustained and continuously improved.'
 };
 
 const LENS_KEY_COLORS = ['#0f766e', '#0369a1', '#7c3aed', '#b45309', '#be123c'];
@@ -168,10 +172,13 @@ export function AdoptionDashboard({
       .map((component) => {
         let total = 0;
         let actionCount = 0;
+        let completedActionCount = 0;
         component.lenses.forEach((lens) => {
           const entry = getEntry(component.id, lens);
           total += Number(entry.score || 0);
-          actionCount += (entry.actions || []).length;
+          const actions = entry.actions || [];
+          actionCount += actions.length;
+          completedActionCount += actions.filter((action) => action.status === 'Completed').length;
         });
         const avgNum = Number((total / component.lenses.length).toFixed(1));
         const status = avgNum === 0 ? 'not-started' : avgNum >= component.target ? 'on-track' : 'below-target';
@@ -188,7 +195,7 @@ export function AdoptionDashboard({
           if (raw !== 0) delta = raw;
         }
 
-        return { component, avgNum, status, delta, actionCount };
+        return { component, avgNum, status, delta, actionCount, completedActionCount };
       })
       .filter(({ component, status }) => {
         if (statusFilter !== 'all' && status !== statusFilter) {
@@ -506,7 +513,7 @@ export function AdoptionDashboard({
               onClick={() => onNavigate('cm-guide')}
               className="font-medium text-[#005eb8] hover:underline"
             >
-              See the CM Toolkit Guide
+              See Adoption Engine Onboarding
             </button>
           ) : null}
         </p>
@@ -600,12 +607,12 @@ export function AdoptionDashboard({
       <div className="bg-white rounded-lg shadow-sm p-6 border border-slate-200 mb-8">
         <div className="flex flex-col gap-4 mb-4 xl:flex-row xl:items-center xl:justify-between">
           <div>
-            <h3 className="text-lg font-semibold text-slate-800">Overall Average by Component</h3>
+            <h3 className="text-lg font-semibold text-slate-800">Component Status</h3>
             <p className="text-xs text-slate-500 mt-1">
                     BRAG scoring is used for components:
               <span className="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800">Blue</span> = on target / complete,{' '}
               <span className="px-1.5 py-0.5 rounded bg-green-100 text-green-800">Green</span> = at/above target,{' '}
-              <span className="px-1.5 py-0.5 rounded bg-red-100 text-red-800">Red</span> = materially below target,{' '}
+              <span className="px-1.5 py-0.5 rounded bg-red-100 text-red-800">Red</span> = significantly below target,{' '}
               <span className="px-1.5 py-0.5 rounded bg-amber-100 text-amber-800">Amber</span> = slightly below target.
             </p>
           </div>
@@ -672,24 +679,25 @@ export function AdoptionDashboard({
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {componentRows.map(({ component, avgNum, actionCount }) => {
-            const deliveryStatus = getDeliveryStatusFromAverage(avgNum, component.target, actionCount);
+          {componentRows.map(({ component, avgNum, actionCount, completedActionCount, delta }) => {
+            const deliveryStatus = getDeliveryStatusFromAverage(avgNum, component.target, actionCount, completedActionCount);
 
             return (
               <button
                 key={component.id}
                 onClick={() => onComponentClick(component.id)}
+                title={getComponentDescription(component.id)}
                 className="flex justify-between items-center p-3 bg-slate-50 border border-slate-100 rounded-md hover:border-blue-300 transition-colors group text-left"
               >
                 <span className="text-sm font-medium text-slate-700 truncate pr-2 group-hover:text-[#005eb8]">
                   {component.label}
                 </span>
                 <div className="flex items-center gap-1 shrink-0">
-                  {scoreDelta !== null && (
+                  {delta !== null && (
                     <span className={`text-xs font-semibold ${
-                      scoreDelta > 0 ? 'text-green-600' : 'text-red-400'
+                      delta > 0 ? 'text-green-600' : 'text-red-400'
                     }`}>
-                      {scoreDelta > 0 ? '↑' : '↓'}
+                      {delta > 0 ? '↑' : '↓'}
                     </span>
                   )}
                   <span className={`text-xs font-bold px-2.5 py-1 rounded ${DELIVERY_BADGE_STYLES[deliveryStatus]}`}>
@@ -712,7 +720,7 @@ export function AdoptionDashboard({
         <div className="flex flex-col gap-3 mb-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-lg font-semibold text-slate-800">Lens & Component Breakdown</h3>
+              <h3 className="text-lg font-semibold text-slate-800">Lenses and which components they apply to</h3>
               <button
                 type="button"
                 onClick={() => setShowLensBreakdownHelp((current) => !current)}
@@ -755,12 +763,18 @@ export function AdoptionDashboard({
             return (
               <div key={lens} className="border border-slate-100 rounded-md p-4 bg-slate-50">
                 <h4 className="font-bold text-sm text-[#005eb8] mb-3">{lens}</h4>
-                <p className="mb-3 text-xs text-slate-600">{LENS_EXPLANATIONS[lens] || 'This lens provides an additional perspective on how each component is landing across teams and services.'}</p>
+                <p className="mb-3 text-xs text-slate-600">{getLensDescription(lens)}</p>
                 <ul className="space-y-2">
                   {mapped.map((component) => {
                     const entry = getEntry(component.id, lens);
                     const score = Number(entry.score || 0);
-                    const deliveryStatus = getDeliveryStatusFromAverage(score, component.target, (entry.actions || []).length);
+                    const actions = entry.actions || [];
+                    const deliveryStatus = getDeliveryStatusFromAverage(
+                      score,
+                      component.target,
+                      actions.length,
+                      actions.filter((action) => action.status === 'Completed').length
+                    );
 
                     return (
                       <li

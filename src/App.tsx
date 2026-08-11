@@ -5,6 +5,21 @@ import MaturityApp from './legacy/MaturityApp';
 import CompareApp from '@pages/CompareApp';
 import ForceFieldAnalysisApp from '@pages/ForceFieldAnalysisApp';
 
+function CtaArrow(): JSX.Element {
+  return (
+    <svg
+      className="inline-block h-4 w-4 align-[-2px]"
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      aria-hidden="true"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M4 10h11m0 0-4-4m4 4-4 4" />
+    </svg>
+  );
+}
+
 function HomePage(): JSX.Element {
   return (
     <main className="home-shell">
@@ -24,7 +39,7 @@ function HomePage(): JSX.Element {
             Assess organisational readiness across maturity stages, capture evidence, and build
             structured actions to improve change outcomes.
           </p>
-          <span className="tool-cta">Open maturity tool -&gt;</span>
+          <span className="tool-cta">Open maturity tool <CtaArrow /></span>
         </a>
 
         <a className="tool-card alt" href="#/adoption">
@@ -34,7 +49,7 @@ function HomePage(): JSX.Element {
             Track readiness by strategic lens, monitor monthly progress, and coordinate ownership
             of adoption actions across teams.
           </p>
-          <span className="tool-cta">Open adoption tool -&gt;</span>
+          <span className="tool-cta">Open adoption tool <CtaArrow /></span>
         </a>
 
         <a className="tool-card compare" href="#/compare">
@@ -44,7 +59,7 @@ function HomePage(): JSX.Element {
             Upload one or two adoption exports to analyse tool engagement, surface insights, and
             compare organisations side-by-side.
           </p>
-          <span className="tool-cta">Open analysis tool -&gt;</span>
+          <span className="tool-cta">Open analysis tool <CtaArrow /></span>
         </a>
 
         <a className="tool-card ffa" href="#/force-field-analysis">
@@ -54,7 +69,7 @@ function HomePage(): JSX.Element {
             Weigh up the driving and restraining forces around your change, score them, and turn
             the biggest ones into owned mitigation actions.
           </p>
-          <span className="tool-cta">Open force field tool -&gt;</span>
+          <span className="tool-cta">Open force field tool <CtaArrow /></span>
         </a>
       </section>
 

@@ -943,6 +943,11 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
     return { icon: '✓', color: 'text-green-300', label: 'Completed' };
   };
 
+  const trustLabel = store.orgProfile.trustName || 'Unconfigured Trust';
+  const projectLabel = store.orgProfile.projectName || 'Unnamed Project';
+  const fullPathwayLabel = PATHWAY_LABELS[store.orgProfile.cst.pathway];
+  const compactPathwayLabel = fullPathwayLabel.split(' - ')[0] || fullPathwayLabel;
+
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50 text-slate-800">
       <input
@@ -1080,42 +1085,50 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
       {/* Main Content */}
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
         {/* Header */}
-        <header className="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-6 shrink-0 z-10 shadow-sm" style={{ borderTop: `3px solid ${userSettings.themeColor}` }}>
-          <div className="flex items-center text-sm gap-4">
-            <button
-              onClick={() => setIsSidebarOpen((current) => !current)}
-              className="inline-flex items-center justify-center px-3 py-2 text-white rounded-md font-semibold transition-colors shadow-sm"
-              aria-label={isSidebarOpen ? 'Collapse side navigation' : 'Expand side navigation'}
-              title={isSidebarOpen ? 'Collapse side navigation' : 'Expand side navigation'}
-              style={{ backgroundColor: userSettings.themeColor }}
-            >
-              <span aria-hidden="true" className="text-lg leading-none">{isSidebarOpen ? '«' : '»'}</span>
-              <span className="sr-only">{isSidebarOpen ? 'Collapse side navigation' : 'Expand side navigation'}</span>
-            </button>
-            <button
-              onClick={handleBackNavigation}
-              disabled={viewHistory.length === 0}
-              title={viewHistory.length === 0 ? 'No previous in-app page' : 'Back to previous page'}
-              className="text-sm px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-md font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              ← Back
-            </button>
-            <span className="font-semibold text-slate-700 mr-2">
-              {store.orgProfile.trustName || 'Unconfigured Trust'}
-            </span>
-            <span className="text-slate-400">/</span>
-            <span className="text-slate-600 ml-2">
-              {store.orgProfile.projectName || 'Unnamed Project'}
-            </span>
-            <span className="ml-2 rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600">
-              {store.orgProfile.cst.type.toUpperCase()} · {PATHWAY_LABELS[store.orgProfile.cst.pathway]}
-            </span>
-            <span className="ml-1 inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-1 text-[11px] font-semibold text-emerald-800">
-              <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" aria-hidden="true" />
-              Auto-save on
-            </span>
-          </div>
-          <div className="flex items-center space-x-3">
+        <header className="bg-white border-b border-slate-200 px-3 py-2 sm:px-6 shrink-0 z-10 shadow-sm" style={{ borderTop: `3px solid ${userSettings.themeColor}` }}>
+          <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
+            <div className="min-w-0 flex items-start gap-2 sm:gap-3">
+              <button
+                onClick={() => setIsSidebarOpen((current) => !current)}
+                className="inline-flex h-9 items-center justify-center px-3 text-white rounded-md font-semibold transition-colors shadow-sm"
+                aria-label={isSidebarOpen ? 'Collapse side navigation' : 'Expand side navigation'}
+                title={isSidebarOpen ? 'Collapse side navigation' : 'Expand side navigation'}
+                style={{ backgroundColor: userSettings.themeColor }}
+              >
+                <span aria-hidden="true" className="text-lg leading-none">{isSidebarOpen ? '«' : '»'}</span>
+                <span className="sr-only">{isSidebarOpen ? 'Collapse side navigation' : 'Expand side navigation'}</span>
+              </button>
+              <button
+                onClick={handleBackNavigation}
+                disabled={viewHistory.length === 0}
+                title={viewHistory.length === 0 ? 'No previous in-app page' : 'Back to previous page'}
+                className="h-9 text-sm px-3 text-slate-600 hover:bg-slate-100 rounded-md font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                ← Back
+              </button>
+
+              <div className="min-w-0">
+                <div className="flex min-w-0 items-center gap-1 text-sm">
+                  <span className="truncate font-semibold text-slate-700" title={trustLabel}>{trustLabel}</span>
+                  <span className="text-slate-400">/</span>
+                  <span className="truncate text-slate-600" title={projectLabel}>{projectLabel}</span>
+                </div>
+                <div className="mt-1 flex min-w-0 items-center gap-1.5">
+                  <span
+                    className="truncate rounded-full bg-slate-100 px-2 py-1 text-[11px] font-semibold text-slate-600"
+                    title={`${store.orgProfile.cst.type.toUpperCase()} · ${fullPathwayLabel}`}
+                  >
+                    {store.orgProfile.cst.type.toUpperCase()} · <span className="sm:hidden">{compactPathwayLabel}</span><span className="hidden sm:inline">{fullPathwayLabel}</span>
+                  </span>
+                  <span className="inline-flex items-center justify-center rounded-full border border-emerald-200 bg-emerald-50 px-2 py-1 text-[11px] font-semibold text-emerald-800" title="Auto-save on">
+                    <span className="inline-flex h-3 w-3 items-center justify-center rounded-full bg-emerald-500 text-[9px] text-white" aria-hidden="true">✓</span>
+                    <span className="sr-only sm:not-sr-only sm:ml-1">Auto-save on</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2 lg:justify-end">
             <button
               onClick={() => setShowOnboarding(true)}
               aria-label="Show introduction"
@@ -1126,15 +1139,16 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
             </button>
             <button
               onClick={handleImportClick}
-              className={nhsButtonSecondary}
+              className={`${nhsButtonSecondary} h-9 px-3 py-0`}
             >
               Import
             </button>
             <button
               onClick={handleExport}
-              className={nhsButtonSecondary}
+              className={`${nhsButtonSecondary} h-9 px-3 py-0`}
             >
-              Export JSON
+              <span className="sm:hidden">Export</span>
+              <span className="hidden sm:inline">Export JSON</span>
             </button>
             <button
               onClick={() => setShowFinaliseModal(true)}
@@ -1144,11 +1158,13 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
                   ? 'Review and finalise monthly snapshot'
                   : 'Finalise Month unlocks from the final week of each month.'
               }
-              className={`${nhsButtonPrimary} shadow-[0_3px_0_rgba(0,0,0,0.2)]`}
+              className={`${nhsButtonPrimary} h-9 px-3 py-0 shadow-[0_3px_0_rgba(0,0,0,0.2)]`}
               style={{ backgroundColor: userSettings.themeColor }}
             >
-              Finalise Month
+              <span className="sm:hidden">Finalise</span>
+              <span className="hidden sm:inline">Finalise Month</span>
             </button>
+            </div>
           </div>
         </header>
 

@@ -64,6 +64,7 @@ export function ProjectDetailsPage({
   onOpenOnboarding
 }: ProjectDetailsPageProps): JSX.Element {
   const [profile, setProfile] = useState<OrgProfile>(orgProfile);
+  const [activePhaseHelp, setActivePhaseHelp] = useState<OverarchingPhase | null>(null);
   const profileValidation = validateOrgProfile(profile);
   const overallCapabilityScore = getOverallCapabilityScore(profile.cst.phaseCapability);
   const stageOneComplete = Boolean(
@@ -344,16 +345,31 @@ export function ProjectDetailsPage({
               return (
                 <div key={`phase-capability-${phase}`} className="rounded-md border border-slate-200 bg-white p-3">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <div className="flex items-center gap-2">
+                    <div className="relative flex items-center gap-2">
                       <span className="font-semibold text-slate-700">Phase {phase}</span>
                       <button
                         type="button"
+                        onMouseEnter={() => setActivePhaseHelp(phase)}
+                        onMouseLeave={() => setActivePhaseHelp((current) => (current === phase ? null : current))}
+                        onFocus={() => setActivePhaseHelp(phase)}
+                        onBlur={() => setActivePhaseHelp((current) => (current === phase ? null : current))}
+                        onClick={() => setActivePhaseHelp((current) => (current === phase ? null : phase))}
                         className="h-5 w-5 rounded-full border border-slate-300 text-xs font-semibold text-slate-600"
-                        title={PHASE_SUMMARY[phase]}
+                        aria-expanded={activePhaseHelp === phase}
+                        aria-controls={`phase-help-${phase}`}
                         aria-label={`Phase ${phase} guidance`}
                       >
                         i
                       </button>
+                      {activePhaseHelp === phase ? (
+                        <div
+                          id={`phase-help-${phase}`}
+                          role="tooltip"
+                          className="absolute left-0 top-7 z-10 w-72 rounded-md border border-slate-200 bg-slate-900 px-3 py-2 text-xs text-white shadow-xl"
+                        >
+                          {PHASE_SUMMARY[phase]}
+                        </div>
+                      ) : null}
                     </div>
                     <span className="text-sm font-semibold text-slate-700">{combined}%</span>
                   </div>

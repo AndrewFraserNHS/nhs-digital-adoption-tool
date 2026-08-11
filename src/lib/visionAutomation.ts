@@ -10,10 +10,8 @@ interface VisionActionTemplate {
   actionTexts: string[];
 }
 
-interface VisionLensObjectiveTemplate {
-  lens: string;
-  objectiveId: string;
-  objectiveText: string;
+function normalizeGeneratedText(value: string): string {
+  return value.trim().replace(/\s+/g, ' ').toLowerCase();
 }
 
 function sanitizeId(value: string): string {
@@ -22,14 +20,6 @@ function sanitizeId(value: string): string {
 
 function createObjectiveText(lens: string, fromScore: number, toScore: number): string {
   return `${lens}: move from ${fromScore} to ${toScore}.`;
-}
-
-function createLensObjectiveText(lens: string): string {
-  const lensLabel = lens.toLowerCase();
-  if (lensLabel.includes('strategic')) {
-    return 'Define a clear purpose for the vision and future-state direction.';
-  }
-  return 'Create shared understanding of the vision and stakeholder needs.';
 }
 
 function parseVisionActionTemplates(): VisionActionTemplate[] {
@@ -132,14 +122,6 @@ function parseVisionActionTemplates(): VisionActionTemplate[] {
 }
 
 const VISION_TEMPLATES = parseVisionActionTemplates();
-const VISION_LENS_OBJECTIVE_TEMPLATES: VisionLensObjectiveTemplate[] = Array.from(
-  new Set(VISION_TEMPLATES.map((template) => template.lens))
-).map((lens) => ({
-  lens,
-  objectiveId: `vision:auto-objective:${sanitizeId(lens)}`,
-  objectiveText: createLensObjectiveText(lens)
-}));
-
 function cloneEntry(entry: DraftEntry): DraftEntry {
   return {
     ...entry,
@@ -178,18 +160,6 @@ function createObjective(template: VisionActionTemplate): ComponentObjective {
   };
 }
 
-function createLensObjective(template: VisionLensObjectiveTemplate): ComponentObjective {
-  return {
-    id: template.objectiveId,
-    text: template.objectiveText,
-    owner: '',
-    timescale: '',
-    notes: '',
-    evidence: '',
-    linkedActions: []
-  };
-}
-
 function getActionId(template: VisionActionTemplate, actionIndex: number): string {
   return `vision-action:${sanitizeId(template.lens)}:${template.fromScore}-${template.toScore}:${actionIndex}`;
 }
@@ -202,6 +172,7 @@ export function syncVisionDerivedContent(store: AdoptionStore): AdoptionStore {
 
   const existingAutoObjectives = (nextObjectives.vision || []).filter((objective) => objective.id.startsWith('vision:auto-objective:'));
   const existingCustomObjectives = (nextObjectives.vision || []).filter((objective) => !objective.id.startsWith('vision:auto-objective:'));
+  const existingObjectiveTexts = new Set((nextObjectives.vision || []).map((objective) => normalizeGeneratedText(objective.text || '')));
   const derivedObjectives: ComponentObjective[] = [];
   const nextVisionDraft = componentLensEntries.reduce<Record<string, DraftEntry>>((accumulator, lens) => {
     accumulator[lens] = cloneEntry(visionDraft[lens] || createEmptyVisionEntry());
@@ -210,32 +181,26 @@ export function syncVisionDerivedContent(store: AdoptionStore): AdoptionStore {
 
   VISION_TEMPLATES.forEach((template) => {
     const existingObjective = existingAutoObjectives.find((objective) => objective.id === template.objectiveId);
-    if (!existingObjective && !derivedObjectives.some((objective) => objective.id === template.objectiveId)) {
+    const objectiveTextKey = normalizeGeneratedText(template.objectiveText);
+    if (!existingObjective && !existingObjectiveTexts.has(objectiveTextKey) && !derivedObjectives.some((objective) => objective.id === template.objectiveId || normalizeGeneratedText(objective.text) === objectiveTextKey)) {
       derivedObjectives.push(createObjective(template));
+      existingObjectiveTexts.add(objectiveTextKey);
     }
 
     const lensEntry = nextVisionDraft[template.lens] || createEmptyVisionEntry();
+    const existingActionTexts = new Set((lensEntry.actions || []).map((action) => normalizeGeneratedText(action.text || '')));
 
-    // Every auto-generated objective must always have at least one linked action, regardless of the
-    // lens's current score, so actions are seeded for all score-transition templates up front rather
-    // than only once the score happens to reach that transition's starting point.
     template.actionTexts.forEach((actionText, index) => {
       const actionId = getActionId(template, index);
       const alreadyHasAction = (lensEntry.actions || []).some((action) => action.id === actionId);
-      if (!alreadyHasAction) {
+      const actionTextKey = normalizeGeneratedText(actionText);
+      if (!alreadyHasAction && !existingActionTexts.has(actionTextKey)) {
         lensEntry.actions = [...(lensEntry.actions || []), createAction(template, actionText, index)];
+        existingActionTexts.add(actionTextKey);
       }
     });
 
     nextVisionDraft[template.lens] = lensEntry;
-  });
-
-  VISION_LENS_OBJECTIVE_TEMPLATES.forEach((template) => {
-    const existsInAuto = existingAutoObjectives.some((objective) => objective.id === template.objectiveId);
-    const existsInDerived = derivedObjectives.some((objective) => objective.id === template.objectiveId);
-    if (!existsInAuto && !existsInDerived) {
-      derivedObjectives.push(createLensObjective(template));
-    }
   });
 
   const linkedObjectives = [...existingAutoObjectives, ...existingCustomObjectives, ...derivedObjectives].map((objective) => {
@@ -257,22 +222,7 @@ export function syncVisionDerivedContent(store: AdoptionStore): AdoptionStore {
       };
     }
 
-    const lensTemplate = VISION_LENS_OBJECTIVE_TEMPLATES.find((candidate) => candidate.objectiveId === objective.id);
-    if (!lensTemplate) {
-      return objective;
-    }
-
-    const links = VISION_TEMPLATES.filter((candidate) => candidate.lens === lensTemplate.lens).flatMap((candidate) => {
-      const lensEntry = nextVisionDraft[candidate.lens] || createEmptyVisionEntry();
-      return candidate.actionTexts
-        .map((_, index) => ({ lens: candidate.lens, actionId: getActionId(candidate, index) }))
-        .filter((link) => (lensEntry.actions || []).some((action) => action.id === link.actionId));
-    });
-
-    return {
-      ...objective,
-      linkedActions: links
-    };
+    return objective;
   });
 
   return {

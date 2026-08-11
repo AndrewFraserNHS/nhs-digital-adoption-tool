@@ -56,7 +56,7 @@ describe('syncPathwayObjectives', () => {
     expect(visionObjectives.some((objective) => objective.id === 'custom-objective')).toBe(true);
   });
 
-  it('auto-links every vision pathway objective to at least one action', () => {
+  it('does not clone vision pathway outcomes into matching actions', () => {
     const store = createStore();
     const next = syncPathwayObjectives(store);
 
@@ -65,12 +65,12 @@ describe('syncPathwayObjectives', () => {
     );
     expect(visionObjectives.length).toBeGreaterThan(0);
 
-    visionObjectives.forEach((objective) => {
-      expect(objective.linkedActions.length).toBeGreaterThan(0);
-      const link = objective.linkedActions[0];
-      const lensEntry = next.currentDraft.vision?.[link.lens];
-      expect(lensEntry?.actions.some((action) => action.id === link.actionId)).toBe(true);
-    });
+    expect(visionObjectives.every((objective) => objective.linkedActions.length === 0)).toBe(true);
+    expect(
+      Object.values(next.currentDraft.vision || {}).every((entry) =>
+        entry.actions.every((action) => !action.id.startsWith('pathway-auto-action:'))
+      )
+    ).toBe(true);
   });
 
   it('does not auto-link actions for non-vision components', () => {

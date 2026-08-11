@@ -27,6 +27,7 @@ interface ActionEditorState {
   mode: 'create' | 'edit';
   actionId?: string;
   action: DraftAction;
+  evidenceItems: EvidenceItem[];
   linkedObjectiveIds: string[];
   targetPickerComponentId: string;
   targetPickerLens: string;
@@ -300,6 +301,7 @@ export function AssessmentPanel({
   const [showObjectivesSection, setShowObjectivesSection] = useState(true);
   const [showActionsSection, setShowActionsSection] = useState(true);
   const [expandedLensActions, setExpandedLensActions] = useState<Record<string, boolean>>({});
+  const [lensActionTypeFilters, setLensActionTypeFilters] = useState<Record<string, string>>({});
   const objectives = store.objectives?.[component.id] || [];
 
   const componentActionsByLens = useMemo(() => {
@@ -458,6 +460,7 @@ export function AssessmentPanel({
         sourceLens: lens,
         mode: 'create',
         action: seeded,
+        evidenceItems: parseEvidenceItems(seeded.evidence || ''),
         linkedObjectiveIds: [],
         targetPickerComponentId: component.id,
         targetPickerLens: lens
@@ -488,6 +491,7 @@ export function AssessmentPanel({
         startDate: action.startDate || '',
         dueDate: action.dueDate || ''
       },
+      evidenceItems: parseEvidenceItems(action.evidence || ''),
       linkedObjectiveIds,
       targetPickerComponentId: firstTarget.componentId,
       targetPickerLens: firstTarget.lens
@@ -510,6 +514,7 @@ export function AssessmentPanel({
 
     const normalizedAction: DraftAction = {
       ...actionEditor.action,
+      evidence: serializeEvidenceItems(actionEditor.evidenceItems),
       status: normalizeActionStatus(actionEditor.action.status),
       linkedTargets: getNormalizedTargets(
         actionEditor.action,
@@ -664,14 +669,22 @@ export function AssessmentPanel({
   };
 
   const updateEvidenceItemsInActionEditor = (nextItems: EvidenceItem[]) => {
-    updateActionEditor({ evidence: serializeEvidenceItems(nextItems) });
+    setActionEditor((current) => {
+      if (!current) {
+        return current;
+      }
+      return {
+        ...current,
+        evidenceItems: nextItems
+      };
+    });
   };
 
   const addEvidenceLinkRow = () => {
     if (!actionEditor) {
       return;
     }
-    const existing = parseEvidenceItems(actionEditor.action.evidence || '');
+    const existing = actionEditor.evidenceItems;
     updateEvidenceItemsInActionEditor([...existing, { type: 'url', label: '', href: '' }]);
   };
 
@@ -679,7 +692,7 @@ export function AssessmentPanel({
     if (!actionEditor) {
       return;
     }
-    const existing = parseEvidenceItems(actionEditor.action.evidence || '');
+    const existing = actionEditor.evidenceItems;
     if (!existing[index]) {
       return;
     }
@@ -696,7 +709,7 @@ export function AssessmentPanel({
     if (!actionEditor) {
       return;
     }
-    const existing = parseEvidenceItems(actionEditor.action.evidence || '');
+    const existing = actionEditor.evidenceItems;
     updateEvidenceItemsInActionEditor(existing.filter((_, itemIndex) => itemIndex !== index));
   };
 
@@ -710,7 +723,7 @@ export function AssessmentPanel({
       return;
     }
 
-    const existing = parseEvidenceItems(actionEditor.action.evidence || '');
+    const existing = actionEditor.evidenceItems;
     const next = [...existing];
 
     for (const file of Array.from(fileList)) {
@@ -928,7 +941,17 @@ export function AssessmentPanel({
         {component.lenses.map((lens) => {
           const entry = getEntry(component.id, lens);
           const showMatrix = !!store.showMatrix?.[`${component.id}:${lens}`];
-          const lensActions = [...(actionsByTarget[`${component.id}:${lens}`] || [])].sort((left, right) => {
+          const lensActionTypeFilter = lensActionTypeFilters[`${component.id}:${lens}`] || 'all';
+          const lensActionTypeOptions = Array.from(
+            new Set(
+              (actionsByTarget[`${component.id}:${lens}`] || [])
+                .map((resolvedAction) => resolvedAction.action.actionType)
+                .filter((actionType): actionType is Exclude<DraftAction['actionType'], undefined> => actionType !== undefined)
+            )
+          ).sort((left, right) => String(left).localeCompare(String(right)));
+          const lensActions = [...(actionsByTarget[`${component.id}:${lens}`] || [])]
+            .filter((resolvedAction) => lensActionTypeFilter === 'all' || (resolvedAction.action.actionType || '') === lensActionTypeFilter)
+            .sort((left, right) => {
             const leftCompleted = normalizeActionStatus(left.action.status) === 'Completed';
             const rightCompleted = normalizeActionStatus(right.action.status) === 'Completed';
             if (leftCompleted !== rightCompleted) {
@@ -938,7 +961,7 @@ export function AssessmentPanel({
             const leftDue = left.action.dueDate ? new Date(left.action.dueDate).getTime() : Number.POSITIVE_INFINITY;
             const rightDue = right.action.dueDate ? new Date(right.action.dueDate).getTime() : Number.POSITIVE_INFINITY;
             return leftDue - rightDue;
-          });
+            });
           const borderColor =
             entry.score >= component.target ? '#22c55e' : entry.score > 0 ? '#f59e0b' : '#cbd5e1';
 
@@ -1045,12 +1068,28 @@ export function AssessmentPanel({
                       Hierarchy: Outcome - Action - Affected component lenses.
                     </p>
                   </div>
-                  <button
-                    onClick={() => openCreateActionModal(lens)}
-                    className="px-3 py-1.5 rounded bg-[#005eb8] text-white text-xs font-semibold shadow-[0_2px_0_#003087] hover:bg-[#00417a] transition-colors focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2"
-                  >
-                    Add Action
-                  </button>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <select
+                      aria-label={`Filter ${lens} actions by type`}
+                      value={lensActionTypeFilter}
+                      onChange={(event) => setLensActionTypeFilters((current) => ({
+                        ...current,
+                        [`${component.id}:${lens}`]: event.target.value
+                      }))}
+                      className={`rounded-md border px-2.5 py-1.5 text-xs font-semibold ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-700'}`}
+                    >
+                      <option value="all">All action types</option>
+                      {[...new Set([...ACTION_TYPES, ...lensActionTypeOptions])].map((actionType) => (
+                        <option key={actionType} value={actionType}>{actionType}</option>
+                      ))}
+                    </select>
+                    <button
+                      onClick={() => openCreateActionModal(lens)}
+                      className="px-3 py-1.5 rounded bg-[#005eb8] text-white text-xs font-semibold shadow-[0_2px_0_#003087] hover:bg-[#00417a] transition-colors focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2"
+                    >
+                      Add Action
+                    </button>
+                  </div>
                 </div>
 
                 {lensActions.length ? (
@@ -1064,8 +1103,8 @@ export function AssessmentPanel({
                           <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Owner</th>
                           <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Start</th>
                           <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">End</th>
-                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Notes</th>
-                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Evidence</th>
+                          {/* <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Notes</th> */}
+                          {/* <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Evidence</th> */}
                           <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Affected Component Lenses</th>
                           <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Actions</th>
                         </tr>
@@ -1104,19 +1143,15 @@ export function AssessmentPanel({
                                   {displayStatus}
                                 </span>
                                 {temporalHint ? <div className="mt-1 text-xs text-rose-700">{temporalHint}</div> : null}
-                                {!linkedOutcomes.length ? (
+                                {!linkedOutcomes.length && (
                                   <div className={`mt-1 text-xs ${darkMode ? 'text-amber-200' : 'text-amber-700'}`}>Not yet linked</div>
-                                ) : (
-                                  <div className={`mt-1 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-                                    {linkedOutcomes.length} affected outcome{linkedOutcomes.length === 1 ? '' : 's'}
-                                  </div>
                                 )}
                               </td>
                               <td className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>{action.actionType || 'Unassigned'}</td>
                               <td className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>{action.owner || 'Unassigned'}</td>
                               <td className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>{action.startDate || '-'}</td>
                               <td className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>{action.dueDate || '-'}</td>
-                              <td className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>{action.notes || '-'}</td>
+                              {/* <td className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>{action.notes || '-'}</td>
                               <td className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
                                 {parseEvidenceItems(action.evidence || '').length ? (
                                   <div className="space-y-1">
@@ -1142,7 +1177,7 @@ export function AssessmentPanel({
                                 ) : (
                                   '-'
                                 )}
-                              </td>
+                              </td> */}
                               <td className={`px-3 py-2 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>{linkedTargets}</td>
                               <td className="px-3 py-2">
                                 <div className="flex gap-2">
@@ -1295,20 +1330,36 @@ export function AssessmentPanel({
               <div className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} rounded-lg border p-3`}>
                 <div className="flex items-center justify-between gap-2">
                   <p className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>Evidence Links / Docs</p>
-                  <button
-                    type="button"
-                    onClick={addEvidenceLinkRow}
-                    className={`${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 hover:bg-slate-700' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'} rounded-md border px-2.5 py-1.5 text-xs font-semibold`}
-                  >
-                    Add Link
-                  </button>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={addEvidenceLinkRow}
+                      className={`${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 hover:bg-slate-700' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'} rounded-md border px-2.5 py-1.5 text-xs font-semibold`}
+                    >
+                      Add web link
+                    </button>
+                    <label className={`${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 hover:bg-slate-700' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'} inline-flex cursor-pointer items-center gap-2 rounded-md border px-3 py-1.5 text-xs font-semibold`}>
+                      Upload file(s)
+                      <input
+                        type="file"
+                        multiple
+                        className="hidden"
+                        onChange={uploadEvidenceFiles}
+                      />
+                    </label>
+                  </div>
                 </div>
-                <p className={`mt-1 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>Add one or more URLs, or upload small local files (embedded into the export JSON).</p>
+                <p className={`mt-1 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>Add evidence as either web links or uploaded files. Everything appears below in a single list.</p>
 
                 <div className={`${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'} mt-2 space-y-2 rounded border p-2`}>
-                  {parseEvidenceItems(actionEditor.action.evidence || '').length ? (
-                    parseEvidenceItems(actionEditor.action.evidence || '').map((item, index) => (
-                      <div key={`${item.type}-${index}`} className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} grid grid-cols-1 gap-2 rounded border p-2 md:grid-cols-[1fr,1fr,auto]`}>
+                  {actionEditor.evidenceItems.length ? (
+                    actionEditor.evidenceItems.map((item, index) => (
+                      <div key={`${item.type}-${index}`} className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} grid grid-cols-1 gap-2 rounded border p-2 md:grid-cols-[auto,1fr,1fr,auto]`}>
+                        <div className="flex items-start pt-2">
+                          <span className={`${item.type === 'file' ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'} inline-flex rounded-full px-2 py-1 text-[11px] font-semibold uppercase tracking-wide`}>
+                            {item.type === 'file' ? 'File' : 'Link'}
+                          </span>
+                        </div>
                         <input
                           value={item.label}
                           onChange={(event) => updateEvidenceItem(index, 'label', event.target.value)}
@@ -1334,18 +1385,6 @@ export function AssessmentPanel({
                   ) : (
                     <p className={`px-2 py-1 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>No evidence links or documents added yet.</p>
                   )}
-                </div>
-
-                <div className="mt-2">
-                  <label className={`${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 hover:bg-slate-700' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'} inline-flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2 text-xs font-semibold`}>
-                    Upload file(s)
-                    <input
-                      type="file"
-                      multiple
-                      className="hidden"
-                      onChange={uploadEvidenceFiles}
-                    />
-                  </label>
                 </div>
               </div>
 

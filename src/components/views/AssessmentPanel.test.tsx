@@ -160,6 +160,47 @@ describe('AssessmentPanel', () => {
     expect(props.onActionRemove).toHaveBeenCalledWith('vision', 'Strategic Direction', 'action-1');
   });
 
+  it('filters lens actions by action type', () => {
+    const entry = createEntry({
+      actions: [
+        {
+          id: 'action-1',
+          text: 'Run workshop',
+          actionType: 'Meetings',
+          owner: 'PMO',
+          timescale: 'Q3',
+          status: 'In Progress'
+        },
+        {
+          id: 'action-2',
+          text: 'Write admin note',
+          actionType: 'Admin',
+          owner: 'PMO',
+          timescale: 'Q3',
+          status: 'Planned'
+        }
+      ]
+    });
+    const props = createProps({ entry });
+    render(<AssessmentPanel {...props} />);
+
+    fireEvent.change(screen.getByRole('combobox', { name: 'Filter Strategic Direction actions by type' }), { target: { value: 'Meetings' } });
+
+    expect(screen.getByText('Run workshop')).toBeInTheDocument();
+    expect(screen.queryByText('Write admin note')).toBeNull();
+  });
+
+  it('adds an evidence web link row in the action editor', () => {
+    const props = createProps();
+    render(<AssessmentPanel {...props} />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Add Action' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Add web link' }));
+
+    expect(screen.getByPlaceholderText('Link label')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('https://...')).toBeInTheDocument();
+  });
+
   it('renders linked actions on linked targets and removes from source lens', () => {
     const sourceEntry = createEntry({
       actions: [

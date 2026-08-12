@@ -10,15 +10,23 @@
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistrations().then(function (regs) {
           if (regs.length > 0) {
-            Promise.all(regs.map(function (r) { return r.unregister(); })).then(function () {
+            Promise.all(
+              regs.map(function (r) {
+                return r.unregister();
+              })
+            ).then(function () {
               window.location.reload();
             });
           }
         });
       }
     </script>
-    <script type="module" crossorigin src="./assets/index-D5yQpmRI.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-4shyelM0.css">
+    <script type="module" crossorigin src="./assets/index-qgtJNVBc.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/vendor-react-nTLHQtbJ.js">
+    <link rel="modulepreload" crossorigin href="./assets/vendor-misc-CRAZsVSL.js">
+    <link rel="modulepreload" crossorigin href="./assets/vendor-react-dom-BuuNUkTg.js">
+    <link rel="modulepreload" crossorigin href="./assets/vendor-router-BWoDkPWg.js">
+    <link rel="stylesheet" crossorigin href="./assets/index-CJ7LkDJu.css">
   </head>
   <body>
     <div id="app"></div>

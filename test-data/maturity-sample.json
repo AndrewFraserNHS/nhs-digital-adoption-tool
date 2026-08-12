@@ -22,10 +22,7 @@
     "Vision": {
       "justification": "Programme vision is defined and communicated to most stakeholder groups.",
       "notes": "Need stronger clinical champion messaging.",
-      "links": [
-        "https://example.nhs.uk/vision-pack",
-        "https://example.nhs.uk/townhall-recording"
-      ],
+      "links": ["https://example.nhs.uk/vision-pack", "https://example.nhs.uk/townhall-recording"],
       "actions": [
         {
           "id": "maturity-1",
@@ -39,9 +36,7 @@
     "Benefits": {
       "justification": "Benefits are defined, but baselines are incomplete.",
       "notes": "Operational metrics still being aligned.",
-      "links": [
-        "https://example.nhs.uk/benefits-register"
-      ],
+      "links": ["https://example.nhs.uk/benefits-register"],
       "actions": [
         {
           "id": "maturity-2",

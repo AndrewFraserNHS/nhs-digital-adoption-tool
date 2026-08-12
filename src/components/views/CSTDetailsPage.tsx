@@ -211,7 +211,12 @@ export function ProjectDetailsPage({
         <h2 className={`text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
           CST Details
         </h2>
-        <button type="button" onClick={onOpenOnboarding} className={nhsButtonSecondary}>
+        <button
+          type="button"
+          onClick={onOpenOnboarding}
+          className={nhsButtonSecondary}
+          data-testid="cst-show-intro-button"
+        >
           Show introduction again
         </button>
       </div>
@@ -251,6 +256,7 @@ export function ProjectDetailsPage({
             <input
               id="org-trust-name"
               type="text"
+              data-testid="cst-trust-name-input"
               className={`w-full rounded-md border shadow-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8] sm:text-sm p-2 ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-[#768692] bg-white text-slate-900'}`}
               value={profile.trustName}
               onChange={(e) => handleTrustChange(e.target.value)}
@@ -924,6 +930,7 @@ export function ProjectDetailsPage({
                   <button
                     key={component.id}
                     type="button"
+                    data-testid={`cst-component-button-${component.id}`}
                     onClick={() => onComponentClick(component.id)}
                     className={`w-full text-left rounded-md border p-3 transition-colors ${darkMode ? 'border-slate-700 bg-slate-900 hover:border-blue-400 hover:bg-slate-800' : 'border-slate-200 hover:border-blue-300 hover:bg-blue-50/40'}`}
                   >

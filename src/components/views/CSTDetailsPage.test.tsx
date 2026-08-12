@@ -70,8 +70,9 @@ describe('ProjectDetailsPage', () => {
       />
     );
 
-    const textboxes = screen.getAllByRole('textbox');
-    fireEvent.change(textboxes[0], { target: { value: 'Updated Trust' } });
+    fireEvent.change(screen.getByTestId('cst-trust-name-input'), {
+      target: { value: 'Updated Trust' },
+    });
 
     expect(onProfileUpdate).toHaveBeenLastCalledWith(
       expect.objectContaining({ trustName: 'Updated Trust' })
@@ -94,7 +95,7 @@ describe('ProjectDetailsPage', () => {
       />
     );
 
-    fireEvent.click(screen.getByRole('button', { name: /Vision/ }));
+    fireEvent.click(screen.getByTestId('cst-component-button-vision'));
     expect(onComponentClick).toHaveBeenCalledWith('vision');
   });
 
@@ -114,7 +115,7 @@ describe('ProjectDetailsPage', () => {
       />
     );
 
-    fireEvent.click(screen.getByRole('button', { name: 'Show introduction again' }));
+    fireEvent.click(screen.getByTestId('cst-show-intro-button'));
     expect(onOpenOnboarding).toHaveBeenCalled();
   });
 });

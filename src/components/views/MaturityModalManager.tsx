@@ -164,6 +164,7 @@ export function MaturityModalManager({
 
     return (
       <div
+        data-testid="maturity-modal-matrix"
         className="fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-4"
         onClick={handleOverlayClick}
       >
@@ -174,6 +175,7 @@ export function MaturityModalManager({
           <div className="flex justify-between items-center p-4 border-b border-gray-200 shrink-0">
             <h2 className="text-xl font-bold text-gray-900">{activeComponent} - Matrix</h2>
             <button
+              data-testid="maturity-modal-close"
               onClick={onClose}
               className="text-gray-500 hover:text-gray-800 text-2xl leading-none"
             >
@@ -184,6 +186,7 @@ export function MaturityModalManager({
             {STAGES.map((stage, i) => (
               <button
                 key={i}
+                data-testid={`maturity-matrix-score-${i}`}
                 onClick={() => handleSetScore(i)}
                 className={`w-full text-left p-4 rounded-lg border transition-colors ${
                   i === sc ? 'border-blue-400 bg-blue-50' : 'border-gray-200 hover:border-blue-300'
@@ -228,6 +231,7 @@ export function MaturityModalManager({
 
     return (
       <div
+        data-testid="maturity-modal-guidance"
         className="fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-4"
         onClick={handleOverlayClick}
       >
@@ -238,13 +242,16 @@ export function MaturityModalManager({
           <div className="flex justify-between items-center p-4 border-b border-gray-200 shrink-0">
             <h2 className="text-xl font-bold text-gray-900">{activeComponent} - Guidance</h2>
             <button
+              data-testid="maturity-modal-close"
               onClick={onClose}
               className="text-gray-500 hover:text-gray-800 text-2xl leading-none"
             >
               ×
             </button>
           </div>
-          <div className="p-6 overflow-y-auto">{body}</div>
+          <div className="p-6 overflow-y-auto" data-testid="maturity-guidance-body">
+            {body}
+          </div>
         </div>
       </div>
     );
@@ -253,6 +260,7 @@ export function MaturityModalManager({
   if (modalType === 'help') {
     return (
       <div
+        data-testid="maturity-modal-help"
         className="fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-4"
         onClick={handleOverlayClick}
       >
@@ -261,8 +269,11 @@ export function MaturityModalManager({
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex justify-between items-center p-4 border-b border-gray-200 shrink-0">
-            <h2 className="text-xl font-bold text-gray-900">How to Use This Tool</h2>
+            <h2 className="text-xl font-bold text-gray-900" data-testid="maturity-help-heading">
+              How to Use This Tool
+            </h2>
             <button
+              data-testid="maturity-modal-close"
               onClick={onClose}
               className="text-gray-500 hover:text-gray-800 text-2xl leading-none"
             >
@@ -328,6 +339,7 @@ export function MaturityModalManager({
   if (modalType === 'versionHistory') {
     return (
       <div
+        data-testid="maturity-modal-version-history"
         className="fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-4"
         onClick={handleOverlayClick}
       >
@@ -336,8 +348,11 @@ export function MaturityModalManager({
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex justify-between items-center p-4 border-b border-gray-200 shrink-0">
-            <h2 className="text-xl font-bold text-gray-900">Version History</h2>
+            <h2 className="text-xl font-bold text-gray-900" data-testid="maturity-version-history-heading">
+              Version History
+            </h2>
             <button
+              data-testid="maturity-modal-close"
               onClick={onClose}
               className="text-gray-500 hover:text-gray-800 text-2xl leading-none"
             >
@@ -354,6 +369,7 @@ export function MaturityModalManager({
               {VERSION_HISTORY_ITEMS.map((item) => (
                 <div
                   key={item.version}
+                  data-testid={`maturity-version-item-${item.version}`}
                   className="border-b border-slate-200 pb-4 last:border-b-0 last:pb-0"
                 >
                   <h3 className="font-semibold text-slate-900">Version {item.version}</h3>
@@ -376,6 +392,7 @@ export function MaturityModalManager({
   if (modalType === 'reportChoice') {
     return (
       <div
+        data-testid="maturity-modal-report-choice"
         className="fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-4"
         onClick={handleOverlayClick}
       >
@@ -386,6 +403,7 @@ export function MaturityModalManager({
           <div className="flex justify-between items-center p-4 border-b border-gray-200 shrink-0">
             <h2 className="text-xl font-bold text-gray-900">Select a Report</h2>
             <button
+              data-testid="maturity-modal-close"
               onClick={onClose}
               className="text-gray-500 hover:text-gray-800 text-2xl leading-none"
             >
@@ -444,6 +462,7 @@ export function MaturityModalManager({
 
     return (
       <div
+        data-testid="maturity-modal-report"
         className="fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-4"
         onClick={handleOverlayClick}
       >
@@ -455,18 +474,21 @@ export function MaturityModalManager({
             <h2 className="text-xl font-bold text-gray-900">Assessment Report</h2>
             <div className="flex gap-2">
               <button
+                data-testid="maturity-report-print-button"
                 onClick={() => handlePrint(reportHtml, 'Maturity Assessment Report')}
                 className="px-4 py-2 bg-[#005eb8] text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
               >
                 Print / Save PDF
               </button>
               <button
+                data-testid="maturity-report-export-csv-button"
                 onClick={handleExportCsv}
                 className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-200 transition-colors"
               >
                 Export CSV
               </button>
               <button
+                data-testid="maturity-modal-close"
                 onClick={onClose}
                 className="text-gray-500 hover:text-gray-800 text-2xl leading-none"
               >
@@ -475,6 +497,7 @@ export function MaturityModalManager({
             </div>
           </div>
           <div
+            data-testid="maturity-report-content"
             className="p-8 overflow-y-auto print-area"
             dangerouslySetInnerHTML={{ __html: reportHtml }}
           />
@@ -490,6 +513,7 @@ export function MaturityModalManager({
 
     return (
       <div
+        data-testid="maturity-modal-action-plan-report"
         className="fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-4"
         onClick={handleOverlayClick}
       >
@@ -501,18 +525,21 @@ export function MaturityModalManager({
             <h2 className="text-xl font-bold text-gray-900">Action Plan Report</h2>
             <div className="flex gap-2">
               <button
+                data-testid="maturity-action-plan-print-button"
                 onClick={() => handlePrint(actionPlanHtml, 'Action Plan Report')}
                 className="px-4 py-2 bg-[#005eb8] text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
               >
                 Print / Save PDF
               </button>
               <button
+                data-testid="maturity-action-plan-export-csv-button"
                 onClick={() => onExportActionPlanCsv?.(actionPlanData?.rows ?? [])}
                 className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-200 transition-colors"
               >
                 Export CSV
               </button>
               <button
+                data-testid="maturity-modal-close"
                 onClick={onClose}
                 className="text-gray-500 hover:text-gray-800 text-2xl leading-none"
               >

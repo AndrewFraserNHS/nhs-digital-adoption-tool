@@ -44,10 +44,10 @@ describe('MaturityModalManager', () => {
     const props = buildProps();
     render(<MaturityModalManager {...props} modalType="matrix" />);
 
-    fireEvent.click(screen.getByRole('button', { name: /2\s+-\s+Developing\s+Two/i }));
+    fireEvent.click(screen.getByTestId('maturity-matrix-score-2'));
     expect(props.onSetScore).toHaveBeenCalledWith('Vision', 2);
 
-    fireEvent.click(screen.getAllByRole('button', { name: '×' })[0]);
+    fireEvent.click(screen.getByTestId('maturity-modal-close'));
     expect(props.onClose).toHaveBeenCalled();
   });
 
@@ -55,8 +55,11 @@ describe('MaturityModalManager', () => {
     const props = buildProps();
     const { rerender } = render(<MaturityModalManager {...props} modalType="guidance" />);
 
-    expect(screen.getAllByText('Purpose').length).toBeGreaterThan(0);
-    expect(screen.getByText('Inputs, tools and templates')).toBeInTheDocument();
+    expect(screen.getByTestId('maturity-modal-guidance')).toBeInTheDocument();
+    expect(screen.getByTestId('maturity-guidance-body').textContent).toContain('Purpose');
+    expect(screen.getByTestId('maturity-guidance-body').textContent).toContain(
+      'Inputs, tools and templates'
+    );
 
     rerender(
       <MaturityModalManager
@@ -66,25 +69,33 @@ describe('MaturityModalManager', () => {
         guidanceData={{}}
       />
     );
-    expect(screen.getByText('No guidance available.')).toBeInTheDocument();
+    expect(screen.getByTestId('maturity-guidance-body').textContent).toContain(
+      'No guidance available.'
+    );
   });
 
   it('renders help modal with usage guidance', () => {
     const props = buildProps();
     render(<MaturityModalManager {...props} modalType="help" />);
 
-    expect(screen.getByRole('heading', { name: /how to use this tool/i })).toBeInTheDocument();
-    expect(screen.getByText(/fill in CST details/i)).toBeInTheDocument();
-    expect(screen.getByText(/assess each theme/i)).toBeInTheDocument();
+    expect(screen.getByTestId('maturity-modal-help')).toBeInTheDocument();
+    expect(screen.getByTestId('maturity-help-heading')).toBeInTheDocument();
+    expect(screen.getByTestId('maturity-modal-help').textContent).toContain('Fill in CST Details');
+    expect(screen.getByTestId('maturity-modal-help').textContent).toContain('Assess Each Theme');
   });
 
   it('renders version history modal with release notes', () => {
     const props = buildProps();
     render(<MaturityModalManager {...props} modalType="versionHistory" />);
 
-    expect(screen.getByRole('heading', { name: /version history/i })).toBeInTheDocument();
-    expect(screen.getByText(/version 5\.20/i)).toBeInTheDocument();
-    expect(screen.getAllByText(/updated component matrix definitions/i).length).toBeGreaterThan(0);
+    expect(screen.getByTestId('maturity-modal-version-history')).toBeInTheDocument();
+    expect(screen.getByTestId('maturity-version-history-heading')).toBeInTheDocument();
+    expect(screen.getByTestId('maturity-modal-version-history').textContent).toContain(
+      'Version 5.20'
+    );
+    expect(screen.getByTestId('maturity-modal-version-history').textContent?.toLowerCase()).toContain(
+      'updated component matrix definitions'
+    );
   });
 
   it('renders report modal, prints, and exports csv from report rows', () => {
@@ -106,15 +117,15 @@ describe('MaturityModalManager', () => {
 
     render(<MaturityModalManager {...props} modalType="report" />);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Print / Save PDF' }));
+    fireEvent.click(screen.getByTestId('maturity-report-print-button'));
     vi.runAllTimers();
-    fireEvent.click(screen.getByRole('button', { name: 'Export CSV' }));
+    fireEvent.click(screen.getByTestId('maturity-report-export-csv-button'));
 
     expect(openSpy).toHaveBeenCalled();
     expect(print).toHaveBeenCalled();
     expect(write).toHaveBeenCalled();
     expect(props.onExportCsv).toHaveBeenCalledWith(props.reportData.rows);
-    expect(screen.getByText('Mock Report')).toBeInTheDocument();
+    expect(screen.getByTestId('maturity-report-content').textContent).toContain('Mock Report');
 
     openSpy.mockRestore();
     vi.useRealTimers();
@@ -130,7 +141,7 @@ describe('MaturityModalManager', () => {
       />
     );
 
-    fireEvent.click(screen.getByRole('button', { name: 'Export CSV' }));
+    fireEvent.click(screen.getByTestId('maturity-report-export-csv-button'));
     expect(props.onExportCsv).toHaveBeenCalledWith([
       { id: 'Vision', label: 'Vision', value: 2 },
       { id: 'Benefits', label: 'Benefits', value: 0 },

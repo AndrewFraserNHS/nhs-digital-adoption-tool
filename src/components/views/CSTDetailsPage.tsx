@@ -598,13 +598,11 @@ export function ProjectDetailsPage({
 
       <div className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-5`}>
         <div>
-          <h3 className={`text-lg font-semibold flex items-center gap-2 ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
+          <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
             Programme Hierarchy
-            <span className={`inline-flex h-5 w-5 items-center justify-center rounded-full border text-xs font-semibold ${darkMode ? 'border-slate-600 text-slate-300' : 'border-slate-300 text-slate-600'}`} title="A component is a change topic you assess and track.">i</span>
-            <span className={`inline-flex h-5 w-5 items-center justify-center rounded-full border text-xs font-semibold ${darkMode ? 'border-slate-600 text-slate-300' : 'border-slate-300 text-slate-600'}`} title="A lens is the perspective used to assess each component (for example leadership, risk, capability, sustainment).">i</span>
           </h3>
           <p className={`text-sm mt-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-            Your programme has {components.length} components, each viewed through one or more lenses. Click a
+            Your programme has {components.length} components, each viewed through one or more lenses. A component is a change topic you assess and track; a lens is the perspective used to assess it (e.g. leadership, risk, capability). Click a
             component to jump to its assessment.
           </p>
         </div>

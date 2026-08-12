@@ -280,7 +280,7 @@ export function ActionPlanTracker({ actions, onComponentClick, darkMode = false 
                     <td className={`px-4 py-3 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
                       <button
                         onClick={() => handleComponentClick(compId)}
-                        className="hover:text-[#005eb8] transition-colors"
+                        className="text-left hover:text-[#005eb8] transition-colors"
                       >
                         {component}
                       </button>

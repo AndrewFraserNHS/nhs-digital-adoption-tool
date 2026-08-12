@@ -28,7 +28,7 @@ const PHASES = [
   '2 Solution Design',
   '3 Development',
   '4 Deployment / Go Live',
-  '5 Post-Deployment'
+  '5 Post-Deployment',
 ];
 
 const STAGES = MATURITY_STAGES;
@@ -50,7 +50,7 @@ export function MaturityOverview({
   onSaveClick,
   onLoadClick,
   onResetClick,
-  onReportsClick
+  onReportsClick,
 }: MaturityOverviewProps): JSX.Element {
   const handleSummaryViewToggle = useCallback(
     (view: 'dueDate' | 'status') => {
@@ -65,7 +65,9 @@ export function MaturityOverview({
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 px-6 py-4 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-xl font-bold text-slate-900">Change Maturity Assessment Tool</h1>
-          <p className="text-xs text-slate-500 mt-0.5">{CONSTANTS.VERSION} - NHS Change Maturity Framework</p>
+          <p className="text-xs text-slate-500 mt-0.5">
+            {CONSTANTS.VERSION} - NHS Change Maturity Framework
+          </p>
         </div>
         <div className="flex flex-wrap gap-2">
           <button
@@ -102,7 +104,10 @@ export function MaturityOverview({
           {/* Left Column - Input Fields */}
           <div className="space-y-4">
             <div>
-              <label htmlFor="organisation-name" className="block text-sm font-medium text-gray-600 mb-1">
+              <label
+                htmlFor="organisation-name"
+                className="block text-sm font-medium text-gray-600 mb-1"
+              >
                 Organisation Name
               </label>
               <input
@@ -115,7 +120,10 @@ export function MaturityOverview({
               />
             </div>
             <div>
-              <label htmlFor="project-name" className="block text-sm font-medium text-gray-600 mb-1">
+              <label
+                htmlFor="project-name"
+                className="block text-sm font-medium text-gray-600 mb-1"
+              >
                 Project Name
               </label>
               <input
@@ -128,7 +136,10 @@ export function MaturityOverview({
               />
             </div>
             <div>
-              <label htmlFor="project-phase-select" className="block text-sm font-medium text-gray-600 mb-1">
+              <label
+                htmlFor="project-phase-select"
+                className="block text-sm font-medium text-gray-600 mb-1"
+              >
                 Project Phase
               </label>
               <select
@@ -146,7 +157,10 @@ export function MaturityOverview({
               </select>
             </div>
             <div>
-              <label htmlFor="guidance-target-select" className="block text-sm font-medium text-gray-600 mb-1">
+              <label
+                htmlFor="guidance-target-select"
+                className="block text-sm font-medium text-gray-600 mb-1"
+              >
                 Guidance Target
               </label>
               <select
@@ -200,10 +214,7 @@ export function MaturityOverview({
               </div>
             </div>
             <div className="w-full h-48 flex items-center justify-center">
-              <canvas
-                id="actions-summary-chart"
-                style={{ maxHeight: '100%', maxWidth: '100%' }}
-              />
+              <canvas id="actions-summary-chart" style={{ maxHeight: '100%', maxWidth: '100%' }} />
             </div>
           </div>
         </div>
@@ -213,10 +224,7 @@ export function MaturityOverview({
       <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-200 mb-8">
         <h2 className="text-2xl font-bold text-center text-gray-900 mb-4">Maturity Radar</h2>
         <div style={{ position: 'relative', width: '100%', height: '520px', overflow: 'visible' }}>
-          <canvas
-            id="maturityRadar"
-            style={{ maxHeight: '100%', maxWidth: '100%' }}
-          />
+          <canvas id="maturityRadar" style={{ maxHeight: '100%', maxWidth: '100%' }} />
         </div>
         <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 mt-4 text-sm text-gray-600">
           {STAGES.map((stage, i) => (

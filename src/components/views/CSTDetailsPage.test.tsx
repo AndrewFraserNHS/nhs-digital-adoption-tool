@@ -16,12 +16,18 @@ const orgProfile: OrgProfile = {
     goLiveDate: '2026-10-01',
     fullAdoptionDate: '',
     benefitRealizationDate: '',
-    phaseCapability: {}
-  }
+    phaseCapability: {},
+  },
 };
 
 const components: AssessmentComponent[] = [
-  { id: 'vision', label: 'Vision', lenses: ['Strategic Direction and Leadership'], phase: 1, target: 4 }
+  {
+    id: 'vision',
+    label: 'Vision',
+    lenses: ['Strategic Direction and Leadership'],
+    phase: 1,
+    target: 4,
+  },
 ];
 
 const store: AdoptionStore = {
@@ -29,13 +35,18 @@ const store: AdoptionStore = {
   orgProfile,
   currentDraft: {
     vision: {
-      'Strategic Direction and Leadership': { score: 2, justification: '', evidence: '', actions: [] }
-    }
+      'Strategic Direction and Leadership': {
+        score: 2,
+        justification: '',
+        evidence: '',
+        actions: [],
+      },
+    },
   },
   objectives: {},
   phaseOverrides: {},
   pathwayChecks: {},
-  history: []
+  history: [],
 };
 
 function getEntry(componentId: string, lens: string): DraftEntry {

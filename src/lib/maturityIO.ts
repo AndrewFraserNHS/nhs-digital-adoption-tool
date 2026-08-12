@@ -1,5 +1,5 @@
-import type { ComponentDetail } from './maturityState';
 import { normalizeActionStatus } from './actionModel';
+import type { ComponentDetail } from './maturityState';
 
 export interface ProjectProfile {
   org: string;
@@ -19,7 +19,7 @@ export function createEmptyDetail(): ComponentDetail {
     justification: '',
     notes: '',
     links: [],
-    actions: []
+    actions: [],
   };
 }
 
@@ -37,8 +37,8 @@ export function cloneDetail(detail: Partial<ComponentDetail> | undefined): Compo
       status: normalizeActionStatus(action.status),
       phase: action.phase,
       guidanceUrl: action.guidanceUrl,
-      timescale: action.timescale
-    }))
+      timescale: action.timescale,
+    })),
   };
 }
 

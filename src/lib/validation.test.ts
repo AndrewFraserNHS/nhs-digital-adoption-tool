@@ -1,26 +1,27 @@
 import { describe, expect, it } from 'vitest';
+
 import {
   combineValidationResults,
   validateDate,
   validateEmail,
   validateRequired,
   validateScore,
-  validateUrl
+  validateUrl,
 } from './validation';
 
 describe('validation helpers', () => {
   it('validates score required, numeric, and range branches', () => {
     expect(validateScore(null)).toEqual({
       isValid: false,
-      errors: [{ field: 'score', message: 'Score is required' }]
+      errors: [{ field: 'score', message: 'Score is required' }],
     });
     expect(validateScore('abc')).toEqual({
       isValid: false,
-      errors: [{ field: 'score', message: 'Score must be a number' }]
+      errors: [{ field: 'score', message: 'Score must be a number' }],
     });
     expect(validateScore(9, 0, 5, 'maturity')).toEqual({
       isValid: false,
-      errors: [{ field: 'maturity', message: 'Score must be between 0 and 5' }]
+      errors: [{ field: 'maturity', message: 'Score must be between 0 and 5' }],
     });
     expect(validateScore(4).isValid).toBe(true);
   });
@@ -28,7 +29,7 @@ describe('validation helpers', () => {
   it('validates required and email formats', () => {
     expect(validateRequired('')).toEqual({
       isValid: false,
-      errors: [{ field: 'field', message: 'field is required' }]
+      errors: [{ field: 'field', message: 'field is required' }],
     });
     expect(validateEmail('bad-email').isValid).toBe(false);
     expect(validateEmail('a@b.com').isValid).toBe(true);
@@ -44,12 +45,12 @@ describe('validation helpers', () => {
   it('combines validation result arrays', () => {
     const combined = combineValidationResults([
       { isValid: true, errors: [] },
-      { isValid: false, errors: [{ field: 'x', message: 'x bad' }] }
+      { isValid: false, errors: [{ field: 'x', message: 'x bad' }] },
     ]);
 
     expect(combined).toEqual({
       isValid: false,
-      errors: [{ field: 'x', message: 'x bad' }]
+      errors: [{ field: 'x', message: 'x bad' }],
     });
   });
 });

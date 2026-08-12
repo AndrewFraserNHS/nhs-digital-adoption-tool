@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { MaturityModalManager } from './MaturityModalManager';
 
 vi.mock('@lib/reporting', () => ({
-  generateMaturityReport: vi.fn(() => '<div>Mock Report</div>')
+  generateMaturityReport: vi.fn(() => '<div>Mock Report</div>'),
 }));
 
 function buildProps() {
@@ -17,19 +17,19 @@ function buildProps() {
         purpose: 'Purpose',
         inputs: 'Inputs',
         indicators: 'Indicators',
-        deliverables: 'Deliverables'
-      }
+        deliverables: 'Deliverables',
+      },
     },
     reportData: {
       orgName: 'Trust',
       projectName: 'Programme',
       phase: '1 Pre-Discovery',
-      rows: [{ id: 'vision', label: 'Vision', value: 2, max: 5 }]
+      rows: [{ id: 'vision', label: 'Vision', value: 2, max: 5 }],
     },
     components: ['Vision', 'Benefits'],
     onClose: vi.fn(),
     onSetScore: vi.fn(),
-    onExportCsv: vi.fn()
+    onExportCsv: vi.fn(),
   };
 }
 
@@ -89,18 +89,35 @@ describe('MaturityModalManager', () => {
 
   it('renders report modal, prints, and exports csv from report rows', () => {
     const props = buildProps();
-    const printSpy = vi.spyOn(window, 'print').mockImplementation(() => {});
+    vi.useFakeTimers();
+    const write = vi.fn();
+    const print = vi.fn();
+    const close = vi.fn();
+    const focus = vi.fn();
+    const openSpy = vi.spyOn(window, 'open').mockReturnValue({
+      document: {
+        write,
+        close: vi.fn(),
+      },
+      print,
+      close,
+      focus,
+    } as unknown as Window);
 
     render(<MaturityModalManager {...props} modalType="report" />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Print / Save PDF' }));
+    vi.runAllTimers();
     fireEvent.click(screen.getByRole('button', { name: 'Export CSV' }));
 
-    expect(printSpy).toHaveBeenCalled();
+    expect(openSpy).toHaveBeenCalled();
+    expect(print).toHaveBeenCalled();
+    expect(write).toHaveBeenCalled();
     expect(props.onExportCsv).toHaveBeenCalledWith(props.reportData.rows);
     expect(screen.getByText('Mock Report')).toBeInTheDocument();
 
-    printSpy.mockRestore();
+    openSpy.mockRestore();
+    vi.useRealTimers();
   });
 
   it('exports csv fallback rows when report rows are missing', () => {
@@ -116,7 +133,7 @@ describe('MaturityModalManager', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Export CSV' }));
     expect(props.onExportCsv).toHaveBeenCalledWith([
       { id: 'Vision', label: 'Vision', value: 2 },
-      { id: 'Benefits', label: 'Benefits', value: 0 }
+      { id: 'Benefits', label: 'Benefits', value: 0 },
     ]);
   });
 });

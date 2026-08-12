@@ -3,10 +3,11 @@
  * Manages draft entries, organization profile, and history
  */
 
-import { Store, type StateListener } from './observable';
-import type { ActionType, UnifiedActionStatus } from './actionModel';
-import { DEFAULT_CST_PROFILE, type CstPathwayKey, type CstProfile } from '@data/cst';
+import { type CstPathwayKey, type CstProfile, DEFAULT_CST_PROFILE } from '@data/cst';
 import type { LinkOverrides } from '@data/maturity-guidance-links';
+
+import type { ActionType, UnifiedActionStatus } from './actionModel';
+import { type StateListener, Store } from './observable';
 
 export interface ActionTargetLink {
   componentId: string;
@@ -70,7 +71,9 @@ export function deriveObjectiveStatus(
   }
 
   const statuses = objective.linkedActions.map((link) => {
-    const action = (actionsByLens[link.lens] || []).find((candidate) => candidate.id === link.actionId);
+    const action = (actionsByLens[link.lens] || []).find(
+      (candidate) => candidate.id === link.actionId
+    );
     return action?.status || 'Planned';
   });
 
@@ -111,7 +114,16 @@ export interface HistorySnapshot {
   data: Record<string, Record<string, DraftEntry>>;
 }
 
-export type View = 'dashboard' | 'assessment' | 'action-plan' | 'cm-guide' | 'guidance-builder' | 'roadmap-view' | 'highlight-builder' | 'project-details' | 'settings';
+export type View =
+  | 'dashboard'
+  | 'assessment'
+  | 'action-plan'
+  | 'cm-guide'
+  | 'guidance-builder'
+  | 'roadmap-view'
+  | 'highlight-builder'
+  | 'project-details'
+  | 'settings';
 
 export interface AdoptionStore {
   view: View;
@@ -136,9 +148,9 @@ export function normalizeOrgProfile(profile?: Partial<OrgProfile>): OrgProfile {
     leadName: profile?.leadName || '',
     cst: {
       ...DEFAULT_CST_PROFILE,
-      ...(profile?.cst || {})
+      ...(profile?.cst || {}),
     },
-    linkOverrides: profile?.linkOverrides
+    linkOverrides: profile?.linkOverrides,
   };
 }
 
@@ -152,7 +164,7 @@ function clonePathwayChecks(checks?: PathwayChecklistState): PathwayChecklistSta
     next[componentId] = {
       'pathway-1': [...(componentChecks['pathway-1'] || [])],
       'pathway-2': [...(componentChecks['pathway-2'] || [])],
-      'pathway-3': [...(componentChecks['pathway-3'] || [])]
+      'pathway-3': [...(componentChecks['pathway-3'] || [])],
     };
     return next;
   }, {});
@@ -166,12 +178,10 @@ export function initializeStore(persisted?: Partial<AdoptionStore>): AdoptionSto
     view: persisted?.view || 'dashboard',
     orgProfile: normalizeOrgProfile(persisted?.orgProfile),
     currentDraft: persisted?.currentDraft || {},
-    objectives: persisted?.objectives
-      ? cloneObjectivesMap(persisted.objectives)
-      : {},
+    objectives: persisted?.objectives ? cloneObjectivesMap(persisted.objectives) : {},
     history: persisted?.history || [],
     phaseOverrides: persisted?.phaseOverrides || {},
-    pathwayChecks: clonePathwayChecks(persisted?.pathwayChecks)
+    pathwayChecks: clonePathwayChecks(persisted?.pathwayChecks),
   };
 }
 
@@ -186,12 +196,12 @@ export function createReactiveAdoptionStore(persisted?: Partial<AdoptionStore>):
   getSubscriberCount: () => number;
 } {
   const store = new Store(initializeStore(persisted));
-  
+
   return {
     getState: () => store.getState(),
     setState: (updater) => store.setState(updater),
     subscribe: (listener) => store.subscribe(listener),
-    getSubscriberCount: () => store.getSubscriberCount()
+    getSubscriberCount: () => store.getSubscriberCount(),
   };
 }
 
@@ -203,7 +213,7 @@ export function createEmptyEntry(): DraftEntry {
     score: 0,
     justification: '',
     evidence: '',
-    actions: []
+    actions: [],
   };
 }
 
@@ -219,22 +229,28 @@ export function cloneEntry(entry: DraftEntry): DraftEntry {
       ...action,
       linkedTargets: (action.linkedTargets || []).map((target) => ({
         componentId: target.componentId,
-        lens: target.lens
-      }))
-    }))
+        lens: target.lens,
+      })),
+    })),
   };
 }
 
 export function cloneDraft(
   draft: Record<string, Record<string, DraftEntry>>
 ): Record<string, Record<string, DraftEntry>> {
-  return Object.keys(draft).reduce<Record<string, Record<string, DraftEntry>>>((components, componentId) => {
-    components[componentId] = Object.keys(draft[componentId]).reduce<Record<string, DraftEntry>>((lenses, lens) => {
-      lenses[lens] = cloneEntry(draft[componentId][lens]);
-      return lenses;
-    }, {});
-    return components;
-  }, {});
+  return Object.keys(draft).reduce<Record<string, Record<string, DraftEntry>>>(
+    (components, componentId) => {
+      components[componentId] = Object.keys(draft[componentId]).reduce<Record<string, DraftEntry>>(
+        (lenses, lens) => {
+          lenses[lens] = cloneEntry(draft[componentId][lens]);
+          return lenses;
+        },
+        {}
+      );
+      return components;
+    },
+    {}
+  );
 }
 
 /**
@@ -243,7 +259,7 @@ export function cloneDraft(
 export function cloneObjective(objective: ComponentObjective): ComponentObjective {
   return {
     ...objective,
-    linkedActions: objective.linkedActions.map((link) => ({ ...link }))
+    linkedActions: objective.linkedActions.map((link) => ({ ...link })),
   };
 }
 

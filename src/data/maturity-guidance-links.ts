@@ -13,7 +13,7 @@ export interface GuidanceLink {
 
 export const TOOLKIT_BASE_DEFAULTS = {
   label: 'Change Management Toolkit',
-  url: 'https://future.nhs.uk/CMN/view?objectId=129489733'
+  url: 'https://future.nhs.uk/CMN/view?objectId=129489733',
 } as const;
 
 export interface LinkBaseOverride {
@@ -34,7 +34,9 @@ export interface LinkOverrides {
 }
 
 export function resolveEffectiveLink(link: GuidanceLink, overrides?: LinkOverrides): GuidanceLink {
-  if (!overrides) return link;
+  if (!overrides) {
+    return link;
+  }
   const perLink = overrides.links?.[link.key];
   const overrideUrl = perLink?.url?.trim();
   const overrideLabel = perLink?.label?.trim() || link.label;
@@ -88,151 +90,359 @@ const ADOPTION_COMPONENT_TO_GUIDANCE_KEYS: Record<string, string[]> = {
   process_change: ['Process change'],
   reinforcement: ['Reinforcement'],
   org_maturity: ['Change Management Capability'],
-  transfer_bau: ['Reinforcement']
+  transfer_bau: ['Reinforcement'],
 };
 
 export const DEFAULT_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
-  'Vision': {
+  Vision: {
     inputs: [
-      { key: 'fnhs_37515792', label: 'Change Vision Template', url: 'https://future.nhs.uk/CMN/view?objectId=37515792' },
-      { key: 'fnhs_34039184', label: 'Sinek’s Golden Circle', url: 'https://future.nhs.uk/CMN/view?objectId=34039184' },
-      { key: 'fnhs_34039088', label: 'Rich Picture', url: 'https://future.nhs.uk/CMN/view?objectId=34039088' }
-    ]
+      {
+        key: 'fnhs_37515792',
+        label: 'Change Vision Template',
+        url: 'https://future.nhs.uk/CMN/view?objectId=37515792',
+      },
+      {
+        key: 'fnhs_34039184',
+        label: 'Sinek’s Golden Circle',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34039184',
+      },
+      {
+        key: 'fnhs_34039088',
+        label: 'Rich Picture',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34039088',
+      },
+    ],
   },
   'Case for Change': {
     inputs: [
-      { key: 'fnhs_34037712', label: 'SWOT Analysis', url: 'https://future.nhs.uk/CMN/view?objectId=34037712', description: 'Helps leadership frame the need for change.' },
-      { key: 'fnhs_34037360', label: 'Force Field Analysis', url: 'https://future.nhs.uk/CMN/view?objectId=34037360', description: 'Identifies drivers and barriers to change.' },
-      { key: 'fnhs_45000208', label: "What's in it for me? Benefits", url: 'https://future.nhs.uk/CMN/view?objectId=45000208', description: 'Supports benefit capture by stakeholder group.' },
-      { key: 'fnhs_34037040', label: 'High Level GAP Analysis', url: 'https://future.nhs.uk/CMN/view?objectId=34037040', description: 'Highlights what needs to change.' },
-      { key: 'fnhs_34037072', label: 'PESTLE Analysis', url: 'https://future.nhs.uk/CMN/view?objectId=34037072', description: 'Analyzes external influencing factors.' },
-      { key: 'fnhs_34040176', label: 'Benefits Map', url: 'https://future.nhs.uk/CMN/view?objectId=34040176', description: 'Links benefits and desired outcomes.' },
-      { key: 'fnhs_34039024', label: 'Sponsor Coalition Map', url: 'https://future.nhs.uk/CMN/view?objectId=34039024', description: 'Identifies visible champions and supporters.' },
-      { key: 'fnhs_69511824', label: 'Measuring Digital Adoption', url: 'https://future.nhs.uk/CMN/view?objectId=69511824', description: 'Examples of adoption measures tied to success.' }
+      {
+        key: 'fnhs_34037712',
+        label: 'SWOT Analysis',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34037712',
+        description: 'Helps leadership frame the need for change.',
+      },
+      {
+        key: 'fnhs_34037360',
+        label: 'Force Field Analysis',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34037360',
+        description: 'Identifies drivers and barriers to change.',
+      },
+      {
+        key: 'fnhs_45000208',
+        label: "What's in it for me? Benefits",
+        url: 'https://future.nhs.uk/CMN/view?objectId=45000208',
+        description: 'Supports benefit capture by stakeholder group.',
+      },
+      {
+        key: 'fnhs_34037040',
+        label: 'High Level GAP Analysis',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34037040',
+        description: 'Highlights what needs to change.',
+      },
+      {
+        key: 'fnhs_34037072',
+        label: 'PESTLE Analysis',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34037072',
+        description: 'Analyzes external influencing factors.',
+      },
+      {
+        key: 'fnhs_34040176',
+        label: 'Benefits Map',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34040176',
+        description: 'Links benefits and desired outcomes.',
+      },
+      {
+        key: 'fnhs_34039024',
+        label: 'Sponsor Coalition Map',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34039024',
+        description: 'Identifies visible champions and supporters.',
+      },
+      {
+        key: 'fnhs_69511824',
+        label: 'Measuring Digital Adoption',
+        url: 'https://future.nhs.uk/CMN/view?objectId=69511824',
+        description: 'Examples of adoption measures tied to success.',
+      },
     ],
     deliverables: [
-      { key: 'fnhs_44287088', label: 'A clear case for change communicated to all stakeholders', url: 'https://future.nhs.uk/CMN/view?objectId=44287088' }
-    ]
+      {
+        key: 'fnhs_44287088',
+        label: 'A clear case for change communicated to all stakeholders',
+        url: 'https://future.nhs.uk/CMN/view?objectId=44287088',
+      },
+    ],
   },
   'Sponsorship/ Change Network': {
     inputs: [
-      { key: 'fnhs_34039024', label: 'Sponsor Coalition Map', url: 'https://future.nhs.uk/CMN/view?objectId=34039024' },
-      { key: 'fnhs_34037520', label: 'Good sponsor', url: 'https://future.nhs.uk/CMN/view?objectId=34037520' },
-      { key: 'fnhs_34037552', label: 'Form a Change Network', url: 'https://future.nhs.uk/CMN/view?objectId=34037552' }
-    ]
+      {
+        key: 'fnhs_34039024',
+        label: 'Sponsor Coalition Map',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34039024',
+      },
+      {
+        key: 'fnhs_34037520',
+        label: 'Good sponsor',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34037520',
+      },
+      {
+        key: 'fnhs_34037552',
+        label: 'Form a Change Network',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34037552',
+      },
+    ],
   },
-  'Benefits': {
+  Benefits: {
     inputs: [
-      { key: 'fnhs_34037232', label: 'Benefits Discovery Workshop', url: 'https://future.nhs.uk/CMN/view?objectId=34037232' },
-      { key: 'fnhs_34040176', label: 'Benefits Map', url: 'https://future.nhs.uk/CMN/view?objectId=34040176' },
-      { key: 'fnhs_34030736', label: 'Benefits Realisation Plan', url: 'https://future.nhs.uk/CMN/view?objectId=34030736' }
-    ]
+      {
+        key: 'fnhs_34037232',
+        label: 'Benefits Discovery Workshop',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34037232',
+      },
+      {
+        key: 'fnhs_34040176',
+        label: 'Benefits Map',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34040176',
+      },
+      {
+        key: 'fnhs_34030736',
+        label: 'Benefits Realisation Plan',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34030736',
+      },
+    ],
   },
   'Change Impact & Risk': {
     inputs: [
-      { key: 'fnhs_34037424', label: 'Change Impact Assessment', url: 'https://future.nhs.uk/CMN/view?objectId=34037424' },
-      { key: 'fnhs_34037968', label: 'Heat Map', url: 'https://future.nhs.uk/CMN/view?objectId=34037968' },
-      { key: 'fnhs_34037776', label: 'Change Risk Assessment', url: 'https://future.nhs.uk/CMN/view?objectId=34037776' }
-    ]
+      {
+        key: 'fnhs_34037424',
+        label: 'Change Impact Assessment',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34037424',
+      },
+      {
+        key: 'fnhs_34037968',
+        label: 'Heat Map',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34037968',
+      },
+      {
+        key: 'fnhs_34037776',
+        label: 'Change Risk Assessment',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34037776',
+      },
+    ],
   },
   'Change Management Readiness & Planning': {
     inputs: [
-      { key: 'fnhs_42042672', label: 'Change Management Strategy', url: 'https://future.nhs.uk/CMN/view?objectId=42042672' },
-      { key: 'fnhs_34038032', label: 'Change Management Plan', url: 'https://future.nhs.uk/CMN/view?objectId=34038032' },
-      { key: 'fnhs_34040240', label: 'RACI Matrix', url: 'https://future.nhs.uk/CMN/view?objectId=34040240' }
-    ]
+      {
+        key: 'fnhs_42042672',
+        label: 'Change Management Strategy',
+        url: 'https://future.nhs.uk/CMN/view?objectId=42042672',
+      },
+      {
+        key: 'fnhs_34038032',
+        label: 'Change Management Plan',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34038032',
+      },
+      {
+        key: 'fnhs_34040240',
+        label: 'RACI Matrix',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34040240',
+      },
+    ],
   },
   'Stakeholder Engagement & Comms': {
     inputs: [
-      { key: 'fnhs_34018288', label: 'Stakeholder Analysis', url: 'https://future.nhs.uk/CMN/view?objectId=34018288' },
-      { key: 'fnhs_34037008', label: 'Stakeholder Engagement & Communications Strategy', url: 'https://future.nhs.uk/CMN/view?objectId=34037008' },
-      { key: 'fnhs_34037616', label: 'Stakeholder Engagement & Communications Plan', url: 'https://future.nhs.uk/CMN/view?objectId=34037616' }
-    ]
+      {
+        key: 'fnhs_34018288',
+        label: 'Stakeholder Analysis',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34018288',
+      },
+      {
+        key: 'fnhs_34037008',
+        label: 'Stakeholder Engagement & Communications Strategy',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34037008',
+      },
+      {
+        key: 'fnhs_34037616',
+        label: 'Stakeholder Engagement & Communications Plan',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34037616',
+      },
+    ],
   },
   'Resistance Management': {
     inputs: [
-      { key: 'fnhs_34037360', label: 'Force Field Analysis', url: 'https://future.nhs.uk/CMN/view?objectId=34037360' },
-      { key: 'fnhs_34038832', label: 'ADKAR Model', url: 'https://future.nhs.uk/CMN/view?objectId=34038832' },
-      { key: 'fnhs_34307760', label: 'Resistance Management Plan', url: 'https://future.nhs.uk/CMN/view?objectId=34307760' }
-    ]
+      {
+        key: 'fnhs_34037360',
+        label: 'Force Field Analysis',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34037360',
+      },
+      {
+        key: 'fnhs_34038832',
+        label: 'ADKAR Model',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34038832',
+      },
+      {
+        key: 'fnhs_34307760',
+        label: 'Resistance Management Plan',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34307760',
+      },
+    ],
   },
   'Skills/ Learning': {
     inputs: [
-      { key: 'fnhs_34037456', label: 'Learning Needs Analysis', url: 'https://future.nhs.uk/CMN/view?objectId=34037456' },
-      { key: 'fnhs_34038384', label: 'Training Plan', url: 'https://future.nhs.uk/CMN/view?objectId=34038384' },
-      { key: 'fnhs_34038224', label: 'Updated Standard Operating Procedures', url: 'https://future.nhs.uk/CMN/view?objectId=34038224' }
-    ]
+      {
+        key: 'fnhs_34037456',
+        label: 'Learning Needs Analysis',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34037456',
+      },
+      {
+        key: 'fnhs_34038384',
+        label: 'Training Plan',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34038384',
+      },
+      {
+        key: 'fnhs_34038224',
+        label: 'Updated Standard Operating Procedures',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34038224',
+      },
+    ],
   },
   'Process change': {
     inputs: [
-      { key: 'fnhs_34037840', label: 'Process Mapping', url: 'https://future.nhs.uk/CMN/view?objectId=34037840' },
-      { key: 'fnhs_34037040', label: 'GAP Analysis', url: 'https://future.nhs.uk/CMN/view?objectId=34037040' },
-      { key: 'fnhs_34038224', label: 'Standard Operating Procedures (SOPs)', url: 'https://future.nhs.uk/CMN/view?objectId=34038224' }
-    ]
+      {
+        key: 'fnhs_34037840',
+        label: 'Process Mapping',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34037840',
+      },
+      {
+        key: 'fnhs_34037040',
+        label: 'GAP Analysis',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34037040',
+      },
+      {
+        key: 'fnhs_34038224',
+        label: 'Standard Operating Procedures (SOPs)',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34038224',
+      },
+    ],
   },
-  'Reinforcement': {
+  Reinforcement: {
     inputs: [
-      { key: 'fnhs_44287088', label: 'Case for Change', url: 'https://future.nhs.uk/CMN/view?objectID=44287088' },
-      { key: 'fnhs_34037552', label: 'Change Network', url: 'https://future.nhs.uk/CMN/view?objectId=34037552' },
-      { key: 'fnhs_34038672', label: 'User Survey', url: 'https://future.nhs.uk/CMN/view?objectId=34038672' },
-      { key: 'fnhs_34039312', label: 'Leverage', url: 'https://future.nhs.uk/CMN/view?objectId=34039312' },
-      { key: 'fnhs_34030736', label: 'Benefits Realisation Plan', url: 'https://future.nhs.uk/CMN/view?objectId=34030736' },
-      { key: 'fnhs_34038864', label: 'Develop activities to Celebrate Successes', url: 'https://future.nhs.uk/CMN/view?objectId=34038864' },
-      { key: 'fnhs_34038800', label: 'Adoption Checklist', url: 'https://future.nhs.uk/CMN/view?objectId=34038800' },
-      { key: 'fnhs_34038640', label: 'Sustainability Risk Assessment', url: 'https://future.nhs.uk/CMN/view?objectId=34038640' }
+      {
+        key: 'fnhs_44287088',
+        label: 'Case for Change',
+        url: 'https://future.nhs.uk/CMN/view?objectID=44287088',
+      },
+      {
+        key: 'fnhs_34037552',
+        label: 'Change Network',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34037552',
+      },
+      {
+        key: 'fnhs_34038672',
+        label: 'User Survey',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34038672',
+      },
+      {
+        key: 'fnhs_34039312',
+        label: 'Leverage',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34039312',
+      },
+      {
+        key: 'fnhs_34030736',
+        label: 'Benefits Realisation Plan',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34030736',
+      },
+      {
+        key: 'fnhs_34038864',
+        label: 'Develop activities to Celebrate Successes',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34038864',
+      },
+      {
+        key: 'fnhs_34038800',
+        label: 'Adoption Checklist',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34038800',
+      },
+      {
+        key: 'fnhs_34038640',
+        label: 'Sustainability Risk Assessment',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34038640',
+      },
     ],
     deliverables: [
-      { key: 'fnhs_34038864', label: 'Methods in place to celebrate successes', url: 'https://future.nhs.uk/CMN/view?objectId=34038864' },
-      { key: 'fnhs_34038672', label: 'Feedback Mechanism for those impacted by the change', url: 'https://future.nhs.uk/CMN/view?objectId=34038672' },
-      { key: 'fnhs_34038032', label: 'Change Management plan', url: 'https://future.nhs.uk/CMN/view?objectId=34038032' },
-      { key: 'fnhs_34038256', label: 'Transition plan', url: 'https://future.nhs.uk/CMN/view?objectId=34038256' }
-    ]
+      {
+        key: 'fnhs_34038864',
+        label: 'Methods in place to celebrate successes',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34038864',
+      },
+      {
+        key: 'fnhs_34038672',
+        label: 'Feedback Mechanism for those impacted by the change',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34038672',
+      },
+      {
+        key: 'fnhs_34038032',
+        label: 'Change Management plan',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34038032',
+      },
+      {
+        key: 'fnhs_34038256',
+        label: 'Transition plan',
+        url: 'https://future.nhs.uk/CMN/view?objectId=34038256',
+      },
+    ],
   },
   'Change Management Capability': {
     inputs: [
-      { key: 'cmn_home', label: 'Change Management Network', url: 'https://future.nhs.uk/CMN/groupHome' },
-      { key: 'toolkit_base', label: 'Change Management Toolkit', url: 'https://future.nhs.uk/CMN/view?objectId=129489733' }
-    ]
-  }
+      {
+        key: 'cmn_home',
+        label: 'Change Management Network',
+        url: 'https://future.nhs.uk/CMN/groupHome',
+      },
+      {
+        key: 'toolkit_base',
+        label: 'Change Management Toolkit',
+        url: 'https://future.nhs.uk/CMN/view?objectId=129489733',
+      },
+    ],
+  },
 };
 
 const PRODUCT_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
   // TODO(Product): Populate product-specific guidance links per theme.
-  'Vision': { inputs: [], deliverables: [] },
+  Vision: { inputs: [], deliverables: [] },
   'Case for Change': { inputs: [], deliverables: [] },
   'Sponsorship/ Change Network': { inputs: [], deliverables: [] },
-  'Benefits': { inputs: [], deliverables: [] },
+  Benefits: { inputs: [], deliverables: [] },
   'Change Impact & Risk': { inputs: [], deliverables: [] },
   'Change Management Readiness & Planning': { inputs: [], deliverables: [] },
   'Stakeholder Engagement & Comms': { inputs: [], deliverables: [] },
   'Resistance Management': { inputs: [], deliverables: [] },
   'Skills/ Learning': { inputs: [], deliverables: [] },
   'Process change': { inputs: [], deliverables: [] },
-  'Reinforcement': { inputs: [], deliverables: [] },
-  'Change Management Capability': { inputs: [], deliverables: [] }
+  Reinforcement: { inputs: [], deliverables: [] },
+  'Change Management Capability': { inputs: [], deliverables: [] },
 };
 
 const EPR_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
   // TODO(EPR): Populate EPR-specific guidance links per theme.
-  'Vision': { inputs: [], deliverables: [] },
+  Vision: { inputs: [], deliverables: [] },
   'Case for Change': { inputs: [], deliverables: [] },
   'Sponsorship/ Change Network': { inputs: [], deliverables: [] },
-  'Benefits': { inputs: [], deliverables: [] },
+  Benefits: { inputs: [], deliverables: [] },
   'Change Impact & Risk': { inputs: [], deliverables: [] },
   'Change Management Readiness & Planning': { inputs: [], deliverables: [] },
   'Stakeholder Engagement & Comms': { inputs: [], deliverables: [] },
   'Resistance Management': { inputs: [], deliverables: [] },
   'Skills/ Learning': { inputs: [], deliverables: [] },
   'Process change': { inputs: [], deliverables: [] },
-  'Reinforcement': { inputs: [], deliverables: [] },
-  'Change Management Capability': { inputs: [], deliverables: [] }
+  Reinforcement: { inputs: [], deliverables: [] },
+  'Change Management Capability': { inputs: [], deliverables: [] },
 };
 
 export const MATURITY_GUIDANCE_LINKS: Record<MaturityGuidanceTarget, GuidanceLinkMap> = {
   Default: DEFAULT_GUIDANCE_LINK_MAP,
   Product: PRODUCT_GUIDANCE_LINK_MAP,
   AVT: PRODUCT_GUIDANCE_LINK_MAP,
-  EPR: EPR_GUIDANCE_LINK_MAP
+  EPR: EPR_GUIDANCE_LINK_MAP,
 };
 
 function readStoredGuidanceWorkstreams(): GuidanceWorkstreamDefinition[] {
@@ -294,8 +504,11 @@ export function resolveGuidanceLinks(
   overrides?: LinkOverrides
 ): GuidanceLink[] {
   const byTarget = getGuidanceLinkMapByTarget(target)?.[componentName]?.[section] || [];
-  const raw = byTarget.length > 0 ? byTarget : (DEFAULT_GUIDANCE_LINK_MAP?.[componentName]?.[section] || []);
-  if (!overrides) return raw;
+  const raw =
+    byTarget.length > 0 ? byTarget : DEFAULT_GUIDANCE_LINK_MAP?.[componentName]?.[section] || [];
+  if (!overrides) {
+    return raw;
+  }
   return raw.map((link) => resolveEffectiveLink(link, overrides));
 }
 

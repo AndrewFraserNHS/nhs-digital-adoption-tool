@@ -10,15 +10,15 @@ const components: AssessmentComponent[] = [
     label: 'Vision',
     lenses: ['Strategic Direction'],
     phase: 1,
-    target: 4
+    target: 4,
   },
   {
     id: 'benefits',
     label: 'Benefits',
     lenses: ['Strategic Direction'],
     phase: 1,
-    target: 3
-  }
+    target: 3,
+  },
 ];
 
 function createEntry(overrides?: Partial<DraftEntry>): DraftEntry {
@@ -32,19 +32,16 @@ function createEntry(overrides?: Partial<DraftEntry>): DraftEntry {
         text: 'Run workshop',
         owner: 'PMO',
         timescale: 'Q3',
-        status: 'In Progress'
-      }
+        status: 'In Progress',
+      },
     ],
-    ...overrides
+    ...overrides,
   };
 }
 
-function createProps(overrides?: {
-  showMatrix?: boolean;
-  entry?: DraftEntry;
-}) {
+function createProps(overrides?: { showMatrix?: boolean; entry?: DraftEntry }) {
   const entryByKey: Record<string, DraftEntry> = {
-    'vision:Strategic Direction': overrides?.entry || createEntry()
+    'vision:Strategic Direction': overrides?.entry || createEntry(),
   };
   const defaultEntry = entryByKey['vision:Strategic Direction'];
 
@@ -63,21 +60,21 @@ function createProps(overrides?: {
           goLiveDate: '2026-10-01',
           fullAdoptionDate: '',
           benefitRealizationDate: '',
-          phaseCapability: {}
-        }
+          phaseCapability: {},
+        },
       },
       currentDraft: {
         vision: {
-          'Strategic Direction': defaultEntry
-        }
+          'Strategic Direction': defaultEntry,
+        },
       },
       objectives: {},
       history: [],
       phaseOverrides: {},
       pathwayChecks: {},
       showMatrix: {
-        'vision:Strategic Direction': Boolean(overrides?.showMatrix)
-      }
+        'vision:Strategic Direction': Boolean(overrides?.showMatrix),
+      },
     },
     components,
     activeComponentId: 'vision',
@@ -88,7 +85,7 @@ function createProps(overrides?: {
     onOpenLensInfo: vi.fn(),
     onMatrixToggle: vi.fn(),
     onActionRemove: vi.fn(),
-    onObjectivesUpdate: vi.fn()
+    onObjectivesUpdate: vi.fn(),
   };
 }
 
@@ -115,7 +112,9 @@ describe('AssessmentPanel', () => {
 
     const updatedEntries = props.onEntryUpdate.mock.calls.map((call) => call[2]);
     expect(updatedEntries.some((entry: DraftEntry) => entry.score === 4)).toBe(true);
-    expect(updatedEntries.some((entry: DraftEntry) => entry.justification === 'Updated justification')).toBe(true);
+    expect(
+      updatedEntries.some((entry: DraftEntry) => entry.justification === 'Updated justification')
+    ).toBe(true);
   });
 
   it('toggles matrix and allows selecting score from matrix cards', () => {
@@ -150,7 +149,9 @@ describe('AssessmentPanel', () => {
     render(<AssessmentPanel {...props} />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Add Action' }));
-    fireEvent.change(screen.getByLabelText('Description'), { target: { value: 'Created from modal' } });
+    fireEvent.change(screen.getByLabelText('Description'), {
+      target: { value: 'Created from modal' },
+    });
     fireEvent.click(screen.getByRole('button', { name: 'Save Action' }));
     expect(props.onEntryUpdate).toHaveBeenCalled();
     const lastUpdateEntry = props.onEntryUpdate.mock.calls.at(-1)[2] as DraftEntry;
@@ -169,7 +170,7 @@ describe('AssessmentPanel', () => {
           actionType: 'Meetings',
           owner: 'PMO',
           timescale: 'Q3',
-          status: 'In Progress'
+          status: 'In Progress',
         },
         {
           id: 'action-2',
@@ -177,14 +178,17 @@ describe('AssessmentPanel', () => {
           actionType: 'Admin',
           owner: 'PMO',
           timescale: 'Q3',
-          status: 'Planned'
-        }
-      ]
+          status: 'Planned',
+        },
+      ],
     });
     const props = createProps({ entry });
     render(<AssessmentPanel {...props} />);
 
-    fireEvent.change(screen.getByRole('combobox', { name: 'Filter Strategic Direction actions by type' }), { target: { value: 'Meetings' } });
+    fireEvent.change(
+      screen.getByRole('combobox', { name: 'Filter Strategic Direction actions by type' }),
+      { target: { value: 'Meetings' } }
+    );
 
     expect(screen.getByText('Run workshop')).toBeInTheDocument();
     expect(screen.queryByText('Write admin note')).toBeNull();
@@ -212,23 +216,24 @@ describe('AssessmentPanel', () => {
           status: 'Planned',
           linkedTargets: [
             { componentId: 'vision', lens: 'Strategic Direction' },
-            { componentId: 'benefits', lens: 'Strategic Direction' }
-          ]
-        }
-      ]
+            { componentId: 'benefits', lens: 'Strategic Direction' },
+          ],
+        },
+      ],
     });
 
     const props = createProps();
     props.activeComponentId = 'benefits';
     props.store.currentDraft = {
       vision: {
-        'Strategic Direction': sourceEntry
+        'Strategic Direction': sourceEntry,
       },
       benefits: {
-        'Strategic Direction': createEntry({ actions: [] })
-      }
+        'Strategic Direction': createEntry({ actions: [] }),
+      },
     };
-    props.getEntry = (componentId: string, lens: string) => props.store.currentDraft[componentId][lens];
+    props.getEntry = (componentId: string, lens: string) =>
+      props.store.currentDraft[componentId][lens];
 
     render(<AssessmentPanel {...props} />);
 
@@ -236,7 +241,11 @@ describe('AssessmentPanel', () => {
     expect(screen.getByText('Linked from Vision / Strategic Direction')).toBeTruthy();
 
     fireEvent.click(screen.getByRole('button', { name: 'Remove' }));
-    expect(props.onActionRemove).toHaveBeenCalledWith('vision', 'Strategic Direction', 'linked-vision-action');
+    expect(props.onActionRemove).toHaveBeenCalledWith(
+      'vision',
+      'Strategic Direction',
+      'linked-vision-action'
+    );
   });
 
   it('opens outcome details modal with status and linked actions', () => {
@@ -248,9 +257,9 @@ describe('AssessmentPanel', () => {
           text: 'Vision objective',
           owner: '',
           timescale: '',
-          linkedActions: [{ lens: 'Strategic Direction', actionId: 'action-1' }]
-        }
-      ]
+          linkedActions: [{ lens: 'Strategic Direction', actionId: 'action-1' }],
+        },
+      ],
     };
     render(<AssessmentPanel {...props} />);
 
@@ -279,15 +288,17 @@ describe('AssessmentPanel', () => {
           text: 'Vision objective',
           owner: '',
           timescale: '',
-          linkedActions: []
-        }
-      ]
+          linkedActions: [],
+        },
+      ],
     };
 
     render(<AssessmentPanel {...props} />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Add Action' }));
-    fireEvent.change(screen.getByLabelText('Description'), { target: { value: 'New linked action' } });
+    fireEvent.change(screen.getByLabelText('Description'), {
+      target: { value: 'New linked action' },
+    });
     fireEvent.click(screen.getByRole('checkbox'));
     fireEvent.click(screen.getByRole('button', { name: 'Save Action' }));
 
@@ -297,9 +308,9 @@ describe('AssessmentPanel', () => {
         expect.objectContaining({
           id: 'obj-1',
           linkedActions: expect.arrayContaining([
-            expect.objectContaining({ lens: 'Strategic Direction' })
-          ])
-        })
+            expect.objectContaining({ lens: 'Strategic Direction' }),
+          ]),
+        }),
       ])
     );
   });

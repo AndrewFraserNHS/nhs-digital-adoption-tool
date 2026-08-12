@@ -1,4 +1,30 @@
-import Chart, { ChartType, ChartConfiguration, Plugin } from 'chart.js/auto';
+import Chart, { ChartConfiguration, ChartType, Plugin } from 'chart.js/auto';
+
+interface CenterTextConfig {
+  text?: string;
+  font?: string;
+  color?: string;
+  subText?: string;
+  subFont?: string;
+  subColor?: string;
+}
+
+interface RadarScaleAdapter {
+  options?: {
+    pointLabels?: {
+      font?: { size?: number; family?: string };
+      color?: string;
+      padding?: number;
+    };
+  };
+  _pointLabels?: string[];
+  drawingArea: number;
+  getPointPosition: (
+    index: number,
+    distanceFromCenter: number,
+    angle: number
+  ) => { x: number; y: number };
+}
 
 export function wrapChartLabel(label: string): string[] {
   if (!label) {
@@ -29,21 +55,33 @@ function isDarkThemeEnabled(): boolean {
   return document.documentElement.dataset.nhsThemeMode === 'dark';
 }
 
-export function createChart(type: ChartType, ctx: CanvasRenderingContext2D | HTMLCanvasElement, data: any, options: any = {}) {
+export function createChart(
+  type: ChartType,
+  ctx: CanvasRenderingContext2D | HTMLCanvasElement,
+  data: ChartConfiguration['data'],
+  options: ChartConfiguration['options'] = {}
+) {
   const canvas = resolveCanvas(ctx);
-  const existingChart = (Chart as typeof Chart & { getChart?: (canvas: HTMLCanvasElement) => Chart | null }).getChart?.(canvas);
+  const existingChart = (
+    Chart as typeof Chart & { getChart?: (canvas: HTMLCanvasElement) => Chart | null }
+  ).getChart?.(canvas);
 
   if (existingChart) {
     existingChart.destroy();
   }
 
-  const cfg: ChartConfiguration = { type, data, options } as ChartConfiguration;
+  const cfg: ChartConfiguration = { type, data, options };
   return new Chart(canvas, cfg);
 }
 
-export function createRadarChart(ctx: CanvasRenderingContext2D | HTMLCanvasElement, data: any, options: any = {}) {
+export function createRadarChart(
+  ctx: CanvasRenderingContext2D | HTMLCanvasElement,
+  data: ChartConfiguration<'radar'>['data'],
+  options: ChartConfiguration<'radar'>['options'] = {}
+) {
   // sensible defaults to better match legacy rendering
-  Chart.defaults.font.family = "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial";
+  Chart.defaults.font.family =
+    "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial";
   Chart.defaults.font.size = 12;
   Chart.defaults.elements.line.tension = 0.2;
   Chart.defaults.elements.point.radius = 4;
@@ -63,12 +101,17 @@ export function createRadarChart(ctx: CanvasRenderingContext2D | HTMLCanvasEleme
     layout: { padding: 56 },
     plugins: {
       legend: { display: true, position: 'bottom' },
-      tooltip: { enabled: true, backgroundColor: darkMode ? 'rgba(15,23,42,0.98)' : 'rgba(11,18,32,0.95)', titleColor: '#fff', bodyColor: '#fff' },
+      tooltip: {
+        enabled: true,
+        backgroundColor: darkMode ? 'rgba(15,23,42,0.98)' : 'rgba(11,18,32,0.95)',
+        titleColor: '#fff',
+        bodyColor: '#fff',
+      },
       centerText: '',
     },
     elements: {
       line: { borderWidth: 3, tension: 0.2, borderColor: lineBorder, backgroundColor: lineFill },
-      point: { radius: 4, hoverRadius: 6, backgroundColor: pointColor }
+      point: { radius: 4, hoverRadius: 6, backgroundColor: pointColor },
     },
     scales: {
       r: {
@@ -81,10 +124,10 @@ export function createRadarChart(ctx: CanvasRenderingContext2D | HTMLCanvasEleme
           color: labelColor,
           font: { size: 12, family: Chart.defaults.font.family },
           padding: 10,
-          callback: (value: string) => wrapChartLabel(value).join('\n')
-        }
-      }
-    }
+          callback: (value: string) => wrapChartLabel(value).join('\n'),
+        },
+      },
+    },
   };
 
   const mergedOptions = {
@@ -101,16 +144,20 @@ export function createRadarChart(ctx: CanvasRenderingContext2D | HTMLCanvasEleme
           ...(defaultOpts.scales?.r?.pointLabels || {}),
           ...(options.scales?.r?.pointLabels || {}),
           display: false,
-          callback: (value: string) => wrapChartLabel(value).join('\n')
-        }
-      }
-    }
+          callback: (value: string) => wrapChartLabel(value).join('\n'),
+        },
+      },
+    },
   };
 
   return createChart('radar', ctx, data, mergedOptions);
 }
 
-export function createLineChart(ctx: CanvasRenderingContext2D | HTMLCanvasElement, data: any, options: any = {}) {
+export function createLineChart(
+  ctx: CanvasRenderingContext2D | HTMLCanvasElement,
+  data: ChartConfiguration<'line'>['data'],
+  options: ChartConfiguration<'line'>['options'] = {}
+) {
   const darkMode = isDarkThemeEnabled();
   const tickColor = darkMode ? '#e2e8f0' : '#0b1220';
   const xGridColor = darkMode ? 'rgba(226,232,240,0.08)' : 'rgba(11,18,32,0.04)';
@@ -120,12 +167,20 @@ export function createLineChart(ctx: CanvasRenderingContext2D | HTMLCanvasElemen
   const defaultOpts = {
     elements: {
       line: { borderWidth: 2, tension: 0.2, borderColor: lineBorder, backgroundColor: lineFill },
-      point: { radius: 3, hoverRadius: 5, backgroundColor: lineBorder }
+      point: { radius: 3, hoverRadius: 5, backgroundColor: lineBorder },
     },
     scales: {
-      x: { display: true, grid: { color: xGridColor }, ticks: { color: tickColor, font: { size: 11 } } },
-      y: { beginAtZero: true, grid: { color: yGridColor }, ticks: { color: tickColor, font: { size: 11 } } }
-    }
+      x: {
+        display: true,
+        grid: { color: xGridColor },
+        ticks: { color: tickColor, font: { size: 11 } },
+      },
+      y: {
+        beginAtZero: true,
+        grid: { color: yGridColor },
+        ticks: { color: tickColor, font: { size: 11 } },
+      },
+    },
   };
   return createChart('line', ctx, data, { ...defaultOpts, ...options });
 }
@@ -142,17 +197,19 @@ const radarCenterPlugin: Plugin = {
   beforeDraw: (chart) => {
     try {
       const ctx = chart.ctx;
-      const opts = (chart.options as any) || {};
+      const opts = (chart.options || {}) as {
+        plugins?: { centerText?: string | CenterTextConfig };
+      };
       const centerCfg = opts.plugins?.centerText;
       const txt = centerCfg?.text || centerCfg || '';
       if (!txt) {
-return;
-}
+        return;
+      }
 
-      const chartType = String((chart.config as any)?.type || '');
+      const chartType = String(chart.config.type || '');
       if (chartType !== 'radar' && chartType !== 'doughnut') {
-return;
-}
+        return;
+      }
 
       ctx.save();
       ctx.textAlign = 'center';
@@ -177,7 +234,7 @@ return;
         ctx.fillStyle = centerCfg?.color || (isDarkThemeEnabled() ? '#e2e8f0' : '#0b1220');
         const lines = String(txt).split('\n');
         const lineHeight = size * 1.05;
-        const offset = (lines.length - 1) * -lineHeight / 2;
+        const offset = ((lines.length - 1) * -lineHeight) / 2;
         lines.forEach((line: string, i: number) => {
           ctx.fillText(line, x, y + offset + i * lineHeight);
         });
@@ -186,14 +243,14 @@ return;
     } catch (_e) {
       // ignore rendering errors
     }
-  }
+  },
 };
 
 const radarPointLabelPlugin: Plugin = {
   id: 'radarPointLabelText',
   afterDraw: (chart) => {
     try {
-      const scale = chart.scales?.r as any;
+      const scale = chart.scales?.r as unknown as RadarScaleAdapter | undefined;
       const pointLabels = scale?.options?.pointLabels;
       if (!scale || !pointLabels || chart.config.type !== 'radar') {
         return;
@@ -201,7 +258,8 @@ const radarPointLabelPlugin: Plugin = {
 
       const ctx = chart.ctx;
       const fontSize = Number(pointLabels.font?.size || Chart.defaults.font.size || 12);
-      const fontFamily = pointLabels.font?.family || Chart.defaults.font.family || 'Inter, sans-serif';
+      const fontFamily =
+        pointLabels.font?.family || Chart.defaults.font.family || 'Inter, sans-serif';
       const color = pointLabels.color || (isDarkThemeEnabled() ? '#e2e8f0' : '#0b1220');
       const padding = Number(pointLabels.padding ?? 14);
       const labels = Array.isArray(scale._pointLabels) ? scale._pointLabels : [];
@@ -221,7 +279,7 @@ const radarPointLabelPlugin: Plugin = {
 
         const position = scale.getPointPosition(index, scale.drawingArea + padding, 0);
         const lineHeight = fontSize * 1.15;
-        const offset = (lines.length - 1) * -lineHeight / 2;
+        const offset = ((lines.length - 1) * -lineHeight) / 2;
         const labelHeight = Math.max(fontSize, lines.length * lineHeight);
         const labelWidth = fontSize * 6;
         const minX = labelWidth / 2 + 4;
@@ -241,16 +299,14 @@ const radarPointLabelPlugin: Plugin = {
     } catch (_error) {
       // ignore rendering errors
     }
-  }
+  },
 };
 
 Chart.register(radarCenterPlugin, radarPointLabelPlugin);
 
 // Register minimal global adapter for legacy pages
 if (typeof window !== 'undefined') {
-  // @ts-ignore
   window.NHSDigitalAdoption = window.NHSDigitalAdoption || {};
-  // @ts-ignore
   window.NHSDigitalAdoption.Charts = {
     createRadarChart,
     createLineChart,

@@ -38,7 +38,7 @@ export class Observable<T> {
    */
   subscribe(listener: StateListener<T>): () => void {
     this.listeners.add(listener);
-    
+
     // Return unsubscribe function
     return () => {
       this.listeners.delete(listener);
@@ -49,7 +49,7 @@ export class Observable<T> {
    * Notify all subscribers of state change
    */
   private notify(): void {
-    this.listeners.forEach(listener => {
+    this.listeners.forEach((listener) => {
       try {
         listener(this.state);
       } catch (error) {

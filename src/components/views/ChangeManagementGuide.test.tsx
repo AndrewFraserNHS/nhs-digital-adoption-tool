@@ -25,7 +25,9 @@ describe('ChangeManagementGuide', () => {
   it('renders two navigation buttons for a two-component question', () => {
     render(<ChangeManagementGuide onComponentClick={vi.fn()} />);
 
-    expect(screen.getByRole('button', { name: 'Go to Senior Sponsorship & Governance' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Go to Senior Sponsorship & Governance' })
+    ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Go to Change Network' })).toBeInTheDocument();
   });
 

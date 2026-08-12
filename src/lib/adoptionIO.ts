@@ -1,6 +1,18 @@
-import type { AdoptionStore, ComponentObjective, DraftEntry, HistorySnapshot, OrgProfile, PathwayChecklistState } from './adoptionState';
-import { cloneObjectivesMap, cloneDraft, initializeStore, normalizeOrgProfile } from './adoptionState';
 import { normalizeActionStatus } from './actionModel';
+import type {
+  AdoptionStore,
+  ComponentObjective,
+  DraftEntry,
+  HistorySnapshot,
+  OrgProfile,
+  PathwayChecklistState,
+} from './adoptionState';
+import {
+  cloneDraft,
+  cloneObjectivesMap,
+  initializeStore,
+  normalizeOrgProfile,
+} from './adoptionState';
 
 export const ADOPTION_STORAGE_KEY = 'nhs-digital-adoption-store';
 
@@ -13,6 +25,229 @@ export interface SavedAdoptionAssessment {
   history: HistorySnapshot[];
   phaseOverrides: Record<string, string>;
   pathwayChecks: PathwayChecklistState;
+}
+
+const VALID_PATHWAYS = new Set(['pathway-1', 'pathway-2', 'pathway-3']);
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function assertRecord(value: unknown, path: string): asserts value is Record<string, unknown> {
+  if (!isRecord(value)) {
+    throw new Error(`Invalid adoption assessment payload at ${path}: expected object.`);
+  }
+}
+
+function assertOptionalString(value: unknown, path: string): void {
+  if (value !== undefined && typeof value !== 'string') {
+    throw new Error(`Invalid adoption assessment payload at ${path}: expected string.`);
+  }
+}
+
+function assertOptionalNumber(value: unknown, path: string): void {
+  if (value !== undefined && typeof value !== 'number') {
+    throw new Error(`Invalid adoption assessment payload at ${path}: expected number.`);
+  }
+}
+
+function assertOptionalArray(value: unknown, path: string): asserts value is unknown[] {
+  if (value !== undefined && !Array.isArray(value)) {
+    throw new Error(`Invalid adoption assessment payload at ${path}: expected array.`);
+  }
+}
+
+function validateAction(value: unknown, path: string): void {
+  assertRecord(value, path);
+  assertOptionalString(value.id, `${path}.id`);
+  assertOptionalString(value.text, `${path}.text`);
+  assertOptionalString(value.owner, `${path}.owner`);
+  assertOptionalString(value.timescale, `${path}.timescale`);
+  assertOptionalString(value.status, `${path}.status`);
+  assertOptionalString(value.notes, `${path}.notes`);
+  assertOptionalString(value.evidence, `${path}.evidence`);
+}
+
+function validateDraftEntry(value: unknown, path: string): void {
+  assertRecord(value, path);
+  assertOptionalNumber(value.score, `${path}.score`);
+  assertOptionalString(value.justification, `${path}.justification`);
+  assertOptionalString(value.evidence, `${path}.evidence`);
+  assertOptionalArray(value.actions, `${path}.actions`);
+  (value.actions || []).forEach((action, actionIndex) => {
+    validateAction(action, `${path}.actions[${actionIndex}]`);
+  });
+}
+
+function validateDraftMap(value: unknown, path: string): void {
+  assertRecord(value, path);
+  Object.keys(value).forEach((componentId) => {
+    const component = value[componentId];
+    assertRecord(component, `${path}.${componentId}`);
+    Object.keys(component).forEach((lens) => {
+      validateDraftEntry(component[lens], `${path}.${componentId}.${lens}`);
+    });
+  });
+}
+
+function validateObjectivesMap(value: unknown, path: string): void {
+  assertRecord(value, path);
+  Object.keys(value).forEach((componentId) => {
+    const objectives = value[componentId];
+    if (!Array.isArray(objectives)) {
+      throw new Error(
+        `Invalid adoption assessment payload at ${path}.${componentId}: expected array.`
+      );
+    }
+
+    objectives.forEach((objective, objectiveIndex) => {
+      assertRecord(objective, `${path}.${componentId}[${objectiveIndex}]`);
+      assertOptionalString(objective.id, `${path}.${componentId}[${objectiveIndex}].id`);
+      assertOptionalString(objective.text, `${path}.${componentId}[${objectiveIndex}].text`);
+      assertOptionalString(objective.owner, `${path}.${componentId}[${objectiveIndex}].owner`);
+      assertOptionalString(
+        objective.timescale,
+        `${path}.${componentId}[${objectiveIndex}].timescale`
+      );
+      assertOptionalString(objective.notes, `${path}.${componentId}[${objectiveIndex}].notes`);
+      assertOptionalString(
+        objective.evidence,
+        `${path}.${componentId}[${objectiveIndex}].evidence`
+      );
+      assertOptionalArray(
+        objective.linkedActions,
+        `${path}.${componentId}[${objectiveIndex}].linkedActions`
+      );
+
+      (objective.linkedActions || []).forEach((link, linkIndex) => {
+        assertRecord(link, `${path}.${componentId}[${objectiveIndex}].linkedActions[${linkIndex}]`);
+        assertOptionalString(
+          link.lens,
+          `${path}.${componentId}[${objectiveIndex}].linkedActions[${linkIndex}].lens`
+        );
+        assertOptionalString(
+          link.actionId,
+          `${path}.${componentId}[${objectiveIndex}].linkedActions[${linkIndex}].actionId`
+        );
+      });
+    });
+  });
+}
+
+function validatePathwayChecks(value: unknown, path: string): void {
+  assertRecord(value, path);
+  Object.keys(value).forEach((componentId) => {
+    const checks = value[componentId];
+    assertRecord(checks, `${path}.${componentId}`);
+
+    ['pathway-1', 'pathway-2', 'pathway-3'].forEach((pathway) => {
+      const pathwayChecks = checks[pathway];
+      assertOptionalArray(pathwayChecks, `${path}.${componentId}.${pathway}`);
+      (pathwayChecks || []).forEach((check, checkIndex) => {
+        if (typeof check !== 'string') {
+          throw new Error(
+            `Invalid adoption assessment payload at ${path}.${componentId}.${pathway}[${checkIndex}]: expected string.`
+          );
+        }
+      });
+    });
+  });
+}
+
+function validateOrgProfile(value: unknown, path: string): void {
+  assertRecord(value, path);
+  assertOptionalString(value.trustName, `${path}.trustName`);
+  assertOptionalString(value.region, `${path}.region`);
+  assertOptionalString(value.trustType, `${path}.trustType`);
+  assertOptionalString(value.projectName, `${path}.projectName`);
+  assertOptionalString(value.leadName, `${path}.leadName`);
+
+  if (value.cst !== undefined) {
+    assertRecord(value.cst, `${path}.cst`);
+    assertOptionalString(value.cst.type, `${path}.cst.type`);
+    assertOptionalString(value.cst.pathway, `${path}.cst.pathway`);
+    if (typeof value.cst.pathway === 'string' && !VALID_PATHWAYS.has(value.cst.pathway)) {
+      throw new Error(
+        `Invalid adoption assessment payload at ${path}.cst.pathway: unexpected value "${value.cst.pathway}".`
+      );
+    }
+    assertOptionalString(value.cst.goLiveDate, `${path}.cst.goLiveDate`);
+    assertOptionalString(value.cst.fullAdoptionDate, `${path}.cst.fullAdoptionDate`);
+    assertOptionalString(value.cst.benefitRealizationDate, `${path}.cst.benefitRealizationDate`);
+  }
+}
+
+function validateHistory(value: unknown, path: string): void {
+  if (!Array.isArray(value)) {
+    throw new Error(`Invalid adoption assessment payload at ${path}: expected array.`);
+  }
+
+  value.forEach((snapshot, index) => {
+    assertRecord(snapshot, `${path}[${index}]`);
+    assertOptionalString(snapshot.monthLabel, `${path}[${index}].monthLabel`);
+    assertOptionalNumber(snapshot.overallPercentage, `${path}[${index}].overallPercentage`);
+    if (snapshot.data !== undefined) {
+      validateDraftMap(snapshot.data, `${path}[${index}].data`);
+    }
+  });
+}
+
+function validateStringRecord(value: unknown, path: string): void {
+  assertRecord(value, path);
+  Object.keys(value).forEach((key) => {
+    if (typeof value[key] !== 'string') {
+      throw new Error(`Invalid adoption assessment payload at ${path}.${key}: expected string.`);
+    }
+  });
+}
+
+function validateLegacyComponentActions(value: unknown, path: string): void {
+  assertRecord(value, path);
+  Object.keys(value).forEach((componentId) => {
+    const actions = value[componentId];
+    if (!Array.isArray(actions)) {
+      throw new Error(
+        `Invalid adoption assessment payload at ${path}.${componentId}: expected array.`
+      );
+    }
+    actions.forEach((action, actionIndex) => {
+      validateAction(action, `${path}.${componentId}[${actionIndex}]`);
+    });
+  });
+}
+
+export function parseImportedAdoptionAssessment(
+  payload: unknown
+): Partial<SavedAdoptionAssessment> {
+  if (!isRecord(payload)) {
+    throw new Error('Invalid adoption assessment payload at root: expected object.');
+  }
+
+  assertOptionalString(payload.schemaVersion, 'schemaVersion');
+  assertOptionalString(payload.exportedAt, 'exportedAt');
+  if (payload.orgProfile !== undefined) {
+    validateOrgProfile(payload.orgProfile, 'orgProfile');
+  }
+  if (payload.currentDraft !== undefined) {
+    validateDraftMap(payload.currentDraft, 'currentDraft');
+  }
+  if (payload.objectives !== undefined) {
+    validateObjectivesMap(payload.objectives, 'objectives');
+  }
+  if (payload.history !== undefined) {
+    validateHistory(payload.history, 'history');
+  }
+  if (payload.phaseOverrides !== undefined) {
+    validateStringRecord(payload.phaseOverrides, 'phaseOverrides');
+  }
+  if (payload.pathwayChecks !== undefined) {
+    validatePathwayChecks(payload.pathwayChecks, 'pathwayChecks');
+  }
+  if (payload.componentActions !== undefined) {
+    validateLegacyComponentActions(payload.componentActions, 'componentActions');
+  }
+
+  return payload as Partial<SavedAdoptionAssessment>;
 }
 
 export function buildSnapshotLabel(date = new Date()): string {
@@ -28,10 +263,10 @@ export function buildAdoptionExportPayload(store: AdoptionStore): SavedAdoptionA
     objectives: normaliseObjectivesMap(store.objectives),
     history: store.history.map((snapshot) => ({
       ...snapshot,
-      data: cloneAndNormaliseDraft(snapshot.data)
+      data: cloneAndNormaliseDraft(snapshot.data),
     })),
     phaseOverrides: { ...store.phaseOverrides },
-    pathwayChecks: clonePathwayChecks(store.pathwayChecks)
+    pathwayChecks: clonePathwayChecks(store.pathwayChecks),
   };
 }
 
@@ -43,7 +278,8 @@ export function buildAdoptionExportPayload(store: AdoptionStore): SavedAdoptionA
 function migrateLegacyComponentActionsToObjectives(
   payload: Record<string, unknown>
 ): Record<string, ComponentObjective[]> | undefined {
-  const legacy = payload.componentActions as Record<string, Array<Record<string, unknown>>> | undefined;
+  const legacy = payload.componentActions as
+    Record<string, Array<Record<string, unknown>>> | undefined;
   if (!legacy) {
     return undefined;
   }
@@ -56,7 +292,7 @@ function migrateLegacyComponentActionsToObjectives(
       timescale: String(action.timescale || ''),
       notes: String(action.notes || ''),
       evidence: String(action.evidence || ''),
-      linkedActions: []
+      linkedActions: [],
     }));
     return next;
   }, {});
@@ -81,7 +317,7 @@ export function migrateSavedAdoptionAssessment(
     schemaVersion: payload.schemaVersion || '2.0',
     orgProfile: migratedProfile,
     objectives: normaliseObjectivesMap(objectivesSource),
-    pathwayChecks: clonePathwayChecks(payload.pathwayChecks)
+    pathwayChecks: clonePathwayChecks(payload.pathwayChecks),
   };
 }
 
@@ -89,8 +325,11 @@ export function mergeImportedAdoptionState(
   payload: Partial<SavedAdoptionAssessment>,
   fallbackStore: AdoptionStore
 ): AdoptionStore {
-  const migrated = migrateSavedAdoptionAssessment(payload);
-  const hasImportedObjectives = Boolean(payload.objectives || (payload as Record<string, unknown>).componentActions);
+  const parsed = parseImportedAdoptionAssessment(payload);
+  const migrated = migrateSavedAdoptionAssessment(parsed);
+  const hasImportedObjectives = Boolean(
+    parsed.objectives || (parsed as Record<string, unknown>).componentActions
+  );
 
   return initializeStore({
     ...fallbackStore,
@@ -101,10 +340,10 @@ export function mergeImportedAdoptionState(
     objectives: hasImportedObjectives ? migrated.objectives : fallbackStore.objectives,
     history: (migrated.history || fallbackStore.history).map((snapshot) => ({
       ...snapshot,
-      data: cloneAndNormaliseDraft(snapshot.data)
+      data: cloneAndNormaliseDraft(snapshot.data),
     })),
     phaseOverrides: migrated.phaseOverrides || fallbackStore.phaseOverrides,
-    pathwayChecks: migrated.pathwayChecks || fallbackStore.pathwayChecks
+    pathwayChecks: migrated.pathwayChecks || fallbackStore.pathwayChecks,
   });
 }
 
@@ -116,7 +355,7 @@ export function buildHistorySnapshot(
   return {
     monthLabel: buildSnapshotLabel(date),
     overallPercentage,
-    data: cloneAndNormaliseDraft(currentDraft)
+    data: cloneAndNormaliseDraft(currentDraft),
   };
 }
 
@@ -133,8 +372,8 @@ function cloneAndNormaliseDraft(
         evidence: action.evidence || '',
         linkedTargets: (action.linkedTargets || []).map((target) => ({
           componentId: target.componentId,
-          lens: target.lens
-        }))
+          lens: target.lens,
+        })),
       }));
     });
   });
@@ -154,8 +393,8 @@ function normaliseObjectivesMap(
       evidence: objective.evidence || '',
       linkedActions: (objective.linkedActions || []).map((link) => ({
         lens: link.lens,
-        actionId: link.actionId
-      }))
+        actionId: link.actionId,
+      })),
     }));
   });
   return cloned;
@@ -171,7 +410,7 @@ function clonePathwayChecks(checks?: PathwayChecklistState): PathwayChecklistSta
     next[componentId] = {
       'pathway-1': [...(componentChecks['pathway-1'] || [])],
       'pathway-2': [...(componentChecks['pathway-2'] || [])],
-      'pathway-3': [...(componentChecks['pathway-3'] || [])]
+      'pathway-3': [...(componentChecks['pathway-3'] || [])],
     };
     return next;
   }, {});

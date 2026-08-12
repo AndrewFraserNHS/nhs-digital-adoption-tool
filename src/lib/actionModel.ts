@@ -5,7 +5,7 @@ export const UNIFIED_ACTION_STATUSES = [
   'Completed',
   'Cancelled',
   'Overdue start',
-  'Overdue completion'
+  'Overdue completion',
 ] as const;
 
 export const ACTION_TYPES = [
@@ -21,7 +21,7 @@ export const ACTION_TYPES = [
   'Decision',
   'Dependency',
   'Risk',
-  'Documentation'
+  'Documentation',
 ] as const;
 
 export type UnifiedActionStatus = (typeof UNIFIED_ACTION_STATUSES)[number];
@@ -34,7 +34,7 @@ export const ACTION_STATUS_BADGE_STYLES: Record<UnifiedActionStatus, string> = {
   Completed: 'bg-green-100 text-green-800 border-green-200',
   Cancelled: 'bg-slate-200 text-slate-700 border-slate-300',
   'Overdue start': 'bg-rose-100 text-rose-800 border-rose-200',
-  'Overdue completion': 'bg-red-100 text-red-800 border-red-200'
+  'Overdue completion': 'bg-red-100 text-red-800 border-red-200',
 };
 
 export function normalizeActionStatus(status: string | undefined): UnifiedActionStatus {
@@ -44,7 +44,12 @@ export function normalizeActionStatus(status: string | undefined): UnifiedAction
     return 'Planned';
   }
 
-  if (value === 'in progress' || value === 'in-progress' || value === 'doing' || value === 'active') {
+  if (
+    value === 'in progress' ||
+    value === 'in-progress' ||
+    value === 'doing' ||
+    value === 'active'
+  ) {
     return 'In Progress';
   }
 

@@ -1,63 +1,70 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import AppState from '@lib/state';
-import { createRadarChart, createLineChart } from '@lib/charts';
-import { downloadFile, escapeHtml } from '@lib/utils';
-import { ASSESSMENT_LENSES as LENSES } from '@data/lenses';
+import { OnboardingIntro } from '@components/onboarding/OnboardingIntro';
+import { ActionPlanTracker } from '@components/views/ActionPlanTracker';
+import { AdoptionDashboard } from '@components/views/AdoptionDashboard';
+import { AssessmentPanel } from '@components/views/AssessmentPanel';
+import { ChangeManagementGuide } from '@components/views/ChangeManagementGuide';
+import { ProjectDetailsPage } from '@components/views/CSTDetailsPage';
+import { GuidanceRoadmapView } from '@components/views/GuidanceRoadmapView';
+import { HighlightBuilderTool } from '@components/views/HighlightBuilderTool';
+import { LensInfoModal } from '@components/views/LensInfoModal';
+import { type AdoptionUserSettings, SettingsPanel } from '@components/views/SettingsPanel';
 import { ASSESSMENT_COMPONENTS, getComponentById } from '@data/components';
-import { resolveGuidanceLinksForAdoptionComponent, type MaturityGuidanceTarget } from '@data/maturity-guidance-links';
 import {
   COMPETENCE_OPTIONS,
-  CONFIDENCE_OPTIONS,
-  PATHWAY_LABELS,
   type CompetenceGrade,
+  CONFIDENCE_OPTIONS,
   type ConfidenceScore,
-  type OverarchingPhase
+  type OverarchingPhase,
+  PATHWAY_LABELS,
 } from '@data/cst';
-import { GENERIC_RUBRIC } from '@data/rubrics';
-import { SPECIFIC_RUBRICS } from '../types/constants';
-import type {
-  View,
-  DraftEntry,
-  AdoptionStore,
-  DraftAction,
-  ComponentObjective
-} from '@lib/adoptionState';
-import { initializeStore, createEmptyEntry, cloneEntry } from '@lib/adoptionState';
+import { ASSESSMENT_LENSES as LENSES } from '@data/lenses';
 import {
-  buildComponentRadarChartData,
-  getMetrics as computeMetrics,
-  buildRadarChartData,
-  flattenActions
-} from '@lib/adoptionMetrics';
-import { load, save } from '@lib/storage';
+  type MaturityGuidanceTarget,
+  resolveGuidanceLinksForAdoptionComponent,
+} from '@data/maturity-guidance-links';
+import { GENERIC_RUBRIC } from '@data/rubrics';
 import {
   ADOPTION_STORAGE_KEY,
   buildAdoptionExportPayload,
   buildHistorySnapshot,
-  migrateSavedAdoptionAssessment,
   mergeImportedAdoptionState,
-  type SavedAdoptionAssessment
+  migrateSavedAdoptionAssessment,
+  parseImportedAdoptionAssessment,
+  type SavedAdoptionAssessment,
 } from '@lib/adoptionIO';
+import {
+  buildComponentRadarChartData,
+  buildRadarChartData,
+  flattenActions,
+  getMetrics as computeMetrics,
+} from '@lib/adoptionMetrics';
+import type {
+  AdoptionStore,
+  ComponentObjective,
+  DraftAction,
+  DraftEntry,
+  View,
+} from '@lib/adoptionState';
+import { cloneEntry, createEmptyEntry, initializeStore } from '@lib/adoptionState';
 import { validateCstProfile } from '@lib/adoptionValidator';
-import { AdoptionDashboard } from '@components/views/AdoptionDashboard';
-import { SettingsPanel, type AdoptionUserSettings } from '@components/views/SettingsPanel';
-import { ActionPlanTracker } from '@components/views/ActionPlanTracker';
-import { AssessmentPanel } from '@components/views/AssessmentPanel';
-import { LensInfoModal } from '@components/views/LensInfoModal';
-import { ChangeManagementGuide } from '@components/views/ChangeManagementGuide';
-import { syncVisionDerivedContent } from '@lib/visionAutomation';
+import { createLineChart, createRadarChart } from '@lib/charts';
 import { syncPathwayObjectives } from '@lib/pathwayObjectives';
-import { GuidanceRoadmapView } from '@components/views/GuidanceRoadmapView';
-import { HighlightBuilderTool } from '@components/views/HighlightBuilderTool';
-import { ProjectDetailsPage } from '@components/views/CSTDetailsPage';
-import { OnboardingIntro } from '@components/onboarding/OnboardingIntro';
+import AppState from '@lib/state';
+import { load, save } from '@lib/storage';
+import { downloadFile, escapeHtml } from '@lib/utils';
+import { syncVisionDerivedContent } from '@lib/visionAutomation';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+
 import { nhsButtonPrimary, nhsButtonSecondary, nhsFocusRing } from '../styles/nhsTheme';
+import { SPECIFIC_RUBRICS } from '../types/constants';
 
 const ADOPTION_USER_SETTINGS_KEY = 'nhs-digital-adoption-user-settings';
 const ADOPTION_REPORT_REMINDER_DISMISS_KEY = 'nhs-digital-adoption-report-reminder-dismissed';
 const ADOPTION_ENGAGEMENT_KEY = 'nhs-digital-adoption-engagement';
 const ADOPTION_ONBOARDING_SEEN_KEY = 'nhs-digital-adoption-onboarding-seen';
 const DEFAULT_GUIDANCE_TARGET: MaturityGuidanceTarget = 'Default';
+const MAX_IMPORT_FILE_BYTES = 5 * 1024 * 1024;
+const ACCEPTED_IMPORT_MIME_TYPES = new Set(['application/json', 'text/json']);
 
 const THEME_PRESET_COLORS = ['#005eb8', '#003366', '#009b8a', '#6c28d9', '#059669', '#dc2626'];
 
@@ -77,7 +84,7 @@ const DEFAULT_USER_SETTINGS: AdoptionUserSettings = {
   themeColor: '#005eb8',
   profileImageDataUrl: '',
   darkMode: false,
-  colorAccessibilityMode: 'standard'
+  colorAccessibilityMode: 'standard',
 };
 
 const DEFAULT_ENGAGEMENT_STATE: EngagementState = {
@@ -87,7 +94,7 @@ const DEFAULT_ENGAGEMENT_STATE: EngagementState = {
   emailDraftOpens: 0,
   highlightLayoutSaves: 0,
   onTimeFinalisations: 0,
-  lateFinalisations: 0
+  lateFinalisations: 0,
 };
 
 function cloneAction(action: DraftAction): DraftAction {
@@ -95,13 +102,15 @@ function cloneAction(action: DraftAction): DraftAction {
     ...action,
     linkedTargets: (action.linkedTargets || []).map((target) => ({
       componentId: target.componentId,
-      lens: target.lens
-    }))
+      lens: target.lens,
+    })),
   };
 }
 
 function getRubricText(componentId: string, lensName: string, score: number): string {
-  const rubricGroup = (SPECIFIC_RUBRICS as unknown as Record<string, Record<string, Record<number, string>>>)[componentId];
+  const rubricGroup = (
+    SPECIFIC_RUBRICS as unknown as Record<string, Record<string, Record<number, string>>>
+  )[componentId];
   return rubricGroup?.[lensName]?.[score] || GENERIC_RUBRIC[score] || GENERIC_RUBRIC[0];
 }
 
@@ -115,7 +124,11 @@ function getPreviousMonthLabel(date = new Date()): string {
   return previousMonth.toLocaleString('en-GB', { month: 'short', year: 'numeric' });
 }
 
-function buildReminderBody(previousMonthLabel: string, trustName: string, projectName: string): string {
+function buildReminderBody(
+  previousMonthLabel: string,
+  trustName: string,
+  projectName: string
+): string {
   return [
     'Monthly Adoption Reporting Reminder',
     '',
@@ -129,7 +142,7 @@ function buildReminderBody(previousMonthLabel: string, trustName: string, projec
     'Point-in-time JSON report export generated from the latest working draft.',
     '',
     'Next Step',
-    'Review, confirm finalisation status, and circulate to the team.'
+    'Review, confirm finalisation status, and circulate to the team.',
   ].join('\n');
 }
 
@@ -173,27 +186,27 @@ function addEngagementXp(current: EngagementState, delta: number): EngagementSta
   return {
     ...current,
     xp: nextXp,
-    level: calculateLevelFromXp(nextXp)
+    level: calculateLevelFromXp(nextXp),
   };
 }
 
 function calculateEngagementGrade(onTimeFinalisations: number, emailDraftOpens: number): string {
   const score = onTimeFinalisations * 30 + Math.min(emailDraftOpens, 20) * 4;
   if (score >= 170) {
-return 'S';
-}
+    return 'S';
+  }
   if (score >= 130) {
-return 'A';
-}
+    return 'A';
+  }
   if (score >= 95) {
-return 'B';
-}
+    return 'B';
+  }
   if (score >= 60) {
-return 'C';
-}
+    return 'C';
+  }
   if (score >= 30) {
-return 'D';
-}
+    return 'D';
+  }
   return 'E';
 }
 
@@ -211,7 +224,9 @@ function calculateCheckInStreak(checkIns: Record<string, boolean>, anchor = new 
   return streak;
 }
 
-function promptPhaseCapability(phase: OverarchingPhase): { competence: CompetenceGrade; confidence: ConfidenceScore } | null {
+function promptPhaseCapability(
+  phase: OverarchingPhase
+): { competence: CompetenceGrade; confidence: ConfidenceScore } | null {
   const competenceInput = window.prompt(
     `Phase ${phase} has changed. Enter delivery readiness grade (${COMPETENCE_OPTIONS.join('/')}).`,
     'C'
@@ -242,7 +257,7 @@ function promptPhaseCapability(phase: OverarchingPhase): { competence: Competenc
 
   return {
     competence: normalizedCompetence,
-    confidence: normalizedConfidence
+    confidence: normalizedConfidence,
   };
 }
 
@@ -260,16 +275,26 @@ export function AdoptionApp() {
   const [store, setStore] = useState<AdoptionStore>(() => {
     const state = AppState.getInstance();
     state.loadFromWindow();
-    const persisted = migrateSavedAdoptionAssessment(load<SavedAdoptionAssessment>(ADOPTION_STORAGE_KEY));
-    return syncPathwayObjectives(syncVisionDerivedContent(initializeStore({
-      view: 'dashboard',
-      orgProfile: persisted?.orgProfile || state.adoption?.orgProfile,
-      currentDraft: persisted?.currentDraft || state.adoption?.currentDraft,
-      objectives: persisted?.objectives || state.adoption?.objectives,
-      history: persisted?.history || state.adoption?.history,
-      phaseOverrides: persisted?.phaseOverrides || state.adoption?.phaseOverrides,
-      pathwayChecks: persisted?.pathwayChecks || state.adoption?.pathwayChecks
-    }) as AdoptionStore));
+    let persisted: Partial<SavedAdoptionAssessment> = {};
+    try {
+      const rawPersisted = load<unknown>(ADOPTION_STORAGE_KEY);
+      persisted = migrateSavedAdoptionAssessment(parseImportedAdoptionAssessment(rawPersisted));
+    } catch (error) {
+      console.warn('Ignoring invalid persisted adoption data.', error);
+    }
+    return syncPathwayObjectives(
+      syncVisionDerivedContent(
+        initializeStore({
+          view: 'dashboard',
+          orgProfile: persisted?.orgProfile || state.adoption?.orgProfile,
+          currentDraft: persisted?.currentDraft || state.adoption?.currentDraft,
+          objectives: persisted?.objectives || state.adoption?.objectives,
+          history: persisted?.history || state.adoption?.history,
+          phaseOverrides: persisted?.phaseOverrides || state.adoption?.phaseOverrides,
+          pathwayChecks: persisted?.pathwayChecks || state.adoption?.pathwayChecks,
+        }) as AdoptionStore
+      )
+    );
   });
 
   const [showMatrix, setShowMatrix] = useState<Record<string, boolean>>({});
@@ -278,7 +303,7 @@ export function AdoptionApp() {
     const persisted = load<Partial<AdoptionUserSettings>>(ADOPTION_USER_SETTINGS_KEY);
     return {
       ...DEFAULT_USER_SETTINGS,
-      ...persisted
+      ...persisted,
     };
   });
   const [engagement, setEngagement] = useState<EngagementState>(() => {
@@ -287,20 +312,27 @@ export function AdoptionApp() {
       ...DEFAULT_ENGAGEMENT_STATE,
       ...persisted,
       level: calculateLevelFromXp(persisted?.xp || 0),
-      checkIns: persisted?.checkIns || {}
+      checkIns: persisted?.checkIns || {},
     };
   });
   const dashboardRef = React.useRef<HTMLDivElement>(null);
   const mainContentRef = React.useRef<HTMLElement>(null);
+  const [statusAnnouncement, setStatusAnnouncement] = useState('');
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const currentReminderMonthKey = useMemo(() => getMonthStorageKey(), []);
   const todayKey = useMemo(() => getTodayKey(), []);
-  const [dismissedReminderMonths, setDismissedReminderMonths] = useState<Record<string, boolean>>(() => {
-    const persisted = load<Record<string, boolean>>(ADOPTION_REPORT_REMINDER_DISMISS_KEY);
-    return persisted || {};
-  });
-  const [hasSeenOnboarding, setHasSeenOnboarding] = useState<boolean>(() => Boolean(load<boolean>(ADOPTION_ONBOARDING_SEEN_KEY)));
-  const [showOnboarding, setShowOnboarding] = useState<boolean>(() => !load<boolean>(ADOPTION_ONBOARDING_SEEN_KEY));
+  const [dismissedReminderMonths, setDismissedReminderMonths] = useState<Record<string, boolean>>(
+    () => {
+      const persisted = load<Record<string, boolean>>(ADOPTION_REPORT_REMINDER_DISMISS_KEY);
+      return persisted || {};
+    }
+  );
+  const [hasSeenOnboarding, setHasSeenOnboarding] = useState<boolean>(() =>
+    Boolean(load<boolean>(ADOPTION_ONBOARDING_SEEN_KEY))
+  );
+  const [showOnboarding, setShowOnboarding] = useState<boolean>(
+    () => !load<boolean>(ADOPTION_ONBOARDING_SEEN_KEY)
+  );
   const [showEngagementCard, setShowEngagementCard] = useState<boolean>(true);
   const [viewHistory, setViewHistory] = useState<View[]>([]);
   const [showFinaliseModal, setShowFinaliseModal] = useState(false);
@@ -326,7 +358,7 @@ export function AdoptionApp() {
       previousMonthLabel,
       isFirstDayOfMonth,
       hasFinalisedPreviousMonth,
-      shouldNotify: isFirstDayOfMonth && !hasFinalisedPreviousMonth
+      shouldNotify: isFirstDayOfMonth && !hasFinalisedPreviousMonth,
     };
   }, [store.history]);
   const [emailTo, setEmailTo] = useState('test@test.com');
@@ -335,15 +367,18 @@ export function AdoptionApp() {
   const currentMonthLabel = useMemo(() => getCurrentMonthLabel(), []);
   const finaliseWindowOpen = useMemo(() => isFinaliseWindowOpen(), []);
 
-  const getEntry = useCallback((componentId: string, lens: string): DraftEntry => {
-    if (!store.currentDraft[componentId]) {
-      store.currentDraft[componentId] = {};
-    }
-    if (!store.currentDraft[componentId][lens]) {
-      store.currentDraft[componentId][lens] = createEmptyEntry();
-    }
-    return store.currentDraft[componentId][lens];
-  }, [store]);
+  const getEntry = useCallback(
+    (componentId: string, lens: string): DraftEntry => {
+      if (!store.currentDraft[componentId]) {
+        store.currentDraft[componentId] = {};
+      }
+      if (!store.currentDraft[componentId][lens]) {
+        store.currentDraft[componentId][lens] = createEmptyEntry();
+      }
+      return store.currentDraft[componentId][lens];
+    },
+    [store]
+  );
 
   const metrics = useMemo(() => {
     const baseMetrics = computeMetrics(store, COMPONENTS);
@@ -355,8 +390,8 @@ export function AdoptionApp() {
           DEFAULT_GUIDANCE_TARGET,
           step.componentId,
           'inputs'
-        ).slice(0, 3)
-      }))
+        ).slice(0, 3),
+      })),
     };
   }, [store]);
   const actionRows = flattenActions(
@@ -380,7 +415,7 @@ export function AdoptionApp() {
       objectives: store.objectives,
       history: store.history,
       phaseOverrides: store.phaseOverrides,
-      pathwayChecks: store.pathwayChecks
+      pathwayChecks: store.pathwayChecks,
     };
   }, [store]);
 
@@ -397,7 +432,9 @@ export function AdoptionApp() {
   }, [dismissedReminderMonths]);
 
   useEffect(() => {
-    setEmailSubject(`Action required: finalise ${reportReminder.previousMonthLabel} adoption report`);
+    setEmailSubject(
+      `Action required: finalise ${reportReminder.previousMonthLabel} adoption report`
+    );
     setEmailBody(
       buildReminderBody(
         reportReminder.previousMonthLabel,
@@ -411,37 +448,45 @@ export function AdoptionApp() {
   useEffect(() => {
     if (view === 'dashboard' && dashboardRef.current) {
       setTimeout(() => {
-        const radarCanvas = dashboardRef.current?.querySelector('#adoption-radar-chart') as HTMLCanvasElement;
+        const radarCanvas = dashboardRef.current?.querySelector(
+          '#adoption-radar-chart'
+        ) as HTMLCanvasElement;
         if (radarCanvas) {
           const radarData = buildRadarChartData(store, MUTABLE_LENSES, COMPONENTS, getEntry);
           createRadarChart(radarCanvas, radarData);
         }
 
-        const componentRadarCanvas = dashboardRef.current?.querySelector('#adoption-component-radar-chart') as HTMLCanvasElement;
+        const componentRadarCanvas = dashboardRef.current?.querySelector(
+          '#adoption-component-radar-chart'
+        ) as HTMLCanvasElement;
         if (componentRadarCanvas) {
           const componentRadarData = buildComponentRadarChartData(COMPONENTS, getEntry);
           createRadarChart(componentRadarCanvas, componentRadarData, {
             scales: {
               r: {
-                ticks: { display: true, min: 0, max: 5, stepSize: 1, backdropColor: 'transparent' }
-              }
-            }
+                ticks: { display: true, min: 0, max: 5, stepSize: 1, backdropColor: 'transparent' },
+              },
+            },
           });
         }
-        
+
         if (store.history.length > 0) {
-          const lineCanvas = dashboardRef.current?.querySelector('#adoption-line-chart') as HTMLCanvasElement;
+          const lineCanvas = dashboardRef.current?.querySelector(
+            '#adoption-line-chart'
+          ) as HTMLCanvasElement;
           if (lineCanvas) {
             const lineData = {
               labels: store.history.map((snapshot) => snapshot.monthLabel),
-              datasets: [{
-                label: 'Adoption Score',
-                data: store.history.map(h => h.overallPercentage || 0),
-                borderColor: '#005EB8',
-                backgroundColor: 'rgba(0, 94, 184, 0.1)',
-                fill: true,
-                tension: 0.4
-              }]
+              datasets: [
+                {
+                  label: 'Adoption Score',
+                  data: store.history.map((h) => h.overallPercentage || 0),
+                  borderColor: '#005EB8',
+                  backgroundColor: 'rgba(0, 94, 184, 0.1)',
+                  fill: true,
+                  tension: 0.4,
+                },
+              ],
             };
             createLineChart(lineCanvas, lineData);
           }
@@ -521,16 +566,19 @@ export function AdoptionApp() {
     });
   }, []);
 
-  const openComponentAssessment = useCallback((componentId: string) => {
-    const targetComponent = getComponentById(componentId);
-    if (!targetComponent) {
-      return;
-    }
+  const openComponentAssessment = useCallback(
+    (componentId: string) => {
+      const targetComponent = getComponentById(componentId);
+      if (!targetComponent) {
+        return;
+      }
 
-    setActiveComponentId(componentId);
-    navigateToView('assessment');
-    scrollMainToTop();
-  }, [navigateToView, scrollMainToTop]);
+      setActiveComponentId(componentId);
+      navigateToView('assessment');
+      scrollMainToTop();
+    },
+    [navigateToView, scrollMainToTop]
+  );
 
   useEffect(() => {
     scrollMainToTop();
@@ -544,35 +592,43 @@ export function AdoptionApp() {
           ...prev.currentDraft,
           [componentId]: {
             ...prev.currentDraft[componentId],
-            [lens]: cloneEntry(entry)
-          }
-        }
+            [lens]: cloneEntry(entry),
+          },
+        },
       };
       return syncPathwayObjectives(syncVisionDerivedContent(nextStore));
     });
   }, []);
 
-  const updateComponentObjectives = useCallback((componentId: string, objectivesForComponent: ComponentObjective[]) => {
-    setStore((prev) => ({
-      ...prev,
-      objectives: {
-        ...prev.objectives,
-        [componentId]: objectivesForComponent
+  const updateComponentObjectives = useCallback(
+    (componentId: string, objectivesForComponent: ComponentObjective[]) => {
+      setStore((prev) => ({
+        ...prev,
+        objectives: {
+          ...prev.objectives,
+          [componentId]: objectivesForComponent,
+        },
+      }));
+    },
+    []
+  );
+
+  const confirmIfCstWarnings = useCallback(
+    (actionLabel: string): boolean => {
+      const validation = validateCstProfile(store.orgProfile);
+      if (validation.isValid) {
+        return true;
       }
-    }));
+
+      const warnings = validation.errors.map((error) => `- ${error.message}`).join('\n');
+      return window.confirm(`${actionLabel} has CST warnings:\n\n${warnings}\n\nContinue anyway?`);
+    },
+    [store.orgProfile]
+  );
+
+  const announceStatus = useCallback((message: string) => {
+    setStatusAnnouncement(message);
   }, []);
-
-  const confirmIfCstWarnings = useCallback((actionLabel: string): boolean => {
-    const validation = validateCstProfile(store.orgProfile);
-    if (validation.isValid) {
-      return true;
-    }
-
-    const warnings = validation.errors.map((error) => `- ${error.message}`).join('\n');
-    return window.confirm(
-      `${actionLabel} has CST warnings:\n\n${warnings}\n\nContinue anyway?`
-    );
-  }, [store.orgProfile]);
 
   const handleExport = useCallback(() => {
     const proceed = confirmIfCstWarnings('Export JSON');
@@ -587,126 +643,168 @@ export function AdoptionApp() {
       JSON.stringify(payload, null, 2),
       'application/json'
     );
-  }, [confirmIfCstWarnings, store]);
+    announceStatus('Assessment export downloaded.');
+  }, [announceStatus, confirmIfCstWarnings, store]);
 
   const handleImportClick = useCallback(() => {
     fileInputRef.current?.click();
   }, []);
 
-  const handleImportFile = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) {
-      return;
-    }
-
-    try {
-      const text = await file.text();
-      const parsed = JSON.parse(text) as Partial<SavedAdoptionAssessment>;
-      setStore((prev) => syncPathwayObjectives(syncVisionDerivedContent(mergeImportedAdoptionState(parsed, prev))));
-      setView('dashboard');
-    } catch (_error) {
-      window.alert('Unable to import adoption assessment. Please verify the file contents.');
-    } finally {
-      event.target.value = '';
-    }
-  }, []);
-
-  const handleFinaliseMonth = useCallback((options?: { replaceExisting?: boolean }) => {
-    const replaceExisting = Boolean(options?.replaceExisting);
-    const proceedWithWarnings = confirmIfCstWarnings('Finalise Month');
-    if (!proceedWithWarnings) {
-      return;
-    }
-
-    const previousPhase = store.history.length > 0
-      ? computeMetrics(
-          {
-            ...store,
-            currentDraft: store.history[store.history.length - 1].data
-          },
-          COMPONENTS
-        ).currentPhase
-      : 1;
-
-    if (metrics.currentPhase > previousPhase) {
-      const assessment = promptPhaseCapability(metrics.currentPhase as OverarchingPhase);
-      if (!assessment) {
-        window.alert('Phase progression cancelled. Confidence and competence self-assessment is required when readiness phase changes.');
+  const handleImportFile = useCallback(
+    async (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      if (!file) {
         return;
       }
 
-      const gaps: string[] = [];
-      COMPONENTS.filter((component) => component.phase < metrics.currentPhase).forEach((component) => {
-        component.lenses.forEach((lens) => {
-          const entry = store.currentDraft[component.id]?.[lens];
-          if (!entry || entry.score <= 0 || !entry.justification?.trim()) {
-            gaps.push(`${component.label} / ${lens}`);
-          }
-        });
-      });
+      const hasJsonExtension = file.name.toLowerCase().endsWith('.json');
+      const hasAcceptedType = !file.type || ACCEPTED_IMPORT_MIME_TYPES.has(file.type);
+      if (!hasJsonExtension || !hasAcceptedType) {
+        announceStatus('Import failed. Please choose a valid JSON file.');
+        window.alert('Import failed. Please choose a valid JSON file.');
+        event.target.value = '';
+        return;
+      }
 
-      if (gaps.length > 0) {
-        const rationale = window.prompt(
-          `You're progressing from Phase ${previousPhase} to Phase ${metrics.currentPhase}, but ${gaps.length} item(s) are incomplete. Please provide a justification.`
+      if (file.size > MAX_IMPORT_FILE_BYTES) {
+        announceStatus('Import failed. The selected file is larger than 5 MB.');
+        window.alert('Import failed. The selected file is larger than 5 MB.');
+        event.target.value = '';
+        return;
+      }
+
+      try {
+        const text = await file.text();
+        const parsed = parseImportedAdoptionAssessment(JSON.parse(text));
+        setStore((prev) =>
+          syncPathwayObjectives(syncVisionDerivedContent(mergeImportedAdoptionState(parsed, prev)))
         );
-        if (!rationale || !rationale.trim()) {
-          window.alert('Phase progression cancelled. A justification is required when prior phase items are missing.');
+        setView('dashboard');
+        announceStatus('Assessment import complete. Dashboard updated.');
+      } catch (_error) {
+        announceStatus('Import failed. Please verify the file contents.');
+        window.alert('Unable to import adoption assessment. Please verify the file contents.');
+      } finally {
+        event.target.value = '';
+      }
+    },
+    [announceStatus]
+  );
+
+  const handleFinaliseMonth = useCallback(
+    (options?: { replaceExisting?: boolean }) => {
+      const replaceExisting = Boolean(options?.replaceExisting);
+      const proceedWithWarnings = confirmIfCstWarnings('Finalise Month');
+      if (!proceedWithWarnings) {
+        return;
+      }
+
+      const previousPhase =
+        store.history.length > 0
+          ? computeMetrics(
+              {
+                ...store,
+                currentDraft: store.history[store.history.length - 1].data,
+              },
+              COMPONENTS
+            ).currentPhase
+          : 1;
+
+      if (metrics.currentPhase > previousPhase) {
+        const assessment = promptPhaseCapability(metrics.currentPhase as OverarchingPhase);
+        if (!assessment) {
+          window.alert(
+            'Phase progression cancelled. Confidence and competence self-assessment is required when readiness phase changes.'
+          );
           return;
         }
 
-        setStore((prev) => ({
-          ...prev,
-          phaseOverrides: {
-            ...prev.phaseOverrides,
-            [`phase-progression-${Date.now()}`]: rationale.trim()
-          },
-          orgProfile: {
-            ...prev.orgProfile,
-            cst: {
-              ...prev.orgProfile.cst,
-              phaseCapability: {
-                ...prev.orgProfile.cst.phaseCapability,
-                [metrics.currentPhase as OverarchingPhase]: {
-                  ...assessment,
-                  assessedAt: new Date().toISOString(),
-                  reason: 'phase-change'
-                }
+        const gaps: string[] = [];
+        COMPONENTS.filter((component) => component.phase < metrics.currentPhase).forEach(
+          (component) => {
+            component.lenses.forEach((lens) => {
+              const entry = store.currentDraft[component.id]?.[lens];
+              if (!entry || entry.score <= 0 || !entry.justification?.trim()) {
+                gaps.push(`${component.label} / ${lens}`);
               }
-            }
+            });
           }
-        }));
-      } else {
-        setStore((prev) => ({
-          ...prev,
-          orgProfile: {
-            ...prev.orgProfile,
-            cst: {
-              ...prev.orgProfile.cst,
-              phaseCapability: {
-                ...prev.orgProfile.cst.phaseCapability,
-                [metrics.currentPhase as OverarchingPhase]: {
-                  ...assessment,
-                  assessedAt: new Date().toISOString(),
-                  reason: 'phase-change'
-                }
-              }
-            }
+        );
+
+        if (gaps.length > 0) {
+          const rationale = window.prompt(
+            `You're progressing from Phase ${previousPhase} to Phase ${metrics.currentPhase}, but ${gaps.length} item(s) are incomplete. Please provide a justification.`
+          );
+          if (!rationale || !rationale.trim()) {
+            window.alert(
+              'Phase progression cancelled. A justification is required when prior phase items are missing.'
+            );
+            return;
           }
-        }));
+
+          setStore((prev) => ({
+            ...prev,
+            phaseOverrides: {
+              ...prev.phaseOverrides,
+              [`phase-progression-${Date.now()}`]: rationale.trim(),
+            },
+            orgProfile: {
+              ...prev.orgProfile,
+              cst: {
+                ...prev.orgProfile.cst,
+                phaseCapability: {
+                  ...prev.orgProfile.cst.phaseCapability,
+                  [metrics.currentPhase as OverarchingPhase]: {
+                    ...assessment,
+                    assessedAt: new Date().toISOString(),
+                    reason: 'phase-change',
+                  },
+                },
+              },
+            },
+          }));
+        } else {
+          setStore((prev) => ({
+            ...prev,
+            orgProfile: {
+              ...prev.orgProfile,
+              cst: {
+                ...prev.orgProfile.cst,
+                phaseCapability: {
+                  ...prev.orgProfile.cst.phaseCapability,
+                  [metrics.currentPhase as OverarchingPhase]: {
+                    ...assessment,
+                    assessedAt: new Date().toISOString(),
+                    reason: 'phase-change',
+                  },
+                },
+              },
+            },
+          }));
+        }
       }
-    }
 
-    const snapshot = buildHistorySnapshot(store.currentDraft, metrics.overallPct);
+      const snapshot = buildHistorySnapshot(store.currentDraft, metrics.overallPct);
 
-    setStore((prev) => ({
-      ...prev,
-      history: replaceExisting
-        ? prev.history.map((item) => (item.monthLabel === snapshot.monthLabel ? snapshot : item))
-        : [...prev.history, snapshot]
-    }));
-    setEngagement((prev) => addEngagementXp(prev, 25));
-    setView('dashboard');
-  }, [COMPONENTS, confirmIfCstWarnings, metrics.currentPhase, metrics.overallPct, store, store.currentDraft, store.history]);
+      setStore((prev) => ({
+        ...prev,
+        history: replaceExisting
+          ? prev.history.map((item) => (item.monthLabel === snapshot.monthLabel ? snapshot : item))
+          : [...prev.history, snapshot],
+      }));
+      setEngagement((prev) => addEngagementXp(prev, 25));
+      setView('dashboard');
+    },
+    [
+      COMPONENTS,
+      confirmIfCstWarnings,
+      metrics.currentPhase,
+      metrics.overallPct,
+      store,
+      store.currentDraft,
+      store.history,
+    ]
+  );
 
   const handleFinalisePriorMonth = useCallback(() => {
     const proceedWithWarnings = confirmIfCstWarnings('Finalise Prior Month');
@@ -715,7 +813,9 @@ export function AdoptionApp() {
     }
 
     const previousMonthLabel = reportReminder.previousMonthLabel;
-    const alreadyFinalised = store.history.some((snapshot) => snapshot.monthLabel === previousMonthLabel);
+    const alreadyFinalised = store.history.some(
+      (snapshot) => snapshot.monthLabel === previousMonthLabel
+    );
 
     if (alreadyFinalised) {
       window.alert(`${previousMonthLabel} has already been finalised.`);
@@ -728,7 +828,7 @@ export function AdoptionApp() {
     const snapshot = buildHistorySnapshot(store.currentDraft, metrics.overallPct, previousDate);
     setStore((prev) => ({
       ...prev,
-      history: [...prev.history, snapshot]
+      history: [...prev.history, snapshot],
     }));
 
     const submittedOnTime = new Date().getDate() === 1;
@@ -737,12 +837,18 @@ export function AdoptionApp() {
         {
           ...prev,
           onTimeFinalisations: prev.onTimeFinalisations + (submittedOnTime ? 1 : 0),
-          lateFinalisations: prev.lateFinalisations + (submittedOnTime ? 0 : 1)
+          lateFinalisations: prev.lateFinalisations + (submittedOnTime ? 0 : 1),
         },
         submittedOnTime ? 45 : 20
       )
     );
-  }, [confirmIfCstWarnings, metrics.overallPct, reportReminder.previousMonthLabel, store.currentDraft, store.history]);
+  }, [
+    confirmIfCstWarnings,
+    metrics.overallPct,
+    reportReminder.previousMonthLabel,
+    store.currentDraft,
+    store.history,
+  ]);
 
   const handleLoadExampleData = useCallback(async () => {
     try {
@@ -751,17 +857,21 @@ export function AdoptionApp() {
         throw new Error(`Failed to load sample data: ${response.status}`);
       }
 
-      const payload = (await response.json()) as Partial<SavedAdoptionAssessment>;
-      setStore((prev) => syncPathwayObjectives(syncVisionDerivedContent(mergeImportedAdoptionState(payload, prev))));
+      const payload = parseImportedAdoptionAssessment(await response.json());
+      setStore((prev) =>
+        syncPathwayObjectives(syncVisionDerivedContent(mergeImportedAdoptionState(payload, prev)))
+      );
       setView('dashboard');
+      announceStatus('Example assessment data loaded.');
       if (shouldAutoCloseSidebar()) {
         setIsSidebarOpen(false);
       }
     } catch (error) {
       console.error(error);
+      announceStatus('Unable to load example data right now.');
       window.alert('Unable to load example data right now. Please try again.');
     }
-  }, []);
+  }, [announceStatus]);
 
   const handleResetData = useCallback(() => {
     const confirmed = window.confirm(
@@ -776,18 +886,19 @@ export function AdoptionApp() {
     setStore(resetStore);
     setShowMatrix({});
     setView('dashboard');
+    announceStatus('Assessment data has been reset.');
 
     if (shouldAutoCloseSidebar()) {
       setIsSidebarOpen(false);
     }
-  }, []);
+  }, [announceStatus]);
 
   const buildPointInTimePayload = useCallback(() => {
     return {
       generatedAt: new Date().toISOString(),
       targetMonth: reportReminder.previousMonthLabel,
       finalisedPriorMonth: reportReminder.hasFinalisedPreviousMonth,
-      report: buildAdoptionExportPayload(store)
+      report: buildAdoptionExportPayload(store),
     };
   }, [reportReminder.hasFinalisedPreviousMonth, reportReminder.previousMonthLabel, store]);
 
@@ -806,7 +917,9 @@ export function AdoptionApp() {
     const attachmentName = buildPointInTimeFilename();
     const body = `${emailBody}\n\nAttachment: ${attachmentName}`;
     const mailto = `mailto:${recipient}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(body)}`;
-    setEngagement((prev) => addEngagementXp({ ...prev, emailDraftOpens: prev.emailDraftOpens + 1 }, 8));
+    setEngagement((prev) =>
+      addEngagementXp({ ...prev, emailDraftOpens: prev.emailDraftOpens + 1 }, 8)
+    );
     window.location.href = mailto;
   }, [buildPointInTimeFilename, emailBody, emailSubject, emailTo]);
 
@@ -820,8 +933,8 @@ export function AdoptionApp() {
           ...prev,
           checkIns: {
             ...prev.checkIns,
-            [todayKey]: true
-          }
+            [todayKey]: true,
+          },
         },
         10
       );
@@ -833,7 +946,7 @@ export function AdoptionApp() {
       addEngagementXp(
         {
           ...prev,
-          highlightLayoutSaves: prev.highlightLayoutSaves + 1
+          highlightLayoutSaves: prev.highlightLayoutSaves + 1,
         },
         15
       )
@@ -865,17 +978,24 @@ export function AdoptionApp() {
       '',
       encodedAttachment,
       `--${boundary}--`,
-      ''
+      '',
     ].join('\r\n');
 
     const monthSlug = reportReminder.previousMonthLabel.toLowerCase().replace(/\s+/g, '-');
     downloadFile(`adoption-reminder-${monthSlug}.eml`, eml, 'message/rfc822');
-  }, [buildPointInTimeFilename, buildPointInTimePayload, emailBody, emailSubject, emailTo, reportReminder.previousMonthLabel]);
+  }, [
+    buildPointInTimeFilename,
+    buildPointInTimePayload,
+    emailBody,
+    emailSubject,
+    emailTo,
+    reportReminder.previousMonthLabel,
+  ]);
 
   const dismissReportReminder = useCallback(() => {
     setDismissedReminderMonths((prev) => ({
       ...prev,
-      [currentReminderMonthKey]: true
+      [currentReminderMonthKey]: true,
     }));
   }, [currentReminderMonthKey]);
 
@@ -888,7 +1008,9 @@ export function AdoptionApp() {
   const canCreateNewFinalisation = finaliseWindowOpen;
   const canOpenFinaliseModal = canCreateNewFinalisation || Boolean(currentMonthSnapshot);
   const finaliseSummary = useMemo(() => {
-    const baselineSnapshot = currentMonthSnapshot || (store.history.length > 0 ? store.history[store.history.length - 1] : null);
+    const baselineSnapshot =
+      currentMonthSnapshot ||
+      (store.history.length > 0 ? store.history[store.history.length - 1] : null);
     const baselineOverall = baselineSnapshot?.overallPercentage || 0;
     const deltaOverall = metrics.overallPct - baselineOverall;
     return {
@@ -898,16 +1020,27 @@ export function AdoptionApp() {
       deltaOverall,
       assessedCount: metrics.assessedCount,
       totalActions: metrics.totalActions,
-      completedActions: metrics.completedActions
+      completedActions: metrics.completedActions,
     };
-  }, [currentMonthLabel, currentMonthSnapshot, metrics.assessedCount, metrics.completedActions, metrics.overallPct, metrics.totalActions, store.history]);
+  }, [
+    currentMonthLabel,
+    currentMonthSnapshot,
+    metrics.assessedCount,
+    metrics.completedActions,
+    metrics.overallPct,
+    metrics.totalActions,
+    store.history,
+  ]);
   const themeUnlocked = engagement.level >= 3;
   const engagementGrade = useMemo(
     () => calculateEngagementGrade(engagement.onTimeFinalisations, engagement.emailDraftOpens),
     [engagement.emailDraftOpens, engagement.onTimeFinalisations]
   );
   const hasCheckedInToday = Boolean(engagement.checkIns[todayKey]);
-  const checkInStreak = useMemo(() => calculateCheckInStreak(engagement.checkIns), [engagement.checkIns]);
+  const checkInStreak = useMemo(
+    () => calculateCheckInStreak(engagement.checkIns),
+    [engagement.checkIns]
+  );
   const achievements = useMemo(
     () => [
       {
@@ -915,58 +1048,62 @@ export function AdoptionApp() {
         name: 'Steady Cadence',
         description: 'Check in for 3 consecutive days.',
         unlocked: checkInStreak >= 3,
-        progress: `${Math.min(checkInStreak, 3)}/3`
+        progress: `${Math.min(checkInStreak, 3)}/3`,
       },
       {
         id: 'first-ontime',
         name: 'On-Time Closer',
         description: 'Finalise a prior month on time.',
         unlocked: engagement.onTimeFinalisations >= 1,
-        progress: `${Math.min(engagement.onTimeFinalisations, 1)}/1`
+        progress: `${Math.min(engagement.onTimeFinalisations, 1)}/1`,
       },
       {
         id: 'first-save',
         name: 'Story Builder',
         description: 'Save your first highlight layout.',
         unlocked: engagement.highlightLayoutSaves >= 1,
-        progress: `${Math.min(engagement.highlightLayoutSaves, 1)}/1`
-      }
+        progress: `${Math.min(engagement.highlightLayoutSaves, 1)}/1`,
+      },
     ],
     [checkInStreak, engagement.highlightLayoutSaves, engagement.onTimeFinalisations]
   );
 
-  const handleUserSettingsUpdate = useCallback((nextSettings: AdoptionUserSettings) => {
-    if (!themeUnlocked && !THEME_PRESET_COLORS.includes(nextSettings.themeColor)) {
-      setUserSettings((prev) => ({
-        ...nextSettings,
-        themeColor: prev.themeColor
-      }));
-      return;
-    }
-    setUserSettings(nextSettings);
-  }, [themeUnlocked]);
+  const handleUserSettingsUpdate = useCallback(
+    (nextSettings: AdoptionUserSettings) => {
+      if (!themeUnlocked && !THEME_PRESET_COLORS.includes(nextSettings.themeColor)) {
+        setUserSettings((prev) => ({
+          ...nextSettings,
+          themeColor: prev.themeColor,
+        }));
+        return;
+      }
+      setUserSettings(nextSettings);
+    },
+    [themeUnlocked]
+  );
 
-  const getComponentStatus = (comp: typeof COMPONENTS[0]) => {
-    let scoredCount = 0, justifiedCount = 0;
-    comp.lenses.forEach(l => {
+  const getComponentStatus = (comp: (typeof COMPONENTS)[0]) => {
+    let scoredCount = 0,
+      justifiedCount = 0;
+    comp.lenses.forEach((l) => {
       const e = store.currentDraft[comp.id]?.[l];
       if (e && e.score > 0) {
         scoredCount++;
         if (e.justification?.trim()) {
-justifiedCount++;
-}
+          justifiedCount++;
+        }
       }
     });
-    
+
     if (scoredCount === 0) {
-return { icon: '◯', color: 'text-blue-100', label: 'Not Started' };
-}
+      return { icon: '◯', color: 'text-blue-100', label: 'Not Started' };
+    }
     if (scoredCount > justifiedCount) {
-return { icon: '⚠', color: 'text-red-300', label: 'Missing Justification' };
-}
+      return { icon: '⚠', color: 'text-red-300', label: 'Missing Justification' };
+    }
     if (scoredCount < comp.lenses.length) {
-return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
-}
+      return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
+    }
     return { icon: '✓', color: 'text-green-300', label: 'Completed' };
   };
 
@@ -976,7 +1113,12 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
   const compactPathwayLabel = fullPathwayLabel.split(' - ')[0] || fullPathwayLabel;
 
   return (
-    <div className={`flex h-screen overflow-hidden ${userSettings.darkMode ? 'bg-slate-900 text-slate-100' : 'bg-slate-50 text-slate-800'}`}>
+    <div
+      className={`flex h-screen overflow-hidden ${userSettings.darkMode ? 'bg-slate-900 text-slate-100' : 'bg-slate-50 text-slate-800'}`}
+    >
+      <div role="status" aria-live="polite" className="sr-only">
+        {statusAnnouncement}
+      </div>
       <input
         ref={fileInputRef}
         type="file"
@@ -993,9 +1135,7 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
       {/* Sidebar */}
       <div
         className={`fixed inset-y-0 left-0 z-20 bg-[#005eb8] text-white flex flex-col shadow-xl overflow-hidden transition-all duration-300 ease-out lg:static lg:translate-x-0 ${
-          isSidebarOpen
-            ? 'w-72 translate-x-0'
-            : 'w-0 -translate-x-full lg:w-0'
+          isSidebarOpen ? 'w-72 translate-x-0' : 'w-0 -translate-x-full lg:w-0'
         }`}
         style={{ backgroundColor: userSettings.themeColor }}
       >
@@ -1018,13 +1158,19 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
           </div>
 
           <div className="mt-3 rounded-md bg-blue-700 p-2 text-xs">
-            <div className="font-semibold text-blue-100">Level {engagement.level} · Grade {engagementGrade}</div>
-            <div className="text-blue-200">XP {engagement.xp} · Layout saves {engagement.highlightLayoutSaves}</div>
+            <div className="font-semibold text-blue-100">
+              Level {engagement.level} · Grade {engagementGrade}
+            </div>
+            <div className="text-blue-200">
+              XP {engagement.xp} · Layout saves {engagement.highlightLayoutSaves}
+            </div>
           </div>
         </div>
 
         <div className="flex-1 overflow-y-auto py-4">
-          <div className="px-4 mb-2 text-xs font-semibold text-blue-300 uppercase tracking-wider">Intro</div>
+          <div className="px-4 mb-2 text-xs font-semibold text-blue-300 uppercase tracking-wider">
+            Intro
+          </div>
           <nav className="space-y-1 mb-4">
             {(['project-details', 'cm-guide'] as View[]).map((v) => (
               <button
@@ -1044,7 +1190,9 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
             ))}
           </nav>
 
-          <div className="px-4 mb-2 text-xs font-semibold text-blue-300 uppercase tracking-wider">Overview</div>
+          <div className="px-4 mb-2 text-xs font-semibold text-blue-300 uppercase tracking-wider">
+            Overview
+          </div>
           <nav className="space-y-1 mb-4">
             {(['dashboard', 'action-plan', 'roadmap-view'] as View[]).map((v) => (
               <button
@@ -1059,12 +1207,18 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
                     : 'text-blue-100 hover:bg-blue-800 border-l-4 border-transparent'
                 }`}
               >
-                {v === 'dashboard' ? 'Dashboard' : v === 'action-plan' ? 'Action Tracker' : 'Roadmap View'}
+                {v === 'dashboard'
+                  ? 'Dashboard'
+                  : v === 'action-plan'
+                    ? 'Action Tracker'
+                    : 'Roadmap View'}
               </button>
             ))}
           </nav>
 
-          <div className="px-4 mb-2 text-xs font-semibold text-blue-300 uppercase tracking-wider">Tools</div>
+          <div className="px-4 mb-2 text-xs font-semibold text-blue-300 uppercase tracking-wider">
+            Tools
+          </div>
           <nav className="space-y-1 mb-8">
             {(['highlight-builder', 'settings'] as View[]).map((v) => (
               <button
@@ -1084,9 +1238,11 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
             ))}
           </nav>
 
-          <div className="px-4 mb-2 text-xs font-semibold text-blue-300 uppercase tracking-wider">Assessment Components</div>
+          <div className="px-4 mb-2 text-xs font-semibold text-blue-300 uppercase tracking-wider">
+            Assessment Components
+          </div>
           <nav className="space-y-1">
-            {COMPONENTS.map(comp => {
+            {COMPONENTS.map((comp) => {
               const isActive = view === 'assessment' && activeComponentId === comp.id;
               const status = getComponentStatus(comp);
               return (
@@ -1099,18 +1255,28 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
                     openComponentAssessment(comp.id);
                   }}
                   className={`w-full text-left px-4 py-2 text-sm flex items-center justify-between transition-colors ${
-                    isActive ? 'bg-white font-medium text-[#005eb8]' : `hover:bg-blue-800 ${status.color}`
+                    isActive
+                      ? 'bg-white font-medium text-[#005eb8]'
+                      : `hover:bg-blue-800 ${status.color}`
                   }`}
                 >
                   <span className="truncate pr-2">{escapeHtml(comp.label)}</span>
-                  <span className="text-xs flex-shrink-0" title={status.label} aria-label={status.label}>{status.icon}</span>
+                  <span
+                    className="text-xs flex-shrink-0"
+                    title={status.label}
+                    aria-label={status.label}
+                  >
+                    {status.icon}
+                  </span>
                 </button>
               );
             })}
           </nav>
 
           <div className="mt-8 px-4 pb-4 border-t border-blue-800 pt-6">
-            <div className="text-[10px] font-semibold text-blue-300 uppercase tracking-wider mb-3">Status Legend</div>
+            <div className="text-[10px] font-semibold text-blue-300 uppercase tracking-wider mb-3">
+              Status Legend
+            </div>
             <div className="space-y-2 text-xs text-blue-200">
               <div>◯ Not Started</div>
               <div>◐ In Progress</div>
@@ -1124,7 +1290,10 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
       {/* Main Content */}
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
         {/* Header */}
-        <header className={`${userSettings.darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} border-b px-3 py-2 sm:px-6 shrink-0 z-10 shadow-sm`} style={{ borderTop: `3px solid ${userSettings.themeColor}` }}>
+        <header
+          className={`${userSettings.darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} border-b px-3 py-2 sm:px-6 shrink-0 z-10 shadow-sm`}
+          style={{ borderTop: `3px solid ${userSettings.themeColor}` }}
+        >
           <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
             <div className="min-w-0 flex items-start gap-2 sm:gap-3">
               <button
@@ -1134,15 +1303,23 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
                 title={isSidebarOpen ? 'Collapse side navigation' : 'Expand side navigation'}
                 style={{ backgroundColor: userSettings.themeColor }}
               >
-                <span aria-hidden="true" className="text-lg leading-none">{isSidebarOpen ? '«' : '»'}</span>
-                <span className="sr-only">{isSidebarOpen ? 'Collapse side navigation' : 'Expand side navigation'}</span>
+                <span aria-hidden="true" className="text-lg leading-none">
+                  {isSidebarOpen ? '«' : '»'}
+                </span>
+                <span className="sr-only">
+                  {isSidebarOpen ? 'Collapse side navigation' : 'Expand side navigation'}
+                </span>
               </button>
               <button
                 onClick={handleBackNavigation}
                 disabled={viewHistory.length === 0}
-                title={viewHistory.length === 0 ? 'No previous in-app page' : 'Back to previous page'}
+                title={
+                  viewHistory.length === 0 ? 'No previous in-app page' : 'Back to previous page'
+                }
                 className={`h-9 text-sm px-3 rounded-md font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
-                  userSettings.darkMode ? 'text-slate-100 hover:bg-slate-700' : 'text-slate-600 hover:bg-slate-100'
+                  userSettings.darkMode
+                    ? 'text-slate-100 hover:bg-slate-700'
+                    : 'text-slate-600 hover:bg-slate-100'
                 }`}
               >
                 ← Back
@@ -1150,21 +1327,47 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
 
               <div className="min-w-0">
                 <div className="flex min-w-0 items-center gap-1 text-sm">
-                  <span className={`truncate font-semibold ${userSettings.darkMode ? 'text-slate-100' : 'text-slate-700'}`} title={trustLabel}>{trustLabel}</span>
-                  <span className={`${userSettings.darkMode ? 'text-slate-300' : 'text-slate-400'}`}>/</span>
-                  <span className={`truncate ${userSettings.darkMode ? 'text-slate-100' : 'text-slate-600'}`} title={projectLabel}>{projectLabel}</span>
+                  <span
+                    className={`truncate font-semibold ${userSettings.darkMode ? 'text-slate-100' : 'text-slate-700'}`}
+                    title={trustLabel}
+                  >
+                    {trustLabel}
+                  </span>
+                  <span
+                    className={`${userSettings.darkMode ? 'text-slate-300' : 'text-slate-400'}`}
+                  >
+                    /
+                  </span>
+                  <span
+                    className={`truncate ${userSettings.darkMode ? 'text-slate-100' : 'text-slate-600'}`}
+                    title={projectLabel}
+                  >
+                    {projectLabel}
+                  </span>
                 </div>
                 <div className="mt-1 flex min-w-0 items-center gap-1.5">
                   <span
                     className={`truncate rounded-full px-2 py-1 text-[11px] font-semibold ${
-                      userSettings.darkMode ? 'bg-slate-700 text-slate-100' : 'bg-slate-100 text-slate-600'
+                      userSettings.darkMode
+                        ? 'bg-slate-700 text-slate-100'
+                        : 'bg-slate-100 text-slate-600'
                     }`}
                     title={`${store.orgProfile.cst.type.toUpperCase()} · ${fullPathwayLabel}`}
                   >
-                    {store.orgProfile.cst.type.toUpperCase()} · <span className="sm:hidden">{compactPathwayLabel}</span><span className="hidden sm:inline">{fullPathwayLabel}</span>
+                    {store.orgProfile.cst.type.toUpperCase()} ·{' '}
+                    <span className="sm:hidden">{compactPathwayLabel}</span>
+                    <span className="hidden sm:inline">{fullPathwayLabel}</span>
                   </span>
-                  <span className="inline-flex items-center justify-center rounded-full border border-emerald-200 bg-emerald-50 px-2 py-1 text-[11px] font-semibold text-emerald-800" title="Auto-save on">
-                    <span className="inline-flex h-3 w-3 items-center justify-center rounded-full bg-emerald-500 text-[9px] text-white" aria-hidden="true">✓</span>
+                  <span
+                    className="inline-flex items-center justify-center rounded-full border border-emerald-200 bg-emerald-50 px-2 py-1 text-[11px] font-semibold text-emerald-800"
+                    title="Auto-save on"
+                  >
+                    <span
+                      className="inline-flex h-3 w-3 items-center justify-center rounded-full bg-emerald-500 text-[9px] text-white"
+                      aria-hidden="true"
+                    >
+                      ✓
+                    </span>
                     <span className="sr-only sm:not-sr-only sm:ml-1">Auto-save on</span>
                   </span>
                 </div>
@@ -1172,41 +1375,35 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
             </div>
 
             <div className="flex flex-wrap items-center gap-2 lg:justify-end">
-            <button
-              onClick={() => setShowOnboarding(true)}
-              aria-label="Show introduction"
-              title="Show introduction"
-              className={`text-sm w-9 h-9 flex items-center justify-center bg-white text-[#425563] border border-[#768692] hover:bg-[#f0f4f5] rounded-full font-semibold transition-colors ${nhsFocusRing}`}
-            >
-              ?
-            </button>
-            <button
-              onClick={handleImportClick}
-              className={`${nhsButtonSecondary} h-9 px-3 py-0`}
-            >
-              Import
-            </button>
-            <button
-              onClick={handleExport}
-              className={`${nhsButtonSecondary} h-9 px-3 py-0`}
-            >
-              <span className="sm:hidden">Export</span>
-              <span className="hidden sm:inline">Export JSON</span>
-            </button>
-            <button
-              onClick={() => setShowFinaliseModal(true)}
-              disabled={!canOpenFinaliseModal}
-              title={
-                canOpenFinaliseModal
-                  ? 'Review and finalise monthly snapshot'
-                  : 'Finalise Month unlocks from the final week of each month.'
-              }
-              className={`${nhsButtonPrimary} h-9 px-3 py-0 shadow-[0_3px_0_rgba(0,0,0,0.2)]`}
-              style={{ backgroundColor: userSettings.themeColor }}
-            >
-              <span className="sm:hidden">Finalise</span>
-              <span className="hidden sm:inline">Finalise Month</span>
-            </button>
+              <button
+                onClick={() => setShowOnboarding(true)}
+                aria-label="Show introduction"
+                title="Show introduction"
+                className={`text-sm w-9 h-9 flex items-center justify-center bg-white text-[#425563] border border-[#768692] hover:bg-[#f0f4f5] rounded-full font-semibold transition-colors ${nhsFocusRing}`}
+              >
+                ?
+              </button>
+              <button onClick={handleImportClick} className={`${nhsButtonSecondary} h-9 px-3 py-0`}>
+                Import
+              </button>
+              <button onClick={handleExport} className={`${nhsButtonSecondary} h-9 px-3 py-0`}>
+                <span className="sm:hidden">Export</span>
+                <span className="hidden sm:inline">Export JSON</span>
+              </button>
+              <button
+                onClick={() => setShowFinaliseModal(true)}
+                disabled={!canOpenFinaliseModal}
+                title={
+                  canOpenFinaliseModal
+                    ? 'Review and finalise monthly snapshot'
+                    : 'Finalise Month unlocks from the final week of each month.'
+                }
+                className={`${nhsButtonPrimary} h-9 px-3 py-0 shadow-[0_3px_0_rgba(0,0,0,0.2)]`}
+                style={{ backgroundColor: userSettings.themeColor }}
+              >
+                <span className="sm:hidden">Finalise</span>
+                <span className="hidden sm:inline">Finalise Month</span>
+              </button>
             </div>
           </div>
         </header>
@@ -1214,12 +1411,21 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
         {/* Main Content Area */}
         <main ref={mainContentRef} className="flex-1 overflow-y-auto p-8">
           {view === 'dashboard' && showEngagementCard ? (
-            <section className={`${userSettings.darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'} mb-6 rounded-xl border p-4 shadow-sm`}>
+            <section
+              className={`${userSettings.darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'} mb-6 rounded-xl border p-4 shadow-sm`}
+            >
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
-                  <p className={`text-xs font-semibold uppercase tracking-wider ${userSettings.darkMode ? 'text-slate-300' : 'text-slate-500'}`}>Engagement</p>
-                  <p className={`text-sm mt-1 ${userSettings.darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
-                    Level {engagement.level} · Grade {engagementGrade} · On-time finalisations {engagement.onTimeFinalisations} · Email opens {engagement.emailDraftOpens}
+                  <p
+                    className={`text-xs font-semibold uppercase tracking-wider ${userSettings.darkMode ? 'text-slate-300' : 'text-slate-500'}`}
+                  >
+                    Engagement
+                  </p>
+                  <p
+                    className={`text-sm mt-1 ${userSettings.darkMode ? 'text-slate-100' : 'text-slate-700'}`}
+                  >
+                    Level {engagement.level} · Grade {engagementGrade} · On-time finalisations{' '}
+                    {engagement.onTimeFinalisations} · Email opens {engagement.emailDraftOpens}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -1256,12 +1462,20 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
                     }`}
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <p className={`text-sm font-semibold ${userSettings.darkMode ? 'text-slate-100' : 'text-slate-800'}`}>{achievement.name}</p>
+                      <p
+                        className={`text-sm font-semibold ${userSettings.darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+                      >
+                        {achievement.name}
+                      </p>
                       <span className="text-xs font-bold">
                         {achievement.unlocked ? 'Unlocked' : achievement.progress}
                       </span>
                     </div>
-                    <p className={`mt-1 text-xs ${userSettings.darkMode ? 'text-slate-300' : 'text-slate-600'}`}>{achievement.description}</p>
+                    <p
+                      className={`mt-1 text-xs ${userSettings.darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+                    >
+                      {achievement.description}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -1269,15 +1483,20 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
           ) : null}
 
           {shouldShowReportReminder && (
-            <section className={`${userSettings.darkMode ? 'border-amber-700 bg-slate-800' : 'border-amber-300 bg-amber-50'} mb-8 rounded-xl border p-5 shadow-sm`}>
+            <section
+              className={`${userSettings.darkMode ? 'border-amber-700 bg-slate-800' : 'border-amber-300 bg-amber-50'} mb-8 rounded-xl border p-5 shadow-sm`}
+            >
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-amber-700">First Day Reminder</p>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-amber-700">
+                    First Day Reminder
+                  </p>
                   <h3 className="text-lg font-bold text-amber-900 mt-1">
                     Submit prior month report for {reportReminder.previousMonthLabel}
                   </h3>
                   <p className="text-sm text-amber-800 mt-2">
-                    Please prompt the team to finalise {reportReminder.previousMonthLabel} if it has not already been recorded.
+                    Please prompt the team to finalise {reportReminder.previousMonthLabel} if it has
+                    not already been recorded.
                   </p>
                 </div>
                 <button
@@ -1377,10 +1596,12 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
             <ProjectDetailsPage
               orgProfile={store.orgProfile}
               onProfileUpdate={(updatedProfile) => {
-                setStore(prev => syncPathwayObjectives({
-                  ...prev,
-                  orgProfile: updatedProfile
-                }));
+                setStore((prev) =>
+                  syncPathwayObjectives({
+                    ...prev,
+                    orgProfile: updatedProfile,
+                  })
+                );
               }}
               components={COMPONENTS}
               lenses={MUTABLE_LENSES}
@@ -1402,16 +1623,16 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
               onEntryUpdate={updateEntry}
               onOpenLensInfo={setActiveLensInfo}
               onMatrixToggle={(key) => {
-                setShowMatrix(prev => ({
+                setShowMatrix((prev) => ({
                   ...prev,
-                  [key]: !prev[key]
+                  [key]: !prev[key],
                 }));
               }}
               onActionRemove={(componentId, lens, actionId) => {
                 const entry = getEntry(componentId, lens);
                 updateEntry(componentId, lens, {
                   ...entry,
-                  actions: entry.actions.filter(a => a.id !== actionId).map(cloneAction)
+                  actions: entry.actions.filter((a) => a.id !== actionId).map(cloneAction),
                 });
               }}
               onObjectivesUpdate={updateComponentObjectives}
@@ -1474,14 +1695,24 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
         </main>
 
         {activeLensInfo ? (
-          <LensInfoModal lensName={activeLensInfo} onClose={() => setActiveLensInfo('')} darkMode={Boolean(userSettings.darkMode)} />
+          <LensInfoModal
+            lensName={activeLensInfo}
+            onClose={() => setActiveLensInfo('')}
+            darkMode={Boolean(userSettings.darkMode)}
+          />
         ) : null}
 
         {showFinaliseModal ? (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 p-4">
-            <div className={`${userSettings.darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'} w-full max-w-2xl rounded-xl border p-6 shadow-2xl`}>
+            <div
+              className={`${userSettings.darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'} w-full max-w-2xl rounded-xl border p-6 shadow-2xl`}
+            >
               <div className="flex items-center justify-between gap-3">
-                <h3 className={`text-lg font-semibold ${userSettings.darkMode ? 'text-slate-100' : 'text-slate-900'}`}>Finalise Month</h3>
+                <h3
+                  className={`text-lg font-semibold ${userSettings.darkMode ? 'text-slate-100' : 'text-slate-900'}`}
+                >
+                  Finalise Month
+                </h3>
                 <button
                   type="button"
                   onClick={() => setShowFinaliseModal(false)}
@@ -1491,10 +1722,13 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
                 </button>
               </div>
 
-              <div className={`mt-4 space-y-3 text-sm ${userSettings.darkMode ? 'text-slate-200' : 'text-slate-700'}`}>
+              <div
+                className={`mt-4 space-y-3 text-sm ${userSettings.darkMode ? 'text-slate-200' : 'text-slate-700'}`}
+              >
                 <p>
-                  Finalising creates a point-in-time snapshot for <strong>{finaliseSummary.currentMonthLabel}</strong>.
-                  A new reporting month starts on the 1st day of each month.
+                  Finalising creates a point-in-time snapshot for{' '}
+                  <strong>{finaliseSummary.currentMonthLabel}</strong>. A new reporting month starts
+                  on the 1st day of each month.
                 </p>
                 <p>
                   {finaliseWindowOpen
@@ -1503,18 +1737,34 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
                 </p>
                 {currentMonthSnapshot ? (
                   <p className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-amber-900">
-                    A snapshot already exists for {finaliseSummary.currentMonthLabel}. Re-finalise will replace this month only.
+                    A snapshot already exists for {finaliseSummary.currentMonthLabel}. Re-finalise
+                    will replace this month only.
                   </p>
                 ) : null}
               </div>
 
-              <div className={`${userSettings.darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} mt-4 rounded-md border p-3 text-sm`}>
-                <p className={`font-semibold ${userSettings.darkMode ? 'text-slate-100' : 'text-slate-800'}`}>Current summary</p>
-                <ul className={`mt-2 space-y-1 ${userSettings.darkMode ? 'text-slate-200' : 'text-slate-700'}`}>
+              <div
+                className={`${userSettings.darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} mt-4 rounded-md border p-3 text-sm`}
+              >
+                <p
+                  className={`font-semibold ${userSettings.darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+                >
+                  Current summary
+                </p>
+                <ul
+                  className={`mt-2 space-y-1 ${userSettings.darkMode ? 'text-slate-200' : 'text-slate-700'}`}
+                >
                   <li>Baseline snapshot: {finaliseSummary.baselineLabel}</li>
-                  <li>Overall readiness: {metrics.overallPct}% ({finaliseSummary.deltaOverall >= 0 ? '+' : ''}{finaliseSummary.deltaOverall}% vs baseline)</li>
+                  <li>
+                    Overall readiness: {metrics.overallPct}% (
+                    {finaliseSummary.deltaOverall >= 0 ? '+' : ''}
+                    {finaliseSummary.deltaOverall}% vs baseline)
+                  </li>
                   <li>Components assessed: {finaliseSummary.assessedCount}</li>
-                  <li>Actions complete: {finaliseSummary.completedActions}/{finaliseSummary.totalActions}</li>
+                  <li>
+                    Actions complete: {finaliseSummary.completedActions}/
+                    {finaliseSummary.totalActions}
+                  </li>
                 </ul>
               </div>
 

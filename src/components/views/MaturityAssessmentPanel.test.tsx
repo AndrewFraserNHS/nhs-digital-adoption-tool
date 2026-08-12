@@ -9,10 +9,16 @@ function buildDetail(overrides?: Partial<ComponentDetail>): ComponentDetail {
     notes: 'Initial notes',
     links: ['https://alpha.example', 'https://beta.example'],
     actions: [
-      { id: 'a1', text: 'Plan workshops', owner: 'Amy', dueDate: '2026-08-10', status: 'In Progress' },
-      { id: 'a2', text: 'Publish comms', owner: 'Ben', dueDate: '2026-09-01', status: 'Completed' }
+      {
+        id: 'a1',
+        text: 'Plan workshops',
+        owner: 'Amy',
+        dueDate: '2026-08-10',
+        status: 'In Progress',
+      },
+      { id: 'a2', text: 'Publish comms', owner: 'Ben', dueDate: '2026-09-01', status: 'Completed' },
     ],
-    ...overrides
+    ...overrides,
   };
 }
 
@@ -27,17 +33,17 @@ function buildProps(overrides?: {
     scores: overrides?.scores || { Vision: 2, Benefits: 1 },
     details: overrides?.details || {
       Vision: buildDetail(),
-      Benefits: buildDetail({ links: [], actions: [] })
+      Benefits: buildDetail({ links: [], actions: [] }),
     },
     componentMatrix: {
       Vision: ['', 'Stage 1 text', 'Stage 2 text', 'Stage 3 text'],
-      Benefits: ['', 'Benefits stage 1']
+      Benefits: ['', 'Benefits stage 1'],
     },
     onComponentChange: vi.fn(),
     onScoreChange: vi.fn(),
     onOpenMatrix: vi.fn(),
     onOpenGuidance: vi.fn(),
-    onDetailUpdate: vi.fn()
+    onDetailUpdate: vi.fn(),
   };
 }
 
@@ -71,37 +77,61 @@ describe('MaturityAssessmentPanel', () => {
     const props = buildProps();
     render(<MaturityAssessmentPanel {...props} />);
 
-    fireEvent.change(screen.getByLabelText(/Justification/), { target: { value: 'Updated justification' } });
-    fireEvent.change(screen.getByLabelText('Additional information and notes'), { target: { value: 'Updated notes' } });
+    fireEvent.change(screen.getByLabelText(/Justification/), {
+      target: { value: 'Updated justification' },
+    });
+    fireEvent.change(screen.getByLabelText('Additional information and notes'), {
+      target: { value: 'Updated notes' },
+    });
 
     fireEvent.click(screen.getByRole('button', { name: '+ Add Supporting Link' }));
     fireEvent.click(screen.getAllByTitle('Remove')[0]);
 
     fireEvent.click(screen.getByRole('button', { name: '+ Add Action' }));
-    fireEvent.change(screen.getAllByPlaceholderText('Describe the action...')[0], { target: { value: 'Updated action text' } });
+    fireEvent.change(screen.getAllByPlaceholderText('Describe the action...')[0], {
+      target: { value: 'Updated action text' },
+    });
 
     expect(props.onDetailUpdate).toHaveBeenCalled();
     const allUpdates = props.onDetailUpdate.mock.calls.map((call) => call[1] as ComponentDetail);
-    expect(allUpdates.some((detail) => detail.justification === 'Updated justification')).toBe(true);
+    expect(allUpdates.some((detail) => detail.justification === 'Updated justification')).toBe(
+      true
+    );
     expect(allUpdates.some((detail) => detail.notes === 'Updated notes')).toBe(true);
-    expect(allUpdates.some((detail) => detail.actions.some((action) => action.text === 'Updated action text'))).toBe(true);
+    expect(
+      allUpdates.some((detail) =>
+        detail.actions.some((action) => action.text === 'Updated action text')
+      )
+    ).toBe(true);
   });
 
   it('exercises filter branches for links and actions', () => {
     const props = buildProps({
       details: {
         Vision: buildDetail({
-          actions: [{ id: 'a1', text: 'Plan workshops', owner: 'Amy', dueDate: '2026-08-10', status: 'In Progress' }]
+          actions: [
+            {
+              id: 'a1',
+              text: 'Plan workshops',
+              owner: 'Amy',
+              dueDate: '2026-08-10',
+              status: 'In Progress',
+            },
+          ],
         }),
-        Benefits: buildDetail({ links: [], actions: [] })
-      }
+        Benefits: buildDetail({ links: [], actions: [] }),
+      },
     });
     render(<MaturityAssessmentPanel {...props} />);
 
-    fireEvent.change(screen.getByPlaceholderText('Filter links...'), { target: { value: 'missing' } });
+    fireEvent.change(screen.getByPlaceholderText('Filter links...'), {
+      target: { value: 'missing' },
+    });
     expect(screen.getByText('No supporting links match the current filter.')).toBeInTheDocument();
 
-    fireEvent.change(screen.getByPlaceholderText('Search actions...'), { target: { value: 'nothing' } });
+    fireEvent.change(screen.getByPlaceholderText('Search actions...'), {
+      target: { value: 'nothing' },
+    });
     expect(screen.getByText('No actions match the current filters.')).toBeInTheDocument();
   });
 
@@ -110,9 +140,9 @@ describe('MaturityAssessmentPanel', () => {
       activeComponent: 'Missing',
       details: {
         Vision: buildDetail(),
-        Benefits: buildDetail({ links: [], actions: [] })
+        Benefits: buildDetail({ links: [], actions: [] }),
       },
-      scores: { Vision: 2, Benefits: 1 }
+      scores: { Vision: 2, Benefits: 1 },
     });
 
     render(<MaturityAssessmentPanel {...props} />);

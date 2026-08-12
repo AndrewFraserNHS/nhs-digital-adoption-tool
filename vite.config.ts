@@ -1,6 +1,7 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
 import { fileURLToPath, URL } from 'node:url';
+
+import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
 
 // Single-entry React SPA config for GitHub Pages.
 export default defineConfig({
@@ -12,7 +13,31 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    emptyOutDir: true
+    emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes('node_modules')) {
+            return undefined;
+          }
+
+          if (id.includes('react-router-dom')) {
+            return 'vendor-router';
+          }
+          if (id.includes('react-dom')) {
+            return 'vendor-react-dom';
+          }
+          if (id.includes('/react/')) {
+            return 'vendor-react';
+          }
+          if (id.includes('chart.js')) {
+            return 'vendor-chart';
+          }
+
+          return 'vendor-misc';
+        },
+      },
+    },
   },
   resolve: {
     alias: {

@@ -37,18 +37,24 @@ export function validateCstProfile(profile: OrgProfile): ValidationResult {
 
   const fullAdoptionDate = asDate(cst.fullAdoptionDate);
   if (cst.fullAdoptionDate && !fullAdoptionDate) {
-    errors.push({ field: 'cst.fullAdoptionDate', message: 'Full adoption date must be a valid date when provided.' });
+    errors.push({
+      field: 'cst.fullAdoptionDate',
+      message: 'Full adoption date must be a valid date when provided.',
+    });
   }
 
   const benefitDate = asDate(cst.benefitRealizationDate);
   if (cst.benefitRealizationDate && !benefitDate) {
-    errors.push({ field: 'cst.benefitRealizationDate', message: 'Benefit realization date must be a valid date when provided.' });
+    errors.push({
+      field: 'cst.benefitRealizationDate',
+      message: 'Benefit realization date must be a valid date when provided.',
+    });
   }
 
   if (fullAdoptionDate && fullAdoptionDate < goLiveDate) {
     errors.push({
       field: 'cst.fullAdoptionDate',
-      message: 'Full adoption date cannot be earlier than go live date.'
+      message: 'Full adoption date cannot be earlier than go live date.',
     });
   }
 
@@ -57,7 +63,8 @@ export function validateCstProfile(profile: OrgProfile): ValidationResult {
     if (benefitDate < baseline) {
       errors.push({
         field: 'cst.benefitRealizationDate',
-        message: 'Benefit realization date cannot be earlier than full adoption date (or go live when full adoption is empty).'
+        message:
+          'Benefit realization date cannot be earlier than full adoption date (or go live when full adoption is empty).',
       });
     }
   }
@@ -107,14 +114,14 @@ export function validateEntry(entry: DraftEntry): ValidationResult {
   if (entry.justification && entry.justification.length > 5000) {
     errors.push({
       field: 'justification',
-      message: 'Justification cannot exceed 5000 characters'
+      message: 'Justification cannot exceed 5000 characters',
     });
   }
 
   if (entry.evidence && entry.evidence.length > 2000) {
     errors.push({
       field: 'evidence',
-      message: 'Evidence cannot exceed 2000 characters'
+      message: 'Evidence cannot exceed 2000 characters',
     });
   }
 
@@ -134,14 +141,14 @@ export function validateOrgProfile(profile: OrgProfile): ValidationResult {
   if (profile.trustName && profile.trustName.length > 255) {
     errors.push({
       field: 'trustName',
-      message: 'Trust name cannot exceed 255 characters'
+      message: 'Trust name cannot exceed 255 characters',
     });
   }
 
   if (profile.region && profile.region.length > 100) {
     errors.push({
       field: 'region',
-      message: 'Region cannot exceed 100 characters'
+      message: 'Region cannot exceed 100 characters',
     });
   }
 

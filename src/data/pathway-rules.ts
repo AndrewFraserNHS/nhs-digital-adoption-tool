@@ -23,7 +23,7 @@ const PATHWAY_HEADER_TO_KEY: Record<string, CstPathwayKey> = {
   'Pathway 3 - product is live but adoption is patchy': 'pathway-3',
   'Pathway 1 - Pilot': 'pathway-1',
   'Pathway 2 - Scale up': 'pathway-2',
-  'Pathway 3 - Reassess': 'pathway-3'
+  'Pathway 3 - Reassess': 'pathway-3',
 };
 
 const DOMAIN_BY_COMPONENT_ID: Record<string, string> = {
@@ -43,11 +43,14 @@ const DOMAIN_BY_COMPONENT_ID: Record<string, string> = {
   reinforcement: 'Reinforcement',
   resistance: 'Resistance',
   cm_readiness: 'Readiness and Planning',
-  org_maturity: 'Organisational Change Management Maturity'
+  org_maturity: 'Organisational Change Management Maturity',
 };
 
 function sanitizeKeyPart(value: string): string {
-  return value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
 }
 
 function withProductToken(value: string): string {
@@ -118,14 +121,10 @@ function parsePathwayRules(raw: string): PathwayRulesByDomain {
     rules[domain][pathway] = {
       domain,
       descriptor,
-      checklist
+      checklist,
     };
 
-    while (
-      index < lines.length &&
-      lines[index] &&
-      !PATHWAY_HEADER_TO_KEY[lines[index]]
-    ) {
+    while (index < lines.length && lines[index] && !PATHWAY_HEADER_TO_KEY[lines[index]]) {
       index += 1;
     }
   }
@@ -139,7 +138,10 @@ export function getDomainByComponentId(componentId: string): string | null {
   return DOMAIN_BY_COMPONENT_ID[componentId] || null;
 }
 
-export function getPathwayRulesForComponent(componentId: string, pathway: CstPathwayKey): PathwayDomainRule | null {
+export function getPathwayRulesForComponent(
+  componentId: string,
+  pathway: CstPathwayKey
+): PathwayDomainRule | null {
   const domain = getDomainByComponentId(componentId);
   if (!domain) {
     return null;

@@ -1,17 +1,18 @@
 import { describe, expect, it, vi } from 'vitest';
+
 import { load, remove, save } from './storage';
 
 describe('storage', () => {
   const memory = new Map<string, string>();
 
   const mockStorage = {
-    getItem: (key: string) => (memory.has(key) ? memory.get(key)! : null),
+    getItem: (key: string) => (memory.has(key) ? (memory.get(key) ?? null) : null),
     setItem: (key: string, value: string) => {
       memory.set(key, value);
     },
     removeItem: (key: string) => {
       memory.delete(key);
-    }
+    },
   };
 
   (globalThis as { localStorage?: unknown }).localStorage = mockStorage;

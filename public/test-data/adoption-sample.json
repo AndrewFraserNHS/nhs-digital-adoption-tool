@@ -131,22 +131,13 @@
   "phaseOverrides": {},
   "pathwayChecks": {
     "vision": {
-      "pathway-2": [
-        "pathway-2:vision:1",
-        "pathway-2:vision:2",
-        "pathway-2:vision:3"
-      ]
+      "pathway-2": ["pathway-2:vision:1", "pathway-2:vision:2", "pathway-2:vision:3"]
     },
     "case_for_change": {
-      "pathway-2": [
-        "pathway-2:case-for-change:1",
-        "pathway-2:case-for-change:2"
-      ]
+      "pathway-2": ["pathway-2:case-for-change:1", "pathway-2:case-for-change:2"]
     },
     "stakeholder": {
-      "pathway-2": [
-        "pathway-2:stakeholder-engagement-and-communication:1"
-      ]
+      "pathway-2": ["pathway-2:stakeholder-engagement-and-communication:1"]
     }
   }
 }

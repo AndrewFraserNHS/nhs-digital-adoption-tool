@@ -1,8 +1,8 @@
-import { JSX, useCallback, useRef, useState } from 'react';
 import { ASSESSMENT_COMPONENTS } from '@data/components';
 import { normalizeActionStatus } from '@lib/actionModel';
 import type { SavedAdoptionAssessment } from '@lib/adoptionIO';
 import type { DraftEntry, OrgProfile } from '@lib/adoptionState';
+import { type DragEvent, JSX, useCallback, useRef, useState } from 'react';
 
 // ─── Analysis types ───────────────────────────────────────────────────────────
 
@@ -65,10 +65,18 @@ function classify(
   hasEvidence: boolean,
   hasActions: boolean
 ): ComponentAnalysis['engagement'] {
-  if (!hasScore) return 'none';
-  if (!hasJustification) return 'minimal';
-  if (!hasEvidence && !hasActions) return 'moderate';
-  if (hasEvidence || hasActions) return hasEvidence && hasActions ? 'thorough' : 'engaged';
+  if (!hasScore) {
+    return 'none';
+  }
+  if (!hasJustification) {
+    return 'minimal';
+  }
+  if (!hasEvidence && !hasActions) {
+    return 'moderate';
+  }
+  if (hasEvidence || hasActions) {
+    return hasEvidence && hasActions ? 'thorough' : 'engaged';
+  }
   return 'moderate';
 }
 
@@ -111,7 +119,9 @@ function analyseFile(payload: SavedAdoptionAssessment): AnalysisResult {
         const jWords = wordCount(entry?.justification);
         justificationWordSum += jWords;
         compJustWords += jWords;
-        if (jWords >= 5) justifiedEntries += 1;
+        if (jWords >= 5) {
+          justifiedEntries += 1;
+        }
 
         if ((entry?.evidence || '').trim().length > 5) {
           evidencedEntries += 1;
@@ -123,18 +133,23 @@ function analyseFile(payload: SavedAdoptionAssessment): AnalysisResult {
         const status = normalizeActionStatus(action.status);
         totalActions += 1;
         compActions += 1;
-        if (action.owner?.trim()) ownerSet.add(action.owner.trim().toLowerCase());
-        if (status === 'Completed') { completedActions += 1; compCompletedActions += 1; }
-        else if (status === 'In Progress') inProgressActions += 1;
-        else if (status === 'Planned') plannedActions += 1;
-        else if (status === 'Blocked') blockedActions += 1;
+        if (action.owner?.trim()) {
+          ownerSet.add(action.owner.trim().toLowerCase());
+        }
+        if (status === 'Completed') {
+          completedActions += 1;
+          compCompletedActions += 1;
+        } else if (status === 'In Progress') {
+          inProgressActions += 1;
+        } else if (status === 'Planned') {
+          plannedActions += 1;
+        } else if (status === 'Blocked') {
+          blockedActions += 1;
+        }
       });
-
     });
 
-    const avgScore = comp.lenses.length
-      ? Number((compScore / comp.lenses.length).toFixed(2))
-      : 0;
+    const avgScore = comp.lenses.length ? Number((compScore / comp.lenses.length).toFixed(2)) : 0;
 
     return {
       id: comp.id,
@@ -154,9 +169,15 @@ function analyseFile(payload: SavedAdoptionAssessment): AnalysisResult {
   });
 
   const scoringCoverage = totalLensPairs ? Math.round((scoredLensPairs / totalLensPairs) * 100) : 0;
-  const justificationCoverage = scoredLensPairs ? Math.round((justifiedEntries / scoredLensPairs) * 100) : 0;
-  const evidenceCoverage = scoredLensPairs ? Math.round((evidencedEntries / scoredLensPairs) * 100) : 0;
-  const avgJustificationWords = scoredLensPairs ? Math.round(justificationWordSum / scoredLensPairs) : 0;
+  const justificationCoverage = scoredLensPairs
+    ? Math.round((justifiedEntries / scoredLensPairs) * 100)
+    : 0;
+  const evidenceCoverage = scoredLensPairs
+    ? Math.round((evidencedEntries / scoredLensPairs) * 100)
+    : 0;
+  const avgJustificationWords = scoredLensPairs
+    ? Math.round(justificationWordSum / scoredLensPairs)
+    : 0;
   const historyCount = (payload.history || []).length;
 
   // Normalise action density: 5+ actions per scored component → 100
@@ -166,11 +187,11 @@ function analyseFile(payload: SavedAdoptionAssessment): AnalysisResult {
   const historyScore = Math.min(100, historyCount * 33);
 
   const engagementIndex = Math.round(
-    scoringCoverage * 0.30 +
-    justificationCoverage * 0.25 +
-    evidenceCoverage * 0.20 +
-    actionDensityScore * 0.15 +
-    historyScore * 0.10
+    scoringCoverage * 0.3 +
+      justificationCoverage * 0.25 +
+      evidenceCoverage * 0.2 +
+      actionDensityScore * 0.15 +
+      historyScore * 0.1
   );
 
   const overallPct = maxPossibleScore ? Math.round((totalScore / maxPossibleScore) * 100) : 0;
@@ -244,7 +265,8 @@ function analyseFile(payload: SavedAdoptionAssessment): AnalysisResult {
   }
 
   // Phase skipping: check if lower-phase components are mostly unscored while higher-phase ones are
-  const phase1Coverage = components.filter((c) => c.phase === 1 && c.scoredLenses > 0).length /
+  const phase1Coverage =
+    components.filter((c) => c.phase === 1 && c.scoredLenses > 0).length /
     Math.max(1, components.filter((c) => c.phase === 1).length);
   const laterPhaseScored = components.some((c) => c.phase >= 3 && c.scoredLenses > 0);
   if (phase1Coverage < 0.5 && laterPhaseScored) {
@@ -276,7 +298,8 @@ function analyseFile(payload: SavedAdoptionAssessment): AnalysisResult {
     insights.push({
       kind: 'info',
       title: 'Assessment in early stages',
-      detail: 'Not enough data to generate specific insights yet. Begin scoring components and recording justifications to unlock recommendations.',
+      detail:
+        'Not enough data to generate specific insights yet. Begin scoring components and recording justifications to unlock recommendations.',
     });
   }
 
@@ -313,7 +336,10 @@ interface TimelineSnapshot {
   isCurrent: boolean;
 }
 
-function buildTimelineColumns(payload: SavedAdoptionAssessment, result: AnalysisResult): TimelineSnapshot[] {
+function buildTimelineColumns(
+  payload: SavedAdoptionAssessment,
+  result: AnalysisResult
+): TimelineSnapshot[] {
   const history = (payload.history || []).map((snapshot) => {
     const componentAverages: Record<string, number> = {};
     ASSESSMENT_COMPONENTS.forEach((comp) => {
@@ -321,13 +347,15 @@ function buildTimelineColumns(payload: SavedAdoptionAssessment, result: Analysis
       comp.lenses.forEach((lens) => {
         total += Number(snapshot.data[comp.id]?.[lens]?.score || 0);
       });
-      componentAverages[comp.id] = comp.lenses.length ? Number((total / comp.lenses.length).toFixed(1)) : 0;
+      componentAverages[comp.id] = comp.lenses.length
+        ? Number((total / comp.lenses.length).toFixed(1))
+        : 0;
     });
     return {
       label: snapshot.monthLabel,
       overallPercentage: snapshot.overallPercentage,
       componentAverages,
-      isCurrent: false
+      isCurrent: false,
     };
   });
 
@@ -340,26 +368,43 @@ function buildTimelineColumns(payload: SavedAdoptionAssessment, result: Analysis
         acc[c.id] = c.avgScore;
         return acc;
       }, {}),
-      isCurrent: true
-    }
+      isCurrent: true,
+    },
   ];
 }
 
-function TimelineView({ payload, result, fileName }: { payload: SavedAdoptionAssessment; result: AnalysisResult; fileName: string }) {
+function TimelineView({
+  payload,
+  result,
+  fileName,
+}: {
+  payload: SavedAdoptionAssessment;
+  result: AnalysisResult;
+  fileName: string;
+}) {
   const [phaseFilter, setPhaseFilter] = useState<number | 'all'>('all');
   const phases = [...new Set(ASSESSMENT_COMPONENTS.map((c) => c.phase))].sort((a, b) => a - b);
 
   const columns = buildTimelineColumns(payload, result);
-  const visibleComponents = phaseFilter === 'all' ? ASSESSMENT_COMPONENTS : ASSESSMENT_COMPONENTS.filter((c) => c.phase === phaseFilter);
+  const visibleComponents =
+    phaseFilter === 'all'
+      ? ASSESSMENT_COMPONENTS
+      : ASSESSMENT_COMPONENTS.filter((c) => c.phase === phaseFilter);
   const finalisedCount = columns.filter((col) => !col.isCurrent).length;
 
   return (
     <div className="space-y-8">
       <div className="bg-[#005eb8] text-white rounded-lg p-5 flex flex-col sm:flex-row sm:items-center gap-4">
         <div className="flex-1">
-          <p className="text-xs text-blue-200 font-semibold uppercase tracking-wide mb-1">{fileName}</p>
-          <h3 className="text-xl font-bold">{result.orgProfile.trustName || 'Unknown Organisation'}</h3>
-          {result.orgProfile.projectName && <p className="text-sm text-blue-100 mt-0.5">{result.orgProfile.projectName}</p>}
+          <p className="text-xs text-blue-200 font-semibold uppercase tracking-wide mb-1">
+            {fileName}
+          </p>
+          <h3 className="text-xl font-bold">
+            {result.orgProfile.trustName || 'Unknown Organisation'}
+          </h3>
+          {result.orgProfile.projectName && (
+            <p className="text-sm text-blue-100 mt-0.5">{result.orgProfile.projectName}</p>
+          )}
         </div>
         <div className="text-center shrink-0">
           <p className="text-3xl font-bold">{finalisedCount}</p>
@@ -375,7 +420,9 @@ function TimelineView({ payload, result, fileName }: { payload: SavedAdoptionAss
         <div className="flex gap-3 overflow-x-auto pb-2">
           {columns.map((col, index) => {
             const prev = columns[index - 1];
-            const delta = prev ? Number((col.overallPercentage - prev.overallPercentage).toFixed(1)) : null;
+            const delta = prev
+              ? Number((col.overallPercentage - prev.overallPercentage).toFixed(1))
+              : null;
             return (
               <div
                 key={`${col.label}-${index}`}
@@ -384,8 +431,11 @@ function TimelineView({ payload, result, fileName }: { payload: SavedAdoptionAss
                 <p className="text-xs font-semibold text-slate-500 truncate">{col.label}</p>
                 <p className="text-2xl font-bold text-slate-800 mt-1">{col.overallPercentage}%</p>
                 {delta !== null ? (
-                  <p className={`text-xs font-semibold mt-1 ${delta > 0 ? 'text-green-600' : delta < 0 ? 'text-red-600' : 'text-slate-400'}`}>
-                    {delta > 0 ? '+' : ''}{delta}% vs prior
+                  <p
+                    className={`text-xs font-semibold mt-1 ${delta > 0 ? 'text-green-600' : delta < 0 ? 'text-red-600' : 'text-slate-400'}`}
+                  >
+                    {delta > 0 ? '+' : ''}
+                    {delta}% vs prior
                   </p>
                 ) : (
                   <p className="text-xs text-slate-400 mt-1">Baseline</p>
@@ -401,16 +451,23 @@ function TimelineView({ payload, result, fileName }: { payload: SavedAdoptionAss
           <div>
             <h3 className="text-lg font-semibold text-slate-800">Component Scores Over Time</h3>
             <p className="text-xs text-slate-500 mt-0.5">
-              Each cell is the average lens score for that component that month. Colour shows the change versus the previous column.
+              Each cell is the average lens score for that component that month. Colour shows the
+              change versus the previous column.
             </p>
           </div>
           <select
             value={phaseFilter}
-            onChange={(e) => setPhaseFilter(e.target.value === 'all' ? 'all' : Number(e.target.value))}
+            onChange={(e) =>
+              setPhaseFilter(e.target.value === 'all' ? 'all' : Number(e.target.value))
+            }
             className="rounded-md border border-slate-300 px-3 py-2 text-sm sm:w-36"
           >
             <option value="all">All phases</option>
-            {phases.map((p) => <option key={p} value={p}>Phase {p}</option>)}
+            {phases.map((p) => (
+              <option key={p} value={p}>
+                Phase {p}
+              </option>
+            ))}
           </select>
         </div>
         <div className="overflow-x-auto">
@@ -419,18 +476,24 @@ function TimelineView({ payload, result, fileName }: { payload: SavedAdoptionAss
               <tr className="border-b border-slate-200 text-left text-xs text-slate-500 uppercase tracking-wide">
                 <th className="pb-2 font-semibold sticky left-0 bg-white pr-3">Component</th>
                 {columns.map((col, index) => (
-                  <th key={`${col.label}-${index}`} className="pb-2 font-semibold text-center px-2">{col.label}</th>
+                  <th key={`${col.label}-${index}`} className="pb-2 font-semibold text-center px-2">
+                    {col.label}
+                  </th>
                 ))}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {visibleComponents.map((comp) => (
                 <tr key={comp.id} className="hover:bg-slate-50">
-                  <td className="py-2.5 pr-3 font-medium text-slate-700 sticky left-0 bg-white">{comp.label}</td>
+                  <td className="py-2.5 pr-3 font-medium text-slate-700 sticky left-0 bg-white">
+                    {comp.label}
+                  </td>
                   {columns.map((col, index) => {
                     const score = col.componentAverages[comp.id] || 0;
-                    const prevScore = index > 0 ? columns[index - 1].componentAverages[comp.id] || 0 : null;
-                    const delta = prevScore !== null ? Number((score - prevScore).toFixed(1)) : null;
+                    const prevScore =
+                      index > 0 ? columns[index - 1].componentAverages[comp.id] || 0 : null;
+                    const delta =
+                      prevScore !== null ? Number((score - prevScore).toFixed(1)) : null;
                     const cellClass =
                       delta === null || delta === 0
                         ? 'bg-slate-50 text-slate-600'
@@ -438,8 +501,13 @@ function TimelineView({ payload, result, fileName }: { payload: SavedAdoptionAss
                           ? 'bg-green-50 text-green-700'
                           : 'bg-red-50 text-red-600';
                     return (
-                      <td key={`${comp.id}-${col.label}-${index}`} className="py-2.5 px-2 text-center">
-                        <span className={`inline-flex min-w-[2.5rem] justify-center rounded px-2 py-0.5 text-xs font-bold ${cellClass}`}>
+                      <td
+                        key={`${comp.id}-${col.label}-${index}`}
+                        className="py-2.5 px-2 text-center"
+                      >
+                        <span
+                          className={`inline-flex min-w-[2.5rem] justify-center rounded px-2 py-0.5 text-xs font-bold ${cellClass}`}
+                        >
                           {score > 0 ? score.toFixed(1) : '–'}
                         </span>
                       </td>
@@ -474,24 +542,44 @@ const ENGAGEMENT_COLOR: Record<ComponentAnalysis['engagement'], string> = {
 };
 
 function indexColor(n: number): string {
-  if (n >= 75) return 'bg-green-500';
-  if (n >= 50) return 'bg-amber-400';
-  if (n >= 25) return 'bg-orange-400';
+  if (n >= 75) {
+    return 'bg-green-500';
+  }
+  if (n >= 50) {
+    return 'bg-amber-400';
+  }
+  if (n >= 25) {
+    return 'bg-orange-400';
+  }
   return 'bg-red-400';
 }
 
-function MetricBar({ label, value, max = 100, color = 'bg-[#005eb8]' }: {
-  label: string; value: number; max?: number; color?: string;
+function MetricBar({
+  label,
+  value,
+  max = 100,
+  color = 'bg-[#005eb8]',
+}: {
+  label: string;
+  value: number;
+  max?: number;
+  color?: string;
 }) {
   const pct = Math.round((value / max) * 100);
   return (
     <div>
       <div className="flex justify-between text-xs text-slate-600 mb-1">
         <span>{label}</span>
-        <span className="font-semibold">{value}{max === 100 ? '%' : ''}</span>
+        <span className="font-semibold">
+          {value}
+          {max === 100 ? '%' : ''}
+        </span>
       </div>
       <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-        <div className={`h-full ${color} rounded-full transition-all`} style={{ width: `${pct}%` }} />
+        <div
+          className={`h-full ${color} rounded-full transition-all`}
+          style={{ width: `${pct}%` }}
+        />
       </div>
     </div>
   );
@@ -499,14 +587,34 @@ function MetricBar({ label, value, max = 100, color = 'bg-[#005eb8]' }: {
 
 function InsightCard({ insight }: { insight: Insight }) {
   const styles = {
-    warning: { border: 'border-amber-200', bg: 'bg-amber-50', icon: '⚠', iconColor: 'text-amber-500', titleColor: 'text-amber-800' },
-    info: { border: 'border-blue-200', bg: 'bg-blue-50', icon: 'ℹ', iconColor: 'text-blue-500', titleColor: 'text-blue-800' },
-    success: { border: 'border-green-200', bg: 'bg-green-50', icon: '✓', iconColor: 'text-green-600', titleColor: 'text-green-800' },
+    warning: {
+      border: 'border-amber-200',
+      bg: 'bg-amber-50',
+      icon: '⚠',
+      iconColor: 'text-amber-500',
+      titleColor: 'text-amber-800',
+    },
+    info: {
+      border: 'border-blue-200',
+      bg: 'bg-blue-50',
+      icon: 'ℹ',
+      iconColor: 'text-blue-500',
+      titleColor: 'text-blue-800',
+    },
+    success: {
+      border: 'border-green-200',
+      bg: 'bg-green-50',
+      icon: '✓',
+      iconColor: 'text-green-600',
+      titleColor: 'text-green-800',
+    },
   }[insight.kind];
 
   return (
     <div className={`rounded-lg border ${styles.border} ${styles.bg} p-4 flex gap-3`}>
-      <span className={`mt-0.5 text-base font-bold ${styles.iconColor} shrink-0`}>{styles.icon}</span>
+      <span className={`mt-0.5 text-base font-bold ${styles.iconColor} shrink-0`}>
+        {styles.icon}
+      </span>
       <div>
         <p className={`text-sm font-semibold ${styles.titleColor}`}>{insight.title}</p>
         <p className="text-xs text-slate-600 mt-0.5 leading-relaxed">{insight.detail}</p>
@@ -526,21 +634,33 @@ function DropZone({ onFiles }: { onFiles: (files: File[]) => void }) {
   const [dragOver, setDragOver] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setDragOver(false);
-    const dropped = Array.from(e.dataTransfer.files).filter((f) => f.type === 'application/json' || f.name.endsWith('.json'));
-    if (dropped.length) onFiles(dropped.slice(0, 2));
-  }, [onFiles]);
+  const handleDrop = useCallback(
+    (e: DragEvent) => {
+      e.preventDefault();
+      setDragOver(false);
+      const dropped = Array.from(e.dataTransfer.files).filter(
+        (f) => f.type === 'application/json' || f.name.endsWith('.json')
+      );
+      if (dropped.length) {
+        onFiles(dropped.slice(0, 2));
+      }
+    },
+    [onFiles]
+  );
 
   return (
     <div
-      onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+      onDragOver={(e) => {
+        e.preventDefault();
+        setDragOver(true);
+      }}
       onDragLeave={() => setDragOver(false)}
       onDrop={handleDrop}
       onClick={() => inputRef.current?.click()}
       className={`cursor-pointer rounded-xl border-2 border-dashed p-12 flex flex-col items-center gap-4 transition-colors ${
-        dragOver ? 'border-[#005eb8] bg-blue-50' : 'border-slate-300 bg-slate-50 hover:border-slate-400'
+        dragOver
+          ? 'border-[#005eb8] bg-blue-50'
+          : 'border-slate-300 bg-slate-50 hover:border-slate-400'
       }`}
     >
       <input
@@ -551,18 +671,26 @@ function DropZone({ onFiles }: { onFiles: (files: File[]) => void }) {
         className="hidden"
         onChange={(e) => {
           const files = Array.from(e.target.files || []).slice(0, 2);
-          if (files.length) onFiles(files);
+          if (files.length) {
+            onFiles(files);
+          }
           e.target.value = '';
         }}
       />
       <span className="text-4xl">📂</span>
       <div className="text-center">
         <p className="font-semibold text-slate-700">Drop 1 or 2 adoption JSON exports here</p>
-        <p className="text-sm text-slate-500 mt-1">or click to browse - exported from the Digital Adoption Tool</p>
+        <p className="text-sm text-slate-500 mt-1">
+          or click to browse - exported from the Digital Adoption Tool
+        </p>
       </div>
       <div className="flex gap-3 mt-2">
-        <span className="text-xs bg-white border border-slate-200 rounded px-3 py-1 text-slate-600">1 file → Engagement analysis</span>
-        <span className="text-xs bg-white border border-slate-200 rounded px-3 py-1 text-slate-600">2 files → Side-by-side comparison</span>
+        <span className="text-xs bg-white border border-slate-200 rounded px-3 py-1 text-slate-600">
+          1 file → Engagement analysis
+        </span>
+        <span className="text-xs bg-white border border-slate-200 rounded px-3 py-1 text-slate-600">
+          2 files → Side-by-side comparison
+        </span>
       </div>
     </div>
   );
@@ -571,22 +699,37 @@ function DropZone({ onFiles }: { onFiles: (files: File[]) => void }) {
 // ─── Single file analysis view ────────────────────────────────────────────────
 
 function SingleAnalysis({ result, fileName }: { result: AnalysisResult; fileName: string }) {
-  const { engagement: eng, components, insights, overallPct, onTargetCount, totalComponents, orgProfile } = result;
+  const {
+    engagement: eng,
+    components,
+    insights,
+    overallPct,
+    onTargetCount,
+    totalComponents,
+    orgProfile,
+  } = result;
   const [phaseFilter, setPhaseFilter] = useState<number | 'all'>('all');
   const phases = [...new Set(ASSESSMENT_COMPONENTS.map((c) => c.phase))].sort((a, b) => a - b);
 
-  const visible = phaseFilter === 'all' ? components : components.filter((c) => c.phase === phaseFilter);
+  const visible =
+    phaseFilter === 'all' ? components : components.filter((c) => c.phase === phaseFilter);
 
   return (
     <div className="space-y-8">
       {/* Org banner */}
       <div className="bg-[#005eb8] text-white rounded-lg p-5 flex flex-col sm:flex-row sm:items-center gap-4">
         <div className="flex-1">
-          <p className="text-xs text-blue-200 font-semibold uppercase tracking-wide mb-1">{fileName}</p>
+          <p className="text-xs text-blue-200 font-semibold uppercase tracking-wide mb-1">
+            {fileName}
+          </p>
           <h3 className="text-xl font-bold">{orgProfile.trustName || 'Unknown Organisation'}</h3>
-          {orgProfile.projectName && <p className="text-sm text-blue-100 mt-0.5">{orgProfile.projectName}</p>}
+          {orgProfile.projectName && (
+            <p className="text-sm text-blue-100 mt-0.5">{orgProfile.projectName}</p>
+          )}
           {(orgProfile.region || orgProfile.trustType) && (
-            <p className="text-xs text-blue-200 mt-1">{[orgProfile.region, orgProfile.trustType].filter(Boolean).join(' · ')}</p>
+            <p className="text-xs text-blue-200 mt-1">
+              {[orgProfile.region, orgProfile.trustType].filter(Boolean).join(' · ')}
+            </p>
           )}
         </div>
         <div className="flex gap-6 shrink-0">
@@ -595,7 +738,9 @@ function SingleAnalysis({ result, fileName }: { result: AnalysisResult; fileName
             <p className="text-xs text-blue-200">Overall score</p>
           </div>
           <div className="text-center">
-            <p className="text-3xl font-bold">{onTargetCount}/{totalComponents}</p>
+            <p className="text-3xl font-bold">
+              {onTargetCount}/{totalComponents}
+            </p>
             <p className="text-xs text-blue-200">On target</p>
           </div>
           <div className="text-center">
@@ -610,10 +755,14 @@ function SingleAnalysis({ result, fileName }: { result: AnalysisResult; fileName
         <div className="flex items-center justify-between mb-5">
           <div>
             <h3 className="text-lg font-semibold text-slate-800">Engagement Index</h3>
-            <p className="text-sm text-slate-500">How thoroughly the tool is being used, not just filled in</p>
+            <p className="text-sm text-slate-500">
+              How thoroughly the tool is being used, not just filled in
+            </p>
           </div>
           <div className="text-center">
-            <div className={`w-20 h-20 rounded-full flex items-center justify-center text-white text-2xl font-bold ${indexColor(eng.engagementIndex)}`}>
+            <div
+              className={`w-20 h-20 rounded-full flex items-center justify-center text-white text-2xl font-bold ${indexColor(eng.engagementIndex)}`}
+            >
               {eng.engagementIndex}
             </div>
             <p className="text-xs text-slate-500 mt-1">out of 100</p>
@@ -621,9 +770,18 @@ function SingleAnalysis({ result, fileName }: { result: AnalysisResult; fileName
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <MetricBar label="Scoring coverage" value={eng.scoringCoverage} color="bg-[#005eb8]" />
-          <MetricBar label="Justification coverage" value={eng.justificationCoverage} color="bg-violet-500" />
+          <MetricBar
+            label="Justification coverage"
+            value={eng.justificationCoverage}
+            color="bg-violet-500"
+          />
           <MetricBar label="Evidence coverage" value={eng.evidenceCoverage} color="bg-teal-500" />
-          <MetricBar label="Avg justification length" value={Math.min(eng.avgJustificationWords, 50)} max={50} color="bg-amber-500" />
+          <MetricBar
+            label="Avg justification length"
+            value={Math.min(eng.avgJustificationWords, 50)}
+            max={50}
+            color="bg-amber-500"
+          />
         </div>
         <div className="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-slate-100">
           {[
@@ -641,7 +799,12 @@ function SingleAnalysis({ result, fileName }: { result: AnalysisResult; fileName
         {eng.uniqueOwners.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-1">
             {eng.uniqueOwners.map((o) => (
-              <span key={o} className="text-xs bg-slate-100 text-slate-600 rounded px-2 py-0.5 capitalize">{o}</span>
+              <span
+                key={o}
+                className="text-xs bg-slate-100 text-slate-600 rounded px-2 py-0.5 capitalize"
+              >
+                {o}
+              </span>
             ))}
           </div>
         )}
@@ -651,7 +814,9 @@ function SingleAnalysis({ result, fileName }: { result: AnalysisResult; fileName
       <div>
         <h3 className="text-lg font-semibold text-slate-800 mb-3">Insights & Recommendations</h3>
         <div className="space-y-3">
-          {insights.map((ins, i) => <InsightCard key={i} insight={ins} />)}
+          {insights.map((ins, i) => (
+            <InsightCard key={i} insight={ins} />
+          ))}
         </div>
       </div>
 
@@ -661,11 +826,17 @@ function SingleAnalysis({ result, fileName }: { result: AnalysisResult; fileName
           <h3 className="text-lg font-semibold text-slate-800">Component Engagement Breakdown</h3>
           <select
             value={phaseFilter}
-            onChange={(e) => setPhaseFilter(e.target.value === 'all' ? 'all' : Number(e.target.value))}
+            onChange={(e) =>
+              setPhaseFilter(e.target.value === 'all' ? 'all' : Number(e.target.value))
+            }
             className="rounded-md border border-slate-300 px-3 py-2 text-sm sm:w-36"
           >
             <option value="all">All phases</option>
-            {phases.map((p) => <option key={p} value={p}>Phase {p}</option>)}
+            {phases.map((p) => (
+              <option key={p} value={p}>
+                Phase {p}
+              </option>
+            ))}
           </select>
         </div>
         <div className="overflow-x-auto">
@@ -687,25 +858,35 @@ function SingleAnalysis({ result, fileName }: { result: AnalysisResult; fileName
                   <td className="py-2.5 pr-3 font-medium text-slate-700">{comp.label}</td>
                   <td className="py-2.5 text-center text-slate-500">{comp.phase}</td>
                   <td className="py-2.5 text-center">
-                    <span className={`text-xs font-bold px-2 py-0.5 rounded ${
-                      comp.avgScore === 0 ? 'bg-slate-100 text-slate-400'
-                        : comp.onTarget ? 'bg-green-100 text-green-700'
-                        : 'bg-amber-100 text-amber-700'
-                    }`}>
+                    <span
+                      className={`text-xs font-bold px-2 py-0.5 rounded ${
+                        comp.avgScore === 0
+                          ? 'bg-slate-100 text-slate-400'
+                          : comp.onTarget
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-amber-100 text-amber-700'
+                      }`}
+                    >
                       {comp.avgScore > 0 ? comp.avgScore.toFixed(1) : '–'}
                     </span>
                   </td>
                   <td className="py-2.5 text-center text-slate-500 text-xs">{comp.target}</td>
-                  <td className="py-2.5 text-center text-xs text-slate-500">{comp.scoredLenses}/{comp.totalLenses}</td>
+                  <td className="py-2.5 text-center text-xs text-slate-500">
+                    {comp.scoredLenses}/{comp.totalLenses}
+                  </td>
                   <td className="py-2.5 text-center">
                     {comp.actionCount > 0 ? (
                       <span className="text-xs text-slate-600">
                         {comp.completedActionCount}/{comp.actionCount}
                       </span>
-                    ) : <span className="text-slate-300 text-xs">–</span>}
+                    ) : (
+                      <span className="text-slate-300 text-xs">–</span>
+                    )}
                   </td>
                   <td className="py-2.5">
-                    <span className={`text-xs font-medium px-2 py-0.5 rounded ${ENGAGEMENT_COLOR[comp.engagement]}`}>
+                    <span
+                      className={`text-xs font-medium px-2 py-0.5 rounded ${ENGAGEMENT_COLOR[comp.engagement]}`}
+                    >
                       {ENGAGEMENT_LABEL[comp.engagement]}
                     </span>
                   </td>
@@ -718,7 +899,9 @@ function SingleAnalysis({ result, fileName }: { result: AnalysisResult; fileName
 
       {/* Estate improvement recommendations */}
       <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-slate-800 mb-1">Estate-Wide Improvement Signals</h3>
+        <h3 className="text-lg font-semibold text-slate-800 mb-1">
+          Estate-Wide Improvement Signals
+        </h3>
         <p className="text-sm text-slate-500 mb-4">
           Patterns from this assessment that suggest systemic actions across your wider estate.
         </p>
@@ -745,12 +928,18 @@ function SingleAnalysis({ result, fileName }: { result: AnalysisResult; fileName
           />
           <EstateSignal
             title="Address phase sequencing"
-            active={phase1Coverage(components) < 0.6 && components.some((c) => c.phase >= 3 && c.scoredLenses > 0)}
+            active={
+              phase1Coverage(components) < 0.6 &&
+              components.some((c) => c.phase >= 3 && c.scoredLenses > 0)
+            }
             detail="Foundation phase components are under-assessed relative to later phases. Enforce phase-gate reviews before advancing in the tool."
           />
           <EstateSignal
             title="Unblock stalled actions"
-            active={eng.blockedActions > 0 || eng.plannedActions > eng.completedActions + eng.inProgressActions}
+            active={
+              eng.blockedActions > 0 ||
+              eng.plannedActions > eng.completedActions + eng.inProgressActions
+            }
             detail="Stalled or blocked actions suggest delivery impediments. A dedicated action review session with senior sponsors may be needed."
           />
         </div>
@@ -764,13 +953,27 @@ function phase1Coverage(components: ComponentAnalysis[]): number {
   return phase1.length ? phase1.filter((c) => c.scoredLenses > 0).length / phase1.length : 1;
 }
 
-function EstateSignal({ title, active, detail }: { title: string; active: boolean; detail: string }) {
+function EstateSignal({
+  title,
+  active,
+  detail,
+}: {
+  title: string;
+  active: boolean;
+  detail: string;
+}) {
   return (
-    <div className={`rounded-md border p-4 ${active ? 'border-amber-200 bg-amber-50' : 'border-slate-100 bg-slate-50 opacity-50'}`}>
+    <div
+      className={`rounded-md border p-4 ${active ? 'border-amber-200 bg-amber-50' : 'border-slate-100 bg-slate-50 opacity-50'}`}
+    >
       <div className="flex items-start gap-2">
-        <span className={`text-base mt-0.5 ${active ? 'text-amber-500' : 'text-slate-300'}`}>{active ? '⚑' : '○'}</span>
+        <span className={`text-base mt-0.5 ${active ? 'text-amber-500' : 'text-slate-300'}`}>
+          {active ? '⚑' : '○'}
+        </span>
         <div>
-          <p className={`text-sm font-semibold ${active ? 'text-amber-800' : 'text-slate-500'}`}>{title}</p>
+          <p className={`text-sm font-semibold ${active ? 'text-amber-800' : 'text-slate-500'}`}>
+            {title}
+          </p>
           <p className="text-xs text-slate-600 mt-0.5 leading-relaxed">{detail}</p>
         </div>
       </div>
@@ -780,23 +983,28 @@ function EstateSignal({ title, active, detail }: { title: string; active: boolea
 
 // ─── Two-file comparison view ─────────────────────────────────────────────────
 
-function CompareView({ results, fileNames }: { results: [AnalysisResult, AnalysisResult]; fileNames: [string, string] }) {
+function CompareView({
+  results,
+  fileNames,
+}: {
+  results: [AnalysisResult, AnalysisResult];
+  fileNames: [string, string];
+}) {
   const [a, b] = results;
   const [phaseFilter, setPhaseFilter] = useState<number | 'all'>('all');
   const phases = [...new Set(ASSESSMENT_COMPONENTS.map((c) => c.phase))].sort((a, b) => a - b);
 
   const allInsights: Insight[] = [];
-  const scoreGapComps = ASSESSMENT_COMPONENTS
-    .map((comp) => {
-      const ca = a.components.find((c) => c.id === comp.id);
-      const cb = b.components.find((c) => c.id === comp.id);
-      return { comp, ca, cb, delta: Number(((cb?.avgScore || 0) - (ca?.avgScore || 0)).toFixed(2)) };
-    })
-    .filter((row) => phaseFilter === 'all' || row.comp.phase === phaseFilter);
+  const scoreGapComps = ASSESSMENT_COMPONENTS.map((comp) => {
+    const ca = a.components.find((c) => c.id === comp.id);
+    const cb = b.components.find((c) => c.id === comp.id);
+    return { comp, ca, cb, delta: Number(((cb?.avgScore || 0) - (ca?.avgScore || 0)).toFixed(2)) };
+  }).filter((row) => phaseFilter === 'all' || row.comp.phase === phaseFilter);
 
   const engDelta = b.engagement.engagementIndex - a.engagement.engagementIndex;
   if (Math.abs(engDelta) > 20) {
-    const [higher, lower] = engDelta > 0 ? [fileNames[1], fileNames[0]] : [fileNames[0], fileNames[1]];
+    const [higher, lower] =
+      engDelta > 0 ? [fileNames[1], fileNames[0]] : [fileNames[0], fileNames[1]];
     allInsights.push({
       kind: 'info',
       title: 'Engagement gap between assessments',
@@ -813,8 +1021,12 @@ function CompareView({ results, fileNames }: { results: [AnalysisResult, Analysi
         {results.map((result, i) => (
           <div key={i} className="bg-white rounded-lg border border-slate-200 shadow-sm p-5">
             <p className="text-xs text-slate-400 font-medium mb-1 truncate">{fileNames[i]}</p>
-            <h3 className="text-lg font-bold text-slate-800">{result.orgProfile.trustName || 'Unknown'}</h3>
-            {result.orgProfile.projectName && <p className="text-sm text-slate-500">{result.orgProfile.projectName}</p>}
+            <h3 className="text-lg font-bold text-slate-800">
+              {result.orgProfile.trustName || 'Unknown'}
+            </h3>
+            {result.orgProfile.projectName && (
+              <p className="text-sm text-slate-500">{result.orgProfile.projectName}</p>
+            )}
             <div className="mt-4 grid grid-cols-3 gap-3 text-center">
               {[
                 { label: 'Score', value: `${result.overallPct}%` },
@@ -829,19 +1041,37 @@ function CompareView({ results, fileNames }: { results: [AnalysisResult, Analysi
             </div>
             <div className="mt-4 space-y-2">
               <MetricBar label="Scoring coverage" value={result.engagement.scoringCoverage} />
-              <MetricBar label="Justification coverage" value={result.engagement.justificationCoverage} color="bg-violet-500" />
-              <MetricBar label="Evidence coverage" value={result.engagement.evidenceCoverage} color="bg-teal-500" />
+              <MetricBar
+                label="Justification coverage"
+                value={result.engagement.justificationCoverage}
+                color="bg-violet-500"
+              />
+              <MetricBar
+                label="Evidence coverage"
+                value={result.engagement.evidenceCoverage}
+                color="bg-teal-500"
+              />
             </div>
           </div>
         ))}
       </div>
 
       {/* Delta summary */}
-      <div className={`rounded-lg border p-4 flex items-center gap-4 ${overallDelta >= 0 ? 'border-green-200 bg-green-50' : 'border-amber-200 bg-amber-50'}`}>
-        <span className="text-2xl font-bold">{overallDelta >= 0 ? '+' : ''}{overallDelta}%</span>
+      <div
+        className={`rounded-lg border p-4 flex items-center gap-4 ${overallDelta >= 0 ? 'border-green-200 bg-green-50' : 'border-amber-200 bg-amber-50'}`}
+      >
+        <span className="text-2xl font-bold">
+          {overallDelta >= 0 ? '+' : ''}
+          {overallDelta}%
+        </span>
         <p className="text-sm text-slate-700">
-          overall score difference. {fileNames[1]} is {Math.abs(overallDelta)}% {overallDelta >= 0 ? 'higher' : 'lower'} than {fileNames[0]}.
-          Engagement index delta: <strong>{engDelta >= 0 ? '+' : ''}{engDelta}</strong>.
+          overall score difference. {fileNames[1]} is {Math.abs(overallDelta)}%{' '}
+          {overallDelta >= 0 ? 'higher' : 'lower'} than {fileNames[0]}. Engagement index delta:{' '}
+          <strong>
+            {engDelta >= 0 ? '+' : ''}
+            {engDelta}
+          </strong>
+          .
         </p>
       </div>
 
@@ -850,7 +1080,9 @@ function CompareView({ results, fileNames }: { results: [AnalysisResult, Analysi
         <div>
           <h3 className="text-lg font-semibold text-slate-800 mb-3">Comparison Insights</h3>
           <div className="space-y-3">
-            {allInsights.map((ins, i) => <InsightCard key={i} insight={ins} />)}
+            {allInsights.map((ins, i) => (
+              <InsightCard key={i} insight={ins} />
+            ))}
           </div>
         </div>
       )}
@@ -860,15 +1092,23 @@ function CompareView({ results, fileNames }: { results: [AnalysisResult, Analysi
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-5">
           <div>
             <h3 className="text-lg font-semibold text-slate-800">Component Score Comparison</h3>
-            <p className="text-xs text-slate-500 mt-0.5">Delta = {fileNames[1]} minus {fileNames[0]}</p>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Delta = {fileNames[1]} minus {fileNames[0]}
+            </p>
           </div>
           <select
             value={phaseFilter}
-            onChange={(e) => setPhaseFilter(e.target.value === 'all' ? 'all' : Number(e.target.value))}
+            onChange={(e) =>
+              setPhaseFilter(e.target.value === 'all' ? 'all' : Number(e.target.value))
+            }
             className="rounded-md border border-slate-300 px-3 py-2 text-sm sm:w-36"
           >
             <option value="all">All phases</option>
-            {phases.map((p) => <option key={p} value={p}>Phase {p}</option>)}
+            {phases.map((p) => (
+              <option key={p} value={p}>
+                Phase {p}
+              </option>
+            ))}
           </select>
         </div>
         <div className="overflow-x-auto">
@@ -877,8 +1117,12 @@ function CompareView({ results, fileNames }: { results: [AnalysisResult, Analysi
               <tr className="border-b border-slate-200 text-xs text-slate-500 uppercase tracking-wide text-left">
                 <th className="pb-2 font-semibold">Component</th>
                 <th className="pb-2 font-semibold text-center">Ph</th>
-                <th className="pb-2 font-semibold text-center">{fileNames[0].split('.')[0].slice(0, 14)}</th>
-                <th className="pb-2 font-semibold text-center">{fileNames[1].split('.')[0].slice(0, 14)}</th>
+                <th className="pb-2 font-semibold text-center">
+                  {fileNames[0].split('.')[0].slice(0, 14)}
+                </th>
+                <th className="pb-2 font-semibold text-center">
+                  {fileNames[1].split('.')[0].slice(0, 14)}
+                </th>
                 <th className="pb-2 font-semibold text-center">Delta</th>
                 <th className="pb-2 font-semibold text-center">Target</th>
               </tr>
@@ -895,11 +1139,15 @@ function CompareView({ results, fileNames }: { results: [AnalysisResult, Analysi
                     <ScoreBadge score={cb?.avgScore || 0} target={comp.target} />
                   </td>
                   <td className="py-2.5 text-center">
-                    <span className={`text-xs font-bold px-2 py-0.5 rounded ${
-                      delta === 0 ? 'bg-slate-100 text-slate-400'
-                        : delta > 0 ? 'bg-green-100 text-green-700'
-                        : 'bg-red-100 text-red-600'
-                    }`}>
+                    <span
+                      className={`text-xs font-bold px-2 py-0.5 rounded ${
+                        delta === 0
+                          ? 'bg-slate-100 text-slate-400'
+                          : delta > 0
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-red-100 text-red-600'
+                      }`}
+                    >
                       {delta === 0 ? '–' : `${delta > 0 ? '+' : ''}${delta.toFixed(1)}`}
                     </span>
                   </td>
@@ -915,9 +1163,13 @@ function CompareView({ results, fileNames }: { results: [AnalysisResult, Analysi
 }
 
 function ScoreBadge({ score, target }: { score: number; target: number }) {
-  if (score === 0) return <span className="text-xs text-slate-300">–</span>;
+  if (score === 0) {
+    return <span className="text-xs text-slate-300">–</span>;
+  }
   return (
-    <span className={`text-xs font-bold px-2 py-0.5 rounded ${score >= target ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
+    <span
+      className={`text-xs font-bold px-2 py-0.5 rounded ${score >= target ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}
+    >
       {score.toFixed(1)}
     </span>
   );
@@ -948,29 +1200,42 @@ export default function CompareApp(): JSX.Element {
       setFiles(parsed.slice(0, 2));
       setSingleFileView('engagement');
     } catch {
-      setError('Could not parse one or more files. Please check they are valid Digital Adoption Tool exports.');
+      setError(
+        'Could not parse one or more files. Please check they are valid Digital Adoption Tool exports.'
+      );
     }
   }, []);
 
-  const reset = () => { setFiles([]); setError(null); setSingleFileView('engagement'); };
+  const reset = () => {
+    setFiles([]);
+    setError(null);
+    setSingleFileView('engagement');
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800">
       <header className="bg-white border-b border-slate-200 shadow-sm px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <button
-            onClick={() => { window.location.hash = '#/'; }}
+            onClick={() => {
+              window.location.hash = '#/';
+            }}
             className="text-sm px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-md font-medium transition-colors"
           >
             ← Back
           </button>
           <div>
             <h1 className="text-lg font-bold text-slate-800">Assess & Compare</h1>
-            <p className="text-xs text-slate-500">Engagement analysis and side-by-side comparison of adoption assessments</p>
+            <p className="text-xs text-slate-500">
+              Engagement analysis and side-by-side comparison of adoption assessments
+            </p>
           </div>
         </div>
         {files.length > 0 && (
-          <button onClick={reset} className="text-sm px-4 py-2 border border-slate-300 rounded-md text-slate-600 hover:bg-slate-100 transition-colors">
+          <button
+            onClick={reset}
+            className="text-sm px-4 py-2 border border-slate-300 rounded-md text-slate-600 hover:bg-slate-100 transition-colors"
+          >
             Upload new files
           </button>
         )}
@@ -983,14 +1248,16 @@ export default function CompareApp(): JSX.Element {
           </div>
         )}
 
-        {files.length === 0 && (
-          <DropZone onFiles={handleFiles} />
-        )}
+        {files.length === 0 && <DropZone onFiles={handleFiles} />}
 
         {files.length === 1 && (
           <>
             {(files[0].payload.history || []).length > 0 && (
-              <div className="mb-6 inline-flex rounded-md border border-slate-300 overflow-hidden text-sm font-semibold" role="group" aria-label="Single file view">
+              <div
+                className="mb-6 inline-flex rounded-md border border-slate-300 overflow-hidden text-sm font-semibold"
+                role="group"
+                aria-label="Single file view"
+              >
                 <button
                   type="button"
                   onClick={() => setSingleFileView('engagement')}
@@ -1011,7 +1278,11 @@ export default function CompareApp(): JSX.Element {
             )}
 
             {singleFileView === 'timeline' && (files[0].payload.history || []).length > 0 ? (
-              <TimelineView payload={files[0].payload} result={files[0].result} fileName={files[0].name} />
+              <TimelineView
+                payload={files[0].payload}
+                result={files[0].result}
+                fileName={files[0].name}
+              />
             ) : (
               <SingleAnalysis result={files[0].result} fileName={files[0].name} />
             )}

@@ -3,8 +3,8 @@
  * Manages responses, details, and UI state for component-based maturity assessment
  */
 
-import { Store, type StateListener } from './observable';
 import type { UnifiedActionStatus } from './actionModel';
+import { type StateListener, Store } from './observable';
 
 export interface ActionItem {
   id: string;
@@ -28,21 +28,27 @@ export interface ComponentDetail {
 export interface MaturityStore {
   activeComponent: string;
   summaryView: 'dueDate' | 'status';
-  modal: '' | 'matrix' | 'guidance' | 'reportChoice' | 'report' | 'actionPlanReport' | 'help' | 'versionHistory';
+  modal:
+    | ''
+    | 'matrix'
+    | 'guidance'
+    | 'reportChoice'
+    | 'report'
+    | 'actionPlanReport'
+    | 'help'
+    | 'versionHistory';
   modalComp: string;
 }
 
 /**
  * Initialize maturity assessment store
  */
-export function initializeMaturityStore(
-  firstComponent: string = ''
-): MaturityStore {
+export function initializeMaturityStore(firstComponent: string = ''): MaturityStore {
   return {
     activeComponent: firstComponent,
     summaryView: 'dueDate',
     modal: '',
-    modalComp: ''
+    modalComp: '',
   };
 }
 
@@ -57,12 +63,12 @@ export function createReactiveMaturityStore(firstComponent: string = ''): {
   getSubscriberCount: () => number;
 } {
   const store = new Store(initializeMaturityStore(firstComponent));
-  
+
   return {
     getState: () => store.getState(),
     setState: (updater) => store.setState(updater),
     subscribe: (listener) => store.subscribe(listener),
-    getSubscriberCount: () => store.getSubscriberCount()
+    getSubscriberCount: () => store.getSubscriberCount(),
   };
 }
 
@@ -85,7 +91,7 @@ export function getDetail(
       justification: '',
       notes: '',
       links: [],
-      actions: []
+      actions: [],
     };
   }
   return details[componentName];
@@ -107,7 +113,7 @@ export function createAction(
     owner,
     startDate,
     dueDate,
-    status
+    status,
   };
 }
 

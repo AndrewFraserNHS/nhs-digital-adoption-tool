@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { buildInitialDetails, cloneDetail, createEmptyDetail, normaliseDetails, normaliseResponses } from './maturityIO';
+
+import {
+  buildInitialDetails,
+  cloneDetail,
+  createEmptyDetail,
+  normaliseDetails,
+  normaliseResponses,
+} from './maturityIO';
 
 describe('maturityIO', () => {
   const components = ['Vision', 'Benefits'];
@@ -9,7 +16,7 @@ describe('maturityIO', () => {
       justification: '',
       notes: '',
       links: [],
-      actions: []
+      actions: [],
     });
   });
 
@@ -29,8 +36,10 @@ describe('maturityIO', () => {
         justification: 'Aligned',
         notes: 'Reviewed',
         links: ['https://example.com'],
-        actions: [{ id: '1', text: 'Confirm', owner: 'PMO', dueDate: '2026-08-01', status: 'In Progress' }]
-      }
+        actions: [
+          { id: '1', text: 'Confirm', owner: 'PMO', dueDate: '2026-08-01', status: 'In Progress' },
+        ],
+      },
     });
 
     expect(details.Vision.justification).toBe('Aligned');
@@ -43,7 +52,7 @@ describe('maturityIO', () => {
       justification: 'Text',
       notes: 'Notes',
       links: ['https://example.com'],
-      actions: [{ id: '1', text: 'Act', owner: 'Lead', dueDate: '2026-08-01', status: 'Planned' }]
+      actions: [{ id: '1', text: 'Act', owner: 'Lead', dueDate: '2026-08-01', status: 'Planned' }],
     };
 
     const detail = cloneDetail(source);

@@ -1,14 +1,15 @@
+import type { AssessmentComponent } from '@data/components';
 import { describe, expect, it } from 'vitest';
+
 import {
   buildRadarChartData,
   computeRadarData,
   computeTargetRadarData,
   flattenActions,
   getComponentObjectiveCounts,
-  getMetrics
+  getMetrics,
 } from './adoptionMetrics';
 import type { AdoptionStore, DraftEntry } from './adoptionState';
-import type { AssessmentComponent } from '@data/components';
 
 const components: AssessmentComponent[] = [
   {
@@ -16,15 +17,15 @@ const components: AssessmentComponent[] = [
     label: 'Vision',
     lenses: ['Lens A', 'Lens B'],
     phase: 1,
-    target: 4
+    target: 4,
   },
   {
     id: 'benefits',
     label: 'Benefits',
     lenses: ['Lens A'],
     phase: 1,
-    target: 2
-  }
+    target: 2,
+  },
 ];
 
 const store: AdoptionStore = {
@@ -32,7 +33,7 @@ const store: AdoptionStore = {
   orgProfile: {
     trustName: 'Trust',
     region: 'North',
-    trustType: 'Acute'
+    trustType: 'Acute',
   },
   currentDraft: {
     vision: {
@@ -41,15 +42,15 @@ const store: AdoptionStore = {
         justification: '',
         evidence: '',
         actions: [
-          { id: '1', text: 'Action A', owner: 'Alex', timescale: 'Q3', status: 'In Progress' }
-        ]
+          { id: '1', text: 'Action A', owner: 'Alex', timescale: 'Q3', status: 'In Progress' },
+        ],
       },
       'Lens B': {
         score: 0,
         justification: '',
         evidence: '',
-        actions: []
-      }
+        actions: [],
+      },
     },
     benefits: {
       'Lens A': {
@@ -57,18 +58,26 @@ const store: AdoptionStore = {
         justification: '',
         evidence: '',
         actions: [
-          { id: '2', text: 'Action B', owner: 'Blair', timescale: 'Q4', status: 'Completed' }
-        ]
-      }
-    }
+          { id: '2', text: 'Action B', owner: 'Blair', timescale: 'Q4', status: 'Completed' },
+        ],
+      },
+    },
   },
   objectives: {},
   phaseOverrides: {},
-  history: []
+  history: [],
 };
 
 function getEntry(componentId: string, lens: string): DraftEntry {
   return store.currentDraft[componentId][lens];
+}
+
+function getComponentOrThrow(id: string): AssessmentComponent {
+  const component = components.find((candidate) => candidate.id === id);
+  if (!component) {
+    throw new Error(`Unknown component: ${id}`);
+  }
+  return component;
 }
 
 describe('adoptionMetrics', () => {
@@ -90,8 +99,8 @@ describe('adoptionMetrics', () => {
           totalLenses: 3,
           onTrackComponents: 1,
           actionCompletionPct: 50,
-          rag: 'Amber'
-        }
+          rag: 'Amber',
+        },
       ],
       nextSteps: [
         {
@@ -99,9 +108,9 @@ describe('adoptionMetrics', () => {
           componentLabel: 'Vision',
           phase: 1,
           gapToTarget: 2,
-          message: 'Raise Vision from 2.0 to target 4. Assess 1 remaining lens area(s).'
-        }
-      ]
+          message: 'Raise Vision from 2.0 to target 4. Assess 1 remaining lens area(s).',
+        },
+      ],
     });
   });
 
@@ -114,24 +123,24 @@ describe('adoptionMetrics', () => {
             score: 1,
             justification: '',
             evidence: '',
-            actions: []
+            actions: [],
           },
           'Lens B': {
             score: 0,
             justification: '',
             evidence: '',
-            actions: []
-          }
+            actions: [],
+          },
         },
         benefits: {
           'Lens A': {
             score: 1,
             justification: '',
             evidence: '',
-            actions: []
-          }
-        }
-      }
+            actions: [],
+          },
+        },
+      },
     };
 
     const metrics = getMetrics(belowTargetStore, components);
@@ -139,7 +148,7 @@ describe('adoptionMetrics', () => {
     expect(metrics.nextSteps.length).toBeGreaterThan(0);
     expect(metrics.nextSteps[0]).toMatchObject({
       componentId: 'vision',
-      phase: 1
+      phase: 1,
     });
   });
 
@@ -149,7 +158,7 @@ describe('adoptionMetrics', () => {
   });
 
   it('flattens actions with component labels', () => {
-    const rows = flattenActions(store, (id) => components.find((component) => component.id === id)!, getEntry);
+    const rows = flattenActions(store, getComponentOrThrow, getEntry);
 
     expect(rows).toHaveLength(2);
     expect(rows[0]).toMatchObject({ compId: 'vision', component: 'Vision', lens: 'Lens A' });
@@ -161,10 +170,16 @@ describe('adoptionMetrics', () => {
       ...store,
       objectives: {
         vision: [
-          { id: 'o1', text: 'Fully done', owner: 'PMO', timescale: 'Q3', linkedActions: [{ lens: 'Lens A', actionId: '1' }] },
-          { id: 'o2', text: 'Not linked yet', owner: 'PMO', timescale: 'Q3', linkedActions: [] }
-        ]
-      }
+          {
+            id: 'o1',
+            text: 'Fully done',
+            owner: 'PMO',
+            timescale: 'Q3',
+            linkedActions: [{ lens: 'Lens A', actionId: '1' }],
+          },
+          { id: 'o2', text: 'Not linked yet', owner: 'PMO', timescale: 'Q3', linkedActions: [] },
+        ],
+      },
     };
 
     // action '1' in Lens A has status 'In Progress' per the base store fixture
@@ -175,7 +190,7 @@ describe('adoptionMetrics', () => {
     // counted once via the lens loop
     const metrics = getMetrics(storeWithObjectives, components);
     expect(metrics.totalActions).toBe(2);
-    const rows = flattenActions(storeWithObjectives, (id) => components.find((component) => component.id === id)!, getEntry);
+    const rows = flattenActions(storeWithObjectives, getComponentOrThrow, getEntry);
     expect(rows).toHaveLength(2);
   });
 
@@ -197,20 +212,32 @@ describe('adoptionMetrics', () => {
                 status: 'Planned',
                 linkedTargets: [
                   { componentId: 'vision', lens: 'Lens A' },
-                  { componentId: 'benefits', lens: 'Lens A' }
-                ]
-              }
-            ]
-          }
-        }
-      }
+                  { componentId: 'benefits', lens: 'Lens A' },
+                ],
+              },
+            ],
+          },
+        },
+      },
     };
 
-    const rows = flattenActions(linkedStore, (id) => components.find((component) => component.id === id)!, (componentId, lens) => linkedStore.currentDraft[componentId][lens]);
+    const rows = flattenActions(
+      linkedStore,
+      getComponentOrThrow,
+      (componentId, lens) => linkedStore.currentDraft[componentId][lens]
+    );
 
     expect(rows).toHaveLength(3);
-    expect(rows.find((row) => row.compId === 'vision' && row.lens === 'Lens A' && row.action.id === 'linked-1')).toBeTruthy();
-    expect(rows.find((row) => row.compId === 'benefits' && row.lens === 'Lens A' && row.action.id === 'linked-1')).toBeTruthy();
+    expect(
+      rows.find(
+        (row) => row.compId === 'vision' && row.lens === 'Lens A' && row.action.id === 'linked-1'
+      )
+    ).toBeTruthy();
+    expect(
+      rows.find(
+        (row) => row.compId === 'benefits' && row.lens === 'Lens A' && row.action.id === 'linked-1'
+      )
+    ).toBeTruthy();
   });
 
   it('builds chart.js radar data structure with current and target datasets', () => {

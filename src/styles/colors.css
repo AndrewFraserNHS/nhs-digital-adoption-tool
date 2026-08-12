@@ -92,18 +92,30 @@
   color: #64748b;
 }
 
-.adoption-dashboard .dashboard-metric-card--phase.dashboard-metric-card--red .dashboard-metric-card__headline,
-.adoption-dashboard .dashboard-metric-card--phase.dashboard-metric-card--red .dashboard-metric-card__description {
+.adoption-dashboard
+  .dashboard-metric-card--phase.dashboard-metric-card--red
+  .dashboard-metric-card__headline,
+.adoption-dashboard
+  .dashboard-metric-card--phase.dashboard-metric-card--red
+  .dashboard-metric-card__description {
   color: var(--dashboard-phase-red-text-light);
 }
 
-.adoption-dashboard .dashboard-metric-card--phase.dashboard-metric-card--amber .dashboard-metric-card__headline,
-.adoption-dashboard .dashboard-metric-card--phase.dashboard-metric-card--amber .dashboard-metric-card__description {
+.adoption-dashboard
+  .dashboard-metric-card--phase.dashboard-metric-card--amber
+  .dashboard-metric-card__headline,
+.adoption-dashboard
+  .dashboard-metric-card--phase.dashboard-metric-card--amber
+  .dashboard-metric-card__description {
   color: var(--dashboard-phase-amber-text-light);
 }
 
-.adoption-dashboard .dashboard-metric-card--phase.dashboard-metric-card--green .dashboard-metric-card__headline,
-.adoption-dashboard .dashboard-metric-card--phase.dashboard-metric-card--green .dashboard-metric-card__description {
+.adoption-dashboard
+  .dashboard-metric-card--phase.dashboard-metric-card--green
+  .dashboard-metric-card__headline,
+.adoption-dashboard
+  .dashboard-metric-card--phase.dashboard-metric-card--green
+  .dashboard-metric-card__description {
   color: var(--dashboard-phase-green-text-light);
 }
 
@@ -156,17 +168,29 @@
   color: #cbd5e1;
 }
 
-.adoption-dashboard.theme-dark .dashboard-metric-card--phase.dashboard-metric-card--red .dashboard-metric-card__headline,
-.adoption-dashboard.theme-dark .dashboard-metric-card--phase.dashboard-metric-card--red .dashboard-metric-card__description {
+.adoption-dashboard.theme-dark
+  .dashboard-metric-card--phase.dashboard-metric-card--red
+  .dashboard-metric-card__headline,
+.adoption-dashboard.theme-dark
+  .dashboard-metric-card--phase.dashboard-metric-card--red
+  .dashboard-metric-card__description {
   color: var(--dashboard-phase-red-text-dark);
 }
 
-.adoption-dashboard.theme-dark .dashboard-metric-card--phase.dashboard-metric-card--amber .dashboard-metric-card__headline,
-.adoption-dashboard.theme-dark .dashboard-metric-card--phase.dashboard-metric-card--amber .dashboard-metric-card__description {
+.adoption-dashboard.theme-dark
+  .dashboard-metric-card--phase.dashboard-metric-card--amber
+  .dashboard-metric-card__headline,
+.adoption-dashboard.theme-dark
+  .dashboard-metric-card--phase.dashboard-metric-card--amber
+  .dashboard-metric-card__description {
   color: var(--dashboard-phase-amber-text-dark);
 }
 
-.adoption-dashboard.theme-dark .dashboard-metric-card--phase.dashboard-metric-card--green .dashboard-metric-card__headline,
-.adoption-dashboard.theme-dark .dashboard-metric-card--phase.dashboard-metric-card--green .dashboard-metric-card__description {
+.adoption-dashboard.theme-dark
+  .dashboard-metric-card--phase.dashboard-metric-card--green
+  .dashboard-metric-card__headline,
+.adoption-dashboard.theme-dark
+  .dashboard-metric-card--phase.dashboard-metric-card--green
+  .dashboard-metric-card__description {
   color: var(--dashboard-phase-green-text-dark);
 }

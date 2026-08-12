@@ -11,15 +11,15 @@ const components: AssessmentComponent[] = [
     label: 'Vision',
     lenses: ['Strategic Lens'],
     phase: 1,
-    target: 4
+    target: 4,
   },
   {
     id: 'benefits',
     label: 'Benefits',
     lenses: ['Strategic Lens'],
     phase: 1,
-    target: 2
-  }
+    target: 2,
+  },
 ];
 
 const store: AdoptionStore = {
@@ -36,8 +36,8 @@ const store: AdoptionStore = {
       goLiveDate: '2026-10-01',
       fullAdoptionDate: '',
       benefitRealizationDate: '',
-      phaseCapability: {}
-    }
+      phaseCapability: {},
+    },
   },
   currentDraft: {
     vision: {
@@ -45,17 +45,17 @@ const store: AdoptionStore = {
         score: 5,
         justification: 'Complete',
         evidence: 'Deck',
-        actions: []
-      }
+        actions: [],
+      },
     },
     benefits: {
       'Strategic Lens': {
         score: 1,
         justification: 'Partial',
         evidence: 'Note',
-        actions: []
-      }
-    }
+        actions: [],
+      },
+    },
   },
   objectives: {},
   phaseOverrides: {},
@@ -64,9 +64,9 @@ const store: AdoptionStore = {
     {
       monthLabel: 'Jul 2026',
       overallPercentage: 60,
-      data: {}
-    }
-  ]
+      data: {},
+    },
+  ],
 };
 
 const metrics: Metrics = {
@@ -86,8 +86,8 @@ const metrics: Metrics = {
       totalLenses: 2,
       onTrackComponents: 1,
       actionCompletionPct: 0,
-      rag: 'Amber'
-    }
+      rag: 'Amber',
+    },
   ],
   nextSteps: [
     {
@@ -95,9 +95,10 @@ const metrics: Metrics = {
       componentLabel: 'Benefits',
       phase: 1,
       gapToTarget: 1,
-      message: 'Raise Benefits from 1.0 to target 2. Create at least one delivery action linked to this component.'
-    }
-  ]
+      message:
+        'Raise Benefits from 1.0 to target 2. Create at least one delivery action linked to this component.',
+    },
+  ],
 };
 
 function getEntry(componentId: string, lens: string): DraftEntry {
@@ -200,9 +201,9 @@ describe('AdoptionDashboard', () => {
         {
           ...metrics.nextSteps[0],
           gapToTarget: 0,
-          message: 'Benefits are fully on target and complete.'
-        }
-      ]
+          message: 'Benefits are fully on target and complete.',
+        },
+      ],
     };
 
     render(
@@ -219,7 +220,9 @@ describe('AdoptionDashboard', () => {
     );
 
     const focusCards = screen.getAllByRole('button', { name: /Benefits/i });
-    const focusCard = focusCards.find((button) => button.textContent?.includes('Benefits are fully on target and complete.'));
+    const focusCard = focusCards.find((button) =>
+      button.textContent?.includes('Benefits are fully on target and complete.')
+    );
 
     expect(focusCard).toBeTruthy();
     expect(focusCard && within(focusCard).getByText('Blue')).toBeInTheDocument();

@@ -1,6 +1,12 @@
 import React, { JSX, useCallback } from 'react';
+import DOMPurify from 'dompurify';
 import { MATURITY_STAGES, STAGE_COLORS as STAGE_COLORS_PALETTE } from '@data/rubrics';
-import { generateMaturityReport, generateActionPlanReport, type MaturityReportData, type ActionPlanReportData } from '@lib/reporting';
+import {
+  generateMaturityReport,
+  generateActionPlanReport,
+  type MaturityReportData,
+  type ActionPlanReportData,
+} from '@lib/reporting';
 import { CONSTANTS, VERSION_HISTORY_ITEMS } from '../../types/constants';
 
 export interface MaturityGuidance {
@@ -14,7 +20,15 @@ export interface MaturityGuidance {
 }
 
 export interface MaturityModalManagerProps {
-  modalType: '' | 'matrix' | 'guidance' | 'reportChoice' | 'report' | 'actionPlanReport' | 'help' | 'versionHistory';
+  modalType:
+    | ''
+    | 'matrix'
+    | 'guidance'
+    | 'reportChoice'
+    | 'report'
+    | 'actionPlanReport'
+    | 'help'
+    | 'versionHistory';
   activeComponent: string;
   scores: Record<string, number>;
   componentMatrix: Record<string, string[]>;
@@ -32,6 +46,20 @@ export interface MaturityModalManagerProps {
 const STAGES = MATURITY_STAGES;
 const STAGE_COLORS = STAGE_COLORS_PALETTE;
 
+function sanitizeHtml(value: string): string {
+  return DOMPurify.sanitize(value, {
+    USE_PROFILES: { html: true },
+  });
+}
+
+function escapeText(value: string): string {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
 
 export function MaturityModalManager({
   modalType,
@@ -46,11 +74,11 @@ export function MaturityModalManager({
   onSetScore,
   onSelectReport,
   onExportCsv,
-  onExportActionPlanCsv
+  onExportActionPlanCsv,
 }: MaturityModalManagerProps): JSX.Element | null {
   const renderGuidanceContent = useCallback((plainText: string, html?: string): JSX.Element => {
     if (html) {
-      return <div dangerouslySetInnerHTML={{ __html: html }} />;
+      return <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(html) }} />;
     }
     return <div>{plainText || ''}</div>;
   }, []);
@@ -58,12 +86,16 @@ export function MaturityModalManager({
   // Opens a blank window containing only report HTML so print output is clean and full-width
   const handlePrint = useCallback((html: string, title: string) => {
     const win = window.open('', '_blank');
-    if (!win) return;
+    if (!win) {
+      return;
+    }
+    const safeTitle = escapeText(title);
+    const safeHtml = sanitizeHtml(html);
     win.document.write(`<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>${title}</title>
+<title>${safeTitle}</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; }
   body { margin: 0; padding: 1.5cm; font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: #1f2937; }
@@ -77,10 +109,14 @@ export function MaturityModalManager({
   a { color: #2563eb; word-break: break-all; }
 </style>
 </head>
-<body>${html}</body>
+<body>${safeHtml}</body>
 </html>`);
     win.document.close();
-    setTimeout(() => { win.focus(); win.print(); win.close(); }, 250);
+    setTimeout(() => {
+      win.focus();
+      win.print();
+      win.close();
+    }, 250);
   }, []);
 
   const handleExportCsv = useCallback(() => {
@@ -94,7 +130,7 @@ export function MaturityModalManager({
         components.map((n) => ({
           id: n,
           label: n,
-          value: scores[n] || 0
+          value: scores[n] || 0,
         }))
       );
     }
@@ -156,9 +192,7 @@ export function MaturityModalManager({
                 <div className="font-semibold mb-1" style={{ color: STAGE_COLORS[i] }}>
                   {i} - {stage}
                 </div>
-                <p className="text-sm text-gray-700 whitespace-pre-wrap">
-                  {rows[i] || 'N/A'}
-                </p>
+                <p className="text-sm text-gray-700 whitespace-pre-wrap">{rows[i] || 'N/A'}</p>
               </button>
             ))}
           </div>
@@ -238,23 +272,52 @@ export function MaturityModalManager({
           <div className="p-6 overflow-y-auto space-y-4 text-sm text-gray-700">
             <div>
               <h3 className="font-semibold text-gray-900 mb-1">1. Fill in CST Details</h3>
-              <p>Start by entering the <span className="font-medium">Organisation Name</span> and <span className="font-medium">Project Name</span>. You can also select a <span className="font-medium">Project Phase</span> to compare your current scores with the expected maturity for that phase.</p>
+              <p>
+                Start by entering the <span className="font-medium">Organisation Name</span> and{' '}
+                <span className="font-medium">Project Name</span>. You can also select a{' '}
+                <span className="font-medium">Project Phase</span> to compare your current scores
+                with the expected maturity for that phase.
+              </p>
             </div>
             <div>
               <h3 className="font-semibold text-gray-900 mb-1">2. Assess Each Theme</h3>
-              <p>Use the tabs to navigate between the 12 change maturity themes. For each theme, select the <span className="font-medium">Maturity Stage</span> that best describes your project’s current state. Click <span className="font-medium">View Matrix</span> for detailed descriptions of each stage, or <span className="font-medium">View Guidance</span> for theme-specific advice.</p>
+              <p>
+                Use the tabs to navigate between the 12 change maturity themes. For each theme,
+                select the <span className="font-medium">Maturity Stage</span> that best describes
+                your project’s current state. Click <span className="font-medium">View Matrix</span>{' '}
+                for detailed descriptions of each stage, or{' '}
+                <span className="font-medium">View Guidance</span> for theme-specific advice.
+              </p>
             </div>
             <div>
               <h3 className="font-semibold text-gray-900 mb-1">3. Provide Context & Actions</h3>
-              <p>In the text boxes, add your <span className="font-medium">Justification</span> for the score, any <span className="font-medium">Additional information and notes</span>, and add supporting links with <span className="font-medium">Add Supporting Link</span>. Use the <span className="font-medium">Actions to Improve Maturity</span> section to add trackable actions with owners and dates.</p>
+              <p>
+                In the text boxes, add your <span className="font-medium">Justification</span> for
+                the score, any <span className="font-medium">Additional information and notes</span>
+                , and add supporting links with{' '}
+                <span className="font-medium">Add Supporting Link</span>. Use the{' '}
+                <span className="font-medium">Actions to Improve Maturity</span> section to add
+                trackable actions with owners and dates.
+              </p>
             </div>
             <div>
               <h3 className="font-semibold text-gray-900 mb-1">4. Track Your Progress</h3>
-              <p>The <span className="font-medium">Maturity Radar</span> and <span className="font-medium">Overall Change Maturity</span> score update in real time as you work. The <span className="font-medium">Actions Summary</span> chart gives a quick view of your action plan, and your progress is automatically saved in your browser.</p>
+              <p>
+                The <span className="font-medium">Maturity Radar</span> and{' '}
+                <span className="font-medium">Overall Change Maturity</span> score update in real
+                time as you work. The <span className="font-medium">Actions Summary</span> chart
+                gives a quick view of your action plan, and your progress is automatically saved in
+                your browser.
+              </p>
             </div>
             <div>
               <h3 className="font-semibold text-gray-900 mb-1">5. Save, Load & Report</h3>
-              <p>Use the buttons in the header to <span className="font-medium">Save As...</span> to save your assessment as a file, <span className="font-medium">Load</span> a previous assessment, generate <span className="font-medium">Reports</span> (Maturity or Action Plan), or <span className="font-medium">Reset</span> the tool.</p>
+              <p>
+                Use the buttons in the header to <span className="font-medium">Save As...</span> to
+                save your assessment as a file, <span className="font-medium">Load</span> a previous
+                assessment, generate <span className="font-medium">Reports</span> (Maturity or
+                Action Plan), or <span className="font-medium">Reset</span> the tool.
+              </p>
             </div>
           </div>
         </div>
@@ -283,15 +346,22 @@ export function MaturityModalManager({
           </div>
           <div className="p-6 overflow-y-auto space-y-4">
             <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <p className="font-semibold text-slate-900">CADAS - Change Maturity Assessment Tool {CONSTANTS.VERSION}</p>
+              <p className="font-semibold text-slate-900">
+                CADAS - Change Maturity Assessment Tool {CONSTANTS.VERSION}
+              </p>
             </div>
             <div className="space-y-4">
               {VERSION_HISTORY_ITEMS.map((item) => (
-                <div key={item.version} className="border-b border-slate-200 pb-4 last:border-b-0 last:pb-0">
+                <div
+                  key={item.version}
+                  className="border-b border-slate-200 pb-4 last:border-b-0 last:pb-0"
+                >
                   <h3 className="font-semibold text-slate-900">Version {item.version}</h3>
                   <ul className="mt-2 space-y-1 text-sm text-slate-700">
                     {item.notes.map((note) => (
-                      <li key={note} className="leading-6">• {note}</li>
+                      <li key={note} className="leading-6">
+                        • {note}
+                      </li>
                     ))}
                   </ul>
                 </div>
@@ -328,9 +398,18 @@ export function MaturityModalManager({
               className="w-full flex items-center justify-center gap-3 px-4 py-3 text-white rounded-lg transition-colors hover:opacity-90"
               style={{ backgroundColor: '#005EB8' }}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
                 <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
-                <path fillRule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clipRule="evenodd" />
+                <path
+                  fillRule="evenodd"
+                  d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z"
+                  clipRule="evenodd"
+                />
               </svg>
               <span>Maturity Assessment Report</span>
             </button>
@@ -339,9 +418,18 @@ export function MaturityModalManager({
               className="w-full flex items-center justify-center gap-3 px-4 py-3 text-white rounded-lg transition-colors hover:opacity-90"
               style={{ backgroundColor: '#00A499' }}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
                 <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
-                <path fillRule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clipRule="evenodd" />
+                <path
+                  fillRule="evenodd"
+                  d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z"
+                  clipRule="evenodd"
+                />
               </svg>
               <span>Action Plan Report</span>
             </button>
@@ -352,6 +440,8 @@ export function MaturityModalManager({
   }
 
   if (modalType === 'report') {
+    const reportHtml = sanitizeHtml(generateMaturityReport(reportData));
+
     return (
       <div
         className="fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-4"
@@ -365,7 +455,7 @@ export function MaturityModalManager({
             <h2 className="text-xl font-bold text-gray-900">Assessment Report</h2>
             <div className="flex gap-2">
               <button
-                onClick={() => handlePrint(generateMaturityReport(reportData), 'Maturity Assessment Report')}
+                onClick={() => handlePrint(reportHtml, 'Maturity Assessment Report')}
                 className="px-4 py-2 bg-[#005eb8] text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
               >
                 Print / Save PDF
@@ -386,7 +476,7 @@ export function MaturityModalManager({
           </div>
           <div
             className="p-8 overflow-y-auto print-area"
-            dangerouslySetInnerHTML={{ __html: generateMaturityReport(reportData) }}
+            dangerouslySetInnerHTML={{ __html: reportHtml }}
           />
         </div>
       </div>
@@ -394,6 +484,10 @@ export function MaturityModalManager({
   }
 
   if (modalType === 'actionPlanReport') {
+    const actionPlanHtml = sanitizeHtml(
+      generateActionPlanReport(actionPlanData ?? { orgName: '', rows: [] })
+    );
+
     return (
       <div
         className="fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-4"
@@ -407,7 +501,7 @@ export function MaturityModalManager({
             <h2 className="text-xl font-bold text-gray-900">Action Plan Report</h2>
             <div className="flex gap-2">
               <button
-                onClick={() => handlePrint(generateActionPlanReport(actionPlanData ?? { orgName: '', rows: [] }), 'Action Plan Report')}
+                onClick={() => handlePrint(actionPlanHtml, 'Action Plan Report')}
                 className="px-4 py-2 bg-[#005eb8] text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
               >
                 Print / Save PDF
@@ -428,7 +522,7 @@ export function MaturityModalManager({
           </div>
           <div
             className="p-8 overflow-y-auto print-area"
-            dangerouslySetInnerHTML={{ __html: generateActionPlanReport(actionPlanData ?? { orgName: '', rows: [] }) }}
+            dangerouslySetInnerHTML={{ __html: actionPlanHtml }}
           />
         </div>
       </div>

@@ -19,7 +19,7 @@ export function calculateChecklistCompletion(
       status: 'on-track',
       completionPct: 100,
       checkedCount: 0,
-      totalCount: 0
+      totalCount: 0,
     };
   }
 
@@ -51,7 +51,7 @@ export function evaluatePathwayTrackStatus(input: {
       status: input.averageScore >= input.targetScore ? 'on-track' : 'attention',
       completionPct: checklistStatus.completionPct,
       checkedCount: checklistStatus.checkedCount,
-      totalCount: checklistStatus.totalCount
+      totalCount: checklistStatus.totalCount,
     };
   }
 
@@ -59,10 +59,13 @@ export function evaluatePathwayTrackStatus(input: {
     return checklistStatus;
   }
 
-  if (input.averageScore < Math.max(1, input.targetScore - 1) && checklistStatus.status !== 'on-track') {
+  if (
+    input.averageScore < Math.max(1, input.targetScore - 1) &&
+    checklistStatus.status !== 'on-track'
+  ) {
     return {
       ...checklistStatus,
-      status: 'attention'
+      status: 'attention',
     };
   }
 

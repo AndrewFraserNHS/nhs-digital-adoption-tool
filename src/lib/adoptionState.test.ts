@@ -1,12 +1,13 @@
 import { describe, expect, it } from 'vitest';
+
 import {
-  cloneObjectivesMap,
   cloneDraft,
   cloneEntry,
+  cloneObjectivesMap,
   createEmptyEntry,
   createReactiveAdoptionStore,
   deriveObjectiveStatus,
-  initializeStore
+  initializeStore,
 } from './adoptionState';
 
 describe('adoptionState', () => {
@@ -21,9 +22,14 @@ describe('adoptionState', () => {
 
     const persisted = initializeStore({
       view: 'settings',
-      orgProfile: { trustName: 'Trust', region: 'North', trustType: 'Acute', cst: defaults.orgProfile.cst },
+      orgProfile: {
+        trustName: 'Trust',
+        region: 'North',
+        trustType: 'Acute',
+        cst: defaults.orgProfile.cst,
+      },
       currentDraft: { vision: {} },
-      history: []
+      history: [],
     });
     expect(persisted.view).toBe('settings');
     expect(persisted.orgProfile.trustName).toBe('Trust');
@@ -37,7 +43,7 @@ describe('adoptionState', () => {
       score: 3,
       justification: 'why',
       evidence: 'doc',
-      actions: [{ id: '1', text: 'Act', owner: 'Owner', timescale: 'Q3', status: 'In Progress' }]
+      actions: [{ id: '1', text: 'Act', owner: 'Owner', timescale: 'Q3', status: 'In Progress' }],
     };
     const cloned = cloneEntry(source);
     cloned.actions[0].text = 'Changed';
@@ -51,9 +57,9 @@ describe('adoptionState', () => {
           score: 2,
           justification: '',
           evidence: '',
-          actions: [{ id: '1', text: 'One', owner: 'A', timescale: 'Q1', status: 'Planned' }]
-        }
-      }
+          actions: [{ id: '1', text: 'One', owner: 'A', timescale: 'Q1', status: 'Planned' }],
+        },
+      },
     };
 
     const cloned = cloneDraft(draft);
@@ -63,7 +69,15 @@ describe('adoptionState', () => {
 
   it('deep clones objective maps and does not mutate the original', () => {
     const map = {
-      vision: [{ id: '1', text: 'Publish comms plan', owner: 'Lead', timescale: 'Q1', linkedActions: [{ lens: 'Lens A', actionId: 'a1' }] }]
+      vision: [
+        {
+          id: '1',
+          text: 'Publish comms plan',
+          owner: 'Lead',
+          timescale: 'Q1',
+          linkedActions: [{ lens: 'Lens A', actionId: 'a1' }],
+        },
+      ],
     };
 
     const cloned = cloneObjectivesMap(map);
@@ -79,7 +93,10 @@ describe('adoptionState', () => {
       text: 'Ready for go-live',
       owner: 'Lead',
       timescale: 'Q3',
-      linkedActions: [{ lens: 'Lens A', actionId: 'a1' }, { lens: 'Lens A', actionId: 'a2' }]
+      linkedActions: [
+        { lens: 'Lens A', actionId: 'a1' },
+        { lens: 'Lens A', actionId: 'a2' },
+      ],
     };
 
     expect(deriveObjectiveStatus({ ...objective, linkedActions: [] }, {})).toBe('Not Started');
@@ -87,8 +104,8 @@ describe('adoptionState', () => {
     const actionsByLens = {
       'Lens A': [
         { id: 'a1', text: '', owner: '', timescale: '', status: 'Planned' as const },
-        { id: 'a2', text: '', owner: '', timescale: '', status: 'Planned' as const }
-      ]
+        { id: 'a2', text: '', owner: '', timescale: '', status: 'Planned' as const },
+      ],
     };
     expect(deriveObjectiveStatus(objective, actionsByLens)).toBe('Not Started');
 
@@ -112,7 +129,7 @@ describe('adoptionState', () => {
 
     store.setState((current) => ({
       ...current,
-      orgProfile: { ...current.orgProfile, trustName: 'Updated Trust' }
+      orgProfile: { ...current.orgProfile, trustName: 'Updated Trust' },
     }));
 
     expect(values).toEqual(['Updated Trust']);

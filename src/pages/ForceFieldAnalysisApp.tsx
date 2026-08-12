@@ -1,5 +1,5 @@
-import { JSX, useEffect, useRef, useState, type ChangeEvent } from 'react';
 import { downloadFile } from '@lib/utils';
+import { type ChangeEvent, JSX, useEffect, useRef, useState } from 'react';
 
 type ForceSide = 'driving' | 'restraining';
 type ForceActionStatus = 'Planned' | 'In Progress' | 'Blocked' | 'Completed';
@@ -35,7 +35,7 @@ const STATUS_OPTIONS: ForceActionStatus[] = ['Planned', 'In Progress', 'Blocked'
 const DEFAULT_STATE: ForceFieldAnalysisState = {
   projectName: '',
   forces: [],
-  actions: []
+  actions: [],
 };
 
 function createId(): string {
@@ -47,10 +47,20 @@ function createForce(side: ForceSide): Force {
 }
 
 function createAction(forceId: string): ForceAction {
-  return { id: createId(), forceId, text: '', owner: '', dueDate: '', status: 'Planned', impact: 0 };
+  return {
+    id: createId(),
+    forceId,
+    text: '',
+    owner: '',
+    dueDate: '',
+    status: 'Planned',
+    impact: 0,
+  };
 }
 
-function normaliseState(parsed: Partial<ForceFieldAnalysisState> | null | undefined): ForceFieldAnalysisState {
+function normaliseState(
+  parsed: Partial<ForceFieldAnalysisState> | null | undefined
+): ForceFieldAnalysisState {
   if (!parsed) {
     return DEFAULT_STATE;
   }
@@ -62,7 +72,7 @@ function normaliseState(parsed: Partial<ForceFieldAnalysisState> | null | undefi
           id: force.id || createId(),
           text: force.text || '',
           side: force.side === 'restraining' ? 'restraining' : 'driving',
-          score: Number.isFinite(force.score) ? Math.max(0, Math.min(10, force.score)) : 5
+          score: Number.isFinite(force.score) ? Math.max(0, Math.min(10, force.score)) : 5,
         }))
     : [];
 
@@ -76,14 +86,14 @@ function normaliseState(parsed: Partial<ForceFieldAnalysisState> | null | undefi
           owner: action.owner || '',
           dueDate: action.dueDate || '',
           status: STATUS_OPTIONS.includes(action.status) ? action.status : 'Planned',
-          impact: Number.isFinite(action.impact) ? action.impact : 0
+          impact: Number.isFinite(action.impact) ? action.impact : 0,
         }))
     : [];
 
   return {
     projectName: parsed.projectName || '',
     forces,
-    actions
+    actions,
   };
 }
 
@@ -115,18 +125,28 @@ function scoreBadgeClass(score: number, side: ForceSide): string {
   const lowClass = 'bg-red-100 text-red-800 border-red-300';
 
   if (side === 'driving') {
-    if (isHigh) return highClass;
-    if (isLow) return lowClass;
+    if (isHigh) {
+      return highClass;
+    }
+    if (isLow) {
+      return lowClass;
+    }
     return midClass;
   }
 
-  if (isHigh) return lowClass;
-  if (isLow) return highClass;
+  if (isHigh) {
+    return lowClass;
+  }
+  if (isLow) {
+    return highClass;
+  }
   return midClass;
 }
 
 function sumOriginalScores(forces: Force[], side: ForceSide): number {
-  return forces.filter((force) => force.side === side).reduce((total, force) => total + force.score, 0);
+  return forces
+    .filter((force) => force.side === side)
+    .reduce((total, force) => total + force.score, 0);
 }
 
 /**
@@ -152,7 +172,7 @@ function ForcePanel({
   onAddForce,
   onUpdateText,
   onUpdateScore,
-  onRemoveForce
+  onRemoveForce,
 }: {
   side: ForceSide;
   forces: Force[];
@@ -166,7 +186,9 @@ function ForcePanel({
   const total = sumOriginalScores(forces, side);
 
   return (
-    <div className={`rounded-lg border p-5 ${isDriving ? 'border-green-200 bg-green-50/40' : 'border-red-200 bg-red-50/40'}`}>
+    <div
+      className={`rounded-lg border p-5 ${isDriving ? 'border-green-200 bg-green-50/40' : 'border-red-200 bg-red-50/40'}`}
+    >
       <div className="flex items-center justify-between gap-3 mb-1">
         <h3 className={`text-lg font-semibold ${isDriving ? 'text-green-800' : 'text-red-800'}`}>
           {isDriving ? 'Driving Forces' : 'Restraining Forces'}
@@ -186,7 +208,9 @@ function ForcePanel({
               <textarea
                 value={force.text}
                 onChange={(event) => onUpdateText(force.id, event.target.value)}
-                placeholder={isDriving ? 'e.g. Strong sponsor commitment' : 'e.g. Legacy system dependencies'}
+                placeholder={
+                  isDriving ? 'e.g. Strong sponsor commitment' : 'e.g. Legacy system dependencies'
+                }
                 className="flex-1 rounded-md border border-slate-300 px-2 py-1.5 text-sm h-16"
               />
               <button
@@ -205,7 +229,9 @@ function ForcePanel({
                 className={`rounded-md border px-2 py-1 text-xs font-bold ${scoreBadgeClass(force.score, side)}`}
               >
                 {SCORE_OPTIONS.map((option) => (
-                  <option key={option} value={option}>{option}</option>
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
                 ))}
               </select>
               <span className="text-xs text-slate-400">out of 10</span>
@@ -213,7 +239,9 @@ function ForcePanel({
           </div>
         ))}
         {!sideForces.length ? (
-          <p className="text-sm text-slate-500">No {isDriving ? 'driving' : 'restraining'} forces added yet.</p>
+          <p className="text-sm text-slate-500">
+            No {isDriving ? 'driving' : 'restraining'} forces added yet.
+          </p>
         ) : null}
       </div>
 
@@ -235,7 +263,7 @@ function ForcesScreen({
   onUpdateText,
   onUpdateScore,
   onRemoveForce,
-  onContinue
+  onContinue,
 }: {
   state: ForceFieldAnalysisState;
   onUpdateProjectName: (value: string) => void;
@@ -252,7 +280,9 @@ function ForcesScreen({
   return (
     <div className="space-y-6">
       <div className="rounded-lg border border-slate-200 bg-white p-5">
-        <label className="block text-sm font-semibold text-slate-700 mb-2">Project / change name</label>
+        <label className="block text-sm font-semibold text-slate-700 mb-2">
+          Project / change name
+        </label>
         <input
           value={state.projectName}
           onChange={(event) => onUpdateProjectName(event.target.value)}
@@ -261,13 +291,20 @@ function ForcesScreen({
         />
       </div>
 
-      <div className={`rounded-lg border p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 ${netScore >= 0 ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}`}>
+      <div
+        className={`rounded-lg border p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 ${netScore >= 0 ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}`}
+      >
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Net Force Score</p>
-          <p className="text-sm text-slate-600 mt-0.5">Driving total ({drivingTotal}) minus restraining total ({restrainingTotal}).</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+            Net Force Score
+          </p>
+          <p className="text-sm text-slate-600 mt-0.5">
+            Driving total ({drivingTotal}) minus restraining total ({restrainingTotal}).
+          </p>
         </div>
         <p className={`text-3xl font-bold ${netScore >= 0 ? 'text-green-700' : 'text-red-700'}`}>
-          {netScore > 0 ? '+' : ''}{netScore}
+          {netScore > 0 ? '+' : ''}
+          {netScore}
         </p>
       </div>
 
@@ -308,7 +345,7 @@ function ActionsScreen({
   onUpdateAction,
   onAddAction,
   onRemoveAction,
-  onBack
+  onBack,
 }: {
   state: ForceFieldAnalysisState;
   onUpdateAction: (id: string, updates: Partial<ForceAction>) => void;
@@ -322,65 +359,98 @@ function ActionsScreen({
 
   return (
     <div className="space-y-6">
-      <div className={`rounded-lg border p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 ${finalMitigatedScore >= 0 ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}`}>
+      <div
+        className={`rounded-lg border p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 ${finalMitigatedScore >= 0 ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}`}
+      >
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Finalised Mitigated Score</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+            Finalised Mitigated Score
+          </p>
           <p className="text-sm text-slate-600 mt-0.5">
-            Driving mitigated total ({drivingMitigated}) minus restraining mitigated total ({restrainingMitigated}).
-            A force's mitigated score is its original score plus the impact of its Completed actions.
+            Driving mitigated total ({drivingMitigated}) minus restraining mitigated total (
+            {restrainingMitigated}). A force's mitigated score is its original score plus the impact
+            of its Completed actions.
           </p>
         </div>
-        <p className={`text-3xl font-bold ${finalMitigatedScore >= 0 ? 'text-green-700' : 'text-red-700'}`}>
-          {finalMitigatedScore > 0 ? '+' : ''}{finalMitigatedScore}
+        <p
+          className={`text-3xl font-bold ${finalMitigatedScore >= 0 ? 'text-green-700' : 'text-red-700'}`}
+        >
+          {finalMitigatedScore > 0 ? '+' : ''}
+          {finalMitigatedScore}
         </p>
       </div>
 
       <div className="rounded-lg border border-slate-200 bg-white p-5">
         <h3 className="text-lg font-semibold text-slate-800 mb-1">Force Mitigation</h3>
         <p className="text-sm text-slate-500 mb-4">
-          Each force's mitigated score is derived automatically from its Completed actions below - it can't be set directly.
+          Each force's mitigated score is derived automatically from its Completed actions below -
+          it can't be set directly.
         </p>
         <div className="overflow-x-auto rounded-md border border-slate-200">
           <table className="min-w-full divide-y divide-slate-200 bg-white">
             <thead className="bg-slate-50">
               <tr>
-                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Force</th>
-                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Side</th>
-                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Original Score</th>
-                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Mitigated Score</th>
-                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Actions</th>
+                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                  Force
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                  Side
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                  Original Score
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                  Mitigated Score
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {state.forces.map((force) => {
                 const forceActions = state.actions.filter((action) => action.forceId === force.id);
-                const completedCount = forceActions.filter((action) => action.status === 'Completed').length;
+                const completedCount = forceActions.filter(
+                  (action) => action.status === 'Completed'
+                ).length;
                 const mitigatedScore = deriveMitigatedScore(force, state.actions);
                 return (
                   <tr key={force.id}>
-                    <td className="px-3 py-2 text-sm text-slate-800">{force.text || 'Untitled force'}</td>
+                    <td className="px-3 py-2 text-sm text-slate-800">
+                      {force.text || 'Untitled force'}
+                    </td>
                     <td className="px-3 py-2 text-sm">
-                      <span className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-semibold ${force.side === 'driving' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'}`}>
+                      <span
+                        className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-semibold ${force.side === 'driving' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'}`}
+                      >
                         {force.side === 'driving' ? 'Driving' : 'Restraining'}
                       </span>
                     </td>
                     <td className="px-3 py-2">
-                      <span className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-bold ${scoreBadgeClass(force.score, force.side)}`}>
+                      <span
+                        className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-bold ${scoreBadgeClass(force.score, force.side)}`}
+                      >
                         {force.score}
                       </span>
                     </td>
                     <td className="px-3 py-2">
-                      <span className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-bold ${scoreBadgeClass(mitigatedScore, force.side)}`}>
+                      <span
+                        className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-bold ${scoreBadgeClass(mitigatedScore, force.side)}`}
+                      >
                         {mitigatedScore}
                       </span>
                     </td>
-                    <td className="px-3 py-2 text-sm text-slate-600">{completedCount}/{forceActions.length} complete</td>
+                    <td className="px-3 py-2 text-sm text-slate-600">
+                      {completedCount}/{forceActions.length} complete
+                    </td>
                   </tr>
                 );
               })}
               {!state.forces.length ? (
                 <tr>
-                  <td className="px-3 py-2 text-sm text-slate-500" colSpan={5}>No forces defined yet. Go back and add some.</td>
+                  <td className="px-3 py-2 text-sm text-slate-500" colSpan={5}>
+                    No forces defined yet. Go back and add some.
+                  </td>
                 </tr>
               ) : null}
             </tbody>
@@ -393,20 +463,33 @@ function ActionsScreen({
           <h3 className="text-lg font-semibold text-slate-800">Mitigation Actions</h3>
         </div>
         <p className="text-sm text-slate-500 mb-4">
-          Actions to strengthen driving forces or weaken restraining forces, each owned and dated. Set how many
-          points an action shifts its force by once Completed - positive to strengthen, negative to weaken.
+          Actions to strengthen driving forces or weaken restraining forces, each owned and dated.
+          Set how many points an action shifts its force by once Completed - positive to strengthen,
+          negative to weaken.
         </p>
 
         <div className="overflow-x-auto rounded-md border border-slate-200">
           <table className="min-w-full divide-y divide-slate-200 bg-white">
             <thead className="bg-slate-50">
               <tr>
-                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Force</th>
-                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Action</th>
-                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Owner</th>
-                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Due Date</th>
-                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Status</th>
-                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Score Impact</th>
+                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                  Force
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                  Action
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                  Owner
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                  Due Date
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                  Status
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                  Score Impact
+                </th>
                 <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500"></th>
               </tr>
             </thead>
@@ -416,11 +499,15 @@ function ActionsScreen({
                   <td className="px-3 py-2">
                     <select
                       value={action.forceId}
-                      onChange={(event) => onUpdateAction(action.id, { forceId: event.target.value })}
+                      onChange={(event) =>
+                        onUpdateAction(action.id, { forceId: event.target.value })
+                      }
                       className="rounded-md border border-slate-300 px-2 py-1 text-xs"
                     >
                       {state.forces.map((force) => (
-                        <option key={force.id} value={force.id}>{force.text || 'Untitled force'}</option>
+                        <option key={force.id} value={force.id}>
+                          {force.text || 'Untitled force'}
+                        </option>
                       ))}
                     </select>
                   </td>
@@ -442,18 +529,26 @@ function ActionsScreen({
                     <input
                       type="date"
                       value={action.dueDate}
-                      onChange={(event) => onUpdateAction(action.id, { dueDate: event.target.value })}
+                      onChange={(event) =>
+                        onUpdateAction(action.id, { dueDate: event.target.value })
+                      }
                       className="rounded-md border border-slate-300 px-2 py-1 text-sm"
                     />
                   </td>
                   <td className="px-3 py-2">
                     <select
                       value={action.status}
-                      onChange={(event) => onUpdateAction(action.id, { status: event.target.value as ForceActionStatus })}
+                      onChange={(event) =>
+                        onUpdateAction(action.id, {
+                          status: event.target.value as ForceActionStatus,
+                        })
+                      }
                       className="rounded-md border border-slate-300 px-2 py-1 text-xs"
                     >
                       {STATUS_OPTIONS.map((status) => (
-                        <option key={status} value={status}>{status}</option>
+                        <option key={status} value={status}>
+                          {status}
+                        </option>
                       ))}
                     </select>
                   </td>
@@ -463,7 +558,9 @@ function ActionsScreen({
                       min={-10}
                       max={10}
                       value={action.impact}
-                      onChange={(event) => onUpdateAction(action.id, { impact: Number(event.target.value) })}
+                      onChange={(event) =>
+                        onUpdateAction(action.id, { impact: Number(event.target.value) })
+                      }
                       className="w-16 rounded-md border border-slate-300 px-2 py-1 text-sm"
                     />
                   </td>
@@ -480,7 +577,9 @@ function ActionsScreen({
               ))}
               {!state.actions.length ? (
                 <tr>
-                  <td className="px-3 py-2 text-sm text-slate-500" colSpan={7}>No actions yet.</td>
+                  <td className="px-3 py-2 text-sm text-slate-500" colSpan={7}>
+                    No actions yet.
+                  </td>
                 </tr>
               ) : null}
             </tbody>
@@ -496,7 +595,9 @@ function ActionsScreen({
           + Add Action
         </button>
         {!state.forces.length ? (
-          <p className="mt-2 text-xs text-slate-500">Add at least one force on the previous screen before adding actions.</p>
+          <p className="mt-2 text-xs text-slate-500">
+            Add at least one force on the previous screen before adding actions.
+          </p>
         ) : null}
       </div>
 
@@ -534,14 +635,14 @@ export default function ForceFieldAnalysisApp(): JSX.Element {
   const updateForceText = (id: string, text: string) => {
     setState((current) => ({
       ...current,
-      forces: current.forces.map((force) => (force.id === id ? { ...force, text } : force))
+      forces: current.forces.map((force) => (force.id === id ? { ...force, text } : force)),
     }));
   };
 
   const updateForceScore = (id: string, score: number) => {
     setState((current) => ({
       ...current,
-      forces: current.forces.map((force) => (force.id === id ? { ...force, score } : force))
+      forces: current.forces.map((force) => (force.id === id ? { ...force, score } : force)),
     }));
   };
 
@@ -549,7 +650,7 @@ export default function ForceFieldAnalysisApp(): JSX.Element {
     setState((current) => ({
       ...current,
       forces: current.forces.filter((force) => force.id !== id),
-      actions: current.actions.filter((action) => action.forceId !== id)
+      actions: current.actions.filter((action) => action.forceId !== id),
     }));
   };
 
@@ -563,12 +664,17 @@ export default function ForceFieldAnalysisApp(): JSX.Element {
   const updateAction = (id: string, updates: Partial<ForceAction>) => {
     setState((current) => ({
       ...current,
-      actions: current.actions.map((action) => (action.id === id ? { ...action, ...updates } : action))
+      actions: current.actions.map((action) =>
+        action.id === id ? { ...action, ...updates } : action
+      ),
     }));
   };
 
   const removeAction = (id: string) => {
-    setState((current) => ({ ...current, actions: current.actions.filter((action) => action.id !== id) }));
+    setState((current) => ({
+      ...current,
+      actions: current.actions.filter((action) => action.id !== id),
+    }));
   };
 
   const handleExport = () => {
@@ -594,7 +700,9 @@ export default function ForceFieldAnalysisApp(): JSX.Element {
       setScreen('forces');
       setImportError(null);
     } catch {
-      setImportError('Unable to import this file. Please check it is a valid Force Field Analysis export.');
+      setImportError(
+        'Unable to import this file. Please check it is a valid Force Field Analysis export.'
+      );
     } finally {
       event.target.value = '';
     }
@@ -612,14 +720,18 @@ export default function ForceFieldAnalysisApp(): JSX.Element {
       <header className="bg-white border-b border-slate-200 shadow-sm px-6 py-4 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-4">
           <button
-            onClick={() => { window.location.hash = '#/'; }}
+            onClick={() => {
+              window.location.hash = '#/';
+            }}
             className="text-sm px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-md font-medium transition-colors"
           >
             ← Back
           </button>
           <div>
             <h1 className="text-lg font-bold text-slate-800">Force Field Analysis</h1>
-            <p className="text-xs text-slate-500">Weigh driving vs restraining forces and plan mitigation actions</p>
+            <p className="text-xs text-slate-500">
+              Weigh driving vs restraining forces and plan mitigation actions
+            </p>
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-3">
@@ -637,7 +749,11 @@ export default function ForceFieldAnalysisApp(): JSX.Element {
           >
             Export JSON
           </button>
-          <div className="flex items-center rounded-md border border-slate-300 overflow-hidden text-sm font-semibold" role="group" aria-label="Force field analysis screen">
+          <div
+            className="flex items-center rounded-md border border-slate-300 overflow-hidden text-sm font-semibold"
+            role="group"
+            aria-label="Force field analysis screen"
+          >
             <button
               type="button"
               onClick={() => setScreen('forces')}

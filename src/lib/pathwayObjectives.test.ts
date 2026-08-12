@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import type { AdoptionStore } from './adoptionState';
 import { initializeStore } from './adoptionState';
 import { syncPathwayObjectives } from './pathwayObjectives';
@@ -19,7 +20,7 @@ function createStore(): AdoptionStore {
           timescale: '',
           notes: '',
           evidence: '',
-          linkedActions: []
+          linkedActions: [],
         },
         {
           id: 'custom-objective',
@@ -28,10 +29,10 @@ function createStore(): AdoptionStore {
           timescale: '',
           notes: '',
           evidence: '',
-          linkedActions: []
-        }
-      ]
-    }
+          linkedActions: [],
+        },
+      ],
+    },
   }) as AdoptionStore;
 }
 
@@ -41,8 +42,14 @@ describe('syncPathwayObjectives', () => {
     const next = syncPathwayObjectives(store);
 
     const visionObjectives = next.objectives.vision || [];
-    expect(visionObjectives.some((objective) => objective.id.startsWith('vision:auto-objective:'))).toBe(false);
-    expect(visionObjectives.some((objective) => objective.id.startsWith('pathway:auto-objective:pathway-1:vision:'))).toBe(false);
+    expect(
+      visionObjectives.some((objective) => objective.id.startsWith('vision:auto-objective:'))
+    ).toBe(false);
+    expect(
+      visionObjectives.some((objective) =>
+        objective.id.startsWith('pathway:auto-objective:pathway-1:vision:')
+      )
+    ).toBe(false);
     expect(visionObjectives.some((objective) => objective.id === 'custom-objective')).toBe(true);
   });
 
@@ -52,7 +59,9 @@ describe('syncPathwayObjectives', () => {
 
     const visionObjectives = next.objectives.vision || [];
     expect(visionObjectives.some((objective) => objective.id === 'custom-objective')).toBe(true);
-    expect(visionObjectives.every((objective) => !objective.id.startsWith('pathway:auto-objective:'))).toBe(true);
+    expect(
+      visionObjectives.every((objective) => !objective.id.startsWith('pathway:auto-objective:'))
+    ).toBe(true);
   });
 
   it('does not add pathway-auto-actions for vision', () => {
@@ -74,6 +83,8 @@ describe('syncPathwayObjectives', () => {
       objective.id.startsWith('pathway:auto-objective:')
     );
     expect(caseForChangeObjectives.length).toBeGreaterThan(0);
-    expect(caseForChangeObjectives.every((objective) => objective.linkedActions.length === 0)).toBe(true);
+    expect(caseForChangeObjectives.every((objective) => objective.linkedActions.length === 0)).toBe(
+      true
+    );
   });
 });

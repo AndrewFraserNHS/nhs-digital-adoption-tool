@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest';
+
 import {
   combineValidationResults,
   validateCstProfile,
   validateEntry,
   validateOrgProfile,
-  validateScore
+  validateScore,
 } from './adoptionValidator';
 
 describe('adoptionValidator', () => {
@@ -12,11 +13,11 @@ describe('adoptionValidator', () => {
     expect(validateScore('3').isValid).toBe(true);
     expect(validateScore('abc')).toEqual({
       isValid: false,
-      errors: [{ field: 'score', message: 'Score must be a number' }]
+      errors: [{ field: 'score', message: 'Score must be a number' }],
     });
     expect(validateScore(8)).toEqual({
       isValid: false,
-      errors: [{ field: 'score', message: 'Score must be between 0 and 5' }]
+      errors: [{ field: 'score', message: 'Score must be between 0 and 5' }],
     });
   });
 
@@ -25,7 +26,7 @@ describe('adoptionValidator', () => {
       score: 2,
       justification: 'x'.repeat(5001),
       evidence: 'y'.repeat(2001),
-      actions: []
+      actions: [],
     });
 
     expect(invalid.isValid).toBe(false);
@@ -44,8 +45,8 @@ describe('adoptionValidator', () => {
         goLiveDate: '',
         fullAdoptionDate: '',
         benefitRealizationDate: '',
-        phaseCapability: {}
-      }
+        phaseCapability: {},
+      },
     });
 
     expect(result.isValid).toBe(false);
@@ -65,8 +66,8 @@ describe('adoptionValidator', () => {
         goLiveDate: '2026-11-10',
         fullAdoptionDate: '2026-11-09',
         benefitRealizationDate: '2026-11-08',
-        phaseCapability: {}
-      }
+        phaseCapability: {},
+      },
     });
 
     expect(invalid.isValid).toBe(false);
@@ -83,8 +84,8 @@ describe('adoptionValidator', () => {
         goLiveDate: '2026-11-10',
         fullAdoptionDate: '2026-12-10',
         benefitRealizationDate: '2027-01-10',
-        phaseCapability: {}
-      }
+        phaseCapability: {},
+      },
     });
     expect(valid.isValid).toBe(true);
   });
@@ -100,8 +101,8 @@ describe('adoptionValidator', () => {
       isValid: false,
       errors: [
         { field: 'a', message: 'A invalid' },
-        { field: 'b', message: 'B invalid' }
-      ]
+        { field: 'b', message: 'B invalid' },
+      ],
     });
   });
 });

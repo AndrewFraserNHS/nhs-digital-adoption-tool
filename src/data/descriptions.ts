@@ -1,4 +1,4 @@
-import { LENS_INFO, type AssessmentLens } from '@data/lenses';
+import { type AssessmentLens, LENS_INFO } from '@data/lenses';
 
 export const COMPONENT_DESCRIPTIONS: Record<string, string> = {
   vision: 'Defines the future state and why the change matters.',
@@ -17,7 +17,7 @@ export const COMPONENT_DESCRIPTIONS: Record<string, string> = {
   process_change: 'Embeds workflow changes into everyday operational delivery.',
   reinforcement: 'Sustains momentum so adoption does not decay after launch.',
   org_maturity: 'Improves long-term organisational change capability and maturity.',
-  transfer_bau: 'Transitions ownership into BAU with clear accountability.'
+  transfer_bau: 'Transitions ownership into BAU with clear accountability.',
 };
 
 export function getComponentDescription(componentId: string): string {

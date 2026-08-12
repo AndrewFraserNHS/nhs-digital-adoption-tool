@@ -14,13 +14,15 @@
     "preview": "vite preview",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
-    "lint": "eslint '**/*.{js,ts}' --fix || true",
-    "format": "prettier --write '**/*.{js,ts,css,html,json,md}'"
+    "lint": "eslint '**/*.{js,ts,tsx}' --fix",
+    "format": "prettier --write '**/*.{js,jsx,ts,tsx,css,html,json,md,yml,yaml}'",
+    "format:check": "prettier --check '**/*.{js,jsx,ts,tsx,css,html,json,md,yml,yaml}'"
   },
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "^8.64.0",
     "@typescript-eslint/parser": "^8.64.0",
     "chart.js": "^4.4.0",
+    "dompurify": "^3.4.13",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
     "react-router-dom": "^6.30.4"
@@ -35,6 +37,7 @@
     "@vitest/coverage-v8": "^2.1.9",
     "eslint": "^8.50.0",
     "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
     "gh-pages": "^5.0.0",
     "jsdom": "^29.1.1",
     "node-html-parser": "^9.0.0",

@@ -13,8 +13,8 @@ const actions: ActionRow[] = [
       text: 'Run clinical workshop',
       owner: 'Alice',
       timescale: 'Q3',
-      status: 'In Progress'
-    }
+      status: 'In Progress',
+    },
   },
   {
     compId: 'benefits',
@@ -25,9 +25,9 @@ const actions: ActionRow[] = [
       text: 'Publish baseline metrics',
       owner: 'Bob',
       timescale: 'Q4',
-      status: 'Completed'
-    }
-  }
+      status: 'Completed',
+    },
+  },
 ];
 
 describe('ActionPlanTracker', () => {

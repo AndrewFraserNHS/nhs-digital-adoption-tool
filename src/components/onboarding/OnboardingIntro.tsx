@@ -18,22 +18,25 @@ function buildSteps(): Step[] {
       title: 'What is the Adoption Engine?',
       body: (
         <div className="text-sm text-slate-700 space-y-2">
-        <p className="text-sm text-slate-700">
-          Going live with a new digital product isn't the finish line - people still need to adopt
-          it, change how they work, and keep using it.   </p>
-          <p className="text-sm text-slate-700">The Adoption Engine helps you track how people and
-          teams are adopting the change before go-live, during rollout, and after launch so progress
-          is visible and outcomes are measurable.</p>
+          <p className="text-sm text-slate-700">
+            Going live with a new digital product isn't the finish line - people still need to adopt
+            it, change how they work, and keep using it.{' '}
+          </p>
+          <p className="text-sm text-slate-700">
+            The Adoption Engine helps you track how people and teams are adopting the change before
+            go-live, during rollout, and after launch so progress is visible and outcomes are
+            measurable.
+          </p>
           <p className="text-sm text-slate-700"> It helps you answer four simple questions:</p>
           <ul className="list-decimal pl-5 space-y-1">
             <li>Where are we going?</li>
             <li> How will we know we've got there?</li>
             <li> What needs to be in place?</li>
             <li> What should we do next?</li>
-          </ul> 
+          </ul>
           <p className="text-sm text-slate-700">
-          The goal is not just to implement change, but to ensure it is
-          adopted, embedded and delivering benefits.
+            The goal is not just to implement change, but to ensure it is adopted, embedded and
+            delivering benefits.
           </p>
         </div>
       ),
@@ -61,15 +64,26 @@ function buildSteps(): Step[] {
       body: (
         <div className="text-sm text-slate-700 space-y-2">
           <p>The Adoption Engine supports three common change journeys:</p>
-<ul className="list-decimal pl-5 space-y-4">
-<li><strong>Starting for the First Time</strong><br/>
-Building the foundations for successful adoption.</li>
+          <ul className="list-decimal pl-5 space-y-4">
+            <li>
+              <strong>Starting for the First Time</strong>
+              <br />
+              Building the foundations for successful adoption.
+            </li>
 
-<li><strong>Piloted and Ready to Scale Up</strong><br/>Expanding a successful pilot to a wider audience.</li>
+            <li>
+              <strong>Piloted and Ready to Scale Up</strong>
+              <br />
+              Expanding a successful pilot to a wider audience.
+            </li>
 
-<li><strong>Gone Live but Adoption is Patchy</strong><br/>Strengthening adoption where uptake or benefits are lower than expected.</li>
-</ul>
-<p>Choose your pathway to tailor the guidance, actions and resources you see.</p>
+            <li>
+              <strong>Gone Live but Adoption is Patchy</strong>
+              <br />
+              Strengthening adoption where uptake or benefits are lower than expected.
+            </li>
+          </ul>
+          <p>Choose your pathway to tailor the guidance, actions and resources you see.</p>
         </div>
       ),
     },

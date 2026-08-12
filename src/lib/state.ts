@@ -3,13 +3,13 @@ import type {
   DraftEntry,
   HistorySnapshot,
   OrgProfile,
-  PathwayChecklistState
+  PathwayChecklistState,
 } from './adoptionState';
 
 export interface AssessmentState {
   orgName?: string;
   createdAt?: string;
-  responses?: Record<string, any>;
+  responses?: Record<string, unknown>;
 }
 
 export interface AdoptionState {
@@ -30,18 +30,21 @@ class AppState {
 
   static getInstance(): AppState {
     if (!AppState.instance) {
-AppState.instance = new AppState();
-}
+      AppState.instance = new AppState();
+    }
     return AppState.instance;
   }
 
   loadFromWindow() {
     // migrate legacy window.assessmentState if present
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const legacy: any = (window as any).assessmentState || (window as any).NHSDigitalAdoption?.AppState;
+    const win = window as unknown as {
+      assessmentState?: AssessmentState;
+      NHSDigitalAdoption?: { AppState?: AssessmentState };
+    };
+    const legacy = win.assessmentState || win.NHSDigitalAdoption?.AppState;
     if (legacy) {
-this.assessment = { ...this.assessment, ...legacy };
-}
+      this.assessment = { ...this.assessment, ...legacy };
+    }
   }
 }
 

@@ -34,7 +34,13 @@ describe('OnboardingIntro', () => {
 
   it('calls onNavigateToProjectDetails from the final step', () => {
     const onNavigateToProjectDetails = vi.fn();
-    render(<OnboardingIntro open onClose={vi.fn()} onNavigateToProjectDetails={onNavigateToProjectDetails} />);
+    render(
+      <OnboardingIntro
+        open
+        onClose={vi.fn()}
+        onNavigateToProjectDetails={onNavigateToProjectDetails}
+      />
+    );
 
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));

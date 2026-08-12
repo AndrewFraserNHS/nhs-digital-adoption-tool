@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { buildAdoptionExportPayload, buildHistorySnapshot, buildSnapshotLabel, mergeImportedAdoptionState, migrateSavedAdoptionAssessment } from './adoptionIO';
+
+import {
+  buildAdoptionExportPayload,
+  buildHistorySnapshot,
+  buildSnapshotLabel,
+  mergeImportedAdoptionState,
+  migrateSavedAdoptionAssessment,
+  parseImportedAdoptionAssessment,
+} from './adoptionIO';
 import { initializeStore } from './adoptionState';
 
 describe('adoptionIO', () => {
@@ -21,8 +29,8 @@ describe('adoptionIO', () => {
           goLiveDate: '2026-09-01',
           fullAdoptionDate: '',
           benefitRealizationDate: '',
-          phaseCapability: {}
-        }
+          phaseCapability: {},
+        },
       },
       currentDraft: {
         vision: {
@@ -30,22 +38,44 @@ describe('adoptionIO', () => {
             score: 3,
             justification: 'Defined',
             evidence: 'Deck',
-            actions: [{ id: '1', text: 'Run workshop', owner: 'PMO', timescale: 'Q3', status: 'In Progress' }]
-          }
-        }
+            actions: [
+              {
+                id: '1',
+                text: 'Run workshop',
+                owner: 'PMO',
+                timescale: 'Q3',
+                status: 'In Progress',
+              },
+            ],
+          },
+        },
       },
       objectives: {
-        vision: [{ id: 'o1', text: 'Publish plan', owner: 'PMO', timescale: 'Q3', linkedActions: [{ lens: 'Strategic Direction and Leadership', actionId: '1' }] }]
+        vision: [
+          {
+            id: 'o1',
+            text: 'Publish plan',
+            owner: 'PMO',
+            timescale: 'Q3',
+            linkedActions: [{ lens: 'Strategic Direction and Leadership', actionId: '1' }],
+          },
+        ],
       },
-      history: []
+      history: [],
     });
 
     const payload = buildAdoptionExportPayload(store);
     expect(payload.schemaVersion).toBe('4.0');
     payload.currentDraft.vision['Strategic Direction and Leadership'].actions[0].text = 'Changed';
-    payload.objectives!.vision[0].text = 'Changed';
+    expect(payload.objectives).toBeDefined();
+    if (!payload.objectives) {
+      throw new Error('Expected objectives to be present in export payload');
+    }
+    payload.objectives.vision[0].text = 'Changed';
 
-    expect(store.currentDraft.vision['Strategic Direction and Leadership'].actions[0].text).toBe('Run workshop');
+    expect(store.currentDraft.vision['Strategic Direction and Leadership'].actions[0].text).toBe(
+      'Run workshop'
+    );
     expect(store.objectives.vision[0].text).toBe('Publish plan');
   });
 
@@ -63,33 +93,44 @@ describe('adoptionIO', () => {
           goLiveDate: '2026-11-01',
           fullAdoptionDate: '',
           benefitRealizationDate: '',
-          phaseCapability: {}
-        }
+          phaseCapability: {},
+        },
       },
       currentDraft: {},
       objectives: {
-        vision: [{ id: 'existing', text: 'Existing objective', owner: 'PMO', timescale: 'Q1', linkedActions: [] }]
+        vision: [
+          {
+            id: 'existing',
+            text: 'Existing objective',
+            owner: 'PMO',
+            timescale: 'Q1',
+            linkedActions: [],
+          },
+        ],
       },
-      history: []
+      history: [],
     });
 
-    const merged = mergeImportedAdoptionState({
-      orgProfile: {
-        trustName: 'Imported',
-        region: 'South',
-        trustType: 'Mental Health',
-        projectName: 'Portal',
-        leadName: 'Pat',
-        cst: {
-          type: 'initiative',
-          pathway: 'pathway-3',
-          goLiveDate: '2026-08-01',
-          fullAdoptionDate: '',
-          benefitRealizationDate: '',
-          phaseCapability: {}
-        }
-      }
-    }, current);
+    const merged = mergeImportedAdoptionState(
+      {
+        orgProfile: {
+          trustName: 'Imported',
+          region: 'South',
+          trustType: 'Mental Health',
+          projectName: 'Portal',
+          leadName: 'Pat',
+          cst: {
+            type: 'initiative',
+            pathway: 'pathway-3',
+            goLiveDate: '2026-08-01',
+            fullAdoptionDate: '',
+            benefitRealizationDate: '',
+            phaseCapability: {},
+          },
+        },
+      },
+      current
+    );
 
     expect(merged.orgProfile.trustName).toBe('Imported');
     expect(merged.orgProfile.projectName).toBe('Portal');
@@ -102,8 +143,8 @@ describe('adoptionIO', () => {
       orgProfile: {
         trustName: 'Legacy Trust',
         region: '',
-        trustType: ''
-      }
+        trustType: '',
+      },
     });
 
     expect(migrated.orgProfile?.cst.pathway).toBe('pathway-1');
@@ -112,13 +153,22 @@ describe('adoptionIO', () => {
   });
 
   it('migrates legacy schema 3.0 componentActions into objectives with no linked actions', () => {
-    const migrated = migrateSavedAdoptionAssessment({
+    const legacyPayload = {
       schemaVersion: '3.0',
       orgProfile: { trustName: 'Legacy Trust', region: '', trustType: '' },
       componentActions: {
-        vision: [{ id: 'c1', text: 'Old component action', owner: 'PMO', timescale: 'Q3', status: 'In Progress' }]
-      }
-    } as any);
+        vision: [
+          {
+            id: 'c1',
+            text: 'Old component action',
+            owner: 'PMO',
+            timescale: 'Q3',
+            status: 'In Progress',
+          },
+        ],
+      },
+    };
+    const migrated = migrateSavedAdoptionAssessment(parseImportedAdoptionAssessment(legacyPayload));
 
     expect(migrated.objectives?.vision).toEqual([
       {
@@ -128,8 +178,8 @@ describe('adoptionIO', () => {
         timescale: 'Q3',
         notes: '',
         evidence: '',
-        linkedActions: []
-      }
+        linkedActions: [],
+      },
     ]);
   });
 
@@ -140,9 +190,11 @@ describe('adoptionIO', () => {
           score: 4,
           justification: 'Strong',
           evidence: 'Plan',
-          actions: [{ id: '1', text: 'Communicate', owner: 'Lead', timescale: 'Aug', status: 'Planned' }]
-        }
-      }
+          actions: [
+            { id: '1', text: 'Communicate', owner: 'Lead', timescale: 'Aug', status: 'Planned' },
+          ],
+        },
+      },
     };
 
     const snapshot = buildHistorySnapshot(draft, 72, new Date('2026-07-01T00:00:00Z'));
@@ -150,6 +202,34 @@ describe('adoptionIO', () => {
 
     expect(snapshot.monthLabel).toBe('Jul 2026');
     expect(snapshot.overallPercentage).toBe(72);
-    expect(snapshot.data.vision['Strategic Direction and Leadership'].actions[0].text).toBe('Communicate');
+    expect(snapshot.data.vision['Strategic Direction and Leadership'].actions[0].text).toBe(
+      'Communicate'
+    );
+  });
+
+  it('rejects malformed payloads before import merge', () => {
+    expect(() => parseImportedAdoptionAssessment({ currentDraft: [] })).toThrow(
+      /Invalid adoption assessment payload at currentDraft/
+    );
+
+    const fallback = initializeStore();
+    expect(() =>
+      mergeImportedAdoptionState(
+        { currentDraft: [] } as unknown as Partial<ReturnType<typeof buildAdoptionExportPayload>>,
+        fallback
+      )
+    ).toThrow(/Invalid adoption assessment payload at currentDraft/);
+  });
+
+  it('accepts partial payloads with only org profile', () => {
+    const parsed = parseImportedAdoptionAssessment({
+      orgProfile: {
+        trustName: 'Safe import',
+        region: 'North',
+        trustType: 'Acute',
+      },
+    });
+
+    expect(parsed.orgProfile?.trustName).toBe('Safe import');
   });
 });

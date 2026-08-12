@@ -9,7 +9,7 @@ export const GENERIC_RUBRIC: Record<number, string> = {
   2: 'Developing: Basic processes exist but are inconsistently applied. Reliance on heroic individual efforts.',
   3: 'Embedding: Standardised approach defined and applied across the project. Leadership is engaged.',
   4: 'Adopted: Behaviours are changing. Metrics are actively monitored to drive adoption.',
-  5: 'Thriving: Change is fully embedded as business as usual. Continuous improvement is evident.'
+  5: 'Thriving: Change is fully embedded as business as usual. Continuous improvement is evident.',
 };
 
 export const MATURITY_STAGES = [
@@ -18,7 +18,7 @@ export const MATURITY_STAGES = [
   'Developing',
   'Maturing',
   'Embedding',
-  'Thriving'
+  'Thriving',
 ];
 
 export const STAGE_COLORS = [
@@ -27,7 +27,7 @@ export const STAGE_COLORS = [
   '#FFB81C', // Developing: orange
   '#005EB8', // Maturing: blue
   '#330072', // Embedding: purple
-  '#00A499'  // Thriving: teal
+  '#00A499', // Thriving: teal
 ];
 
 export type SpecificRubricEntry = Record<number, string>;

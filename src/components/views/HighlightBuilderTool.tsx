@@ -31,10 +31,10 @@ const SECTION_OPTIONS = [
   { id: 'interventions-delivered', label: 'Change Interventions Delivered' },
   { id: 'upcoming-priorities', label: 'Upcoming Priorities' },
   { id: 'decisions-required', label: 'Decisions Required' },
-  { id: 'change-lead-assessment', label: 'Change Lead Assessment' }
+  { id: 'change-lead-assessment', label: 'Change Lead Assessment' },
 ] as const;
 
-type SectionId = typeof SECTION_OPTIONS[number]['id'];
+type SectionId = (typeof SECTION_OPTIONS)[number]['id'];
 
 const DEFAULT_LAYOUT: HighlightBuilderLayout = {
   title: 'Executive Highlight Report',
@@ -56,26 +56,28 @@ const DEFAULT_LAYOUT: HighlightBuilderLayout = {
     'interventions-delivered',
     'upcoming-priorities',
     'decisions-required',
-    'change-lead-assessment'
+    'change-lead-assessment',
   ],
-  sectionNarratives: {}
+  sectionNarratives: {},
 };
 
 const STATUS_BADGE_CLASSES: Record<HighlightBuilderLayout['overallStatus'], string> = {
   Green: 'bg-green-100 text-green-800 border-green-200',
   Amber: 'bg-amber-100 text-amber-800 border-amber-200',
-  Red: 'bg-red-100 text-red-800 border-red-200'
+  Red: 'bg-red-100 text-red-800 border-red-200',
 };
 
 const STATUS_DOT_CLASSES: Record<HighlightBuilderLayout['overallStatus'], string> = {
   Green: 'bg-green-500',
   Amber: 'bg-amber-500',
-  Red: 'bg-red-500'
+  Red: 'bg-red-500',
 };
 
 function StatusBadge({ status }: { status: HighlightBuilderLayout['overallStatus'] }): JSX.Element {
   return (
-    <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold ${STATUS_BADGE_CLASSES[status]}`}>
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold ${STATUS_BADGE_CLASSES[status]}`}
+    >
       <span className={`h-2 w-2 rounded-full ${STATUS_DOT_CLASSES[status]}`} />
       {status}
     </span>
@@ -109,15 +111,20 @@ function readStoredLayout(): HighlightBuilderLayout {
     return {
       ...DEFAULT_LAYOUT,
       ...parsed,
-      overallStatus: parsed.overallStatus === 'Green' || parsed.overallStatus === 'Amber' || parsed.overallStatus === 'Red'
-        ? parsed.overallStatus
-        : DEFAULT_LAYOUT.overallStatus,
-      orientation: parsed.orientation === 'portrait' || parsed.orientation === 'landscape'
-        ? parsed.orientation
-        : DEFAULT_LAYOUT.orientation,
-      sections: Array.isArray(parsed.sections) && parsed.sections.length > 0
-        ? parsed.sections
-        : DEFAULT_LAYOUT.sections
+      overallStatus:
+        parsed.overallStatus === 'Green' ||
+        parsed.overallStatus === 'Amber' ||
+        parsed.overallStatus === 'Red'
+          ? parsed.overallStatus
+          : DEFAULT_LAYOUT.overallStatus,
+      orientation:
+        parsed.orientation === 'portrait' || parsed.orientation === 'landscape'
+          ? parsed.orientation
+          : DEFAULT_LAYOUT.orientation,
+      sections:
+        Array.isArray(parsed.sections) && parsed.sections.length > 0
+          ? parsed.sections
+          : DEFAULT_LAYOUT.sections,
     };
   } catch {
     return DEFAULT_LAYOUT;
@@ -134,7 +141,7 @@ export function HighlightBuilderTool({
   projectName,
   themeColor,
   onLayoutSaved,
-  darkMode = false
+  darkMode = false,
 }: {
   store: AdoptionStore;
   metrics: Metrics;
@@ -158,10 +165,7 @@ export function HighlightBuilderTool({
   const [fileInputKey, setFileInputKey] = useState<number>(0);
   const previewContainerRef = useRef<HTMLDivElement | null>(null);
 
-  const selectedSectionSet = useMemo(
-    () => new Set(layout.sections),
-    [layout.sections]
-  );
+  const selectedSectionSet = useMemo(() => new Set(layout.sections), [layout.sections]);
 
   const sectionIndexMap = useMemo(() => {
     return layout.sections.reduce<Record<string, number>>((next, id, index) => {
@@ -181,7 +185,7 @@ export function HighlightBuilderTool({
         component,
         average,
         target: component.target,
-        gap: Number(Math.max(0, component.target - average).toFixed(1))
+        gap: Number(Math.max(0, component.target - average).toFixed(1)),
       };
     });
   }, [components, getEntry]);
@@ -199,7 +203,7 @@ export function HighlightBuilderTool({
             componentLabel: component.label,
             componentId: component.id,
             lens,
-            action
+            action,
           }))
         )
       )
@@ -214,7 +218,7 @@ export function HighlightBuilderTool({
   const updateLayout = (updates: Partial<HighlightBuilderLayout>) => {
     setLayout((current) => ({
       ...current,
-      ...updates
+      ...updates,
     }));
   };
 
@@ -226,7 +230,7 @@ export function HighlightBuilderTool({
 
       return {
         ...current,
-        sections: nextSections
+        sections: nextSections,
       };
     });
   };
@@ -236,8 +240,8 @@ export function HighlightBuilderTool({
       ...current,
       sectionNarratives: {
         ...current.sectionNarratives,
-        [sectionId]: value
-      }
+        [sectionId]: value,
+      },
     }));
   };
 
@@ -257,7 +261,7 @@ export function HighlightBuilderTool({
     setLogoFileName(file.name);
     setLayout((current) => ({
       ...current,
-      logoDataUrl: dataUrl
+      logoDataUrl: dataUrl,
     }));
     setFileInputKey((current) => current + 1);
   };
@@ -281,16 +285,21 @@ export function HighlightBuilderTool({
       setLayout({
         ...DEFAULT_LAYOUT,
         ...parsed,
-        overallStatus: parsed.overallStatus === 'Green' || parsed.overallStatus === 'Amber' || parsed.overallStatus === 'Red'
-          ? parsed.overallStatus
-          : DEFAULT_LAYOUT.overallStatus,
-        orientation: parsed.orientation === 'portrait' || parsed.orientation === 'landscape'
-          ? parsed.orientation
-          : DEFAULT_LAYOUT.orientation,
-        sections: Array.isArray(parsed.sections) && parsed.sections.length > 0
-          ? parsed.sections
-          : DEFAULT_LAYOUT.sections,
-        sectionNarratives: parsed.sectionNarratives || {}
+        overallStatus:
+          parsed.overallStatus === 'Green' ||
+          parsed.overallStatus === 'Amber' ||
+          parsed.overallStatus === 'Red'
+            ? parsed.overallStatus
+            : DEFAULT_LAYOUT.overallStatus,
+        orientation:
+          parsed.orientation === 'portrait' || parsed.orientation === 'landscape'
+            ? parsed.orientation
+            : DEFAULT_LAYOUT.orientation,
+        sections:
+          Array.isArray(parsed.sections) && parsed.sections.length > 0
+            ? parsed.sections
+            : DEFAULT_LAYOUT.sections,
+        sectionNarratives: parsed.sectionNarratives || {},
       });
     } catch {
       window.alert('Unable to load the selected layout JSON. Please verify the file contents.');
@@ -303,22 +312,31 @@ export function HighlightBuilderTool({
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(layout));
   }, [layout]);
 
-  const previousSnapshot = store.history.length > 1 ? store.history[store.history.length - 2] : null;
+  const previousSnapshot =
+    store.history.length > 1 ? store.history[store.history.length - 2] : null;
 
   const dashboardRows = useMemo(() => {
     return componentScores.slice(0, 10).map((item) => {
       const previousAverage = previousSnapshot
         ? Number(
             (
-              item.component.lenses.reduce((total, lens) => total + Number(previousSnapshot.data[item.component.id]?.[lens]?.score || 0), 0) /
-              item.component.lenses.length
+              item.component.lenses.reduce(
+                (total, lens) =>
+                  total + Number(previousSnapshot.data[item.component.id]?.[lens]?.score || 0),
+                0
+              ) / item.component.lenses.length
             ).toFixed(1)
           )
         : item.average;
 
-      const trend = item.average > previousAverage ? '▲' : item.average < previousAverage ? '▼' : '►';
+      const trend =
+        item.average > previousAverage ? '▲' : item.average < previousAverage ? '▼' : '►';
       const status: HighlightBuilderLayout['overallStatus'] =
-        item.average >= item.target ? 'Green' : item.average >= Math.max(1, item.target - 1) ? 'Amber' : 'Red';
+        item.average >= item.target
+          ? 'Green'
+          : item.average >= Math.max(1, item.target - 1)
+            ? 'Amber'
+            : 'Red';
       const commentary =
         item.average >= item.target
           ? 'Consistently understood by most stakeholder groups.'
@@ -330,35 +348,75 @@ export function HighlightBuilderTool({
         area: item.component.label,
         status,
         trend,
-        commentary
+        commentary,
       };
     });
   }, [componentScores, previousSnapshot]);
 
   const adoptionMetricRows = useMemo(() => {
-    const completedActions = topActions.filter((row) => normalizeActionStatus(row.action.status) === 'Completed').length;
-    const completionFromActions = topActions.length ? Math.round((completedActions / topActions.length) * 100) : 0;
-    const championActionCount = topActions.filter((row) => /champion|change network/i.test(row.action.text || '')).length;
+    const completedActions = topActions.filter(
+      (row) => normalizeActionStatus(row.action.status) === 'Completed'
+    ).length;
+    const completionFromActions = topActions.length
+      ? Math.round((completedActions / topActions.length) * 100)
+      : 0;
+    const championActionCount = topActions.filter((row) =>
+      /champion|change network/i.test(row.action.text || '')
+    ).length;
     const inferredChampionCoverage =
       championActionCount >= 5 ? 2 : championActionCount >= 1 ? 1 : 0;
     return [
-      { measure: 'User Activation', target: '95%', current: `${Math.min(100, metrics.overallPct + 6)}%` },
+      {
+        measure: 'User Activation',
+        target: '95%',
+        current: `${Math.min(100, metrics.overallPct + 6)}%`,
+      },
       { measure: 'Active Users', target: '80%', current: `${Math.min(100, metrics.overallPct)}%` },
-      { measure: 'Training Completion', target: '90%', current: `${Math.min(100, metrics.actionCompletionPct)}%` },
-      { measure: 'Stakeholder Engagement Score', target: '80%', current: `${Math.min(100, metrics.overallPct + 4)}%` },
-      { measure: 'Champion Coverage', target: '1 per team', current: `${inferredChampionCoverage} per team` },
-      { measure: 'User Satisfaction', target: '80%', current: `${Math.min(100, metrics.overallPct + 2)}%` },
-      { measure: 'Process Compliance', target: '90%', current: `${Math.min(100, metrics.overallPct - 3)}%` },
-      { measure: 'Benefits Evidence Submitted', target: '75%', current: `${Math.min(100, completionFromActions)}%` }
+      {
+        measure: 'Training Completion',
+        target: '90%',
+        current: `${Math.min(100, metrics.actionCompletionPct)}%`,
+      },
+      {
+        measure: 'Stakeholder Engagement Score',
+        target: '80%',
+        current: `${Math.min(100, metrics.overallPct + 4)}%`,
+      },
+      {
+        measure: 'Champion Coverage',
+        target: '1 per team',
+        current: `${inferredChampionCoverage} per team`,
+      },
+      {
+        measure: 'User Satisfaction',
+        target: '80%',
+        current: `${Math.min(100, metrics.overallPct + 2)}%`,
+      },
+      {
+        measure: 'Process Compliance',
+        target: '90%',
+        current: `${Math.min(100, metrics.overallPct - 3)}%`,
+      },
+      {
+        measure: 'Benefits Evidence Submitted',
+        target: '75%',
+        current: `${Math.min(100, completionFromActions)}%`,
+      },
     ].map((row) => {
       const numericCurrent = Number((row.current || '').replace(/[^0-9.]/g, ''));
       const numericTarget = Number((row.target || '').replace(/[^0-9.]/g, ''));
-      const trend = numericCurrent >= numericTarget ? '►' : numericCurrent >= numericTarget - 5 ? '▲' : '▼';
-      const status = numericCurrent >= numericTarget ? 'Green' : numericCurrent >= numericTarget - 5 ? 'Amber' : 'Red';
+      const trend =
+        numericCurrent >= numericTarget ? '►' : numericCurrent >= numericTarget - 5 ? '▲' : '▼';
+      const status =
+        numericCurrent >= numericTarget
+          ? 'Green'
+          : numericCurrent >= numericTarget - 5
+            ? 'Amber'
+            : 'Red';
       return {
         ...row,
         trend,
-        status
+        status,
       };
     });
   }, [metrics.actionCompletionPct, metrics.overallPct, topActions]);
@@ -371,7 +429,7 @@ export function HighlightBuilderTool({
         risk: `Inconsistent adoption in ${item.component.label}`,
         impact: 'Benefits may not be realised in full.',
         mitigation: 'Targeted coaching and local engagement sessions.',
-        status: 'Open'
+        status: 'Open',
       }));
   }, [componentScores]);
 
@@ -421,17 +479,27 @@ export function HighlightBuilderTool({
             <table className="min-w-full divide-y divide-slate-200 bg-white">
               <thead className="bg-slate-50">
                 <tr>
-                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Area</th>
-                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Status</th>
-                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Trend</th>
-                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Commentary</th>
+                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                    Area
+                  </th>
+                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                    Status
+                  </th>
+                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                    Trend
+                  </th>
+                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                    Commentary
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {dashboardRows.map((row) => (
                   <tr key={row.area}>
                     <td className="px-3 py-2 text-sm text-slate-700">{row.area}</td>
-                    <td className="px-3 py-2 text-sm"><StatusBadge status={row.status} /></td>
+                    <td className="px-3 py-2 text-sm">
+                      <StatusBadge status={row.status} />
+                    </td>
                     <td className="px-3 py-2 text-sm">{row.trend}</td>
                     <td className="px-3 py-2 text-sm text-slate-600">{row.commentary}</td>
                   </tr>
@@ -451,11 +519,21 @@ export function HighlightBuilderTool({
             <table className="min-w-full divide-y divide-slate-200 bg-white">
               <thead className="bg-slate-50">
                 <tr>
-                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Measure</th>
-                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Target</th>
-                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Current</th>
-                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Trend</th>
-                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Status</th>
+                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                    Measure
+                  </th>
+                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                    Target
+                  </th>
+                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                    Current
+                  </th>
+                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                    Trend
+                  </th>
+                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                    Status
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -465,7 +543,9 @@ export function HighlightBuilderTool({
                     <td className="px-3 py-2 text-sm text-slate-600">{row.target}</td>
                     <td className="px-3 py-2 text-sm text-slate-700">{row.current}</td>
                     <td className="px-3 py-2 text-sm">{row.trend}</td>
-                    <td className="px-3 py-2 text-sm"><StatusBadge status={row.status as HighlightBuilderLayout['overallStatus']} /></td>
+                    <td className="px-3 py-2 text-sm">
+                      <StatusBadge status={row.status as HighlightBuilderLayout['overallStatus']} />
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -483,23 +563,35 @@ export function HighlightBuilderTool({
             <table className="min-w-full divide-y divide-slate-200 bg-white">
               <thead className="bg-slate-50">
                 <tr>
-                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Risk / Issue</th>
-                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Impact</th>
-                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Mitigation</th>
-                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Status</th>
+                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                    Risk / Issue
+                  </th>
+                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                    Impact
+                  </th>
+                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                    Mitigation
+                  </th>
+                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                    Status
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {riskRows.length ? riskRows.map((row, index) => (
-                  <tr key={`${row.risk}-${index}`}>
-                    <td className="px-3 py-2 text-sm text-slate-700">{row.risk}</td>
-                    <td className="px-3 py-2 text-sm text-slate-600">{row.impact}</td>
-                    <td className="px-3 py-2 text-sm text-slate-600">{row.mitigation}</td>
-                    <td className="px-3 py-2 text-sm">{row.status}</td>
-                  </tr>
-                )) : (
+                {riskRows.length ? (
+                  riskRows.map((row, index) => (
+                    <tr key={`${row.risk}-${index}`}>
+                      <td className="px-3 py-2 text-sm text-slate-700">{row.risk}</td>
+                      <td className="px-3 py-2 text-sm text-slate-600">{row.impact}</td>
+                      <td className="px-3 py-2 text-sm text-slate-600">{row.mitigation}</td>
+                      <td className="px-3 py-2 text-sm">{row.status}</td>
+                    </tr>
+                  ))
+                ) : (
                   <tr>
-                    <td className="px-3 py-2 text-sm text-slate-500" colSpan={4}>No key risks are currently above threshold.</td>
+                    <td className="px-3 py-2 text-sm text-slate-500" colSpan={4}>
+                      No key risks are currently above threshold.
+                    </td>
                   </tr>
                 )}
               </tbody>
@@ -514,9 +606,13 @@ export function HighlightBuilderTool({
         <>
           <p className="mt-2 text-sm whitespace-pre-line text-slate-700">{narrative}</p>
           <ol className="mt-3 list-decimal pl-5 space-y-1 text-sm text-slate-700">
-            {upcomingPriorities.length ? upcomingPriorities.map((priority, index) => (
-              <li key={`${priority}-${index}`}>{priority}</li>
-            )) : <li>No immediate priorities detected from current data.</li>}
+            {upcomingPriorities.length ? (
+              upcomingPriorities.map((priority, index) => (
+                <li key={`${priority}-${index}`}>{priority}</li>
+              ))
+            ) : (
+              <li>No immediate priorities detected from current data.</li>
+            )}
           </ol>
         </>
       );
@@ -588,24 +684,36 @@ export function HighlightBuilderTool({
             <table className="min-w-full divide-y divide-slate-200 bg-white">
               <thead className="bg-slate-50">
                 <tr>
-                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Decision</th>
-                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Owner</th>
-                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Required By</th>
+                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                    Decision
+                  </th>
+                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                    Owner
+                  </th>
+                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                    Required By
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 <tr>
-                  <td className="px-3 py-2 text-sm text-slate-700">Approval for additional adoption support resource</td>
+                  <td className="px-3 py-2 text-sm text-slate-700">
+                    Approval for additional adoption support resource
+                  </td>
                   <td className="px-3 py-2 text-sm text-slate-700">Programme Board</td>
                   <td className="px-3 py-2 text-sm text-slate-600">TBC</td>
                 </tr>
                 <tr>
-                  <td className="px-3 py-2 text-sm text-slate-700">Agreement on ongoing benefits ownership</td>
+                  <td className="px-3 py-2 text-sm text-slate-700">
+                    Agreement on ongoing benefits ownership
+                  </td>
                   <td className="px-3 py-2 text-sm text-slate-700">SRO</td>
                   <td className="px-3 py-2 text-sm text-slate-600">TBC</td>
                 </tr>
                 <tr>
-                  <td className="px-3 py-2 text-sm text-slate-700">Endorsement of next rollout phase</td>
+                  <td className="px-3 py-2 text-sm text-slate-700">
+                    Endorsement of next rollout phase
+                  </td>
                   <td className="px-3 py-2 text-sm text-slate-700">Steering Group</td>
                   <td className="px-3 py-2 text-sm text-slate-600">TBC</td>
                 </tr>
@@ -624,16 +732,37 @@ export function HighlightBuilderTool({
             <table className="min-w-full divide-y divide-slate-200 bg-white">
               <thead className="bg-slate-50">
                 <tr>
-                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Area</th>
-                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Confidence</th>
+                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                    Area
+                  </th>
+                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                    Confidence
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                <tr><td className="px-3 py-2 text-sm text-slate-700">Delivery of Change Activities</td><td className="px-3 py-2 text-sm">High</td></tr>
-                <tr><td className="px-3 py-2 text-sm text-slate-700">Stakeholder Engagement</td><td className="px-3 py-2 text-sm">High</td></tr>
-                <tr><td className="px-3 py-2 text-sm text-slate-700">Adoption Achievement</td><td className="px-3 py-2 text-sm">Medium</td></tr>
-                <tr><td className="px-3 py-2 text-sm text-slate-700">Benefits Realisation</td><td className="px-3 py-2 text-sm">Medium</td></tr>
-                <tr><td className="px-3 py-2 text-sm text-slate-700">Sustainability Post Go-Live</td><td className="px-3 py-2 text-sm">Medium</td></tr>
+                <tr>
+                  <td className="px-3 py-2 text-sm text-slate-700">
+                    Delivery of Change Activities
+                  </td>
+                  <td className="px-3 py-2 text-sm">High</td>
+                </tr>
+                <tr>
+                  <td className="px-3 py-2 text-sm text-slate-700">Stakeholder Engagement</td>
+                  <td className="px-3 py-2 text-sm">High</td>
+                </tr>
+                <tr>
+                  <td className="px-3 py-2 text-sm text-slate-700">Adoption Achievement</td>
+                  <td className="px-3 py-2 text-sm">Medium</td>
+                </tr>
+                <tr>
+                  <td className="px-3 py-2 text-sm text-slate-700">Benefits Realisation</td>
+                  <td className="px-3 py-2 text-sm">Medium</td>
+                </tr>
+                <tr>
+                  <td className="px-3 py-2 text-sm text-slate-700">Sustainability Post Go-Live</td>
+                  <td className="px-3 py-2 text-sm">Medium</td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -659,7 +788,9 @@ export function HighlightBuilderTool({
       return;
     }
 
-    win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8" /><title>Highlight Report</title></head><body></body></html>');
+    win.document.write(
+      '<!DOCTYPE html><html><head><meta charset="UTF-8" /><title>Highlight Report</title></head><body></body></html>'
+    );
 
     // Reuse the active app styles so the printed report matches the React preview.
     document.querySelectorAll('link[rel="stylesheet"], style').forEach((node) => {
@@ -709,7 +840,9 @@ export function HighlightBuilderTool({
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">Highlight Builder Tool</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">
+              Highlight Builder Tool
+            </p>
             <h2 className="text-2xl font-bold text-slate-900">Create a polished highlight pack</h2>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -722,9 +855,19 @@ export function HighlightBuilderTool({
             </button>
             <label className="rounded-md bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-200 cursor-pointer">
               Load JSON Layout
-              <input key={fileInputKey} type="file" accept="application/json" className="hidden" onChange={handleLoadLayout} />
+              <input
+                key={fileInputKey}
+                type="file"
+                accept="application/json"
+                className="hidden"
+                onChange={handleLoadLayout}
+              />
             </label>
-            <div className="flex items-center rounded-md border border-slate-300 overflow-hidden text-sm font-semibold" role="group" aria-label="PDF export orientation">
+            <div
+              className="flex items-center rounded-md border border-slate-300 overflow-hidden text-sm font-semibold"
+              role="group"
+              aria-label="PDF export orientation"
+            >
               <button
                 type="button"
                 onClick={() => updateLayout({ orientation: 'portrait' })}
@@ -758,7 +901,9 @@ export function HighlightBuilderTool({
         <aside className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
           <div className="space-y-5">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">Report title</label>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
+                Report title
+              </label>
               <input
                 value={layout.title}
                 onChange={(event) => updateLayout({ title: event.target.value })}
@@ -776,7 +921,9 @@ export function HighlightBuilderTool({
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">Reporting period</label>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
+                Reporting period
+              </label>
               <input
                 value={layout.reportingPeriod}
                 onChange={(event) => updateLayout({ reportingPeriod: event.target.value })}
@@ -787,7 +934,9 @@ export function HighlightBuilderTool({
 
             <div className="grid grid-cols-1 gap-3">
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">Change Lead</label>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  Change Lead
+                </label>
                 <input
                   value={layout.changeLeadName}
                   onChange={(event) => updateLayout({ changeLeadName: event.target.value })}
@@ -805,10 +954,16 @@ export function HighlightBuilderTool({
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">Overall Change Status</label>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
+                Overall Change Status
+              </label>
               <select
                 value={layout.overallStatus}
-                onChange={(event) => updateLayout({ overallStatus: event.target.value as HighlightBuilderLayout['overallStatus'] })}
+                onChange={(event) =>
+                  updateLayout({
+                    overallStatus: event.target.value as HighlightBuilderLayout['overallStatus'],
+                  })
+                }
                 className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
               >
                 <option value="Green">Green</option>
@@ -818,7 +973,9 @@ export function HighlightBuilderTool({
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">Theme colour</label>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
+                Theme colour
+              </label>
               <input
                 type="color"
                 value={layout.themeColor}
@@ -828,10 +985,17 @@ export function HighlightBuilderTool({
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">Logo in top-left</label>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
+                Logo in top-left
+              </label>
               <label className="flex w-full cursor-pointer items-center justify-center rounded-md border border-dashed border-slate-300 bg-slate-50 px-3 py-4 text-sm text-slate-700 hover:bg-slate-100">
                 <span>{logoFileName || 'Upload logo'}</span>
-                <input type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} />
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleLogoUpload}
+                />
               </label>
               {layout.logoDataUrl ? (
                 <div className="mt-3 rounded-md border border-slate-200 bg-slate-50 p-2">
@@ -847,9 +1011,10 @@ export function HighlightBuilderTool({
                   const isActive = selectedSectionSet.has(section.id);
                   const sectionId = section.id as SectionId;
                   const activeIndex = sectionIndexMap[section.id];
-                  const displayLabel = typeof activeIndex === 'number'
-                    ? withSectionNumber(activeIndex, section.label)
-                    : section.label;
+                  const displayLabel =
+                    typeof activeIndex === 'number'
+                      ? withSectionNumber(activeIndex, section.label)
+                      : section.label;
                   return (
                     <div key={section.id} className="rounded-md border border-slate-200 px-3 py-2">
                       <label className="flex items-center gap-3 text-sm text-slate-700">
@@ -864,10 +1029,14 @@ export function HighlightBuilderTool({
                       {isActive ? (
                         <div className="mt-3 space-y-3">
                           <div>
-                            <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-slate-500 mb-1">Section narrative</label>
+                            <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-slate-500 mb-1">
+                              Section narrative
+                            </label>
                             <textarea
                               value={layout.sectionNarratives[sectionId] || ''}
-                              onChange={(event) => setSectionNarrative(sectionId, event.target.value)}
+                              onChange={(event) =>
+                                setSectionNarrative(sectionId, event.target.value)
+                              }
                               placeholder={buildSectionNarrative(sectionId)}
                               rows={4}
                               className="w-full rounded-md border border-slate-300 px-2 py-2 text-xs outline-none focus:border-blue-500"
@@ -887,18 +1056,29 @@ export function HighlightBuilderTool({
           </div>
         </aside>
 
-        <div ref={previewContainerRef} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div
+          ref={previewContainerRef}
+          className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+        >
           <div className="mb-4 flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
             {layout.logoDataUrl ? (
               <img alt="Logo preview" src={layout.logoDataUrl} className="max-h-12 w-auto" />
             ) : (
-              <div className="flex h-12 w-12 items-center justify-center rounded-md bg-slate-200 text-sm font-bold text-slate-700">NHS</div>
+              <div className="flex h-12 w-12 items-center justify-center rounded-md bg-slate-200 text-sm font-bold text-slate-700">
+                NHS
+              </div>
             )}
             <div>
-              <div data-print-hide="true" className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Builder Preview</div>
+              <div
+                data-print-hide="true"
+                className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500"
+              >
+                Builder Preview
+              </div>
               <div className="text-lg font-bold text-slate-900">{layout.title}</div>
               <div className="text-sm text-slate-600 mt-1">
-                {layout.programmeName || projectName || 'Unnamed Programme'} · {layout.reportingPeriod || 'Reporting period not set'}
+                {layout.programmeName || projectName || 'Unnamed Programme'} ·{' '}
+                {layout.reportingPeriod || 'Reporting period not set'}
               </div>
               <div className="mt-1 flex items-center gap-2 text-sm text-slate-600">
                 Overall Status: <StatusBadge status={layout.overallStatus} />
@@ -917,7 +1097,10 @@ export function HighlightBuilderTool({
                 style={{ borderLeft: `4px solid ${layout.themeColor}` }}
               >
                 <div className="text-sm font-semibold text-slate-700">
-                  {withSectionNumber(sectionIndexMap[sectionId] || 0, SECTION_OPTIONS.find((item) => item.id === sectionId)?.label || sectionId)}
+                  {withSectionNumber(
+                    sectionIndexMap[sectionId] || 0,
+                    SECTION_OPTIONS.find((item) => item.id === sectionId)?.label || sectionId
+                  )}
                 </div>
                 {renderSectionBody(sectionId as SectionId)}
               </article>

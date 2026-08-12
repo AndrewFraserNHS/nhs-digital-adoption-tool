@@ -76,7 +76,10 @@ function normalizeGeneratedText(value: string): string {
 }
 
 function sanitizeId(value: string): string {
-  return value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
 }
 
 function parseVisionActionTemplates(): VisionActionTemplate[] {
@@ -95,7 +98,7 @@ function parseVisionActionTemplates(): VisionActionTemplate[] {
       lens: currentLens,
       fromScore: currentStage.fromScore,
       toScore: currentStage.toScore,
-      actionTexts: currentActions
+      actionTexts: currentActions,
     });
     currentActions = [];
   };
@@ -181,12 +184,16 @@ function cloneEntry(entry: DraftEntry): DraftEntry {
     ...entry,
     actions: (entry.actions || []).map((action) => ({
       ...action,
-      linkedTargets: (action.linkedTargets || []).map((target) => ({ ...target }))
-    }))
+      linkedTargets: (action.linkedTargets || []).map((target) => ({ ...target })),
+    })),
   };
 }
 
-function createAction(template: VisionActionTemplate, actionText: string, actionIndex: number): DraftAction {
+function createAction(
+  template: VisionActionTemplate,
+  actionText: string,
+  actionIndex: number
+): DraftAction {
   return {
     id: `vision-action:${sanitizeId(template.lens)}:${template.fromScore}-${template.toScore}:${actionIndex}`,
     text: actionText,
@@ -198,7 +205,7 @@ function createAction(template: VisionActionTemplate, actionText: string, action
     dueDate: '',
     notes: '',
     evidence: '',
-    linkedTargets: [{ componentId: 'vision', lens: template.lens }]
+    linkedTargets: [{ componentId: 'vision', lens: template.lens }],
   };
 }
 
@@ -213,7 +220,7 @@ function createOutcome(
     timescale: existing?.timescale || '',
     notes: existing?.notes || '',
     evidence: existing?.evidence || '',
-    linkedActions: []
+    linkedActions: [],
   };
 }
 
@@ -253,28 +260,43 @@ export function syncVisionDerivedContent(store: AdoptionStore): AdoptionStore {
   const visionDraft = nextDraft.vision || {};
   const componentLensEntries = Object.keys(visionDraft);
 
-  const existingOutcomeObjectives = (nextObjectives.vision || []).filter((o) => o.id.startsWith('vision:outcome:'));
-  const existingOtherObjectives = (nextObjectives.vision || []).filter((o) => !o.id.startsWith('vision:outcome:'));
-  const existingById = existingOutcomeObjectives.reduce<Record<string, ComponentObjective>>((acc, o) => {
-    acc[o.id] = o;
-    return acc;
-  }, {});
+  const existingOutcomeObjectives = (nextObjectives.vision || []).filter((o) =>
+    o.id.startsWith('vision:outcome:')
+  );
+  const existingOtherObjectives = (nextObjectives.vision || []).filter(
+    (o) => !o.id.startsWith('vision:outcome:')
+  );
+  const existingById = existingOutcomeObjectives.reduce<Record<string, ComponentObjective>>(
+    (acc, o) => {
+      acc[o.id] = o;
+      return acc;
+    },
+    {}
+  );
 
-  const nextVisionDraft = componentLensEntries.reduce<Record<string, DraftEntry>>((accumulator, lens) => {
-    accumulator[lens] = cloneEntry(visionDraft[lens] || createEmptyVisionEntry());
-    return accumulator;
-  }, {});
+  const nextVisionDraft = componentLensEntries.reduce<Record<string, DraftEntry>>(
+    (accumulator, lens) => {
+      accumulator[lens] = cloneEntry(visionDraft[lens] || createEmptyVisionEntry());
+      return accumulator;
+    },
+    {}
+  );
 
   VISION_TEMPLATES.forEach((template) => {
     const lensEntry = nextVisionDraft[template.lens] || createEmptyVisionEntry();
-    const existingActionTexts = new Set((lensEntry.actions || []).map((action) => normalizeGeneratedText(action.text || '')));
+    const existingActionTexts = new Set(
+      (lensEntry.actions || []).map((action) => normalizeGeneratedText(action.text || ''))
+    );
 
     template.actionTexts.forEach((actionText, index) => {
       const actionId = getActionId(template, index);
       const alreadyHasAction = (lensEntry.actions || []).some((action) => action.id === actionId);
       const actionTextKey = normalizeGeneratedText(actionText);
       if (!alreadyHasAction && !existingActionTexts.has(actionTextKey)) {
-        lensEntry.actions = [...(lensEntry.actions || []), createAction(template, actionText, index)];
+        lensEntry.actions = [
+          ...(lensEntry.actions || []),
+          createAction(template, actionText, index),
+        ];
         existingActionTexts.add(actionTextKey);
       }
     });
@@ -284,19 +306,22 @@ export function syncVisionDerivedContent(store: AdoptionStore): AdoptionStore {
 
   const namedOutcomes = VISION_OUTCOME_DEFINITIONS.map((definition) => ({
     ...createOutcome(definition, existingById[definition.id]),
-    linkedActions: getOutcomeLinkedActions(definition.id.replace('vision:outcome:', '') as VisionOutcomeId, nextVisionDraft)
+    linkedActions: getOutcomeLinkedActions(
+      definition.id.replace('vision:outcome:', '') as VisionOutcomeId,
+      nextVisionDraft
+    ),
   }));
 
   return {
     ...store,
     currentDraft: {
       ...nextDraft,
-      vision: nextVisionDraft
+      vision: nextVisionDraft,
     },
     objectives: {
       ...nextObjectives,
-      vision: [...existingOtherObjectives, ...namedOutcomes]
-    }
+      vision: [...existingOtherObjectives, ...namedOutcomes],
+    },
   };
 }
 
@@ -305,6 +330,6 @@ function createEmptyVisionEntry(): DraftEntry {
     score: 0,
     justification: '',
     evidence: '',
-    actions: []
+    actions: [],
   };
 }

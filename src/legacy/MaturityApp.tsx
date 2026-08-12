@@ -1,14 +1,19 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react';
-import AppState from '@lib/state';
-import { createChart, createRadarChart } from '@lib/charts';
-import { validateScore } from '@lib/adoptionValidator';
+import { MaturityAssessmentPanel } from '@components/views/MaturityAssessmentPanel';
+import {
+  type MaturityGuidance,
+  MaturityModalManager,
+} from '@components/views/MaturityModalManager';
+import { MaturityOverview } from '@components/views/MaturityOverview';
 import { componentMatrix } from '@data/legacy-data';
+import {
+  getAvailableGuidanceTargets,
+  type MaturityGuidanceTarget,
+  resolveGuidanceLinks,
+} from '@data/maturity-guidance-links';
 import { MATURITY_STAGES, STAGE_COLORS } from '@data/rubrics';
-import { getAvailableGuidanceTargets, resolveGuidanceLinks, type MaturityGuidanceTarget } from '@data/maturity-guidance-links';
-import { exportMaturityReportToCSV, exportActionPlanReportToCSV, type MaturityReportData, type ActionPlanReportData } from '@lib/reporting';
-import type { ActionItem, ComponentDetail, MaturityStore } from '@lib/maturityState';
-import { initializeMaturityStore } from '@lib/maturityState';
 import { normalizeActionStatus } from '@lib/actionModel';
+import { validateScore } from '@lib/adoptionValidator';
+import { createChart, createRadarChart } from '@lib/charts';
 import {
   buildInitialDetails,
   cloneDetail,
@@ -16,11 +21,18 @@ import {
   normaliseDetails,
   normaliseResponses,
   type ProjectProfile,
-  type SavedMaturityAssessment
+  type SavedMaturityAssessment,
 } from '@lib/maturityIO';
-import { MaturityOverview } from '@components/views/MaturityOverview';
-import { MaturityAssessmentPanel } from '@components/views/MaturityAssessmentPanel';
-import { MaturityModalManager, type MaturityGuidance } from '@components/views/MaturityModalManager';
+import type { ActionItem, ComponentDetail, MaturityStore } from '@lib/maturityState';
+import { initializeMaturityStore } from '@lib/maturityState';
+import {
+  type ActionPlanReportData,
+  exportActionPlanReportToCSV,
+  exportMaturityReportToCSV,
+  type MaturityReportData,
+} from '@lib/reporting';
+import AppState from '@lib/state';
+import { type ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 const STAGES = MATURITY_STAGES;
 
@@ -68,75 +80,75 @@ interface LegacySavedMaturityAssessment {
 
 const PHASE_EXPECTED_SCORES: Record<string, Record<string, number>> = {
   'Phase 1: Pre-Discovery': {
-    'Vision': 5,
+    Vision: 5,
     'Case for Change': 5,
     'Sponsorship/ Change Network': 1,
-    'Benefits': 1,
+    Benefits: 1,
     'Change Impact & Risk': 1,
     'Change Management Readiness & Planning': 1,
     'Stakeholder Engagement & Comms': 1,
     'Resistance Management': 1,
     'Skills/ Learning': 1,
     'Process change': 1,
-    'Reinforcement': 1,
-    'Change Management Capability': 1
+    Reinforcement: 1,
+    'Change Management Capability': 1,
   },
   'Phase 2: Solution Design': {
-    'Vision': 5,
+    Vision: 5,
     'Case for Change': 5,
     'Sponsorship/ Change Network': 2,
-    'Benefits': 3,
+    Benefits: 3,
     'Change Impact & Risk': 2,
     'Change Management Readiness & Planning': 2,
     'Stakeholder Engagement & Comms': 2,
     'Resistance Management': 2,
     'Skills/ Learning': 2,
     'Process change': 3,
-    'Reinforcement': 2,
-    'Change Management Capability': 2
+    Reinforcement: 2,
+    'Change Management Capability': 2,
   },
   'Phase 3: Development': {
-    'Vision': 5,
+    Vision: 5,
     'Case for Change': 5,
     'Sponsorship/ Change Network': 3,
-    'Benefits': 4,
+    Benefits: 4,
     'Change Impact & Risk': 3,
     'Change Management Readiness & Planning': 3,
     'Stakeholder Engagement & Comms': 3,
     'Resistance Management': 3,
     'Skills/ Learning': 4,
     'Process change': 4,
-    'Reinforcement': 3,
-    'Change Management Capability': 3
+    Reinforcement: 3,
+    'Change Management Capability': 3,
   },
   'Phase 4: Implementation': {
-    'Vision': 5,
+    Vision: 5,
     'Case for Change': 5,
     'Sponsorship/ Change Network': 5,
-    'Benefits': 5,
+    Benefits: 5,
     'Change Impact & Risk': 5,
     'Change Management Readiness & Planning': 4,
     'Stakeholder Engagement & Comms': 5,
     'Resistance Management': 4,
     'Skills/ Learning': 5,
     'Process change': 5,
-    'Reinforcement': 4,
-    'Change Management Capability': 4
+    Reinforcement: 4,
+    'Change Management Capability': 4,
   },
   'Phase 5: Post Deployment': {
-    'Vision': 5,
+    Vision: 5,
     'Case for Change': 5,
     'Sponsorship/ Change Network': 5,
-    'Benefits': 5,
+    Benefits: 5,
     'Change Impact & Risk': 5,
     'Change Management Readiness & Planning': 5,
     'Stakeholder Engagement & Comms': 5,
     'Resistance Management': 5,
     'Skills/ Learning': 5,
     'Process change': 5,
-    'Reinforcement': 5,
-    'Change Management Capability': 5
-  }
+    Reinforcement: 5,
+    'Change Management Capability': 5,
+  },
 };
 
 const LEGACY_GUIDANCE_OVERRIDES: Partial<Record<string, Partial<MaturityGuidance>>> = {
@@ -146,11 +158,14 @@ const LEGACY_GUIDANCE_OVERRIDES: Partial<Record<string, Partial<MaturityGuidance
     indicatorsHtml:
       "<div class='flex mb-2'><span class='mr-3'>&bull;</span><span>New processes are followed consistently across the relevant teams.</span></div><div class='flex mb-2'><span class='mr-3'>&bull;</span><span>The intended efficiencies or quality improvements from the new processes are being realised.</span></div><div class='flex mb-2'><span class='mr-3'>&bull;</span><span>Employees understand the new processes and their roles within them.</span></div>",
     deliverablesHtml:
-      "<div class='flex mb-2'><span class='mr-3'>&bull;</span><span>Validated 'To-Be' process maps and updated, signed-off SOPs.</span></div>"
-  }
+      "<div class='flex mb-2'><span class='mr-3'>&bull;</span><span>Validated 'To-Be' process maps and updated, signed-off SOPs.</span></div>",
+  },
 };
 
-function buildLinkedInputsHtml(componentName: string, target: MaturityGuidanceTarget): string | undefined {
+function buildLinkedInputsHtml(
+  componentName: string,
+  target: MaturityGuidanceTarget
+): string | undefined {
   const links = resolveGuidanceLinks(target, componentName, 'inputs');
   if (!links.length) {
     return undefined;
@@ -164,7 +179,10 @@ function buildLinkedInputsHtml(componentName: string, target: MaturityGuidanceTa
     .join('');
 }
 
-function buildLinkedDeliverablesHtml(componentName: string, target: MaturityGuidanceTarget): string | undefined {
+function buildLinkedDeliverablesHtml(
+  componentName: string,
+  target: MaturityGuidanceTarget
+): string | undefined {
   const links = resolveGuidanceLinks(target, componentName, 'deliverables');
   if (!links.length) {
     return undefined;
@@ -195,7 +213,7 @@ function buildStatusSummary(actions: ActionItem[]): SummaryData {
     values: labels.map((label) => counts.get(label) || 0),
     colors,
     centerText: total,
-    centerSubText: 'Total Actions'
+    centerSubText: 'Total Actions',
   };
 }
 
@@ -246,7 +264,7 @@ function buildDueDateSummary(actions: ActionItem[]): SummaryData {
     values: labels.map((label) => counts.get(label) || 0),
     colors,
     centerText: inProgress,
-    centerSubText: 'In Progress'
+    centerSubText: 'In Progress',
   };
 }
 
@@ -268,7 +286,7 @@ function parseMaturityAssessment(
       detail.actions = detail.actions.map((action) => ({
         ...action,
         startDate: action.startDate || '',
-        status: normalizeActionStatus(action.status)
+        status: normalizeActionStatus(action.status),
       }));
     });
 
@@ -279,8 +297,11 @@ function parseMaturityAssessment(
         phase: modernParsed.orgProfile?.phase || '',
         guidanceTarget: modernParsed.orgProfile?.guidanceTarget || DEFAULT_GUIDANCE_TARGET,
       },
-      responses: normaliseResponses(componentNames, modernParsed.responses as Record<string, unknown> | undefined),
-      details: normalisedDetails
+      responses: normaliseResponses(
+        componentNames,
+        modernParsed.responses as Record<string, unknown> | undefined
+      ),
+      details: normalisedDetails,
     };
   }
 
@@ -321,9 +342,9 @@ function parseMaturityAssessment(
           owner: action.owner || '',
           startDate: action.startDate || '',
           dueDate: action.dueDate || '',
-          status: normalizeActionStatus(action.status)
+          status: normalizeActionStatus(action.status),
         }))
-        .filter((action) => action.text.trim())
+        .filter((action) => action.text.trim()),
     };
   });
 
@@ -332,10 +353,10 @@ function parseMaturityAssessment(
       org: legacyParsed.projectDetails?.organisation || '',
       project: legacyParsed.projectDetails?.project || '',
       phase: legacyParsed.projectDetails?.phase || '',
-      guidanceTarget: DEFAULT_GUIDANCE_TARGET
+      guidanceTarget: DEFAULT_GUIDANCE_TARGET,
     },
     responses,
-    details
+    details,
   };
 }
 
@@ -344,42 +365,56 @@ function buildGuidanceData(
   details: Record<string, ComponentDetail>,
   guidanceTarget: MaturityGuidanceTarget
 ): Record<string, MaturityGuidance> {
-  return Object.keys(componentMatrix).reduce<Record<string, MaturityGuidance>>((acc, componentName) => {
-    const stage = scores[componentName] || 0;
-    const currentStageText = componentMatrix[componentName]?.[stage] || 'No stage selected yet.';
-    const nextStageText = componentMatrix[componentName]?.[Math.min(stage + 1, STAGES.length - 1)] || currentStageText;
-    const detail = details[componentName] || createEmptyDetail();
+  return Object.keys(componentMatrix).reduce<Record<string, MaturityGuidance>>(
+    (acc, componentName) => {
+      const stage = scores[componentName] || 0;
+      const currentStageText = componentMatrix[componentName]?.[stage] || 'No stage selected yet.';
+      const nextStageText =
+        componentMatrix[componentName]?.[Math.min(stage + 1, STAGES.length - 1)] ||
+        currentStageText;
+      const detail = details[componentName] || createEmptyDetail();
 
-    const baseGuidance: MaturityGuidance = {
-      purpose: `Assess the current maturity of ${componentName} and identify the practical change activities needed to progress to the next stage.`,
-      inputs: [
-        `Current stage evidence: ${currentStageText}`,
-        detail.justification ? `Existing justification: ${detail.justification}` : 'Add a short rationale for the selected stage.',
-        detail.links.length ? `Supporting links recorded: ${detail.links.join(', ')}` : 'Add supporting links or documents to evidence the score.'
-      ].join('\n\n'),
-      indicators: [
-        `Current stage (${stage} - ${STAGES[stage] || STAGES[0]}): ${currentStageText}`,
-        `Next stage focus: ${nextStageText}`
-      ].join('\n\n'),
-      deliverables: [
-        'Documented justification for the selected maturity stage.',
-        'Evidence links and notes showing current state.',
-        detail.actions.length ? `${detail.actions.length} tracked improvement action(s) for this component.` : 'At least one concrete action to improve maturity for this component.'
-      ].join('\n')
-    };
+      const baseGuidance: MaturityGuidance = {
+        purpose: `Assess the current maturity of ${componentName} and identify the practical change activities needed to progress to the next stage.`,
+        inputs: [
+          `Current stage evidence: ${currentStageText}`,
+          detail.justification
+            ? `Existing justification: ${detail.justification}`
+            : 'Add a short rationale for the selected stage.',
+          detail.links.length
+            ? `Supporting links recorded: ${detail.links.join(', ')}`
+            : 'Add supporting links or documents to evidence the score.',
+        ].join('\n\n'),
+        indicators: [
+          `Current stage (${stage} - ${STAGES[stage] || STAGES[0]}): ${currentStageText}`,
+          `Next stage focus: ${nextStageText}`,
+        ].join('\n\n'),
+        deliverables: [
+          'Documented justification for the selected maturity stage.',
+          'Evidence links and notes showing current state.',
+          detail.actions.length
+            ? `${detail.actions.length} tracked improvement action(s) for this component.`
+            : 'At least one concrete action to improve maturity for this component.',
+        ].join('\n'),
+      };
 
-    const override = LEGACY_GUIDANCE_OVERRIDES[componentName];
-    const targetLinkedInputsHtml = buildLinkedInputsHtml(componentName, guidanceTarget);
-    const targetLinkedDeliverablesHtml = buildLinkedDeliverablesHtml(componentName, guidanceTarget);
-    acc[componentName] = {
-      ...baseGuidance,
-      ...override,
-      inputsHtml: targetLinkedInputsHtml || override?.inputsHtml,
-      deliverablesHtml: targetLinkedDeliverablesHtml || override?.deliverablesHtml
-    };
+      const override = LEGACY_GUIDANCE_OVERRIDES[componentName];
+      const targetLinkedInputsHtml = buildLinkedInputsHtml(componentName, guidanceTarget);
+      const targetLinkedDeliverablesHtml = buildLinkedDeliverablesHtml(
+        componentName,
+        guidanceTarget
+      );
+      acc[componentName] = {
+        ...baseGuidance,
+        ...override,
+        inputsHtml: targetLinkedInputsHtml || override?.inputsHtml,
+        deliverablesHtml: targetLinkedDeliverablesHtml || override?.deliverablesHtml,
+      };
 
-    return acc;
-  }, {});
+      return acc;
+    },
+    {}
+  );
 }
 
 function buildMaturityReportData(
@@ -405,8 +440,8 @@ function buildMaturityReportData(
       justification: details[componentName]?.justification || '',
       notes: details[componentName]?.notes || '',
       links: details[componentName]?.links || [],
-      actionCount: details[componentName]?.actions.length || 0
-    }))
+      actionCount: details[componentName]?.actions.length || 0,
+    })),
   };
 }
 
@@ -422,13 +457,13 @@ function buildActionPlanReportData(
         text: a.text,
         owner: a.owner || '',
         status: normalizeActionStatus(a.status),
-        dueDate: a.dueDate || ''
+        dueDate: a.dueDate || '',
       }))
   );
   return {
     orgName: profile.org || 'Unknown organisation',
     projectName: profile.project,
-    rows
+    rows,
   };
 }
 
@@ -449,7 +484,7 @@ export function MaturityApp() {
     org: state.assessment.orgName || '',
     project: '',
     phase: '',
-    guidanceTarget: DEFAULT_GUIDANCE_TARGET
+    guidanceTarget: DEFAULT_GUIDANCE_TARGET,
   });
 
   const [responses, setResponses] = useState<Record<string, number>>(() =>
@@ -491,7 +526,9 @@ export function MaturityApp() {
       return;
     }
 
-    const summaryCanvas = container.querySelector('#actions-summary-chart') as HTMLCanvasElement | null;
+    const summaryCanvas = container.querySelector(
+      '#actions-summary-chart'
+    ) as HTMLCanvasElement | null;
     const radarCanvas = container.querySelector('#maturityRadar') as HTMLCanvasElement | null;
     if (!summaryCanvas || !radarCanvas) {
       return;
@@ -510,9 +547,8 @@ export function MaturityApp() {
     resizeCanvas(radarCanvas);
 
     const actions = Object.values(details).flatMap((detail) => detail.actions);
-    const summary = store.summaryView === 'status'
-      ? buildStatusSummary(actions)
-      : buildDueDateSummary(actions);
+    const summary =
+      store.summaryView === 'status' ? buildStatusSummary(actions) : buildDueDateSummary(actions);
 
     const summaryChart = createChart(
       'doughnut',
@@ -526,9 +562,9 @@ export function MaturityApp() {
             backgroundColor: summary.colors,
             borderColor: '#f0f4f5',
             borderWidth: 2,
-            hoverBorderWidth: 4
-          }
-        ]
+            hoverBorderWidth: 4,
+          },
+        ],
       },
       {
         cutout: '70%',
@@ -541,19 +577,20 @@ export function MaturityApp() {
             labels: {
               font: { size: 10 },
               boxWidth: 10,
-              padding: 10
-            }
+              padding: 10,
+            },
           },
           tooltip: {
             callbacks: {
-              label: (context: { label?: string; parsed?: number }) => `${context.label || ''}: ${context.parsed ?? 0}`
-            }
+              label: (context: { label?: string; parsed?: number }) =>
+                `${context.label || ''}: ${context.parsed ?? 0}`,
+            },
           },
           centerText: {
             text: String(summary.centerText),
-            subText: summary.centerSubText
-          }
-        }
+            subText: summary.centerSubText,
+          },
+        },
       }
     );
 
@@ -578,14 +615,15 @@ export function MaturityApp() {
             }),
             pointBorderColor: '#ffffff',
             pointRadius: 4,
-            pointHoverRadius: 6
+            pointHoverRadius: 6,
           },
           ...(projectProfile.phase && PHASE_EXPECTED_SCORES[projectProfile.phase]
             ? [
                 {
                   label: `Expected for ${projectProfile.phase}`,
                   data: componentList.map(
-                    (componentName) => PHASE_EXPECTED_SCORES[projectProfile.phase]?.[componentName] || 0
+                    (componentName) =>
+                      PHASE_EXPECTED_SCORES[projectProfile.phase]?.[componentName] || 0
                   ),
                   backgroundColor: 'rgba(118, 134, 146, 0.1)',
                   borderColor: 'rgba(78, 90, 97, 1)',
@@ -596,11 +634,11 @@ export function MaturityApp() {
                   pointRadius: 4,
                   pointHoverRadius: 7,
                   pointHoverBackgroundColor: '#fff',
-                  pointHoverBorderColor: 'rgba(78, 90, 97, 1)'
-                }
+                  pointHoverBorderColor: 'rgba(78, 90, 97, 1)',
+                },
               ]
-            : [])
-        ]
+            : []),
+        ],
       },
       {
         maintainAspectRatio: false,
@@ -610,16 +648,16 @@ export function MaturityApp() {
             top: 56,
             bottom: 56,
             left: 36,
-            right: 36
-          }
+            right: 36,
+          },
         },
         scales: {
           r: {
             pointLabels: {
-              padding: 24
-            }
-          }
-        }
+              padding: 24,
+            },
+          },
+        },
       }
     );
 
@@ -629,12 +667,9 @@ export function MaturityApp() {
     };
   }, [componentList, details, projectProfile.phase, responses, store.summaryView]);
 
-  const updateProjectProfile = useCallback(
-    (field: keyof ProjectProfile, value: string) => {
-      setProjectProfile((current) => ({ ...current, [field]: value }));
-    },
-    []
-  );
+  const updateProjectProfile = useCallback((field: keyof ProjectProfile, value: string) => {
+    setProjectProfile((current) => ({ ...current, [field]: value }));
+  }, []);
 
   const handleSaveClick = useCallback(() => {
     state.assessment.createdAt = new Date().toISOString();
@@ -645,11 +680,11 @@ export function MaturityApp() {
           {
             orgProfile: projectProfile,
             responses,
-            details
+            details,
           },
           null,
           2
-        )
+        ),
       ],
       { type: 'application/json' }
     );
@@ -692,13 +727,14 @@ export function MaturityApp() {
           return;
         }
         try {
-          const parsed = JSON.parse(text) as SavedMaturityAssessment | LegacySavedMaturityAssessment;
+          const parsed = JSON.parse(text) as
+            SavedMaturityAssessment | LegacySavedMaturityAssessment;
           const loaded = parseMaturityAssessment(parsed, componentList);
           setProjectProfile((current) => ({
             org: loaded.profile.org || current.org,
             project: loaded.profile.project || '',
             phase: loaded.profile.phase || '',
-            guidanceTarget: loaded.profile.guidanceTarget || DEFAULT_GUIDANCE_TARGET
+            guidanceTarget: loaded.profile.guidanceTarget || DEFAULT_GUIDANCE_TARGET,
           }));
           setResponses(loaded.responses);
           setDetails(loaded.details);
@@ -732,7 +768,7 @@ export function MaturityApp() {
   const handleDetailUpdate = useCallback((componentId: string, detail: ComponentDetail) => {
     setDetails((current) => ({
       ...current,
-      [componentId]: cloneDetail(detail)
+      [componentId]: cloneDetail(detail),
     }));
   }, []);
 
@@ -859,12 +895,14 @@ export function MaturityApp() {
           }}
           onSelectReport={(type) => {
             if (type === 'maturity') {
-              const canvas = overviewRef.current?.querySelector('#maturityRadar') as HTMLCanvasElement | null;
+              const canvas = overviewRef.current?.querySelector(
+                '#maturityRadar'
+              ) as HTMLCanvasElement | null;
               setReportChartImage(canvas?.toDataURL('image/png') ?? '');
             }
             setStore((current) => ({
               ...current,
-              modal: type === 'maturity' ? 'report' : 'actionPlanReport'
+              modal: type === 'maturity' ? 'report' : 'actionPlanReport',
             }));
           }}
           onExportCsv={(data) => {

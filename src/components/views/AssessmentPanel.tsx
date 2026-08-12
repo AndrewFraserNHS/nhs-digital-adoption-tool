@@ -6,7 +6,7 @@ import {
   DraftAction,
   deriveObjectiveStatus,
   type ActionTargetLink,
-  type ObjectiveStatus
+  type ObjectiveStatus,
 } from '@lib/adoptionState';
 import { AssessmentComponent } from '@data/components';
 import {
@@ -14,9 +14,9 @@ import {
   ACTION_TYPES,
   UNIFIED_ACTION_STATUSES,
   deriveTemporalActionStatus,
-  normalizeActionStatus
+  normalizeActionStatus,
 } from '@lib/actionModel';
-import { PHASE_NAMES } from '@types/constants';
+import { PHASE_NAMES } from '../../types/constants';
 
 type AssessmentPanelStore = AdoptionStore & {
   showMatrix?: Record<string, boolean>;
@@ -60,7 +60,9 @@ export interface AssessmentPanelProps {
   darkMode?: boolean;
 }
 
-const STATUS_OPTIONS = UNIFIED_ACTION_STATUSES.filter((status) => status !== 'Overdue start' && status !== 'Overdue completion');
+const STATUS_OPTIONS = UNIFIED_ACTION_STATUSES.filter(
+  (status) => status !== 'Overdue start' && status !== 'Overdue completion'
+);
 const SCORE_LEVELS = [0, 1, 2, 3, 4, 5];
 const SCORE_LABELS: Record<number, string> = {
   0: 'Not Started',
@@ -68,14 +70,14 @@ const SCORE_LABELS: Record<number, string> = {
   2: 'Developing',
   3: 'Embedding',
   4: 'Adopted',
-  5: 'Thriving'
+  5: 'Thriving',
 };
 
 const OBJECTIVE_STATUS_BADGE_STYLES: Record<ObjectiveStatus, string> = {
   'Not Started': 'bg-slate-100 text-slate-700 border-slate-200',
   'In Progress': 'bg-blue-100 text-blue-800 border-blue-200',
   Blocked: 'bg-amber-100 text-amber-800 border-amber-200',
-  Completed: 'bg-green-100 text-green-800 border-green-200'
+  Completed: 'bg-green-100 text-green-800 border-green-200',
 };
 
 const EVIDENCE_JSON_PREFIX = '__evidence_json__:';
@@ -111,15 +113,6 @@ function normalizeUrl(value: string): string {
   return trimmed;
 }
 
-function isHttpUrl(value: string): boolean {
-  try {
-    const parsed = new URL(value);
-    return parsed.protocol === 'http:' || parsed.protocol === 'https:';
-  } catch (_error) {
-    return false;
-  }
-}
-
 function parseEvidenceItems(evidenceValue: string): EvidenceItem[] {
   const raw = evidenceValue?.trim() || '';
   if (!raw) {
@@ -135,7 +128,7 @@ function parseEvidenceItems(evidenceValue: string): EvidenceItem[] {
             .map((item) => ({
               type: item.type,
               label: String(item.label || '').trim(),
-              href: String(item.href || '').trim()
+              href: String(item.href || '').trim(),
             }))
             .filter((item) => item.label || item.href)
         : [];
@@ -153,7 +146,7 @@ function parseEvidenceItems(evidenceValue: string): EvidenceItem[] {
       return {
         type: 'url' as const,
         label: line,
-        href
+        href,
       };
     });
 }
@@ -163,7 +156,7 @@ function serializeEvidenceItems(items: EvidenceItem[]): string {
     .map((item) => ({
       type: item.type,
       label: item.label.trim(),
-      href: item.href.trim()
+      href: item.href.trim(),
     }))
     .filter((item) => item.label || item.href);
 
@@ -192,7 +185,12 @@ function InfoIcon(): JSX.Element {
       viewBox="0 0 24 24"
       aria-hidden="true"
     >
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z"
+      />
     </svg>
   );
 }
@@ -206,8 +204,18 @@ function EyeIcon(): JSX.Element {
       viewBox="0 0 24 24"
       aria-hidden="true"
     >
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5s8.268 2.943 9.542 7c-1.274 4.057-5.065 7-9.542 7S3.732 16.057 2.458 12z" />
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+      />
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M2.458 12C3.732 7.943 7.523 5 12 5s8.268 2.943 9.542 7c-1.274 4.057-5.065 7-9.542 7S3.732 16.057 2.458 12z"
+      />
     </svg>
   );
 }
@@ -221,7 +229,12 @@ function EyeOffIcon(): JSX.Element {
       viewBox="0 0 24 24"
       aria-hidden="true"
     >
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.964 9.964 0 012.042-3.368m2.16-1.989A9.962 9.962 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.05 10.05 0 01-4.132 5.411M15 12a3 3 0 00-3-3m0 0a2.99 2.99 0 00-2.13.88M3 3l18 18" />
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.964 9.964 0 012.042-3.368m2.16-1.989A9.962 9.962 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.05 10.05 0 01-4.132 5.411M15 12a3 3 0 00-3-3m0 0a2.99 2.99 0 00-2.13.88M3 3l18 18"
+      />
     </svg>
   );
 }
@@ -235,7 +248,12 @@ function HeaderInfoIcon(): JSX.Element {
       viewBox="0 0 24 24"
       aria-hidden="true"
     >
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z"
+      />
     </svg>
   );
 }
@@ -253,7 +271,7 @@ function createEmptyAction(phase: number, componentId: string, lens: string): Dr
     dueDate: '',
     notes: '',
     evidence: '',
-    linkedTargets: [{ componentId, lens }]
+    linkedTargets: [{ componentId, lens }],
   };
 }
 
@@ -293,7 +311,7 @@ export function AssessmentPanel({
   onMatrixToggle,
   onActionRemove,
   onObjectivesUpdate,
-  darkMode = false
+  darkMode = false,
 }: AssessmentPanelProps): JSX.Element {
   const component = components.find((c) => c.id === activeComponentId) || components[0];
   const [actionEditor, setActionEditor] = useState<ActionEditorState | null>(null);
@@ -314,14 +332,22 @@ export function AssessmentPanel({
   }, [component.id, component.lenses, getEntry]);
 
   const totalLensActions = useMemo(
-    () => component.lenses.reduce((sum, lens) => sum + (getEntry(component.id, lens).actions || []).length, 0),
+    () =>
+      component.lenses.reduce(
+        (sum, lens) => sum + (getEntry(component.id, lens).actions || []).length,
+        0
+      ),
     [component.id, component.lenses, getEntry]
   );
 
   const completedLensActions = useMemo(
     () =>
       component.lenses.reduce(
-        (sum, lens) => sum + (getEntry(component.id, lens).actions || []).filter((action) => normalizeActionStatus(action.status) === 'Completed').length,
+        (sum, lens) =>
+          sum +
+          (getEntry(component.id, lens).actions || []).filter(
+            (action) => normalizeActionStatus(action.status) === 'Completed'
+          ).length,
         0
       ),
     [component.id, component.lenses, getEntry]
@@ -349,7 +375,9 @@ export function AssessmentPanel({
               sourceComponentId,
               sourceLens,
               action,
-              isLinkedView: !(target.componentId === sourceComponentId && target.lens === sourceLens)
+              isLinkedView: !(
+                target.componentId === sourceComponentId && target.lens === sourceLens
+              ),
             });
           });
         });
@@ -376,7 +404,10 @@ export function AssessmentPanel({
     if (!actionEditor) {
       return component.label;
     }
-    return components.find((item) => item.id === actionEditor.sourceComponentId)?.label || actionEditor.sourceComponentId;
+    return (
+      components.find((item) => item.id === actionEditor.sourceComponentId)?.label ||
+      actionEditor.sourceComponentId
+    );
   }, [actionEditor, component.label, components]);
 
   const actionEditorTitleSummary = useMemo(() => {
@@ -405,7 +436,9 @@ export function AssessmentPanel({
     }
 
     return activeObjective.linkedActions.map((link) => {
-      const action = (componentActionsByLens[link.lens] || []).find((candidate) => candidate.id === link.actionId);
+      const action = (componentActionsByLens[link.lens] || []).find(
+        (candidate) => candidate.id === link.actionId
+      );
       const status = action ? normalizeActionStatus(action.status) : null;
       const temporalStatus = action
         ? deriveTemporalActionStatus(action.status, action.startDate, action.dueDate)
@@ -414,7 +447,7 @@ export function AssessmentPanel({
         lens: link.lens,
         action,
         status,
-        temporalStatus
+        temporalStatus,
       };
     });
   }, [activeObjective, componentActionsByLens]);
@@ -431,7 +464,7 @@ export function AssessmentPanel({
       const entry = getEntry(component.id, lens);
       onEntryUpdate(component.id, lens, {
         ...entry,
-        score: newScore
+        score: newScore,
       });
     },
     [component.id, getEntry, onEntryUpdate]
@@ -443,7 +476,7 @@ export function AssessmentPanel({
         const entry = getEntry(component.id, lens);
         onEntryUpdate(component.id, lens, {
           ...entry,
-          justification: value
+          justification: value,
         });
       });
     },
@@ -464,40 +497,44 @@ export function AssessmentPanel({
         evidenceItems: parseEvidenceItems(seeded.evidence || ''),
         linkedObjectiveIds: [],
         targetPickerComponentId: component.id,
-        targetPickerLens: lens
+        targetPickerLens: lens,
       });
     },
     [component.id, component.phase]
   );
 
-  const openEditActionModal = useCallback((sourceComponentId: string, sourceLens: string, action: DraftAction) => {
-    const normalizedTargets = getNormalizedTargets(action, sourceComponentId, sourceLens);
-    const firstTarget = normalizedTargets[0] || { componentId: sourceComponentId, lens: sourceLens };
-    const linkedObjectiveIds = (store.objectives?.[sourceComponentId] || [])
-      .filter((objective) =>
-        objective.linkedActions.some((link) => link.actionId === action.id)
-      )
-      .map((objective) => objective.id);
+  const openEditActionModal = useCallback(
+    (sourceComponentId: string, sourceLens: string, action: DraftAction) => {
+      const normalizedTargets = getNormalizedTargets(action, sourceComponentId, sourceLens);
+      const firstTarget = normalizedTargets[0] || {
+        componentId: sourceComponentId,
+        lens: sourceLens,
+      };
+      const linkedObjectiveIds = (store.objectives?.[sourceComponentId] || [])
+        .filter((objective) => objective.linkedActions.some((link) => link.actionId === action.id))
+        .map((objective) => objective.id);
 
-    setActionEditor({
-      sourceComponentId,
-      sourceLens,
-      mode: 'edit',
-      actionId: action.id,
-      action: {
-        ...action,
-        linkedTargets: normalizedTargets,
-        notes: action.notes || '',
-        evidence: action.evidence || '',
-        startDate: action.startDate || '',
-        dueDate: action.dueDate || ''
-      },
-      evidenceItems: parseEvidenceItems(action.evidence || ''),
-      linkedObjectiveIds,
-      targetPickerComponentId: firstTarget.componentId,
-      targetPickerLens: firstTarget.lens
-    });
-  }, [store.objectives]);
+      setActionEditor({
+        sourceComponentId,
+        sourceLens,
+        mode: 'edit',
+        actionId: action.id,
+        action: {
+          ...action,
+          linkedTargets: normalizedTargets,
+          notes: action.notes || '',
+          evidence: action.evidence || '',
+          startDate: action.startDate || '',
+          dueDate: action.dueDate || '',
+        },
+        evidenceItems: parseEvidenceItems(action.evidence || ''),
+        linkedObjectiveIds,
+        targetPickerComponentId: firstTarget.componentId,
+        targetPickerLens: firstTarget.lens,
+      });
+    },
+    [store.objectives]
+  );
 
   const closeActionModal = () => {
     setActionEditor(null);
@@ -522,18 +559,23 @@ export function AssessmentPanel({
         actionEditor.sourceComponentId,
         actionEditor.sourceLens
       ),
-      timescale: actionEditor.action.dueDate || actionEditor.action.startDate || actionEditor.action.timescale
+      timescale:
+        actionEditor.action.dueDate ||
+        actionEditor.action.startDate ||
+        actionEditor.action.timescale,
     };
 
     const entry = getEntry(actionEditor.sourceComponentId, actionEditor.sourceLens);
     const nextActions =
       actionEditor.mode === 'create'
         ? [...entry.actions, normalizedAction]
-        : entry.actions.map((item) => (item.id === actionEditor.actionId ? normalizedAction : item));
+        : entry.actions.map((item) =>
+            item.id === actionEditor.actionId ? normalizedAction : item
+          );
 
     onEntryUpdate(actionEditor.sourceComponentId, actionEditor.sourceLens, {
       ...entry,
-      actions: nextActions
+      actions: nextActions,
     });
 
     const selectedObjectiveIds = new Set(actionEditor.linkedObjectiveIds);
@@ -546,13 +588,16 @@ export function AssessmentPanel({
       if (selectedObjectiveIds.has(objective.id)) {
         return {
           ...objective,
-          linkedActions: [...linksWithoutThisAction, { lens: actionEditor.sourceLens, actionId: normalizedAction.id }]
+          linkedActions: [
+            ...linksWithoutThisAction,
+            { lens: actionEditor.sourceLens, actionId: normalizedAction.id },
+          ],
         };
       }
 
       return {
         ...objective,
-        linkedActions: linksWithoutThisAction
+        linkedActions: linksWithoutThisAction,
       };
     });
 
@@ -570,8 +615,8 @@ export function AssessmentPanel({
         ...current,
         action: {
           ...current.action,
-          ...updates
-        }
+          ...updates,
+        },
       };
       next.action.status = normalizeActionStatus(next.action.status);
       return next;
@@ -586,7 +631,7 @@ export function AssessmentPanel({
       return {
         ...current,
         targetPickerComponentId: componentId,
-        targetPickerLens: lens
+        targetPickerLens: lens,
       };
     });
   };
@@ -612,7 +657,11 @@ export function AssessmentPanel({
         current.sourceLens
       );
 
-      if (existingTargets.some((target) => target.componentId === componentOption.id && target.lens === lensOption)) {
+      if (
+        existingTargets.some(
+          (target) => target.componentId === componentOption.id && target.lens === lensOption
+        )
+      ) {
         return current;
       }
 
@@ -620,8 +669,11 @@ export function AssessmentPanel({
         ...current,
         action: {
           ...current.action,
-          linkedTargets: [...existingTargets, { componentId: componentOption.id, lens: lensOption }]
-        }
+          linkedTargets: [
+            ...existingTargets,
+            { componentId: componentOption.id, lens: lensOption },
+          ],
+        },
       };
     });
   };
@@ -637,14 +689,16 @@ export function AssessmentPanel({
         current.sourceComponentId,
         current.sourceLens
       );
-      const nextTargets = existingTargets.filter((target) => !(target.componentId === componentId && target.lens === lens));
+      const nextTargets = existingTargets.filter(
+        (target) => !(target.componentId === componentId && target.lens === lens)
+      );
 
       return {
         ...current,
         action: {
           ...current.action,
-          linkedTargets: nextTargets
-        }
+          linkedTargets: nextTargets,
+        },
       };
     });
   };
@@ -664,7 +718,7 @@ export function AssessmentPanel({
 
       return {
         ...current,
-        linkedObjectiveIds: Array.from(selected)
+        linkedObjectiveIds: Array.from(selected),
       };
     });
   };
@@ -676,7 +730,7 @@ export function AssessmentPanel({
       }
       return {
         ...current,
-        evidenceItems: nextItems
+        evidenceItems: nextItems,
       };
     });
   };
@@ -738,7 +792,7 @@ export function AssessmentPanel({
         next.push({
           type: 'file',
           label: file.name,
-          href: dataUrl
+          href: dataUrl,
         });
       } catch (_error) {
         window.alert(`Unable to upload "${file.name}".`);
@@ -757,7 +811,9 @@ export function AssessmentPanel({
     openEditActionModal(component.id, lens, action);
   };
 
-  const scrollToSection = (sectionId: 'assessment-scoring' | 'assessment-objectives' | 'assessment-actions') => {
+  const scrollToSection = (
+    sectionId: 'assessment-scoring' | 'assessment-objectives' | 'assessment-actions'
+  ) => {
     const target = document.getElementById(sectionId);
     target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
@@ -766,14 +822,17 @@ export function AssessmentPanel({
     <div className="max-w-5xl mx-auto pb-20">
       <div className="mb-8 flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <h2 className={`text-3xl font-bold flex items-center ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
+          <h2
+            className={`text-3xl font-bold flex items-center ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+          >
             {component.label}
             <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded ml-4 border border-blue-200">
               {PHASE_NAMES[component.phase] || `Phase ${component.phase}`}
             </span>
           </h2>
           <p className={`mt-2 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-            Score readiness at lens level. Component-level justification, outcomes, and actions are tracked below.
+            Score readiness at lens level. Component-level justification, outcomes, and actions are
+            tracked below.
           </p>
         </div>
         <select
@@ -789,8 +848,14 @@ export function AssessmentPanel({
         </select>
       </div>
 
-      <div className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} mb-6 rounded-lg border p-4`}>
-        <p className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>Guided workflow</p>
+      <div
+        className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} mb-6 rounded-lg border p-4`}
+      >
+        <p
+          className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+        >
+          Guided workflow
+        </p>
         <div className="mt-2 flex flex-wrap gap-2">
           <button
             type="button"
@@ -816,14 +881,23 @@ export function AssessmentPanel({
         </div>
       </div>
 
-      <div className={`mb-6 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium ${darkMode ? 'border-emerald-500/40 bg-emerald-500/15 text-emerald-200' : 'border-emerald-200 bg-emerald-50 text-emerald-800'}`}>
+      <div
+        className={`mb-6 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium ${darkMode ? 'border-emerald-500/40 bg-emerald-500/15 text-emerald-200' : 'border-emerald-200 bg-emerald-50 text-emerald-800'}`}
+      >
         <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" aria-hidden="true" />
         Auto-save is on for scoring and component notes.
       </div>
 
-      <div id="assessment-scoring" className={`${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'} mb-8 rounded-lg border p-5`}>
+      <div
+        id="assessment-scoring"
+        className={`${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'} mb-8 rounded-lg border p-5`}
+      >
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <h3 className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>{hasAnyScoreForComponent ? 'Step 1: Justify' : 'Step 1: Justification of what is currently known'}</h3>
+          <h3 className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
+            {hasAnyScoreForComponent
+              ? 'Step 1: Justify'
+              : 'Step 1: Justification of what is currently known'}
+          </h3>
           <button
             type="button"
             onClick={() => setShowScoringSection((current) => !current)}
@@ -834,10 +908,16 @@ export function AssessmentPanel({
         </div>
         {showScoringSection ? (
           <>
-            <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>Component Justification</label>
+            <label
+              className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}
+            >
+              Component Justification
+            </label>
             <p className={`text-xs mb-2 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-              Explain why this component is scored as it is, what evidence supports that view, and where the biggest gap sits.
-              Example: "Score is 2 because sponsorship is visible only in two services; no monthly steering update yet; next step is to agree a trust-wide sponsor cadence."
+              Explain why this component is scored as it is, what evidence supports that view, and
+              where the biggest gap sits. Example: "Score is 2 because sponsorship is visible only
+              in two services; no monthly steering update yet; next step is to agree a trust-wide
+              sponsor cadence."
             </p>
             <textarea
               value={componentJustification}
@@ -849,9 +929,14 @@ export function AssessmentPanel({
         ) : null}
       </div>
 
-      <div id="assessment-objectives" className={`${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'} mb-8 rounded-lg border p-5`}>
+      <div
+        id="assessment-objectives"
+        className={`${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'} mb-8 rounded-lg border p-5`}
+      >
         <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
-          <h3 className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>Step 2: Review outcomes</h3>
+          <h3 className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
+            Step 2: Review outcomes
+          </h3>
           <button
             type="button"
             onClick={() => setShowObjectivesSection((current) => !current)}
@@ -861,19 +946,27 @@ export function AssessmentPanel({
           </button>
         </div>
         <p className={`text-xs mb-3 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-          Owned by this component as a whole. Status is derived automatically from the lens actions assigned to
-          each outcome below and cannot be set manually.
+          Owned by this component as a whole. Status is derived automatically from the lens actions
+          assigned to each outcome below and cannot be set manually.
         </p>
 
         {showObjectivesSection ? (
           objectives.length ? (
             <div className="overflow-x-auto rounded-md border border-slate-200">
-              <table className={`min-w-full ${darkMode ? 'divide-slate-700 bg-slate-800' : 'divide-slate-200 bg-white'} divide-y`}>
+              <table
+                className={`min-w-full ${darkMode ? 'divide-slate-700 bg-slate-800' : 'divide-slate-200 bg-white'} divide-y`}
+              >
                 <thead className={darkMode ? 'bg-slate-900' : 'bg-slate-50'}>
                   <tr>
-                    <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Description</th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Status</th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Linked Actions</th>
+                    <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                      Description
+                    </th>
+                    <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                      Status
+                    </th>
+                    <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                      Linked Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody className={`${darkMode ? 'divide-slate-700' : 'divide-slate-100'} divide-y`}>
@@ -894,13 +987,21 @@ export function AssessmentPanel({
                         tabIndex={0}
                         className={`${darkMode ? 'hover:bg-slate-700 focus-visible:bg-slate-700' : 'hover:bg-slate-50 focus-visible:bg-slate-50'} cursor-pointer focus:outline-none`}
                       >
-                        <td className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>{objective.text || 'Untitled outcome'}</td>
+                        <td
+                          className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+                        >
+                          {objective.text || 'Untitled outcome'}
+                        </td>
                         <td className="px-3 py-2">
-                          <span className={`inline-flex min-w-[7.5rem] items-center justify-center whitespace-nowrap rounded-full border px-3 py-1 text-center text-xs font-semibold ${badgeStyle}`}>
+                          <span
+                            className={`inline-flex min-w-[7.5rem] items-center justify-center whitespace-nowrap rounded-full border px-3 py-1 text-center text-xs font-semibold ${badgeStyle}`}
+                          >
                             {status}
                           </span>
                         </td>
-                        <td className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                        <td
+                          className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+                        >
                           {objective.linkedActions.length
                             ? `${objective.linkedActions.length} action(s)`
                             : 'None assigned'}
@@ -917,14 +1018,26 @@ export function AssessmentPanel({
         ) : null}
       </div>
 
-      <div id="assessment-actions" className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} mb-3 rounded-lg border p-4`}>
+      <div
+        id="assessment-actions"
+        className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} mb-3 rounded-lg border p-4`}
+      >
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
-            <h3 className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>Step 3: Plan lens actions</h3>
-            <p className={`mt-1 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>Track delivery actions for each lens and link them to outcomes and affected component lenses.</p>
+            <h3
+              className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+            >
+              Step 3: Plan lens actions
+            </h3>
+            <p className={`mt-1 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+              Track delivery actions for each lens and link them to outcomes and affected component
+              lenses.
+            </p>
           </div>
           <div className="flex items-center gap-2">
-            <span className={`${darkMode ? 'bg-slate-800 border-slate-600 text-slate-100' : 'bg-white border-slate-300 text-slate-700'} rounded-full border px-2 py-1 text-xs`}>
+            <span
+              className={`${darkMode ? 'bg-slate-800 border-slate-600 text-slate-100' : 'bg-white border-slate-300 text-slate-700'} rounded-full border px-2 py-1 text-xs`}
+            >
               {completedLensActions}/{totalLensActions} completed
             </span>
             <button
@@ -938,221 +1051,337 @@ export function AssessmentPanel({
         </div>
       </div>
 
-      {showActionsSection ? <div className="space-y-8">
-        {component.lenses.map((lens) => {
-          const entry = getEntry(component.id, lens);
-          const showMatrix = !!store.showMatrix?.[`${component.id}:${lens}`];
-          const lensActionTypeFilter = lensActionTypeFilters[`${component.id}:${lens}`] || 'all';
-          const lensActionTypeOptions = Array.from(
-            new Set(
-              (actionsByTarget[`${component.id}:${lens}`] || [])
-                .map((resolvedAction) => resolvedAction.action.actionType)
-                .filter((actionType): actionType is Exclude<DraftAction['actionType'], undefined> => actionType !== undefined)
-            )
-          ).sort((left, right) => String(left).localeCompare(String(right)));
-          const lensActions = [...(actionsByTarget[`${component.id}:${lens}`] || [])]
-            .filter((resolvedAction) => lensActionTypeFilter === 'all' || (resolvedAction.action.actionType || '') === lensActionTypeFilter)
-            .sort((left, right) => {
-            const leftCompleted = normalizeActionStatus(left.action.status) === 'Completed';
-            const rightCompleted = normalizeActionStatus(right.action.status) === 'Completed';
-            if (leftCompleted !== rightCompleted) {
-              return leftCompleted ? 1 : -1;
-            }
+      {showActionsSection ? (
+        <div className="space-y-8">
+          {component.lenses.map((lens) => {
+            const entry = getEntry(component.id, lens);
+            const showMatrix = !!store.showMatrix?.[`${component.id}:${lens}`];
+            const lensActionTypeFilter = lensActionTypeFilters[`${component.id}:${lens}`] || 'all';
+            const lensActionTypeOptions = Array.from(
+              new Set(
+                (actionsByTarget[`${component.id}:${lens}`] || [])
+                  .map((resolvedAction) => resolvedAction.action.actionType)
+                  .filter(
+                    (actionType): actionType is Exclude<DraftAction['actionType'], undefined> =>
+                      actionType !== undefined
+                  )
+              )
+            ).sort((left, right) => String(left).localeCompare(String(right)));
+            const lensActions = [...(actionsByTarget[`${component.id}:${lens}`] || [])]
+              .filter(
+                (resolvedAction) =>
+                  lensActionTypeFilter === 'all' ||
+                  (resolvedAction.action.actionType || '') === lensActionTypeFilter
+              )
+              .sort((left, right) => {
+                const leftCompleted = normalizeActionStatus(left.action.status) === 'Completed';
+                const rightCompleted = normalizeActionStatus(right.action.status) === 'Completed';
+                if (leftCompleted !== rightCompleted) {
+                  return leftCompleted ? 1 : -1;
+                }
 
-            const leftDue = left.action.dueDate ? new Date(left.action.dueDate).getTime() : Number.POSITIVE_INFINITY;
-            const rightDue = right.action.dueDate ? new Date(right.action.dueDate).getTime() : Number.POSITIVE_INFINITY;
-            return leftDue - rightDue;
-            });
-          const borderColor =
-            entry.score >= component.target ? '#22c55e' : entry.score > 0 ? '#f59e0b' : '#cbd5e1';
+                const leftDue = left.action.dueDate
+                  ? new Date(left.action.dueDate).getTime()
+                  : Number.POSITIVE_INFINITY;
+                const rightDue = right.action.dueDate
+                  ? new Date(right.action.dueDate).getTime()
+                  : Number.POSITIVE_INFINITY;
+                return leftDue - rightDue;
+              });
+            const borderColor =
+              entry.score >= component.target ? '#22c55e' : entry.score > 0 ? '#f59e0b' : '#cbd5e1';
 
-          return (
-            <div key={lens} className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border overflow-hidden`}>
-              <div className={`${darkMode ? 'bg-slate-900 border-slate-700' : 'bg-slate-50 border-slate-200'} p-6 border-b flex flex-col md:flex-row justify-between items-start md:items-center gap-4`}>
-                <div>
-                  <span className="text-sm font-bold uppercase tracking-wider text-blue-600 block mb-1">Lens</span>
-                  <button
-                    onClick={() => onOpenLensInfo(lens)}
-                    className={`flex items-center text-2xl font-semibold transition-colors group text-left ${darkMode ? 'text-slate-100 hover:text-[#63b3ff]' : 'text-slate-800 hover:text-[#005eb8]'}`}
-                    title="View Lens Information"
-                  >
-                    {lens}
-                    <HeaderInfoIcon />
-                  </button>
-                </div>
-                <div className="shrink-0 w-full md:w-64">
-                  <label className={`block text-xs font-semibold mb-1 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>Readiness Score</label>
-                  <select
-                    value={entry.score}
-                    onChange={(e) => handleScoreChange(lens, Number(e.target.value))}
-                    className={`w-full rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 text-sm font-medium border ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
-                    style={{ borderLeftWidth: '4px', borderLeftColor: borderColor }}
-                  >
-                    {SCORE_LEVELS.map((level) => (
-                      <option key={level} value={level}>
-                        {level} - {SCORE_LABELS[level]}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className={`${darkMode ? 'bg-slate-900 border-slate-700' : 'bg-blue-50/50 border-slate-100'} px-6 py-4 border-b text-sm`}>
-                <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
-                  <div className="flex items-start flex-1">
-                    <InfoIcon />
-                    <p className={`whitespace-pre-line ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-                      <strong className={darkMode ? 'text-slate-100' : 'text-slate-700'}>
-                        {entry.score === 0 ? 'Not Started' : `Level ${entry.score}`}: 
-                      </strong>
-                      {getRubricText(component.id, lens, entry.score)}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => onMatrixToggle(`${component.id}:${lens}`)}
-                    className={`${darkMode ? 'bg-slate-800 border-slate-600 text-[#63b3ff] hover:text-[#90cdf4]' : 'bg-white border-blue-200 text-[#005eb8] hover:text-blue-800'} shrink-0 text-xs font-semibold flex items-center px-3 py-1.5 border rounded shadow-sm transition-colors`}
-                  >
-                    {showMatrix ? <EyeOffIcon /> : <EyeIcon />}
-                    {showMatrix ? 'Hide Full Guidance' : 'View Full Guidance'}
-                  </button>
-                </div>
-              </div>
-
-              {showMatrix && (
-                <div className={`${darkMode ? 'bg-slate-900 border-slate-700' : 'bg-slate-50 border-slate-200'} px-6 py-5 border-b`}>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-                    {SCORE_LEVELS.map((level) => {
-                      const bgColors: Record<number, string> = {
-                        0: 'bg-white',
-                        1: 'bg-rose-50',
-                        2: 'bg-orange-50',
-                        3: 'bg-yellow-50',
-                        4: 'bg-green-50',
-                        5: 'bg-blue-50'
-                      };
-                      const baseBg = bgColors[level] || 'bg-white';
-
-                      return (
-                        <button
-                          key={level}
-                          onClick={() => handleScoreChange(lens, level)}
-                          className={`p-4 rounded-lg border shadow-sm text-left transition-colors h-full flex flex-col items-start justify-start ${
-                            entry.score === level
-                              ? `${baseBg} border-[#005eb8] ring-1 ring-[#005eb8]`
-                              : `${baseBg} border-slate-200 hover:border-blue-300`
-                          }`}
-                        >
-                          <div
-                            className={`text-sm font-bold mb-2 pb-2 border-b w-full ${
-                              entry.score === level
-                                ? 'text-[#005eb8] border-blue-200'
-                                : 'text-slate-700 border-slate-100'
-                            }`}
-                          >
-                            {level === 0 ? 'Not Started' : `Level ${level}`}
-                          </div>
-                          <p className={`text-xs whitespace-pre-line leading-relaxed text-left w-full ${darkMode ? 'text-slate-200' : 'text-slate-600'}`}>
-                            {getRubricText(component.id, lens, level)}
-                          </p>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              <div className={`${darkMode ? 'border-slate-700' : 'border-slate-100'} p-6 border-t`}>
-                <div className="flex items-center justify-between mb-3">
+            return (
+              <div
+                key={lens}
+                className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border overflow-hidden`}
+              >
+                <div
+                  className={`${darkMode ? 'bg-slate-900 border-slate-700' : 'bg-slate-50 border-slate-200'} p-6 border-b flex flex-col md:flex-row justify-between items-start md:items-center gap-4`}
+                >
                   <div>
-                    <h4 className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>Lens Actions</h4>
-                    <p className={`mt-1 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-                      Hierarchy: Outcome - Action - Affected component lenses.
-                    </p>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <select
-                      aria-label={`Filter ${lens} actions by type`}
-                      value={lensActionTypeFilter}
-                      onChange={(event) => setLensActionTypeFilters((current) => ({
-                        ...current,
-                        [`${component.id}:${lens}`]: event.target.value
-                      }))}
-                      className={`rounded-md border px-2.5 py-1.5 text-xs font-semibold ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-700'}`}
+                    <span className="text-sm font-bold uppercase tracking-wider text-blue-600 block mb-1">
+                      Lens
+                    </span>
+                    <button
+                      onClick={() => onOpenLensInfo(lens)}
+                      className={`flex items-center text-2xl font-semibold transition-colors group text-left ${darkMode ? 'text-slate-100 hover:text-[#63b3ff]' : 'text-slate-800 hover:text-[#005eb8]'}`}
+                      title="View Lens Information"
                     >
-                      <option value="all">All action types</option>
-                      {[...new Set([...ACTION_TYPES, ...lensActionTypeOptions])].map((actionType) => (
-                        <option key={actionType} value={actionType}>{actionType}</option>
+                      {lens}
+                      <HeaderInfoIcon />
+                    </button>
+                  </div>
+                  <div className="shrink-0 w-full md:w-64">
+                    <label
+                      className={`block text-xs font-semibold mb-1 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
+                    >
+                      Readiness Score
+                    </label>
+                    <select
+                      value={entry.score}
+                      onChange={(e) => handleScoreChange(lens, Number(e.target.value))}
+                      className={`w-full rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 text-sm font-medium border ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
+                      style={{ borderLeftWidth: '4px', borderLeftColor: borderColor }}
+                    >
+                      {SCORE_LEVELS.map((level) => (
+                        <option key={level} value={level}>
+                          {level} - {SCORE_LABELS[level]}
+                        </option>
                       ))}
                     </select>
+                  </div>
+                </div>
+
+                <div
+                  className={`${darkMode ? 'bg-slate-900 border-slate-700' : 'bg-blue-50/50 border-slate-100'} px-6 py-4 border-b text-sm`}
+                >
+                  <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+                    <div className="flex items-start flex-1">
+                      <InfoIcon />
+                      <p
+                        className={`whitespace-pre-line ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+                      >
+                        <strong className={darkMode ? 'text-slate-100' : 'text-slate-700'}>
+                          {entry.score === 0 ? 'Not Started' : `Level ${entry.score}`}:
+                        </strong>
+                        {getRubricText(component.id, lens, entry.score)}
+                      </p>
+                    </div>
                     <button
-                      onClick={() => openCreateActionModal(lens)}
-                      className="px-3 py-1.5 rounded bg-[#005eb8] text-white text-xs font-semibold shadow-[0_2px_0_#003087] hover:bg-[#00417a] transition-colors focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2"
+                      onClick={() => onMatrixToggle(`${component.id}:${lens}`)}
+                      className={`${darkMode ? 'bg-slate-800 border-slate-600 text-[#63b3ff] hover:text-[#90cdf4]' : 'bg-white border-blue-200 text-[#005eb8] hover:text-blue-800'} shrink-0 text-xs font-semibold flex items-center px-3 py-1.5 border rounded shadow-sm transition-colors`}
                     >
-                      Add Action
+                      {showMatrix ? <EyeOffIcon /> : <EyeIcon />}
+                      {showMatrix ? 'Hide Full Guidance' : 'View Full Guidance'}
                     </button>
                   </div>
                 </div>
 
-                {lensActions.length ? (
-                  <div className="overflow-x-auto rounded-md border border-slate-200">
-                    <table className={`min-w-full ${darkMode ? 'divide-slate-700 bg-slate-800' : 'divide-slate-200 bg-white'} divide-y`}>
-                      <thead className={darkMode ? 'bg-slate-900' : 'bg-slate-50'}>
-                        <tr>
-                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Description</th>
-                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Current State</th>
-                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Action Type</th>
-                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Owner</th>
-                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Start</th>
-                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">End</th>
-                          {/* <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Notes</th> */}
-                          {/* <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Evidence</th> */}
-                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Affected Component Lenses</th>
-                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody className={`${darkMode ? 'divide-slate-700' : 'divide-slate-100'} divide-y`}>
-                        {(expandedLensActions[`${component.id}:${lens}`]
-                          ? lensActions
-                          : lensActions.slice(0, 5)
-                        ).map((resolvedAction) => {
-                          const action = resolvedAction.action;
-                          const displayStatus = normalizeActionStatus(action.status);
-                          const temporalStatus = deriveTemporalActionStatus(action.status, action.startDate, action.dueDate);
-                          const temporalHint =
-                            temporalStatus === 'Overdue start' || temporalStatus === 'Overdue completion'
-                              ? temporalStatus
-                              : null;
-                          const sourceComponentLabel = componentById[resolvedAction.sourceComponentId]?.label || resolvedAction.sourceComponentId;
-                          const linkedOutcomes = getActionOutcomeLinks(resolvedAction.sourceComponentId, action.id, store.objectives || {});
-                          const linkedTargets = getNormalizedTargets(action, resolvedAction.sourceComponentId, resolvedAction.sourceLens)
-                            .map((target) => `${componentById[target.componentId]?.label || target.componentId} / ${target.lens}`)
-                            .join(', ');
-                          const badgeStyle = ACTION_STATUS_BADGE_STYLES[displayStatus] || ACTION_STATUS_BADGE_STYLES.Planned;
+                {showMatrix && (
+                  <div
+                    className={`${darkMode ? 'bg-slate-900 border-slate-700' : 'bg-slate-50 border-slate-200'} px-6 py-5 border-b`}
+                  >
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+                      {SCORE_LEVELS.map((level) => {
+                        const bgColors: Record<number, string> = {
+                          0: 'bg-white',
+                          1: 'bg-rose-50',
+                          2: 'bg-orange-50',
+                          3: 'bg-yellow-50',
+                          4: 'bg-green-50',
+                          5: 'bg-blue-50',
+                        };
+                        const baseBg = bgColors[level] || 'bg-white';
 
-                          return (
-                            <tr key={`${resolvedAction.sourceComponentId}:${resolvedAction.sourceLens}:${action.id}`}>
-                              <td className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
-                                <div>{action.text || 'Untitled action'}</div>
-                                {resolvedAction.isLinkedView ? (
-                                  <div className={`mt-1 text-xs ${darkMode ? 'text-indigo-300' : 'text-indigo-700'}`}>
-                                    Linked from {sourceComponentLabel} / {resolvedAction.sourceLens}
-                                  </div>
-                                ) : null}
-                              </td>
-                              <td className="px-3 py-2">
-                                <span className={`inline-flex min-w-[7.5rem] items-center justify-center whitespace-nowrap rounded-full border px-3 py-1 text-center text-xs font-semibold ${badgeStyle}`}>
-                                  {displayStatus}
-                                </span>
-                                {temporalHint ? <div className="mt-1 text-xs text-rose-700">{temporalHint}</div> : null}
-                                {!linkedOutcomes.length && (
-                                  <div className={`mt-1 text-xs ${darkMode ? 'text-amber-200' : 'text-amber-700'}`}>Not yet linked</div>
-                                )}
-                              </td>
-                              <td className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>{action.actionType || 'Unassigned'}</td>
-                              <td className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>{action.owner || 'Unassigned'}</td>
-                              <td className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>{action.startDate || '-'}</td>
-                              <td className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>{action.dueDate || '-'}</td>
-                              {/* <td className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>{action.notes || '-'}</td>
+                        return (
+                          <button
+                            key={level}
+                            onClick={() => handleScoreChange(lens, level)}
+                            className={`p-4 rounded-lg border shadow-sm text-left transition-colors h-full flex flex-col items-start justify-start ${
+                              entry.score === level
+                                ? `${baseBg} border-[#005eb8] ring-1 ring-[#005eb8]`
+                                : `${baseBg} border-slate-200 hover:border-blue-300`
+                            }`}
+                          >
+                            <div
+                              className={`text-sm font-bold mb-2 pb-2 border-b w-full ${
+                                entry.score === level
+                                  ? 'text-[#005eb8] border-blue-200'
+                                  : 'text-slate-700 border-slate-100'
+                              }`}
+                            >
+                              {level === 0 ? 'Not Started' : `Level ${level}`}
+                            </div>
+                            <p
+                              className={`text-xs whitespace-pre-line leading-relaxed text-left w-full ${darkMode ? 'text-slate-200' : 'text-slate-600'}`}
+                            >
+                              {getRubricText(component.id, lens, level)}
+                            </p>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                <div
+                  className={`${darkMode ? 'border-slate-700' : 'border-slate-100'} p-6 border-t`}
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <div>
+                      <h4
+                        className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+                      >
+                        Lens Actions
+                      </h4>
+                      <p
+                        className={`mt-1 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
+                      >
+                        Hierarchy: Outcome - Action - Affected component lenses.
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <select
+                        aria-label={`Filter ${lens} actions by type`}
+                        value={lensActionTypeFilter}
+                        onChange={(event) =>
+                          setLensActionTypeFilters((current) => ({
+                            ...current,
+                            [`${component.id}:${lens}`]: event.target.value,
+                          }))
+                        }
+                        className={`rounded-md border px-2.5 py-1.5 text-xs font-semibold ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-700'}`}
+                      >
+                        <option value="all">All action types</option>
+                        {[...new Set([...ACTION_TYPES, ...lensActionTypeOptions])].map(
+                          (actionType) => (
+                            <option key={actionType} value={actionType}>
+                              {actionType}
+                            </option>
+                          )
+                        )}
+                      </select>
+                      <button
+                        onClick={() => openCreateActionModal(lens)}
+                        className="px-3 py-1.5 rounded bg-[#005eb8] text-white text-xs font-semibold shadow-[0_2px_0_#003087] hover:bg-[#00417a] transition-colors focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2"
+                      >
+                        Add Action
+                      </button>
+                    </div>
+                  </div>
+
+                  {lensActions.length ? (
+                    <div className="overflow-x-auto rounded-md border border-slate-200">
+                      <table
+                        className={`min-w-full ${darkMode ? 'divide-slate-700 bg-slate-800' : 'divide-slate-200 bg-white'} divide-y`}
+                      >
+                        <thead className={darkMode ? 'bg-slate-900' : 'bg-slate-50'}>
+                          <tr>
+                            <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                              Description
+                            </th>
+                            <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                              Current State
+                            </th>
+                            <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                              Action Type
+                            </th>
+                            <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                              Owner
+                            </th>
+                            <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                              Start
+                            </th>
+                            <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                              End
+                            </th>
+                            {/* <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Notes</th> */}
+                            {/* <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Evidence</th> */}
+                            <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                              Affected Component Lenses
+                            </th>
+                            <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                              Actions
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody
+                          className={`${darkMode ? 'divide-slate-700' : 'divide-slate-100'} divide-y`}
+                        >
+                          {(expandedLensActions[`${component.id}:${lens}`]
+                            ? lensActions
+                            : lensActions.slice(0, 5)
+                          ).map((resolvedAction) => {
+                            const action = resolvedAction.action;
+                            const displayStatus = normalizeActionStatus(action.status);
+                            const temporalStatus = deriveTemporalActionStatus(
+                              action.status,
+                              action.startDate,
+                              action.dueDate
+                            );
+                            const temporalHint =
+                              temporalStatus === 'Overdue start' ||
+                              temporalStatus === 'Overdue completion'
+                                ? temporalStatus
+                                : null;
+                            const sourceComponentLabel =
+                              componentById[resolvedAction.sourceComponentId]?.label ||
+                              resolvedAction.sourceComponentId;
+                            const linkedOutcomes = getActionOutcomeLinks(
+                              resolvedAction.sourceComponentId,
+                              action.id,
+                              store.objectives || {}
+                            );
+                            const linkedTargets = getNormalizedTargets(
+                              action,
+                              resolvedAction.sourceComponentId,
+                              resolvedAction.sourceLens
+                            )
+                              .map(
+                                (target) =>
+                                  `${componentById[target.componentId]?.label || target.componentId} / ${target.lens}`
+                              )
+                              .join(', ');
+                            const badgeStyle =
+                              ACTION_STATUS_BADGE_STYLES[displayStatus] ||
+                              ACTION_STATUS_BADGE_STYLES.Planned;
+
+                            return (
+                              <tr
+                                key={`${resolvedAction.sourceComponentId}:${resolvedAction.sourceLens}:${action.id}`}
+                              >
+                                <td
+                                  className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+                                >
+                                  <div>{action.text || 'Untitled action'}</div>
+                                  {resolvedAction.isLinkedView ? (
+                                    <div
+                                      className={`mt-1 text-xs ${darkMode ? 'text-indigo-300' : 'text-indigo-700'}`}
+                                    >
+                                      Linked from {sourceComponentLabel} /{' '}
+                                      {resolvedAction.sourceLens}
+                                    </div>
+                                  ) : null}
+                                </td>
+                                <td className="px-3 py-2">
+                                  <span
+                                    className={`inline-flex min-w-[7.5rem] items-center justify-center whitespace-nowrap rounded-full border px-3 py-1 text-center text-xs font-semibold ${badgeStyle}`}
+                                  >
+                                    {displayStatus}
+                                  </span>
+                                  {temporalHint ? (
+                                    <div className="mt-1 text-xs text-rose-700">{temporalHint}</div>
+                                  ) : null}
+                                  {!linkedOutcomes.length && (
+                                    <div
+                                      className={`mt-1 text-xs ${darkMode ? 'text-amber-200' : 'text-amber-700'}`}
+                                    >
+                                      Not yet linked
+                                    </div>
+                                  )}
+                                </td>
+                                <td
+                                  className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}
+                                >
+                                  {action.actionType || 'Unassigned'}
+                                </td>
+                                <td
+                                  className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}
+                                >
+                                  {action.owner || 'Unassigned'}
+                                </td>
+                                <td
+                                  className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+                                >
+                                  {action.startDate || '-'}
+                                </td>
+                                <td
+                                  className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+                                >
+                                  {action.dueDate || '-'}
+                                </td>
+                                {/* <td className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>{action.notes || '-'}</td>
                               <td className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
                                 {parseEvidenceItems(action.evidence || '').length ? (
                                   <div className="space-y-1">
@@ -1179,63 +1408,89 @@ export function AssessmentPanel({
                                   '-'
                                 )}
                               </td> */}
-                              <td className={`px-3 py-2 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>{linkedTargets}</td>
-                              <td className="px-3 py-2">
-                                <div className="flex gap-2">
-                                  <button
-                                    type="button"
-                                    onClick={() => openEditActionModal(resolvedAction.sourceComponentId, resolvedAction.sourceLens, action)}
-                                    className={`${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 hover:bg-slate-700' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'} rounded-md border px-2.5 py-1.5 text-xs font-semibold`}
-                                  >
-                                    Edit
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={() => onActionRemove(resolvedAction.sourceComponentId, resolvedAction.sourceLens, action.id)}
-                                    className={`${darkMode ? 'border-red-500/40 bg-red-500/15 text-red-200 hover:bg-red-500/25' : 'border-red-200 bg-red-50 text-red-700 hover:bg-red-100'} rounded-md border px-2.5 py-1.5 text-xs font-semibold`}
-                                  >
-                                    Remove
-                                  </button>
-                                </div>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                ) : (
-                  <p className={`text-sm ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>No actions yet for this lens.</p>
-                )}
+                                <td
+                                  className={`px-3 py-2 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+                                >
+                                  {linkedTargets}
+                                </td>
+                                <td className="px-3 py-2">
+                                  <div className="flex gap-2">
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        openEditActionModal(
+                                          resolvedAction.sourceComponentId,
+                                          resolvedAction.sourceLens,
+                                          action
+                                        )
+                                      }
+                                      className={`${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 hover:bg-slate-700' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'} rounded-md border px-2.5 py-1.5 text-xs font-semibold`}
+                                    >
+                                      Edit
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        onActionRemove(
+                                          resolvedAction.sourceComponentId,
+                                          resolvedAction.sourceLens,
+                                          action.id
+                                        )
+                                      }
+                                      className={`${darkMode ? 'border-red-500/40 bg-red-500/15 text-red-200 hover:bg-red-500/25' : 'border-red-200 bg-red-50 text-red-700 hover:bg-red-100'} rounded-md border px-2.5 py-1.5 text-xs font-semibold`}
+                                    >
+                                      Remove
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <p className={`text-sm ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
+                      No actions yet for this lens.
+                    </p>
+                  )}
 
-                {lensActions.length > 5 ? (
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setExpandedLensActions((current) => ({
-                        ...current,
-                        [`${component.id}:${lens}`]: !current[`${component.id}:${lens}`]
-                      }))
-                    }
-                    className={`${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100 hover:bg-slate-700' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'} mt-2 rounded-md border px-3 py-1.5 text-xs font-semibold`}
-                  >
-                    {expandedLensActions[`${component.id}:${lens}`] ? 'Show top 5 actions' : `Show all ${lensActions.length} actions`}
-                  </button>
-                ) : (
-                  ''
-                )}
+                  {lensActions.length > 5 ? (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setExpandedLensActions((current) => ({
+                          ...current,
+                          [`${component.id}:${lens}`]: !current[`${component.id}:${lens}`],
+                        }))
+                      }
+                      className={`${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100 hover:bg-slate-700' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'} mt-2 rounded-md border px-3 py-1.5 text-xs font-semibold`}
+                    >
+                      {expandedLensActions[`${component.id}:${lens}`]
+                        ? 'Show top 5 actions'
+                        : `Show all ${lensActions.length} actions`}
+                    </button>
+                  ) : (
+                    ''
+                  )}
+                </div>
               </div>
-            </div>
-          );
-        })}
-      </div> : null}
+            );
+          })}
+        </div>
+      ) : null}
 
       {actionEditor ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 p-4">
-          <div className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} w-full max-w-3xl max-h-[calc(100vh-2rem)] overflow-hidden rounded-xl border p-6 shadow-2xl`}>
+          <div
+            className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} w-full max-w-3xl max-h-[calc(100vh-2rem)] overflow-hidden rounded-xl border p-6 shadow-2xl`}
+          >
             <div className="flex items-center justify-between gap-3">
-              <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>
-                {actionEditor.mode === 'create' ? 'Create Action' : 'Edit Action'} · {actionEditorSourceLabel} / {actionEditor.sourceLens} · {actionEditorTitleSummary}
+              <h3
+                className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
+              >
+                {actionEditor.mode === 'create' ? 'Create Action' : 'Edit Action'} ·{' '}
+                {actionEditorSourceLabel} / {actionEditor.sourceLens} · {actionEditorTitleSummary}
               </h3>
               <button
                 type="button"
@@ -1247,7 +1502,9 @@ export function AssessmentPanel({
             </div>
 
             <div className="mt-4 max-h-[calc(100vh-13rem)] overflow-y-auto pr-1 grid gap-3">
-              <div className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-blue-100 bg-white'} sticky top-0 z-10 rounded-md border px-3 py-2 shadow-sm`}>
+              <div
+                className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-blue-100 bg-white'} sticky top-0 z-10 rounded-md border px-3 py-2 shadow-sm`}
+              >
                 <label className={`text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
                   <span className="mb-1 block font-semibold">Description</span>
                   <textarea
@@ -1258,9 +1515,12 @@ export function AssessmentPanel({
                 </label>
               </div>
 
-              <div className={`${darkMode ? 'border-slate-700 bg-slate-900 text-slate-200' : 'border-blue-100 bg-blue-50 text-slate-700'} rounded-md border px-3 py-2 text-xs`}>
-                <strong>Linking order:</strong> first attach this action to one or more outcomes, then add affected component lenses
-                (component + lens) where this action should appear.
+              <div
+                className={`${darkMode ? 'border-slate-700 bg-slate-900 text-slate-200' : 'border-blue-100 bg-blue-50 text-slate-700'} rounded-md border px-3 py-2 text-xs`}
+              >
+                <strong>Linking order:</strong> first attach this action to one or more outcomes,
+                then add affected component lenses (component + lens) where this action should
+                appear.
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -1268,11 +1528,17 @@ export function AssessmentPanel({
                   <span className="mb-1 block font-semibold">Action Type</span>
                   <select
                     value={actionEditor.action.actionType || 'Admin'}
-                    onChange={(event) => updateActionEditor({ actionType: event.target.value as DraftAction['actionType'] })}
+                    onChange={(event) =>
+                      updateActionEditor({
+                        actionType: event.target.value as DraftAction['actionType'],
+                      })
+                    }
                     className={`w-full rounded-md border px-3 py-2 text-sm ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
                   >
                     {ACTION_TYPES.map((actionType) => (
-                      <option key={actionType} value={actionType}>{actionType}</option>
+                      <option key={actionType} value={actionType}>
+                        {actionType}
+                      </option>
                     ))}
                   </select>
                 </label>
@@ -1288,11 +1554,15 @@ export function AssessmentPanel({
                   <span className="mb-1 block font-semibold">Status</span>
                   <select
                     value={actionEditor.action.status}
-                    onChange={(event) => updateActionEditor({ status: event.target.value as DraftAction['status'] })}
+                    onChange={(event) =>
+                      updateActionEditor({ status: event.target.value as DraftAction['status'] })
+                    }
                     className={`w-full rounded-md border px-3 py-2 text-sm ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
                   >
                     {STATUS_OPTIONS.map((status) => (
-                      <option key={status} value={status}>{status}</option>
+                      <option key={status} value={status}>
+                        {status}
+                      </option>
                     ))}
                   </select>
                 </label>
@@ -1328,9 +1598,15 @@ export function AssessmentPanel({
                 />
               </label>
 
-              <div className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} rounded-lg border p-3`}>
+              <div
+                className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} rounded-lg border p-3`}
+              >
                 <div className="flex items-center justify-between gap-2">
-                  <p className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>Evidence Links / Docs</p>
+                  <p
+                    className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+                  >
+                    Evidence Links / Docs
+                  </p>
                   <div className="flex flex-wrap items-center gap-2">
                     <button
                       type="button"
@@ -1339,7 +1615,9 @@ export function AssessmentPanel({
                     >
                       Add web link
                     </button>
-                    <label className={`${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 hover:bg-slate-700' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'} inline-flex cursor-pointer items-center gap-2 rounded-md border px-3 py-1.5 text-xs font-semibold`}>
+                    <label
+                      className={`${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 hover:bg-slate-700' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'} inline-flex cursor-pointer items-center gap-2 rounded-md border px-3 py-1.5 text-xs font-semibold`}
+                    >
                       Upload file(s)
                       <input
                         type="file"
@@ -1350,27 +1628,45 @@ export function AssessmentPanel({
                     </label>
                   </div>
                 </div>
-                <p className={`mt-1 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>Add evidence as either web links or uploaded files. Everything appears below in a single list.</p>
+                <p className={`mt-1 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
+                  Add evidence as either web links or uploaded files. Everything appears below in a
+                  single list.
+                </p>
 
-                <div className={`${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'} mt-2 space-y-2 rounded border p-2`}>
+                <div
+                  className={`${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'} mt-2 space-y-2 rounded border p-2`}
+                >
                   {actionEditor.evidenceItems.length ? (
                     actionEditor.evidenceItems.map((item, index) => (
-                      <div key={`${item.type}-${index}`} className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} grid grid-cols-1 gap-2 rounded border p-2 md:grid-cols-[auto,1fr,1fr,auto]`}>
+                      <div
+                        key={`${item.type}-${index}`}
+                        className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} grid grid-cols-1 gap-2 rounded border p-2 md:grid-cols-[auto,1fr,1fr,auto]`}
+                      >
                         <div className="flex items-start pt-2">
-                          <span className={`${item.type === 'file' ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'} inline-flex rounded-full px-2 py-1 text-[11px] font-semibold uppercase tracking-wide`}>
+                          <span
+                            className={`${item.type === 'file' ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'} inline-flex rounded-full px-2 py-1 text-[11px] font-semibold uppercase tracking-wide`}
+                          >
                             {item.type === 'file' ? 'File' : 'Link'}
                           </span>
                         </div>
                         <input
                           value={item.label}
-                          onChange={(event) => updateEvidenceItem(index, 'label', event.target.value)}
+                          onChange={(event) =>
+                            updateEvidenceItem(index, 'label', event.target.value)
+                          }
                           placeholder={item.type === 'file' ? 'Document label' : 'Link label'}
                           className={`rounded-md border px-2.5 py-2 text-sm ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
                         />
                         <input
                           value={item.href}
-                          onChange={(event) => updateEvidenceItem(index, 'href', event.target.value)}
-                          placeholder={item.type === 'file' ? 'Embedded file URL (auto generated)' : 'https://...'}
+                          onChange={(event) =>
+                            updateEvidenceItem(index, 'href', event.target.value)
+                          }
+                          placeholder={
+                            item.type === 'file'
+                              ? 'Embedded file URL (auto generated)'
+                              : 'https://...'
+                          }
                           className={`rounded-md border px-2.5 py-2 text-sm ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
                           disabled={item.type === 'file'}
                         />
@@ -1384,41 +1680,71 @@ export function AssessmentPanel({
                       </div>
                     ))
                   ) : (
-                    <p className={`px-2 py-1 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>No evidence links or documents added yet.</p>
+                    <p
+                      className={`px-2 py-1 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
+                    >
+                      No evidence links or documents added yet.
+                    </p>
                   )}
                 </div>
               </div>
 
-              <div className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} rounded-lg border p-3`}>
-                <p className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>Affected Outcomes</p>
-                <p className={`mt-1 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-                  Tick 1-3 outcomes directly impacted by this action. Outcome status is auto-derived from these linked actions.
+              <div
+                className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} rounded-lg border p-3`}
+              >
+                <p
+                  className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+                >
+                  Affected Outcomes
                 </p>
-                <div className={`${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'} mt-2 space-y-2 rounded border p-2`}>
+                <p className={`mt-1 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
+                  Tick 1-3 outcomes directly impacted by this action. Outcome status is auto-derived
+                  from these linked actions.
+                </p>
+                <div
+                  className={`${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'} mt-2 space-y-2 rounded border p-2`}
+                >
                   {(store.objectives?.[actionEditor.sourceComponentId] || []).length ? (
                     (store.objectives?.[actionEditor.sourceComponentId] || []).map((objective) => {
                       const checked = actionEditor.linkedObjectiveIds.includes(objective.id);
                       return (
-                        <label key={objective.id} className={`${darkMode ? 'hover:bg-slate-700' : 'hover:bg-slate-50'} flex items-start gap-2 rounded px-2 py-1.5`}>
+                        <label
+                          key={objective.id}
+                          className={`${darkMode ? 'hover:bg-slate-700' : 'hover:bg-slate-50'} flex items-start gap-2 rounded px-2 py-1.5`}
+                        >
                           <input
                             type="checkbox"
                             checked={checked}
                             onChange={() => toggleObjectiveLinkInActionEditor(objective.id)}
                             className="mt-0.5"
                           />
-                          <span className={`text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>{objective.text || 'Untitled outcome'}</span>
+                          <span
+                            className={`text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}
+                          >
+                            {objective.text || 'Untitled outcome'}
+                          </span>
                         </label>
                       );
                     })
                   ) : (
-                    <p className={`px-2 py-1 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>No outcomes are defined for this component yet.</p>
+                    <p
+                      className={`px-2 py-1 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
+                    >
+                      No outcomes are defined for this component yet.
+                    </p>
                   )}
                 </div>
               </div>
 
-              <div className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} rounded-lg border p-3`}>
+              <div
+                className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} rounded-lg border p-3`}
+              >
                 <div className="flex items-center gap-2">
-                  <p className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>Affected Component Lenses</p>
+                  <p
+                    className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+                  >
+                    Affected Component Lenses
+                  </p>
                   <span
                     className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-slate-300 text-xs font-semibold text-slate-600"
                     title="Actions often contribute to other component lenses. Add those targets here so the same action is visible in each relevant lens."
@@ -1438,18 +1764,26 @@ export function AssessmentPanel({
                       className={`rounded-md border px-2.5 py-2 text-sm ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
                     >
                       {components.map((item) => (
-                        <option key={item.id} value={item.id}>{item.label}</option>
+                        <option key={item.id} value={item.id}>
+                          {item.label}
+                        </option>
                       ))}
                     </select>
 
                     <select
                       value={actionEditor.targetPickerLens}
-                      onChange={(event) => updateTargetPicker(actionEditor.targetPickerComponentId, event.target.value)}
+                      onChange={(event) =>
+                        updateTargetPicker(actionEditor.targetPickerComponentId, event.target.value)
+                      }
                       className={`rounded-md border px-2.5 py-2 text-sm ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
                     >
-                      {(componentById[actionEditor.targetPickerComponentId]?.lenses || []).map((lensOption) => (
-                        <option key={lensOption} value={lensOption}>{lensOption}</option>
-                      ))}
+                      {(componentById[actionEditor.targetPickerComponentId]?.lenses || []).map(
+                        (lensOption) => (
+                          <option key={lensOption} value={lensOption}>
+                            {lensOption}
+                          </option>
+                        )
+                      )}
                     </select>
 
                     <button
@@ -1464,43 +1798,69 @@ export function AssessmentPanel({
                           target.componentId === actionEditor.targetPickerComponentId &&
                           target.lens === actionEditor.targetPickerLens
                       )}
-                      title={getNormalizedTargets(
-                        actionEditor.action,
-                        actionEditor.sourceComponentId,
-                        actionEditor.sourceLens
-                      ).some(
-                        (target) =>
-                          target.componentId === actionEditor.targetPickerComponentId &&
-                          target.lens === actionEditor.targetPickerLens
-                      ) ? 'Already added' : 'Add selected affected lens'}
+                      title={
+                        getNormalizedTargets(
+                          actionEditor.action,
+                          actionEditor.sourceComponentId,
+                          actionEditor.sourceLens
+                        ).some(
+                          (target) =>
+                            target.componentId === actionEditor.targetPickerComponentId &&
+                            target.lens === actionEditor.targetPickerLens
+                        )
+                          ? 'Already added'
+                          : 'Add selected affected lens'
+                      }
                       className={`${darkMode ? 'border-cyan-500/50 bg-cyan-500/15 text-cyan-100 hover:bg-cyan-500/25' : 'border-cyan-300 bg-cyan-100 text-cyan-900 hover:bg-cyan-200'} rounded-md border px-3 py-2 text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-60`}
                     >
                       Add Lens
                     </button>
                   </div>
 
-                  <div className={`${darkMode ? 'border-slate-700' : 'border-slate-200'} overflow-hidden rounded border`}>
-                    <table className={`min-w-full ${darkMode ? 'divide-slate-700 bg-slate-800' : 'divide-slate-200 bg-white'} divide-y`}>
+                  <div
+                    className={`${darkMode ? 'border-slate-700' : 'border-slate-200'} overflow-hidden rounded border`}
+                  >
+                    <table
+                      className={`min-w-full ${darkMode ? 'divide-slate-700 bg-slate-800' : 'divide-slate-200 bg-white'} divide-y`}
+                    >
                       <thead className={darkMode ? 'bg-slate-900' : 'bg-slate-50'}>
                         <tr>
-                          <th className="px-2.5 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Component</th>
-                          <th className="px-2.5 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Lens</th>
-                          <th className="px-2.5 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Remove</th>
+                          <th className="px-2.5 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                            Component
+                          </th>
+                          <th className="px-2.5 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                            Lens
+                          </th>
+                          <th className="px-2.5 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                            Remove
+                          </th>
                         </tr>
                       </thead>
-                      <tbody className={`${darkMode ? 'divide-slate-700' : 'divide-slate-100'} divide-y`}>
+                      <tbody
+                        className={`${darkMode ? 'divide-slate-700' : 'divide-slate-100'} divide-y`}
+                      >
                         {getNormalizedTargets(
                           actionEditor.action,
                           actionEditor.sourceComponentId,
                           actionEditor.sourceLens
                         ).map((target) => (
                           <tr key={`${target.componentId}:${target.lens}`}>
-                            <td className={`px-2.5 py-2 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>{componentById[target.componentId]?.label || target.componentId}</td>
-                            <td className={`px-2.5 py-2 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>{target.lens}</td>
+                            <td
+                              className={`px-2.5 py-2 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}
+                            >
+                              {componentById[target.componentId]?.label || target.componentId}
+                            </td>
+                            <td
+                              className={`px-2.5 py-2 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}
+                            >
+                              {target.lens}
+                            </td>
                             <td className="px-2.5 py-2">
                               <button
                                 type="button"
-                                onClick={() => removeTargetFromActionEditor(target.componentId, target.lens)}
+                                onClick={() =>
+                                  removeTargetFromActionEditor(target.componentId, target.lens)
+                                }
                                 className="rounded border border-red-200 bg-red-50 px-2 py-1 text-xs font-semibold text-red-700 hover:bg-red-100"
                               >
                                 Remove
@@ -1544,7 +1904,11 @@ export function AssessmentPanel({
             className={`w-full max-w-3xl max-h-[calc(100vh-2rem)] overflow-y-auto rounded-xl border p-6 shadow-2xl ${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'}`}
           >
             <div className="flex items-center justify-between gap-3">
-              <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>Outcome Details</h3>
+              <h3
+                className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
+              >
+                Outcome Details
+              </h3>
               <button
                 type="button"
                 onClick={() => setObjectiveViewer(null)}
@@ -1556,12 +1920,22 @@ export function AssessmentPanel({
 
             <div className="mt-4 space-y-4">
               <div>
-                <p className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>Outcome</p>
-                <p className={`mt-1 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>{activeObjective.text || 'Untitled outcome'}</p>
+                <p
+                  className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
+                >
+                  Outcome
+                </p>
+                <p className={`mt-1 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>
+                  {activeObjective.text || 'Untitled outcome'}
+                </p>
               </div>
 
               <div>
-                <p className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>Status</p>
+                <p
+                  className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
+                >
+                  Status
+                </p>
                 <span
                   className={`mt-1 inline-flex min-w-[7.5rem] items-center justify-center whitespace-nowrap rounded-full border px-3 py-1 text-center text-xs font-semibold ${OBJECTIVE_STATUS_BADGE_STYLES[activeObjectiveStatus]}`}
                 >
@@ -1570,46 +1944,87 @@ export function AssessmentPanel({
               </div>
 
               <div>
-                <p className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>Linked Actions</p>
+                <p
+                  className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
+                >
+                  Linked Actions
+                </p>
                 {activeObjectiveLinkedActions.length ? (
-                  <div className={`mt-2 overflow-x-auto rounded-md border ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}>
-                    <table className={`min-w-full divide-y ${darkMode ? 'divide-slate-700 bg-slate-800' : 'divide-slate-200 bg-white'}`}>
+                  <div
+                    className={`mt-2 overflow-x-auto rounded-md border ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}
+                  >
+                    <table
+                      className={`min-w-full divide-y ${darkMode ? 'divide-slate-700 bg-slate-800' : 'divide-slate-200 bg-white'}`}
+                    >
                       <thead className={darkMode ? 'bg-slate-900' : 'bg-slate-50'}>
                         <tr>
-                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Lens</th>
-                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Action</th>
-                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Current State</th>
-                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Navigate</th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                            Lens
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                            Action
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                            Current State
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                            Navigate
+                          </th>
                         </tr>
                       </thead>
-                      <tbody className={`divide-y ${darkMode ? 'divide-slate-700' : 'divide-slate-100'}`}>
+                      <tbody
+                        className={`divide-y ${darkMode ? 'divide-slate-700' : 'divide-slate-100'}`}
+                      >
                         {activeObjectiveLinkedActions.map((item) => {
                           const badgeStyle = item.status
-                            ? (ACTION_STATUS_BADGE_STYLES[item.status] || ACTION_STATUS_BADGE_STYLES.Planned)
+                            ? ACTION_STATUS_BADGE_STYLES[item.status] ||
+                              ACTION_STATUS_BADGE_STYLES.Planned
                             : ACTION_STATUS_BADGE_STYLES.Planned;
                           return (
                             <tr key={`${item.lens}:${item.action?.id || 'missing'}`}>
-                              <td className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>{item.lens}</td>
-                              <td className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>{item.action?.text || 'Linked action not found'}</td>
+                              <td
+                                className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}
+                              >
+                                {item.lens}
+                              </td>
+                              <td
+                                className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}
+                              >
+                                {item.action?.text || 'Linked action not found'}
+                              </td>
                               <td className="px-3 py-2">
-                                <span className={`inline-flex min-w-[7.5rem] items-center justify-center whitespace-nowrap rounded-full border px-3 py-1 text-center text-xs font-semibold ${badgeStyle}`}>
+                                <span
+                                  className={`inline-flex min-w-[7.5rem] items-center justify-center whitespace-nowrap rounded-full border px-3 py-1 text-center text-xs font-semibold ${badgeStyle}`}
+                                >
                                   {item.status || 'Not Started'}
                                 </span>
-                                {item.temporalStatus === 'Overdue start' || item.temporalStatus === 'Overdue completion' ? (
-                                  <div className="mt-1 text-xs text-rose-700">{item.temporalStatus}</div>
+                                {item.temporalStatus === 'Overdue start' ||
+                                item.temporalStatus === 'Overdue completion' ? (
+                                  <div className="mt-1 text-xs text-rose-700">
+                                    {item.temporalStatus}
+                                  </div>
                                 ) : null}
                               </td>
                               <td className="px-3 py-2">
                                 {item.action ? (
                                   <button
                                     type="button"
-                                    onClick={() => openObjectiveActionInEditor(item.lens, item.action || undefined)}
+                                    onClick={() =>
+                                      openObjectiveActionInEditor(
+                                        item.lens,
+                                        item.action || undefined
+                                      )
+                                    }
                                     className={`${darkMode ? 'border-blue-500/40 bg-blue-500/15 text-blue-200 hover:bg-blue-500/25' : 'border-blue-200 bg-blue-50 text-blue-800 hover:bg-blue-100'} rounded-md border px-2.5 py-1.5 text-xs font-semibold`}
                                   >
                                     Open Action
                                   </button>
                                 ) : (
-                                  <span className={`text-xs ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>Unavailable</span>
+                                  <span
+                                    className={`text-xs ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}
+                                  >
+                                    Unavailable
+                                  </span>
                                 )}
                               </td>
                             </tr>
@@ -1619,14 +2034,15 @@ export function AssessmentPanel({
                     </table>
                   </div>
                 ) : (
-                  <p className={`mt-1 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>No linked actions assigned.</p>
+                  <p className={`mt-1 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
+                    No linked actions assigned.
+                  </p>
                 )}
               </div>
             </div>
           </div>
         </div>
       ) : null}
-
     </div>
   );
 }

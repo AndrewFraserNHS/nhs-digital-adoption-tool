@@ -1,9 +1,21 @@
-import type { JSX } from 'react';
+import { type JSX, lazy, Suspense } from 'react';
 import { HashRouter, Navigate, Route, Routes } from 'react-router-dom';
-import AdoptionApp from '@pages/AdoptionApp';
-import MaturityApp from './legacy/MaturityApp';
-import CompareApp from '@pages/CompareApp';
-import ForceFieldAnalysisApp from '@pages/ForceFieldAnalysisApp';
+
+const AdoptionApp = lazy(() => import('@pages/AdoptionApp'));
+const MaturityApp = lazy(() => import('./legacy/MaturityApp'));
+const CompareApp = lazy(() => import('@pages/CompareApp'));
+const ForceFieldAnalysisApp = lazy(() => import('@pages/ForceFieldAnalysisApp'));
+
+function RouteFallback(): JSX.Element {
+  return (
+    <main className="home-shell" aria-live="polite" aria-busy="true">
+      <header className="home-header">
+        <h1>Loading NHS Digital Adoption Tool</h1>
+        <p>Please wait while the selected tool is prepared.</p>
+      </header>
+    </main>
+  );
+}
 
 function CtaArrow(): JSX.Element {
   return (
@@ -36,10 +48,12 @@ function HomePage(): JSX.Element {
           <span className="tool-kicker">Planning</span>
           <h2 className="tool-title">Digital Adoption Tool</h2>
           <p className="tool-desc">
-            Track readiness by strategic lens, monitor monthly progress, and coordinate ownership
-            of adoption actions across teams.
+            Track readiness by strategic lens, monitor monthly progress, and coordinate ownership of
+            adoption actions across teams.
           </p>
-          <span className="tool-cta">Open adoption tool <CtaArrow /></span>
+          <span className="tool-cta">
+            Open adoption tool <CtaArrow />
+          </span>
         </a>
 
         <a className="tool-card compare" href="#/compare">
@@ -49,17 +63,21 @@ function HomePage(): JSX.Element {
             Upload one or two adoption exports to analyse tool engagement, surface insights, and
             compare organisations side-by-side.
           </p>
-          <span className="tool-cta">Open analysis tool <CtaArrow /></span>
+          <span className="tool-cta">
+            Open analysis tool <CtaArrow />
+          </span>
         </a>
 
         <a className="tool-card ffa" href="#/force-field-analysis">
           <span className="tool-kicker">Planning</span>
           <h2 className="tool-title">Force Field Analysis</h2>
           <p className="tool-desc">
-            Weigh up the driving and restraining forces around your change, score them, and turn
-            the biggest ones into owned mitigation actions.
+            Weigh up the driving and restraining forces around your change, score them, and turn the
+            biggest ones into owned mitigation actions.
           </p>
-          <span className="tool-cta">Open force field tool <CtaArrow /></span>
+          <span className="tool-cta">
+            Open force field tool <CtaArrow />
+          </span>
         </a>
       </section>
 
@@ -71,14 +89,16 @@ function HomePage(): JSX.Element {
 export default function App(): JSX.Element {
   return (
     <HashRouter>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/adoption" element={<AdoptionApp />} />
-        <Route path="/maturity" element={<MaturityApp />} />
-        <Route path="/compare" element={<CompareApp />} />
-        <Route path="/force-field-analysis" element={<ForceFieldAnalysisApp />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+      <Suspense fallback={<RouteFallback />}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/adoption" element={<AdoptionApp />} />
+          <Route path="/maturity" element={<MaturityApp />} />
+          <Route path="/compare" element={<CompareApp />} />
+          <Route path="/force-field-analysis" element={<ForceFieldAnalysisApp />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Suspense>
     </HashRouter>
   );
 }

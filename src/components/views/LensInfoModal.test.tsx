@@ -14,10 +14,7 @@ describe('LensInfoModal', () => {
   it('renders known lens content and closes on overlay/cross click', () => {
     const onClose = vi.fn();
     const { container } = render(
-      <LensInfoModal
-        lensName="Strategic Direction and Leadership"
-        onClose={onClose}
-      />
+      <LensInfoModal lensName="Strategic Direction and Leadership" onClose={onClose} />
     );
 
     expect(screen.getByText('What Good Looks Like')).toBeInTheDocument();

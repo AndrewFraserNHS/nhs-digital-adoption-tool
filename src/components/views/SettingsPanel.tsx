@@ -28,7 +28,7 @@ const PRESET_THEMES = [
   { name: 'Teal', color: '#009b8a' },
   { name: 'Purple', color: '#6c28d9' },
   { name: 'Green', color: '#059669' },
-  { name: 'Red', color: '#dc2626' }
+  { name: 'Red', color: '#dc2626' },
 ];
 
 export function SettingsPanel({
@@ -40,7 +40,7 @@ export function SettingsPanel({
   engagementGrade,
   engagementLevel,
   engagementXp,
-  darkMode = false
+  darkMode = false,
 }: SettingsPanelProps): JSX.Element {
   const [settings, setSettings] = useState<AdoptionUserSettings>(userSettings);
   const [fileInputKey, setFileInputKey] = useState(0);
@@ -50,11 +50,14 @@ export function SettingsPanel({
     setSettings(userSettings);
   }, [userSettings]);
 
-  const updateUserSettings = useCallback((updates: Partial<AdoptionUserSettings>) => {
-    const updated = { ...settings, ...updates };
-    setSettings(updated);
-    onUserSettingsUpdate(updated);
-  }, [settings, onUserSettingsUpdate]);
+  const updateUserSettings = useCallback(
+    (updates: Partial<AdoptionUserSettings>) => {
+      const updated = { ...settings, ...updates };
+      setSettings(updated);
+      onUserSettingsUpdate(updated);
+    },
+    [settings, onUserSettingsUpdate]
+  );
 
   const handleProfileImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -82,50 +85,70 @@ export function SettingsPanel({
   };
 
   const engagementHelp = {
-    grade: 'Your grade shows your overall engagement trend. S = excellent, A = strong, B = solid, C = steady, D = building, E = starting out.',
-    level: 'Your level reflects cumulative XP gained through consistent engagement. Higher levels unlock more personalised options and features.',
-    xp: 'XP increases as you complete important actions, finalise months on time, and keep returning to the tool.'
+    grade:
+      'Your grade shows your overall engagement trend. S = excellent, A = strong, B = solid, C = steady, D = building, E = starting out.',
+    level:
+      'Your level reflects cumulative XP gained through consistent engagement. Higher levels unlock more personalised options and features.',
+    xp: 'XP increases as you complete important actions, finalise months on time, and keep returning to the tool.',
   };
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
-      <h2 className={`text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>Settings</h2>
+      <h2 className={`text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
+        Settings
+      </h2>
       <p className={`text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
         Use this page to manage your profile, personal preferences, and support options.
       </p>
 
       {(engagementGrade || engagementLevel || engagementXp !== undefined) && (
-        <div className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-4`}>
+        <div
+          className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-4`}
+        >
           <div>
-            <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>Engagement and Progress</h3>
-            <p className={`mt-1 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>A simple view of your current progress. This updates as you keep using the tool.</p>
+            <h3
+              className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+            >
+              Engagement and Progress
+            </h3>
+            <p className={`mt-1 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+              A simple view of your current progress. This updates as you keep using the tool.
+            </p>
           </div>
-          <div className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} rounded-md border p-4`}>
-            <h4 className={`text-sm font-semibold mb-2 ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>Engagement Summary</h4>
+          <div
+            className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} rounded-md border p-4`}
+          >
+            <h4
+              className={`text-sm font-semibold mb-2 ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+            >
+              Engagement Summary
+            </h4>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {[
                 {
                   key: 'grade',
                   label: 'Grade',
                   value: engagementGrade || 'N/A',
-                  tooltip: engagementHelp.grade
+                  tooltip: engagementHelp.grade,
                 },
                 {
                   key: 'level',
                   label: 'Level',
                   value: engagementLevel ?? 1,
-                  tooltip: engagementHelp.level
+                  tooltip: engagementHelp.level,
                 },
                 {
                   key: 'xp',
                   label: 'XP',
                   value: engagementXp ?? 0,
-                  tooltip: engagementHelp.xp
-                }
+                  tooltip: engagementHelp.xp,
+                },
               ].map((metric) => (
                 <div key={metric.key}>
                   <div className="flex items-center gap-1">
-                    <p className={`text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>{metric.label}</p>
+                    <p className={`text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                      {metric.label}
+                    </p>
                     <span
                       title={metric.tooltip}
                       aria-label={`${metric.label} information`}
@@ -134,7 +157,11 @@ export function SettingsPanel({
                       i
                     </span>
                   </div>
-                  <p className={`text-lg font-bold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>{metric.value}</p>
+                  <p
+                    className={`text-lg font-bold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+                  >
+                    {metric.value}
+                  </p>
                 </div>
               ))}
             </div>
@@ -145,14 +172,23 @@ export function SettingsPanel({
         </div>
       )}
 
-      <div className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-5`}>
+      <div
+        className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-5`}
+      >
         <div>
-          <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>Your Profile</h3>
-          <p className={`mt-1 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>These details personalise your experience and reports.</p>
+          <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
+            Your Profile
+          </h3>
+          <p className={`mt-1 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+            These details personalise your experience and reports.
+          </p>
         </div>
 
         <div>
-          <label htmlFor="user-name" className={`block text-sm font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>
+          <label
+            htmlFor="user-name"
+            className={`block text-sm font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
+          >
             Your Name
           </label>
           <input
@@ -165,7 +201,10 @@ export function SettingsPanel({
         </div>
 
         <div>
-          <label htmlFor="user-preferences" className={`block text-sm font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>
+          <label
+            htmlFor="user-preferences"
+            className={`block text-sm font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
+          >
             Preferences
           </label>
           <textarea
@@ -177,7 +216,11 @@ export function SettingsPanel({
         </div>
 
         <div>
-          <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>Profile Picture</label>
+          <label
+            className={`block text-sm font-medium mb-2 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
+          >
+            Profile Picture
+          </label>
           <div className="flex items-start gap-4">
             {settings.profileImageDataUrl ? (
               <img
@@ -220,14 +263,22 @@ export function SettingsPanel({
         </div>
       </div>
 
-      <div className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-4`}>
+      <div
+        className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-4`}
+      >
         <div>
-          <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>Appearance</h3>
-          <p className={`mt-1 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>Choose the theme colour you want to use throughout the app.</p>
+          <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
+            Appearance
+          </h3>
+          <p className={`mt-1 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+            Choose the theme colour you want to use throughout the app.
+          </p>
         </div>
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <label className={`flex items-center justify-between rounded-md border px-3 py-2 text-sm ${darkMode ? 'border-slate-700 bg-slate-900 text-slate-100' : 'border-slate-200 bg-slate-50 text-slate-700'}`}>
+          <label
+            className={`flex items-center justify-between rounded-md border px-3 py-2 text-sm ${darkMode ? 'border-slate-700 bg-slate-900 text-slate-100' : 'border-slate-200 bg-slate-50 text-slate-700'}`}
+          >
             <span>Dark mode</span>
             <input
               type="checkbox"
@@ -241,7 +292,11 @@ export function SettingsPanel({
             <span className="mb-1 block font-medium">Status colour profile</span>
             <select
               value={settings.colorAccessibilityMode || 'standard'}
-              onChange={(e) => updateUserSettings({ colorAccessibilityMode: e.target.value as 'standard' | 'color-blind-friendly' })}
+              onChange={(e) =>
+                updateUserSettings({
+                  colorAccessibilityMode: e.target.value as 'standard' | 'color-blind-friendly',
+                })
+              }
               className={`w-full rounded-md border p-2 pr-10 ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-[#768692] bg-white text-slate-900'}`}
             >
               <option value="standard">Standard</option>
@@ -251,11 +306,15 @@ export function SettingsPanel({
         </div>
 
         <p className={`text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
-          Color-blind friendly mode keeps BRAG labels in text and shifts status colors to higher-contrast alternatives.
+          Color-blind friendly mode keeps BRAG labels in text and shifts status colors to
+          higher-contrast alternatives.
         </p>
 
         <div>
-          <label htmlFor="user-theme-colour" className={`block text-sm font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>
+          <label
+            htmlFor="user-theme-colour"
+            className={`block text-sm font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
+          >
             Theme Colour
           </label>
           <div className="space-y-3">
@@ -268,10 +327,14 @@ export function SettingsPanel({
                   className="flex items-center gap-2 rounded-md border-2 px-3 py-2 text-sm"
                   style={{
                     borderColor: settings.themeColor === theme.color ? theme.color : '#e2e8f0',
-                    backgroundColor: settings.themeColor === theme.color ? `${theme.color}22` : 'transparent'
+                    backgroundColor:
+                      settings.themeColor === theme.color ? `${theme.color}22` : 'transparent',
                   }}
                 >
-                  <span className="h-4 w-4 rounded-sm border border-slate-300" style={{ backgroundColor: theme.color }} />
+                  <span
+                    className="h-4 w-4 rounded-sm border border-slate-300"
+                    style={{ backgroundColor: theme.color }}
+                  />
                   <span>{theme.name}</span>
                 </button>
               ))}
@@ -286,26 +349,41 @@ export function SettingsPanel({
                 onChange={(e) => updateUserSettings({ themeColor: e.target.value })}
                 disabled={!canUseCustomTheme}
               />
-              <span className={`text-sm font-mono ${darkMode ? 'text-slate-200' : 'text-slate-600'}`}>{settings.themeColor}</span>
-              {!canUseCustomTheme ? <span className={`text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>Unlocks at level 3</span> : null}
+              <span
+                className={`text-sm font-mono ${darkMode ? 'text-slate-200' : 'text-slate-600'}`}
+              >
+                {settings.themeColor}
+              </span>
+              {!canUseCustomTheme ? (
+                <span className={`text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                  Unlocks at level 3
+                </span>
+              ) : null}
             </div>
           </div>
         </div>
       </div>
 
-      <div className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-4`}>
+      <div
+        className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-4`}
+      >
         <div>
-          <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>Data and Support</h3>
-          <p className={`mt-1 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>Load sample data, reset local data, read FAQs, or report an issue.</p>
+          <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
+            Data and Support
+          </h3>
+          <p className={`mt-1 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+            Load sample data, reset local data, read FAQs, or report an issue.
+          </p>
         </div>
 
-        <div className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} rounded-md border p-4`}>
-          <h4 className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>Data Tools</h4>
+        <div
+          className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} rounded-md border p-4`}
+        >
+          <h4 className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
+            Data Tools
+          </h4>
           <div className="mt-3 flex flex-wrap gap-3">
-            <button
-              onClick={onLoadExampleData}
-              className={nhsButtonPrimary}
-            >
+            <button onClick={onLoadExampleData} className={nhsButtonPrimary}>
               Example Data
             </button>
             <button
@@ -320,22 +398,56 @@ export function SettingsPanel({
           </p>
         </div>
 
-        <details className={`rounded-md border p-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200'}`}>
-          <summary className={`cursor-pointer text-sm font-medium ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>How is my data stored?</summary>
-          <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>Your settings and assessment state are stored locally in your browser using local storage.</p>
+        <details
+          className={`rounded-md border p-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200'}`}
+        >
+          <summary
+            className={`cursor-pointer text-sm font-medium ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}
+          >
+            How is my data stored?
+          </summary>
+          <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+            Your settings and assessment state are stored locally in your browser using local
+            storage.
+          </p>
         </details>
-        <details className={`rounded-md border p-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200'}`}>
-          <summary className={`cursor-pointer text-sm font-medium ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>What does Example Data do?</summary>
-          <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>It populates the tool with the included sample JSON so you can explore dashboards and workflows quickly.</p>
+        <details
+          className={`rounded-md border p-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200'}`}
+        >
+          <summary
+            className={`cursor-pointer text-sm font-medium ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}
+          >
+            What does Example Data do?
+          </summary>
+          <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+            It populates the tool with the included sample JSON so you can explore dashboards and
+            workflows quickly.
+          </p>
         </details>
-        <details className={`rounded-md border p-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200'}`}>
-          <summary className={`cursor-pointer text-sm font-medium ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>Can I change the theme colour later?</summary>
-          <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>Yes. Update the theme colour at any time in User Settings and it is applied immediately.</p>
+        <details
+          className={`rounded-md border p-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200'}`}
+        >
+          <summary
+            className={`cursor-pointer text-sm font-medium ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}
+          >
+            Can I change the theme colour later?
+          </summary>
+          <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+            Yes. Update the theme colour at any time in User Settings and it is applied immediately.
+          </p>
         </details>
 
-        <div className={`rounded-md border p-4 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200'}`}>
-          <h4 className={`mb-2 text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>Submit a Bug</h4>
-          <p className={`mb-3 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>Found an issue? Send details directly via email.</p>
+        <div
+          className={`rounded-md border p-4 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200'}`}
+        >
+          <h4
+            className={`mb-2 text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+          >
+            Submit a Bug
+          </h4>
+          <p className={`mb-3 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+            Found an issue? Send details directly via email.
+          </p>
           <a
             href="mailto:andrew.fraser22@kpmg.co.uk?subject=NHS%20Digital%20Adoption%20Tool%20Bug"
             className={`inline-flex rounded-md px-4 py-2 text-sm font-medium transition-colors ${darkMode ? 'bg-slate-700 text-slate-100 hover:bg-slate-600' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}

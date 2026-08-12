@@ -19,7 +19,7 @@ function buildProps() {
     onSaveClick: vi.fn(),
     onLoadClick: vi.fn(),
     onResetClick: vi.fn(),
-    onReportsClick: vi.fn()
+    onReportsClick: vi.fn(),
   };
 }
 
@@ -37,9 +37,15 @@ describe('MaturityOverview', () => {
     const props = buildProps();
     render(<MaturityOverview {...props} />);
 
-    fireEvent.change(screen.getByLabelText('Organisation Name'), { target: { value: 'Updated Trust' } });
-    fireEvent.change(screen.getByLabelText('Project Name'), { target: { value: 'Updated Project' } });
-    fireEvent.change(screen.getByLabelText('Project Phase'), { target: { value: '3 Development' } });
+    fireEvent.change(screen.getByLabelText('Organisation Name'), {
+      target: { value: 'Updated Trust' },
+    });
+    fireEvent.change(screen.getByLabelText('Project Name'), {
+      target: { value: 'Updated Project' },
+    });
+    fireEvent.change(screen.getByLabelText('Project Phase'), {
+      target: { value: '3 Development' },
+    });
     fireEvent.change(screen.getByLabelText('Guidance Target'), { target: { value: 'EPR' } });
 
     expect(props.onOrganisationNameChange).toHaveBeenCalledWith('Updated Trust');

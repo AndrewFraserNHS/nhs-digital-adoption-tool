@@ -3,9 +3,11 @@
  * Computes readiness scores, radar data, and progress tracking
  */
 
-import { AdoptionStore, DraftEntry, deriveObjectiveStatus } from './adoptionState';
 import { AssessmentComponent } from '@data/components';
+import type { ChartData } from 'chart.js';
+
 import { isCompletedActionStatus } from './actionModel';
+import { AdoptionStore, deriveObjectiveStatus, DraftEntry } from './adoptionState';
 
 export interface Metrics {
   totalCurrent: number;
@@ -56,23 +58,23 @@ export interface ActionRow {
 /**
  * Calculate overall metrics for current draft
  */
-export function getMetrics(
-  store: AdoptionStore,
-  components: AssessmentComponent[]
-): Metrics {
+export function getMetrics(store: AdoptionStore, components: AssessmentComponent[]): Metrics {
   let totalCurrent = 0;
   let assessedCount = 0;
   let totalActions = 0;
   let completedActions = 0;
 
-  const byPhase = new Map<number, {
-    componentCount: number;
-    assessedLenses: number;
-    totalLenses: number;
-    onTrackComponents: number;
-    totalActions: number;
-    completedActions: number;
-  }>();
+  const byPhase = new Map<
+    number,
+    {
+      componentCount: number;
+      assessedLenses: number;
+      totalLenses: number;
+      onTrackComponents: number;
+      totalActions: number;
+      completedActions: number;
+    }
+  >();
 
   const componentProgress: Array<{
     component: AssessmentComponent;
@@ -91,7 +93,7 @@ export function getMetrics(
       totalLenses: 0,
       onTrackComponents: 0,
       totalActions: 0,
-      completedActions: 0
+      completedActions: 0,
     };
     phaseBucket.componentCount += 1;
     phaseBucket.totalLenses += component.lenses.length;
@@ -140,16 +142,13 @@ export function getMetrics(
       assessedLenses: componentAssessed,
       totalLenses: component.lenses.length,
       totalActions: componentActions,
-      completedActions: componentActionsCompleted
+      completedActions: componentActionsCompleted,
     });
 
     byPhase.set(component.phase, phaseBucket);
   });
 
-  const totalExpected = components.reduce(
-    (sum, component) => sum + component.lenses.length,
-    0
-  );
+  const totalExpected = components.reduce((sum, component) => sum + component.lenses.length, 0);
   const absoluteMaxPossible = totalExpected * 5;
   const overallPct = absoluteMaxPossible
     ? Math.round((totalCurrent / absoluteMaxPossible) * 100)
@@ -182,12 +181,13 @@ export function getMetrics(
         totalLenses: bucket.totalLenses,
         onTrackComponents: bucket.onTrackComponents,
         actionCompletionPct: phaseActionCompletionPct,
-        rag
+        rag,
       };
     });
 
   const firstNonGreen = phaseSummaries.find((phaseSummary) => phaseSummary.rag !== 'Green');
-  const currentPhase = firstNonGreen?.phase || phaseSummaries[phaseSummaries.length - 1]?.phase || 1;
+  const currentPhase =
+    firstNonGreen?.phase || phaseSummaries[phaseSummaries.length - 1]?.phase || 1;
   const nextSteps = componentProgress
     .filter(({ component, gapToTarget }) => component.phase <= currentPhase + 1 && gapToTarget > 0)
     .sort((left, right) => {
@@ -197,21 +197,32 @@ export function getMetrics(
       return right.gapToTarget - left.gapToTarget;
     })
     .slice(0, 3)
-    .map(({ component, avgScore, gapToTarget, totalActions, completedActions, assessedLenses, totalLenses }) => {
-      const remainingActions = Math.max(0, totalActions - completedActions);
-      const evidenceText = assessedLenses < totalLenses
-        ? `Assess ${totalLenses - assessedLenses} remaining lens area(s).`
-        : remainingActions > 0
-          ? `Complete ${remainingActions} open action(s).`
-          : 'Create at least one delivery action linked to this component.';
-      return {
-        componentId: component.id,
-        componentLabel: component.label,
-        phase: component.phase,
+    .map(
+      ({
+        component,
+        avgScore,
         gapToTarget,
-        message: `Raise ${component.label} from ${avgScore.toFixed(1)} to target ${component.target}. ${evidenceText}`
-      };
-    });
+        totalActions,
+        completedActions,
+        assessedLenses,
+        totalLenses,
+      }) => {
+        const remainingActions = Math.max(0, totalActions - completedActions);
+        const evidenceText =
+          assessedLenses < totalLenses
+            ? `Assess ${totalLenses - assessedLenses} remaining lens area(s).`
+            : remainingActions > 0
+              ? `Complete ${remainingActions} open action(s).`
+              : 'Create at least one delivery action linked to this component.';
+        return {
+          componentId: component.id,
+          componentLabel: component.label,
+          phase: component.phase,
+          gapToTarget,
+          message: `Raise ${component.label} from ${avgScore.toFixed(1)} to target ${component.target}. ${evidenceText}`,
+        };
+      }
+    );
 
   return {
     totalCurrent,
@@ -223,7 +234,7 @@ export function getMetrics(
     actionCompletionPct,
     currentPhase,
     phaseSummaries,
-    nextSteps
+    nextSteps,
   };
 }
 
@@ -278,10 +289,10 @@ export function buildRadarChartData(
   lenses: string[],
   components: AssessmentComponent[],
   getEntry: (componentId: string, lens: string) => DraftEntry
-): any {
+): ChartData<'radar', number[], string> {
   const current = computeRadarData(store, lenses, components, getEntry);
   const targets = computeTargetRadarData(lenses, components);
-  
+
   return {
     labels: lenses,
     datasets: [
@@ -292,7 +303,7 @@ export function buildRadarChartData(
         backgroundColor: 'rgba(0, 94, 184, 0.1)',
         borderWidth: 2,
         pointRadius: 4,
-        pointHoverRadius: 6
+        pointHoverRadius: 6,
       },
       {
         label: 'Target',
@@ -302,30 +313,33 @@ export function buildRadarChartData(
         borderWidth: 2,
         borderDash: [5, 5],
         pointRadius: 3,
-        pointHoverRadius: 5
-      }
-    ]
+        pointHoverRadius: 5,
+      },
+    ],
   };
 }
 
 export function buildComponentRadarChartData(
   components: AssessmentComponent[],
   getEntry: (componentId: string, lens: string) => DraftEntry
-): any {
+): ChartData<'radar', number[], string> {
   return {
     labels: components.map((component) => component.label),
     datasets: [
       {
         label: 'Current Average Readiness',
         data: components.map((component) => {
-          const total = component.lenses.reduce((sum, lens) => sum + Number(getEntry(component.id, lens).score || 0), 0);
+          const total = component.lenses.reduce(
+            (sum, lens) => sum + Number(getEntry(component.id, lens).score || 0),
+            0
+          );
           return Number((total / component.lenses.length).toFixed(1));
         }),
         borderColor: '#005EB8',
         backgroundColor: 'rgba(0, 94, 184, 0.12)',
         borderWidth: 2,
         pointRadius: 4,
-        pointHoverRadius: 6
+        pointHoverRadius: 6,
       },
       {
         label: 'Target Average',
@@ -335,9 +349,9 @@ export function buildComponentRadarChartData(
         borderWidth: 2,
         borderDash: [5, 5],
         pointRadius: 3,
-        pointHoverRadius: 5
-      }
-    ]
+        pointHoverRadius: 5,
+      },
+    ],
   };
 }
 
@@ -366,9 +380,10 @@ export function flattenActions(
     Object.keys(store.currentDraft[componentId]).forEach((lens) => {
       const actions = getEntry(componentId, lens).actions || [];
       actions.forEach((action) => {
-        const targets = action.linkedTargets && action.linkedTargets.length
-          ? action.linkedTargets
-          : [{ componentId, lens }];
+        const targets =
+          action.linkedTargets && action.linkedTargets.length
+            ? action.linkedTargets
+            : [{ componentId, lens }];
 
         targets.forEach((target) => {
           pushRow(target.componentId, target.lens, action);
@@ -391,16 +406,22 @@ export function getComponentObjectiveCounts(
 ): { total: number; completed: number } {
   const objectives = store.objectives?.[componentId] || [];
 
-  const actionsByLens = (lenses: string[]): Record<string, ReturnType<typeof getEntry>['actions']> =>
+  const actionsByLens = (
+    lenses: string[]
+  ): Record<string, ReturnType<typeof getEntry>['actions']> =>
     lenses.reduce<Record<string, ReturnType<typeof getEntry>['actions']>>((byLens, lens) => {
       byLens[lens] = getEntry(componentId, lens).actions;
       return byLens;
     }, {});
 
-  const lensesUsed = Array.from(new Set(objectives.flatMap((objective) => objective.linkedActions.map((link) => link.lens))));
+  const lensesUsed = Array.from(
+    new Set(objectives.flatMap((objective) => objective.linkedActions.map((link) => link.lens)))
+  );
   const byLens = actionsByLens(lensesUsed);
 
-  const completed = objectives.filter((objective) => deriveObjectiveStatus(objective, byLens) === 'Completed').length;
+  const completed = objectives.filter(
+    (objective) => deriveObjectiveStatus(objective, byLens) === 'Completed'
+  ).length;
 
   return { total: objectives.length, completed };
 }

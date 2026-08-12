@@ -37,38 +37,41 @@ const COMPETENCE_SCORE_MAP: Record<CompetenceGrade, number> = {
   B: 4,
   C: 3,
   D: 2,
-  E: 1
+  E: 1,
 };
 
 export function getCombinedCapabilityScore(assessment: PhaseCapabilityAssessment): number {
   const competenceScore = COMPETENCE_SCORE_MAP[assessment.competence];
   const confidenceScore = assessment.confidence;
-  return Math.round((((competenceScore / 5) + (confidenceScore / 5)) / 2) * 100);
+  return Math.round(((competenceScore / 5 + confidenceScore / 5) / 2) * 100);
 }
 
 export function getOverallCapabilityScore(profile: PhaseCapabilityProfile): number | null {
-  const assessments = OVERARCHING_PHASES
-    .map((phase) => profile[phase])
-    .filter((item): item is PhaseCapabilityAssessment => Boolean(item));
+  const assessments = OVERARCHING_PHASES.map((phase) => profile[phase]).filter(
+    (item): item is PhaseCapabilityAssessment => Boolean(item)
+  );
 
   if (!assessments.length) {
     return null;
   }
 
-  const total = assessments.reduce((sum, assessment) => sum + getCombinedCapabilityScore(assessment), 0);
+  const total = assessments.reduce(
+    (sum, assessment) => sum + getCombinedCapabilityScore(assessment),
+    0
+  );
   return Math.round(total / assessments.length);
 }
 
 export const CST_TYPE_OPTIONS: Array<{ value: CstType; label: string }> = [
   { value: 'project', label: 'Project' },
   { value: 'program', label: 'Program' },
-  { value: 'initiative', label: 'Initiative' }
+  { value: 'initiative', label: 'Initiative' },
 ];
 
 export const PATHWAY_OPTIONS: Array<{ value: CstPathwayKey; label: string }> = [
   { value: 'pathway-1', label: 'Pathway 1 - Starting for the First Time' },
   { value: 'pathway-2', label: 'Pathway 2 - Piloted and Ready to Scale Up' },
-  { value: 'pathway-3', label: 'Pathway 3 - Gone Live but Adoption is Patchy' }
+  { value: 'pathway-3', label: 'Pathway 3 - Gone Live but Adoption is Patchy' },
 ];
 
 export const PATHWAY_LABELS: Record<CstPathwayKey, string> = PATHWAY_OPTIONS.reduce(
@@ -85,5 +88,5 @@ export const DEFAULT_CST_PROFILE: CstProfile = {
   goLiveDate: '',
   fullAdoptionDate: '',
   benefitRealizationDate: '',
-  phaseCapability: {}
+  phaseCapability: {},
 };

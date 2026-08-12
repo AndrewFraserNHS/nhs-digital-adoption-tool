@@ -40,10 +40,7 @@ export function validateScore(
 /**
  * Validate a string is not empty
  */
-export function validateRequired(
-  value: unknown,
-  fieldName = 'field'
-): ValidationResult {
+export function validateRequired(value: unknown, fieldName = 'field'): ValidationResult {
   const errors: ValidationError[] = [];
 
   if (value === null || value === undefined || (typeof value === 'string' && value.trim() === '')) {

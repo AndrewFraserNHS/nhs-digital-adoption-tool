@@ -17,7 +17,7 @@ export function FilterSummaryBar({
   resultText,
   activeFilters,
   activeFiltersAriaLabel,
-  darkMode = false
+  darkMode = false,
 }: FilterSummaryBarProps): JSX.Element {
   return (
     <>
@@ -44,7 +44,12 @@ export function FilterSummaryBar({
         >
           Reset filters
         </button>
-        <span className={`text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`} aria-live="polite">{resultText}</span>
+        <span
+          className={`text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
+          aria-live="polite"
+        >
+          {resultText}
+        </span>
       </div>
 
       {activeFilters.length > 0 ? (

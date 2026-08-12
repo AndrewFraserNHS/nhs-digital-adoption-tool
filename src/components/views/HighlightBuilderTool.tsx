@@ -692,11 +692,11 @@ export function HighlightBuilderTool({
     win.document.body.appendChild(printable);
 
     win.document.close();
-    win.addEventListener('load', () => {
+    setTimeout(() => {
       win.focus();
       win.print();
       win.close();
-    });
+    }, 250);
   };
 
   return (

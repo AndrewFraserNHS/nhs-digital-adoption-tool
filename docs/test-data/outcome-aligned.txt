@@ -1,0 +1,119 @@
+Vision Outcomes
+Outcome 1: A Compelling Future State Has Been Defined
+Outcome Statement
+A clear, credible and compelling vision of the future state has been developed and aligned with the organisation's strategic objectives and desired outcomes. 
+Measures
+•	Approved vision statement exists.
+•	Vision formally signed off through governance.
+•	Vision aligns to documented strategic objectives.
+•	Stakeholders agree the vision is clear and meaningful.
+•	Leaders can describe the future state consistently.
+This outcome answers:
+"Do we know where we are trying to get to?"
+Outcome 2: The Vision Is Understood and Shared
+Outcome Statement
+Stakeholders understand the purpose of the change and can articulate the vision, intended outcomes and benefits in a consistent way. 
+Measures
+•	% of stakeholders who can explain the vision in their own words.
+•	% of stakeholders who understand why the change is happening.
+•	Reduction in conflicting interpretations of the vision.
+•	Survey score for understanding of change purpose.
+•	Feedback demonstrates common understanding across stakeholder groups.
+This outcome answers:
+"Do people understand where we are going and why?"
+Outcome 3: The Vision Is Visible and Guides the Change
+Outcome Statement
+The vision is consistently reinforced by leaders and change agents and is used to guide decision-making, communications, priorities and programme activity. 
+Measures
+•	% of leadership communications referencing the vision.
+•	Communication audits show consistent use of agreed messaging.
+•	Sponsors and change champions communicate aligned messages.
+•	Programme decisions demonstrate alignment to the vision.
+•	Governance papers, plans and communications reference the vision.
+This outcome answers:
+"Is the vision actually influencing behaviour and decisions?"
+ 
+Alignment of Vision actions to Vision outcomes
+Vision outcome key
+Code	Vision outcome
+O1	A compelling future state has been defined
+O2	The vision is understood and shared
+O3	The vision is visible and guides the change
+
+Readiness stage: Not Started (0) → Emerging (1)
+Strategic Direction & Leadership Lens
+Action	Aligned outcome(s)	Rationale
+Facilitate an initial vision workshop with the SRO, sponsors and key programme stakeholders to explore the future state.	O1	This directly supports development of the future-state vision. 
+Gather information on organisational priorities, programme objectives and expected outcomes to inform vision development.	O1	This ensures the vision is grounded in strategic priorities and intended outcomes. 
+Document initial themes describing why the change is needed and what success may look like.	O1, O2	This helps define the future state and begins to create a shared articulation of purpose. 
+Identify key leaders who need to contribute to and endorse the vision.	O1, O3	This supports creation of the vision and prepares for leadership reinforcement. 
+Establish a process and timeline for drafting the vision statement.	O1	This is a foundational action for producing the defined vision. 
+People Experience & Culture Lens
+Action	Aligned outcome(s)	Rationale
+Conduct stakeholder listening sessions to understand current challenges and expectations.	O1, O2	This ensures the vision reflects stakeholder realities and supports shared understanding. 
+Gather feedback on people's perceptions of the proposed change.	O1, O2	This helps shape the vision and identifies whether the emerging purpose is understood. 
+Identify common concerns, aspirations and opportunities that should influence the vision.	O1	This informs the content and credibility of the future-state vision. 
+Create simple awareness messages explaining that a vision is being developed.	O2	This begins the process of making the vision visible and understandable. 
+Ensure representation from key stakeholder groups in early vision discussions.	O1, O2	This supports a more inclusive vision and improves the likelihood of shared ownership. 
+Readiness stage: Emerging (1) → Developing (2)
+Strategic Direction & Leadership Lens
+Action	Aligned outcome(s)	Rationale
+Draft a formal vision statement describing the future state and intended outcomes.	O1	This is central to defining the future state. 
+Test the draft vision with senior leaders to ensure strategic alignment.	O1, O3	This strengthens the vision and begins to connect it to leadership direction. 
+Refine the vision using feedback from sponsors and governance groups.	O1, O3	This improves the quality of the vision and links it to governance ownership. 
+Validate how the vision aligns with organisational objectives and programme benefits.	O1	This confirms that the vision is strategically relevant and outcome-led. 
+Develop a high-level vision narrative that can be used consistently across the programme.	O2, O3	This supports shared understanding and consistent reinforcement. 
+People Experience & Culture Lens
+Action	Aligned outcome(s)	Rationale
+Run workshops with impacted stakeholder groups to test understanding of the draft vision.	O2	This directly tests whether stakeholders understand the vision. 
+Collect structured feedback on whether the vision feels relevant and meaningful.	O1, O2	This helps refine the vision and assess whether it resonates with stakeholders. 
+Identify gaps or ambiguities in the vision from a staff perspective.	O1, O2	This improves the clarity of the vision and supports shared understanding. 
+Update the vision to reflect stakeholder insights and concerns.	O1, O2	This makes the future-state vision more credible and meaningful. 
+Begin developing people-centred messaging explaining why the vision matters to different stakeholder groups.	O2	This supports understanding of the vision by different audiences. 
+Readiness stage: Developing (2) → Embedding (3)
+Strategic Direction & Leadership Lens
+Action	Aligned outcome(s)	Rationale
+Secure formal approval of the vision through programme governance.	O1, O3	This confirms the vision and positions it as a formal guide for the change. 
+Develop a leadership communication plan to support vision rollout.	O2, O3	This supports shared understanding and leadership-led reinforcement. 
+Equip sponsors with key messages, presentations and briefing materials.	O2, O3	This enables consistent communication and visible sponsorship. 
+Integrate the vision into programme governance documentation and reporting.	O3	This ensures the vision is used to guide governance and programme activity. 
+Ensure leadership communications consistently reference the agreed vision.	O2, O3	This reinforces shared understanding and keeps the vision visible. 
+People Experience & Culture Lens
+Action	Aligned outcome(s)	Rationale
+Develop audience-specific communications explaining the purpose, value and future-state ambition of the vision for different groups.	O2	This improves understanding of the vision across stakeholder groups. I would avoid drifting into detailed change impact here. 
+Deliver engagement sessions to build understanding and awareness.	O2	This directly supports shared understanding of the change vision. 
+Establish feedback channels to assess comprehension and acceptance.	O2	This measures whether the vision is understood and accepted. 
+Use change agents and sponsors to reinforce the vision locally.	O2, O3	This supports consistent local understanding and visible reinforcement. 
+Monitor stakeholder understanding through surveys, workshops or feedback sessions.	O2	This provides evidence that the vision is understood and shared. 
+Readiness stage: Embedding (3) → Adopted (4)
+Strategic Direction & Leadership Lens
+Action	Aligned outcome(s)	Rationale
+Ensure sponsors consistently communicate the vision during governance and operational meetings.	O2, O3	This reinforces consistency and embeds the vision into leadership practice. 
+Integrate the vision into programme decision-making and governance discussions.	O3	This directly supports the outcome that the vision guides decisions and priorities. 
+Review leadership communications regularly for alignment and consistency.	O2, O3	This checks that messages remain consistent and visibly connected to the vision. 
+Provide coaching to sponsors and leaders on vision-led leadership behaviours.	O3	This helps leaders use the vision to guide their behaviours and decisions. 
+Measure leadership engagement in promoting the vision.	O3	This evidences whether leaders are actively reinforcing the vision. 
+People Experience & Culture Lens
+Action	Aligned outcome(s)	Rationale
+Deploy a formal vision communication campaign across all impacted stakeholder groups.	O2, O3	This supports broad understanding and visible reinforcement of the vision. 
+Establish regular feedback loops to assess understanding and engagement.	O2	This tests whether the vision is understood and shared. 
+Monitor stakeholder awareness and adjust communications where necessary.	O2	This supports continuous improvement in understanding of the vision. 
+Use case studies and practical examples to demonstrate the vision in action.	O2, O3	This helps people understand the vision and see how it guides action. 
+Reinforce the vision through team meetings, departmental briefings and change network activities.	O2, O3	This keeps the vision visible and consistently reinforced through local channels. 
+Readiness stage: Adopted (4) → Thriving (5)
+Strategic Direction & Leadership Lens
+Action	Aligned outcome(s)	Rationale
+Embed the vision into organisational planning, governance and decision-making processes.	O3	This is directly about the vision guiding organisational activity. 
+Ensure leaders consistently reference the vision when making strategic and operational decisions.	O3	This demonstrates that the vision is influencing leadership decisions. 
+Review organisational priorities regularly to ensure continued alignment with the vision.	O1, O3	This keeps the future-state vision aligned to organisational direction and decision-making. 
+Use adoption and performance data to refine and strengthen how the vision is communicated.	O2, O3	This improves how the vision is understood and keeps it relevant in practice. 
+Establish mechanisms to continuously evaluate whether organisational behaviours remain aligned to the vision.	O3	This tests whether the vision is guiding behaviours and organisational choices. 
+People Experience & Culture Lens
+Action	Aligned outcome(s)	Rationale
+Measure how well staff understand and can articulate the vision.	O2	This directly measures whether the vision is understood and shared. 
+Capture and share success stories demonstrating delivery of the vision.	O2, O3	This reinforces the vision and shows it being translated into action. 
+Encourage teams to identify local improvements that support achievement of the vision.	O3	This shows the vision guiding local decisions and improvement activity. 
+Maintain continuous engagement and listening activities to keep the vision relevant.	O1, O2	This sustains the relevance of the vision and continued shared understanding. 
+Reinforce the vision through recognition programmes and celebration of achievements.	O2, O3	This makes the vision visible and reinforces behaviours aligned to it. 
+Ensure the vision becomes part of everyday conversations, team objectives and organisational culture.	O2, O3	This indicates that the vision is widely shared and embedded into how people think, communicate and prioritise. 
+

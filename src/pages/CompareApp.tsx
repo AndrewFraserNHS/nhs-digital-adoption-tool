@@ -251,7 +251,7 @@ function analyseFile(payload: SavedAdoptionAssessment): AnalysisResult {
     insights.push({
       kind: 'info',
       title: 'Phase sequencing gap',
-      detail: `Phase 1 components are less than 50% scored, yet later-phase components are being assessed. Ensure foundation phases are documented to provide an accurate readiness baseline.`,
+      detail: `Pre-Discovery components are less than 50% scored, yet later-phase components are being assessed. Ensure foundation phases are documented to provide an accurate readiness baseline.`,
     });
   }
 

@@ -32,16 +32,6 @@ function HomePage(): JSX.Element {
       </header>
 
       <section className="tool-grid" aria-label="Tool selection">
-        <a className="tool-card" href="#/maturity">
-          <span className="tool-kicker">Assessment</span>
-          <h2 className="tool-title">Change Maturity Assessment</h2>
-          <p className="tool-desc">
-            Assess organisational readiness across maturity stages, capture evidence, and build
-            structured actions to improve change outcomes.
-          </p>
-          <span className="tool-cta">Open maturity tool <CtaArrow /></span>
-        </a>
-
         <a className="tool-card alt" href="#/adoption">
           <span className="tool-kicker">Planning</span>
           <h2 className="tool-title">Digital Adoption Tool</h2>

@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { ProjectDetailsPage } from './ProjectDetailsPage';
+import { ProjectDetailsPage } from './CSTDetailsPage';
 import type { AdoptionStore, DraftEntry, OrgProfile } from '@lib/adoptionState';
 import type { AssessmentComponent } from '@data/components';
 

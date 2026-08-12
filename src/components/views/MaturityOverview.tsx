@@ -24,11 +24,11 @@ export interface MaturityOverviewProps {
 }
 
 const PHASES = [
-  'Phase 1: Pre-Discovery',
-  'Phase 2: Solution Design',
-  'Phase 3: Development',
-  'Phase 4: Implementation',
-  'Phase 5: Post Deployment'
+  '1 Pre-Discovery',
+  '2 Solution Design',
+  '3 Development',
+  '4 Deployment / Go Live',
+  '5 Post-Deployment'
 ];
 
 const STAGES = MATURITY_STAGES;

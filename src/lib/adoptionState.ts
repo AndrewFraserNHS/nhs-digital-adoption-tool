@@ -6,6 +6,7 @@
 import { Store, type StateListener } from './observable';
 import type { ActionType, UnifiedActionStatus } from './actionModel';
 import { DEFAULT_CST_PROFILE, type CstPathwayKey, type CstProfile } from '@data/cst';
+import type { LinkOverrides } from '@data/maturity-guidance-links';
 
 export interface ActionTargetLink {
   componentId: string;
@@ -99,6 +100,7 @@ export interface OrgProfile {
   projectName?: string;
   leadName?: string;
   cst: CstProfile;
+  linkOverrides?: LinkOverrides;
 }
 
 export type PathwayChecklistState = Record<string, Partial<Record<CstPathwayKey, string[]>>>;
@@ -135,7 +137,8 @@ export function normalizeOrgProfile(profile?: Partial<OrgProfile>): OrgProfile {
     cst: {
       ...DEFAULT_CST_PROFILE,
       ...(profile?.cst || {})
-    }
+    },
+    linkOverrides: profile?.linkOverrides
   };
 }
 

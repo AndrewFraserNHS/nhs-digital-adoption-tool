@@ -3,7 +3,7 @@ import { initializeStore } from './adoptionState';
 import { syncVisionDerivedContent } from './visionAutomation';
 
 describe('syncVisionDerivedContent', () => {
-  it('adds current-stage lens actions and materializes the 10 score-transition vision auto-outcomes', () => {
+  it('adds current-stage lens actions and creates the 3 named vision outcomes', () => {
     const store = initializeStore({
       currentDraft: {
         vision: {
@@ -30,11 +30,14 @@ describe('syncVisionDerivedContent', () => {
 
     expect(strategicEntry.actions.some((action) => action.text.includes('vision workshop'))).toBe(true);
     expect(peopleEntry.actions.some((action) => action.text.includes('stakeholder listening sessions'))).toBe(true);
-    expect(nextStore.objectives.vision).toHaveLength(10);
-    expect((nextStore.objectives.vision || []).every((objective) => /^vision:auto-objective:.+:\d-\d$/.test(objective.id))).toBe(true);
+    expect(nextStore.objectives.vision).toHaveLength(3);
+    expect((nextStore.objectives.vision || []).every((objective) => /^vision:outcome:o[123]$/.test(objective.id))).toBe(true);
+    expect((nextStore.objectives.vision || []).map((o) => o.id)).toEqual(
+      expect.arrayContaining(['vision:outcome:o1', 'vision:outcome:o2', 'vision:outcome:o3'])
+    );
   });
 
-  it('gives every score-transition objective at least one linked action even when the lens is not currently at that transition score', () => {
+  it('gives every named vision outcome at least one linked action', () => {
     const store = initializeStore({
       currentDraft: {
         vision: {
@@ -56,12 +59,12 @@ describe('syncVisionDerivedContent', () => {
     });
 
     const nextStore = syncVisionDerivedContent(store);
-    const scoreTransitionObjectives = (nextStore.objectives.vision || []).filter((objective) =>
-      /^vision:auto-objective:.+:\d-\d$/.test(objective.id)
+    const outcomes = (nextStore.objectives.vision || []).filter((objective) =>
+      /^vision:outcome:o[123]$/.test(objective.id)
     );
 
-    expect(scoreTransitionObjectives.length).toBeGreaterThan(0);
-    scoreTransitionObjectives.forEach((objective) => {
+    expect(outcomes).toHaveLength(3);
+    outcomes.forEach((objective) => {
       expect(objective.linkedActions.length).toBeGreaterThan(0);
     });
   });

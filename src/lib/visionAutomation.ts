@@ -5,10 +5,71 @@ interface VisionActionTemplate {
   lens: string;
   fromScore: number;
   toScore: number;
-  objectiveId: string;
-  objectiveText: string;
   actionTexts: string[];
 }
+
+type VisionOutcomeId = 'o1' | 'o2' | 'o3';
+
+const VISION_OUTCOME_DEFINITIONS: { id: string; text: string }[] = [
+  { id: 'vision:outcome:o1', text: 'A Compelling Future State Has Been Defined' },
+  { id: 'vision:outcome:o2', text: 'The Vision Is Understood and Shared' },
+  { id: 'vision:outcome:o3', text: 'The Vision Is Visible and Guides the Change' },
+];
+
+// Maps `${sanitizeId(lens)}:${fromScore}-${toScore}:${actionIndex}` to outcome IDs
+const ACTION_OUTCOME_MAP: Record<string, VisionOutcomeId[]> = {
+  'strategic-direction-and-leadership:0-1:0': ['o1'],
+  'strategic-direction-and-leadership:0-1:1': ['o1'],
+  'strategic-direction-and-leadership:0-1:2': ['o1', 'o2'],
+  'strategic-direction-and-leadership:0-1:3': ['o1', 'o3'],
+  'strategic-direction-and-leadership:0-1:4': ['o1'],
+  'people-experience-and-culture:0-1:0': ['o1', 'o2'],
+  'people-experience-and-culture:0-1:1': ['o1', 'o2'],
+  'people-experience-and-culture:0-1:2': ['o1'],
+  'people-experience-and-culture:0-1:3': ['o2'],
+  'people-experience-and-culture:0-1:4': ['o1', 'o2'],
+  'strategic-direction-and-leadership:1-2:0': ['o1'],
+  'strategic-direction-and-leadership:1-2:1': ['o1', 'o3'],
+  'strategic-direction-and-leadership:1-2:2': ['o1', 'o3'],
+  'strategic-direction-and-leadership:1-2:3': ['o1'],
+  'strategic-direction-and-leadership:1-2:4': ['o2', 'o3'],
+  'people-experience-and-culture:1-2:0': ['o2'],
+  'people-experience-and-culture:1-2:1': ['o1', 'o2'],
+  'people-experience-and-culture:1-2:2': ['o1', 'o2'],
+  'people-experience-and-culture:1-2:3': ['o1', 'o2'],
+  'people-experience-and-culture:1-2:4': ['o2'],
+  'strategic-direction-and-leadership:2-3:0': ['o1', 'o3'],
+  'strategic-direction-and-leadership:2-3:1': ['o2', 'o3'],
+  'strategic-direction-and-leadership:2-3:2': ['o2', 'o3'],
+  'strategic-direction-and-leadership:2-3:3': ['o3'],
+  'strategic-direction-and-leadership:2-3:4': ['o2', 'o3'],
+  'people-experience-and-culture:2-3:0': ['o2'],
+  'people-experience-and-culture:2-3:1': ['o2'],
+  'people-experience-and-culture:2-3:2': ['o2'],
+  'people-experience-and-culture:2-3:3': ['o2', 'o3'],
+  'people-experience-and-culture:2-3:4': ['o2'],
+  'strategic-direction-and-leadership:3-4:0': ['o2', 'o3'],
+  'strategic-direction-and-leadership:3-4:1': ['o3'],
+  'strategic-direction-and-leadership:3-4:2': ['o2', 'o3'],
+  'strategic-direction-and-leadership:3-4:3': ['o3'],
+  'strategic-direction-and-leadership:3-4:4': ['o3'],
+  'people-experience-and-culture:3-4:0': ['o2', 'o3'],
+  'people-experience-and-culture:3-4:1': ['o2'],
+  'people-experience-and-culture:3-4:2': ['o2'],
+  'people-experience-and-culture:3-4:3': ['o2', 'o3'],
+  'people-experience-and-culture:3-4:4': ['o2', 'o3'],
+  'strategic-direction-and-leadership:4-5:0': ['o3'],
+  'strategic-direction-and-leadership:4-5:1': ['o3'],
+  'strategic-direction-and-leadership:4-5:2': ['o1', 'o3'],
+  'strategic-direction-and-leadership:4-5:3': ['o2', 'o3'],
+  'strategic-direction-and-leadership:4-5:4': ['o3'],
+  'people-experience-and-culture:4-5:0': ['o2'],
+  'people-experience-and-culture:4-5:1': ['o2', 'o3'],
+  'people-experience-and-culture:4-5:2': ['o3'],
+  'people-experience-and-culture:4-5:3': ['o1', 'o2'],
+  'people-experience-and-culture:4-5:4': ['o2', 'o3'],
+  'people-experience-and-culture:4-5:5': ['o2', 'o3'],
+};
 
 function normalizeGeneratedText(value: string): string {
   return value.trim().replace(/\s+/g, ' ').toLowerCase();
@@ -16,10 +77,6 @@ function normalizeGeneratedText(value: string): string {
 
 function sanitizeId(value: string): string {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-}
-
-function createObjectiveText(lens: string, fromScore: number, toScore: number): string {
-  return `${lens}: move from ${fromScore} to ${toScore}.`;
 }
 
 function parseVisionActionTemplates(): VisionActionTemplate[] {
@@ -34,13 +91,10 @@ function parseVisionActionTemplates(): VisionActionTemplate[] {
       return;
     }
 
-    const objectiveId = `vision:auto-objective:${sanitizeId(currentLens)}:${currentStage.fromScore}-${currentStage.toScore}`;
     templates.push({
       lens: currentLens,
       fromScore: currentStage.fromScore,
       toScore: currentStage.toScore,
-      objectiveId,
-      objectiveText: createObjectiveText(currentLens, currentStage.fromScore, currentStage.toScore),
       actionTexts: currentActions
     });
     currentActions = [];
@@ -148,14 +202,17 @@ function createAction(template: VisionActionTemplate, actionText: string, action
   };
 }
 
-function createObjective(template: VisionActionTemplate): ComponentObjective {
+function createOutcome(
+  definition: { id: string; text: string },
+  existing?: ComponentObjective
+): ComponentObjective {
   return {
-    id: template.objectiveId,
-    text: template.objectiveText,
-    owner: '',
-    timescale: '',
-    notes: '',
-    evidence: '',
+    id: definition.id,
+    text: definition.text,
+    owner: existing?.owner || '',
+    timescale: existing?.timescale || '',
+    notes: existing?.notes || '',
+    evidence: existing?.evidence || '',
     linkedActions: []
   };
 }
@@ -164,29 +221,51 @@ function getActionId(template: VisionActionTemplate, actionIndex: number): strin
   return `vision-action:${sanitizeId(template.lens)}:${template.fromScore}-${template.toScore}:${actionIndex}`;
 }
 
+function getOutcomeLinkedActions(
+  outcomeId: VisionOutcomeId,
+  nextVisionDraft: Record<string, DraftEntry>
+): Array<{ lens: string; actionId: string }> {
+  const links: Array<{ lens: string; actionId: string }> = [];
+
+  VISION_TEMPLATES.forEach((template) => {
+    const stem = `${sanitizeId(template.lens)}:${template.fromScore}-${template.toScore}`;
+    const lensEntry = nextVisionDraft[template.lens];
+    if (!lensEntry) {
+      return;
+    }
+    template.actionTexts.forEach((_, index) => {
+      const mapped = ACTION_OUTCOME_MAP[`${stem}:${index}`];
+      if (mapped?.includes(outcomeId)) {
+        const actionId = getActionId(template, index);
+        if (lensEntry.actions.some((a) => a.id === actionId)) {
+          links.push({ lens: template.lens, actionId });
+        }
+      }
+    });
+  });
+
+  return links;
+}
+
 export function syncVisionDerivedContent(store: AdoptionStore): AdoptionStore {
   const nextDraft = { ...(store.currentDraft || {}) };
   const nextObjectives = { ...(store.objectives || {}) };
   const visionDraft = nextDraft.vision || {};
   const componentLensEntries = Object.keys(visionDraft);
 
-  const existingAutoObjectives = (nextObjectives.vision || []).filter((objective) => objective.id.startsWith('vision:auto-objective:'));
-  const existingCustomObjectives = (nextObjectives.vision || []).filter((objective) => !objective.id.startsWith('vision:auto-objective:'));
-  const existingObjectiveTexts = new Set((nextObjectives.vision || []).map((objective) => normalizeGeneratedText(objective.text || '')));
-  const derivedObjectives: ComponentObjective[] = [];
+  const existingOutcomeObjectives = (nextObjectives.vision || []).filter((o) => o.id.startsWith('vision:outcome:'));
+  const existingOtherObjectives = (nextObjectives.vision || []).filter((o) => !o.id.startsWith('vision:outcome:'));
+  const existingById = existingOutcomeObjectives.reduce<Record<string, ComponentObjective>>((acc, o) => {
+    acc[o.id] = o;
+    return acc;
+  }, {});
+
   const nextVisionDraft = componentLensEntries.reduce<Record<string, DraftEntry>>((accumulator, lens) => {
     accumulator[lens] = cloneEntry(visionDraft[lens] || createEmptyVisionEntry());
     return accumulator;
   }, {});
 
   VISION_TEMPLATES.forEach((template) => {
-    const existingObjective = existingAutoObjectives.find((objective) => objective.id === template.objectiveId);
-    const objectiveTextKey = normalizeGeneratedText(template.objectiveText);
-    if (!existingObjective && !existingObjectiveTexts.has(objectiveTextKey) && !derivedObjectives.some((objective) => objective.id === template.objectiveId || normalizeGeneratedText(objective.text) === objectiveTextKey)) {
-      derivedObjectives.push(createObjective(template));
-      existingObjectiveTexts.add(objectiveTextKey);
-    }
-
     const lensEntry = nextVisionDraft[template.lens] || createEmptyVisionEntry();
     const existingActionTexts = new Set((lensEntry.actions || []).map((action) => normalizeGeneratedText(action.text || '')));
 
@@ -203,27 +282,10 @@ export function syncVisionDerivedContent(store: AdoptionStore): AdoptionStore {
     nextVisionDraft[template.lens] = lensEntry;
   });
 
-  const linkedObjectives = [...existingAutoObjectives, ...existingCustomObjectives, ...derivedObjectives].map((objective) => {
-    if (!objective.id.startsWith('vision:auto-objective:')) {
-      return objective;
-    }
-
-    const template = VISION_TEMPLATES.find((candidate) => candidate.objectiveId === objective.id);
-    if (template) {
-      const lensEntry = nextVisionDraft[template.lens] || createEmptyVisionEntry();
-      return {
-        ...objective,
-        linkedActions: template.actionTexts
-          .map((_, index) => ({
-            lens: template.lens,
-            actionId: getActionId(template, index)
-          }))
-          .filter((link) => (lensEntry.actions || []).some((action) => action.id === link.actionId))
-      };
-    }
-
-    return objective;
-  });
+  const namedOutcomes = VISION_OUTCOME_DEFINITIONS.map((definition) => ({
+    ...createOutcome(definition, existingById[definition.id]),
+    linkedActions: getOutcomeLinkedActions(definition.id.replace('vision:outcome:', '') as VisionOutcomeId, nextVisionDraft)
+  }));
 
   return {
     ...store,
@@ -233,7 +295,7 @@ export function syncVisionDerivedContent(store: AdoptionStore): AdoptionStore {
     },
     objectives: {
       ...nextObjectives,
-      vision: linkedObjectives
+      vision: [...existingOtherObjectives, ...namedOutcomes]
     }
   };
 }

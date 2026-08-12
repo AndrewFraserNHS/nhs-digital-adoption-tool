@@ -8,6 +8,7 @@ import { getPathwayRulesForComponent } from '@data/pathway-rules';
 import { calculateChecklistCompletion } from '@lib/pathwayAnalysis';
 import { FilterSummaryBar } from '@components/ui/FilterSummaryBar';
 import { getComponentDescription, getLensDescription } from '@data/descriptions';
+import { PHASE_NAMES } from '@types/constants';
 
 export interface DashboardProps {
   store: AdoptionStore;
@@ -410,7 +411,7 @@ export function AdoptionDashboard({
         <div className={`dashboard-metric-card dashboard-metric-card--phase dashboard-metric-card--${currentPhaseTone} rounded-lg shadow-sm p-6 border`}>
           <h3 className="dashboard-metric-card__label text-sm font-medium mb-1">Current Phase Focus</h3>
           <div className="flex items-end space-x-2">
-            <span className="dashboard-metric-card__headline text-4xl font-bold">Phase {metrics.currentPhase}</span>
+            <span className="dashboard-metric-card__headline text-4xl font-bold">{PHASE_NAMES[metrics.currentPhase] || `Phase ${metrics.currentPhase}`}</span>
           </div>
           <p className="dashboard-metric-card__description text-sm mt-2">
             {currentPhaseRag} status based on delivery progress and action completion.
@@ -497,7 +498,7 @@ export function AdoptionDashboard({
         <div className="bg-white rounded-lg shadow-sm p-8 border border-slate-200 mb-8 text-center">
           <h3 className="text-lg font-semibold text-slate-800">Getting started</h3>
           <p className="text-sm text-slate-600 mt-2 max-w-xl mx-auto">
-            Nothing has been assessed yet, so there's nothing to chart. Set up your project details first, then start
+            Nothing has been assessed yet, so there's nothing to chart. Set up your CST details first, then start
             scoring your first component to see your readiness build up here.
           </p>
           <div className="mt-4 flex items-center justify-center gap-3">
@@ -507,7 +508,7 @@ export function AdoptionDashboard({
                 onClick={() => onNavigate('project-details')}
                 className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
               >
-                Set up your project details
+                Set up your CST details
               </button>
             ) : null}
             {components[0] ? (
@@ -557,7 +558,7 @@ export function AdoptionDashboard({
                 className={`rounded-md border p-4 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
               >
                 <div className="flex items-center justify-between mb-2">
-                  <h4 className={`font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>Phase {phaseSummary.phase}</h4>
+                  <h4 className={`font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>{PHASE_NAMES[phaseSummary.phase] || `Phase ${phaseSummary.phase}`}</h4>
                   <span className={`text-xs font-semibold px-2 py-0.5 rounded ${ragClass}`}>
                     {phaseSummary.rag}
                   </span>
@@ -700,7 +701,7 @@ export function AdoptionDashboard({
             >
               <option value="all">All phases</option>
               {phases.map((phase) => (
-                <option key={phase} value={phase}>Phase {phase}</option>
+                <option key={phase} value={phase}>{PHASE_NAMES[phase] || `Phase ${phase}`}</option>
               ))}
             </select>
           </div>
@@ -809,8 +810,8 @@ export function AdoptionDashboard({
           >
             <option value="all">All phases</option>
             {phases.map((phase) => (
-              <option key={phase} value={phase}>Phase {phase}</option>
-            ))}
+              <option key={phase} value={phase}>{PHASE_NAMES[phase] || `Phase ${phase}`}</option>
+            ))}"
           </select>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

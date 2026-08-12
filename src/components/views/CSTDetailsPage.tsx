@@ -5,6 +5,13 @@ import { validateOrgProfile } from '@lib/adoptionValidator';
 import { getComponentObjectiveCounts } from '@lib/adoptionMetrics';
 import { AssessmentComponent } from '@data/components';
 import {
+  DEFAULT_GUIDANCE_LINK_MAP,
+  TOOLKIT_BASE_DEFAULTS,
+  type GuidanceSectionLinks,
+  type LinkOverrides,
+  type PerLinkOverride
+} from '@data/maturity-guidance-links';
+import {
   COMPETENCE_OPTIONS,
   CONFIDENCE_OPTIONS,
   CST_TYPE_OPTIONS,
@@ -141,6 +148,15 @@ export function ProjectDetailsPage({
     [profile, onProfileUpdate]
   );
 
+  const handleLinkOverridesChange = useCallback(
+    (overrides: LinkOverrides) => {
+      const updated = { ...profile, linkOverrides: overrides };
+      setProfile(updated);
+      onProfileUpdate(updated);
+    },
+    [profile, onProfileUpdate]
+  );
+
   const componentsByPhase = components.reduce<Record<number, AssessmentComponent[]>>((byPhase, component) => {
     byPhase[component.phase] = byPhase[component.phase] || [];
     byPhase[component.phase].push(component);
@@ -150,7 +166,7 @@ export function ProjectDetailsPage({
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className={`text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>Project Details</h2>
+        <h2 className={`text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>CST Details</h2>
         <button
           type="button"
           onClick={onOpenOnboarding}
@@ -166,7 +182,7 @@ export function ProjectDetailsPage({
 
       <div className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium ${darkMode ? 'border-emerald-500/40 bg-emerald-500/15 text-emerald-200' : 'border-emerald-200 bg-emerald-50 text-emerald-800'}`}>
         <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" aria-hidden="true" />
-        Auto-save is on for Project Details.
+        Auto-save is on for CST Details.
       </div>
 
       <div className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-6`}>
@@ -413,6 +429,167 @@ export function ProjectDetailsPage({
                     </label>
                   </div>
                 </div>
+              );
+            })}
+          </div>
+        </details>
+      </div>
+
+      {/* Step 4: External link overrides */}
+      <div className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-6`}>
+        <details>
+          <summary className={`cursor-pointer text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
+            Step 4: External links
+          </summary>
+          <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+            All toolkit links across the tool point to the NHS Future platform by default. You can override the base
+            toolkit destination for your organisation, or change individual links independently.
+          </p>
+
+          {/* Base override */}
+          <div className={`mt-4 rounded-md border p-4 space-y-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}>
+            <div>
+              <p className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>Base override</p>
+              <p className={`text-xs mt-0.5 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
+                Replaces the Change Management Toolkit destination for all links that fall back to it.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label className={`block text-xs font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>
+                  Toolkit name
+                </label>
+                <input
+                  type="text"
+                  placeholder={TOOLKIT_BASE_DEFAULTS.label}
+                  value={profile.linkOverrides?.base?.label ?? ''}
+                  onChange={(e) => handleLinkOverridesChange({
+                    ...profile.linkOverrides,
+                    base: { ...profile.linkOverrides?.base, label: e.target.value || undefined }
+                  })}
+                  className={`w-full rounded-md border shadow-sm sm:text-sm p-2 ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
+                />
+              </div>
+              <div>
+                <label className={`block text-xs font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>
+                  Toolkit URL
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="url"
+                    placeholder={TOOLKIT_BASE_DEFAULTS.url}
+                    value={profile.linkOverrides?.base?.url ?? ''}
+                    onChange={(e) => handleLinkOverridesChange({
+                      ...profile.linkOverrides,
+                      base: { ...profile.linkOverrides?.base, url: e.target.value || undefined }
+                    })}
+                    className={`flex-1 min-w-0 rounded-md border shadow-sm sm:text-sm p-2 ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
+                  />
+                  {profile.linkOverrides?.base?.url && (
+                    <button
+                      type="button"
+                      onClick={() => handleLinkOverridesChange({
+                        ...profile.linkOverrides,
+                        base: { ...profile.linkOverrides?.base, url: undefined }
+                      })}
+                      className={`shrink-0 rounded-md border px-3 py-2 text-xs font-medium ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-50'}`}
+                    >
+                      Reset
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Per-link overrides grouped by section */}
+          <div className="mt-4 space-y-3">
+            <p className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>Per-link overrides</p>
+            <p className={`text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
+              Leave a URL blank to use the fallback. Set fallback to <strong>Base</strong> to use your base override above,
+              or <strong>Default</strong> to keep the original NHS Future link.
+            </p>
+            {(Object.entries(DEFAULT_GUIDANCE_LINK_MAP) as [string, GuidanceSectionLinks][]).map(([sectionName, sectionLinks]) => {
+              const allLinks = [...(sectionLinks.inputs ?? []), ...(sectionLinks.deliverables ?? [])];
+              const overrideCount = allLinks.filter((l) => profile.linkOverrides?.links?.[l.key]?.url?.trim()).length;
+              return (
+                <details key={sectionName} className={`rounded-md border ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}>
+                  <summary className={`flex cursor-pointer items-center justify-between gap-2 p-3 text-sm font-medium ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>
+                    <span>{sectionName}</span>
+                    {overrideCount > 0 && (
+                      <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${darkMode ? 'bg-blue-500/20 text-blue-300' : 'bg-blue-100 text-blue-700'}`}>
+                        {overrideCount} override{overrideCount !== 1 ? 's' : ''}
+                      </span>
+                    )}
+                  </summary>
+                  <div className={`divide-y ${darkMode ? 'divide-slate-700' : 'divide-slate-100'}`}>
+                    {(['inputs', 'deliverables'] as const).map((sect) => {
+                      const links = sectionLinks[sect] ?? [];
+                      if (!links.length) return null;
+                      return (
+                        <div key={sect} className="p-3 space-y-2">
+                          <p className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>{sect}</p>
+                          {links.map((link) => {
+                            const perLink: PerLinkOverride = profile.linkOverrides?.links?.[link.key] ?? { fallback: 'base' };
+                            return (
+                              <div key={link.key} className="grid grid-cols-1 gap-1.5">
+                                <span className={`text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>{link.label}</span>
+                                <p className={`text-xs truncate ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>{link.url}</p>
+                                <div className="flex gap-2">
+                                  <input
+                                    type="url"
+                                    placeholder="Override URL (leave blank to use fallback)"
+                                    value={perLink.url ?? ''}
+                                    onChange={(e) => {
+                                      const val = e.target.value || undefined;
+                                      handleLinkOverridesChange({
+                                        ...profile.linkOverrides,
+                                        links: {
+                                          ...profile.linkOverrides?.links,
+                                          [link.key]: { ...perLink, url: val }
+                                        }
+                                      });
+                                    }}
+                                    className={`flex-1 min-w-0 rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
+                                  />
+                                  {!perLink.url && (
+                                    <select
+                                      value={perLink.fallback ?? 'base'}
+                                      onChange={(e) => handleLinkOverridesChange({
+                                        ...profile.linkOverrides,
+                                        links: {
+                                          ...profile.linkOverrides?.links,
+                                          [link.key]: { ...perLink, fallback: e.target.value as 'base' | 'default' }
+                                        }
+                                      })}
+                                      className={`rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
+                                    >
+                                      <option value="base">Fallback: Base</option>
+                                      <option value="default">Fallback: Default</option>
+                                    </select>
+                                  )}
+                                  {perLink.url && (
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const next = { ...profile.linkOverrides?.links };
+                                        delete next[link.key];
+                                        handleLinkOverridesChange({ ...profile.linkOverrides, links: next });
+                                      }}
+                                      className={`shrink-0 rounded border px-2 py-1.5 text-xs font-medium ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-50'}`}
+                                    >
+                                      Clear
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </details>
               );
             })}
           </div>

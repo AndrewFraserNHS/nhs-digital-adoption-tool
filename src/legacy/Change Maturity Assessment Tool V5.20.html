@@ -791,13 +791,13 @@
              <div>
                 <h3 class="text-lg font-semibold mb-2 text-gray-800">Version 4.7</h3>
                 <ul class="list-disc list-inside space-y-1 text-gray-700">
-                    <li>The "Actions Summary" in Project Details now provides a detailed breakdown of "In Progress" actions by their due date status (Overdue, Due in 30 days, OK).</li>
+                    <li>The "Actions Summary" in CST Details now provides a detailed breakdown of "In Progress" actions by their due date status (Overdue, Due in 30 days, OK).</li>
                 </ul>
             </div>
              <div>
                 <h3 class="text-lg font-semibold mb-2 text-gray-800">Version 4.6</h3>
                 <ul class="list-disc list-inside space-y-1 text-gray-700">
-                    <li>Added an "Actions Summary" section to the Project Details card.</li>
+                    <li>Added an "Actions Summary" section to the CST Details card.</li>
                     <li>The summary provides a live count of total, in-progress, paused, and completed actions across all themes and historical stages.</li>
                 </ul>
             </div>
@@ -829,7 +829,7 @@
                 <h3 class="text-lg font-semibold mb-2 text-gray-800">Version 4.2</h3>
                 <ul class="list-disc list-inside space-y-1 text-gray-700">
                     <li>Major UI update: Replaced the long scrollable list of themes with a new tabbed interface.</li>
-                    <li>The Project Details and Maturity Radar are now fixed at the top for better visibility.</li>
+                    <li>The CST Details and Maturity Radar are now fixed at the top for better visibility.</li>
                 </ul>
             </div>
             <div class="border-t pt-4 mt-4">
@@ -877,7 +877,7 @@
 
         const instructionsText = `
             <div>
-                <h3 class="text-lg font-semibold mb-2" style="color: #005EB8;">1. Fill in Project Details</h3>
+                <h3 class="text-lg font-semibold mb-2" style="color: #005EB8;">1. Fill in CST Details</h3>
                 <p class="text-gray-700">
                     Start by entering the <strong>Organisation Name</strong> and <strong>Project Name</strong>. You can also select a <strong>Project Phase</strong> to see how your current scores compare to the expected maturity for that phase.
                 </p>
@@ -2181,7 +2181,7 @@
             ];
             csv.push(headers.join(','));
 
-            // Add project details
+            // Add CST details
             csv.push([`"Organisation: ${escapeCSV(assessmentState.projectDetails.organisation)}"`].join(','));
             csv.push([`"Project: ${escapeCSV(assessmentState.projectDetails.project)}"`].join(','));
             csv.push([`"Overall Maturity: ${escapeCSV(document.getElementById('overall-score').textContent)}"`].join(','));
@@ -2220,7 +2220,7 @@
             ];
             csv.push(headers.join(','));
 
-            // Add project details
+            // Add CST details
             csv.push([`"Organisation: ${escapeCSV(assessmentState.projectDetails.organisation)}"`].join(','));
             csv.push([`"Project: ${escapeCSV(assessmentState.projectDetails.project)}"`].join(','));
             csv.push([]); // Blank line

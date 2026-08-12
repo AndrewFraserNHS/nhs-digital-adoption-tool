@@ -80,7 +80,7 @@ export function MaturityModalManager({
 <body>${html}</body>
 </html>`);
     win.document.close();
-    win.addEventListener('load', () => { win.focus(); win.print(); win.close(); });
+    setTimeout(() => { win.focus(); win.print(); win.close(); }, 250);
   }, []);
 
   const handleExportCsv = useCallback(() => {
@@ -237,7 +237,7 @@ export function MaturityModalManager({
           </div>
           <div className="p-6 overflow-y-auto space-y-4 text-sm text-gray-700">
             <div>
-              <h3 className="font-semibold text-gray-900 mb-1">1. Fill in Project Details</h3>
+              <h3 className="font-semibold text-gray-900 mb-1">1. Fill in CST Details</h3>
               <p>Start by entering the <span className="font-medium">Organisation Name</span> and <span className="font-medium">Project Name</span>. You can also select a <span className="font-medium">Project Phase</span> to compare your current scores with the expected maturity for that phase.</p>
             </div>
             <div>

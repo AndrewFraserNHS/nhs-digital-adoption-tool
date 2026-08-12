@@ -51,7 +51,7 @@ function buildSteps(): Step[] {
             tailors the guidance, actions and resources provided.
           </p>
           <p>
-            You can update your CST at any time from <strong>Project Details</strong>
+            You can update your CST at any time from <strong>CST Details</strong>
           </p>
         </div>
       ),
@@ -102,7 +102,7 @@ Building the foundations for successful adoption.</li>
       title: 'Getting Started',
       body: (
         <div className="text-sm text-slate-700 space-y-2">
-          <p className="text-sm text-slate-700">Start with Project Details to review your CST. </p>
+          <p className="text-sm text-slate-700">Start with CST Details to review your CST. </p>
           <p className="text-sm text-slate-700">Then visit the Dashboard to:</p>
           <ul className="list-decimal pl-5 space-y-1">
             <li>View your current position</li>
@@ -179,7 +179,7 @@ export function OnboardingIntro({
                   onClick={onNavigateToProjectDetails}
                   className="flex h-[42px] min-h-[42px] items-center justify-center rounded-md border border-blue-300 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-800 hover:bg-blue-100"
                 >
-                  Set up your project details
+                  Set up your CST details
                 </button>
               ) : null}
               {onNavigateToGuide ? (

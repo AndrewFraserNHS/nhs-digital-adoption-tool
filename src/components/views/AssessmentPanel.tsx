@@ -16,6 +16,7 @@ import {
   deriveTemporalActionStatus,
   normalizeActionStatus
 } from '@lib/actionModel';
+import { PHASE_NAMES } from '@types/constants';
 
 type AssessmentPanelStore = AdoptionStore & {
   showMatrix?: Record<string, boolean>;
@@ -768,7 +769,7 @@ export function AssessmentPanel({
           <h2 className={`text-3xl font-bold flex items-center ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
             {component.label}
             <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded ml-4 border border-blue-200">
-              Toolkit Phase {component.phase}
+              {PHASE_NAMES[component.phase] || `Phase ${component.phase}`}
             </span>
           </h2>
           <p className={`mt-2 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
@@ -796,7 +797,7 @@ export function AssessmentPanel({
             onClick={() => scrollToSection('assessment-scoring')}
             className={`${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 hover:bg-slate-700' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'} rounded-md border px-3 py-1.5 text-xs font-semibold`}
           >
-            1. Score and justify
+            1. Justify
           </button>
           <button
             type="button"
@@ -822,7 +823,7 @@ export function AssessmentPanel({
 
       <div id="assessment-scoring" className={`${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'} mb-8 rounded-lg border p-5`}>
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <h3 className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>{hasAnyScoreForComponent ? 'Step 1: Score and justify' : 'Step 1: Justification of what is currently known'}</h3>
+          <h3 className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>{hasAnyScoreForComponent ? 'Step 1: Justify' : 'Step 1: Justification of what is currently known'}</h3>
           <button
             type="button"
             onClick={() => setShowScoringSection((current) => !current)}

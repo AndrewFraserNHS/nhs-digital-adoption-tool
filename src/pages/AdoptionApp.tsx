@@ -49,7 +49,7 @@ import { syncVisionDerivedContent } from '@lib/visionAutomation';
 import { syncPathwayObjectives } from '@lib/pathwayObjectives';
 import { GuidanceRoadmapView } from '@components/views/GuidanceRoadmapView';
 import { HighlightBuilderTool } from '@components/views/HighlightBuilderTool';
-import { ProjectDetailsPage } from '@components/views/ProjectDetailsPage';
+import { ProjectDetailsPage } from '@components/views/CSTDetailsPage';
 import { OnboardingIntro } from '@components/onboarding/OnboardingIntro';
 import { nhsButtonPrimary, nhsButtonSecondary, nhsFocusRing } from '../styles/nhsTheme';
 
@@ -1039,7 +1039,7 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
                     : 'text-blue-100 hover:bg-blue-800 border-l-4 border-transparent'
                 }`}
               >
-                {v === 'project-details' ? 'Project Details' : 'Adoption Engine Onboarding'}
+                {v === 'project-details' ? 'CST Details' : 'Adoption Engine Onboarding'}
               </button>
             ))}
           </nav>
@@ -1429,6 +1429,7 @@ return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
             <ChangeManagementGuide
               onComponentClick={openComponentAssessment}
               guidanceTarget={DEFAULT_GUIDANCE_TARGET}
+              linkOverrides={store.orgProfile.linkOverrides}
               darkMode={Boolean(userSettings.darkMode)}
             />
           )}

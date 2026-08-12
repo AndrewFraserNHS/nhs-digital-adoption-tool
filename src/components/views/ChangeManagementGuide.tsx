@@ -1,11 +1,12 @@
 import { JSX, useState, type ReactNode } from 'react';
 import { getComponentById } from '@data/components';
-import { resolveGuidanceLinksForAdoptionComponent, type MaturityGuidanceTarget } from '@data/maturity-guidance-links';
+import { resolveGuidanceLinksForAdoptionComponent, type LinkOverrides, type MaturityGuidanceTarget } from '@data/maturity-guidance-links';
 import { KEY_QUESTIONS } from '@data/key-questions';
 
 export interface ChangeManagementGuideProps {
   onComponentClick: (componentId: string) => void;
   guidanceTarget?: MaturityGuidanceTarget;
+  linkOverrides?: LinkOverrides;
   darkMode?: boolean;
 }
 
@@ -180,7 +181,7 @@ function AccordionSection({
   );
 }
 
-export function ChangeManagementGuide({ onComponentClick, guidanceTarget = 'Default', darkMode = false }: ChangeManagementGuideProps): JSX.Element {
+export function ChangeManagementGuide({ onComponentClick, guidanceTarget = 'Default', linkOverrides, darkMode = false }: ChangeManagementGuideProps): JSX.Element {
   const [expandedSection, setExpandedSection] = useState<GuideSectionId | null>('questions');
   const [expandedPhase, setExpandedPhase] = useState<number | null>(null);
 
@@ -230,7 +231,8 @@ export function ChangeManagementGuide({ onComponentClick, guidanceTarget = 'Defa
             const toolkitLinks = resolveGuidanceLinksForAdoptionComponent(
               guidanceTarget,
               keyQuestion.componentIds[0],
-              'inputs'
+              'inputs',
+              linkOverrides
             ).slice(0, 2);
 
             return (

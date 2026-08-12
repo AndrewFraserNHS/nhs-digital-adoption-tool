@@ -23,7 +23,7 @@ function buildProps() {
     reportData: {
       orgName: 'Trust',
       projectName: 'Programme',
-      phase: 'Phase 1',
+      phase: '1 Pre-Discovery',
       rows: [{ id: 'vision', label: 'Vision', value: 2, max: 5 }]
     },
     components: ['Vision', 'Benefits'],
@@ -74,7 +74,7 @@ describe('MaturityModalManager', () => {
     render(<MaturityModalManager {...props} modalType="help" />);
 
     expect(screen.getByRole('heading', { name: /how to use this tool/i })).toBeInTheDocument();
-    expect(screen.getByText(/fill in project details/i)).toBeInTheDocument();
+    expect(screen.getByText(/fill in CST details/i)).toBeInTheDocument();
     expect(screen.getByText(/assess each theme/i)).toBeInTheDocument();
   });
 

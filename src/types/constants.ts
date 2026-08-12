@@ -5,6 +5,14 @@ export const CONSTANTS = {
   VERSION: `v${packageJson.version}`,
 };
 
+export const PHASE_NAMES: Record<number, string> = {
+  1: 'Pre-Discovery',
+  2: 'Solution Design',
+  3: 'Development',
+  4: 'Deployment / Go Live',
+  5: 'Post-Deployment'
+};
+
 export const SPECIFIC_RUBRICS = {
   sampleRubric: [
     { id: 'r1', label: 'Leadership', max: 5 },
@@ -417,13 +425,13 @@ export const VERSION_HISTORY_ITEMS = [
   {
     version: '4.7',
     notes: [
-      'The "Actions Summary" in Project Details now provides a detailed breakdown of "In Progress" actions by their due date status (Overdue, Due in 30 days, OK).'
+      'The "Actions Summary" in CST Details now provides a detailed breakdown of "In Progress" actions by their due date status (Overdue, Due in 30 days, OK).'
     ]
   },
   {
     version: '4.6',
     notes: [
-      'Added an "Actions Summary" section to the Project Details card.',
+      'Added an "Actions Summary" section to the CST Details card.',
       'The summary provides a live count of total, in-progress, paused, and completed actions across all themes and historical stages.'
     ]
   },
@@ -455,7 +463,7 @@ export const VERSION_HISTORY_ITEMS = [
     version: '4.2',
     notes: [
       'Major UI update: Replaced the long scrollable list of themes with a new tabbed interface.',
-      'The Project Details and Maturity Radar are now fixed at the top for better visibility.'
+      'The CST Details and Maturity Radar are now fixed at the top for better visibility.'
     ]
   },
   {
@@ -489,7 +497,7 @@ export const VERSION_HISTORY_ITEMS = [
   {
     version: '3.7',
     notes: [
-      'Radar chart legend for phase comparison now dynamically updates based on the selected project phase (e.g., "Expected for Phase 1: Pre-Discovery").'
+      'Radar chart legend for phase comparison now dynamically updates based on the selected project phase (e.g., "Expected for 1 Pre-Discovery").'
     ]
   },
   {

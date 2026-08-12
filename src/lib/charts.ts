@@ -60,6 +60,7 @@ export function createRadarChart(ctx: CanvasRenderingContext2D | HTMLCanvasEleme
   const defaultOpts = {
     maintainAspectRatio: true,
     responsive: true,
+    layout: { padding: 56 },
     plugins: {
       legend: { display: true, position: 'bottom' },
       tooltip: { enabled: true, backgroundColor: darkMode ? 'rgba(15,23,42,0.98)' : 'rgba(11,18,32,0.95)', titleColor: '#fff', bodyColor: '#fff' },
@@ -76,10 +77,10 @@ export function createRadarChart(ctx: CanvasRenderingContext2D | HTMLCanvasEleme
         angleLines: { color: angleColor, lineWidth: 1 },
         ticks: { display: false },
         pointLabels: {
-          display: true,
+          display: false,
           color: labelColor,
           font: { size: 12, family: Chart.defaults.font.family },
-          padding: 14,
+          padding: 10,
           callback: (value: string) => wrapChartLabel(value).join('\n')
         }
       }
@@ -89,6 +90,7 @@ export function createRadarChart(ctx: CanvasRenderingContext2D | HTMLCanvasEleme
   const mergedOptions = {
     ...defaultOpts,
     ...options,
+    layout: { padding: 56, ...(options.layout || {}) },
     scales: {
       ...(defaultOpts.scales || {}),
       ...(options.scales || {}),
@@ -98,7 +100,7 @@ export function createRadarChart(ctx: CanvasRenderingContext2D | HTMLCanvasEleme
         pointLabels: {
           ...(defaultOpts.scales?.r?.pointLabels || {}),
           ...(options.scales?.r?.pointLabels || {}),
-          display: true,
+          display: false,
           callback: (value: string) => wrapChartLabel(value).join('\n')
         }
       }
@@ -221,10 +223,11 @@ const radarPointLabelPlugin: Plugin = {
         const lineHeight = fontSize * 1.15;
         const offset = (lines.length - 1) * -lineHeight / 2;
         const labelHeight = Math.max(fontSize, lines.length * lineHeight);
-        const minX = fontSize * 1.5;
-        const maxX = chart.width - fontSize * 1.5;
-        const minY = labelHeight / 2;
-        const maxY = chart.height - labelHeight / 2;
+        const labelWidth = fontSize * 6;
+        const minX = labelWidth / 2 + 4;
+        const maxX = chart.width - labelWidth / 2 - 4;
+        const minY = labelHeight / 2 + 4;
+        const maxY = chart.height - labelHeight / 2 - 4;
         const clampedX = Math.min(Math.max(position.x, minX), maxX);
         const clampedY = Math.min(Math.max(position.y, minY), maxY);
 

@@ -120,7 +120,7 @@ describe('AdoptionDashboard', () => {
     );
 
     expect(screen.getByText('60%')).toBeInTheDocument();
-    expect(screen.getAllByText('Phase 1').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Pre-Discovery').length).toBeGreaterThan(0);
     expect(screen.getByText('0 of 0 actions completed.')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Hide component radar' })).toBeInTheDocument();
   });
@@ -186,7 +186,7 @@ describe('AdoptionDashboard', () => {
     expect(screen.getByText('Getting started')).toBeInTheDocument();
     expect(screen.queryByText('Phase Progress (RAG)')).not.toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole('button', { name: 'Set up your project details' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Set up your CST details' }));
     expect(onNavigate).toHaveBeenCalledWith('project-details');
 
     fireEvent.click(screen.getByRole('button', { name: 'Start your first assessment' }));

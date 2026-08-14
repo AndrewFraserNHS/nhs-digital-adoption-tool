@@ -51,6 +51,7 @@ import type {
 } from '@lib/adoptionState';
 import { cloneEntry, createEmptyEntry, initializeStore } from '@lib/adoptionState';
 import { validateCstProfile } from '@lib/adoptionValidator';
+import { syncCaseForChangeDerivedContent } from '@lib/caseForChangeAutomation';
 import { createLineChart, createRadarChart } from '@lib/charts';
 import { syncPathwayObjectives } from '@lib/pathwayObjectives';
 import AppState from '@lib/state';
@@ -115,6 +116,10 @@ function cloneAction(action: DraftAction): DraftAction {
 
 function buildSuppressedAutoActionKey(componentId: string, lens: string): string {
   return `${componentId}:${lens}`;
+}
+
+function syncDerivedContent(store: AdoptionStore): AdoptionStore {
+  return syncPathwayObjectives(syncCaseForChangeDerivedContent(syncVisionDerivedContent(store)));
 }
 
 function getRubricText(componentId: string, lensName: string, score: number): string {
@@ -292,21 +297,19 @@ export function AdoptionApp() {
     } catch (error) {
       console.warn('Ignoring invalid persisted adoption data.', error);
     }
-    return syncPathwayObjectives(
-      syncVisionDerivedContent(
-        initializeStore({
-          view: 'dashboard',
-          orgProfile: persisted?.orgProfile || state.adoption?.orgProfile,
-          currentDraft: persisted?.currentDraft || state.adoption?.currentDraft,
-          objectives: persisted?.objectives || state.adoption?.objectives,
-          suppressedAutoActions:
-            persisted?.suppressedAutoActions || state.adoption?.suppressedAutoActions,
-          actionAuditLog: persisted?.actionAuditLog || state.adoption?.actionAuditLog,
-          history: persisted?.history || state.adoption?.history,
-          phaseOverrides: persisted?.phaseOverrides || state.adoption?.phaseOverrides,
-          pathwayChecks: persisted?.pathwayChecks || state.adoption?.pathwayChecks,
-        }) as AdoptionStore
-      )
+    return syncDerivedContent(
+      initializeStore({
+        view: 'dashboard',
+        orgProfile: persisted?.orgProfile || state.adoption?.orgProfile,
+        currentDraft: persisted?.currentDraft || state.adoption?.currentDraft,
+        objectives: persisted?.objectives || state.adoption?.objectives,
+        suppressedAutoActions:
+          persisted?.suppressedAutoActions || state.adoption?.suppressedAutoActions,
+        actionAuditLog: persisted?.actionAuditLog || state.adoption?.actionAuditLog,
+        history: persisted?.history || state.adoption?.history,
+        phaseOverrides: persisted?.phaseOverrides || state.adoption?.phaseOverrides,
+        pathwayChecks: persisted?.pathwayChecks || state.adoption?.pathwayChecks,
+      }) as AdoptionStore
     );
   });
 
@@ -621,7 +624,7 @@ export function AdoptionApp() {
           },
         },
       };
-      return syncPathwayObjectives(syncVisionDerivedContent(nextStore));
+      return syncDerivedContent(nextStore);
     });
   }, []);
 
@@ -701,9 +704,7 @@ export function AdoptionApp() {
       try {
         const text = await file.text();
         const parsed = parseImportedAdoptionAssessment(JSON.parse(text));
-        setStore((prev) =>
-          syncPathwayObjectives(syncVisionDerivedContent(mergeImportedAdoptionState(parsed, prev)))
-        );
+        setStore((prev) => syncDerivedContent(mergeImportedAdoptionState(parsed, prev)));
         setView('dashboard');
         announceStatus('Assessment import complete. Dashboard updated.');
       } catch (_error) {
@@ -889,9 +890,7 @@ export function AdoptionApp() {
       }
 
       const payload = parseImportedAdoptionAssessment(await response.json());
-      setStore((prev) =>
-        syncPathwayObjectives(syncVisionDerivedContent(mergeImportedAdoptionState(payload, prev)))
-      );
+      setStore((prev) => syncDerivedContent(mergeImportedAdoptionState(payload, prev)));
       setView('dashboard');
       announceStatus('Example assessment data loaded.');
       if (shouldAutoCloseSidebar()) {
@@ -913,7 +912,7 @@ export function AdoptionApp() {
       return;
     }
 
-    const resetStore = syncPathwayObjectives(syncVisionDerivedContent(initializeStore()));
+    const resetStore = syncDerivedContent(initializeStore());
     setStore(resetStore);
     setShowMatrix({});
     setView('dashboard');
@@ -1739,7 +1738,10 @@ export function AdoptionApp() {
                   };
 
                   const nextSuppressedAutoActions = { ...prev.suppressedAutoActions };
-                  if (actionId.startsWith('vision-action:')) {
+                  if (
+                    actionId.startsWith('vision-action:') ||
+                    actionId.startsWith('case-for-change-action:')
+                  ) {
                     const suppressionKey = buildSuppressedAutoActionKey(componentId, lens);
                     const currentSuppressed = nextSuppressedAutoActions[suppressionKey] || [];
                     if (!currentSuppressed.includes(actionId)) {
@@ -1771,7 +1773,7 @@ export function AdoptionApp() {
                     actionAuditLog: [...prev.actionAuditLog, auditEntry],
                   };
 
-                  return syncPathwayObjectives(syncVisionDerivedContent(nextStore));
+                  return syncDerivedContent(nextStore);
                 });
               }}
               onObjectivesUpdate={updateComponentObjectives}

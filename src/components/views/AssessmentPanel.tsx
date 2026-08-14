@@ -831,7 +831,7 @@ export function AssessmentPanel({
             </span>
           </h2>
           <p className={`mt-2 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-            Score readiness at lens level. Component-level justification, outcomes, and actions are
+            Assess readiness at lens level. Change Component justification, outcomes, and actions are
             tracked below.
           </p>
         </div>
@@ -911,19 +911,18 @@ export function AssessmentPanel({
             <label
               className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}
             >
-              Component Justification
+              Change Component Justification
             </label>
             <p className={`text-xs mb-2 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-              Explain why this component is scored as it is, what evidence supports that view, and
-              where the biggest gap sits. Example: "Score is 2 because sponsorship is visible only
-              in two services; no monthly steering update yet; next step is to agree a trust-wide
-              sponsor cadence."
+              Explain what is currently known, what evidence supports that view, and where the
+              biggest gap sits. Example: "Sponsorship is visible only in two services; there is no
+              monthly steering update yet; next step is to agree a trust-wide sponsor cadence."
             </p>
             <textarea
               value={componentJustification}
               onChange={(event) => handleComponentJustificationChange(event.target.value)}
               className={`w-full rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm h-24 p-2 border ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
-              placeholder="Record why this component received its current score, the evidence behind it, and the key improvement needed next."
+              placeholder="Record what is currently known for this change component, the evidence behind it, and the key improvement needed next."
             />
           </>
         ) : null}
@@ -1145,7 +1144,7 @@ export function AssessmentPanel({
                         <strong className={darkMode ? 'text-slate-100' : 'text-slate-700'}>
                           {entry.score === 0 ? 'Not Started' : `Level ${entry.score}`}:
                         </strong>
-                        {getRubricText(component.id, lens, entry.score)}
+                        {` ${getRubricText(component.id, lens, entry.score)}`}
                       </p>
                     </div>
                     <button

@@ -1,3 +1,5 @@
+import { DEFAULT_TOOLKIT_KEY, type ToolkitOptionKey } from './toolkits';
+
 export type CstType = 'project' | 'program' | 'initiative';
 
 export type CstPathwayKey = 'pathway-1' | 'pathway-2' | 'pathway-3';
@@ -23,6 +25,7 @@ export interface CstProfile {
   goLiveDate: string;
   fullAdoptionDate: string;
   benefitRealizationDate: string;
+  toolkitChoice: ToolkitOptionKey;
   phaseCapability: PhaseCapabilityProfile;
 }
 
@@ -88,5 +91,6 @@ export const DEFAULT_CST_PROFILE: CstProfile = {
   goLiveDate: '',
   fullAdoptionDate: '',
   benefitRealizationDate: '',
+  toolkitChoice: DEFAULT_TOOLKIT_KEY,
   phaseCapability: {},
 };

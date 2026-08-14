@@ -87,6 +87,10 @@ export function deriveTemporalActionStatus(
     return normalized;
   }
 
+  // If the action is already underway, treat it as In Progress for start-date checks.
+  // Still allow overdue completion to surface if the due date has passed.
+  const treatAsInProgress = normalized === 'In Progress';
+
   const today = new Date(now);
   today.setHours(0, 0, 0, 0);
 
@@ -102,7 +106,10 @@ export function deriveTemporalActionStatus(
   if (parsedStartDate && !isNaN(parsedStartDate.getTime())) {
     parsedStartDate.setHours(0, 0, 0, 0);
     if (today > parsedStartDate) {
-      return 'Overdue start';
+      if (!treatAsInProgress) {
+        return 'Overdue start';
+      }
+      // If it's already in progress, don't mark as 'Overdue start'.
     }
   }
 

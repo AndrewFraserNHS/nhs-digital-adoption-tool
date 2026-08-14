@@ -151,6 +151,37 @@ const PHASE_EXPECTED_SCORES: Record<string, Record<string, number>> = {
   },
 };
 
+function resolvePhaseExpectedScores(phaseLabel: string | undefined): Record<string, number> | null {
+  if (!phaseLabel) {
+    return null;
+  }
+
+  const directMatch = PHASE_EXPECTED_SCORES[phaseLabel];
+  if (directMatch) {
+    return directMatch;
+  }
+
+  const phaseNumberMatch = phaseLabel.match(/\b([1-5])\b/);
+  if (!phaseNumberMatch) {
+    return null;
+  }
+
+  const phaseNumber = Number(phaseNumberMatch[1]);
+  if (!Number.isInteger(phaseNumber) || phaseNumber < 1 || phaseNumber > 5) {
+    return null;
+  }
+
+  const canonicalLabel = `Phase ${phaseNumber}: ${[
+    'Pre-Discovery',
+    'Solution Design',
+    'Development',
+    'Implementation',
+    'Post Deployment',
+  ][phaseNumber - 1]}`;
+
+  return PHASE_EXPECTED_SCORES[canonicalLabel] || null;
+}
+
 const LEGACY_GUIDANCE_OVERRIDES: Partial<Record<string, Partial<MaturityGuidance>>> = {
   'Process change': {
     purpose:
@@ -594,6 +625,8 @@ export function MaturityApp() {
       }
     );
 
+    const expectedPhaseScores = resolvePhaseExpectedScores(projectProfile.phase);
+
     const radarChart = createRadarChart(
       radarCanvas,
       {
@@ -617,13 +650,12 @@ export function MaturityApp() {
             pointRadius: 4,
             pointHoverRadius: 6,
           },
-          ...(projectProfile.phase && PHASE_EXPECTED_SCORES[projectProfile.phase]
+          ...(expectedPhaseScores
             ? [
                 {
                   label: `Expected for ${projectProfile.phase}`,
                   data: componentList.map(
-                    (componentName) =>
-                      PHASE_EXPECTED_SCORES[projectProfile.phase]?.[componentName] || 0
+                    (componentName) => expectedPhaseScores[componentName] || 0
                   ),
                   backgroundColor: 'rgba(118, 134, 146, 0.1)',
                   borderColor: 'rgba(78, 90, 97, 1)',

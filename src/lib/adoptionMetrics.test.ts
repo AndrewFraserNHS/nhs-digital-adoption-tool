@@ -34,6 +34,15 @@ const store: AdoptionStore = {
     trustName: 'Trust',
     region: 'North',
     trustType: 'Acute',
+    cst: {
+      type: 'project',
+      pathway: 'pathway-1',
+      goLiveDate: '',
+      fullAdoptionDate: '',
+      benefitRealizationDate: '',
+      toolkitChoice: 'avt-v2-2026',
+      phaseCapability: {},
+    },
   },
   currentDraft: {
     vision: {
@@ -107,7 +116,7 @@ describe('adoptionMetrics', () => {
           componentId: 'vision',
           componentLabel: 'Vision',
           phase: 1,
-          gapToTarget: 2,
+          gapToTarget: 3,
           message: 'Raise Vision from 2.0 to target 4. Assess 1 remaining lens area(s).',
         },
       ],
@@ -150,6 +159,84 @@ describe('adoptionMetrics', () => {
       componentId: 'vision',
       phase: 1,
     });
+  });
+
+  it('stops at the first phase with any component below expected readiness', () => {
+    const phaseComponents: AssessmentComponent[] = [
+      {
+        id: 'vision',
+        label: 'Vision',
+        lenses: ['Lens A'],
+        phase: 1,
+        target: 4,
+      },
+      {
+        id: 'benefits',
+        label: 'Benefits',
+        lenses: ['Lens A'],
+        phase: 1,
+        target: 2,
+      },
+      {
+        id: 'sponsorship',
+        label: 'Sponsorship',
+        lenses: ['Lens A'],
+        phase: 2,
+        target: 3,
+      },
+    ];
+
+    const readyForPhaseOne: AdoptionStore = {
+      ...store,
+      currentDraft: {
+        vision: {
+          'Lens A': {
+            score: 5,
+            justification: '',
+            evidence: '',
+            actions: [],
+          },
+        },
+        benefits: {
+          'Lens A': {
+            score: 1,
+            justification: '',
+            evidence: '',
+            actions: [],
+          },
+        },
+        sponsorship: {
+          'Lens A': {
+            score: 1,
+            justification: '',
+            evidence: '',
+            actions: [],
+          },
+        },
+      },
+    } as AdoptionStore;
+
+    const metricsAtPhaseTwo = getMetrics(readyForPhaseOne, phaseComponents);
+    expect(metricsAtPhaseTwo.currentPhase).toBe(2);
+
+    const phaseTwoReady: AdoptionStore = {
+      ...readyForPhaseOne,
+      currentDraft: {
+        ...readyForPhaseOne.currentDraft,
+        sponsorship: {
+          'Lens A': {
+            score: 2,
+            justification: '',
+            evidence: '',
+            actions: [],
+          },
+        },
+      },
+    } as AdoptionStore;
+
+    const metricsAtLatestPhase = getMetrics(phaseTwoReady, phaseComponents);
+    expect(metricsAtLatestPhase.currentPhase).toBe(2);
+    expect(metricsAtLatestPhase.phaseSummaries.find((p) => p.phase === 2)?.onTrackComponents).toBe(1);
   });
 
   it('computes current and target radar series', () => {

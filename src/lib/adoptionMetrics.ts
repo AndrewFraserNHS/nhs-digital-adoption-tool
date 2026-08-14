@@ -5,9 +5,117 @@
 
 import { AssessmentComponent } from '@data/components';
 import type { ChartData } from 'chart.js';
-
 import { isCompletedActionStatus } from './actionModel';
 import { AdoptionStore, deriveObjectiveStatus, DraftEntry } from './adoptionState';
+
+const COMPONENT_PHASE_EXEMPLARS: Record<number, Record<string, number>> = {
+  1: {
+    vision: 5,
+    case_for_change: 5,
+    sponsorship: 1,
+    change_network: 1,
+    benefits: 1,
+    change_impact: 1,
+    risk_management: 1,
+    cm_readiness: 1,
+    stakeholder: 1,
+    resistance: 1,
+    skills_learning: 1,
+    capability: 1,
+    change_adoption: 1,
+    process_change: 1,
+    reinforcement: 1,
+    org_maturity: 1,
+    transfer_bau: 1,
+  },
+  2: {
+    vision: 5,
+    case_for_change: 5,
+    sponsorship: 2,
+    change_network: 2,
+    benefits: 3,
+    change_impact: 2,
+    risk_management: 2,
+    cm_readiness: 2,
+    stakeholder: 2,
+    resistance: 2,
+    skills_learning: 2,
+    capability: 2,
+    change_adoption: 2,
+    process_change: 3,
+    reinforcement: 2,
+    org_maturity: 2,
+    transfer_bau: 2,
+  },
+  3: {
+    vision: 5,
+    case_for_change: 5,
+    sponsorship: 3,
+    change_network: 3,
+    benefits: 4,
+    change_impact: 3,
+    risk_management: 3,
+    cm_readiness: 3,
+    stakeholder: 3,
+    resistance: 3,
+    skills_learning: 4,
+    capability: 3,
+    change_adoption: 3,
+    process_change: 4,
+    reinforcement: 3,
+    org_maturity: 3,
+    transfer_bau: 3,
+  },
+  4: {
+    vision: 5,
+    case_for_change: 5,
+    sponsorship: 5,
+    change_network: 5,
+    benefits: 5,
+    change_impact: 5,
+    risk_management: 5,
+    cm_readiness: 4,
+    stakeholder: 5,
+    resistance: 4,
+    skills_learning: 5,
+    capability: 4,
+    change_adoption: 4,
+    process_change: 5,
+    reinforcement: 4,
+    org_maturity: 4,
+    transfer_bau: 4,
+  },
+  5: {
+    vision: 5,
+    case_for_change: 5,
+    sponsorship: 5,
+    change_network: 5,
+    benefits: 5,
+    change_impact: 5,
+    risk_management: 5,
+    cm_readiness: 5,
+    stakeholder: 5,
+    resistance: 5,
+    skills_learning: 5,
+    capability: 5,
+    change_adoption: 5,
+    process_change: 5,
+    reinforcement: 5,
+    org_maturity: 5,
+    transfer_bau: 5,
+  },
+};
+
+export function getComponentExemplarScore(
+  componentId: string,
+  phase: number | undefined,
+  fallbackTarget: number
+): number {
+  if (!phase || !COMPONENT_PHASE_EXEMPLARS[phase]) {
+    return fallbackTarget;
+  }
+  return COMPONENT_PHASE_EXEMPLARS[phase][componentId] ?? fallbackTarget;
+}
 
 export interface Metrics {
   totalCurrent: number;
@@ -130,8 +238,9 @@ export function getMetrics(store: AdoptionStore, components: AssessmentComponent
     const avgScore = component.lenses.length
       ? Number((componentTotal / component.lenses.length).toFixed(1))
       : 0;
-    const gapToTarget = Number(Math.max(0, component.target - avgScore).toFixed(1));
-    if (avgScore >= component.target) {
+    const phaseExpectedScore = getComponentExemplarScore(component.id, component.phase, component.target);
+    const gapToTarget = Number(Math.max(0, phaseExpectedScore - avgScore).toFixed(1));
+    if (avgScore >= phaseExpectedScore) {
       phaseBucket.onTrackComponents += 1;
     }
 
@@ -185,9 +294,12 @@ export function getMetrics(store: AdoptionStore, components: AssessmentComponent
       };
     });
 
-  const firstNonGreen = phaseSummaries.find((phaseSummary) => phaseSummary.rag !== 'Green');
+  const firstPhaseNotReadinessReady = phaseSummaries.find(
+    (phaseSummary) => phaseSummary.onTrackComponents < phaseSummary.componentCount
+  );
+
   const currentPhase =
-    firstNonGreen?.phase || phaseSummaries[phaseSummaries.length - 1]?.phase || 1;
+    firstPhaseNotReadinessReady?.phase || phaseSummaries[phaseSummaries.length - 1]?.phase || 1;
   const nextSteps = componentProgress
     .filter(({ component, gapToTarget }) => component.phase <= currentPhase + 1 && gapToTarget > 0)
     .sort((left, right) => {
@@ -321,29 +433,46 @@ export function buildRadarChartData(
 
 export function buildComponentRadarChartData(
   components: AssessmentComponent[],
-  getEntry: (componentId: string, lens: string) => DraftEntry
+  getEntry: (componentId: string, lens: string) => DraftEntry,
+  currentPhase?: number
 ): ChartData<'radar', number[], string> {
+  const exemplarPhase =
+    currentPhase && COMPONENT_PHASE_EXEMPLARS[currentPhase] ? currentPhase : null;
+  const colorForScore = (score: number): string => {
+    if (score <= 0) return '#768692';
+    if (score < 1.5) return '#AE2521';
+    if (score < 2.5) return '#FFB81C';
+    if (score < 3.5) return '#005EB8';
+    if (score < 4.5) return '#330072';
+    return '#00A499';
+  };
+  const averageScores = components.map((component) => {
+    const total = component.lenses.reduce(
+      (sum, lens) => sum + Number(getEntry(component.id, lens).score || 0),
+      0
+    );
+    return Number((total / component.lenses.length).toFixed(1));
+  });
+
   return {
     labels: components.map((component) => component.label),
     datasets: [
       {
         label: 'Current Average Readiness',
-        data: components.map((component) => {
-          const total = component.lenses.reduce(
-            (sum, lens) => sum + Number(getEntry(component.id, lens).score || 0),
-            0
-          );
-          return Number((total / component.lenses.length).toFixed(1));
-        }),
+        data: averageScores,
         borderColor: '#005EB8',
         backgroundColor: 'rgba(0, 94, 184, 0.12)',
         borderWidth: 2,
         pointRadius: 4,
         pointHoverRadius: 6,
+        pointBackgroundColor: averageScores.map(colorForScore),
+        pointBorderColor: averageScores.map(colorForScore),
       },
       {
-        label: 'Target Average',
-        data: components.map((component) => component.target),
+        label: exemplarPhase ? `Exemplar (Phase ${exemplarPhase})` : 'Target Average',
+        data: components.map((component) =>
+          getComponentExemplarScore(component.id, exemplarPhase || undefined, component.target)
+        ),
         borderColor: '#94a3b8',
         backgroundColor: 'rgba(148, 163, 184, 0.06)',
         borderWidth: 2,

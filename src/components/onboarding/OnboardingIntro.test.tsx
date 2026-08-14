@@ -47,7 +47,7 @@ describe('OnboardingIntro', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
 
-    fireEvent.click(screen.getByRole('button', { name: 'Set up your CST details' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Set up your CST Personalisation' }));
     expect(onNavigateToProjectDetails).toHaveBeenCalled();
   });
 

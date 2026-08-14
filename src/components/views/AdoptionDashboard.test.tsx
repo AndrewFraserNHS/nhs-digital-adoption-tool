@@ -36,6 +36,7 @@ const store: AdoptionStore = {
       goLiveDate: '2026-10-01',
       fullAdoptionDate: '',
       benefitRealizationDate: '',
+        toolkitChoice: 'avt-v2-2026',
       phaseCapability: {},
     },
   },
@@ -123,7 +124,7 @@ describe('AdoptionDashboard', () => {
     expect(screen.getByText('60%')).toBeInTheDocument();
     expect(screen.getAllByText('Pre-Discovery').length).toBeGreaterThan(0);
     expect(screen.getByText('0 of 0 actions completed.')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Hide component radar' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Hide change component radar' })).toBeInTheDocument();
   });
 
   it('filters component cards by status', () => {
@@ -187,14 +188,14 @@ describe('AdoptionDashboard', () => {
     expect(screen.getByText('Getting started')).toBeInTheDocument();
     expect(screen.queryByText('Phase Progress (RAG)')).not.toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole('button', { name: 'Set up your CST details' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Set up your CST Personalisation' }));
     expect(onNavigate).toHaveBeenCalledWith('project-details');
 
     fireEvent.click(screen.getByRole('button', { name: 'Start your first assessment' }));
     expect(onComponentClick).toHaveBeenCalledWith('vision');
   });
 
-  it('shows Blue for fully on-target, complete work in the dashboard focus list', () => {
+  it('shows Green for fully on-target work in the dashboard focus list', () => {
     const completeMetrics: Metrics = {
       ...metrics,
       nextSteps: [
@@ -225,8 +226,8 @@ describe('AdoptionDashboard', () => {
     );
 
     expect(focusCard).toBeTruthy();
-    expect(focusCard && within(focusCard).getByText('Blue')).toBeInTheDocument();
-    expect(focusCard && within(focusCard).queryByText('Green')).not.toBeInTheDocument();
+    expect(focusCard && within(focusCard).getByText('Green')).toBeInTheDocument();
+    expect(focusCard && within(focusCard).queryByText('Blue')).not.toBeInTheDocument();
   });
 
   it('calls onOpenLensInfo when the lens explainer is clicked', () => {

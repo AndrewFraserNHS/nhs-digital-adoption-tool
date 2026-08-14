@@ -80,7 +80,7 @@ describe('MaturityModalManager', () => {
 
     expect(screen.getByTestId('maturity-modal-help')).toBeInTheDocument();
     expect(screen.getByTestId('maturity-help-heading')).toBeInTheDocument();
-    expect(screen.getByTestId('maturity-modal-help').textContent).toContain('Fill in CST Details');
+    expect(screen.getByTestId('maturity-modal-help').textContent).toContain('Fill in CST Personalisation');
     expect(screen.getByTestId('maturity-modal-help').textContent).toContain('Assess Each Theme');
   });
 

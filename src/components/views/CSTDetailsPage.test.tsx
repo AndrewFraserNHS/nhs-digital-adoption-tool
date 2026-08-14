@@ -16,6 +16,7 @@ const orgProfile: OrgProfile = {
     goLiveDate: '2026-10-01',
     fullAdoptionDate: '',
     benefitRealizationDate: '',
+    toolkitChoice: 'avt-v2-2026',
     phaseCapability: {},
   },
 };
@@ -117,5 +118,32 @@ describe('ProjectDetailsPage', () => {
 
     fireEvent.click(screen.getByTestId('cst-show-intro-button'));
     expect(onOpenOnboarding).toHaveBeenCalled();
+  });
+
+  it('updates toolkit choice from CST Details', () => {
+    const onProfileUpdate = vi.fn();
+
+    render(
+      <ProjectDetailsPage
+        orgProfile={orgProfile}
+        onProfileUpdate={onProfileUpdate}
+        components={components}
+        lenses={['Strategic Direction and Leadership']}
+        store={store}
+        getEntry={getEntry}
+        onComponentClick={vi.fn()}
+        onOpenOnboarding={vi.fn()}
+      />
+    );
+
+    fireEvent.change(screen.getByLabelText('Default toolkit for assistant preview'), {
+      target: { value: 'change-management-v3-2023' },
+    });
+
+    expect(onProfileUpdate).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        cst: expect.objectContaining({ toolkitChoice: 'change-management-v3-2023' }),
+      })
+    );
   });
 });

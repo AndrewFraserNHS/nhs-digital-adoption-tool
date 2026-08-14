@@ -45,6 +45,7 @@ describe('adoptionValidator', () => {
         goLiveDate: '',
         fullAdoptionDate: '',
         benefitRealizationDate: '',
+        toolkitChoice: 'avt-v2-2026',
         phaseCapability: {},
       },
     });
@@ -66,6 +67,7 @@ describe('adoptionValidator', () => {
         goLiveDate: '2026-11-10',
         fullAdoptionDate: '2026-11-09',
         benefitRealizationDate: '2026-11-08',
+        toolkitChoice: 'avt-v2-2026',
         phaseCapability: {},
       },
     });
@@ -84,6 +86,7 @@ describe('adoptionValidator', () => {
         goLiveDate: '2026-11-10',
         fullAdoptionDate: '2026-12-10',
         benefitRealizationDate: '2027-01-10',
+        toolkitChoice: 'avt-v2-2026',
         phaseCapability: {},
       },
     });

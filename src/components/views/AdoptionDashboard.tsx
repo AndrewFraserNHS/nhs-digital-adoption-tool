@@ -1,5 +1,6 @@
 import { AdoptionStore, DraftAction, DraftEntry, View } from '@lib/adoptionState';
 import { Metrics } from '@lib/adoptionMetrics';
+import { getComponentExemplarScore } from '@lib/adoptionMetrics';
 import { AssessmentComponent } from '@data/components';
 import { JSX, useMemo, useState } from 'react';
 import type { CstPathwayKey } from '@data/cst';
@@ -24,6 +25,11 @@ export interface DashboardProps {
   onOpenOnboarding?: () => void;
   colorAccessibilityMode?: 'standard' | 'color-blind-friendly';
   darkMode?: boolean;
+  phaseFocusMode?: 'auto' | 'manual';
+  manualPhaseFocus?: number;
+  onPhaseFocusModeChange?: (mode: 'auto' | 'manual') => void;
+  onManualPhaseFocusChange?: (phase: number) => void;
+  onResetPhaseFocus?: () => void;
 }
 
 type BragStatus = 'Blue' | 'Red' | 'Amber' | 'Green';
@@ -50,7 +56,7 @@ function InfoIcon(): JSX.Element {
 
 function getBragStatusFromGap(gapToTarget: number): BragStatus {
   if (gapToTarget <= 0) {
-    return 'Blue';
+    return 'Green';
   }
   if (gapToTarget >= 2) {
     return 'Red';
@@ -63,7 +69,7 @@ function getBragStatusFromGap(gapToTarget: number): BragStatus {
 
 function getBragStatusFromAverage(avgScore: number, targetScore: number): BragStatus {
   if (avgScore <= 0) {
-    return 'Blue';
+    return 'Amber';
   }
 
   const gap = targetScore - avgScore;
@@ -73,15 +79,19 @@ function getBragStatusFromAverage(avgScore: number, targetScore: number): BragSt
   if (gap > 0) {
     return 'Amber';
   }
-  return 'Blue';
+  return 'Green';
 }
 
 function getDeliveryStatusFromAverage(
   avgScore: number,
   targetScore: number,
   actionCount: number,
-  completedActionCount: number
+  completedActionCount: number,
+  allLensesLevelFive: boolean
 ): DeliveryStatus {
+  if (allLensesLevelFive) {
+    return 'Blue';
+  }
   if (actionCount <= 0) {
     return 'N/A';
   }
@@ -133,6 +143,11 @@ export function AdoptionDashboard({
   onOpenOnboarding,
   colorAccessibilityMode = 'standard',
   darkMode = false,
+  phaseFocusMode = 'auto',
+  manualPhaseFocus,
+  onPhaseFocusModeChange,
+  onManualPhaseFocusChange,
+  onResetPhaseFocus,
 }: DashboardProps): JSX.Element {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<
@@ -150,6 +165,11 @@ export function AdoptionDashboard({
     () => [...new Set(components.map((c) => c.phase))].sort((a, b) => a - b),
     [components]
   );
+  const suggestedPhase = metrics.currentPhase;
+  const effectivePhase =
+    phaseFocusMode === 'manual' && manualPhaseFocus && phases.includes(manualPhaseFocus)
+      ? manualPhaseFocus
+      : suggestedPhase;
 
   const [overdueVisible, setOverdueVisible] = useState(true);
 
@@ -209,18 +229,28 @@ export function AdoptionDashboard({
     return components
       .map((component) => {
         let total = 0;
+        let allLensesLevelFive = true;
         let actionCount = 0;
         let completedActionCount = 0;
         component.lenses.forEach((lens) => {
           const entry = getEntry(component.id, lens);
-          total += Number(entry.score || 0);
+          const score = Number(entry.score || 0);
+          total += score;
+          if (score !== 5) {
+            allLensesLevelFive = false;
+          }
           const actions = entry.actions || [];
           actionCount += actions.length;
           completedActionCount += actions.filter((action) => action.status === 'Completed').length;
         });
         const avgNum = Number((total / component.lenses.length).toFixed(1));
+        const exemplarTarget = getComponentExemplarScore(
+          component.id,
+          effectivePhase,
+          component.target
+        );
         const status =
-          avgNum === 0 ? 'not-started' : avgNum >= component.target ? 'on-track' : 'below-target';
+          avgNum === 0 ? 'not-started' : avgNum >= exemplarTarget ? 'on-track' : 'below-target';
 
         // Compare to last finalised snapshot (null when no history or unchanged)
         let delta: number | null = null;
@@ -234,7 +264,16 @@ export function AdoptionDashboard({
           if (raw !== 0) delta = raw;
         }
 
-        return { component, avgNum, status, delta, actionCount, completedActionCount };
+        return {
+          component,
+          avgNum,
+          exemplarTarget,
+          status,
+          delta,
+          actionCount,
+          completedActionCount,
+          allLensesLevelFive,
+        };
       })
       .filter(({ component, status }) => {
         if (statusFilter !== 'all' && status !== statusFilter) {
@@ -262,6 +301,7 @@ export function AdoptionDashboard({
   }, [
     components,
     componentPhaseFilter,
+    effectivePhase,
     getEntry,
     lastSnapshot,
     searchTerm,
@@ -269,6 +309,53 @@ export function AdoptionDashboard({
     sortDirection,
     statusFilter,
   ]);
+
+  const focusedNextSteps = useMemo<Metrics['nextSteps']>(() => {
+    if (phaseFocusMode === 'auto') {
+      return metrics.nextSteps;
+    }
+
+    return components
+      .map((component) => {
+        let total = 0;
+        let actionCount = 0;
+        let completedActionCount = 0;
+
+        component.lenses.forEach((lens) => {
+          const entry = getEntry(component.id, lens);
+          total += Number(entry.score || 0);
+          const actions = entry.actions || [];
+          actionCount += actions.length;
+          completedActionCount += actions.filter((action) => action.status === 'Completed').length;
+        });
+
+        const avgScore = Number((total / component.lenses.length).toFixed(1));
+        const targetScore = getComponentExemplarScore(component.id, effectivePhase, component.target);
+        const gapToTarget = Number(Math.max(0, targetScore - avgScore).toFixed(1));
+        const remainingActions = Math.max(0, actionCount - completedActionCount);
+        const evidenceText =
+          remainingActions > 0
+            ? `Complete ${remainingActions} open action(s).`
+            : 'Create at least one delivery action linked to this component.';
+
+        return {
+          componentId: component.id,
+          componentLabel: component.label,
+          phase: component.phase,
+          gapToTarget,
+          message: `Raise ${component.label} from ${avgScore.toFixed(1)} to exemplar ${targetScore.toFixed(1)}. ${evidenceText}`,
+          toolkitLinks: [],
+        };
+      })
+      .filter((step) => step.phase <= effectivePhase + 1 && step.gapToTarget >= 0)
+      .sort((left, right) => {
+        if (left.phase !== right.phase) {
+          return left.phase - right.phase;
+        }
+        return right.gapToTarget - left.gapToTarget;
+      })
+      .slice(0, 3);
+  }, [components, effectivePhase, getEntry, metrics.nextSteps, phaseFocusMode]);
 
   const pathwaySummary = useMemo(() => {
     let required = 0;
@@ -315,7 +402,7 @@ export function AdoptionDashboard({
   };
 
   const currentPhaseSummary = metrics.phaseSummaries.find(
-    (phaseSummary) => phaseSummary.phase === metrics.currentPhase
+    (phaseSummary) => phaseSummary.phase === effectivePhase
   );
   const currentPhaseRag = currentPhaseSummary?.rag || 'Red';
   const currentPhaseTone = currentPhaseRag.toLowerCase();
@@ -488,13 +575,63 @@ export function AdoptionDashboard({
           <h3 className="dashboard-metric-card__label text-sm font-medium mb-1">
             Current Phase Focus
           </h3>
+          <div className="mb-2 flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() => onPhaseFocusModeChange?.('auto')}
+              className={`rounded-full border px-2.5 py-1 text-xs font-semibold transition-colors ${
+                phaseFocusMode === 'auto'
+                  ? 'border-blue-700 bg-[#005eb8] text-white'
+                  : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'
+              }`}
+            >
+              Auto
+            </button>
+            <button
+              type="button"
+              onClick={() => onPhaseFocusModeChange?.('manual')}
+              className={`rounded-full border px-2.5 py-1 text-xs font-semibold transition-colors ${
+                phaseFocusMode === 'manual'
+                  ? 'border-blue-700 bg-[#005eb8] text-white'
+                  : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'
+              }`}
+            >
+              Manual
+            </button>
+            {phaseFocusMode === 'manual' ? (
+              <select
+                value={effectivePhase}
+                onChange={(e) => onManualPhaseFocusChange?.(Number(e.target.value))}
+                className="rounded-md border border-white/50 bg-white/90 px-2 py-1 text-xs font-medium text-slate-800"
+                aria-label="Manual phase focus"
+              >
+                {phases.map((phase) => (
+                  <option key={phase} value={phase}>
+                    {PHASE_NAMES[phase] || `Phase ${phase}`}
+                  </option>
+                ))}
+              </select>
+            ) : null}
+            {phaseFocusMode === 'manual' && onResetPhaseFocus ? (
+              <button
+                type="button"
+                onClick={onResetPhaseFocus}
+                className="rounded-full border border-slate-300 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-100"
+              >
+                Reset to suggested
+              </button>
+            ) : null}
+          </div>
           <div className="flex items-end space-x-2">
             <span className="dashboard-metric-card__headline text-4xl font-bold">
-              {PHASE_NAMES[metrics.currentPhase] || `Phase ${metrics.currentPhase}`}
+              {PHASE_NAMES[effectivePhase] || `Phase ${effectivePhase}`}
             </span>
           </div>
           <p className="dashboard-metric-card__description text-sm mt-2">
             {currentPhaseRag} status based on delivery progress and action completion.
+            {phaseFocusMode === 'manual'
+              ? ` Suggested phase is ${PHASE_NAMES[suggestedPhase] || `Phase ${suggestedPhase}`}.`
+              : ''}
           </p>
         </div>
 
@@ -532,11 +669,13 @@ export function AdoptionDashboard({
           </span>
         </div>
         <p className={`text-sm mb-4 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-          These are the biggest gaps to target for your current phase, largest gap first.
+          These are the biggest gaps to target for your
+          {phaseFocusMode === 'manual' ? ' selected focus phase' : ' current phase'}, largest gap
+          first.
         </p>
-        {metrics.nextSteps.length > 0 ? (
+        {focusedNextSteps.length > 0 ? (
           <div className="space-y-3">
-            {metrics.nextSteps.map((step) => {
+            {focusedNextSteps.map((step) => {
               const bragStatus = getBragStatusFromGap(step.gapToTarget);
               return (
                 <button
@@ -604,7 +743,7 @@ export function AdoptionDashboard({
         <div className="bg-white rounded-lg shadow-sm p-8 border border-slate-200 mb-8 text-center">
           <h3 className="text-lg font-semibold text-slate-800">Getting started</h3>
           <p className="text-sm text-slate-600 mt-2 max-w-xl mx-auto">
-            Nothing has been assessed yet, so there's nothing to chart. Set up your CST details
+            Nothing has been assessed yet, so there's nothing to chart. Set up your CST Personalisation
             first, then start scoring your first component to see your readiness build up here.
           </p>
           <div className="mt-4 flex items-center justify-center gap-3">
@@ -614,7 +753,7 @@ export function AdoptionDashboard({
                 onClick={() => onNavigate('project-details')}
                 className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
               >
-                Set up your CST details
+                Set up your CST Personalisation
               </button>
             ) : null}
             {components[0] ? (
@@ -693,8 +832,9 @@ export function AdoptionDashboard({
             </div>
           </div>
 
-          {/* Charts Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          <div className="flex flex-col">
+            {/* Charts Section */}
+            <div className="order-2 grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
             <div
               className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm p-6 border flex flex-col`}
             >
@@ -771,21 +911,21 @@ export function AdoptionDashboard({
                 against their specific target reiquirements.
               </p>
             </div>
-          </div>
+            </div>
 
-          {/* Component Overview */}
-          <div
-            className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm p-6 border mb-8`}
-          >
+            {/* Component Overview */}
+            <div
+              className={`order-1 ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm p-6 border mb-8`}
+            >
             <div className="mb-4 flex w-full flex-col gap-4">
               <div className="w-full">
                 <h3
                   className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
                 >
-                  Component Radar
+                  Change Component Radar
                 </h3>
                 <p className={`text-xs mt-1 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-                  Show or hide the component-level readiness radar, then use the overview list below
+                  Show or hide the change-component readiness radar, then use the overview list below
                   to drill into delivery status.
                 </p>
               </div>
@@ -795,7 +935,7 @@ export function AdoptionDashboard({
                   onClick={() => setShowComponentRadar((current) => !current)}
                   className="rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-white"
                 >
-                  {showComponentRadar ? 'Hide component radar' : 'Show component radar'}
+                  {showComponentRadar ? 'Hide change component radar' : 'Show change component radar'}
                 </button>
               </div>
             </div>
@@ -805,7 +945,7 @@ export function AdoptionDashboard({
                 className={`w-full ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} rounded-md border p-4`}
               >
                 <div
-                  className={`flex min-h-[420px] w-full items-center justify-center rounded border p-2 ${darkMode ? 'border-slate-700 bg-slate-950' : 'border-slate-100 bg-white'}`}
+                  className={`flex min-h-[720px] w-full items-center justify-center rounded border p-2 ${darkMode ? 'border-slate-700 bg-slate-950' : 'border-slate-100 bg-white'}`}
                 >
                   <canvas id="adoption-component-radar-chart" className="block h-full w-full" />
                 </div>
@@ -828,17 +968,17 @@ export function AdoptionDashboard({
                 <p
                   className={`mt-4 text-center text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
                 >
-                  Visualises the average readiness score for each component against its target
-                  score.
+                  Visualises the average readiness score for each component against the phase
+                  exemplar profile.
                 </p>
               </div>
             ) : null}
 
             <div className="mt-4 w-full space-y-3">
               <p className={`text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-                BRAG scoring is used for the component overview:
+                BRAG scoring is used for the change component overview:
                 <span className="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800">Blue</span> =
-                actions exist and all are complete,{' '}
+                every lens is level 5,{' '}
                 <span className="px-1.5 py-0.5 rounded bg-green-100 text-green-800">Green</span> =
                 on target,{' '}
                 <span className="px-1.5 py-0.5 rounded bg-red-100 text-red-800">Red</span> = behind
@@ -923,13 +1063,30 @@ export function AdoptionDashboard({
 
             <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {componentRows.map(
-                ({ component, avgNum, actionCount, completedActionCount, delta }) => {
+                ({ component, avgNum, exemplarTarget, actionCount, completedActionCount, delta, allLensesLevelFive }) => {
                   const deliveryStatus = getDeliveryStatusFromAverage(
                     avgNum,
-                    component.target,
+                    exemplarTarget,
                     actionCount,
-                    completedActionCount
+                    completedActionCount,
+                    allLensesLevelFive
                   );
+                  const readinessArrow =
+                    deliveryStatus === 'Red'
+                      ? '↓'
+                      : avgNum >= exemplarTarget
+                        ? '→'
+                        : avgNum <= 0
+                          ? '↑'
+                          : '↗';
+                  const arrowToneClass =
+                    deliveryStatus === 'Red'
+                      ? 'text-red-500'
+                      : avgNum >= exemplarTarget
+                      ? darkMode
+                        ? 'text-slate-300'
+                        : 'text-slate-500'
+                      : 'text-amber-600';
 
                   return (
                     <button
@@ -948,13 +1105,34 @@ export function AdoptionDashboard({
                         {component.label}
                       </span>
                       <div className="flex items-center gap-1 shrink-0">
+                        <span
+                          className={`text-xs font-semibold ${arrowToneClass}`}
+                          title={
+                            avgNum >= exemplarTarget
+                              ? 'On or above expected readiness for phase focus'
+                              : avgNum <= 0
+                                ? 'Not started: raise towards expected readiness'
+                                : 'Below expected readiness: continue improving'
+                          }
+                          aria-label={
+                            avgNum >= exemplarTarget
+                              ? 'At expected readiness'
+                              : avgNum <= 0
+                                ? 'Not started, increase readiness'
+                                : 'Below expected readiness'
+                          }
+                        >
+                          {readinessArrow}
+                        </span>
                         {delta !== null && (
                           <span
-                            className={`text-xs font-semibold ${
+                            className={`text-[11px] font-semibold ${
                               delta > 0 ? 'text-green-600' : 'text-red-400'
                             }`}
+                            title="Change versus last finalised month"
                           >
-                            {delta > 0 ? '↑' : '↓'}
+                            {delta > 0 ? '+' : ''}
+                            {delta.toFixed(1)}
                           </span>
                         )}
                         <span
@@ -975,6 +1153,7 @@ export function AdoptionDashboard({
                 </div>
               )}
             </div>
+            </div>
           </div>
 
           {/* Lens & Component Breakdown */}
@@ -992,7 +1171,7 @@ export function AdoptionDashboard({
                   <button
                     type="button"
                     onClick={() => setShowLensBreakdownHelp((current) => !current)}
-                    className="inline-flex items-center justify-center rounded-full border border-slate-300 p-1 text-slate-500 hover:border-[#005eb8] hover:text-[#005eb8]"
+                    className="inline-flex items-center justify-center rounded-full p-1 text-slate-500 hover:text-[#005eb8]"
                     aria-label="Explain lenses and components"
                     title="Explain lenses and components"
                   >
@@ -1050,12 +1229,18 @@ export function AdoptionDashboard({
                       {mapped.map((component) => {
                         const entry = getEntry(component.id, lens);
                         const score = Number(entry.score || 0);
+                        const exemplarTarget = getComponentExemplarScore(
+                          component.id,
+                          effectivePhase,
+                          component.target
+                        );
                         const actions = entry.actions || [];
                         const deliveryStatus = getDeliveryStatusFromAverage(
                           score,
-                          component.target,
+                          exemplarTarget,
                           actions.length,
-                          actions.filter((action) => action.status === 'Completed').length
+                          actions.filter((action) => action.status === 'Completed').length,
+                          false
                         );
 
                         return (

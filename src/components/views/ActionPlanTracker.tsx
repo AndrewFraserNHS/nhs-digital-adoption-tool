@@ -303,14 +303,14 @@ export function ActionPlanTracker({
         {filteredActions.length ? (
           <div className="overflow-x-auto">
             <table
-              className={`min-w-full ${darkMode ? 'divide-slate-700' : 'divide-slate-200'} divide-y`}
+              className={`min-w-full table-fixed ${darkMode ? 'divide-slate-700' : 'divide-slate-200'} divide-y`}
             >
               <thead className={darkMode ? 'bg-slate-900' : 'bg-slate-50'}>
                 <tr>
                   <th
                     className={`px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
                   >
-                    Component
+                    Change Component
                   </th>
                   <th
                     className={`px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
@@ -318,7 +318,7 @@ export function ActionPlanTracker({
                     Lens
                   </th>
                   <th
-                    className={`px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
+                    className={`w-[22%] px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
                   >
                     Action
                   </th>
@@ -338,7 +338,7 @@ export function ActionPlanTracker({
                     Timescale
                   </th>
                   <th
-                    className={`px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
+                    className={`w-[14%] px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
                   >
                     Status
                   </th>
@@ -354,7 +354,7 @@ export function ActionPlanTracker({
                     >
                       <button
                         onClick={() => handleComponentClick(compId)}
-                        className="text-left hover:text-[#005eb8] transition-colors"
+                        className="text-left underline underline-offset-2 hover:text-[#005eb8] transition-colors"
                       >
                         {component}
                       </button>
@@ -365,7 +365,7 @@ export function ActionPlanTracker({
                       {lens}
                     </td>
                     <td
-                      className={`px-4 py-3 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}
+                      className={`w-[22%] px-4 py-3 text-sm whitespace-normal break-words leading-snug ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}
                     >
                       {action.text}
                     </td>
@@ -384,7 +384,7 @@ export function ActionPlanTracker({
                     >
                       {action.timescale}
                     </td>
-                    <td className="px-4 py-3 text-sm">
+                    <td className="w-[14%] px-4 py-3 text-sm">
                       <span
                         className={`inline-flex rounded-full border px-2 py-1 text-xs font-semibold ${ACTION_STATUS_BADGE_STYLES[normalizeActionStatus(action.status)]}`}
                       >

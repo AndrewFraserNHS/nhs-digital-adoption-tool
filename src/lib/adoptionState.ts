@@ -115,6 +115,7 @@ export interface HistorySnapshot {
 }
 
 export type View =
+  | 'introduction'
   | 'dashboard'
   | 'assessment'
   | 'action-plan'

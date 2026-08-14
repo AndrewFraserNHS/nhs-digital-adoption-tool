@@ -13,6 +13,7 @@ import {
   initializeStore,
   normalizeOrgProfile,
 } from './adoptionState';
+import { isToolkitOptionKey } from '@data/toolkits';
 
 export const ADOPTION_STORAGE_KEY = 'nhs-digital-adoption-store';
 
@@ -174,6 +175,12 @@ function validateOrgProfile(value: unknown, path: string): void {
     assertOptionalString(value.cst.goLiveDate, `${path}.cst.goLiveDate`);
     assertOptionalString(value.cst.fullAdoptionDate, `${path}.cst.fullAdoptionDate`);
     assertOptionalString(value.cst.benefitRealizationDate, `${path}.cst.benefitRealizationDate`);
+    assertOptionalString(value.cst.toolkitChoice, `${path}.cst.toolkitChoice`);
+    if (typeof value.cst.toolkitChoice === 'string' && !isToolkitOptionKey(value.cst.toolkitChoice)) {
+      throw new Error(
+        `Invalid adoption assessment payload at ${path}.cst.toolkitChoice: unexpected value "${value.cst.toolkitChoice}".`
+      );
+    }
   }
 }
 

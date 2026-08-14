@@ -282,7 +282,7 @@ export function MaturityModalManager({
           </div>
           <div className="p-6 overflow-y-auto space-y-4 text-sm text-gray-700">
             <div>
-              <h3 className="font-semibold text-gray-900 mb-1">1. Fill in CST Details</h3>
+              <h3 className="font-semibold text-gray-900 mb-1">1. Fill in CST Personalisation</h3>
               <p>
                 Start by entering the <span className="font-medium">Organisation Name</span> and{' '}
                 <span className="font-medium">Project Name</span>. You can also select a{' '}

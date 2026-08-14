@@ -1,4 +1,5 @@
 import { OnboardingIntro } from '@components/onboarding/OnboardingIntro';
+import { ToolkitChatbot } from '@components/ui/ToolkitChatbot';
 import { ActionPlanTracker } from '@components/views/ActionPlanTracker';
 import { AdoptionDashboard } from '@components/views/AdoptionDashboard';
 import { AssessmentPanel } from '@components/views/AssessmentPanel';
@@ -7,6 +8,7 @@ import { ProjectDetailsPage } from '@components/views/CSTDetailsPage';
 import { GuidanceRoadmapView } from '@components/views/GuidanceRoadmapView';
 import { HighlightBuilderTool } from '@components/views/HighlightBuilderTool';
 import { LensInfoModal } from '@components/views/LensInfoModal';
+import { OnboardingOverviewPage } from '@components/views/OnboardingOverviewPage';
 import { type AdoptionUserSettings, SettingsPanel } from '@components/views/SettingsPanel';
 import { ASSESSMENT_COMPONENTS, getComponentById } from '@data/components';
 import {
@@ -23,6 +25,7 @@ import {
   resolveGuidanceLinksForAdoptionComponent,
 } from '@data/maturity-guidance-links';
 import { GENERIC_RUBRIC } from '@data/rubrics';
+import { isCompletedActionStatus } from '@lib/actionModel';
 import {
   ADOPTION_STORAGE_KEY,
   buildAdoptionExportPayload,
@@ -85,6 +88,8 @@ const DEFAULT_USER_SETTINGS: AdoptionUserSettings = {
   profileImageDataUrl: '',
   darkMode: false,
   colorAccessibilityMode: 'standard',
+  phaseFocusMode: 'auto',
+  manualPhaseFocus: 1,
 };
 
 const DEFAULT_ENGAGEMENT_STATE: EngagementState = {
@@ -364,8 +369,8 @@ export function AdoptionApp() {
   const [emailTo, setEmailTo] = useState('test@test.com');
   const [emailSubject, setEmailSubject] = useState('');
   const [emailBody, setEmailBody] = useState('');
-  const currentMonthLabel = useMemo(() => getCurrentMonthLabel(), []);
-  const finaliseWindowOpen = useMemo(() => isFinaliseWindowOpen(), []);
+  const currentMonthLabel = getCurrentMonthLabel();
+  const finaliseWindowOpen = isFinaliseWindowOpen();
 
   const getEntry = useCallback(
     (componentId: string, lens: string): DraftEntry => {
@@ -394,6 +399,10 @@ export function AdoptionApp() {
       })),
     };
   }, [store]);
+  const effectivePhaseFocus =
+    userSettings.phaseFocusMode === 'manual' && userSettings.manualPhaseFocus
+      ? userSettings.manualPhaseFocus
+      : metrics.currentPhase;
   const actionRows = flattenActions(
     store,
     (componentId) => getComponentById(componentId) || COMPONENTS[0],
@@ -460,11 +469,17 @@ export function AdoptionApp() {
           '#adoption-component-radar-chart'
         ) as HTMLCanvasElement;
         if (componentRadarCanvas) {
-          const componentRadarData = buildComponentRadarChartData(COMPONENTS, getEntry);
+          const componentRadarData = buildComponentRadarChartData(
+            COMPONENTS,
+            getEntry,
+            effectivePhaseFocus
+          );
           createRadarChart(componentRadarCanvas, componentRadarData, {
             scales: {
               r: {
-                ticks: { display: true, min: 0, max: 5, stepSize: 1, backdropColor: 'transparent' },
+                min: 0,
+                max: 5,
+                ticks: { display: true, stepSize: 1, backdropColor: 'transparent' },
               },
             },
           });
@@ -493,7 +508,7 @@ export function AdoptionApp() {
         }
       }, 100);
     }
-  }, [view, store, getEntry, MUTABLE_LENSES]);
+  }, [view, store, getEntry, MUTABLE_LENSES, COMPONENTS, effectivePhaseFocus]);
 
   useEffect(() => {
     const syncSidebarWithViewport = () => {
@@ -694,6 +709,11 @@ export function AdoptionApp() {
   const handleFinaliseMonth = useCallback(
     (options?: { replaceExisting?: boolean }) => {
       const replaceExisting = Boolean(options?.replaceExisting);
+      if (!finaliseWindowOpen) {
+        window.alert('Finalise Month is available during the final week of each month.');
+        return;
+      }
+
       const proceedWithWarnings = confirmIfCstWarnings('Finalise Month');
       if (!proceedWithWarnings) {
         return;
@@ -798,6 +818,7 @@ export function AdoptionApp() {
     [
       COMPONENTS,
       confirmIfCstWarnings,
+      finaliseWindowOpen,
       metrics.currentPhase,
       metrics.overallPct,
       store,
@@ -1006,7 +1027,16 @@ export function AdoptionApp() {
     [currentMonthLabel, store.history]
   );
   const canCreateNewFinalisation = finaliseWindowOpen;
-  const canOpenFinaliseModal = canCreateNewFinalisation || Boolean(currentMonthSnapshot);
+  const canOpenFinaliseModal = canCreateNewFinalisation;
+  const finaliseButtonTitle = canOpenFinaliseModal
+    ? 'Review and finalise monthly snapshot'
+    : 'Finalise Month unlocks from the final week of each month.';
+  const finaliseButtonClassName = canOpenFinaliseModal
+    ? `${nhsButtonPrimary} h-9 px-3 py-0 shadow-[0_3px_0_rgba(0,0,0,0.2)]`
+    : 'h-9 px-3 py-0 rounded-md border border-slate-300 bg-slate-200 text-slate-500 cursor-not-allowed';
+  const finaliseButtonStyle = canOpenFinaliseModal
+    ? { backgroundColor: userSettings.themeColor }
+    : undefined;
   const finaliseSummary = useMemo(() => {
     const baselineSnapshot =
       currentMonthSnapshot ||
@@ -1083,8 +1113,11 @@ export function AdoptionApp() {
   );
 
   const getComponentStatus = (comp: (typeof COMPONENTS)[0]) => {
-    let scoredCount = 0,
-      justifiedCount = 0;
+    let scoredCount = 0;
+    let justifiedCount = 0;
+    let actionCount = 0;
+    let completedActionCount = 0;
+
     comp.lenses.forEach((l) => {
       const e = store.currentDraft[comp.id]?.[l];
       if (e && e.score > 0) {
@@ -1093,6 +1126,9 @@ export function AdoptionApp() {
           justifiedCount++;
         }
       }
+      const actions = e?.actions || [];
+      actionCount += actions.length;
+      completedActionCount += actions.filter((action) => isCompletedActionStatus(action.status)).length;
     });
 
     if (scoredCount === 0) {
@@ -1102,6 +1138,9 @@ export function AdoptionApp() {
       return { icon: '⚠', color: 'text-red-300', label: 'Missing Justification' };
     }
     if (scoredCount < comp.lenses.length) {
+      return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
+    }
+    if (actionCount <= 0 || completedActionCount < actionCount) {
       return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
     }
     return { icon: '✓', color: 'text-green-300', label: 'Completed' };
@@ -1172,7 +1211,7 @@ export function AdoptionApp() {
             Intro
           </div>
           <nav className="space-y-1 mb-4">
-            {(['project-details', 'cm-guide'] as View[]).map((v) => (
+            {(['introduction', 'cm-guide', 'project-details'] as View[]).map((v) => (
               <button
                 key={v}
                 ref={(el) => {
@@ -1185,7 +1224,11 @@ export function AdoptionApp() {
                     : 'text-blue-100 hover:bg-blue-800 border-l-4 border-transparent'
                 }`}
               >
-                {v === 'project-details' ? 'CST Details' : 'Adoption Engine Onboarding'}
+                {v === 'introduction'
+                  ? 'Introduction'
+                  : v === 'project-details'
+                    ? 'CST Personalisation'
+                    : 'Adoption Engine Onboarding'}
               </button>
             ))}
           </nav>
@@ -1239,7 +1282,7 @@ export function AdoptionApp() {
           </nav>
 
           <div className="px-4 mb-2 text-xs font-semibold text-blue-300 uppercase tracking-wider">
-            Assessment Components
+            Change Components
           </div>
           <nav className="space-y-1">
             {COMPONENTS.map((comp) => {
@@ -1291,7 +1334,7 @@ export function AdoptionApp() {
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
         {/* Header */}
         <header
-          className={`${userSettings.darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} border-b px-3 py-2 sm:px-6 shrink-0 z-10 shadow-sm`}
+          className={`${userSettings.darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} border-b px-3 py-2 sm:px-6 shrink-0 z-10 ${view === 'introduction' ? '' : 'shadow-sm'}`}
           style={{ borderTop: `3px solid ${userSettings.themeColor}` }}
         >
           <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
@@ -1383,6 +1426,29 @@ export function AdoptionApp() {
               >
                 ?
               </button>
+              <button
+                type="button"
+                onClick={() => {
+                  window.location.hash = '#/';
+                }}
+                aria-label="Go to home page"
+                title="Go to home page"
+                className={`${nhsButtonSecondary} h-9 w-9 px-0 py-0 inline-flex items-center justify-center`}
+              >
+                <svg
+                  className="h-4 w-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  aria-hidden="true"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 10.5 12 3l9 7.5" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5.5 9.5V21h13V9.5" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 21v-6h4v6" />
+                </svg>
+                <span className="sr-only">Home</span>
+              </button>
               <button onClick={handleImportClick} className={`${nhsButtonSecondary} h-9 px-3 py-0`}>
                 Import
               </button>
@@ -1390,20 +1456,18 @@ export function AdoptionApp() {
                 <span className="sm:hidden">Export</span>
                 <span className="hidden sm:inline">Export JSON</span>
               </button>
-              <button
-                onClick={() => setShowFinaliseModal(true)}
-                disabled={!canOpenFinaliseModal}
-                title={
-                  canOpenFinaliseModal
-                    ? 'Review and finalise monthly snapshot'
-                    : 'Finalise Month unlocks from the final week of each month.'
-                }
-                className={`${nhsButtonPrimary} h-9 px-3 py-0 shadow-[0_3px_0_rgba(0,0,0,0.2)]`}
-                style={{ backgroundColor: userSettings.themeColor }}
-              >
-                <span className="sm:hidden">Finalise</span>
-                <span className="hidden sm:inline">Finalise Month</span>
-              </button>
+              <span className="inline-flex" title={finaliseButtonTitle}>
+                <button
+                  onClick={() => setShowFinaliseModal(true)}
+                  disabled={!canOpenFinaliseModal}
+                  aria-label="Finalise Month"
+                  className={finaliseButtonClassName}
+                  style={finaliseButtonStyle}
+                >
+                  <span className="sm:hidden">Finalise</span>
+                  <span className="hidden sm:inline">Finalise Month</span>
+                </button>
+              </span>
             </div>
           </div>
         </header>
@@ -1580,6 +1644,29 @@ export function AdoptionApp() {
                 components={COMPONENTS}
                 lenses={MUTABLE_LENSES}
                 metrics={metrics}
+                phaseFocusMode={userSettings.phaseFocusMode || 'auto'}
+                manualPhaseFocus={userSettings.manualPhaseFocus}
+                onPhaseFocusModeChange={(mode) =>
+                  setUserSettings((prev) => ({
+                    ...prev,
+                    phaseFocusMode: mode,
+                    manualPhaseFocus: mode === 'manual' ? prev.manualPhaseFocus || metrics.currentPhase : prev.manualPhaseFocus,
+                  }))
+                }
+                onManualPhaseFocusChange={(phase) =>
+                  setUserSettings((prev) => ({
+                    ...prev,
+                    phaseFocusMode: 'manual',
+                    manualPhaseFocus: phase,
+                  }))
+                }
+                onResetPhaseFocus={() =>
+                  setUserSettings((prev) => ({
+                    ...prev,
+                    phaseFocusMode: 'auto',
+                    manualPhaseFocus: metrics.currentPhase,
+                  }))
+                }
                 getEntry={getEntry}
                 onComponentClick={openComponentAssessment}
                 pathway={store.orgProfile.cst.pathway}
@@ -1652,6 +1739,14 @@ export function AdoptionApp() {
               guidanceTarget={DEFAULT_GUIDANCE_TARGET}
               linkOverrides={store.orgProfile.linkOverrides}
               darkMode={Boolean(userSettings.darkMode)}
+            />
+          )}
+          {view === 'introduction' && (
+            <OnboardingOverviewPage
+              darkMode={Boolean(userSettings.darkMode)}
+              onNavigateToProjectDetails={() => handleViewChange('project-details')}
+              onNavigateToGuide={() => handleViewChange('cm-guide')}
+              onNavigateToDashboard={() => handleViewChange('dashboard')}
             />
           )}
           {view === 'roadmap-view' && (
@@ -1776,7 +1871,7 @@ export function AdoptionApp() {
                 >
                   Cancel
                 </button>
-                {currentMonthSnapshot ? (
+                {currentMonthSnapshot && finaliseWindowOpen ? (
                   <button
                     type="button"
                     onClick={() => {
@@ -1794,7 +1889,7 @@ export function AdoptionApp() {
                     setShowFinaliseModal(false);
                     handleFinaliseMonth();
                   }}
-                  disabled={!finaliseWindowOpen && !currentMonthSnapshot}
+                  disabled={!finaliseWindowOpen}
                   className="rounded-md bg-[#005eb8] px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Finalise Snapshot
@@ -1803,6 +1898,10 @@ export function AdoptionApp() {
             </div>
           </div>
         ) : null}
+        <ToolkitChatbot
+          toolkitChoice={store.orgProfile.cst.toolkitChoice}
+          darkMode={Boolean(userSettings.darkMode)}
+        />
 
         <OnboardingIntro
           open={showOnboarding}

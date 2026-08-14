@@ -12,7 +12,7 @@ interface Step {
   body: JSX.Element;
 }
 
-function buildSteps(): Step[] {
+export function buildOnboardingSteps(): Step[] {
   return [
     {
       title: 'What is the Adoption Engine?',
@@ -54,7 +54,7 @@ function buildSteps(): Step[] {
             tailors the guidance, actions and resources provided.
           </p>
           <p>
-            You can update your CST at any time from <strong>CST Details</strong>
+            You can update your CST at any time from <strong>CST Personalisation</strong>
           </p>
         </div>
       ),
@@ -116,7 +116,7 @@ function buildSteps(): Step[] {
       title: 'Getting Started',
       body: (
         <div className="text-sm text-slate-700 space-y-2">
-          <p className="text-sm text-slate-700">Start with CST Details to review your CST. </p>
+          <p className="text-sm text-slate-700">Start with CST Personalisation to review your CST. </p>
           <p className="text-sm text-slate-700">Then visit the Dashboard to:</p>
           <ul className="list-decimal pl-5 space-y-1">
             <li>View your current position</li>
@@ -140,7 +140,7 @@ export function OnboardingIntro({
   onNavigateToGuide,
 }: OnboardingIntroProps): JSX.Element | null {
   const [stepIndex, setStepIndex] = useState(0);
-  const steps = buildSteps();
+  const steps = buildOnboardingSteps();
 
   useEffect(() => {
     if (open) {
@@ -158,7 +158,7 @@ export function OnboardingIntro({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 p-4">
-      <div className="w-full max-w-lg rounded-xl border border-slate-200 bg-white p-6 shadow-2xl">
+      <div className="relative w-full max-w-lg rounded-xl border border-slate-200 bg-white p-6 shadow-2xl">
         <div className="flex items-center justify-between gap-3">
           <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
             Introduction · Step {stepIndex + 1} of {steps.length}
@@ -193,7 +193,7 @@ export function OnboardingIntro({
                   onClick={onNavigateToProjectDetails}
                   className="flex h-[42px] min-h-[42px] items-center justify-center rounded-md border border-blue-300 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-800 hover:bg-blue-100"
                 >
-                  Set up your CST details
+                  Set up your CST Personalisation
                 </button>
               ) : null}
               {onNavigateToGuide ? (

@@ -8,6 +8,8 @@ export interface AdoptionUserSettings {
   profileImageDataUrl?: string;
   darkMode?: boolean;
   colorAccessibilityMode?: 'standard' | 'color-blind-friendly';
+  phaseFocusMode?: 'auto' | 'manual';
+  manualPhaseFocus?: number;
 }
 
 export interface SettingsPanelProps {
@@ -44,6 +46,9 @@ export function SettingsPanel({
 }: SettingsPanelProps): JSX.Element {
   const [settings, setSettings] = useState<AdoptionUserSettings>(userSettings);
   const [fileInputKey, setFileInputKey] = useState(0);
+  const [activeEngagementHelp, setActiveEngagementHelp] = useState<'grade' | 'level' | 'xp' | null>(
+    null
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -92,6 +97,39 @@ export function SettingsPanel({
     xp: 'XP increases as you complete important actions, finalise months on time, and keep returning to the tool.',
   };
 
+  const resolvedLevel = engagementLevel ?? 1;
+  const resolvedXp = engagementXp ?? 0;
+  const currentLevelFloorXp = Math.max(0, (resolvedLevel - 1) * 120);
+  const xpIntoCurrentLevel = Math.max(0, resolvedXp - currentLevelFloorXp);
+  const xpProgressPct = Math.max(0, Math.min(100, Math.round((xpIntoCurrentLevel / 120) * 100)));
+  const xpToNextLevel = Math.max(0, resolvedLevel * 120 - resolvedXp);
+
+  const engagementMetrics: Array<{
+    key: 'grade' | 'level' | 'xp';
+    label: string;
+    value: string | number;
+    tooltip: string;
+  }> = [
+    {
+      key: 'grade',
+      label: 'Grade',
+      value: engagementGrade || 'N/A',
+      tooltip: engagementHelp.grade,
+    },
+    {
+      key: 'level',
+      label: 'Level',
+      value: resolvedLevel,
+      tooltip: engagementHelp.level,
+    },
+    {
+      key: 'xp',
+      label: 'XP',
+      value: resolvedXp,
+      tooltip: engagementHelp.xp,
+    },
+  ];
+
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <h2 className={`text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
@@ -112,7 +150,7 @@ export function SettingsPanel({
               Engagement and Progress
             </h3>
             <p className={`mt-1 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-              A simple view of your current progress. This updates as you keep using the tool.
+              A quick view of how consistently the tool is being used over time.
             </p>
           </div>
           <div
@@ -123,50 +161,72 @@ export function SettingsPanel({
             >
               Engagement Summary
             </h4>
+            <p className={`mb-3 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+              Tap the info icon beside each metric for a plain-language explanation.
+            </p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {[
-                {
-                  key: 'grade',
-                  label: 'Grade',
-                  value: engagementGrade || 'N/A',
-                  tooltip: engagementHelp.grade,
-                },
-                {
-                  key: 'level',
-                  label: 'Level',
-                  value: engagementLevel ?? 1,
-                  tooltip: engagementHelp.level,
-                },
-                {
-                  key: 'xp',
-                  label: 'XP',
-                  value: engagementXp ?? 0,
-                  tooltip: engagementHelp.xp,
-                },
-              ].map((metric) => (
-                <div key={metric.key}>
-                  <div className="flex items-center gap-1">
+              {engagementMetrics.map((metric) => (
+                <div key={metric.key} className="relative">
+                  <div className="flex items-center gap-1.5">
                     <p className={`text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
                       {metric.label}
                     </p>
-                    <span
-                      title={metric.tooltip}
+                    <button
+                      type="button"
                       aria-label={`${metric.label} information`}
-                      className={`inline-flex h-4 w-4 items-center justify-center rounded-full border border-[#005eb8] text-[9px] font-bold text-[#005eb8] ${darkMode ? 'bg-[#1d334f]' : 'bg-[#e8f1fb]'}`}
+                      aria-expanded={activeEngagementHelp === metric.key}
+                      onClick={() =>
+                        setActiveEngagementHelp((current) =>
+                          current === metric.key ? null : metric.key
+                        )
+                      }
+                      className={`inline-flex h-4 w-4 items-center justify-center rounded-full border border-[#005eb8] text-[9px] font-bold text-[#005eb8] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ffeb3b] ${darkMode ? 'bg-[#1d334f]' : 'bg-[#e8f1fb]'}`}
                     >
                       i
-                    </span>
+                    </button>
                   </div>
                   <p
                     className={`text-lg font-bold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
                   >
                     {metric.value}
                   </p>
+                  {activeEngagementHelp === metric.key ? (
+                    <div
+                      className={`absolute left-0 top-11 z-10 w-64 rounded-md border px-3 py-2 text-xs shadow-lg ${
+                        darkMode
+                          ? 'border-slate-600 bg-slate-800 text-slate-100'
+                          : 'border-slate-200 bg-white text-slate-700'
+                      }`}
+                    >
+                      {metric.tooltip}
+                    </div>
+                  ) : null}
                 </div>
               ))}
             </div>
+            <div className="mt-4">
+              <div className="flex items-center justify-between gap-2">
+                <p className={`text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                  Progress to next level
+                </p>
+                <p className={`text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                  {xpToNextLevel} XP to Level {resolvedLevel + 1}
+                </p>
+              </div>
+              <div
+                className={`mt-1 h-2.5 w-full overflow-hidden rounded-full ${
+                  darkMode ? 'bg-slate-700' : 'bg-slate-200'
+                }`}
+              >
+                <div
+                  className="h-full rounded-full bg-[#005eb8] transition-all"
+                  style={{ width: `${xpProgressPct}%` }}
+                />
+              </div>
+            </div>
             <p className={`mt-3 text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
-              You’re making good progress - this reflects consistency over time, not perfection.
+              This reflects consistency over time, not perfection. Small, regular updates are what
+              move this forwards.
             </p>
           </div>
         </div>

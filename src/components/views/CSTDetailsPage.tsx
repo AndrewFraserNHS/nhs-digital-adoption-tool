@@ -17,14 +17,13 @@ import {
   CST_TYPE_OPTIONS,
   OVERARCHING_PHASES,
   PATHWAY_OPTIONS,
-  getCombinedCapabilityScore,
-  getOverallCapabilityScore,
   type CompetenceGrade,
   type ConfidenceScore,
   type CstPathwayKey,
   type CstType,
   type OverarchingPhase,
 } from '@data/cst';
+import { TOOLKIT_OPTIONS, type ToolkitOptionKey } from '@data/toolkits';
 
 const PHASE_SUMMARY: Record<OverarchingPhase, string> = {
   1: 'Pre go-live planning and early mobilisation.',
@@ -49,6 +48,51 @@ const COMPETENCE_LABELS: Record<CompetenceGrade, string> = {
   D: 'Early adoption in practice',
   E: 'Not yet embedded in practice',
 };
+
+function getConfidenceBand(confidence: ConfidenceScore): 'high' | 'average' | 'below' {
+  if (confidence >= 4) {
+    return 'high';
+  }
+  if (confidence === 3) {
+    return 'average';
+  }
+  return 'below';
+}
+
+function getCapabilityBand(competence: CompetenceGrade): 'high' | 'average' | 'below' {
+  if (competence === 'A' || competence === 'B') {
+    return 'high';
+  }
+  if (competence === 'C') {
+    return 'average';
+  }
+  return 'below';
+}
+
+function getPhaseBrag(
+  competence: CompetenceGrade,
+  confidence: ConfidenceScore
+): 'Blue' | 'Green' | 'Amber' | 'Red' {
+  const capabilityBand = getCapabilityBand(competence);
+  const confidenceBand = getConfidenceBand(confidence);
+
+  const bothHigh = capabilityBand === 'high' && confidenceBand === 'high';
+  const bothBelowAverage = capabilityBand === 'below' && confidenceBand === 'below';
+  const eitherHighOtherAverageOrAbove =
+    (capabilityBand === 'high' && confidenceBand !== 'below') ||
+    (confidenceBand === 'high' && capabilityBand !== 'below');
+
+  if (bothHigh) {
+    return 'Blue';
+  }
+  if (bothBelowAverage) {
+    return 'Red';
+  }
+  if (eitherHighOtherAverageOrAbove) {
+    return 'Green';
+  }
+  return 'Amber';
+}
 
 export interface ProjectDetailsPageProps {
   orgProfile: OrgProfile;
@@ -92,7 +136,6 @@ export function ProjectDetailsPage({
     [validationByField]
   );
 
-  const overallCapabilityScore = getOverallCapabilityScore(profile.cst.phaseCapability);
   const stageOneComplete = Boolean(
     profile.trustName.trim() &&
     (profile.projectName || '').trim() &&
@@ -158,6 +201,15 @@ export function ProjectDetailsPage({
     [profile, onProfileUpdate]
   );
 
+  const handleToolkitChoiceChange = useCallback(
+    (value: ToolkitOptionKey) => {
+      const updated = { ...profile, cst: { ...profile.cst, toolkitChoice: value } };
+      setProfile(updated);
+      onProfileUpdate(updated);
+    },
+    [profile, onProfileUpdate]
+  );
+
   const handlePhaseCapabilityChange = useCallback(
     (
       phase: OverarchingPhase,
@@ -209,7 +261,7 @@ export function ProjectDetailsPage({
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className={`text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
-          CST Details
+          CST Personalisation
         </h2>
         <button
           type="button"
@@ -229,7 +281,7 @@ export function ProjectDetailsPage({
         className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium ${darkMode ? 'border-emerald-500/40 bg-emerald-500/15 text-emerald-200' : 'border-emerald-200 bg-emerald-50 text-emerald-800'}`}
       >
         <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" aria-hidden="true" />
-        Auto-save is on for CST Details.
+        Auto-save is on for CST Personalisation.
       </div>
 
       <div
@@ -237,11 +289,10 @@ export function ProjectDetailsPage({
       >
         <div className="space-y-1">
           <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
-            Step 1: Organisation profile
+            Organisation profile
           </h3>
           <p className={`text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-            Complete these core details first. After this stage is complete, move straight into
-            assigning actions.
+            Step 1: Basic details.
           </p>
         </div>
 
@@ -523,12 +574,6 @@ export function ProjectDetailsPage({
               Capture your starting position, then refresh when readiness phase changes or after
               major milestones.
             </p>
-            <p
-              className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}
-            >
-              Overall Score: {overallCapabilityScore ?? 'N/A'}
-              {overallCapabilityScore !== null ? '%' : ''}
-            </p>
           </div>
 
           <div className="mt-3 rounded-md border border-blue-200 bg-blue-50 p-3 text-xs text-blue-900">
@@ -538,8 +583,8 @@ export function ProjectDetailsPage({
               of working is in practice.
             </p>
             <p className="mt-1">
-              Each phase score combines both equally. Example: readiness grade A (5/5) and
-              confidence 1 (1/5) gives (100% + 20%) / 2 = 60%.
+              Cards now use BRAG backgrounds: Blue = both high, Green = one high and the other at
+              least average, Amber = neither high, Red = both below average.
             </p>
           </div>
 
@@ -549,15 +594,28 @@ export function ProjectDetailsPage({
                 competence: 'C',
                 confidence: 3,
               };
-              const combined = getCombinedCapabilityScore({
-                competence: value.competence,
-                confidence: value.confidence,
-              });
+              const brag = getPhaseBrag(value.competence, value.confidence);
+              const bragCardClass =
+                brag === 'Blue'
+                  ? 'border-sky-300 bg-sky-50'
+                  : brag === 'Green'
+                    ? 'border-emerald-300 bg-emerald-50'
+                    : brag === 'Red'
+                      ? 'border-red-300 bg-red-50'
+                      : 'border-amber-300 bg-amber-50';
+              const bragLabelClass =
+                brag === 'Blue'
+                  ? 'text-sky-800 bg-sky-100'
+                  : brag === 'Green'
+                    ? 'text-emerald-800 bg-emerald-100'
+                    : brag === 'Red'
+                      ? 'text-red-800 bg-red-100'
+                      : 'text-amber-800 bg-amber-100';
 
               return (
                 <div
                   key={`phase-capability-${phase}`}
-                  className={`${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'} rounded-md border p-3`}
+                  className={`${darkMode ? 'border-slate-700 bg-slate-800' : bragCardClass} rounded-md border p-3`}
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="relative flex items-center gap-2">
@@ -596,10 +654,8 @@ export function ProjectDetailsPage({
                         </div>
                       ) : null}
                     </div>
-                    <span
-                      className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}
-                    >
-                      {combined}%
+                    <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${darkMode ? 'bg-slate-700 text-slate-100' : bragLabelClass}`}>
+                      {brag}
                     </span>
                   </div>
                   <p className={`mt-1 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
@@ -677,6 +733,44 @@ export function ProjectDetailsPage({
             override the base toolkit destination for your organisation, or change individual links
             independently.
           </p>
+
+          <div
+            className={`mt-3 rounded-md border p-3 text-xs ${darkMode ? 'border-blue-500/30 bg-blue-500/10 text-blue-100' : 'border-blue-200 bg-blue-50 text-blue-900'}`}
+          >
+            <p className="font-semibold">Fallback reference</p>
+            <p className="mt-1">
+              Base fallback: <span className="font-medium">{TOOLKIT_BASE_DEFAULTS.label}</span> ({TOOLKIT_BASE_DEFAULTS.url})
+            </p>
+            <p className="mt-1">
+              Default fallback: the original NHS Future link defined per guidance item.
+            </p>
+          </div>
+
+          <div
+            className={`mt-4 rounded-md border p-4 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
+          >
+            <label
+              htmlFor="cst-toolkit-choice"
+              className={`block text-xs font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
+            >
+              Default toolkit for assistant preview
+            </label>
+            <select
+              id="cst-toolkit-choice"
+              value={profile.cst.toolkitChoice}
+              onChange={(event) => handleToolkitChoiceChange(event.target.value as ToolkitOptionKey)}
+              className={`w-full rounded-md border shadow-sm sm:text-sm p-2 pr-10 ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100' : 'border-[#768692] bg-white text-slate-900'}`}
+            >
+              {TOOLKIT_OPTIONS.map((toolkit) => (
+                <option key={toolkit.key} value={toolkit.key}>
+                  {toolkit.label}
+                </option>
+              ))}
+            </select>
+            <p className={`mt-2 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
+              This controls which toolkit the chatbot-style assistant opens by default across the tool.
+            </p>
+          </div>
 
           {/* Base override */}
           <div

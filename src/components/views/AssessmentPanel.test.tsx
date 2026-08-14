@@ -60,6 +60,7 @@ function createProps(overrides?: { showMatrix?: boolean; entry?: DraftEntry }) {
           goLiveDate: '2026-10-01',
           fullAdoptionDate: '',
           benefitRealizationDate: '',
+          toolkitChoice: 'avt-v2-2026',
           phaseCapability: {},
         },
       },

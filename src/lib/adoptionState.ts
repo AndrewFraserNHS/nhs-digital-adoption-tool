@@ -7,6 +7,7 @@ import { type CstPathwayKey, type CstProfile, DEFAULT_CST_PROFILE } from '@data/
 import type { LinkOverrides } from '@data/maturity-guidance-links';
 
 import type { ActionType, UnifiedActionStatus } from './actionModel';
+import type { AuditEvent } from './auditLog';
 import { type StateListener, Store } from './observable';
 
 export interface ActionTargetLink {
@@ -134,6 +135,7 @@ export type View =
   | 'guidance-builder'
   | 'roadmap-view'
   | 'highlight-builder'
+  | 'audit-log'
   | 'project-details'
   | 'settings';
 
@@ -143,7 +145,7 @@ export interface AdoptionStore {
   currentDraft: Record<string, Record<string, DraftEntry>>;
   objectives: Record<string, ComponentObjective[]>;
   suppressedAutoActions: Record<string, string[]>;
-  actionAuditLog: RemovedActionAuditEntry[];
+  auditLog: AuditEvent[];
   history: HistorySnapshot[];
   phaseOverrides: Record<string, string>;
   pathwayChecks: PathwayChecklistState;
@@ -194,7 +196,7 @@ export function initializeStore(persisted?: Partial<AdoptionStore>): AdoptionSto
     currentDraft: persisted?.currentDraft || {},
     objectives: persisted?.objectives ? cloneObjectivesMap(persisted.objectives) : {},
     suppressedAutoActions: cloneSuppressedAutoActions(persisted?.suppressedAutoActions),
-    actionAuditLog: cloneActionAuditLog(persisted?.actionAuditLog),
+    auditLog: cloneAuditLog(persisted?.auditLog),
     history: persisted?.history || [],
     phaseOverrides: persisted?.phaseOverrides || {},
     pathwayChecks: clonePathwayChecks(persisted?.pathwayChecks),
@@ -214,7 +216,7 @@ function cloneSuppressedAutoActions(
   }, {});
 }
 
-function cloneActionAuditLog(entries?: RemovedActionAuditEntry[]): RemovedActionAuditEntry[] {
+function cloneAuditLog(entries?: AuditEvent[]): AuditEvent[] {
   if (!entries) {
     return [];
   }

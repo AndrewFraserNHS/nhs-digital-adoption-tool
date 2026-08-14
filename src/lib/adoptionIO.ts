@@ -1,4 +1,6 @@
 import { normalizeActionStatus } from './actionModel';
+import type { AuditEvent } from './auditLog';
+import { trimAuditEvents } from './auditLog';
 import type {
   AdoptionStore,
   ComponentObjective,
@@ -24,6 +26,8 @@ export interface SavedAdoptionAssessment {
   orgProfile: OrgProfile;
   currentDraft: Record<string, Record<string, DraftEntry>>;
   objectives?: Record<string, ComponentObjective[]>;
+  auditLog?: AuditEvent[];
+  // Legacy v4 field preserved for backward compatibility on import.
   suppressedAutoActions?: Record<string, string[]>;
   actionAuditLog?: RemovedActionAuditEntry[];
   history: HistorySnapshot[];
@@ -194,6 +198,30 @@ function validateActionAuditLog(value: unknown, path: string): void {
   });
 }
 
+function validateAuditLog(value: unknown, path: string): void {
+  if (!Array.isArray(value)) {
+    throw new Error(`Invalid adoption assessment payload at ${path}: expected array.`);
+  }
+
+  value.forEach((item, index) => {
+    assertRecord(item, `${path}[${index}]`);
+    assertOptionalString(item.id, `${path}[${index}].id`);
+    assertOptionalString(item.timestamp, `${path}[${index}].timestamp`);
+    assertOptionalString(item.actor, `${path}[${index}].actor`);
+    assertOptionalString(item.eventType, `${path}[${index}].eventType`);
+    assertOptionalString(item.entityType, `${path}[${index}].entityType`);
+    assertOptionalString(item.entityId, `${path}[${index}].entityId`);
+    assertOptionalString(item.summary, `${path}[${index}].summary`);
+    assertOptionalString(item.trustName, `${path}[${index}].trustName`);
+    assertOptionalString(item.projectName, `${path}[${index}].projectName`);
+    assertOptionalString(item.componentId, `${path}[${index}].componentId`);
+    assertOptionalString(item.lens, `${path}[${index}].lens`);
+    assertOptionalString(item.reason, `${path}[${index}].reason`);
+    assertOptionalString(item.source, `${path}[${index}].source`);
+    assertOptionalString(item.importedAt, `${path}[${index}].importedAt`);
+  });
+}
+
 function validateOrgProfile(value: unknown, path: string): void {
   assertRecord(value, path);
   assertOptionalString(value.trustName, `${path}.trustName`);
@@ -280,6 +308,9 @@ export function parseImportedAdoptionAssessment(
   if (payload.objectives !== undefined) {
     validateObjectivesMap(payload.objectives, 'objectives');
   }
+  if (payload.auditLog !== undefined) {
+    validateAuditLog(payload.auditLog, 'auditLog');
+  }
   if (payload.suppressedAutoActions !== undefined) {
     validateSuppressedAutoActions(payload.suppressedAutoActions, 'suppressedAutoActions');
   }
@@ -313,8 +344,8 @@ export function buildAdoptionExportPayload(store: AdoptionStore): SavedAdoptionA
     orgProfile: { ...store.orgProfile },
     currentDraft: cloneAndNormaliseDraft(store.currentDraft),
     objectives: normaliseObjectivesMap(store.objectives),
+    auditLog: cloneAuditLog(store.auditLog),
     suppressedAutoActions: cloneSuppressedAutoActions(store.suppressedAutoActions),
-    actionAuditLog: cloneActionAuditLog(store.actionAuditLog),
     history: store.history.map((snapshot) => ({
       ...snapshot,
       data: cloneAndNormaliseDraft(snapshot.data),
@@ -352,6 +383,62 @@ function migrateLegacyComponentActionsToObjectives(
   }, {});
 }
 
+function migrateLegacyActionAuditLogToAuditLog(
+  entries: RemovedActionAuditEntry[] | undefined,
+  profile?: OrgProfile
+): AuditEvent[] {
+  if (!entries?.length) {
+    return [];
+  }
+
+  return entries.map((entry) => ({
+    id: `legacy-${entry.id}`,
+    timestamp: entry.removedAt,
+    actor: 'Unknown user',
+    eventType: 'action-removed',
+    entityType: 'action',
+    entityId: entry.actionId,
+    summary: `Removed action: ${entry.actionText || entry.actionId}`,
+    trustName: profile?.trustName,
+    projectName: profile?.projectName,
+    componentId: entry.componentId,
+    lens: entry.lens,
+    reason: entry.reason,
+    before: {
+      actionText: entry.actionText,
+      actionType: entry.actionType,
+    },
+    source: 'local',
+  }));
+}
+
+function normalizeAuditLog(
+  auditLog: AuditEvent[] | undefined,
+  legacy: RemovedActionAuditEntry[] | undefined,
+  profile?: OrgProfile
+): AuditEvent[] {
+  const fromLegacy = migrateLegacyActionAuditLogToAuditLog(legacy, profile);
+  const fromCurrent = (auditLog || []).map((entry) => ({ ...entry }));
+  const merged = [...fromLegacy, ...fromCurrent].sort((left, right) => {
+    const leftTime = Date.parse(left.timestamp || '');
+    const rightTime = Date.parse(right.timestamp || '');
+    if (!Number.isNaN(leftTime) && !Number.isNaN(rightTime) && leftTime !== rightTime) {
+      return leftTime - rightTime;
+    }
+    return (left.id || '').localeCompare(right.id || '');
+  });
+
+  return trimAuditEvents(merged);
+}
+
+function markImportedAuditEvents(events: AuditEvent[], importedAt: string): AuditEvent[] {
+  return events.map((event) => ({
+    ...event,
+    source: 'imported',
+    importedAt,
+  }));
+}
+
 export function migrateSavedAdoptionAssessment(
   payload: Partial<SavedAdoptionAssessment> | null | undefined
 ): Partial<SavedAdoptionAssessment> {
@@ -371,8 +458,8 @@ export function migrateSavedAdoptionAssessment(
     schemaVersion: payload.schemaVersion || '2.0',
     orgProfile: migratedProfile,
     objectives: normaliseObjectivesMap(objectivesSource),
+    auditLog: normalizeAuditLog(payload.auditLog, payload.actionAuditLog, migratedProfile),
     suppressedAutoActions: cloneSuppressedAutoActions(payload.suppressedAutoActions),
-    actionAuditLog: cloneActionAuditLog(payload.actionAuditLog),
     pathwayChecks: clonePathwayChecks(payload.pathwayChecks),
   };
 }
@@ -386,6 +473,12 @@ export function mergeImportedAdoptionState(
   const hasImportedObjectives = Boolean(
     parsed.objectives || (parsed as Record<string, unknown>).componentActions
   );
+  const importedAt = new Date().toISOString();
+  const importedAuditLog = markImportedAuditEvents(migrated.auditLog || [], importedAt);
+  const combinedAuditLog = trimAuditEvents([
+    ...(fallbackStore.auditLog || []),
+    ...importedAuditLog,
+  ]);
 
   return initializeStore({
     ...fallbackStore,
@@ -394,9 +487,9 @@ export function mergeImportedAdoptionState(
       ? cloneAndNormaliseDraft(migrated.currentDraft)
       : cloneAndNormaliseDraft(fallbackStore.currentDraft),
     objectives: hasImportedObjectives ? migrated.objectives : fallbackStore.objectives,
+    auditLog: combinedAuditLog,
     suppressedAutoActions:
       migrated.suppressedAutoActions || fallbackStore.suppressedAutoActions,
-    actionAuditLog: migrated.actionAuditLog || fallbackStore.actionAuditLog,
     history: (migrated.history || fallbackStore.history).map((snapshot) => ({
       ...snapshot,
       data: cloneAndNormaliseDraft(snapshot.data),
@@ -488,7 +581,7 @@ function cloneSuppressedAutoActions(
   }, {});
 }
 
-function cloneActionAuditLog(entries?: RemovedActionAuditEntry[]): RemovedActionAuditEntry[] {
+function cloneAuditLog(entries?: AuditEvent[]): AuditEvent[] {
   if (!entries) {
     return [];
   }

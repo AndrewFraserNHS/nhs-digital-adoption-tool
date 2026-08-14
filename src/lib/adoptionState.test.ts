@@ -20,7 +20,7 @@ describe('adoptionState', () => {
     expect(defaults.pathwayChecks).toEqual({});
     expect(defaults.objectives).toEqual({});
     expect(defaults.suppressedAutoActions).toEqual({});
-    expect(defaults.actionAuditLog).toEqual([]);
+    expect(defaults.auditLog).toEqual([]);
 
     const persisted = initializeStore({
       view: 'settings',

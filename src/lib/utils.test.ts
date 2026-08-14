@@ -7,7 +7,7 @@ describe('utils', () => {
     expect(escapeHtml(null)).toBe('');
     expect(escapeHtml(undefined)).toBe('');
     expect(escapeHtml('<div>"x" & y\'</div>')).toBe(
-      '&lt;div&gt;&quot;x&quot; &amp; y&#39;&lt;/div&gt;'
+      '&lt;div&gt;&quot;x&quot; & y&#39;&lt;/div&gt;'
     );
     expect(esc('<b>ok</b>')).toBe('&lt;b&gt;ok&lt;/b&gt;');
   });

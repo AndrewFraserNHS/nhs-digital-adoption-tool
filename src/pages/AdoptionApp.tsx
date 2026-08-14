@@ -3,6 +3,7 @@ import { ToolkitChatbot } from '@components/ui/ToolkitChatbot';
 import { ActionPlanTracker } from '@components/views/ActionPlanTracker';
 import { AdoptionDashboard } from '@components/views/AdoptionDashboard';
 import { AssessmentPanel } from '@components/views/AssessmentPanel';
+import { AuditLogPage } from '@components/views/AuditLogPage';
 import { ChangeManagementGuide } from '@components/views/ChangeManagementGuide';
 import { ProjectDetailsPage } from '@components/views/CSTDetailsPage';
 import { GuidanceRoadmapView } from '@components/views/GuidanceRoadmapView';
@@ -46,11 +47,11 @@ import type {
   ComponentObjective,
   DraftAction,
   DraftEntry,
-  RemovedActionAuditEntry,
   View,
 } from '@lib/adoptionState';
 import { cloneEntry, createEmptyEntry, initializeStore } from '@lib/adoptionState';
 import { validateCstProfile } from '@lib/adoptionValidator';
+import { type AuditEvent, createAuditEvent, trimAuditEvents } from '@lib/auditLog';
 import { syncCaseForChangeDerivedContent } from '@lib/caseForChangeAutomation';
 import { createLineChart, createRadarChart } from '@lib/charts';
 import { syncPathwayObjectives } from '@lib/pathwayObjectives';
@@ -70,6 +71,7 @@ const ADOPTION_ONBOARDING_SEEN_KEY = 'nhs-digital-adoption-onboarding-seen';
 const DEFAULT_GUIDANCE_TARGET: MaturityGuidanceTarget = 'Default';
 const MAX_IMPORT_FILE_BYTES = 5 * 1024 * 1024;
 const ACCEPTED_IMPORT_MIME_TYPES = new Set(['application/json', 'text/json']);
+const DEFAULT_AUDIT_ACTOR = 'Unknown user';
 
 const THEME_PRESET_COLORS = ['#005eb8', '#003366', '#009b8a', '#6c28d9', '#059669', '#dc2626'];
 
@@ -120,6 +122,11 @@ function buildSuppressedAutoActionKey(componentId: string, lens: string): string
 
 function syncDerivedContent(store: AdoptionStore): AdoptionStore {
   return syncPathwayObjectives(syncCaseForChangeDerivedContent(syncVisionDerivedContent(store)));
+}
+
+function getAuditActor(name: string): string {
+  const normalized = name.trim();
+  return normalized || DEFAULT_AUDIT_ACTOR;
 }
 
 function getRubricText(componentId: string, lensName: string, score: number): string {
@@ -305,7 +312,7 @@ export function AdoptionApp() {
         objectives: persisted?.objectives || state.adoption?.objectives,
         suppressedAutoActions:
           persisted?.suppressedAutoActions || state.adoption?.suppressedAutoActions,
-        actionAuditLog: persisted?.actionAuditLog || state.adoption?.actionAuditLog,
+        auditLog: persisted?.auditLog || state.adoption?.auditLog,
         history: persisted?.history || state.adoption?.history,
         phaseOverrides: persisted?.phaseOverrides || state.adoption?.phaseOverrides,
         pathwayChecks: persisted?.pathwayChecks || state.adoption?.pathwayChecks,
@@ -434,7 +441,7 @@ export function AdoptionApp() {
       currentDraft: store.currentDraft,
       objectives: store.objectives,
       suppressedAutoActions: store.suppressedAutoActions,
-      actionAuditLog: store.actionAuditLog,
+      auditLog: store.auditLog,
       history: store.history,
       phaseOverrides: store.phaseOverrides,
       pathwayChecks: store.pathwayChecks,
@@ -612,8 +619,40 @@ export function AdoptionApp() {
     scrollMainToTop();
   }, [scrollMainToTop, view]);
 
+  function appendAuditEvents(
+    prev: AdoptionStore,
+    draftEvents: Array<Omit<AuditEvent, 'id' | 'timestamp' | 'actor'>>
+  ) {
+    if (!draftEvents.length) {
+      return prev.auditLog;
+    }
+
+    const actor = getAuditActor(userSettings.name || '');
+    const events = draftEvents.map((event) =>
+      createAuditEvent({
+        actor,
+        eventType: event.eventType,
+        entityType: event.entityType,
+        entityId: event.entityId,
+        summary: event.summary,
+        trustName: event.trustName ?? prev.orgProfile.trustName,
+        projectName: event.projectName ?? prev.orgProfile.projectName,
+        componentId: event.componentId,
+        lens: event.lens,
+        reason: event.reason,
+        before: event.before,
+        after: event.after,
+        source: event.source,
+        importedAt: event.importedAt,
+      })
+    );
+
+    return trimAuditEvents([...(prev.auditLog || []), ...events]);
+  }
+
   const updateEntry = useCallback((componentId: string, lens: string, entry: DraftEntry) => {
     setStore((prev) => {
+      const previousEntry = prev.currentDraft[componentId]?.[lens] || createEmptyEntry();
       const nextStore = {
         ...prev,
         currentDraft: {
@@ -624,21 +663,161 @@ export function AdoptionApp() {
           },
         },
       };
-      return syncDerivedContent(nextStore);
+      const events: Array<Omit<AuditEvent, 'id' | 'timestamp' | 'actor'>> = [];
+
+      if (previousEntry.score !== entry.score) {
+        events.push({
+          eventType: 'entry-score-updated',
+          entityType: 'entry',
+          entityId: `${componentId}:${lens}`,
+          summary: `Updated readiness score for ${componentId} / ${lens}: ${previousEntry.score} -> ${entry.score}`,
+          componentId,
+          lens,
+          before: { score: previousEntry.score },
+          after: { score: entry.score },
+          source: 'local',
+        });
+      }
+
+      if ((previousEntry.justification || '') !== (entry.justification || '')) {
+        events.push({
+          eventType: 'entry-justification-updated',
+          entityType: 'entry',
+          entityId: `${componentId}:${lens}`,
+          summary: `Updated justification for ${componentId} / ${lens}`,
+          componentId,
+          lens,
+          before: { justification: previousEntry.justification || '' },
+          after: { justification: entry.justification || '' },
+          source: 'local',
+        });
+      }
+
+      if ((previousEntry.evidence || '') !== (entry.evidence || '')) {
+        events.push({
+          eventType: 'entry-evidence-updated',
+          entityType: 'entry',
+          entityId: `${componentId}:${lens}`,
+          summary: `Updated evidence for ${componentId} / ${lens}`,
+          componentId,
+          lens,
+          before: { evidence: previousEntry.evidence || '' },
+          after: { evidence: entry.evidence || '' },
+          source: 'local',
+        });
+      }
+
+      const previousById = new Map(previousEntry.actions.map((action) => [action.id, action]));
+      entry.actions.forEach((action) => {
+        const previousAction = previousById.get(action.id);
+        if (!previousAction) {
+          events.push({
+            eventType: 'action-created',
+            entityType: 'action',
+            entityId: action.id,
+            summary: `Created action in ${componentId} / ${lens}`,
+            componentId,
+            lens,
+            after: {
+              text: action.text,
+              status: action.status,
+              owner: action.owner,
+              actionType: action.actionType,
+            },
+            source: 'local',
+          });
+          return;
+        }
+
+        const previousActionFingerprint = JSON.stringify({
+          text: previousAction.text,
+          status: previousAction.status,
+          owner: previousAction.owner,
+          actionType: previousAction.actionType,
+          notes: previousAction.notes,
+          dueDate: previousAction.dueDate,
+          startDate: previousAction.startDate,
+          evidence: previousAction.evidence,
+        });
+        const nextActionFingerprint = JSON.stringify({
+          text: action.text,
+          status: action.status,
+          owner: action.owner,
+          actionType: action.actionType,
+          notes: action.notes,
+          dueDate: action.dueDate,
+          startDate: action.startDate,
+          evidence: action.evidence,
+        });
+
+        if (previousActionFingerprint !== nextActionFingerprint) {
+          events.push({
+            eventType: 'action-updated',
+            entityType: 'action',
+            entityId: action.id,
+            summary: `Updated action in ${componentId} / ${lens}`,
+            componentId,
+            lens,
+            before: {
+              text: previousAction.text,
+              status: previousAction.status,
+              owner: previousAction.owner,
+              actionType: previousAction.actionType,
+            },
+            after: {
+              text: action.text,
+              status: action.status,
+              owner: action.owner,
+              actionType: action.actionType,
+            },
+            source: 'local',
+          });
+        }
+      });
+
+      const syncedStore = syncDerivedContent(nextStore);
+      return {
+        ...syncedStore,
+        auditLog: appendAuditEvents(prev, events),
+      };
     });
-  }, []);
+  }, [appendAuditEvents]);
 
   const updateComponentObjectives = useCallback(
     (componentId: string, objectivesForComponent: ComponentObjective[]) => {
-      setStore((prev) => ({
-        ...prev,
-        objectives: {
-          ...prev.objectives,
-          [componentId]: objectivesForComponent,
-        },
-      }));
+      setStore((prev) => {
+        const previousObjectives = prev.objectives[componentId] || [];
+        const nextStore = {
+          ...prev,
+          objectives: {
+            ...prev.objectives,
+            [componentId]: objectivesForComponent,
+          },
+        };
+
+        const changed = JSON.stringify(previousObjectives) !== JSON.stringify(objectivesForComponent);
+        if (!changed) {
+          return nextStore;
+        }
+
+        return {
+          ...nextStore,
+          auditLog: appendAuditEvents(prev, [
+            {
+              eventType: 'objectives-updated',
+              entityType: 'objective',
+              entityId: componentId,
+              summary: `Updated component outcomes for ${componentId}`,
+              componentId,
+              before: { objectiveCount: previousObjectives.length },
+              after: { objectiveCount: objectivesForComponent.length },
+              source: 'local',
+            },
+          ]),
+        };
+      });
     },
-    []
+    [appendAuditEvents]
   );
 
   const confirmIfCstWarnings = useCallback(
@@ -704,7 +883,23 @@ export function AdoptionApp() {
       try {
         const text = await file.text();
         const parsed = parseImportedAdoptionAssessment(JSON.parse(text));
-        setStore((prev) => syncDerivedContent(mergeImportedAdoptionState(parsed, prev)));
+        setStore((prev) => {
+          const merged = syncDerivedContent(mergeImportedAdoptionState(parsed, prev));
+          return {
+            ...merged,
+            auditLog: appendAuditEvents(merged, [
+              {
+                eventType: 'data-imported',
+                entityType: 'system',
+                summary: `Imported assessment data from ${file.name}`,
+                after: {
+                  fileName: file.name,
+                },
+                source: 'local',
+              },
+            ]),
+          };
+        });
         setView('dashboard');
         announceStatus('Assessment import complete. Dashboard updated.');
       } catch (_error) {
@@ -714,7 +909,7 @@ export function AdoptionApp() {
         event.target.value = '';
       }
     },
-    [announceStatus]
+    [announceStatus, appendAuditEvents]
   );
 
   const handleFinaliseMonth = useCallback(
@@ -773,60 +968,119 @@ export function AdoptionApp() {
             return;
           }
 
-          setStore((prev) => ({
-            ...prev,
-            phaseOverrides: {
-              ...prev.phaseOverrides,
-              [`phase-progression-${Date.now()}`]: rationale.trim(),
-            },
-            orgProfile: {
-              ...prev.orgProfile,
-              cst: {
-                ...prev.orgProfile.cst,
-                phaseCapability: {
-                  ...prev.orgProfile.cst.phaseCapability,
-                  [metrics.currentPhase as OverarchingPhase]: {
-                    ...assessment,
-                    assessedAt: new Date().toISOString(),
-                    reason: 'phase-change',
+          setStore((prev) => {
+            const nextStore = {
+              ...prev,
+              phaseOverrides: {
+                ...prev.phaseOverrides,
+                [`phase-progression-${Date.now()}`]: rationale.trim(),
+              },
+              orgProfile: {
+                ...prev.orgProfile,
+                cst: {
+                  ...prev.orgProfile.cst,
+                  phaseCapability: {
+                    ...prev.orgProfile.cst.phaseCapability,
+                    [metrics.currentPhase as OverarchingPhase]: {
+                      ...assessment,
+                      assessedAt: new Date().toISOString(),
+                      reason: 'phase-change',
+                    },
                   },
                 },
               },
-            },
-          }));
+            };
+            return {
+              ...nextStore,
+              auditLog: appendAuditEvents(prev, [
+                {
+                  eventType: 'profile-updated',
+                  entityType: 'profile',
+                  summary: `Updated phase capability for phase ${metrics.currentPhase}`,
+                  after: {
+                    phase: metrics.currentPhase,
+                    competence: assessment.competence,
+                    confidence: assessment.confidence,
+                    rationale: rationale.trim(),
+                  },
+                  source: 'local',
+                },
+              ]),
+            };
+          });
         } else {
-          setStore((prev) => ({
-            ...prev,
-            orgProfile: {
-              ...prev.orgProfile,
-              cst: {
-                ...prev.orgProfile.cst,
-                phaseCapability: {
-                  ...prev.orgProfile.cst.phaseCapability,
-                  [metrics.currentPhase as OverarchingPhase]: {
-                    ...assessment,
-                    assessedAt: new Date().toISOString(),
-                    reason: 'phase-change',
+          setStore((prev) => {
+            const nextStore = {
+              ...prev,
+              orgProfile: {
+                ...prev.orgProfile,
+                cst: {
+                  ...prev.orgProfile.cst,
+                  phaseCapability: {
+                    ...prev.orgProfile.cst.phaseCapability,
+                    [metrics.currentPhase as OverarchingPhase]: {
+                      ...assessment,
+                      assessedAt: new Date().toISOString(),
+                      reason: 'phase-change',
+                    },
                   },
                 },
               },
-            },
-          }));
+            };
+            return {
+              ...nextStore,
+              auditLog: appendAuditEvents(prev, [
+                {
+                  eventType: 'profile-updated',
+                  entityType: 'profile',
+                  summary: `Updated phase capability for phase ${metrics.currentPhase}`,
+                  after: {
+                    phase: metrics.currentPhase,
+                    competence: assessment.competence,
+                    confidence: assessment.confidence,
+                  },
+                  source: 'local',
+                },
+              ]),
+            };
+          });
         }
       }
 
       const snapshot = buildHistorySnapshot(store.currentDraft, metrics.overallPct);
 
-      setStore((prev) => ({
-        ...prev,
-        history: replaceExisting
+      setStore((prev) => {
+        const nextHistory = replaceExisting
           ? prev.history.map((item) => (item.monthLabel === snapshot.monthLabel ? snapshot : item))
-          : [...prev.history, snapshot],
-      }));
+          : [...prev.history, snapshot];
+
+        const nextStore = {
+          ...prev,
+          history: nextHistory,
+        };
+
+        return {
+          ...nextStore,
+          auditLog: appendAuditEvents(prev, [
+            {
+              eventType: 'month-finalized',
+              entityType: 'history',
+              entityId: snapshot.monthLabel,
+              summary: `${replaceExisting ? 'Re-finalized' : 'Finalized'} monthly snapshot for ${snapshot.monthLabel}`,
+              after: {
+                monthLabel: snapshot.monthLabel,
+                overallPercentage: snapshot.overallPercentage,
+              },
+              source: 'local',
+            },
+          ]),
+        };
+      });
       setEngagement((prev) => addEngagementXp(prev, 25));
       setView('dashboard');
     },
     [
+      appendAuditEvents,
       COMPONENTS,
       confirmIfCstWarnings,
       finaliseWindowOpen,
@@ -858,10 +1112,28 @@ export function AdoptionApp() {
     previousDate.setMonth(previousDate.getMonth() - 1);
 
     const snapshot = buildHistorySnapshot(store.currentDraft, metrics.overallPct, previousDate);
-    setStore((prev) => ({
-      ...prev,
-      history: [...prev.history, snapshot],
-    }));
+    setStore((prev) => {
+      const nextStore = {
+        ...prev,
+        history: [...prev.history, snapshot],
+      };
+      return {
+        ...nextStore,
+        auditLog: appendAuditEvents(prev, [
+          {
+            eventType: 'prior-month-finalized',
+            entityType: 'history',
+            entityId: snapshot.monthLabel,
+            summary: `Finalized prior month snapshot for ${snapshot.monthLabel}`,
+            after: {
+              monthLabel: snapshot.monthLabel,
+              overallPercentage: snapshot.overallPercentage,
+            },
+            source: 'local',
+          },
+        ]),
+      };
+    });
 
     const submittedOnTime = new Date().getDate() === 1;
     setEngagement((prev) =>
@@ -875,6 +1147,7 @@ export function AdoptionApp() {
       )
     );
   }, [
+    appendAuditEvents,
     confirmIfCstWarnings,
     metrics.overallPct,
     reportReminder.previousMonthLabel,
@@ -890,7 +1163,20 @@ export function AdoptionApp() {
       }
 
       const payload = parseImportedAdoptionAssessment(await response.json());
-      setStore((prev) => syncDerivedContent(mergeImportedAdoptionState(payload, prev)));
+      setStore((prev) => {
+        const merged = syncDerivedContent(mergeImportedAdoptionState(payload, prev));
+        return {
+          ...merged,
+          auditLog: appendAuditEvents(merged, [
+            {
+              eventType: 'example-data-loaded',
+              entityType: 'system',
+              summary: 'Loaded example assessment data',
+              source: 'local',
+            },
+          ]),
+        };
+      });
       setView('dashboard');
       announceStatus('Example assessment data loaded.');
       if (shouldAutoCloseSidebar()) {
@@ -901,7 +1187,7 @@ export function AdoptionApp() {
       announceStatus('Unable to load example data right now.');
       window.alert('Unable to load example data right now. Please try again.');
     }
-  }, [announceStatus]);
+  }, [announceStatus, appendAuditEvents]);
 
   const handleResetData = useCallback(() => {
     const confirmed = window.confirm(
@@ -1272,7 +1558,7 @@ export function AdoptionApp() {
             Tools
           </div>
           <nav className="space-y-1 mb-8">
-            {(['highlight-builder', 'settings'] as View[]).map((v) => (
+            {(['highlight-builder', 'audit-log', 'settings'] as View[]).map((v) => (
               <button
                 key={v}
                 ref={(el) => {
@@ -1285,7 +1571,11 @@ export function AdoptionApp() {
                     : 'text-blue-100 hover:bg-blue-800 border-l-4 border-transparent'
                 }`}
               >
-                {v === 'highlight-builder' ? 'Highlight Builder' : 'Settings & Profile'}
+                {v === 'highlight-builder'
+                  ? 'Highlight Builder'
+                  : v === 'audit-log'
+                    ? 'Audit Log'
+                    : 'Settings & Profile'}
               </button>
             ))}
           </nav>
@@ -1681,12 +1971,39 @@ export function AdoptionApp() {
             <ProjectDetailsPage
               orgProfile={store.orgProfile}
               onProfileUpdate={(updatedProfile) => {
-                setStore((prev) =>
-                  syncPathwayObjectives({
+                setStore((prev) => {
+                  const nextStore = syncPathwayObjectives({
                     ...prev,
                     orgProfile: updatedProfile,
-                  })
-                );
+                  });
+
+                  const changed = JSON.stringify(prev.orgProfile) !== JSON.stringify(updatedProfile);
+                  if (!changed) {
+                    return nextStore;
+                  }
+
+                  return {
+                    ...nextStore,
+                    auditLog: appendAuditEvents(prev, [
+                      {
+                        eventType: 'profile-updated',
+                        entityType: 'profile',
+                        summary: 'Updated CST profile details',
+                        before: {
+                          trustName: prev.orgProfile.trustName,
+                          projectName: prev.orgProfile.projectName,
+                          cst: prev.orgProfile.cst,
+                        },
+                        after: {
+                          trustName: updatedProfile.trustName,
+                          projectName: updatedProfile.projectName,
+                          cst: updatedProfile.cst,
+                        },
+                        source: 'local',
+                      },
+                    ]),
+                  };
+                });
               }}
               components={COMPONENTS}
               lenses={MUTABLE_LENSES}
@@ -1749,17 +2066,6 @@ export function AdoptionApp() {
                     }
                   }
 
-                  const auditEntry: RemovedActionAuditEntry = {
-                    id: `removed-action:${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-                    removedAt: new Date().toISOString(),
-                    reason: reason.trim(),
-                    componentId,
-                    lens,
-                    actionId,
-                    actionText: actionToRemove.text,
-                    actionType: actionToRemove.actionType,
-                  };
-
                   const nextStore = {
                     ...prev,
                     currentDraft: {
@@ -1770,10 +2076,30 @@ export function AdoptionApp() {
                       },
                     },
                     suppressedAutoActions: nextSuppressedAutoActions,
-                    actionAuditLog: [...prev.actionAuditLog, auditEntry],
                   };
 
-                  return syncDerivedContent(nextStore);
+                  const syncedStore = syncDerivedContent(nextStore);
+                  return {
+                    ...syncedStore,
+                    auditLog: appendAuditEvents(prev, [
+                      {
+                        eventType: 'action-removed',
+                        entityType: 'action',
+                        entityId: actionId,
+                        summary: `Removed action from ${componentId} / ${lens}`,
+                        componentId,
+                        lens,
+                        reason: reason.trim(),
+                        before: {
+                          text: actionToRemove.text,
+                          status: actionToRemove.status,
+                          owner: actionToRemove.owner,
+                          actionType: actionToRemove.actionType,
+                        },
+                        source: 'local',
+                      },
+                    ]),
+                  };
                 });
               }}
               onObjectivesUpdate={updateComponentObjectives}
@@ -1827,6 +2153,9 @@ export function AdoptionApp() {
               onLayoutSaved={handleHighlightLayoutSaved}
               darkMode={Boolean(userSettings.darkMode)}
             />
+          )}
+          {view === 'audit-log' && (
+            <AuditLogPage events={store.auditLog} darkMode={Boolean(userSettings.darkMode)} />
           )}
           {view === 'settings' && (
             <SettingsPanel

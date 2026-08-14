@@ -1,11 +1,12 @@
 import type {
-  RemovedActionAuditEntry,
+  // Legacy removed-action audit entries are migrated to unified AuditEvent in adoptionIO.
   ComponentObjective,
   DraftEntry,
   HistorySnapshot,
   OrgProfile,
   PathwayChecklistState,
 } from './adoptionState';
+import type { AuditEvent } from './auditLog';
 
 export interface AssessmentState {
   orgName?: string;
@@ -18,7 +19,7 @@ export interface AdoptionState {
   currentDraft?: Record<string, Record<string, DraftEntry>>;
   objectives?: Record<string, ComponentObjective[]>;
   suppressedAutoActions?: Record<string, string[]>;
-  actionAuditLog?: RemovedActionAuditEntry[];
+  auditLog?: AuditEvent[];
   history?: HistorySnapshot[];
   phaseOverrides?: Record<string, string>;
   pathwayChecks?: PathwayChecklistState;

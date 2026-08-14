@@ -64,16 +64,19 @@ describe('adoptionIO', () => {
       suppressedAutoActions: {
         'vision:Strategic Direction and Leadership': ['vision-action:strategic-direction-and-leadership:0-1:0'],
       },
-      actionAuditLog: [
+      auditLog: [
         {
-          id: 'removed-1',
-          removedAt: '2026-07-10T10:00:00.000Z',
-          reason: 'Superseded by local pathway action',
+          id: 'audit-1',
+          timestamp: '2026-07-10T10:00:00.000Z',
+          actor: 'Alex',
+          eventType: 'action-removed',
+          entityType: 'action',
+          summary: 'Removed action',
           componentId: 'vision',
           lens: 'Strategic Direction and Leadership',
-          actionId: 'vision-action:strategic-direction-and-leadership:0-1:0',
-          actionText: 'Facilitate workshop',
-          actionType: 'Engagement',
+          entityId: 'vision-action:strategic-direction-and-leadership:0-1:0',
+          reason: 'Superseded by local pathway action',
+          source: 'local',
         },
       ],
       history: [],
@@ -91,10 +94,10 @@ describe('adoptionIO', () => {
       throw new Error('Expected objectives to be present in export payload');
     }
     payload.objectives.vision[0].text = 'Changed';
-    if (!payload.actionAuditLog) {
-      throw new Error('Expected actionAuditLog to be present in export payload');
+    if (!payload.auditLog) {
+      throw new Error('Expected auditLog to be present in export payload');
     }
-    payload.actionAuditLog[0].reason = 'Changed';
+    payload.auditLog[0].reason = 'Changed';
 
     expect(store.currentDraft.vision['Strategic Direction and Leadership'].actions[0].text).toBe(
       'Run workshop'
@@ -103,7 +106,7 @@ describe('adoptionIO', () => {
     expect(store.suppressedAutoActions['vision:Strategic Direction and Leadership'][0]).toBe(
       'vision-action:strategic-direction-and-leadership:0-1:0'
     );
-    expect(store.actionAuditLog[0].reason).toBe('Superseded by local pathway action');
+    expect(store.auditLog[0].reason).toBe('Superseded by local pathway action');
   });
 
   it('merges imported state over the current store', () => {
@@ -262,7 +265,7 @@ describe('adoptionIO', () => {
     expect(parsed.orgProfile?.trustName).toBe('Safe import');
   });
 
-  it('accepts suppression and action audit metadata in imported payloads', () => {
+  it('accepts suppression and legacy action audit metadata in imported payloads', () => {
     const parsed = parseImportedAdoptionAssessment({
       suppressedAutoActions: {
         'vision:Strategic Direction and Leadership': [
@@ -287,5 +290,44 @@ describe('adoptionIO', () => {
       'vision-action:strategic-direction-and-leadership:0-1:0',
     ]);
     expect(parsed.actionAuditLog?.[0]?.reason).toBe('Locally replaced');
+  });
+
+  it('appends imported audit events to existing log', () => {
+    const current = initializeStore({
+      auditLog: [
+        {
+          id: 'local-1',
+          timestamp: '2026-07-10T09:00:00.000Z',
+          actor: 'Local User',
+          eventType: 'profile-updated',
+          entityType: 'profile',
+          summary: 'Local profile change',
+          source: 'local',
+        },
+      ],
+    });
+
+    const merged = mergeImportedAdoptionState(
+      {
+        auditLog: [
+          {
+            id: 'imported-1',
+            timestamp: '2026-07-10T10:00:00.000Z',
+            actor: 'Imported User',
+            eventType: 'action-created',
+            entityType: 'action',
+            summary: 'Imported action',
+            source: 'local',
+          },
+        ],
+      },
+      current
+    );
+
+    expect(merged.auditLog.length).toBe(2);
+    expect(merged.auditLog[0].id).toBe('local-1');
+    expect(merged.auditLog[1].id).toBe('imported-1');
+    expect(merged.auditLog[1].source).toBe('imported');
+    expect(merged.auditLog[1].importedAt).toBeTruthy();
   });
 });

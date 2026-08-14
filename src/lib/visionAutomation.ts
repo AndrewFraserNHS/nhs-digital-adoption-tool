@@ -1,75 +1,55 @@
 import visionActionsText from '../data/vision-actions.txt?raw';
+import { ACTION_TYPES, type ActionType } from './actionModel';
 import type { AdoptionStore, ComponentObjective, DraftAction, DraftEntry } from './adoptionState';
 
 interface VisionActionTemplate {
   lens: string;
   fromScore: number;
   toScore: number;
-  actionTexts: string[];
+  actionIndex: number;
+  actionText: string;
+  actionType?: ActionType;
+  outcomeIds: string[];
 }
 
-type VisionOutcomeId = 'o1' | 'o2' | 'o3';
+interface VisionOutcomeDefinition {
+  id: string;
+  text: string;
+}
 
-const VISION_OUTCOME_DEFINITIONS: { id: string; text: string }[] = [
-  { id: 'vision:outcome:o1', text: 'A Compelling Future State Has Been Defined' },
-  { id: 'vision:outcome:o2', text: 'The Vision Is Understood and Shared' },
-  { id: 'vision:outcome:o3', text: 'The Vision Is Visible and Guides the Change' },
-];
+interface ParsedVisionSource {
+  templates: VisionActionTemplate[];
+  outcomes: VisionOutcomeDefinition[];
+}
 
-// Maps `${sanitizeId(lens)}:${fromScore}-${toScore}:${actionIndex}` to outcome IDs
-const ACTION_OUTCOME_MAP: Record<string, VisionOutcomeId[]> = {
-  'strategic-direction-and-leadership:0-1:0': ['o1'],
-  'strategic-direction-and-leadership:0-1:1': ['o1'],
-  'strategic-direction-and-leadership:0-1:2': ['o1', 'o2'],
-  'strategic-direction-and-leadership:0-1:3': ['o1', 'o3'],
-  'strategic-direction-and-leadership:0-1:4': ['o1'],
-  'people-experience-and-culture:0-1:0': ['o1', 'o2'],
-  'people-experience-and-culture:0-1:1': ['o1', 'o2'],
-  'people-experience-and-culture:0-1:2': ['o1'],
-  'people-experience-and-culture:0-1:3': ['o2'],
-  'people-experience-and-culture:0-1:4': ['o1', 'o2'],
-  'strategic-direction-and-leadership:1-2:0': ['o1'],
-  'strategic-direction-and-leadership:1-2:1': ['o1', 'o3'],
-  'strategic-direction-and-leadership:1-2:2': ['o1', 'o3'],
-  'strategic-direction-and-leadership:1-2:3': ['o1'],
-  'strategic-direction-and-leadership:1-2:4': ['o2', 'o3'],
-  'people-experience-and-culture:1-2:0': ['o2'],
-  'people-experience-and-culture:1-2:1': ['o1', 'o2'],
-  'people-experience-and-culture:1-2:2': ['o1', 'o2'],
-  'people-experience-and-culture:1-2:3': ['o1', 'o2'],
-  'people-experience-and-culture:1-2:4': ['o2'],
-  'strategic-direction-and-leadership:2-3:0': ['o1', 'o3'],
-  'strategic-direction-and-leadership:2-3:1': ['o2', 'o3'],
-  'strategic-direction-and-leadership:2-3:2': ['o2', 'o3'],
-  'strategic-direction-and-leadership:2-3:3': ['o3'],
-  'strategic-direction-and-leadership:2-3:4': ['o2', 'o3'],
-  'people-experience-and-culture:2-3:0': ['o2'],
-  'people-experience-and-culture:2-3:1': ['o2'],
-  'people-experience-and-culture:2-3:2': ['o2'],
-  'people-experience-and-culture:2-3:3': ['o2', 'o3'],
-  'people-experience-and-culture:2-3:4': ['o2'],
-  'strategic-direction-and-leadership:3-4:0': ['o2', 'o3'],
-  'strategic-direction-and-leadership:3-4:1': ['o3'],
-  'strategic-direction-and-leadership:3-4:2': ['o2', 'o3'],
-  'strategic-direction-and-leadership:3-4:3': ['o3'],
-  'strategic-direction-and-leadership:3-4:4': ['o3'],
-  'people-experience-and-culture:3-4:0': ['o2', 'o3'],
-  'people-experience-and-culture:3-4:1': ['o2'],
-  'people-experience-and-culture:3-4:2': ['o2'],
-  'people-experience-and-culture:3-4:3': ['o2', 'o3'],
-  'people-experience-and-culture:3-4:4': ['o2', 'o3'],
-  'strategic-direction-and-leadership:4-5:0': ['o3'],
-  'strategic-direction-and-leadership:4-5:1': ['o3'],
-  'strategic-direction-and-leadership:4-5:2': ['o1', 'o3'],
-  'strategic-direction-and-leadership:4-5:3': ['o2', 'o3'],
-  'strategic-direction-and-leadership:4-5:4': ['o3'],
-  'people-experience-and-culture:4-5:0': ['o2'],
-  'people-experience-and-culture:4-5:1': ['o2', 'o3'],
-  'people-experience-and-culture:4-5:2': ['o3'],
-  'people-experience-and-culture:4-5:3': ['o1', 'o2'],
-  'people-experience-and-culture:4-5:4': ['o2', 'o3'],
-  'people-experience-and-culture:4-5:5': ['o2', 'o3'],
+interface RawVisionOutcome {
+  id?: string;
+  name?: string;
+}
+
+interface RawVisionAction {
+  fromStatus?: string;
+  toStatus?: string;
+  lens?: string;
+  category?: string;
+  action?: string;
+  outcomeIds?: string[];
+}
+
+const STATUS_TO_SCORE: Record<string, number> = {
+  'not started': 0,
+  emerging: 1,
+  developing: 2,
+  embedding: 3,
+  adopted: 4,
+  thriving: 5,
 };
+
+const FALLBACK_OUTCOMES: VisionOutcomeDefinition[] = [
+  { id: 'vision:outcome:o1', text: 'A compelling future state has been defined' },
+  { id: 'vision:outcome:o2', text: 'The vision is understood and shared' },
+  { id: 'vision:outcome:o3', text: 'The vision is visible and guides the change' },
+];
 
 function normalizeGeneratedText(value: string): string {
   return value.trim().replace(/\s+/g, ' ').toLowerCase();
@@ -82,103 +62,141 @@ function sanitizeId(value: string): string {
     .replace(/(^-|-$)/g, '');
 }
 
-function parseVisionActionTemplates(): VisionActionTemplate[] {
-  const lines = visionActionsText.split(/\r?\n/);
-  const templates: VisionActionTemplate[] = [];
-  let currentStage: { fromScore: number; toScore: number } | null = null;
-  let currentLens: string | null = null;
-  let currentActions: string[] = [];
-
-  const flushTemplate = () => {
-    if (!currentStage || !currentLens || !currentActions.length) {
-      return;
-    }
-
-    templates.push({
-      lens: currentLens,
-      fromScore: currentStage.fromScore,
-      toScore: currentStage.toScore,
-      actionTexts: currentActions,
-    });
-    currentActions = [];
-  };
-
-  lines.forEach((line) => {
-    const trimmed = line.trim();
-    const stageMatch = trimmed.match(/^Vision:\s+Not Started \(0\)\s+→\s+Emerging \(1\)$/i);
-    if (stageMatch) {
-      flushTemplate();
-      currentStage = { fromScore: 0, toScore: 1 };
-      currentLens = null;
-      currentActions = [];
-      return;
-    }
-
-    const stageMatch2 = trimmed.match(/^Vision:\s+Emerging \(1\)\s+→\s+Developing \(2\)$/i);
-    if (stageMatch2) {
-      flushTemplate();
-      currentStage = { fromScore: 1, toScore: 2 };
-      currentLens = null;
-      currentActions = [];
-      return;
-    }
-
-    const stageMatch3 = trimmed.match(/^Vision:\s+Developing \(2\)\s+→\s+Embedding \(3\)$/i);
-    if (stageMatch3) {
-      flushTemplate();
-      currentStage = { fromScore: 2, toScore: 3 };
-      currentLens = null;
-      currentActions = [];
-      return;
-    }
-
-    const stageMatch4 = trimmed.match(/^Vision:\s+Embedding \(3\)\s+→\s+Adopted \(4\)$/i);
-    if (stageMatch4) {
-      flushTemplate();
-      currentStage = { fromScore: 3, toScore: 4 };
-      currentLens = null;
-      currentActions = [];
-      return;
-    }
-
-    const stageMatch5 = trimmed.match(/^Vision:\s+Adopted \(4\)\s+→\s+Thriving \(5\)$/i);
-    if (stageMatch5) {
-      flushTemplate();
-      currentStage = { fromScore: 4, toScore: 5 };
-      currentLens = null;
-      currentActions = [];
-      return;
-    }
-
-    if (!currentStage) {
-      return;
-    }
-
-    if (trimmed.includes('Strategic Direction') && trimmed.includes('Lens')) {
-      flushTemplate();
-      currentLens = 'Strategic Direction and Leadership';
-      currentActions = [];
-      return;
-    }
-
-    if (trimmed.includes('People Experience') && trimmed.includes('Lens')) {
-      flushTemplate();
-      currentLens = 'People Experience and Culture';
-      currentActions = [];
-      return;
-    }
-
-    const actionMatch = trimmed.match(/^\d+\.\s*(.+)$/);
-    if (actionMatch && currentLens) {
-      currentActions.push(actionMatch[1].replace(/\s+/g, ' ').trim());
-    }
-  });
-
-  flushTemplate();
-  return templates;
+function normalizeLensName(value: string): string {
+  return value
+    .replace(/&/g, 'and')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
-const VISION_TEMPLATES = parseVisionActionTemplates();
+function normalizeStatusKey(value: string): string {
+  return value.trim().toLowerCase();
+}
+
+function buildSuppressedAutoActionKey(componentId: string, lens: string): string {
+  return `${componentId}:${lens}`;
+}
+
+function isActionType(value: string | undefined): value is ActionType {
+  return typeof value === 'string' && ACTION_TYPES.includes(value as ActionType);
+}
+
+function toOutcomeObjectiveId(sourceId: string): string {
+  const compact = sourceId.trim().toLowerCase();
+  const outcomeSuffixMatch = compact.match(/o\d+$/);
+  if (outcomeSuffixMatch) {
+    return `vision:outcome:${outcomeSuffixMatch[0]}`;
+  }
+  return `vision:outcome:${sanitizeId(sourceId)}`;
+}
+
+function extractFirstJsonObject(source: string): string | null {
+  const start = source.indexOf('{');
+  if (start < 0) {
+    return null;
+  }
+
+  let depth = 0;
+  let inString = false;
+  let isEscaped = false;
+
+  for (let index = start; index < source.length; index += 1) {
+    const char = source[index];
+
+    if (inString) {
+      if (isEscaped) {
+        isEscaped = false;
+        continue;
+      }
+      if (char === '\\') {
+        isEscaped = true;
+        continue;
+      }
+      if (char === '"') {
+        inString = false;
+      }
+      continue;
+    }
+
+    if (char === '"') {
+      inString = true;
+      continue;
+    }
+
+    if (char === '{') {
+      depth += 1;
+      continue;
+    }
+
+    if (char === '}') {
+      depth -= 1;
+      if (depth === 0) {
+        return source.slice(start, index + 1);
+      }
+    }
+  }
+
+  return null;
+}
+
+function parseVisionSource(): ParsedVisionSource {
+  const objectText = extractFirstJsonObject(visionActionsText);
+  if (!objectText) {
+    return { templates: [], outcomes: FALLBACK_OUTCOMES };
+  }
+
+  try {
+    const parsed = JSON.parse(objectText) as {
+      outcomes?: RawVisionOutcome[];
+      actions?: RawVisionAction[];
+    };
+
+    const outcomes = (parsed.outcomes || [])
+      .filter((outcome) => outcome?.id && outcome?.name)
+      .map((outcome) => ({
+        id: toOutcomeObjectiveId(String(outcome.id)),
+        text: String(outcome.name).trim(),
+      }));
+
+    const counters = new Map<string, number>();
+    const templates = (parsed.actions || []).reduce<VisionActionTemplate[]>((next, action) => {
+      const fromStatus = action.fromStatus ? STATUS_TO_SCORE[normalizeStatusKey(action.fromStatus)] : -1;
+      const toStatus = action.toStatus ? STATUS_TO_SCORE[normalizeStatusKey(action.toStatus)] : -1;
+      const lens = action.lens ? normalizeLensName(action.lens) : '';
+      const actionText = (action.action || '').trim();
+
+      if (fromStatus < 0 || toStatus < 0 || !lens || !actionText) {
+        return next;
+      }
+
+      const groupKey = `${lens}:${fromStatus}-${toStatus}`;
+      const actionIndex = counters.get(groupKey) || 0;
+      counters.set(groupKey, actionIndex + 1);
+
+      next.push({
+        lens,
+        fromScore: fromStatus,
+        toScore: toStatus,
+        actionIndex,
+        actionText,
+        actionType: isActionType(action.category) ? action.category : undefined,
+        outcomeIds: (action.outcomeIds || []).map((outcomeId) => toOutcomeObjectiveId(outcomeId)),
+      });
+
+      return next;
+    }, []);
+
+    return {
+      templates,
+      outcomes: outcomes.length ? outcomes : FALLBACK_OUTCOMES,
+    };
+  } catch (_error) {
+    return { templates: [], outcomes: FALLBACK_OUTCOMES };
+  }
+}
+
+const VISION_SOURCE = parseVisionSource();
+
 function cloneEntry(entry: DraftEntry): DraftEntry {
   return {
     ...entry,
@@ -189,14 +207,15 @@ function cloneEntry(entry: DraftEntry): DraftEntry {
   };
 }
 
-function createAction(
-  template: VisionActionTemplate,
-  actionText: string,
-  actionIndex: number
-): DraftAction {
+function getActionId(template: VisionActionTemplate): string {
+  return `vision-action:${sanitizeId(template.lens)}:${template.fromScore}-${template.toScore}:${template.actionIndex}`;
+}
+
+function createAction(template: VisionActionTemplate): DraftAction {
   return {
-    id: `vision-action:${sanitizeId(template.lens)}:${template.fromScore}-${template.toScore}:${actionIndex}`,
-    text: actionText,
+    id: getActionId(template),
+    text: template.actionText,
+    actionType: template.actionType,
     owner: '',
     timescale: '',
     status: 'Planned',
@@ -210,7 +229,7 @@ function createAction(
 }
 
 function createOutcome(
-  definition: { id: string; text: string },
+  definition: VisionOutcomeDefinition,
   existing?: ComponentObjective
 ): ComponentObjective {
   return {
@@ -224,31 +243,51 @@ function createOutcome(
   };
 }
 
-function getActionId(template: VisionActionTemplate, actionIndex: number): string {
-  return `vision-action:${sanitizeId(template.lens)}:${template.fromScore}-${template.toScore}:${actionIndex}`;
+function createEmptyVisionEntry(): DraftEntry {
+  return {
+    score: 0,
+    justification: '',
+    evidence: '',
+    actions: [],
+  };
+}
+
+function resolveActionLinkId(entry: DraftEntry, template: VisionActionTemplate): string | null {
+  const generatedId = getActionId(template);
+  const byId = (entry.actions || []).find((action) => action.id === generatedId);
+  if (byId) {
+    return byId.id;
+  }
+
+  const normalizedTemplateText = normalizeGeneratedText(template.actionText);
+  const byText = (entry.actions || []).find(
+    (action) => normalizeGeneratedText(action.text || '') === normalizedTemplateText
+  );
+  return byText?.id || null;
 }
 
 function getOutcomeLinkedActions(
-  outcomeId: VisionOutcomeId,
+  outcomeId: string,
   nextVisionDraft: Record<string, DraftEntry>
 ): Array<{ lens: string; actionId: string }> {
   const links: Array<{ lens: string; actionId: string }> = [];
 
-  VISION_TEMPLATES.forEach((template) => {
-    const stem = `${sanitizeId(template.lens)}:${template.fromScore}-${template.toScore}`;
+  VISION_SOURCE.templates.forEach((template) => {
+    if (!template.outcomeIds.includes(outcomeId)) {
+      return;
+    }
+
     const lensEntry = nextVisionDraft[template.lens];
     if (!lensEntry) {
       return;
     }
-    template.actionTexts.forEach((_, index) => {
-      const mapped = ACTION_OUTCOME_MAP[`${stem}:${index}`];
-      if (mapped?.includes(outcomeId)) {
-        const actionId = getActionId(template, index);
-        if (lensEntry.actions.some((a) => a.id === actionId)) {
-          links.push({ lens: template.lens, actionId });
-        }
-      }
-    });
+
+    const resolvedActionId = resolveActionLinkId(lensEntry, template);
+    if (!resolvedActionId) {
+      return;
+    }
+
+    links.push({ lens: template.lens, actionId: resolvedActionId });
   });
 
   return links;
@@ -258,23 +297,22 @@ export function syncVisionDerivedContent(store: AdoptionStore): AdoptionStore {
   const nextDraft = { ...(store.currentDraft || {}) };
   const nextObjectives = { ...(store.objectives || {}) };
   const visionDraft = nextDraft.vision || {};
-  const componentLensEntries = Object.keys(visionDraft);
 
-  const existingOutcomeObjectives = (nextObjectives.vision || []).filter((o) =>
-    o.id.startsWith('vision:outcome:')
+  const existingOutcomeObjectives = (nextObjectives.vision || []).filter((objective) =>
+    objective.id.startsWith('vision:outcome:')
   );
   const existingOtherObjectives = (nextObjectives.vision || []).filter(
-    (o) => !o.id.startsWith('vision:outcome:')
+    (objective) => !objective.id.startsWith('vision:outcome:')
   );
   const existingById = existingOutcomeObjectives.reduce<Record<string, ComponentObjective>>(
-    (acc, o) => {
-      acc[o.id] = o;
-      return acc;
+    (accumulator, objective) => {
+      accumulator[objective.id] = objective;
+      return accumulator;
     },
     {}
   );
 
-  const nextVisionDraft = componentLensEntries.reduce<Record<string, DraftEntry>>(
+  const nextVisionDraft = Object.keys(visionDraft).reduce<Record<string, DraftEntry>>(
     (accumulator, lens) => {
       accumulator[lens] = cloneEntry(visionDraft[lens] || createEmptyVisionEntry());
       return accumulator;
@@ -282,34 +320,31 @@ export function syncVisionDerivedContent(store: AdoptionStore): AdoptionStore {
     {}
   );
 
-  VISION_TEMPLATES.forEach((template) => {
+  VISION_SOURCE.templates.forEach((template) => {
     const lensEntry = nextVisionDraft[template.lens] || createEmptyVisionEntry();
     const existingActionTexts = new Set(
       (lensEntry.actions || []).map((action) => normalizeGeneratedText(action.text || ''))
     );
 
-    template.actionTexts.forEach((actionText, index) => {
-      const actionId = getActionId(template, index);
-      const alreadyHasAction = (lensEntry.actions || []).some((action) => action.id === actionId);
-      const actionTextKey = normalizeGeneratedText(actionText);
-      if (!alreadyHasAction && !existingActionTexts.has(actionTextKey)) {
-        lensEntry.actions = [
-          ...(lensEntry.actions || []),
-          createAction(template, actionText, index),
-        ];
-        existingActionTexts.add(actionTextKey);
-      }
-    });
+    const actionId = getActionId(template);
+    const suppressedKey = buildSuppressedAutoActionKey('vision', template.lens);
+    const suppressedActionIds = new Set(store.suppressedAutoActions?.[suppressedKey] || []);
+
+    const alreadyHasAction = (lensEntry.actions || []).some((action) => action.id === actionId);
+    const actionTextKey = normalizeGeneratedText(template.actionText);
+    const isSuppressed = suppressedActionIds.has(actionId);
+
+    if (!alreadyHasAction && !existingActionTexts.has(actionTextKey) && !isSuppressed) {
+      lensEntry.actions = [...(lensEntry.actions || []), createAction(template)];
+      existingActionTexts.add(actionTextKey);
+    }
 
     nextVisionDraft[template.lens] = lensEntry;
   });
 
-  const namedOutcomes = VISION_OUTCOME_DEFINITIONS.map((definition) => ({
+  const namedOutcomes = VISION_SOURCE.outcomes.map((definition) => ({
     ...createOutcome(definition, existingById[definition.id]),
-    linkedActions: getOutcomeLinkedActions(
-      definition.id.replace('vision:outcome:', '') as VisionOutcomeId,
-      nextVisionDraft
-    ),
+    linkedActions: getOutcomeLinkedActions(definition.id, nextVisionDraft),
   }));
 
   return {
@@ -322,14 +357,5 @@ export function syncVisionDerivedContent(store: AdoptionStore): AdoptionStore {
       ...nextObjectives,
       vision: [...existingOtherObjectives, ...namedOutcomes],
     },
-  };
-}
-
-function createEmptyVisionEntry(): DraftEntry {
-  return {
-    score: 0,
-    justification: '',
-    evidence: '',
-    actions: [],
   };
 }

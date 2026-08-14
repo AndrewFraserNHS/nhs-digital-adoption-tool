@@ -46,6 +46,7 @@ import type {
   ComponentObjective,
   DraftAction,
   DraftEntry,
+  RemovedActionAuditEntry,
   View,
 } from '@lib/adoptionState';
 import { cloneEntry, createEmptyEntry, initializeStore } from '@lib/adoptionState';
@@ -110,6 +111,10 @@ function cloneAction(action: DraftAction): DraftAction {
       lens: target.lens,
     })),
   };
+}
+
+function buildSuppressedAutoActionKey(componentId: string, lens: string): string {
+  return `${componentId}:${lens}`;
 }
 
 function getRubricText(componentId: string, lensName: string, score: number): string {
@@ -294,6 +299,9 @@ export function AdoptionApp() {
           orgProfile: persisted?.orgProfile || state.adoption?.orgProfile,
           currentDraft: persisted?.currentDraft || state.adoption?.currentDraft,
           objectives: persisted?.objectives || state.adoption?.objectives,
+          suppressedAutoActions:
+            persisted?.suppressedAutoActions || state.adoption?.suppressedAutoActions,
+          actionAuditLog: persisted?.actionAuditLog || state.adoption?.actionAuditLog,
           history: persisted?.history || state.adoption?.history,
           phaseOverrides: persisted?.phaseOverrides || state.adoption?.phaseOverrides,
           pathwayChecks: persisted?.pathwayChecks || state.adoption?.pathwayChecks,
@@ -422,6 +430,8 @@ export function AdoptionApp() {
       orgProfile: store.orgProfile,
       currentDraft: store.currentDraft,
       objectives: store.objectives,
+      suppressedAutoActions: store.suppressedAutoActions,
+      actionAuditLog: store.actionAuditLog,
       history: store.history,
       phaseOverrides: store.phaseOverrides,
       pathwayChecks: store.pathwayChecks,
@@ -1706,9 +1716,62 @@ export function AdoptionApp() {
               }}
               onActionRemove={(componentId, lens, actionId) => {
                 const entry = getEntry(componentId, lens);
-                updateEntry(componentId, lens, {
-                  ...entry,
-                  actions: entry.actions.filter((a) => a.id !== actionId).map(cloneAction),
+                const actionToRemove = entry.actions.find((action) => action.id === actionId);
+                if (!actionToRemove) {
+                  return;
+                }
+
+                const reason = window.prompt(
+                  'Please provide a reason for removing this action. This will be included in the JSON export audit log.'
+                );
+                if (!reason || !reason.trim()) {
+                  window.alert('Removal cancelled. A reason is required to remove an action.');
+                  return;
+                }
+
+                setStore((prev) => {
+                  const sourceEntry = prev.currentDraft[componentId]?.[lens] || createEmptyEntry();
+                  const nextEntry: DraftEntry = {
+                    ...sourceEntry,
+                    actions: sourceEntry.actions
+                      .filter((candidate) => candidate.id !== actionId)
+                      .map(cloneAction),
+                  };
+
+                  const nextSuppressedAutoActions = { ...prev.suppressedAutoActions };
+                  if (actionId.startsWith('vision-action:')) {
+                    const suppressionKey = buildSuppressedAutoActionKey(componentId, lens);
+                    const currentSuppressed = nextSuppressedAutoActions[suppressionKey] || [];
+                    if (!currentSuppressed.includes(actionId)) {
+                      nextSuppressedAutoActions[suppressionKey] = [...currentSuppressed, actionId];
+                    }
+                  }
+
+                  const auditEntry: RemovedActionAuditEntry = {
+                    id: `removed-action:${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+                    removedAt: new Date().toISOString(),
+                    reason: reason.trim(),
+                    componentId,
+                    lens,
+                    actionId,
+                    actionText: actionToRemove.text,
+                    actionType: actionToRemove.actionType,
+                  };
+
+                  const nextStore = {
+                    ...prev,
+                    currentDraft: {
+                      ...prev.currentDraft,
+                      [componentId]: {
+                        ...prev.currentDraft[componentId],
+                        [lens]: nextEntry,
+                      },
+                    },
+                    suppressedAutoActions: nextSuppressedAutoActions,
+                    actionAuditLog: [...prev.actionAuditLog, auditEntry],
+                  };
+
+                  return syncPathwayObjectives(syncVisionDerivedContent(nextStore));
                 });
               }}
               onObjectivesUpdate={updateComponentObjectives}

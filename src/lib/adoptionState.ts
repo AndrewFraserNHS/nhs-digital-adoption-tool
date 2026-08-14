@@ -33,6 +33,17 @@ export interface DraftAction extends BaseAction {
   linkedTargets?: ActionTargetLink[];
 }
 
+export interface RemovedActionAuditEntry {
+  id: string;
+  removedAt: string;
+  reason: string;
+  componentId: string;
+  lens: string;
+  actionId: string;
+  actionText: string;
+  actionType?: ActionType;
+}
+
 export type ObjectiveStatus = 'Not Started' | 'In Progress' | 'Blocked' | 'Completed';
 
 /** A reference to one existing lens-level action within the same component. */
@@ -131,6 +142,8 @@ export interface AdoptionStore {
   orgProfile: OrgProfile;
   currentDraft: Record<string, Record<string, DraftEntry>>;
   objectives: Record<string, ComponentObjective[]>;
+  suppressedAutoActions: Record<string, string[]>;
+  actionAuditLog: RemovedActionAuditEntry[];
   history: HistorySnapshot[];
   phaseOverrides: Record<string, string>;
   pathwayChecks: PathwayChecklistState;
@@ -180,10 +193,33 @@ export function initializeStore(persisted?: Partial<AdoptionStore>): AdoptionSto
     orgProfile: normalizeOrgProfile(persisted?.orgProfile),
     currentDraft: persisted?.currentDraft || {},
     objectives: persisted?.objectives ? cloneObjectivesMap(persisted.objectives) : {},
+    suppressedAutoActions: cloneSuppressedAutoActions(persisted?.suppressedAutoActions),
+    actionAuditLog: cloneActionAuditLog(persisted?.actionAuditLog),
     history: persisted?.history || [],
     phaseOverrides: persisted?.phaseOverrides || {},
     pathwayChecks: clonePathwayChecks(persisted?.pathwayChecks),
   };
+}
+
+function cloneSuppressedAutoActions(
+  map?: Record<string, string[]>
+): Record<string, string[]> {
+  if (!map) {
+    return {};
+  }
+
+  return Object.keys(map).reduce<Record<string, string[]>>((next, key) => {
+    next[key] = [...(map[key] || [])];
+    return next;
+  }, {});
+}
+
+function cloneActionAuditLog(entries?: RemovedActionAuditEntry[]): RemovedActionAuditEntry[] {
+  if (!entries) {
+    return [];
+  }
+
+  return entries.map((entry) => ({ ...entry }));
 }
 
 /**

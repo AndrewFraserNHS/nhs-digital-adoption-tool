@@ -1,0 +1,830 @@
+
+{ 
+
+"component": { 
+
+"id": "CASE_FOR_CHANGE", 
+
+"name": "Case for Change" 
+
+}, 
+
+ 
+
+"outcomes": [ 
+
+{ 
+
+"id": "CFC_O1", 
+
+"name": "The need for change has been clearly defined and evidenced", 
+
+"description": "A clear, evidence-based explanation exists describing the problem, opportunity, risk or regulatory requirement that necessitates change." 
+
+}, 
+
+{ 
+
+"id": "CFC_O2", 
+
+"name": "The case for change is understood and accepted", 
+
+"description": "Stakeholders understand why the change is required and recognise the relevance, urgency and importance of the issue being addressed." 
+
+}, 
+
+{ 
+
+"id": "CFC_O3", 
+
+"name": "The case for change remains credible and relevant", 
+
+"description": "The rationale for change is regularly reviewed, supported by evidence, and reinforced through communications, governance and programme activity." 
+
+} 
+
+], 
+
+ 
+
+"actions": [ 
+
+ 
+
+{ 
+
+"id": "CFC_001", 
+
+"fromStatus": "Emerging", 
+
+"toStatus": "Developing", 
+
+"lens": "Strategic Direction & Leadership", 
+
+"category": "Analysis & Insight", 
+
+"action": "Define the problem, opportunity, risk or requirement that is driving the need for change.", 
+
+"outcomeIds": ["CFC_O1"] 
+
+}, 
+
+{ 
+
+"id": "CFC_002", 
+
+"fromStatus": "Emerging", 
+
+"toStatus": "Developing", 
+
+"lens": "Strategic Direction & Leadership", 
+
+"category": "Analysis & Insight", 
+
+"action": "Gather quantitative and qualitative evidence demonstrating the impact of the current situation.", 
+
+"outcomeIds": ["CFC_O1"] 
+
+}, 
+
+{ 
+
+"id": "CFC_003", 
+
+"fromStatus": "Emerging", 
+
+"toStatus": "Developing", 
+
+"lens": "Strategic Direction & Leadership", 
+
+"category": "Analysis & Insight", 
+
+"action": "Review organisational objectives, strategies and priorities to establish alignment with the proposed change.", 
+
+"outcomeIds": ["CFC_O1"] 
+
+}, 
+
+{ 
+
+"id": "CFC_004", 
+
+"fromStatus": "Emerging", 
+
+"toStatus": "Developing", 
+
+"lens": "Strategic Direction & Leadership", 
+
+"category": "Design", 
+
+"action": "Develop an initial case for change narrative describing why change is required and why action is needed now.", 
+
+"outcomeIds": ["CFC_O1", "CFC_O2"] 
+
+}, 
+
+{ 
+
+"id": "CFC_005", 
+
+"fromStatus": "Emerging", 
+
+"toStatus": "Developing", 
+
+"lens": "Strategic Direction & Leadership", 
+
+"category": "Governance", 
+
+"action": "Identify sponsors and senior leaders who will champion the case for change.", 
+
+"outcomeIds": ["CFC_O2"] 
+
+}, 
+
+ 
+
+{ 
+
+"id": "CFC_006", 
+
+"fromStatus": "Emerging", 
+
+"toStatus": "Developing", 
+
+"lens": "People Experience & Culture", 
+
+"category": "Engagement", 
+
+"action": "Engage stakeholders to understand their experience of current challenges and opportunities.", 
+
+"outcomeIds": ["CFC_O1"] 
+
+}, 
+
+{ 
+
+"id": "CFC_007", 
+
+"fromStatus": "Emerging", 
+
+"toStatus": "Developing", 
+
+"lens": "Testing & Validation", 
+
+"category": "Testing & Validation", 
+
+"action": "Test whether stakeholders recognise and agree with the need for change.", 
+
+"outcomeIds": ["CFC_O2"] 
+
+}, 
+
+{ 
+
+"id": "CFC_008", 
+
+"fromStatus": "Emerging", 
+
+"toStatus": "Developing", 
+
+"lens": "People Experience & Culture", 
+
+"category": "Analysis & Insight", 
+
+"action": "Gather examples and evidence that illustrate the impact of maintaining the current state.", 
+
+"outcomeIds": ["CFC_O1", "CFC_O2"] 
+
+}, 
+
+{ 
+
+"id": "CFC_009", 
+
+"fromStatus": "Emerging", 
+
+"toStatus": "Developing", 
+
+"lens": "People Experience & Culture", 
+
+"category": "Analysis & Insight", 
+
+"action": "Identify misconceptions, assumptions or conflicting perceptions relating to the need for change.", 
+
+"outcomeIds": ["CFC_O2"] 
+
+}, 
+
+{ 
+
+"id": "CFC_010", 
+
+"fromStatus": "Emerging", 
+
+"toStatus": "Developing", 
+
+"lens": "People Experience & Culture", 
+
+"category": "Design", 
+
+"action": "Refine the case for change using stakeholder insight and feedback.", 
+
+"outcomeIds": ["CFC_O1", "CFC_O2"] 
+
+}, 
+
+ 
+
+{ 
+
+"id": "CFC_011", 
+
+"fromStatus": "Developing", 
+
+"toStatus": "Embedding", 
+
+"lens": "Strategic Direction & Leadership", 
+
+"category": "Governance", 
+
+"action": "Obtain formal leadership and governance endorsement of the case for change.", 
+
+"outcomeIds": ["CFC_O1", "CFC_O3"] 
+
+}, 
+
+{ 
+
+"id": "CFC_012", 
+
+"fromStatus": "Developing", 
+
+"toStatus": "Embedding", 
+
+"lens": "Strategic Direction & Leadership", 
+
+"category": "Communication", 
+
+"action": "Develop clear and consistent messaging explaining why change is necessary.", 
+
+"outcomeIds": ["CFC_O2"] 
+
+}, 
+
+{ 
+
+"id": "CFC_013", 
+
+"fromStatus": "Developing", 
+
+"toStatus": "Embedding", 
+
+"lens": "Strategic Direction & Leadership", 
+
+"category": "Governance", 
+
+"action": "Embed the case for change in programme governance, reporting and decision-making processes.", 
+
+"outcomeIds": ["CFC_O3"] 
+
+}, 
+
+{ 
+
+"id": "CFC_014", 
+
+"fromStatus": "Developing", 
+
+"toStatus": "Embedding", 
+
+"lens": "Strategic Direction & Leadership", 
+
+"category": "Measurement & Evaluation", 
+
+"action": "Establish baseline measures that evidence the current problem or opportunity.", 
+
+"outcomeIds": ["CFC_O1", "CFC_O3"] 
+
+}, 
+
+{ 
+
+"id": "CFC_015", 
+
+"fromStatus": "Developing", 
+
+"toStatus": "Embedding", 
+
+"lens": "Strategic Direction & Leadership", 
+
+"category": "Measurement & Evaluation", 
+
+"action": "Define how evidence supporting the case for change will be reviewed and maintained throughout the change lifecycle.", 
+
+"outcomeIds": ["CFC_O3"] 
+
+}, 
+
+ 
+
+{ 
+
+"id": "CFC_016", 
+
+"fromStatus": "Developing", 
+
+"toStatus": "Embedding", 
+
+"lens": "People Experience & Culture", 
+
+"category": "Communication", 
+
+"action": "Communicate the case for change through engagement and communication activities.", 
+
+"outcomeIds": ["CFC_O2"] 
+
+}, 
+
+{ 
+
+"id": "CFC_017", 
+
+"fromStatus": "Developing", 
+
+"toStatus": "Embedding", 
+
+"lens": "People Experience & Culture", 
+
+"category": "Testing & Validation", 
+
+"action": "Validate stakeholder understanding of the rationale for change.", 
+
+"outcomeIds": ["CFC_O2"] 
+
+}, 
+
+{ 
+
+"id": "CFC_018", 
+
+"fromStatus": "Developing", 
+
+"toStatus": "Embedding", 
+
+"lens": "People Experience & Culture", 
+
+"category": "Engagement", 
+
+"action": "Address concerns, challenges and areas of misunderstanding relating to the need for change.", 
+
+"outcomeIds": ["CFC_O2"] 
+
+}, 
+
+{ 
+
+"id": "CFC_019", 
+
+"fromStatus": "Developing", 
+
+"toStatus": "Embedding", 
+
+"lens": "People Experience & Culture", 
+
+"category": "Communication", 
+
+"action": "Use local examples and evidence to illustrate the importance of the change.", 
+
+"outcomeIds": ["CFC_O1", "CFC_O2"] 
+
+}, 
+
+{ 
+
+"id": "CFC_020", 
+
+"fromStatus": "Developing", 
+
+"toStatus": "Embedding", 
+
+"lens": "People Experience & Culture", 
+
+"category": "Measurement & Evaluation", 
+
+"action": "Monitor stakeholder sentiment regarding the case for change.", 
+
+"outcomeIds": ["CFC_O2", "CFC_O3"] 
+
+}, 
+
+ 
+
+{ 
+
+"id": "CFC_021", 
+
+"fromStatus": "Embedding", 
+
+"toStatus": "Adopted", 
+
+"lens": "Strategic Direction & Leadership", 
+
+"category": "Reinforcement", 
+
+"action": "Ensure leaders consistently reinforce the rationale for change.", 
+
+"outcomeIds": ["CFC_O2", "CFC_O3"] 
+
+}, 
+
+{ 
+
+"id": "CFC_022", 
+
+"fromStatus": "Embedding", 
+
+"toStatus": "Adopted", 
+
+"lens": "Strategic Direction & Leadership", 
+
+"category": "Governance", 
+
+"action": "Use governance forums to review whether the original drivers for change remain valid.", 
+
+"outcomeIds": ["CFC_O3"] 
+
+}, 
+
+{ 
+
+"id": "CFC_023", 
+
+"fromStatus": "Embedding", 
+
+"toStatus": "Adopted", 
+
+"lens": "Strategic Direction & Leadership", 
+
+"category": "Measurement & Evaluation", 
+
+"action": "Use organisational performance, service and outcome measures to support the case for change.", 
+
+"outcomeIds": ["CFC_O3"] 
+
+}, 
+
+{ 
+
+"id": "CFC_024", 
+
+"fromStatus": "Embedding", 
+
+"toStatus": "Adopted", 
+
+"lens": "Strategic Direction & Leadership", 
+
+"category": "Governance", 
+
+"action": "Use the case for change to inform programme decisions, priorities and resource allocation.", 
+
+"outcomeIds": ["CFC_O3"] 
+
+}, 
+
+{ 
+
+"id": "CFC_025", 
+
+"fromStatus": "Embedding", 
+
+"toStatus": "Adopted", 
+
+"lens": "Strategic Direction & Leadership", 
+
+"category": "Risk Management", 
+
+"action": "Review assumptions, emerging risks and external influences that may affect the credibility of the case for change.", 
+
+"outcomeIds": ["CFC_O3"] 
+
+}, 
+
+ 
+
+{ 
+
+"id": "CFC_026", 
+
+"fromStatus": "Embedding", 
+
+"toStatus": "Adopted", 
+
+"lens": "People Experience & Culture", 
+
+"category": "Communication", 
+
+"action": "Share evidence and examples demonstrating the impact of addressing the original problem or opportunity.", 
+
+"outcomeIds": ["CFC_O2", "CFC_O3"] 
+
+}, 
+
+{ 
+
+"id": "CFC_027", 
+
+"fromStatus": "Embedding", 
+
+"toStatus": "Adopted", 
+
+"lens": "People Experience & Culture", 
+
+"category": "Measurement & Evaluation", 
+
+"action": "Evaluate stakeholder acceptance of the ongoing need for change.", 
+
+"outcomeIds": ["CFC_O2"] 
+
+}, 
+
+{ 
+
+"id": "CFC_028", 
+
+"fromStatus": "Embedding", 
+
+"toStatus": "Adopted", 
+
+"lens": "People Experience & Culture", 
+
+"category": "Communication", 
+
+"action": "Target communication and engagement activity where understanding remains low.", 
+
+"outcomeIds": ["CFC_O2"] 
+
+}, 
+
+{ 
+
+"id": "CFC_029", 
+
+"fromStatus": "Embedding", 
+
+"toStatus": "Adopted", 
+
+"lens": "People Experience & Culture", 
+
+"category": "Design", 
+
+"action": "Refine case for change messaging using stakeholder feedback and insight.", 
+
+"outcomeIds": ["CFC_O2", "CFC_O3"] 
+
+}, 
+
+{ 
+
+"id": "CFC_030", 
+
+"fromStatus": "Embedding", 
+
+"toStatus": "Adopted", 
+
+"lens": "People Experience & Culture", 
+
+"category": "Reinforcement", 
+
+"action": "Ensure change champions can confidently explain and reinforce the case for change.", 
+
+"outcomeIds": ["CFC_O2"] 
+
+}, 
+
+ 
+
+{ 
+
+"id": "CFC_031", 
+
+"fromStatus": "Adopted", 
+
+"toStatus": "Thriving", 
+
+"lens": "Strategic Direction & Leadership", 
+
+"category": "Measurement & Evaluation", 
+
+"action": "Review the case for change periodically against organisational priorities and external drivers.", 
+
+"outcomeIds": ["CFC_O3"] 
+
+}, 
+
+{ 
+
+"id": "CFC_032", 
+
+"fromStatus": "Adopted", 
+
+"toStatus": "Thriving", 
+
+"lens": "Strategic Direction & Leadership", 
+
+"category": "Measurement & Evaluation", 
+
+"action": "Use benefits and outcomes data to validate the continued relevance of the case for change.", 
+
+"outcomeIds": ["CFC_O3"] 
+
+}, 
+
+{ 
+
+"id": "CFC_033", 
+
+"fromStatus": "Adopted", 
+
+"toStatus": "Thriving", 
+
+"lens": "Strategic Direction & Leadership", 
+
+"category": "Governance", 
+
+"action": "Embed the rationale for change into organisational planning and continuous improvement activities.", 
+
+"outcomeIds": ["CFC_O3"] 
+
+}, 
+
+{ 
+
+"id": "CFC_034", 
+
+"fromStatus": "Adopted", 
+
+"toStatus": "Thriving", 
+
+"lens": "Strategic Direction & Leadership", 
+
+"category": "Design", 
+
+"action": "Use organisational learning and evidence to evolve the case for change where appropriate.", 
+
+"outcomeIds": ["CFC_O3"] 
+
+}, 
+
+{ 
+
+"id": "CFC_035", 
+
+"fromStatus": "Adopted", 
+
+"toStatus": "Thriving", 
+
+"lens": "Strategic Direction & Leadership", 
+
+"category": "Reinforcement", 
+
+"action": "Ensure leaders continue to communicate and reinforce the rationale for change during routine business activity.", 
+
+"outcomeIds": ["CFC_O2", "CFC_O3"] 
+
+}, 
+
+ 
+
+{ 
+
+"id": "CFC_036", 
+
+"fromStatus": "Adopted", 
+
+"toStatus": "Thriving", 
+
+"lens": "People Experience & Culture", 
+
+"category": "Reinforcement", 
+
+"action": "Capture and share success stories that validate the original need for change.", 
+
+"outcomeIds": ["CFC_O2", "CFC_O3"] 
+
+}, 
+
+{ 
+
+"id": "CFC_037", 
+
+"fromStatus": "Adopted", 
+
+"toStatus": "Thriving", 
+
+"lens": "People Experience & Culture", 
+
+"category": "Measurement & Evaluation", 
+
+"action": "Measure stakeholder belief that the change remains necessary and valuable.", 
+
+"outcomeIds": ["CFC_O2"] 
+
+}, 
+
+{ 
+
+"id": "CFC_038", 
+
+"fromStatus": "Adopted", 
+
+"toStatus": "Thriving", 
+
+"lens": "People Experience & Culture", 
+
+"category": "Communication", 
+
+"action": "Refresh messaging to reflect emerging evidence, learning and organisational priorities.", 
+
+"outcomeIds": ["CFC_O3"] 
+
+}, 
+
+{ 
+
+"id": "CFC_039", 
+
+"fromStatus": "Adopted", 
+
+"toStatus": "Thriving", 
+
+"lens": "People Experience & Culture", 
+
+"category": "Engagement", 
+
+"action": "Maintain ongoing engagement activities to sustain awareness of the reasons for change.", 
+
+"outcomeIds": ["CFC_O2"] 
+
+}, 
+
+{ 
+
+"id": "CFC_040", 
+
+"fromStatus": "Adopted", 
+
+"toStatus": "Thriving", 
+
+"lens": "People Experience & Culture", 
+
+"category": "Reinforcement", 
+
+"action": "Encourage teams to identify opportunities to build on the original case for change.", 
+
+"outcomeIds": ["CFC_O3"] 
+
+} 
+
+] 
+
+} 
+
+Design Notes for the Adoption Engine 
+
+The pattern is intentionally identical to the Vision component: 
+
+{ 
+
+"Component" -> "Outcome" -> "Action" 
+
+} 
+
+Each action contains: 
+
+{ 
+
+"fromStatus": "", 
+
+"toStatus": "", 
+
+"lens": "", 
+
+"category": "", 
+
+"outcomeIds": [] 
+
+} 
+
+This allows the engine to: 
+
+filter actions by maturity transition 
+
+filter by lens 
+
+filter by category 
+
+generate outcome-based recommendations 
+
+calculate outcome coverage 
+
+support future AI-generated recommendations using consistent metadata 

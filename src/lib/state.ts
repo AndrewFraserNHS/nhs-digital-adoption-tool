@@ -1,4 +1,5 @@
 import type {
+  RemovedActionAuditEntry,
   ComponentObjective,
   DraftEntry,
   HistorySnapshot,
@@ -16,6 +17,8 @@ export interface AdoptionState {
   orgProfile?: OrgProfile;
   currentDraft?: Record<string, Record<string, DraftEntry>>;
   objectives?: Record<string, ComponentObjective[]>;
+  suppressedAutoActions?: Record<string, string[]>;
+  actionAuditLog?: RemovedActionAuditEntry[];
   history?: HistorySnapshot[];
   phaseOverrides?: Record<string, string>;
   pathwayChecks?: PathwayChecklistState;

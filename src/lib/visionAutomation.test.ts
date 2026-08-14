@@ -35,6 +35,11 @@ describe('syncVisionDerivedContent', () => {
     expect(
       peopleEntry.actions.some((action) => action.text.includes('stakeholder listening sessions'))
     ).toBe(true);
+    expect(
+      strategicEntry.actions.some(
+        (action) => action.text.includes('vision workshop') && action.actionType === 'Engagement'
+      )
+    ).toBe(true);
     expect(nextStore.objectives.vision).toHaveLength(3);
     expect(
       (nextStore.objectives.vision || []).every((objective) =>
@@ -109,5 +114,35 @@ describe('syncVisionDerivedContent', () => {
 
     expect(new Set(allActionTexts).size).toBe(allActionTexts.length);
     expect(new Set(allObjectiveTexts).size).toBe(allObjectiveTexts.length);
+  });
+
+  it('does not re-add a suppressed auto-generated vision action', () => {
+    const store = initializeStore({
+      currentDraft: {
+        vision: {
+          'Strategic Direction and Leadership': {
+            score: 0,
+            justification: '',
+            evidence: '',
+            actions: [],
+          },
+        },
+      },
+      suppressedAutoActions: {
+        'vision:Strategic Direction and Leadership': [
+          'vision-action:strategic-direction-and-leadership:0-1:0',
+        ],
+      },
+      objectives: {},
+    });
+
+    const nextStore = syncVisionDerivedContent(store);
+    const strategicEntry = nextStore.currentDraft.vision['Strategic Direction and Leadership'];
+
+    expect(
+      strategicEntry.actions.some(
+        (action) => action.id === 'vision-action:strategic-direction-and-leadership:0-1:0'
+      )
+    ).toBe(false);
   });
 });

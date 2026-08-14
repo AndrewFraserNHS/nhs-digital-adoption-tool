@@ -61,22 +61,49 @@ describe('adoptionIO', () => {
           },
         ],
       },
+      suppressedAutoActions: {
+        'vision:Strategic Direction and Leadership': ['vision-action:strategic-direction-and-leadership:0-1:0'],
+      },
+      actionAuditLog: [
+        {
+          id: 'removed-1',
+          removedAt: '2026-07-10T10:00:00.000Z',
+          reason: 'Superseded by local pathway action',
+          componentId: 'vision',
+          lens: 'Strategic Direction and Leadership',
+          actionId: 'vision-action:strategic-direction-and-leadership:0-1:0',
+          actionText: 'Facilitate workshop',
+          actionType: 'Engagement',
+        },
+      ],
       history: [],
     });
 
     const payload = buildAdoptionExportPayload(store);
     expect(payload.schemaVersion).toBe('4.0');
     payload.currentDraft.vision['Strategic Direction and Leadership'].actions[0].text = 'Changed';
+    if (!payload.suppressedAutoActions) {
+      throw new Error('Expected suppressedAutoActions to be present in export payload');
+    }
+    payload.suppressedAutoActions['vision:Strategic Direction and Leadership'][0] = 'changed-id';
     expect(payload.objectives).toBeDefined();
     if (!payload.objectives) {
       throw new Error('Expected objectives to be present in export payload');
     }
     payload.objectives.vision[0].text = 'Changed';
+    if (!payload.actionAuditLog) {
+      throw new Error('Expected actionAuditLog to be present in export payload');
+    }
+    payload.actionAuditLog[0].reason = 'Changed';
 
     expect(store.currentDraft.vision['Strategic Direction and Leadership'].actions[0].text).toBe(
       'Run workshop'
     );
     expect(store.objectives.vision[0].text).toBe('Publish plan');
+    expect(store.suppressedAutoActions['vision:Strategic Direction and Leadership'][0]).toBe(
+      'vision-action:strategic-direction-and-leadership:0-1:0'
+    );
+    expect(store.actionAuditLog[0].reason).toBe('Superseded by local pathway action');
   });
 
   it('merges imported state over the current store', () => {
@@ -233,5 +260,32 @@ describe('adoptionIO', () => {
     });
 
     expect(parsed.orgProfile?.trustName).toBe('Safe import');
+  });
+
+  it('accepts suppression and action audit metadata in imported payloads', () => {
+    const parsed = parseImportedAdoptionAssessment({
+      suppressedAutoActions: {
+        'vision:Strategic Direction and Leadership': [
+          'vision-action:strategic-direction-and-leadership:0-1:0',
+        ],
+      },
+      actionAuditLog: [
+        {
+          id: 'removed-1',
+          removedAt: '2026-07-10T10:00:00.000Z',
+          reason: 'Locally replaced',
+          componentId: 'vision',
+          lens: 'Strategic Direction and Leadership',
+          actionId: 'vision-action:strategic-direction-and-leadership:0-1:0',
+          actionText: 'Facilitate workshop',
+          actionType: 'Engagement',
+        },
+      ],
+    });
+
+    expect(parsed.suppressedAutoActions?.['vision:Strategic Direction and Leadership']).toEqual([
+      'vision-action:strategic-direction-and-leadership:0-1:0',
+    ]);
+    expect(parsed.actionAuditLog?.[0]?.reason).toBe('Locally replaced');
   });
 });

@@ -6,6 +6,7 @@ import type {
   HistorySnapshot,
   OrgProfile,
   PathwayChecklistState,
+  RemovedActionAuditEntry,
 } from './adoptionState';
 import {
   cloneDraft,
@@ -23,6 +24,8 @@ export interface SavedAdoptionAssessment {
   orgProfile: OrgProfile;
   currentDraft: Record<string, Record<string, DraftEntry>>;
   objectives?: Record<string, ComponentObjective[]>;
+  suppressedAutoActions?: Record<string, string[]>;
+  actionAuditLog?: RemovedActionAuditEntry[];
   history: HistorySnapshot[];
   phaseOverrides: Record<string, string>;
   pathwayChecks: PathwayChecklistState;
@@ -155,6 +158,42 @@ function validatePathwayChecks(value: unknown, path: string): void {
   });
 }
 
+function validateSuppressedAutoActions(value: unknown, path: string): void {
+  assertRecord(value, path);
+  Object.keys(value).forEach((key) => {
+    const ids = value[key];
+    if (!Array.isArray(ids)) {
+      throw new Error(`Invalid adoption assessment payload at ${path}.${key}: expected array.`);
+    }
+
+    ids.forEach((id, index) => {
+      if (typeof id !== 'string') {
+        throw new Error(
+          `Invalid adoption assessment payload at ${path}.${key}[${index}]: expected string.`
+        );
+      }
+    });
+  });
+}
+
+function validateActionAuditLog(value: unknown, path: string): void {
+  if (!Array.isArray(value)) {
+    throw new Error(`Invalid adoption assessment payload at ${path}: expected array.`);
+  }
+
+  value.forEach((item, index) => {
+    assertRecord(item, `${path}[${index}]`);
+    assertOptionalString(item.id, `${path}[${index}].id`);
+    assertOptionalString(item.removedAt, `${path}[${index}].removedAt`);
+    assertOptionalString(item.reason, `${path}[${index}].reason`);
+    assertOptionalString(item.componentId, `${path}[${index}].componentId`);
+    assertOptionalString(item.lens, `${path}[${index}].lens`);
+    assertOptionalString(item.actionId, `${path}[${index}].actionId`);
+    assertOptionalString(item.actionText, `${path}[${index}].actionText`);
+    assertOptionalString(item.actionType, `${path}[${index}].actionType`);
+  });
+}
+
 function validateOrgProfile(value: unknown, path: string): void {
   assertRecord(value, path);
   assertOptionalString(value.trustName, `${path}.trustName`);
@@ -241,6 +280,12 @@ export function parseImportedAdoptionAssessment(
   if (payload.objectives !== undefined) {
     validateObjectivesMap(payload.objectives, 'objectives');
   }
+  if (payload.suppressedAutoActions !== undefined) {
+    validateSuppressedAutoActions(payload.suppressedAutoActions, 'suppressedAutoActions');
+  }
+  if (payload.actionAuditLog !== undefined) {
+    validateActionAuditLog(payload.actionAuditLog, 'actionAuditLog');
+  }
   if (payload.history !== undefined) {
     validateHistory(payload.history, 'history');
   }
@@ -268,6 +313,8 @@ export function buildAdoptionExportPayload(store: AdoptionStore): SavedAdoptionA
     orgProfile: { ...store.orgProfile },
     currentDraft: cloneAndNormaliseDraft(store.currentDraft),
     objectives: normaliseObjectivesMap(store.objectives),
+    suppressedAutoActions: cloneSuppressedAutoActions(store.suppressedAutoActions),
+    actionAuditLog: cloneActionAuditLog(store.actionAuditLog),
     history: store.history.map((snapshot) => ({
       ...snapshot,
       data: cloneAndNormaliseDraft(snapshot.data),
@@ -324,6 +371,8 @@ export function migrateSavedAdoptionAssessment(
     schemaVersion: payload.schemaVersion || '2.0',
     orgProfile: migratedProfile,
     objectives: normaliseObjectivesMap(objectivesSource),
+    suppressedAutoActions: cloneSuppressedAutoActions(payload.suppressedAutoActions),
+    actionAuditLog: cloneActionAuditLog(payload.actionAuditLog),
     pathwayChecks: clonePathwayChecks(payload.pathwayChecks),
   };
 }
@@ -345,6 +394,9 @@ export function mergeImportedAdoptionState(
       ? cloneAndNormaliseDraft(migrated.currentDraft)
       : cloneAndNormaliseDraft(fallbackStore.currentDraft),
     objectives: hasImportedObjectives ? migrated.objectives : fallbackStore.objectives,
+    suppressedAutoActions:
+      migrated.suppressedAutoActions || fallbackStore.suppressedAutoActions,
+    actionAuditLog: migrated.actionAuditLog || fallbackStore.actionAuditLog,
     history: (migrated.history || fallbackStore.history).map((snapshot) => ({
       ...snapshot,
       data: cloneAndNormaliseDraft(snapshot.data),
@@ -421,4 +473,25 @@ function clonePathwayChecks(checks?: PathwayChecklistState): PathwayChecklistSta
     };
     return next;
   }, {});
+}
+
+function cloneSuppressedAutoActions(
+  map?: Record<string, string[]>
+): Record<string, string[]> {
+  if (!map) {
+    return {};
+  }
+
+  return Object.keys(map).reduce<Record<string, string[]>>((next, key) => {
+    next[key] = [...(map[key] || [])];
+    return next;
+  }, {});
+}
+
+function cloneActionAuditLog(entries?: RemovedActionAuditEntry[]): RemovedActionAuditEntry[] {
+  if (!entries) {
+    return [];
+  }
+
+  return entries.map((entry) => ({ ...entry }));
 }

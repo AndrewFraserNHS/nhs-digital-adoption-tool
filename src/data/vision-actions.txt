@@ -1,71 +1,546 @@
-Based on the Vision component maturity matrix in Digital Adoption Tool v5.0.xlsx, the actions below are written as practical activities that a Change Manager could undertake to move from each maturity stage to the next. These actions align directly to the expectations in the matrix.
-Vision: Not Started (0) → Emerging (1)
-Strategic Direction & Leadership Lens
-1.	Facilitate an initial vision workshop with the SRO, sponsors and key programme stakeholders to explore the future state.
-2.	Gather information on organisational priorities, programme objectives and expected outcomes to inform vision development.
-3.	Document initial themes describing why the change is needed and what success may look like.
-4.	Identify key leaders who need to contribute to and endorse the vision.
-5.	Establish a process and timeline for drafting the vision statement.
-People Experience & Culture Lens
-1.	Conduct stakeholder listening sessions to understand current challenges and expectations.
-2.	Gather feedback on people's perceptions of the proposed change.
-3.	Identify common concerns, aspirations and opportunities that should influence the vision.
-4.	Create simple awareness messages explaining that a vision is being developed.
-5.	Ensure representation from key stakeholder groups in early vision discussions.
- 
-Vision: Emerging (1) → Developing (2)
-Strategic Direction & Leadership Lens
-1.	Draft a formal vision statement describing the future state and intended outcomes.
-2.	Test the draft vision with senior leaders to ensure strategic alignment.
-3.	Refine the vision using feedback from sponsors and governance groups.
-4.	Validate how the vision aligns with organisational objectives and programme benefits.
-5.	Develop a high-level vision narrative that can be used consistently across the programme.
-People Experience & Culture Lens
-1.	Run workshops with impacted stakeholder groups to test understanding of the draft vision.
-2.	Collect structured feedback on whether the vision feels relevant and meaningful.
-3.	Identify gaps or ambiguities in the vision from a staff perspective.
-4.	Update the vision to reflect stakeholder insights and concerns.
-5.	Begin developing people-centred messaging explaining why the vision matters to different stakeholder groups.
- 
-Vision: Developing (2) → Embedding (3)
-Strategic Direction & Leadership Lens
-1.	Secure formal approval of the vision through programme governance.
-2.	Develop a leadership communication plan to support vision rollout.
-3.	Equip sponsors with key messages, presentations and briefing materials.
-4.	Integrate the vision into programme governance documentation and reporting.
-5.	Ensure leadership communications consistently reference the agreed vision.
-People Experience & Culture Lens
-1.	Develop audience-specific communications explaining the purpose, value and future-state ambition of the vision for different groups.
-2.	Deliver engagement sessions to build understanding and awareness.
-3.	Establish feedback channels to assess comprehension and acceptance.
-4.	Use change agents and sponsors to reinforce the vision locally.
-5.	Monitor stakeholder understanding through surveys, workshops or feedback sessions.
- 
-Vision: Embedding (3) → Adopted (4)
-Strategic Direction & Leadership Lens
-1.	Ensure sponsors consistently communicate the vision during governance and operational meetings.
-2.	Integrate the vision into programme decision-making and governance discussions.
-3.	Review leadership communications regularly for alignment and consistency.
-4.	Provide coaching to sponsors and leaders on vision-led leadership behaviours.
-5.	Measure leadership engagement in promoting the vision.
-People Experience & Culture Lens
-1.	Deploy a formal vision communication campaign across all impacted stakeholder groups.
-2.	Establish regular feedback loops to assess understanding and engagement.
-3.	Monitor stakeholder awareness and adjust communications where necessary.
-4.	Use case studies and practical examples to demonstrate the vision in action.
-5.	Reinforce the vision through team meetings, departmental briefings and change network activities.
- 
-Vision: Adopted (4) → Thriving (5)
-Strategic Direction & Leadership Lens
-1.	Embed the vision into organisational planning, governance and decision-making processes.
-2.	Ensure leaders consistently reference the vision when making strategic and operational decisions.
-3.	Review organisational priorities regularly to ensure continued alignment with the vision.
-4.	Use adoption and performance data to refine and strengthen how the vision is communicated.
-5.	Establish mechanisms to continuously evaluate whether organisational behaviours remain aligned to the vision.
-People Experience & Culture Lens
-1.	Measure how well staff understand and can articulate the vision.
-2.	Capture and share success stories demonstrating delivery of the vision.
-3.	Encourage teams to identify local improvements that support achievement of the vision.
-4.	Maintain continuous engagement and listening activities to keep the vision relevant.
-5.	Reinforce the vision through recognition programmes and celebration of achievements.
-6.	Ensure the vision becomes part of everyday conversations, team objectives and organisational culture.
+{
+  "component": {
+    "id": "VISION",
+    "name": "Vision"
+  },
+  "categories": [
+    "Analysis & Insight",
+    "Design",
+    "Governance",
+    "Engagement",
+    "Communication",
+    "Training & Learning",
+    "Implementation",
+    "Testing & Validation",
+    "Measurement & Evaluation",
+    "Risk Management",
+    "Dependency Management",
+    "Reinforcement"
+  ],
+  "outcomes": [
+    {
+      "id": "VISION_O1",
+      "name": "A compelling future state has been defined"
+    },
+    {
+      "id": "VISION_O2",
+      "name": "The vision is understood and shared"
+    },
+    {
+      "id": "VISION_O3",
+      "name": "The vision is visible and guides the change"
+    }
+  ],
+  "actions": [
+    {
+      "id": "VISION_001",
+      "componentId": "VISION",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Engagement",
+      "action": "Facilitate an initial vision workshop with the SRO, sponsors and key programme stakeholders to explore the future state.",
+      "outcomeIds": ["VISION_O1"]
+    },
+    {
+      "id": "VISION_002",
+      "componentId": "VISION",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Analysis & Insight",
+      "action": "Gather information on organisational priorities, programme objectives and expected outcomes to inform vision development.",
+      "outcomeIds": ["VISION_O1"]
+    },
+    {
+      "id": "VISION_003",
+      "componentId": "VISION",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "Document initial themes describing why the change is needed and what success may look like.",
+      "outcomeIds": ["VISION_O1", "VISION_O2"]
+    },
+    {
+      "id": "VISION_004",
+      "componentId": "VISION",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "Identify key leaders who need to contribute to and endorse the vision.",
+      "outcomeIds": ["VISION_O1", "VISION_O3"]
+    },
+    {
+      "id": "VISION_005",
+      "componentId": "VISION",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "Establish a process and timeline for drafting the vision statement.",
+      "outcomeIds": ["VISION_O1"]
+    },
+    {
+      "id": "VISION_006",
+      "componentId": "VISION",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "Conduct stakeholder listening sessions to understand current challenges and expectations.",
+      "outcomeIds": ["VISION_O1", "VISION_O2"]
+    },
+    {
+      "id": "VISION_007",
+      "componentId": "VISION",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "Gather feedback on stakeholders' perceptions of the proposed change.",
+      "outcomeIds": ["VISION_O1", "VISION_O2"]
+    },
+    {
+      "id": "VISION_008",
+      "componentId": "VISION",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "Identify common concerns, aspirations and opportunities that should influence the vision.",
+      "outcomeIds": ["VISION_O1"]
+    },
+    {
+      "id": "VISION_009",
+      "componentId": "VISION",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "Create simple awareness messages explaining that a vision is being developed.",
+      "outcomeIds": ["VISION_O2"]
+    },
+    {
+      "id": "VISION_010",
+      "componentId": "VISION",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "Ensure representation from key stakeholder groups in early vision discussions.",
+      "outcomeIds": ["VISION_O1", "VISION_O2"]
+    },
+    {
+      "id": "VISION_011",
+      "componentId": "VISION",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "Draft a formal vision statement describing the future state and intended outcomes.",
+      "outcomeIds": ["VISION_O1"]
+    },
+    {
+      "id": "VISION_012",
+      "componentId": "VISION",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Testing & Validation",
+      "action": "Test the draft vision with senior leaders to ensure strategic alignment.",
+      "outcomeIds": ["VISION_O1", "VISION_O3"]
+    },
+    {
+      "id": "VISION_013",
+      "componentId": "VISION",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "Refine the vision using feedback from sponsors and governance groups.",
+      "outcomeIds": ["VISION_O1", "VISION_O3"]
+    },
+    {
+      "id": "VISION_014",
+      "componentId": "VISION",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Testing & Validation",
+      "action": "Validate how the vision aligns with organisational objectives and programme benefits.",
+      "outcomeIds": ["VISION_O1"]
+    },
+    {
+      "id": "VISION_015",
+      "componentId": "VISION",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "Develop a high-level vision narrative that can be used consistently across the programme.",
+      "outcomeIds": ["VISION_O2", "VISION_O3"]
+    },
+    {
+      "id": "VISION_016",
+      "componentId": "VISION",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "Run workshops with stakeholder groups to test understanding of the draft vision.",
+      "outcomeIds": ["VISION_O2"]
+    },
+    {
+      "id": "VISION_017",
+      "componentId": "VISION",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "Collect structured feedback on whether the vision feels relevant and meaningful.",
+      "outcomeIds": ["VISION_O1", "VISION_O2"]
+    },
+    {
+      "id": "VISION_018",
+      "componentId": "VISION",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "Identify gaps or ambiguities in the vision from a stakeholder perspective.",
+      "outcomeIds": ["VISION_O1", "VISION_O2"]
+    },
+    {
+      "id": "VISION_019",
+      "componentId": "VISION",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Design",
+      "action": "Update the vision to reflect stakeholder insights and concerns.",
+      "outcomeIds": ["VISION_O1", "VISION_O2"]
+    },
+    {
+      "id": "VISION_020",
+      "componentId": "VISION",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "Begin developing people-centred messaging explaining why the vision matters to different stakeholder groups.",
+      "outcomeIds": ["VISION_O2"]
+    },
+    {
+      "id": "VISION_021",
+      "componentId": "VISION",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "Secure formal approval of the vision through programme governance.",
+      "outcomeIds": ["VISION_O1", "VISION_O3"]
+    },
+    {
+      "id": "VISION_022",
+      "componentId": "VISION",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "Develop a leadership communication plan to support vision rollout.",
+      "outcomeIds": ["VISION_O2", "VISION_O3"]
+    },
+    {
+      "id": "VISION_023",
+      "componentId": "VISION",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Communication",
+      "action": "Equip sponsors with key messages, presentations and briefing materials.",
+      "outcomeIds": ["VISION_O2", "VISION_O3"]
+    },
+    {
+      "id": "VISION_024",
+      "componentId": "VISION",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "Integrate the vision into programme governance documentation and reporting.",
+      "outcomeIds": ["VISION_O3"]
+    },
+    {
+      "id": "VISION_025",
+      "componentId": "VISION",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Communication",
+      "action": "Ensure leadership communications consistently reference the agreed vision.",
+      "outcomeIds": ["VISION_O2", "VISION_O3"]
+    },
+    {
+      "id": "VISION_026",
+      "componentId": "VISION",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "Develop audience-specific communications describing the purpose, value and future-state ambition of the vision.",
+      "outcomeIds": ["VISION_O2"]
+    },
+    {
+      "id": "VISION_027",
+      "componentId": "VISION",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "Deliver engagement sessions to build understanding and awareness of the vision.",
+      "outcomeIds": ["VISION_O2"]
+    },
+    {
+      "id": "VISION_028",
+      "componentId": "VISION",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "Establish feedback channels to assess comprehension and acceptance of the vision.",
+      "outcomeIds": ["VISION_O2"]
+    },
+    {
+      "id": "VISION_029",
+      "componentId": "VISION",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "Use change agents and sponsors to reinforce the vision locally.",
+      "outcomeIds": ["VISION_O2", "VISION_O3"]
+    },
+    {
+      "id": "VISION_030",
+      "componentId": "VISION",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "Monitor stakeholder understanding through surveys, workshops or feedback sessions.",
+      "outcomeIds": ["VISION_O2"]
+    },
+    {
+      "id": "VISION_031",
+      "componentId": "VISION",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Reinforcement",
+      "action": "Ensure sponsors consistently communicate the vision during governance and operational meetings.",
+      "outcomeIds": ["VISION_O2", "VISION_O3"]
+    },
+    {
+      "id": "VISION_032",
+      "componentId": "VISION",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "Integrate the vision into programme decision-making and governance discussions.",
+      "outcomeIds": ["VISION_O3"]
+    },
+    {
+      "id": "VISION_033",
+      "componentId": "VISION",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "Review leadership communications regularly for alignment and consistency.",
+      "outcomeIds": ["VISION_O2", "VISION_O3"]
+    },
+    {
+      "id": "VISION_034",
+      "componentId": "VISION",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Training & Learning",
+      "action": "Provide coaching to sponsors and leaders on vision-led leadership behaviours.",
+      "outcomeIds": ["VISION_O3"]
+    },
+    {
+      "id": "VISION_035",
+      "componentId": "VISION",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "Measure leadership engagement in promoting the vision.",
+      "outcomeIds": ["VISION_O3"]
+    },
+    {
+      "id": "VISION_036",
+      "componentId": "VISION",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "Deploy a formal vision communication campaign across all stakeholder groups.",
+      "outcomeIds": ["VISION_O2", "VISION_O3"]
+    },
+    {
+      "id": "VISION_037",
+      "componentId": "VISION",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "Establish regular feedback loops to assess understanding and engagement with the vision.",
+      "outcomeIds": ["VISION_O2"]
+    },
+    {
+      "id": "VISION_038",
+      "componentId": "VISION",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "Monitor stakeholder awareness and adjust communications where necessary.",
+      "outcomeIds": ["VISION_O2"]
+    },
+    {
+      "id": "VISION_039",
+      "componentId": "VISION",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "Use case studies and practical examples to demonstrate the vision in action.",
+      "outcomeIds": ["VISION_O2", "VISION_O3"]
+    },
+    {
+      "id": "VISION_040",
+      "componentId": "VISION",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "Reinforce the vision through team meetings, departmental briefings and change network activities.",
+      "outcomeIds": ["VISION_O2", "VISION_O3"]
+    },
+    {
+      "id": "VISION_041",
+      "componentId": "VISION",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "Embed the vision into organisational planning, governance and decision-making processes.",
+      "outcomeIds": ["VISION_O3"]
+    },
+    {
+      "id": "VISION_042",
+      "componentId": "VISION",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Reinforcement",
+      "action": "Ensure leaders consistently reference the vision when making strategic and operational decisions.",
+      "outcomeIds": ["VISION_O3"]
+    },
+    {
+      "id": "VISION_043",
+      "componentId": "VISION",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "Review organisational priorities regularly to ensure continued alignment with the vision.",
+      "outcomeIds": ["VISION_O1", "VISION_O3"]
+    },
+    {
+      "id": "VISION_044",
+      "componentId": "VISION",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "Use adoption and performance data to refine and strengthen how the vision is communicated.",
+      "outcomeIds": ["VISION_O2", "VISION_O3"]
+    },
+    {
+      "id": "VISION_045",
+      "componentId": "VISION",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "Establish mechanisms to continuously evaluate whether organisational behaviours remain aligned to the vision.",
+      "outcomeIds": ["VISION_O3"]
+    },
+    {
+      "id": "VISION_046",
+      "componentId": "VISION",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "Measure how well staff understand and can articulate the vision.",
+      "outcomeIds": ["VISION_O2"]
+    },
+    {
+      "id": "VISION_047",
+      "componentId": "VISION",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "Capture and share success stories demonstrating delivery of the vision.",
+      "outcomeIds": ["VISION_O2", "VISION_O3"]
+    },
+    {
+      "id": "VISION_048",
+      "componentId": "VISION",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "Encourage teams to identify local improvements that support achievement of the vision.",
+      "outcomeIds": ["VISION_O3"]
+    },
+    {
+      "id": "VISION_049",
+      "componentId": "VISION",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "Maintain continuous engagement and listening activities to keep the vision relevant.",
+      "outcomeIds": ["VISION_O1", "VISION_O2"]
+    },
+    {
+      "id": "VISION_050",
+      "componentId": "VISION",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "Reinforce the vision through recognition programmes and celebration of achievements.",
+      "outcomeIds": ["VISION_O2", "VISION_O3"]
+    },
+    {
+      "id": "VISION_051",
+      "componentId": "VISION",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "Ensure the vision becomes part of everyday conversations, team objectives and organisational culture.",
+      "outcomeIds": ["VISION_O2", "VISION_O3"]
+    }
+  ]
+}

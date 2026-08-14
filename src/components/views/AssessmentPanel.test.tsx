@@ -168,7 +168,7 @@ describe('AssessmentPanel', () => {
         {
           id: 'action-1',
           text: 'Run workshop',
-          actionType: 'Meetings',
+          actionType: 'Engagement',
           owner: 'PMO',
           timescale: 'Q3',
           status: 'In Progress',
@@ -176,7 +176,7 @@ describe('AssessmentPanel', () => {
         {
           id: 'action-2',
           text: 'Write admin note',
-          actionType: 'Admin',
+          actionType: 'Governance',
           owner: 'PMO',
           timescale: 'Q3',
           status: 'Planned',
@@ -188,7 +188,7 @@ describe('AssessmentPanel', () => {
 
     fireEvent.change(
       screen.getByRole('combobox', { name: 'Filter Strategic Direction actions by type' }),
-      { target: { value: 'Meetings' } }
+      { target: { value: 'Engagement' } }
     );
 
     expect(screen.getByText('Run workshop')).toBeInTheDocument();

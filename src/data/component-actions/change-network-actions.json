@@ -1,0 +1,425 @@
+{
+  "component": {
+    "id": "CHANGE_NETWORK",
+    "name": "Change Network"
+  },
+  "outcomes": [
+    {
+      "id": "CN_O1",
+      "name": "A representative and effective change network has been established",
+      "description": ""
+    },
+    {
+      "id": "CN_O2",
+      "name": "The change network actively enables engagement and adoption",
+      "description": ""
+    },
+    {
+      "id": "CN_O3",
+      "name": "The change network is embedded and delivers ongoing value",
+      "description": ""
+    }
+  ],
+  "actions": [
+    {
+      "id": "CN_001",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "Define the purpose, scope and objectives of the change network.",
+      "outcomeIds": ["CN_O1"],
+      "readinessScore": 1
+    },
+    {
+      "id": "CN_002",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Analysis & Insight",
+      "action": "Identify areas, services and stakeholder groups that require representation within the change network.",
+      "outcomeIds": ["CN_O1"],
+      "readinessScore": 1
+    },
+    {
+      "id": "CN_003",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "Define the roles, responsibilities and expectations for change agents and champions.",
+      "outcomeIds": ["CN_O1"],
+      "readinessScore": 1
+    },
+    {
+      "id": "CN_004",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "Establish sponsorship and governance arrangements for the change network.",
+      "outcomeIds": ["CN_O1"],
+      "readinessScore": 1
+    },
+    {
+      "id": "CN_005",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "Develop a recruitment and onboarding approach for change network members.",
+      "outcomeIds": ["CN_O1"],
+      "readinessScore": 1
+    },
+    {
+      "id": "CN_006",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "Identify credible and influential individuals who can support change locally.",
+      "outcomeIds": ["CN_O1"],
+      "readinessScore": 1
+    },
+    {
+      "id": "CN_007",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Engagement",
+      "category": "Engagement",
+      "action": "Engage potential network members to understand their willingness and ability to participate.",
+      "outcomeIds": ["CN_O1"],
+      "readinessScore": 1
+    },
+    {
+      "id": "CN_008",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Analysis & Insight",
+      "category": "Analysis & Insight",
+      "action": "Assess gaps in representation, influence and local knowledge.",
+      "outcomeIds": ["CN_O1"],
+      "readinessScore": 1
+    },
+    {
+      "id": "CN_009",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "Communicate the purpose and value of the change network to stakeholders.",
+      "outcomeIds": ["CN_O2"],
+      "readinessScore": 1
+    },
+    {
+      "id": "CN_010",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "Begin connecting prospective network members across organisational areas.",
+      "outcomeIds": ["CN_O1"],
+      "readinessScore": 1
+    },
+    {
+      "id": "CN_011",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "Launch the change network with defined membership, responsibilities and operating arrangements.",
+      "outcomeIds": ["CN_O1"],
+      "readinessScore": 2
+    },
+    {
+      "id": "CN_012",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Training & Learning",
+      "action": "Provide initial training and capability development for network members.",
+      "outcomeIds": ["CN_O2"],
+      "readinessScore": 2
+    },
+    {
+      "id": "CN_013",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Communication",
+      "action": "Provide network members with key messages, updates and engagement materials.",
+      "outcomeIds": ["CN_O2"],
+      "readinessScore": 2
+    },
+    {
+      "id": "CN_014",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "Establish mechanisms for two-way communication between the programme and the network.",
+      "outcomeIds": ["CN_O2"],
+      "readinessScore": 2
+    },
+    {
+      "id": "CN_015",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "Define measures to assess network participation, contribution and effectiveness.",
+      "outcomeIds": ["CN_O2", "CN_O3"],
+      "readinessScore": 2
+    },
+    {
+      "id": "CN_016",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "Use network members to gather insight, questions, concerns and feedback from stakeholders.",
+      "outcomeIds": ["CN_O2"],
+      "readinessScore": 2
+    },
+    {
+      "id": "CN_017",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "Use network members to reinforce key messages and support local engagement activity.",
+      "outcomeIds": ["CN_O2"],
+      "readinessScore": 2
+    },
+    {
+      "id": "CN_018",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "Enable network members to represent stakeholder concerns within programme discussions.",
+      "outcomeIds": ["CN_O2"],
+      "readinessScore": 2
+    },
+    {
+      "id": "CN_019",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "Support network members to build local advocacy and confidence in the change.",
+      "outcomeIds": ["CN_O2"],
+      "readinessScore": 2
+    },
+    {
+      "id": "CN_020",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "Monitor engagement levels and participation across the network.",
+      "outcomeIds": ["CN_O2", "CN_O3"],
+      "readinessScore": 2
+    },
+    {
+      "id": "CN_021",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "Integrate the change network into programme governance, planning and delivery activities.",
+      "outcomeIds": ["CN_O3"],
+      "readinessScore": 3
+    },
+    {
+      "id": "CN_022",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "Evaluate the effectiveness of the network in supporting change outcomes.",
+      "outcomeIds": ["CN_O3"],
+      "readinessScore": 3
+    },
+    {
+      "id": "CN_023",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "Refine network structures, roles and approaches based on learning and feedback.",
+      "outcomeIds": ["CN_O3"],
+      "readinessScore": 3
+    },
+    {
+      "id": "CN_024",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Dependency Management",
+      "action": "Align change network activity with engagement, learning and adoption plans.",
+      "outcomeIds": ["CN_O3"],
+      "readinessScore": 3
+    },
+    {
+      "id": "CN_025",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "Expand network involvement in implementation and decision-support activities.",
+      "outcomeIds": ["CN_O2", "CN_O3"],
+      "readinessScore": 3
+    },
+    {
+      "id": "CN_026",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "Use network members to facilitate local problem solving and remove barriers to adoption.",
+      "outcomeIds": ["CN_O2"],
+      "readinessScore": 3
+    },
+    {
+      "id": "CN_027",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "Share examples of network impact and success across stakeholder groups.",
+      "outcomeIds": ["CN_O2", "CN_O3"],
+      "readinessScore": 3
+    },
+    {
+      "id": "CN_028",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "Recognise and celebrate the contribution of network members.",
+      "outcomeIds": ["CN_O3"],
+      "readinessScore": 3
+    },
+    {
+      "id": "CN_029",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "Assess stakeholder perceptions of change network effectiveness.",
+      "outcomeIds": ["CN_O2", "CN_O3"],
+      "readinessScore": 3
+    },
+    {
+      "id": "CN_030",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "Use network members to reinforce desired behaviours and ways of working.",
+      "outcomeIds": ["CN_O2"],
+      "readinessScore": 3
+    },
+    {
+      "id": "CN_031",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "Embed the change network into organisational change and improvement approaches.",
+      "outcomeIds": ["CN_O3"],
+      "readinessScore": 4
+    },
+    {
+      "id": "CN_032",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "Review and continuously improve network effectiveness and operating models.",
+      "outcomeIds": ["CN_O3"],
+      "readinessScore": 4
+    },
+    {
+      "id": "CN_033",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "Use organisational learning to strengthen future change network approaches.",
+      "outcomeIds": ["CN_O3"],
+      "readinessScore": 4
+    },
+    {
+      "id": "CN_034",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Dependency Management",
+      "action": "Integrate the network with organisational improvement, transformation and change capability activities.",
+      "outcomeIds": ["CN_O3"],
+      "readinessScore": 4
+    },
+    {
+      "id": "CN_035",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Reinforcement",
+      "action": "Maintain a sustainable network capable of supporting future change initiatives.",
+      "outcomeIds": ["CN_O3"],
+      "readinessScore": 4
+    },
+    {
+      "id": "CN_036",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "Maintain active two-way communication between stakeholders and the change network.",
+      "outcomeIds": ["CN_O2", "CN_O3"],
+      "readinessScore": 4
+    },
+    {
+      "id": "CN_037",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "Embed change champion and change agent roles into organisational culture.",
+      "outcomeIds": ["CN_O3"],
+      "readinessScore": 4
+    },
+    {
+      "id": "CN_038",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "Measure the network’s contribution to engagement, adoption and reinforcement outcomes.",
+      "outcomeIds": ["CN_O3"],
+      "readinessScore": 4
+    },
+    {
+      "id": "CN_039",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "Develop future change leaders from within the network.",
+      "outcomeIds": ["CN_O3"],
+      "readinessScore": 4
+    },
+    {
+      "id": "CN_040",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "Demonstrate the value of the network through sustained contribution to organisational change success.",
+      "outcomeIds": ["CN_O3"],
+      "readinessScore": 4
+    }
+  ]
+}

@@ -3,7 +3,7 @@
  * Validates scores, entries, and organizational profiles
  */
 
-import { DraftEntry, OrgProfile } from './adoptionState';
+import { DraftAction, DraftEntry, OrgProfile } from './adoptionState';
 
 function isValidIsoDate(value: string): boolean {
   if (!value) {
@@ -169,4 +169,44 @@ export function combineValidationResults(...results: ValidationResult[]): Valida
   });
 
   return { isValid: allErrors.length === 0, errors: allErrors };
+}
+
+/**
+ * Validate a readiness score on an action (0-5)
+ */
+export function validateActionReadinessScore(
+  readinessScore: number | undefined,
+  actionId?: string
+): ValidationResult {
+  const errors: ValidationError[] = [];
+
+  if (readinessScore !== undefined) {
+    if (typeof readinessScore !== 'number' || isNaN(readinessScore)) {
+      errors.push({
+        field: 'readinessScore',
+        message: `Action ${actionId || ''}: readinessScore must be a number`,
+      });
+    } else if (readinessScore < 0 || readinessScore > 5) {
+      errors.push({
+        field: 'readinessScore',
+        message: `Action ${actionId || ''}: readinessScore must be between 0 and 5, got ${readinessScore}`,
+      });
+    }
+  }
+
+  return { isValid: errors.length === 0, errors };
+}
+
+/**
+ * Validate all actions in a draft entry have valid readinessScores
+ */
+export function validateActionsReadinessScores(actions: DraftAction[]): ValidationResult {
+  const errors: ValidationError[] = [];
+
+  actions.forEach((action) => {
+    const validation = validateActionReadinessScore(action.readinessScore, action.id);
+    errors.push(...validation.errors);
+  });
+
+  return { isValid: errors.length === 0, errors };
 }

@@ -19,6 +19,7 @@ export function ActionPlanTracker({
   const [ownerFilter, setOwnerFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [actionTypeFilter, setActionTypeFilter] = useState('all');
+  const [readinessScoreFilter, setReadinessScoreFilter] = useState<'all' | number>('all');
   const [sortBy, setSortBy] = useState<'component' | 'lens' | 'owner' | 'status' | 'actionType'>(
     'component'
   );
@@ -65,6 +66,22 @@ export function ActionPlanTracker({
     );
   }, [actions]);
 
+  const readinessScoreOptions = useMemo(() => {
+    const scores = actions
+      .map((row) => row.action.readinessScore)
+      .filter((value): value is number => value !== undefined);
+    return Array.from(new Set(scores)).sort((a, b) => a - b);
+  }, [actions]);
+
+  const READINESS_SCORE_LABELS: Record<number, string> = {
+    0: 'Not Started',
+    1: 'Emerging',
+    2: 'Developing',
+    3: 'Embedding',
+    4: 'Adopted',
+    5: 'Thriving',
+  };
+
   const filteredActions = useMemo(() => {
     const query = searchTerm.trim().toLowerCase();
 
@@ -82,6 +99,10 @@ export function ActionPlanTracker({
       }
 
       if (actionTypeFilter !== 'all' && (row.action.actionType || '') !== actionTypeFilter) {
+        return false;
+      }
+
+      if (readinessScoreFilter !== 'all' && row.action.readinessScore !== readinessScoreFilter) {
         return false;
       }
 
@@ -128,6 +149,7 @@ export function ActionPlanTracker({
     actions,
     componentFilter,
     ownerFilter,
+    readinessScoreFilter,
     searchTerm,
     sortBy,
     sortDirection,
@@ -148,6 +170,9 @@ export function ActionPlanTracker({
     if (actionTypeFilter !== 'all') {
       chips.push(`Action type: ${actionTypeFilter}`);
     }
+    if (readinessScoreFilter !== 'all') {
+      chips.push(`Readiness: ${READINESS_SCORE_LABELS[readinessScoreFilter as number]}`);
+    }
     if (ownerFilter !== 'all') {
       chips.push(`Owner: ${ownerFilter}`);
     }
@@ -159,6 +184,7 @@ export function ActionPlanTracker({
     actionTypeFilter,
     componentFilter,
     ownerFilter,
+    readinessScoreFilter,
     searchTerm,
     sortBy,
     sortDirection,
@@ -171,6 +197,7 @@ export function ActionPlanTracker({
     setOwnerFilter('all');
     setStatusFilter('all');
     setActionTypeFilter('all');
+    setReadinessScoreFilter('all');
     setSortBy('component');
     setSortDirection('asc');
     setShowAdvancedControls(false);
@@ -236,7 +263,7 @@ export function ActionPlanTracker({
 
         {showAdvancedControls ? (
           <div
-            className={`grid grid-cols-1 sm:grid-cols-4 gap-3 rounded-md border p-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
+            className={`grid grid-cols-1 sm:grid-cols-5 gap-3 rounded-md border p-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
           >
             <select
               value={ownerFilter}
@@ -263,6 +290,22 @@ export function ActionPlanTracker({
               {actionTypeOptions.map((actionType) => (
                 <option key={actionType} value={actionType}>
                   {actionType}
+                </option>
+              ))}
+            </select>
+            <select
+              value={readinessScoreFilter === 'all' ? 'all' : String(readinessScoreFilter)}
+              onChange={(e) => 
+                setReadinessScoreFilter(e.target.value === 'all' ? 'all' : Number(e.target.value))
+              }
+              className={`rounded-md border border-[#768692] px-3 py-2 text-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8] ${
+                darkMode ? 'bg-slate-800 text-slate-100' : 'text-slate-900'
+              }`}
+            >
+              <option value="all">All readiness levels</option>
+              {readinessScoreOptions.map((score) => (
+                <option key={score} value={String(score)}>
+                  {READINESS_SCORE_LABELS[score]}
                 </option>
               ))}
             </select>

@@ -38,6 +38,8 @@ export function cloneDetail(detail: Partial<ComponentDetail> | undefined): Compo
       phase: action.phase,
       guidanceUrl: action.guidanceUrl,
       timescale: action.timescale,
+      // Preserve readinessScore if present; default to 0 (Not Started) for legacy actions
+      readinessScore: action.readinessScore !== undefined ? action.readinessScore : 0,
     })),
   };
 }

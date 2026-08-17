@@ -1,7 +1,8 @@
-import { JSX, useCallback, useMemo, useState } from 'react';
+import { JSX, useCallback, useMemo, useState, useEffect } from 'react';
 import { MATURITY_STAGES, STAGE_COLORS as STAGE_COLORS_PALETTE } from '@data/rubrics';
 import type { ComponentDetail } from '@lib/maturityState';
 import { UNIFIED_ACTION_STATUSES } from '@lib/actionModel';
+import { detectScoreAdvancementOpportunities } from '@lib/componentDerivedAutomation';
 
 export interface MaturityAssessmentPanelProps {
   activeComponent: string;
@@ -41,12 +42,25 @@ export function MaturityAssessmentPanel({
     'text' | 'owner' | 'startDate' | 'dueDate' | 'status'
   >('dueDate');
   const [actionSortDirection, setActionSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [showNextScoreActions, setShowNextScoreActions] = useState(false);
   const [linkSearch, setLinkSearch] = useState('');
   const [linkSortDirection, setLinkSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [advancementModalOpen, setAdvancementModalOpen] = useState(false);
+  const [advancementSuggestion, setAdvancementSuggestion] = useState<{ currentScore: number; nextScore: number } | null>(null);
+  const [dismissedAdvancementSessions, setDismissedAdvancementSessions] = useState<Set<string>>(new Set());
 
   const d = details[activeComponent];
   const sc = scores[activeComponent] || 0;
   const matrixRow = componentMatrix[activeComponent] || [];
+
+  const hasNotStartedActions = useMemo(() => {
+    if (!d) return false;
+    return d.actions.some((action) => action.readinessScore === 0);
+  }, [d]);
+
+  const effectiveCurrentScore = useMemo(() => {
+    return sc === 0 && !hasNotStartedActions ? 1 : sc;
+  }, [sc, hasNotStartedActions]);
 
   const sortedComponents = useMemo(() => {
     const query = componentSearch.trim().toLowerCase();
@@ -80,15 +94,37 @@ export function MaturityAssessmentPanel({
       });
   }, [d, linkSearch, linkSortDirection]);
 
+  // Compute actions for current and next score bands
+  const actionsForCurrentScore = useMemo(() => {
+    if (!d) return [];
+    return d.actions.filter(action => action.readinessScore === effectiveCurrentScore);
+  }, [d, effectiveCurrentScore]);
+
+  const completedActionsForCurrentScore = useMemo(() => {
+    return actionsForCurrentScore.filter(action => action.status === 'Completed').length;
+  }, [actionsForCurrentScore]);
+
+  const canAdvanceScore = useMemo(() => {
+    return actionsForCurrentScore.length > 0 && 
+           completedActionsForCurrentScore === actionsForCurrentScore.length;
+  }, [actionsForCurrentScore, completedActionsForCurrentScore]);
+
   const visibleActions = useMemo(() => {
     if (!d) {
-      return [] as Array<{ action: ComponentDetail['actions'][number]; index: number }>;
+      return [] as Array<{ action: ComponentDetail['actions'][number]; index: number; isNextScore?: boolean }>;
     }
 
     const query = actionSearch.trim().toLowerCase();
     return d.actions
       .map((action, index) => ({ action, index }))
       .filter(({ action }) => {
+        // Filter by readiness score: show current score, and optionally next score
+        const isCurrentScore = action.readinessScore === effectiveCurrentScore;
+        const isNextScore = action.readinessScore === effectiveCurrentScore + 1;
+        
+        if (!isCurrentScore && (!showNextScoreActions || !isNextScore)) {
+          return false;
+        }
         if (actionStatusFilter !== 'all' && action.status !== actionStatusFilter) {
           return false;
         }
@@ -100,6 +136,11 @@ export function MaturityAssessmentPanel({
           .toLowerCase()
           .includes(query);
       })
+      .map(({ action, index }) => ({
+        action,
+        index,
+        isNextScore: action.readinessScore === effectiveCurrentScore + 1,
+      }))
       .sort((left, right) => {
         const getValue = (item: { action: ComponentDetail['actions'][number] }): string => {
           if (actionSortBy === 'owner') {
@@ -120,7 +161,49 @@ export function MaturityAssessmentPanel({
         const comparison = getValue(left).localeCompare(getValue(right));
         return actionSortDirection === 'asc' ? comparison : -comparison;
       });
-  }, [actionSearch, actionSortBy, actionSortDirection, actionStatusFilter, d]);
+  }, [
+    actionSearch,
+    actionSortBy,
+    actionSortDirection,
+    actionStatusFilter,
+    d,
+    effectiveCurrentScore,
+    showNextScoreActions,
+  ]);
+
+  // Auto-detect advancement opportunities
+  useEffect(() => {
+    if (!d) return;
+
+    const suggestion = detectScoreAdvancementOpportunities(d, effectiveCurrentScore);
+    setAdvancementSuggestion(suggestion);
+
+    // Auto-open modal if advancement is available and not dismissed in this session
+    if (suggestion) {
+      const sessionKey = `${activeComponent}:${effectiveCurrentScore}:${suggestion.nextScore}`;
+      if (!dismissedAdvancementSessions.has(sessionKey)) {
+        setAdvancementModalOpen(true);
+      }
+    }
+  }, [d, effectiveCurrentScore, activeComponent, dismissedAdvancementSessions]);
+
+  const handleAdvanceScore = useCallback(() => {
+    if (advancementSuggestion) {
+      onScoreChange(activeComponent, advancementSuggestion.nextScore);
+      setAdvancementModalOpen(false);
+      // Mark this advancement as dismissed for this session
+      const sessionKey = `${activeComponent}:${advancementSuggestion.currentScore}:${advancementSuggestion.nextScore}`;
+      setDismissedAdvancementSessions(prev => new Set([...prev, sessionKey]));
+    }
+  }, [advancementSuggestion, activeComponent, onScoreChange]);
+
+  const handleDismissAdvancement = useCallback(() => {
+    setAdvancementModalOpen(false);
+    if (advancementSuggestion) {
+      const sessionKey = `${activeComponent}:${advancementSuggestion.currentScore}:${advancementSuggestion.nextScore}`;
+      setDismissedAdvancementSessions(prev => new Set([...prev, sessionKey]));
+    }
+  }, [advancementSuggestion, activeComponent]);
 
   const handleScoreChange = useCallback(
     (newScore: number) => {
@@ -185,10 +268,11 @@ export function MaturityAssessmentPanel({
         startDate: '',
         dueDate: '',
         status: 'Planned',
+        readinessScore: sc,
       });
       onDetailUpdate(activeComponent, { ...d });
     }
-  }, [activeComponent, d, onDetailUpdate]);
+  }, [activeComponent, d, onDetailUpdate, sc]);
 
   const handleRemoveAction = useCallback(
     (index: number) => {
@@ -524,10 +608,17 @@ export function MaturityAssessmentPanel({
                   {/* Actions */}
                   <div>
                     <div className="flex flex-col gap-3 mb-2 md:flex-row md:items-center md:justify-between">
-                      <label className="block text-sm font-semibold text-gray-700">
-                        Actions to Improve Maturity
-                      </label>
-                      <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 w-full md:w-auto">
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700">
+                          Actions to Improve Maturity
+                        </label>
+                        {canAdvanceScore && (
+                          <div className="mt-1 inline-block bg-green-100 border border-green-300 rounded px-2 py-1 text-xs font-semibold text-green-800">
+                            ✓ Ready to Advance
+                          </div>
+                        )}
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-5 gap-2 w-full md:w-auto">
                         <input
                           type="search"
                           value={actionSearch}
@@ -535,6 +626,15 @@ export function MaturityAssessmentPanel({
                           placeholder="Search actions..."
                           className="sm:col-span-2 bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-300"
                         />
+                        <label className="flex items-center gap-2 text-sm">
+                          <input
+                            type="checkbox"
+                            checked={showNextScoreActions}
+                            onChange={(e) => setShowNextScoreActions(e.target.checked)}
+                            className="rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-300"
+                          />
+                          <span className="text-gray-700">Show next level</span>
+                        </label>
                         <select
                           value={actionStatusFilter}
                           onChange={(e) => setActionStatusFilter(e.target.value)}
@@ -576,18 +676,34 @@ export function MaturityAssessmentPanel({
                       </button>
                     </div>
                     <div className="space-y-3">
-                      {visibleActions.map(({ action, index }) => (
+                      {visibleActions.map(({ action, index, isNextScore }) => (
                         <div
                           key={action.id}
-                          className="bg-gray-50 border border-gray-200 rounded-lg p-3 space-y-2"
+                          className={`border rounded-lg p-3 space-y-2 ${
+                            isNextScore
+                              ? 'bg-blue-50 border-blue-200'
+                              : 'bg-gray-50 border-gray-200'
+                          }`}
                         >
-                          <input
-                            type="text"
-                            value={action.text}
-                            onChange={(e) => handleActionTextChange(index, e.target.value)}
-                            placeholder="Describe the action..."
-                            className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
-                          />
+                          <div className="flex items-start justify-between gap-2 mb-2">
+                            <input
+                              type="text"
+                              value={action.text}
+                              onChange={(e) => handleActionTextChange(index, e.target.value)}
+                              placeholder="Describe the action..."
+                              className="flex-1 bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+                            />
+                            {isNextScore && (
+                              <span className="shrink-0 inline-block bg-blue-100 border border-blue-300 rounded px-2 py-1 text-xs font-semibold text-blue-800 whitespace-nowrap">
+                                Next Level
+                              </span>
+                            )}
+                            {!isNextScore && action.readinessScore !== undefined && (
+                              <span className="shrink-0 inline-block bg-gray-200 border border-gray-400 rounded px-2 py-1 text-xs font-medium text-gray-700 whitespace-nowrap">
+                                Level {action.readinessScore}
+                              </span>
+                            )}
+                          </div>
                           <div className="grid grid-cols-4 gap-2">
                             <div className="space-y-1">
                               <label className="block text-xs font-medium text-gray-600">
@@ -671,6 +787,51 @@ export function MaturityAssessmentPanel({
           </div>
         </div>
       </div>
+
+      {/* Advancement Suggestion Modal */}
+      {advancementModalOpen && advancementSuggestion && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-2xl max-w-md w-full">
+            <div className="p-6">
+              <div className="flex items-center justify-center w-10 h-10 mx-auto bg-green-100 rounded-full mb-4">
+                <svg
+                  className="w-6 h-6 text-green-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 text-center mb-2">
+                Ready to Advance!
+              </h3>
+              <p className="text-gray-600 text-center text-sm mb-6">
+                You've completed all actions for the current readiness level. Ready to advance to the next stage?
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={handleDismissAdvancement}
+                  className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                >
+                  Not Yet
+                </button>
+                <button
+                  onClick={handleAdvanceScore}
+                  className="flex-1 px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors"
+                >
+                  Advance Now
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

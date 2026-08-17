@@ -16,6 +16,7 @@ export interface ActionItem {
   phase?: number;
   guidanceUrl?: string;
   timescale?: string;
+  readinessScore?: number;
 }
 
 export interface ComponentDetail {

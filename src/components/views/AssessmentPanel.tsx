@@ -1054,11 +1054,18 @@ export function AssessmentPanel({
         <div className="space-y-8">
           {component.lenses.map((lens) => {
             const entry = getEntry(component.id, lens);
+            const targetKey = `${component.id}:${lens}`;
+            const actionsForLens = actionsByTarget[targetKey] || [];
+            const hasNotStartedActions = actionsForLens.some(
+              (resolvedAction) => resolvedAction.action.readinessScore === 0
+            );
+            const effectiveCurrentScore =
+              entry.score === 0 && !hasNotStartedActions ? 1 : entry.score;
             const showMatrix = !!store.showMatrix?.[`${component.id}:${lens}`];
-            const lensActionTypeFilter = lensActionTypeFilters[`${component.id}:${lens}`] || 'all';
+            const lensActionTypeFilter = lensActionTypeFilters[targetKey] || 'all';
             const lensActionTypeOptions = Array.from(
               new Set(
-                (actionsByTarget[`${component.id}:${lens}`] || [])
+                actionsForLens
                   .map((resolvedAction) => resolvedAction.action.actionType)
                   .filter(
                     (actionType): actionType is Exclude<DraftAction['actionType'], undefined> =>
@@ -1066,11 +1073,23 @@ export function AssessmentPanel({
                   )
               )
             ).sort((left, right) => String(left).localeCompare(String(right)));
-            const lensActions = [...(actionsByTarget[`${component.id}:${lens}`] || [])]
+            const lensActions = [...actionsForLens]
               .filter(
-                (resolvedAction) =>
-                  lensActionTypeFilter === 'all' ||
-                  (resolvedAction.action.actionType || '') === lensActionTypeFilter
+                (resolvedAction) => {
+                  const actionReadinessScore =
+                    resolvedAction.action.readinessScore !== undefined
+                      ? resolvedAction.action.readinessScore
+                      : effectiveCurrentScore;
+
+                  if (actionReadinessScore !== effectiveCurrentScore) {
+                    return false;
+                  }
+
+                  return (
+                    lensActionTypeFilter === 'all' ||
+                    (resolvedAction.action.actionType || '') === lensActionTypeFilter
+                  );
+                }
               )
               .sort((left, right) => {
                 const leftCompleted = normalizeActionStatus(left.action.status) === 'Completed';
@@ -1227,7 +1246,7 @@ export function AssessmentPanel({
                         onChange={(event) =>
                           setLensActionTypeFilters((current) => ({
                             ...current,
-                            [`${component.id}:${lens}`]: event.target.value,
+                            [targetKey]: event.target.value,
                           }))
                         }
                         className={`rounded-md border px-2.5 py-1.5 text-xs font-semibold ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-700'}`}

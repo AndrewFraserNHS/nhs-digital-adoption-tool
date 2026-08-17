@@ -1,0 +1,509 @@
+{
+  "component": {
+    "id": "READINESS_PLANNING",
+    "name": "Change Management Readiness & Planning"
+  },
+  "outcomes": [
+    {
+      "id": "RP_O1",
+      "name": "Organisational readiness has been assessed",
+      "description": "The organisation understands its current level of readiness, including strengths, weaknesses, barriers, dependencies and areas requiring additional support."
+    },
+    {
+      "id": "RP_O2",
+      "name": "A robust change management plan has been developed",
+      "description": "A structured, evidence-based change management plan exists that reflects readiness findings, priorities, risks, impacts and dependencies."
+    },
+    {
+      "id": "RP_O3",
+      "name": "Readiness and planning activities actively support successful implementation",
+      "description": "Readiness is continually reviewed and the change management plan is actively managed and adjusted in response to progress, issues and organisational needs."
+    }
+  ],
+  "actions": [
+    {
+      "id": "RP_001",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "Conduct an initial readiness assessment to understand organisational preparedness for change.",
+      "outcomeIds": [
+        "RP_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "RP_002",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "Assess current organisational capability, capacity and resource availability to support the change.",
+      "outcomeIds": [
+        "RP_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "RP_003",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "Identify readiness gaps between the current state and the desired future state.",
+      "outcomeIds": [
+        "RP_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "RP_004",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Risk",
+      "category": "Risk Management",
+      "action": "Identify readiness risks that could affect successful implementation.",
+      "outcomeIds": [
+        "RP_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "RP_005",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Risk",
+      "category": "Dependency Management",
+      "action": "Identify organisational, programme and operational dependencies that could influence readiness.",
+      "outcomeIds": [
+        "RP_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "RP_006",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "Engage stakeholders to assess local readiness, concerns, confidence and support requirements.",
+      "outcomeIds": [
+        "RP_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "RP_007",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "Gather insight into organisational attitudes, competing priorities and change capacity.",
+      "outcomeIds": [
+        "RP_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "RP_008",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "Establish baseline readiness measures and indicators.",
+      "outcomeIds": [
+        "RP_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "RP_009",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "Develop an initial change management approach based on readiness findings.",
+      "outcomeIds": [
+        "RP_O2"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "RP_010",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "Define the major change management workstreams, activities and milestones required to deliver the change.",
+      "outcomeIds": [
+        "RP_O2"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "RP_011",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Risk",
+      "category": "Design",
+      "action": "Develop a detailed change management plan informed by readiness, impact, risk and stakeholder analysis findings.",
+      "outcomeIds": [
+        "RP_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "RP_012",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Risk",
+      "category": "Dependency Management",
+      "action": "Map dependencies, assumptions, constraints and critical path activities within the change plan.",
+      "outcomeIds": [
+        "RP_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "RP_013",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Risk",
+      "category": "Governance",
+      "action": "Obtain approval of the change management plan through appropriate governance routes.",
+      "outcomeIds": [
+        "RP_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "RP_014",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Risk",
+      "category": "Measurement & Evaluation",
+      "action": "Define readiness indicators, implementation checkpoints and progress measures.",
+      "outcomeIds": [
+        "RP_O2",
+        "RP_O3"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "RP_015",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Risk",
+      "category": "Risk Management",
+      "action": "Integrate readiness and planning risks into the wider change risk management approach.",
+      "outcomeIds": [
+        "RP_O2",
+        "RP_O3"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "RP_016",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "Validate planning assumptions and readiness findings with affected stakeholder groups.",
+      "outcomeIds": [
+        "RP_O1",
+        "RP_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "RP_017",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "Communicate implementation timelines, expected activities and preparation requirements.",
+      "outcomeIds": [
+        "RP_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "RP_018",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Skills & Behaviour",
+      "category": "Dependency Management",
+      "action": "Align learning, communications, engagement and support activities with implementation milestones.",
+      "outcomeIds": [
+        "RP_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "RP_019",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "Establish ownership and accountability for delivery of change management activities.",
+      "outcomeIds": [
+        "RP_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "RP_020",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Risk",
+      "category": "Measurement & Evaluation",
+      "action": "Define how readiness will be monitored and reassessed throughout delivery.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "RP_021",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "Measurement & Evaluation",
+      "action": "Monitor delivery of the change management plan against agreed milestones and success measures.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "RP_022",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "Measurement & Evaluation",
+      "action": "Review readiness levels at key implementation checkpoints.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "RP_023",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "Risk Management",
+      "action": "Address readiness gaps, issues and barriers that emerge during implementation.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "RP_024",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "Governance",
+      "action": "Review progress, readiness and delivery issues through governance forums.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "RP_025",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "Design",
+      "action": "Adjust and refine plans in response to delivery experience, feedback and changing priorities.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "RP_026",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "Gather stakeholder feedback on implementation preparedness and support requirements.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "RP_027",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "Provide regular updates on implementation plans, readiness progress and key milestones.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "RP_028",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Skills & Behaviour",
+      "category": "Dependency Management",
+      "action": "Coordinate readiness activities across communications, engagement, learning and support workstreams.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "RP_029",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Process & Sustainment",
+      "category": "Testing & Validation",
+      "action": "Validate organisational readiness before key implementation events and go-live activities.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "RP_030",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Process & Sustainment",
+      "category": "Measurement & Evaluation",
+      "action": "Assess whether planned change management activities are supporting successful implementation.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "RP_031",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Planning & Risk",
+      "category": "Measurement & Evaluation",
+      "action": "Use implementation and adoption data to evaluate the effectiveness of readiness and planning approaches.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "RP_032",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Planning & Risk",
+      "category": "Design",
+      "action": "Incorporate lessons learned into future change planning methodologies.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "RP_033",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Governance",
+      "category": "Governance",
+      "action": "Embed readiness reviews and change planning disciplines into organisational change delivery standards.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "RP_034",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Planning & Risk",
+      "category": "Measurement & Evaluation",
+      "action": "Continuously review organisational readiness for future changes and transformation activity.",
+      "outcomeIds": [
+        "RP_O1",
+        "RP_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "RP_035",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Planning & Risk",
+      "category": "Dependency Management",
+      "action": "Maintain visibility and management of strategic programme dependencies affecting future readiness.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "RP_036",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "Maintain mechanisms for gathering ongoing readiness insight from across the organisation.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "RP_037",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Reinforcement",
+      "category": "Reinforcement",
+      "action": "Recognise teams and leaders that consistently demonstrate strong change preparedness and planning discipline.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "RP_038",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Planning & Risk",
+      "category": "Measurement & Evaluation",
+      "action": "Benchmark readiness and planning performance against previous programmes and organisational standards.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "RP_039",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Process & Sustainment",
+      "category": "Design",
+      "action": "Continuously improve change planning templates, standards and guidance using organisational learning.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "RP_040",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Process & Sustainment",
+      "category": "Reinforcement",
+      "action": "Embed proactive readiness assessment and planning as a routine part of organisational change delivery.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 4
+    }
+  ]
+}

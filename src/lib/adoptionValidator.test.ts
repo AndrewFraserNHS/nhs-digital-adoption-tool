@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import {
   combineValidationResults,
+  validateActionReadinessScore,
+  validateActionsReadinessScores,
   validateCstProfile,
   validateEntry,
   validateOrgProfile,
@@ -107,5 +109,42 @@ describe('adoptionValidator', () => {
         { field: 'b', message: 'B invalid' },
       ],
     });
+  });
+
+  it('validates action readiness scores', () => {
+    // Valid scores
+    expect(validateActionReadinessScore(0).isValid).toBe(true);
+    expect(validateActionReadinessScore(1).isValid).toBe(true);
+    expect(validateActionReadinessScore(2).isValid).toBe(true);
+    expect(validateActionReadinessScore(3).isValid).toBe(true);
+    expect(validateActionReadinessScore(4).isValid).toBe(true);
+    expect(validateActionReadinessScore(5).isValid).toBe(true);
+
+    // Undefined is valid (optional field)
+    expect(validateActionReadinessScore(undefined).isValid).toBe(true);
+
+    // Invalid scores
+    expect(validateActionReadinessScore(-1).isValid).toBe(false);
+    expect(validateActionReadinessScore(6).isValid).toBe(false);
+    expect(validateActionReadinessScore(NaN).isValid).toBe(false);
+  });
+
+  it('validates all action readiness scores in a collection', () => {
+    const validActions = [
+      { id: 'A1', text: 'Action 1', owner: 'Owner', timescale: '2 weeks', status: 'Planned' as const, readinessScore: 1 },
+      { id: 'A2', text: 'Action 2', owner: 'Owner', timescale: '2 weeks', status: 'Planned' as const, readinessScore: 2 },
+    ];
+
+    const result = validateActionsReadinessScores(validActions);
+    expect(result.isValid).toBe(true);
+
+    const invalidActions = [
+      { id: 'A1', text: 'Action 1', owner: 'Owner', timescale: '2 weeks', status: 'Planned' as const, readinessScore: 1 },
+      { id: 'A2', text: 'Action 2', owner: 'Owner', timescale: '2 weeks', status: 'Planned' as const, readinessScore: 6 },
+    ];
+
+    const invalidResult = validateActionsReadinessScores(invalidActions);
+    expect(invalidResult.isValid).toBe(false);
+    expect(invalidResult.errors.some(e => e.field === 'readinessScore')).toBe(true);
   });
 });

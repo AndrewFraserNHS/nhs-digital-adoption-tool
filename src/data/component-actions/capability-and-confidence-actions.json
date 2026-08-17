@@ -1,0 +1,40 @@
+{
+  "component": {
+    "id": "CAPABILITY_CONFIDENCE",
+    "name": "Capability & Confidence"
+  },
+  "outcomes": [
+    {
+      "id": "CC_O1",
+      "name": "Required capability levels have been defined and assessed",
+      "description": "The organisation understands the capabilities needed to operate effectively in the future state and has assessed current capability gaps."
+    },
+    {
+      "id": "CC_O2",
+      "name": "People can perform confidently in the future state",
+      "description": "Individuals are supported to apply knowledge and skills in practice and demonstrate increasing confidence in new ways of working."
+    },
+    {
+      "id": "CC_O3",
+      "name": "Capability and confidence are sustained and continuously improved",
+      "description": "Capability levels are monitored, confidence is reinforced and continuous improvement mechanisms are in place."
+    }
+  ],
+  "actions": [
+    {"id":"CC_001","fromStatus":"Emerging","toStatus":"Developing","lens":"Skills & Behaviour","category":"Analysis & Insight","action":"Define the future-state capabilities required for successful performance.","outcomeIds":["CC_O1"],"readinessScore":1},
+    {"id":"CC_002","fromStatus":"Emerging","toStatus":"Developing","lens":"Skills & Behaviour","category":"Analysis & Insight","action":"Conduct capability analysis to identify gaps between current and future-state capability requirements.","outcomeIds":["CC_O1"],"readinessScore":1},
+    {"id":"CC_003","fromStatus":"Emerging","toStatus":"Developing","lens":"Skills & Behaviour","category":"Analysis & Insight","action":"Assess current confidence levels amongst impacted stakeholder groups.","outcomeIds":["CC_O1"],"readinessScore":1},
+    {"id":"CC_004","fromStatus":"Emerging","toStatus":"Developing","lens":"People Experience & Culture","category":"Engagement","action":"Identify factors that may increase or reduce stakeholder confidence.","outcomeIds":["CC_O1"],"readinessScore":1},
+    {"id":"CC_005","fromStatus":"Emerging","toStatus":"Developing","lens":"Planning & Risk","category":"Analysis & Insight","action":"Identify capability-related risks that could affect successful adoption.","outcomeIds":["CC_O1"],"readinessScore":1},
+    {"id":"CC_006","fromStatus":"Developing","toStatus":"Embedding","lens":"Skills & Behaviour","category":"Design","action":"Develop capability-building interventions to address identified capability gaps.","outcomeIds":["CC_O2"],"readinessScore":2},
+    {"id":"CC_007","fromStatus":"Developing","toStatus":"Embedding","lens":"Skills & Behaviour","category":"Training & Learning","action":"Provide opportunities for practical application of learning in real or simulated environments.","outcomeIds":["CC_O2"],"readinessScore":2},
+    {"id":"CC_008","fromStatus":"Developing","toStatus":"Embedding","lens":"Skills & Behaviour","category":"Training & Learning","action":"Provide coaching, mentoring and peer support for individuals applying new skills.","outcomeIds":["CC_O2"],"readinessScore":2},
+    {"id":"CC_009","fromStatus":"Developing","toStatus":"Embedding","lens":"People Experience & Culture","category":"Communication","action":"Communicate expectations regarding performance, proficiency and future-state behaviours.","outcomeIds":["CC_O2"],"readinessScore":2},
+    {"id":"CC_010","fromStatus":"Developing","toStatus":"Embedding","lens":"Measurement & Evaluation","category":"Measurement & Evaluation","action":"Establish measures to assess capability development and confidence growth.","outcomeIds":["CC_O2"],"readinessScore":2},
+    {"id":"CC_011","fromStatus":"Developing","toStatus":"Embedding","lens":"People Experience & Culture","category":"Engagement","action":"Gather feedback about confidence levels and practical challenges experienced by users.","outcomeIds":["CC_O2"],"readinessScore":2},
+    {"id":"CC_012","fromStatus":"Developing","toStatus":"Embedding","lens":"Skills & Behaviour","category":"Testing & Validation","action":"Assess practical capability through observation, walkthroughs or structured validation activities.","outcomeIds":["CC_O2"],"readinessScore":2},
+    {"id":"CC_013","fromStatus":"Developing","toStatus":"Embedding","lens":"Skills & Behaviour","category":"Training & Learning","action":"Target additional support towards individuals or groups with lower confidence levels.","outcomeIds":["CC_O2"],"readinessScore":2},
+    {"id":"CC_014","fromStatus":"Developing","toStatus":"Embedding","lens":"Planning & Risk","category":"Risk Management","action":"Monitor capability and confidence risks during implementation.","outcomeIds":["CC_O2"],"readinessScore":2},
+    {"id":"CC_015","fromStatus":"Developing","toStatus":"Embedding","lens":"Governance","category":"Governance","action":"Review capability and confidence measures through programme governance.","outcomeIds":["CC_O2"],"readinessScore":2}
+  ]
+}

@@ -52,11 +52,26 @@ import type {
 import { cloneEntry, createEmptyEntry, initializeStore } from '@lib/adoptionState';
 import { validateCstProfile } from '@lib/adoptionValidator';
 import { type AuditEvent, createAuditEvent, trimAuditEvents } from '@lib/auditLog';
+import { syncBenefitsDerivedContent } from '@lib/benefitsAutomation';
+import { syncCapabilityDerivedContent } from '@lib/capabilityAutomation';
 import { syncCaseForChangeDerivedContent } from '@lib/caseForChangeAutomation';
+import { syncChangeAdoptionDerivedContent } from '@lib/changeAdoptionAutomation';
+import { syncCmReadinessDerivedContent } from '@lib/cmReadinessAutomation';
+import { syncChangeImpactDerivedContent } from '@lib/changeImpactAutomation';
+import { syncChangeNetworkDerivedContent } from '@lib/changeNetworkAutomation';
 import { createLineChart, createRadarChart } from '@lib/charts';
+import { syncOrgChangeReadinessDerivedContent } from '@lib/orgChangeReadinessAutomation';
 import { syncPathwayObjectives } from '@lib/pathwayObjectives';
+import { syncProcessChangeDerivedContent } from '@lib/processChangeAutomation';
+import { syncReinforcementDerivedContent } from '@lib/reinforcementAutomation';
+import { syncResistanceDerivedContent } from '@lib/resistanceAutomation';
+import { syncRiskManagementDerivedContent } from '@lib/riskManagementAutomation';
+import { syncSkillsLearningDerivedContent } from '@lib/skillsLearningAutomation';
+import { syncSponsorshipDerivedContent } from '@lib/sponsorshipAutomation';
 import AppState from '@lib/state';
+import { syncStakeholderDerivedContent } from '@lib/stakeholderAutomation';
 import { load, save } from '@lib/storage';
+import { syncTransferToBauDerivedContent } from '@lib/transferToBauAutomation';
 import { downloadFile, escapeHtml } from '@lib/utils';
 import { syncVisionDerivedContent } from '@lib/visionAutomation';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -121,7 +136,39 @@ function buildSuppressedAutoActionKey(componentId: string, lens: string): string
 }
 
 function syncDerivedContent(store: AdoptionStore): AdoptionStore {
-  return syncPathwayObjectives(syncCaseForChangeDerivedContent(syncVisionDerivedContent(store)));
+  return syncPathwayObjectives(
+    syncTransferToBauDerivedContent(
+      syncOrgChangeReadinessDerivedContent(
+        syncReinforcementDerivedContent(
+          syncProcessChangeDerivedContent(
+            syncCapabilityDerivedContent(
+              syncChangeAdoptionDerivedContent(
+                syncSkillsLearningDerivedContent(
+                  syncResistanceDerivedContent(
+                    syncStakeholderDerivedContent(
+                      syncCmReadinessDerivedContent(
+                        syncRiskManagementDerivedContent(
+                          syncChangeNetworkDerivedContent(
+                            syncChangeImpactDerivedContent(
+                              syncBenefitsDerivedContent(
+                                syncSponsorshipDerivedContent(
+                                  syncCaseForChangeDerivedContent(syncVisionDerivedContent(store))
+                                )
+                              )
+                            )
+                          )
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  );
 }
 
 function getAuditActor(name: string): string {
@@ -2057,7 +2104,10 @@ export function AdoptionApp() {
                   const nextSuppressedAutoActions = { ...prev.suppressedAutoActions };
                   if (
                     actionId.startsWith('vision-action:') ||
-                    actionId.startsWith('case-for-change-action:')
+                    actionId.startsWith('case-for-change-action:') ||
+                    actionId.startsWith('benefits-action:') ||
+                    actionId.startsWith('sponsorship-action:') ||
+                    actionId.startsWith('change-impact-action:')
                   ) {
                     const suppressionKey = buildSuppressedAutoActionKey(componentId, lens);
                     const currentSuppressed = nextSuppressedAutoActions[suppressionKey] || [];

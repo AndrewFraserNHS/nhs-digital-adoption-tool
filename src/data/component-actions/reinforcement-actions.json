@@ -1,0 +1,447 @@
+{
+  "component": {
+    "id": "REINFORCEMENT",
+    "name": "Reinforcement"
+  },
+  "outcomes": [
+    {
+      "id": "REINF_O1",
+      "name": "Reinforcement strategy and sustainment measures are defined",
+      "description": "A clear reinforcement approach is in place, including ownership, measures and dependencies needed to sustain adoption."
+    },
+    {
+      "id": "REINF_O2",
+      "name": "Reinforcement activities support sustained adoption and behaviour change",
+      "description": "Reinforcement actions are actively delivered to embed desired behaviours, confidence and consistent use of new ways of working."
+    },
+    {
+      "id": "REINF_O3",
+      "name": "Sustained change outcomes are embedded and continuously improved",
+      "description": "Reinforcement is monitored and adapted over time so that change outcomes are maintained, improved and integrated into BAU."
+    }
+  ],
+  "actions": [
+    {
+      "id": "REINF_001",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "Define what successful long-term adoption and sustainment will look like.",
+      "outcomeIds": [
+        "REINF_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "REINF_002",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "Identify indicators that will demonstrate whether the change is being sustained.",
+      "outcomeIds": [
+        "REINF_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "REINF_003",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "Assign ownership and accountability for reinforcement activities.",
+      "outcomeIds": [
+        "REINF_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "REINF_004",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Measurement",
+      "category": "Dependency Management",
+      "action": "Identify dependencies between adoption, benefits, leadership and reinforcement activity.",
+      "outcomeIds": [
+        "REINF_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "REINF_005",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Measurement",
+      "category": "Design",
+      "action": "Develop an initial reinforcement approach aligned to adoption goals.",
+      "outcomeIds": [
+        "REINF_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "REINF_006",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "Identify factors that may help or hinder long-term sustainment of the change.",
+      "outcomeIds": [
+        "REINF_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "REINF_007",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "Engage stakeholders to understand what support is needed to maintain new behaviours.",
+      "outcomeIds": [
+        "REINF_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "REINF_008",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "Identify groups where adoption may be difficult to sustain without additional support.",
+      "outcomeIds": [
+        "REINF_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "REINF_009",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "Communicate expectations regarding sustained adoption and future-state behaviours.",
+      "outcomeIds": [
+        "REINF_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "REINF_010",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "Establish baseline sustainment and reinforcement measures.",
+      "outcomeIds": [
+        "REINF_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "REINF_011",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Reinforcement",
+      "action": "Ensure leaders and managers visibly reinforce desired behaviours and ways of working.",
+      "outcomeIds": [
+        "REINF_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "REINF_012",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Communication",
+      "action": "Communicate adoption successes, improvements and positive outcomes.",
+      "outcomeIds": [
+        "REINF_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "REINF_013",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "Review reinforcement indicators and sustainment risks through governance mechanisms.",
+      "outcomeIds": [
+        "REINF_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "REINF_014",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Measurement",
+      "category": "Measurement & Evaluation",
+      "action": "Monitor adoption, behaviour and performance indicators linked to sustained change.",
+      "outcomeIds": [
+        "REINF_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "REINF_015",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Measurement",
+      "category": "Design",
+      "action": "Refine reinforcement plans using sustainment data and stakeholder feedback.",
+      "outcomeIds": [
+        "REINF_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "REINF_016",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "Recognise and celebrate examples of successful adoption and positive behavioural change.",
+      "outcomeIds": [
+        "REINF_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "REINF_017",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "Use change networks, champions and managers to reinforce desired behaviours locally.",
+      "outcomeIds": [
+        "REINF_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "REINF_018",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Training & Learning",
+      "action": "Provide refresher support where adoption or confidence levels begin to decline.",
+      "outcomeIds": [
+        "REINF_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "REINF_019",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "Share success stories, learning and examples of improvements created by the change.",
+      "outcomeIds": [
+        "REINF_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "REINF_020",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "Gather feedback regarding sustainment challenges and support needs.",
+      "outcomeIds": [
+        "REINF_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "REINF_021",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Measurement",
+      "category": "Measurement & Evaluation",
+      "action": "Monitor sustainment indicators and identify areas where adoption is weakening.",
+      "outcomeIds": [
+        "REINF_O2",
+        "REINF_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "REINF_022",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "Target reinforcement activity towards groups showing reductions in adoption or compliance.",
+      "outcomeIds": [
+        "REINF_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "REINF_023",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Reinforcement",
+      "action": "Ensure leaders consistently model desired behaviours and reinforce expectations.",
+      "outcomeIds": [
+        "REINF_O2",
+        "REINF_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "REINF_024",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Governance",
+      "category": "Governance",
+      "action": "Review sustainment performance and improvement actions through governance processes.",
+      "outcomeIds": [
+        "REINF_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "REINF_025",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Measurement",
+      "category": "Analysis & Insight",
+      "action": "Analyse performance, adoption and benefits data to identify sustainment opportunities.",
+      "outcomeIds": [
+        "REINF_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "REINF_026",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "Demonstrate the ongoing value of the change through evidence and success stories.",
+      "outcomeIds": [
+        "REINF_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "REINF_027",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "Recognise teams and individuals who consistently demonstrate future-state behaviours.",
+      "outcomeIds": [
+        "REINF_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "REINF_028",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "Use stakeholder feedback to improve sustainment and reinforcement activities.",
+      "outcomeIds": [
+        "REINF_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "REINF_029",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Measurement",
+      "category": "Risk Management",
+      "action": "Identify risks that may cause reversion to previous behaviours or ways of working.",
+      "outcomeIds": [
+        "REINF_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "REINF_030",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Design",
+      "category": "Design",
+      "action": "Update reinforcement approaches using sustainment insight and lessons learned.",
+      "outcomeIds": [
+        "REINF_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "REINF_031",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Governance",
+      "category": "Governance",
+      "action": "Embed reinforcement measures into operational management and performance processes.",
+      "outcomeIds": [
+        "REINF_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "REINF_032",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Measurement & Evaluation",
+      "category": "Measurement & Evaluation",
+      "action": "Monitor long-term behavioural sustainment and continuous improvement outcomes.",
+      "outcomeIds": [
+        "REINF_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "REINF_033",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Design",
+      "category": "Design",
+      "action": "Use organisational learning to improve future reinforcement strategies.",
+      "outcomeIds": [
+        "REINF_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "REINF_034",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Reinforcement",
+      "category": "Reinforcement",
+      "action": "Embed recognition, feedback and reinforcement practices into organisational culture.",
+      "outcomeIds": [
+        "REINF_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "REINF_035",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "Promote continuous improvement and ongoing enhancement of adopted ways of working.",
+      "outcomeIds": [
+        "REINF_O3"
+      ],
+      "readinessScore": 4
+    }
+  ]
+}

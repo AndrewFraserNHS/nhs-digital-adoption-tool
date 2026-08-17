@@ -1,0 +1,511 @@
+{
+  "component": {
+    "id": "BENEFITS",
+    "name": "Benefits"
+  },
+  "outcomes": [
+    {
+      "id": "BEN_O1",
+      "name": "Benefits and disbenefits have been identified and defined",
+      "description": ""
+    },
+    {
+      "id": "BEN_O2",
+      "name": "Benefits are actively managed and monitored",
+      "description": ""
+    },
+    {
+      "id": "BEN_O3",
+      "name": "Benefits are realised, evidenced and sustained",
+      "description": ""
+    }
+  ],
+  "actions": [
+    {
+      "id": "BEN_001",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Engagement",
+      "action": "Facilitate benefit identification workshops with sponsors, leaders and subject matter experts.",
+      "outcomeIds": [
+        "BEN_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "BEN_002",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Analysis & Insight",
+      "action": "Identify expected organisational, operational, financial and user benefits.",
+      "outcomeIds": [
+        "BEN_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "BEN_003",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Analysis & Insight",
+      "action": "Identify potential disbenefits and unintended consequences associated with the change.",
+      "outcomeIds": [
+        "BEN_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "BEN_004",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "Define measurable benefit statements and success criteria.",
+      "outcomeIds": [
+        "BEN_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "BEN_005",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "Assign benefit owners and accountability for benefit realisation.",
+      "outcomeIds": [
+        "BEN_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "BEN_006",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "Engage stakeholders to understand which benefits matter most to them.",
+      "outcomeIds": [
+        "BEN_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "BEN_007",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "Identify relevant 'what's in it for me' benefits for different stakeholder groups.",
+      "outcomeIds": [
+        "BEN_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "BEN_008",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Testing & Validation",
+      "action": "Validate the relevance and credibility of identified benefits with stakeholders.",
+      "outcomeIds": [
+        "BEN_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "BEN_009",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "Identify differences in perceived benefits across stakeholder groups.",
+      "outcomeIds": [
+        "BEN_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "BEN_010",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Design",
+      "action": "Refine benefit definitions using stakeholder insight and feedback.",
+      "outcomeIds": [
+        "BEN_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "BEN_011",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "Approve and baseline the benefits realisation approach.",
+      "outcomeIds": [
+        "BEN_O1",
+        "BEN_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "BEN_012",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "Define measures, KPIs and reporting arrangements for each benefit.",
+      "outcomeIds": [
+        "BEN_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "BEN_013",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "Establish baseline measures against which benefits can be assessed.",
+      "outcomeIds": [
+        "BEN_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "BEN_014",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "Develop a benefits realisation plan including ownership, timelines and reporting.",
+      "outcomeIds": [
+        "BEN_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "BEN_015",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "Integrate benefits tracking into governance and programme reporting.",
+      "outcomeIds": [
+        "BEN_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "BEN_016",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "Communicate expected benefits and success measures to stakeholders.",
+      "outcomeIds": [
+        "BEN_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "BEN_017",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "Gather stakeholder feedback on benefit assumptions and expectations.",
+      "outcomeIds": [
+        "BEN_O1",
+        "BEN_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "BEN_018",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Testing & Validation",
+      "action": "Validate that benefit measures are meaningful and understood by stakeholders.",
+      "outcomeIds": [
+        "BEN_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "BEN_019",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "Use stakeholder-facing benefit messages to build support and momentum.",
+      "outcomeIds": [
+        "BEN_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "BEN_020",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "Monitor stakeholder confidence in the expected benefits.",
+      "outcomeIds": [
+        "BEN_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "BEN_021",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "Track benefit performance against agreed measures and targets.",
+      "outcomeIds": [
+        "BEN_O2",
+        "BEN_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "BEN_022",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "Review realised and unrealised benefits through governance forums.",
+      "outcomeIds": [
+        "BEN_O2",
+        "BEN_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "BEN_023",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Risk Management",
+      "action": "Identify risks to benefits realisation and agree mitigation actions.",
+      "outcomeIds": [
+        "BEN_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "BEN_024",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "Assess whether expected benefits are being achieved and why.",
+      "outcomeIds": [
+        "BEN_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "BEN_025",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Dependency Management",
+      "action": "Manage dependencies that affect benefit delivery.",
+      "outcomeIds": [
+        "BEN_O2",
+        "BEN_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "BEN_026",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "Share evidence of realised benefits with stakeholders.",
+      "outcomeIds": [
+        "BEN_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "BEN_027",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "Use stakeholder insight to understand barriers to achieving benefits.",
+      "outcomeIds": [
+        "BEN_O2",
+        "BEN_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "BEN_028",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "Monitor stakeholder perceptions of realised value and improvement.",
+      "outcomeIds": [
+        "BEN_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "BEN_029",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "Use benefit stories and examples to reinforce adoption.",
+      "outcomeIds": [
+        "BEN_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "BEN_030",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "Recognise teams and individuals contributing to benefit realisation.",
+      "outcomeIds": [
+        "BEN_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "BEN_031",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "Continuously monitor long-term benefit performance.",
+      "outcomeIds": [
+        "BEN_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "BEN_032",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "Embed benefits management into normal business and performance management processes.",
+      "outcomeIds": [
+        "BEN_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "BEN_033",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "Refine benefit measures and approaches using organisational learning.",
+      "outcomeIds": [
+        "BEN_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "BEN_034",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "Use benefit evidence to inform future investment and change decisions.",
+      "outcomeIds": [
+        "BEN_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "BEN_035",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Dependency Management",
+      "action": "Maintain management of long-term dependencies affecting realised benefits.",
+      "outcomeIds": [
+        "BEN_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "BEN_036",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "Regularly communicate realised benefits and improvement outcomes.",
+      "outcomeIds": [
+        "BEN_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "BEN_037",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "Use stakeholder feedback to identify opportunities for further value realisation.",
+      "outcomeIds": [
+        "BEN_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "BEN_038",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "Measure ongoing stakeholder perception of value delivered by the change.",
+      "outcomeIds": [
+        "BEN_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "BEN_039",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "Use success stories and achievements to sustain belief in the value of the change.",
+      "outcomeIds": [
+        "BEN_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "BEN_040",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "Promote a culture of continuous benefits realisation and improvement.",
+      "outcomeIds": [
+        "BEN_O3"
+      ],
+      "readinessScore": 4
+    }
+  ]
+}

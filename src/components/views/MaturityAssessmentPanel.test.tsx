@@ -15,8 +15,16 @@ function buildDetail(overrides?: Partial<ComponentDetail>): ComponentDetail {
         owner: 'Amy',
         dueDate: '2026-08-10',
         status: 'In Progress',
+        readinessScore: 2,
       },
-      { id: 'a2', text: 'Publish comms', owner: 'Ben', dueDate: '2026-09-01', status: 'Completed' },
+      { 
+        id: 'a2', 
+        text: 'Publish comms', 
+        owner: 'Ben', 
+        dueDate: '2026-09-01', 
+        status: 'Completed',
+        readinessScore: 2,
+      },
     ],
     ...overrides,
   };

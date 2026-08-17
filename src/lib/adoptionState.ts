@@ -32,6 +32,7 @@ export interface BaseAction {
 
 export interface DraftAction extends BaseAction {
   linkedTargets?: ActionTargetLink[];
+  readinessScore?: number; // The readiness score band (0-5) this action targets
 }
 
 export interface RemovedActionAuditEntry {

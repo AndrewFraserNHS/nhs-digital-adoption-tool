@@ -1,0 +1,60 @@
+{
+  "component": {
+    "id": "SKILLS_LEARNING",
+    "name": "Skills & Learning"
+  },
+  "outcomes": [
+    {
+      "id": "SL_O1",
+      "name": "Future learning and capability requirements have been identified",
+      "description": "The knowledge, skills and capability requirements needed to operate successfully in the future state have been assessed and documented."
+    },
+    {
+      "id": "SL_O2",
+      "name": "Learning interventions have been designed and delivered",
+      "description": "Appropriate learning, development and support activities have been developed and delivered to affected stakeholders."
+    },
+    {
+      "id": "SL_O3",
+      "name": "Learning outcomes are achieved and sustained",
+      "description": "People demonstrate the required knowledge and skills, and learning approaches are evaluated and continuously improved."
+    }
+  ],
+  "actions": [
+    {"id":"SL_001","fromStatus":"Emerging","toStatus":"Developing","lens":"Skills & Behaviour","category":"Analysis & Insight","action":"Identify the knowledge, skills and behaviours required to operate successfully in the future state.","outcomeIds":["SL_O1"],"readinessScore":1},
+    {"id":"SL_002","fromStatus":"Emerging","toStatus":"Developing","lens":"Skills & Behaviour","category":"Analysis & Insight","action":"Assess current capability levels across impacted stakeholder groups.","outcomeIds":["SL_O1"],"readinessScore":1},
+    {"id":"SL_003","fromStatus":"Emerging","toStatus":"Developing","lens":"Skills & Behaviour","category":"Analysis & Insight","action":"Conduct a learning needs and skills gap assessment.","outcomeIds":["SL_O1"],"readinessScore":1},
+    {"id":"SL_004","fromStatus":"Emerging","toStatus":"Developing","lens":"Planning & Risk","category":"Analysis & Insight","action":"Assess the scale, complexity and impact of learning requirements across the organisation.","outcomeIds":["SL_O1"],"readinessScore":1},
+    {"id":"SL_005","fromStatus":"Emerging","toStatus":"Developing","lens":"People Experience & Culture","category":"Engagement","action":"Engage stakeholders to understand learning preferences, barriers and support requirements.","outcomeIds":["SL_O1"],"readinessScore":1},
+    {"id":"SL_006","fromStatus":"Emerging","toStatus":"Developing","lens":"Strategic Direction & Leadership","category":"Design","action":"Develop a learning and capability development approach aligned to change objectives.","outcomeIds":["SL_O2"],"readinessScore":1},
+    {"id":"SL_007","fromStatus":"Emerging","toStatus":"Developing","lens":"Strategic Direction & Leadership","category":"Design","action":"Define learning objectives, target audiences and expected learning outcomes.","outcomeIds":["SL_O2"],"readinessScore":1},
+    {"id":"SL_008","fromStatus":"Emerging","toStatus":"Developing","lens":"Dependency Management","category":"Dependency Management","action":"Identify dependencies between learning activities and communications, readiness, process and implementation plans.","outcomeIds":["SL_O2"],"readinessScore":1},
+    {"id":"SL_009","fromStatus":"Emerging","toStatus":"Developing","lens":"Strategic Direction & Leadership","category":"Governance","action":"Establish accountability for learning design, delivery and evaluation.","outcomeIds":["SL_O2"],"readinessScore":1},
+    {"id":"SL_010","fromStatus":"Emerging","toStatus":"Developing","lens":"Skills & Behaviour","category":"Design","action":"Define the methods and channels that will be used to deliver learning and development activities.","outcomeIds":["SL_O2"],"readinessScore":1},
+    {"id":"SL_011","fromStatus":"Developing","toStatus":"Embedding","lens":"Skills & Behaviour","category":"Design","action":"Develop learning materials, guidance, resources and support content.","outcomeIds":["SL_O2"],"readinessScore":2},
+    {"id":"SL_012","fromStatus":"Developing","toStatus":"Embedding","lens":"Skills & Behaviour","category":"Training & Learning","action":"Deliver learning activities to impacted stakeholder groups.","outcomeIds":["SL_O2"],"readinessScore":2},
+    {"id":"SL_013","fromStatus":"Developing","toStatus":"Embedding","lens":"Skills & Behaviour","category":"Training & Learning","action":"Provide role-specific learning interventions where different groups have different learning requirements.","outcomeIds":["SL_O2"],"readinessScore":2},
+    {"id":"SL_014","fromStatus":"Developing","toStatus":"Embedding","lens":"Skills & Behaviour","category":"Training & Learning","action":"Develop and support local learning champions, coaches or trainers.","outcomeIds":["SL_O2"],"readinessScore":2},
+    {"id":"SL_015","fromStatus":"Developing","toStatus":"Embedding","lens":"Measurement & Evaluation","category":"Measurement & Evaluation","action":"Implement mechanisms to assess attendance, participation and learning completion.","outcomeIds":["SL_O2","SL_O3"],"readinessScore":2},
+    {"id":"SL_016","fromStatus":"Developing","toStatus":"Embedding","lens":"People Experience & Culture","category":"Communication","action":"Communicate learning opportunities, schedules and expectations to stakeholders.","outcomeIds":["SL_O2"],"readinessScore":2},
+    {"id":"SL_017","fromStatus":"Developing","toStatus":"Embedding","lens":"People Experience & Culture","category":"Engagement","action":"Gather learner feedback to improve learning content and delivery.","outcomeIds":["SL_O2","SL_O3"],"readinessScore":2},
+    {"id":"SL_018","fromStatus":"Developing","toStatus":"Embedding","lens":"Planning & Risk","category":"Dependency Management","action":"Coordinate training activities with implementation milestones and readiness requirements.","outcomeIds":["SL_O2"],"readinessScore":2},
+    {"id":"SL_019","fromStatus":"Developing","toStatus":"Embedding","lens":"Planning & Risk","category":"Risk Management","action":"Identify and manage risks associated with learning delivery and learner readiness.","outcomeIds":["SL_O2"],"readinessScore":2},
+    {"id":"SL_020","fromStatus":"Developing","toStatus":"Embedding","lens":"Governance","category":"Governance","action":"Monitor learning delivery through governance and reporting processes.","outcomeIds":["SL_O2","SL_O3"],"readinessScore":2},
+    {"id":"SL_021","fromStatus":"Embedding","toStatus":"Adopted","lens":"Measurement & Evaluation","category":"Measurement & Evaluation","action":"Evaluate whether learning objectives have been achieved.","outcomeIds":["SL_O3"],"readinessScore":3},
+    {"id":"SL_022","fromStatus":"Embedding","toStatus":"Adopted","lens":"Measurement & Evaluation","category":"Testing & Validation","action":"Assess whether participants can demonstrate required knowledge and skills.","outcomeIds":["SL_O3"],"readinessScore":3},
+    {"id":"SL_023","fromStatus":"Embedding","toStatus":"Adopted","lens":"Skills & Behaviour","category":"Training & Learning","action":"Provide refresher learning and targeted support where capability gaps remain.","outcomeIds":["SL_O3"],"readinessScore":3},
+    {"id":"SL_024","fromStatus":"Embedding","toStatus":"Adopted","lens":"Skills & Behaviour","category":"Training & Learning","action":"Offer ongoing coaching and support to reinforce learning transfer.","outcomeIds":["SL_O3"],"readinessScore":3},
+    {"id":"SL_025","fromStatus":"Embedding","toStatus":"Adopted","lens":"Measurement & Evaluation","category":"Measurement & Evaluation","action":"Track learning performance data and identify continuing capability gaps.","outcomeIds":["SL_O3"],"readinessScore":3},
+    {"id":"SL_026","fromStatus":"Embedding","toStatus":"Adopted","lens":"People Experience & Culture","category":"Engagement","action":"Gather feedback about learning effectiveness, confidence and practical application.","outcomeIds":["SL_O3"],"readinessScore":3},
+    {"id":"SL_027","fromStatus":"Embedding","toStatus":"Adopted","lens":"Communication","category":"Communication","action":"Share learning successes, progress and achievement milestones.","outcomeIds":["SL_O3"],"readinessScore":3},
+    {"id":"SL_028","fromStatus":"Embedding","toStatus":"Adopted","lens":"Governance","category":"Governance","action":"Review learning outcomes and capability measures through governance processes.","outcomeIds":["SL_O3"],"readinessScore":3},
+    {"id":"SL_029","fromStatus":"Embedding","toStatus":"Adopted","lens":"Design","category":"Design","action":"Refine learning approaches using evaluation findings and implementation experience.","outcomeIds":["SL_O3"],"readinessScore":3},
+    {"id":"SL_030","fromStatus":"Embedding","toStatus":"Adopted","lens":"Reinforcement","category":"Reinforcement","action":"Recognise achievement and application of learning within teams and stakeholder groups.","outcomeIds":["SL_O3"],"readinessScore":3},
+    {"id":"SL_031","fromStatus":"Adopted","toStatus":"Thriving","lens":"Skills & Behaviour","category":"Training & Learning","action":"Maintain continuous learning opportunities to support evolving organisational needs.","outcomeIds":["SL_O3"],"readinessScore":4},
+    {"id":"SL_032","fromStatus":"Adopted","toStatus":"Thriving","lens":"Measurement & Evaluation","category":"Measurement & Evaluation","action":"Monitor long-term capability development and learning effectiveness.","outcomeIds":["SL_O3"],"readinessScore":4},
+    {"id":"SL_033","fromStatus":"Adopted","toStatus":"Thriving","lens":"Design","category":"Design","action":"Use organisational learning and insight to improve future learning approaches.","outcomeIds":["SL_O3"],"readinessScore":4},
+    {"id":"SL_034","fromStatus":"Adopted","toStatus":"Thriving","lens":"Governance","category":"Governance","action":"Embed learning and capability development into organisational improvement and change delivery practices.","outcomeIds":["SL_O3"],"readinessScore":4},
+    {"id":"SL_035","fromStatus":"Adopted","toStatus":"Thriving","lens":"Reinforcement","category":"Reinforcement","action":"Promote a culture of continuous learning and development across the organisation.","outcomeIds":["SL_O3"],"readinessScore":4}
+  ]
+}

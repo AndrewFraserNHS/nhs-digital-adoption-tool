@@ -160,6 +160,7 @@ export interface ActionRow {
     owner: string;
     timescale: string;
     status: string;
+    readinessScore?: number;
   };
 }
 
@@ -502,7 +503,7 @@ export function flattenActions(
     }
     pushed.add(key);
     const component = getComponent(componentId);
-    rows.push({ compId: componentId, component: component.label, lens, action });
+    rows.push({ compId: componentId, component: component.label, lens, action: { ...action } });
   };
 
   Object.keys(store.currentDraft).forEach((componentId) => {

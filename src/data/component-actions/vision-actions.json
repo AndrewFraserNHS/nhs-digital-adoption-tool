@@ -40,7 +40,10 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Engagement",
       "action": "Facilitate an initial vision workshop with the SRO, sponsors and key programme stakeholders to explore the future state.",
-      "outcomeIds": ["VISION_O1"]
+      "outcomeIds": [
+        "VISION_O1"
+      ],
+      "readinessScore": 0
     },
     {
       "id": "VISION_002",
@@ -50,7 +53,10 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
       "action": "Gather information on organisational priorities, programme objectives and expected outcomes to inform vision development.",
-      "outcomeIds": ["VISION_O1"]
+      "outcomeIds": [
+        "VISION_O1"
+      ],
+      "readinessScore": 0
     },
     {
       "id": "VISION_003",
@@ -60,7 +66,11 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Design",
       "action": "Document initial themes describing why the change is needed and what success may look like.",
-      "outcomeIds": ["VISION_O1", "VISION_O2"]
+      "outcomeIds": [
+        "VISION_O1",
+        "VISION_O2"
+      ],
+      "readinessScore": 0
     },
     {
       "id": "VISION_004",
@@ -70,7 +80,11 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
       "action": "Identify key leaders who need to contribute to and endorse the vision.",
-      "outcomeIds": ["VISION_O1", "VISION_O3"]
+      "outcomeIds": [
+        "VISION_O1",
+        "VISION_O3"
+      ],
+      "readinessScore": 0
     },
     {
       "id": "VISION_005",
@@ -80,7 +94,10 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Design",
       "action": "Establish a process and timeline for drafting the vision statement.",
-      "outcomeIds": ["VISION_O1"]
+      "outcomeIds": [
+        "VISION_O1"
+      ],
+      "readinessScore": 0
     },
     {
       "id": "VISION_006",
@@ -90,7 +107,11 @@
       "lens": "People Experience & Culture",
       "category": "Engagement",
       "action": "Conduct stakeholder listening sessions to understand current challenges and expectations.",
-      "outcomeIds": ["VISION_O1", "VISION_O2"]
+      "outcomeIds": [
+        "VISION_O1",
+        "VISION_O2"
+      ],
+      "readinessScore": 0
     },
     {
       "id": "VISION_007",
@@ -100,7 +121,11 @@
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
       "action": "Gather feedback on stakeholders' perceptions of the proposed change.",
-      "outcomeIds": ["VISION_O1", "VISION_O2"]
+      "outcomeIds": [
+        "VISION_O1",
+        "VISION_O2"
+      ],
+      "readinessScore": 0
     },
     {
       "id": "VISION_008",
@@ -110,7 +135,10 @@
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
       "action": "Identify common concerns, aspirations and opportunities that should influence the vision.",
-      "outcomeIds": ["VISION_O1"]
+      "outcomeIds": [
+        "VISION_O1"
+      ],
+      "readinessScore": 0
     },
     {
       "id": "VISION_009",
@@ -120,7 +148,10 @@
       "lens": "People Experience & Culture",
       "category": "Communication",
       "action": "Create simple awareness messages explaining that a vision is being developed.",
-      "outcomeIds": ["VISION_O2"]
+      "outcomeIds": [
+        "VISION_O2"
+      ],
+      "readinessScore": 0
     },
     {
       "id": "VISION_010",
@@ -130,7 +161,11 @@
       "lens": "People Experience & Culture",
       "category": "Engagement",
       "action": "Ensure representation from key stakeholder groups in early vision discussions.",
-      "outcomeIds": ["VISION_O1", "VISION_O2"]
+      "outcomeIds": [
+        "VISION_O1",
+        "VISION_O2"
+      ],
+      "readinessScore": 0
     },
     {
       "id": "VISION_011",
@@ -140,7 +175,10 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Design",
       "action": "Draft a formal vision statement describing the future state and intended outcomes.",
-      "outcomeIds": ["VISION_O1"]
+      "outcomeIds": [
+        "VISION_O1"
+      ],
+      "readinessScore": 1
     },
     {
       "id": "VISION_012",
@@ -150,7 +188,11 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Testing & Validation",
       "action": "Test the draft vision with senior leaders to ensure strategic alignment.",
-      "outcomeIds": ["VISION_O1", "VISION_O3"]
+      "outcomeIds": [
+        "VISION_O1",
+        "VISION_O3"
+      ],
+      "readinessScore": 1
     },
     {
       "id": "VISION_013",
@@ -160,7 +202,11 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Design",
       "action": "Refine the vision using feedback from sponsors and governance groups.",
-      "outcomeIds": ["VISION_O1", "VISION_O3"]
+      "outcomeIds": [
+        "VISION_O1",
+        "VISION_O3"
+      ],
+      "readinessScore": 1
     },
     {
       "id": "VISION_014",
@@ -170,7 +216,10 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Testing & Validation",
       "action": "Validate how the vision aligns with organisational objectives and programme benefits.",
-      "outcomeIds": ["VISION_O1"]
+      "outcomeIds": [
+        "VISION_O1"
+      ],
+      "readinessScore": 1
     },
     {
       "id": "VISION_015",
@@ -180,7 +229,11 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Design",
       "action": "Develop a high-level vision narrative that can be used consistently across the programme.",
-      "outcomeIds": ["VISION_O2", "VISION_O3"]
+      "outcomeIds": [
+        "VISION_O2",
+        "VISION_O3"
+      ],
+      "readinessScore": 1
     },
     {
       "id": "VISION_016",
@@ -190,7 +243,10 @@
       "lens": "People Experience & Culture",
       "category": "Engagement",
       "action": "Run workshops with stakeholder groups to test understanding of the draft vision.",
-      "outcomeIds": ["VISION_O2"]
+      "outcomeIds": [
+        "VISION_O2"
+      ],
+      "readinessScore": 1
     },
     {
       "id": "VISION_017",
@@ -200,7 +256,11 @@
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
       "action": "Collect structured feedback on whether the vision feels relevant and meaningful.",
-      "outcomeIds": ["VISION_O1", "VISION_O2"]
+      "outcomeIds": [
+        "VISION_O1",
+        "VISION_O2"
+      ],
+      "readinessScore": 1
     },
     {
       "id": "VISION_018",
@@ -210,7 +270,11 @@
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
       "action": "Identify gaps or ambiguities in the vision from a stakeholder perspective.",
-      "outcomeIds": ["VISION_O1", "VISION_O2"]
+      "outcomeIds": [
+        "VISION_O1",
+        "VISION_O2"
+      ],
+      "readinessScore": 1
     },
     {
       "id": "VISION_019",
@@ -220,7 +284,11 @@
       "lens": "People Experience & Culture",
       "category": "Design",
       "action": "Update the vision to reflect stakeholder insights and concerns.",
-      "outcomeIds": ["VISION_O1", "VISION_O2"]
+      "outcomeIds": [
+        "VISION_O1",
+        "VISION_O2"
+      ],
+      "readinessScore": 1
     },
     {
       "id": "VISION_020",
@@ -230,7 +298,10 @@
       "lens": "People Experience & Culture",
       "category": "Communication",
       "action": "Begin developing people-centred messaging explaining why the vision matters to different stakeholder groups.",
-      "outcomeIds": ["VISION_O2"]
+      "outcomeIds": [
+        "VISION_O2"
+      ],
+      "readinessScore": 1
     },
     {
       "id": "VISION_021",
@@ -240,7 +311,11 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
       "action": "Secure formal approval of the vision through programme governance.",
-      "outcomeIds": ["VISION_O1", "VISION_O3"]
+      "outcomeIds": [
+        "VISION_O1",
+        "VISION_O3"
+      ],
+      "readinessScore": 2
     },
     {
       "id": "VISION_022",
@@ -250,7 +325,11 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Design",
       "action": "Develop a leadership communication plan to support vision rollout.",
-      "outcomeIds": ["VISION_O2", "VISION_O3"]
+      "outcomeIds": [
+        "VISION_O2",
+        "VISION_O3"
+      ],
+      "readinessScore": 2
     },
     {
       "id": "VISION_023",
@@ -260,7 +339,11 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Communication",
       "action": "Equip sponsors with key messages, presentations and briefing materials.",
-      "outcomeIds": ["VISION_O2", "VISION_O3"]
+      "outcomeIds": [
+        "VISION_O2",
+        "VISION_O3"
+      ],
+      "readinessScore": 2
     },
     {
       "id": "VISION_024",
@@ -270,7 +353,10 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
       "action": "Integrate the vision into programme governance documentation and reporting.",
-      "outcomeIds": ["VISION_O3"]
+      "outcomeIds": [
+        "VISION_O3"
+      ],
+      "readinessScore": 2
     },
     {
       "id": "VISION_025",
@@ -280,7 +366,11 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Communication",
       "action": "Ensure leadership communications consistently reference the agreed vision.",
-      "outcomeIds": ["VISION_O2", "VISION_O3"]
+      "outcomeIds": [
+        "VISION_O2",
+        "VISION_O3"
+      ],
+      "readinessScore": 2
     },
     {
       "id": "VISION_026",
@@ -290,7 +380,10 @@
       "lens": "People Experience & Culture",
       "category": "Communication",
       "action": "Develop audience-specific communications describing the purpose, value and future-state ambition of the vision.",
-      "outcomeIds": ["VISION_O2"]
+      "outcomeIds": [
+        "VISION_O2"
+      ],
+      "readinessScore": 2
     },
     {
       "id": "VISION_027",
@@ -300,7 +393,10 @@
       "lens": "People Experience & Culture",
       "category": "Engagement",
       "action": "Deliver engagement sessions to build understanding and awareness of the vision.",
-      "outcomeIds": ["VISION_O2"]
+      "outcomeIds": [
+        "VISION_O2"
+      ],
+      "readinessScore": 2
     },
     {
       "id": "VISION_028",
@@ -310,7 +406,10 @@
       "lens": "People Experience & Culture",
       "category": "Measurement & Evaluation",
       "action": "Establish feedback channels to assess comprehension and acceptance of the vision.",
-      "outcomeIds": ["VISION_O2"]
+      "outcomeIds": [
+        "VISION_O2"
+      ],
+      "readinessScore": 2
     },
     {
       "id": "VISION_029",
@@ -320,7 +419,11 @@
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
       "action": "Use change agents and sponsors to reinforce the vision locally.",
-      "outcomeIds": ["VISION_O2", "VISION_O3"]
+      "outcomeIds": [
+        "VISION_O2",
+        "VISION_O3"
+      ],
+      "readinessScore": 2
     },
     {
       "id": "VISION_030",
@@ -330,7 +433,10 @@
       "lens": "People Experience & Culture",
       "category": "Measurement & Evaluation",
       "action": "Monitor stakeholder understanding through surveys, workshops or feedback sessions.",
-      "outcomeIds": ["VISION_O2"]
+      "outcomeIds": [
+        "VISION_O2"
+      ],
+      "readinessScore": 2
     },
     {
       "id": "VISION_031",
@@ -340,7 +446,11 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Reinforcement",
       "action": "Ensure sponsors consistently communicate the vision during governance and operational meetings.",
-      "outcomeIds": ["VISION_O2", "VISION_O3"]
+      "outcomeIds": [
+        "VISION_O2",
+        "VISION_O3"
+      ],
+      "readinessScore": 3
     },
     {
       "id": "VISION_032",
@@ -350,7 +460,10 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
       "action": "Integrate the vision into programme decision-making and governance discussions.",
-      "outcomeIds": ["VISION_O3"]
+      "outcomeIds": [
+        "VISION_O3"
+      ],
+      "readinessScore": 3
     },
     {
       "id": "VISION_033",
@@ -360,7 +473,11 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Measurement & Evaluation",
       "action": "Review leadership communications regularly for alignment and consistency.",
-      "outcomeIds": ["VISION_O2", "VISION_O3"]
+      "outcomeIds": [
+        "VISION_O2",
+        "VISION_O3"
+      ],
+      "readinessScore": 3
     },
     {
       "id": "VISION_034",
@@ -370,7 +487,10 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Training & Learning",
       "action": "Provide coaching to sponsors and leaders on vision-led leadership behaviours.",
-      "outcomeIds": ["VISION_O3"]
+      "outcomeIds": [
+        "VISION_O3"
+      ],
+      "readinessScore": 3
     },
     {
       "id": "VISION_035",
@@ -380,7 +500,10 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Measurement & Evaluation",
       "action": "Measure leadership engagement in promoting the vision.",
-      "outcomeIds": ["VISION_O3"]
+      "outcomeIds": [
+        "VISION_O3"
+      ],
+      "readinessScore": 3
     },
     {
       "id": "VISION_036",
@@ -390,7 +513,11 @@
       "lens": "People Experience & Culture",
       "category": "Communication",
       "action": "Deploy a formal vision communication campaign across all stakeholder groups.",
-      "outcomeIds": ["VISION_O2", "VISION_O3"]
+      "outcomeIds": [
+        "VISION_O2",
+        "VISION_O3"
+      ],
+      "readinessScore": 3
     },
     {
       "id": "VISION_037",
@@ -400,7 +527,10 @@
       "lens": "People Experience & Culture",
       "category": "Measurement & Evaluation",
       "action": "Establish regular feedback loops to assess understanding and engagement with the vision.",
-      "outcomeIds": ["VISION_O2"]
+      "outcomeIds": [
+        "VISION_O2"
+      ],
+      "readinessScore": 3
     },
     {
       "id": "VISION_038",
@@ -410,7 +540,10 @@
       "lens": "People Experience & Culture",
       "category": "Measurement & Evaluation",
       "action": "Monitor stakeholder awareness and adjust communications where necessary.",
-      "outcomeIds": ["VISION_O2"]
+      "outcomeIds": [
+        "VISION_O2"
+      ],
+      "readinessScore": 3
     },
     {
       "id": "VISION_039",
@@ -420,7 +553,11 @@
       "lens": "People Experience & Culture",
       "category": "Communication",
       "action": "Use case studies and practical examples to demonstrate the vision in action.",
-      "outcomeIds": ["VISION_O2", "VISION_O3"]
+      "outcomeIds": [
+        "VISION_O2",
+        "VISION_O3"
+      ],
+      "readinessScore": 3
     },
     {
       "id": "VISION_040",
@@ -430,7 +567,11 @@
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
       "action": "Reinforce the vision through team meetings, departmental briefings and change network activities.",
-      "outcomeIds": ["VISION_O2", "VISION_O3"]
+      "outcomeIds": [
+        "VISION_O2",
+        "VISION_O3"
+      ],
+      "readinessScore": 3
     },
     {
       "id": "VISION_041",
@@ -440,7 +581,10 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
       "action": "Embed the vision into organisational planning, governance and decision-making processes.",
-      "outcomeIds": ["VISION_O3"]
+      "outcomeIds": [
+        "VISION_O3"
+      ],
+      "readinessScore": 4
     },
     {
       "id": "VISION_042",
@@ -450,7 +594,10 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Reinforcement",
       "action": "Ensure leaders consistently reference the vision when making strategic and operational decisions.",
-      "outcomeIds": ["VISION_O3"]
+      "outcomeIds": [
+        "VISION_O3"
+      ],
+      "readinessScore": 4
     },
     {
       "id": "VISION_043",
@@ -460,7 +607,11 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Measurement & Evaluation",
       "action": "Review organisational priorities regularly to ensure continued alignment with the vision.",
-      "outcomeIds": ["VISION_O1", "VISION_O3"]
+      "outcomeIds": [
+        "VISION_O1",
+        "VISION_O3"
+      ],
+      "readinessScore": 4
     },
     {
       "id": "VISION_044",
@@ -470,7 +621,11 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Measurement & Evaluation",
       "action": "Use adoption and performance data to refine and strengthen how the vision is communicated.",
-      "outcomeIds": ["VISION_O2", "VISION_O3"]
+      "outcomeIds": [
+        "VISION_O2",
+        "VISION_O3"
+      ],
+      "readinessScore": 4
     },
     {
       "id": "VISION_045",
@@ -480,7 +635,10 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Measurement & Evaluation",
       "action": "Establish mechanisms to continuously evaluate whether organisational behaviours remain aligned to the vision.",
-      "outcomeIds": ["VISION_O3"]
+      "outcomeIds": [
+        "VISION_O3"
+      ],
+      "readinessScore": 4
     },
     {
       "id": "VISION_046",
@@ -490,7 +648,10 @@
       "lens": "People Experience & Culture",
       "category": "Measurement & Evaluation",
       "action": "Measure how well staff understand and can articulate the vision.",
-      "outcomeIds": ["VISION_O2"]
+      "outcomeIds": [
+        "VISION_O2"
+      ],
+      "readinessScore": 4
     },
     {
       "id": "VISION_047",
@@ -500,7 +661,11 @@
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
       "action": "Capture and share success stories demonstrating delivery of the vision.",
-      "outcomeIds": ["VISION_O2", "VISION_O3"]
+      "outcomeIds": [
+        "VISION_O2",
+        "VISION_O3"
+      ],
+      "readinessScore": 4
     },
     {
       "id": "VISION_048",
@@ -510,7 +675,10 @@
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
       "action": "Encourage teams to identify local improvements that support achievement of the vision.",
-      "outcomeIds": ["VISION_O3"]
+      "outcomeIds": [
+        "VISION_O3"
+      ],
+      "readinessScore": 4
     },
     {
       "id": "VISION_049",
@@ -520,7 +688,11 @@
       "lens": "People Experience & Culture",
       "category": "Engagement",
       "action": "Maintain continuous engagement and listening activities to keep the vision relevant.",
-      "outcomeIds": ["VISION_O1", "VISION_O2"]
+      "outcomeIds": [
+        "VISION_O1",
+        "VISION_O2"
+      ],
+      "readinessScore": 4
     },
     {
       "id": "VISION_050",
@@ -530,7 +702,11 @@
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
       "action": "Reinforce the vision through recognition programmes and celebration of achievements.",
-      "outcomeIds": ["VISION_O2", "VISION_O3"]
+      "outcomeIds": [
+        "VISION_O2",
+        "VISION_O3"
+      ],
+      "readinessScore": 4
     },
     {
       "id": "VISION_051",
@@ -540,7 +716,11 @@
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
       "action": "Ensure the vision becomes part of everyday conversations, team objectives and organisational culture.",
-      "outcomeIds": ["VISION_O2", "VISION_O3"]
+      "outcomeIds": [
+        "VISION_O2",
+        "VISION_O3"
+      ],
+      "readinessScore": 4
     }
   ]
 }

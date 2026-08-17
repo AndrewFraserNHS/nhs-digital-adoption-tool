@@ -1,0 +1,447 @@
+{
+  "component": {
+    "id": "CHANGE_ADOPTION",
+    "name": "Change Adoption"
+  },
+  "outcomes": [
+    {
+      "id": "CA_O1",
+      "name": "Adoption expectations and measures have been defined",
+      "description": "Clear adoption objectives, indicators, measures and monitoring mechanisms have been established."
+    },
+    {
+      "id": "CA_O2",
+      "name": "Adoption is actively monitored and supported",
+      "description": "Adoption levels are measured, areas of low adoption are identified and targeted support is provided."
+    },
+    {
+      "id": "CA_O3",
+      "name": "Adoption is sustained and optimised",
+      "description": "Changes are embedded into day-to-day operations and adoption insight is used to drive continuous improvement."
+    }
+  ],
+  "actions": [
+    {
+      "id": "CA_001",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Measurement",
+      "category": "Design",
+      "action": "Define what successful adoption looks like for the change.",
+      "outcomeIds": [
+        "CA_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "CA_002",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Measurement",
+      "category": "Measurement & Evaluation",
+      "action": "Identify adoption indicators, measures and success criteria.",
+      "outcomeIds": [
+        "CA_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "CA_003",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Measurement",
+      "category": "Analysis & Insight",
+      "action": "Identify behaviours, activities and practices that indicate adoption.",
+      "outcomeIds": [
+        "CA_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "CA_004",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Measurement",
+      "category": "Measurement & Evaluation",
+      "action": "Establish baseline measures where adoption can be compared over time.",
+      "outcomeIds": [
+        "CA_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "CA_005",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Measurement",
+      "category": "Governance",
+      "action": "Agree ownership and accountability for monitoring adoption outcomes.",
+      "outcomeIds": [
+        "CA_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "CA_006",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "Engage stakeholders to understand perceived adoption barriers and enablers.",
+      "outcomeIds": [
+        "CA_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "CA_007",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "Identify groups that may require additional adoption support.",
+      "outcomeIds": [
+        "CA_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "CA_008",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "Communicate adoption expectations and desired behaviours.",
+      "outcomeIds": [
+        "CA_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "CA_009",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Measurement",
+      "category": "Dependency Management",
+      "action": "Identify dependencies between adoption, learning, change impact and readiness activities.",
+      "outcomeIds": [
+        "CA_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "CA_010",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Measurement",
+      "category": "Design",
+      "action": "Develop an initial adoption monitoring approach.",
+      "outcomeIds": [
+        "CA_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "CA_011",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Measurement",
+      "category": "Measurement & Evaluation",
+      "action": "Implement mechanisms for monitoring adoption levels and behavioural change.",
+      "outcomeIds": [
+        "CA_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "CA_012",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Measurement",
+      "category": "Measurement & Evaluation",
+      "action": "Collect adoption data, usage information, feedback and performance insight.",
+      "outcomeIds": [
+        "CA_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "CA_013",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Measurement",
+      "category": "Analysis & Insight",
+      "action": "Analyse adoption trends across different stakeholder groups and operational areas.",
+      "outcomeIds": [
+        "CA_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "CA_014",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Measurement",
+      "category": "Governance",
+      "action": "Review adoption performance through governance and reporting structures.",
+      "outcomeIds": [
+        "CA_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "CA_015",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Measurement",
+      "category": "Risk Management",
+      "action": "Identify adoption risks and issues arising from low or inconsistent adoption levels.",
+      "outcomeIds": [
+        "CA_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "CA_016",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "Gather feedback from high and low adopters to understand adoption drivers and barriers.",
+      "outcomeIds": [
+        "CA_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "CA_017",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Training & Learning",
+      "action": "Provide targeted support and development for groups experiencing adoption challenges.",
+      "outcomeIds": [
+        "CA_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "CA_018",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "Communicate adoption progress, successes and areas of focus.",
+      "outcomeIds": [
+        "CA_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "CA_019",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "Use local networks, champions and managers to support adoption activity.",
+      "outcomeIds": [
+        "CA_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "CA_020",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Measurement",
+      "category": "Design",
+      "action": "Refine adoption interventions using feedback and monitoring information.",
+      "outcomeIds": [
+        "CA_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "CA_021",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Measurement",
+      "category": "Measurement & Evaluation",
+      "action": "Track adoption performance against targets, expectations and baseline measures.",
+      "outcomeIds": [
+        "CA_O2",
+        "CA_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "CA_022",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Measurement",
+      "category": "Analysis & Insight",
+      "action": "Identify areas of strong adoption and areas requiring additional intervention.",
+      "outcomeIds": [
+        "CA_O2",
+        "CA_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "CA_023",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "Conduct targeted engagement with low-adoption groups to understand remaining barriers.",
+      "outcomeIds": [
+        "CA_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "CA_024",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "Recognise and promote examples of successful adoption and effective practice.",
+      "outcomeIds": [
+        "CA_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "CA_025",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Measurement",
+      "category": "Dependency Management",
+      "action": "Coordinate adoption activity with reinforcement, capability and benefits realisation activities.",
+      "outcomeIds": [
+        "CA_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "CA_026",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "Share evidence of successful adoption and realised improvements.",
+      "outcomeIds": [
+        "CA_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "CA_027",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Measurement",
+      "category": "Testing & Validation",
+      "action": "Validate that adopted behaviours and practices align with intended future-state outcomes.",
+      "outcomeIds": [
+        "CA_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "CA_028",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Governance",
+      "category": "Governance",
+      "action": "Review adoption outcomes and improvement actions through governance processes.",
+      "outcomeIds": [
+        "CA_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "CA_029",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Measurement",
+      "category": "Design",
+      "action": "Refine adoption approaches using learning from implementation experience.",
+      "outcomeIds": [
+        "CA_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "CA_030",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "Support managers and leaders to reinforce adoption expectations.",
+      "outcomeIds": [
+        "CA_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "CA_031",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Planning & Measurement",
+      "category": "Measurement & Evaluation",
+      "action": "Monitor long-term adoption performance and behavioural sustainability.",
+      "outcomeIds": [
+        "CA_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "CA_032",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Planning & Measurement",
+      "category": "Analysis & Insight",
+      "action": "Use adoption data to identify opportunities for optimisation and improvement.",
+      "outcomeIds": [
+        "CA_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "CA_033",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Governance",
+      "category": "Governance",
+      "action": "Embed adoption monitoring into BAU performance and improvement processes.",
+      "outcomeIds": [
+        "CA_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "CA_034",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Design",
+      "category": "Design",
+      "action": "Use organisational learning to strengthen future adoption approaches.",
+      "outcomeIds": [
+        "CA_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "CA_035",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Reinforcement",
+      "category": "Reinforcement",
+      "action": "Embed adoption-focused behaviours and improvement practices into organisational culture.",
+      "outcomeIds": [
+        "CA_O3"
+      ],
+      "readinessScore": 4
+    }
+  ]
+}

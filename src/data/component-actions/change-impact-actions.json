@@ -1,0 +1,241 @@
+{
+  "component": {
+    "id": "CHANGE_IMPACT",
+    "name": "Change Impact"
+  },
+  "outcomes": [
+    {
+      "id": "CI_O1",
+      "name": "The impact of the change has been identified and understood",
+      "description": "There is a clear understanding of who and what will be affected by the change, including impacts on people, processes, roles, responsibilities, services, customers, stakeholders and business-as-usual operations."
+    },
+    {
+      "id": "CI_O2",
+      "name": "Impacts have been assessed, validated and prioritised",
+      "description": "The scale, complexity, significance and variability of change impacts have been assessed and validated with affected stakeholders, enabling prioritisation of support and planning activity."
+    },
+    {
+      "id": "CI_O3",
+      "name": "Change impacts are actively managed through plans, governance and support",
+      "description": "Impact insight is used to shape change plans, communications, engagement, learning, risk management, governance decisions and sustainment activity throughout the change lifecycle."
+    }
+  ],
+  "actions": [
+    {
+      "id": "CI_001",
+      "componentId": "CHANGE_IMPACT",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "Identify the areas, services, teams, roles, processes and stakeholder groups likely to be affected by the change.",
+      "outcomeIds": [
+        "CI_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "CI_002",
+      "componentId": "CHANGE_IMPACT",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "Create an initial high-level change impact assessment covering expected impacts on people, process, technology, information, governance and ways of working.",
+      "outcomeIds": [
+        "CI_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "CI_003",
+      "componentId": "CHANGE_IMPACT",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "Identify intended and unintended impacts that could affect delivery, productivity, service continuity or stakeholder experience.",
+      "outcomeIds": [
+        "CI_O1",
+        "CI_O2"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "CI_004",
+      "componentId": "CHANGE_IMPACT",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Risk",
+      "category": "Risk Management",
+      "action": "Identify initial change risks arising from the expected impacts.",
+      "outcomeIds": [
+        "CI_O2",
+        "CI_O3"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "CI_005",
+      "componentId": "CHANGE_IMPACT",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Risk",
+      "category": "Design",
+      "action": "Define the approach, criteria and data sources that will be used to assess change impact in more detail.",
+      "outcomeIds": [
+        "CI_O2"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "CI_006",
+      "componentId": "CHANGE_IMPACT",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "Engage affected stakeholder groups to understand how they currently work and where they expect the change to affect them.",
+      "outcomeIds": [
+        "CI_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "CI_007",
+      "componentId": "CHANGE_IMPACT",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "Capture stakeholder concerns, perceived disruption, support needs and areas of uncertainty linked to the change.",
+      "outcomeIds": [
+        "CI_O1",
+        "CI_O2"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "CI_008",
+      "componentId": "CHANGE_IMPACT",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Process & Sustainment",
+      "category": "Analysis & Insight",
+      "action": "Map the current high-level processes and ways of working that may be affected by the change.",
+      "outcomeIds": [
+        "CI_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "CI_009",
+      "componentId": "CHANGE_IMPACT",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Process & Sustainment",
+      "category": "Analysis & Insight",
+      "action": "Identify known pain points, bottlenecks, duplication, workarounds or service pressures that may influence the impact of the change.",
+      "outcomeIds": [
+        "CI_O1",
+        "CI_O2"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "CI_010",
+      "componentId": "CHANGE_IMPACT",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Process & Sustainment",
+      "category": "Measurement & Evaluation",
+      "action": "Identify baseline measures needed to compare the current state with the future state after implementation.",
+      "outcomeIds": [
+        "CI_O2",
+        "CI_O3"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "CI_011",
+      "componentId": "CHANGE_IMPACT",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "Complete a detailed change impact assessment across affected business areas, services, teams and roles.",
+      "outcomeIds": [
+        "CI_O1",
+        "CI_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "CI_012",
+      "componentId": "CHANGE_IMPACT",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Risk",
+      "category": "Measurement & Evaluation",
+      "action": "Assess the scale of impact using agreed criteria such as complexity, frequency, number of people affected and degree of difference from current ways of working.",
+      "outcomeIds": [
+        "CI_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "CI_013",
+      "componentId": "CHANGE_IMPACT",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Risk",
+      "category": "Risk Management",
+      "action": "Translate significant change impacts into change risks, issues or mitigations where appropriate.",
+      "outcomeIds": [
+        "CI_O2",
+        "CI_O3"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "CI_014",
+      "componentId": "CHANGE_IMPACT",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Risk",
+      "category": "Governance",
+      "action": "Review assessed impacts through appropriate governance routes so that decisions are informed by change impact evidence.",
+      "outcomeIds": [
+        "CI_O3"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "CI_015",
+      "componentId": "CHANGE_IMPACT",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Risk",
+      "category": "Dependency Management",
+      "action": "Identify dependencies that could affect impact management, including process, workforce, system, policy, operational or external dependencies.",
+      "outcomeIds": [
+        "CI_O2",
+        "CI_O3"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "CI_016",
+      "componentId": "CHANGE_IMPACT",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "Validate identified impacts with affected stakeholders and subject matter experts.",
+      "outcomeIds": [
+        "CI_O2"
+      ],
+      "readinessScore": 2
+    }
+  ]
+}

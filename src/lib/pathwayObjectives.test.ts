@@ -75,16 +75,13 @@ describe('syncPathwayObjectives', () => {
     ).toBe(true);
   });
 
-  it('does not auto-link actions for non-vision components', () => {
+  it('does not add pathway checklist objectives for non-vision components', () => {
     const store = createStore();
     const next = syncPathwayObjectives(store);
 
     const caseForChangeObjectives = (next.objectives.case_for_change || []).filter((objective) =>
       objective.id.startsWith('pathway:auto-objective:')
     );
-    expect(caseForChangeObjectives.length).toBeGreaterThan(0);
-    expect(caseForChangeObjectives.every((objective) => objective.linkedActions.length === 0)).toBe(
-      true
-    );
+    expect(caseForChangeObjectives).toHaveLength(0);
   });
 });

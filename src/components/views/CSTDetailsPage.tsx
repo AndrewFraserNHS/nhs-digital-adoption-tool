@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, type JSX } from 'react';
-import { AdoptionStore, DraftEntry, OrgProfile } from '@lib/adoptionState';
+import { AdoptionStore, DraftEntry, OrgProfile, type TeamMember } from '@lib/adoptionState';
 import { nhsButtonSecondary } from '../../styles/nhsTheme';
 import { validateOrgProfile } from '@lib/adoptionValidator';
 import { getComponentObjectiveCounts } from '@lib/adoptionMetrics';
@@ -104,6 +104,8 @@ export interface ProjectDetailsPageProps {
   onComponentClick: (componentId: string) => void;
   onOpenOnboarding: () => void;
   darkMode?: boolean;
+  currentUserId?: string;
+  onCurrentUserChange: (id: string) => void;
 }
 
 export function ProjectDetailsPage({
@@ -115,6 +117,8 @@ export function ProjectDetailsPage({
   onComponentClick,
   onOpenOnboarding,
   darkMode = false,
+  currentUserId,
+  onCurrentUserChange,
 }: ProjectDetailsPageProps): JSX.Element {
   const [profile, setProfile] = useState<OrgProfile>(orgProfile);
   const [activePhaseHelp, setActivePhaseHelp] = useState<OverarchingPhase | null>(null);
@@ -246,6 +250,46 @@ export function ProjectDetailsPage({
       onProfileUpdate(updated);
     },
     [profile, onProfileUpdate]
+  );
+
+  const handleAddTeamMember = useCallback(() => {
+    const newMember: TeamMember = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      name: '',
+      role: '',
+    };
+    const updated = { ...profile, teamMembers: [...(profile.teamMembers || []), newMember] };
+    setProfile(updated);
+    onProfileUpdate(updated);
+  }, [profile, onProfileUpdate]);
+
+  const handleUpdateTeamMember = useCallback(
+    (id: string, field: 'name' | 'role', value: string) => {
+      const updated = {
+        ...profile,
+        teamMembers: (profile.teamMembers || []).map((member) =>
+          member.id === id ? { ...member, [field]: value } : member
+        ),
+      };
+      setProfile(updated);
+      onProfileUpdate(updated);
+    },
+    [profile, onProfileUpdate]
+  );
+
+  const handleRemoveTeamMember = useCallback(
+    (id: string) => {
+      const updated = {
+        ...profile,
+        teamMembers: (profile.teamMembers || []).filter((member) => member.id !== id),
+      };
+      setProfile(updated);
+      onProfileUpdate(updated);
+      if (currentUserId === id) {
+        onCurrentUserChange('');
+      }
+    },
+    [profile, onProfileUpdate, currentUserId, onCurrentUserChange]
   );
 
   const componentsByPhase = components.reduce<Record<number, AssessmentComponent[]>>(
@@ -716,6 +760,79 @@ export function ProjectDetailsPage({
             })}
           </div>
         </details>
+      </div>
+
+      <div
+        className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-4`}
+      >
+        <div>
+          <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
+            Team Members
+          </h3>
+          <p className={`text-sm mt-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+            Add the people working on this programme so actions and readiness slides can be assigned
+            to a named owner. This roster is saved with the CST; who you're signed in as is
+            remembered on this device only.
+          </p>
+        </div>
+
+        <div>
+          <label
+            htmlFor="cst-current-user"
+            className={`block text-sm font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
+          >
+            You are signed in as
+          </label>
+          <select
+            id="cst-current-user"
+            value={currentUserId || ''}
+            onChange={(event) => onCurrentUserChange(event.target.value)}
+            className={`w-full rounded-md border shadow-sm sm:text-sm p-2 pr-10 md:w-1/2 ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-[#768692] bg-white text-slate-900'}`}
+          >
+            <option value="">Not selected</option>
+            {(profile.teamMembers || []).map((member) => (
+              <option key={member.id} value={member.id}>
+                {member.name || 'Unnamed'}
+                {member.role ? ` — ${member.role}` : ''}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="space-y-2">
+          {(profile.teamMembers || []).map((member) => (
+            <div key={member.id} className="grid grid-cols-1 md:grid-cols-[1fr,1fr,auto] gap-2 items-center">
+              <input
+                value={member.name}
+                onChange={(event) => handleUpdateTeamMember(member.id, 'name', event.target.value)}
+                placeholder="Name"
+                className={`rounded-md border shadow-sm sm:text-sm p-2 ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-[#768692] bg-white text-slate-900'}`}
+              />
+              <input
+                value={member.role}
+                onChange={(event) => handleUpdateTeamMember(member.id, 'role', event.target.value)}
+                placeholder="Role (e.g. Change Lead)"
+                className={`rounded-md border shadow-sm sm:text-sm p-2 ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-[#768692] bg-white text-slate-900'}`}
+              />
+              <button
+                type="button"
+                onClick={() => handleRemoveTeamMember(member.id)}
+                className="shrink-0 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 hover:bg-red-100"
+              >
+                Remove
+              </button>
+            </div>
+          ))}
+          {!(profile.teamMembers || []).length ? (
+            <p className={`text-sm ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+              No team members added yet.
+            </p>
+          ) : null}
+        </div>
+
+        <button type="button" onClick={handleAddTeamMember} className={nhsButtonSecondary}>
+          + Add Team Member
+        </button>
       </div>
 
       {/* Step 4: External link overrides */}

@@ -4,6 +4,28 @@ import type { AdoptionStore, DraftEntry } from '@lib/adoptionState';
 import { ASSESSMENT_COMPONENTS } from '@data/components';
 import { type Metrics } from '@lib/adoptionMetrics';
 import { normalizeActionStatus } from '@lib/actionModel';
+import { getBragStatusFromAverage, BRAG_BADGE_STYLES } from '@lib/bragStatus';
+import { RichTextEditor } from '@components/common/RichTextEditor';
+
+export interface BragActionRow {
+  id: string;
+  preventingGreenHtml: string;
+  returnToGreenHtml: string;
+  ownerId: string;
+  targetDate: string;
+  /** Reserved for a future pass that auto-populates rows from real actions; unused today. */
+  linkedActionId?: string;
+}
+
+export interface BragSlide {
+  id: string;
+  componentId: string;
+  rows: BragActionRow[];
+}
+
+function createId(): string {
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
 
 interface HighlightBuilderLayout {
   title: string;
@@ -15,6 +37,7 @@ interface HighlightBuilderLayout {
   sroName: string;
   overallStatus: 'Green' | 'Amber' | 'Red';
   orientation: 'portrait' | 'landscape';
+  bragSlides: BragSlide[];
   sections: string[];
   sectionNarratives: Record<string, string>;
 }
@@ -46,6 +69,7 @@ const DEFAULT_LAYOUT: HighlightBuilderLayout = {
   sroName: '',
   overallStatus: 'Amber',
   orientation: 'landscape',
+  bragSlides: [],
   sections: [
     'executive-summary',
     'change-dashboard',
@@ -96,6 +120,31 @@ function withSectionNumber(index: number, label: string): string {
   return `${index + 1}. ${label}`;
 }
 
+function normaliseBragSlides(value: unknown): BragSlide[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return (value as Array<Partial<BragSlide>>)
+    .filter((item) => Boolean(item) && typeof item === 'object')
+    .map((item) => ({
+      id: item.id || createId(),
+      componentId: item.componentId || '',
+      rows: Array.isArray(item.rows)
+        ? (item.rows as Array<Partial<BragActionRow>>)
+            .filter((row) => Boolean(row) && typeof row === 'object')
+            .map((row) => ({
+              id: row.id || createId(),
+              preventingGreenHtml: row.preventingGreenHtml || '',
+              returnToGreenHtml: row.returnToGreenHtml || '',
+              ownerId: row.ownerId || '',
+              targetDate: row.targetDate || '',
+              linkedActionId: row.linkedActionId,
+            }))
+        : [],
+    }));
+}
+
 function readStoredLayout(): HighlightBuilderLayout {
   if (typeof window === 'undefined') {
     return DEFAULT_LAYOUT;
@@ -121,6 +170,7 @@ function readStoredLayout(): HighlightBuilderLayout {
         parsed.orientation === 'portrait' || parsed.orientation === 'landscape'
           ? parsed.orientation
           : DEFAULT_LAYOUT.orientation,
+      bragSlides: normaliseBragSlides(parsed.bragSlides),
       sections:
         Array.isArray(parsed.sections) && parsed.sections.length > 0
           ? parsed.sections
@@ -142,6 +192,7 @@ export function HighlightBuilderTool({
   themeColor,
   onLayoutSaved,
   darkMode = false,
+  currentUserId,
 }: {
   store: AdoptionStore;
   metrics: Metrics;
@@ -153,7 +204,9 @@ export function HighlightBuilderTool({
   themeColor?: string;
   onLayoutSaved?: () => void;
   darkMode?: boolean;
+  currentUserId?: string;
 }): JSX.Element {
+  const teamMembers = store.orgProfile.teamMembers || [];
   const [layout, setLayout] = useState<HighlightBuilderLayout>(() => {
     const stored = readStoredLayout();
     if (themeColor && !stored.themeColor) {
@@ -245,6 +298,65 @@ export function HighlightBuilderTool({
     }));
   };
 
+  const addBragSlide = () => {
+    const usedComponentIds = new Set(layout.bragSlides.map((slide) => slide.componentId));
+    const nextComponent = components.find((component) => !usedComponentIds.has(component.id)) || components[0];
+    const newSlide: BragSlide = { id: createId(), componentId: nextComponent?.id || '', rows: [] };
+    setLayout((current) => ({ ...current, bragSlides: [...current.bragSlides, newSlide] }));
+  };
+
+  const removeBragSlide = (slideId: string) => {
+    setLayout((current) => ({
+      ...current,
+      bragSlides: current.bragSlides.filter((slide) => slide.id !== slideId),
+    }));
+  };
+
+  const updateBragSlideComponent = (slideId: string, componentId: string) => {
+    setLayout((current) => ({
+      ...current,
+      bragSlides: current.bragSlides.map((slide) =>
+        slide.id === slideId ? { ...slide, componentId } : slide
+      ),
+    }));
+  };
+
+  const addBragRow = (slideId: string) => {
+    const newRow: BragActionRow = {
+      id: createId(),
+      preventingGreenHtml: '',
+      returnToGreenHtml: '',
+      ownerId: currentUserId || '',
+      targetDate: '',
+    };
+    setLayout((current) => ({
+      ...current,
+      bragSlides: current.bragSlides.map((slide) =>
+        slide.id === slideId ? { ...slide, rows: [...slide.rows, newRow] } : slide
+      ),
+    }));
+  };
+
+  const updateBragRow = (slideId: string, rowId: string, updates: Partial<BragActionRow>) => {
+    setLayout((current) => ({
+      ...current,
+      bragSlides: current.bragSlides.map((slide) =>
+        slide.id === slideId
+          ? { ...slide, rows: slide.rows.map((row) => (row.id === rowId ? { ...row, ...updates } : row)) }
+          : slide
+      ),
+    }));
+  };
+
+  const removeBragRow = (slideId: string, rowId: string) => {
+    setLayout((current) => ({
+      ...current,
+      bragSlides: current.bragSlides.map((slide) =>
+        slide.id === slideId ? { ...slide, rows: slide.rows.filter((row) => row.id !== rowId) } : slide
+      ),
+    }));
+  };
+
   const handleLogoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) {
@@ -295,6 +407,7 @@ export function HighlightBuilderTool({
           parsed.orientation === 'portrait' || parsed.orientation === 'landscape'
             ? parsed.orientation
             : DEFAULT_LAYOUT.orientation,
+        bragSlides: normaliseBragSlides(parsed.bragSlides),
         sections:
           Array.isArray(parsed.sections) && parsed.sections.length > 0
             ? parsed.sections
@@ -813,6 +926,7 @@ export function HighlightBuilderTool({
       }
       .printable-report [data-print-hide="true"] { display: none !important; }
       .printable-report article { break-inside: avoid; page-break-inside: avoid; }
+      .printable-report [data-brag-slide="true"] { break-after: page; page-break-after: always; }
       .printable-report table { width: 100%; }
     `;
     win.document.head.appendChild(printStyles);
@@ -1005,6 +1119,58 @@ export function HighlightBuilderTool({
             </div>
 
             <div>
+              <div className="text-sm font-semibold text-slate-700 mb-1">
+                Programme/Project Readiness Slides
+              </div>
+              <p className="text-xs text-slate-500 mb-3">
+                These print first, one per page. Add a slide per component you want to report on.
+              </p>
+              <div className="space-y-2">
+                {layout.bragSlides.map((slide, index) => (
+                  <div key={slide.id} className="rounded-md border border-slate-200 px-3 py-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-semibold text-slate-500">
+                        Page {index + 1}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => removeBragSlide(slide.id)}
+                        className="text-xs font-semibold text-red-600 hover:text-red-800"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                    <select
+                      value={slide.componentId}
+                      onChange={(event) => updateBragSlideComponent(slide.id, event.target.value)}
+                      className="mt-1 w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-blue-500"
+                    >
+                      {components.map((component) => (
+                        <option key={component.id} value={component.id}>
+                          {component.label}
+                        </option>
+                      ))}
+                    </select>
+                    <p className="mt-1 text-xs text-slate-500">
+                      {slide.rows.length} row{slide.rows.length === 1 ? '' : 's'}
+                    </p>
+                  </div>
+                ))}
+                {!layout.bragSlides.length ? (
+                  <p className="text-sm text-slate-500">No readiness slides yet.</p>
+                ) : null}
+              </div>
+              <button
+                type="button"
+                onClick={addBragSlide}
+                disabled={!components.length}
+                className="mt-3 w-full rounded-md bg-slate-100 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-200 disabled:opacity-50"
+              >
+                + Add Readiness Slide
+              </button>
+            </div>
+
+            <div>
               <div className="text-sm font-semibold text-slate-700 mb-3">Report sections</div>
               <div className="space-y-2">
                 {SECTION_OPTIONS.map((section) => {
@@ -1090,6 +1256,138 @@ export function HighlightBuilderTool({
           </div>
 
           <div className="grid gap-3">
+            {layout.bragSlides.map((slide) => {
+              const componentInfo = componentScores.find((item) => item.component.id === slide.componentId);
+              const bragStatus = componentInfo
+                ? getBragStatusFromAverage(componentInfo.average, componentInfo.target)
+                : null;
+
+              return (
+                <article
+                  key={slide.id}
+                  data-brag-slide="true"
+                  className="rounded-xl border border-slate-200 p-4"
+                  style={{ borderLeft: `4px solid ${layout.themeColor}` }}
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                        Programme/Project Readiness
+                      </p>
+                      <h3 className="text-lg font-bold text-slate-900">
+                        {componentInfo?.component.label || 'Select a component'}
+                      </h3>
+                    </div>
+                    {componentInfo && bragStatus ? (
+                      <div className="text-right">
+                        <span
+                          className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-bold ${BRAG_BADGE_STYLES[bragStatus]}`}
+                        >
+                          {bragStatus}
+                        </span>
+                        <p className="mt-1 text-xs text-slate-500">
+                          {componentInfo.average.toFixed(1)} of {componentInfo.target} target
+                        </p>
+                      </div>
+                    ) : null}
+                  </div>
+
+                  <div className="mt-3 overflow-x-auto rounded-md border border-slate-200">
+                    <table className="min-w-full divide-y divide-slate-200 bg-white">
+                      <thead className="bg-slate-50">
+                        <tr>
+                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                            What is preventing you from being green
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                            What do you/others need to do to return to green
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                            Action owner
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                            Target date
+                          </th>
+                          <th
+                            data-print-hide="true"
+                            className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500"
+                          />
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {slide.rows.map((row) => (
+                          <tr key={row.id}>
+                            <td className="px-3 py-2 align-top">
+                              <RichTextEditor
+                                value={row.preventingGreenHtml}
+                                onChange={(html) => updateBragRow(slide.id, row.id, { preventingGreenHtml: html })}
+                                placeholder="What's blocking green?"
+                              />
+                            </td>
+                            <td className="px-3 py-2 align-top">
+                              <RichTextEditor
+                                value={row.returnToGreenHtml}
+                                onChange={(html) => updateBragRow(slide.id, row.id, { returnToGreenHtml: html })}
+                                placeholder="What needs to happen?"
+                              />
+                            </td>
+                            <td className="px-3 py-2 align-top">
+                              <select
+                                value={row.ownerId}
+                                onChange={(event) => updateBragRow(slide.id, row.id, { ownerId: event.target.value })}
+                                className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+                              >
+                                <option value="">Unassigned</option>
+                                {teamMembers.map((member) => (
+                                  <option key={member.id} value={member.id}>
+                                    {member.name || 'Unnamed'}
+                                    {member.role ? ` — ${member.role}` : ''}
+                                  </option>
+                                ))}
+                              </select>
+                            </td>
+                            <td className="px-3 py-2 align-top">
+                              <input
+                                type="date"
+                                value={row.targetDate}
+                                onChange={(event) => updateBragRow(slide.id, row.id, { targetDate: event.target.value })}
+                                className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+                              />
+                            </td>
+                            <td data-print-hide="true" className="px-3 py-2 align-top">
+                              <button
+                                type="button"
+                                onClick={() => removeBragRow(slide.id, row.id)}
+                                className="rounded-md border border-red-200 bg-red-50 px-2.5 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100"
+                              >
+                                Remove
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                        {!slide.rows.length ? (
+                          <tr>
+                            <td className="px-3 py-3 text-sm text-slate-500" colSpan={5}>
+                              No rows yet.
+                            </td>
+                          </tr>
+                        ) : null}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <button
+                    type="button"
+                    data-print-hide="true"
+                    onClick={() => addBragRow(slide.id)}
+                    className="mt-3 rounded-md bg-slate-100 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-200"
+                  >
+                    + Add Row
+                  </button>
+                </article>
+              );
+            })}
+
             {layout.sections.map((sectionId) => (
               <article
                 key={sectionId}

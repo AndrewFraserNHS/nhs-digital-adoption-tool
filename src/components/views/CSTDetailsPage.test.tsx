@@ -68,6 +68,7 @@ describe('ProjectDetailsPage', () => {
         getEntry={getEntry}
         onComponentClick={vi.fn()}
         onOpenOnboarding={vi.fn()}
+        onCurrentUserChange={vi.fn()}
       />
     );
 
@@ -93,6 +94,7 @@ describe('ProjectDetailsPage', () => {
         getEntry={getEntry}
         onComponentClick={onComponentClick}
         onOpenOnboarding={vi.fn()}
+        onCurrentUserChange={vi.fn()}
       />
     );
 
@@ -113,6 +115,7 @@ describe('ProjectDetailsPage', () => {
         getEntry={getEntry}
         onComponentClick={vi.fn()}
         onOpenOnboarding={onOpenOnboarding}
+        onCurrentUserChange={vi.fn()}
       />
     );
 
@@ -133,6 +136,7 @@ describe('ProjectDetailsPage', () => {
         getEntry={getEntry}
         onComponentClick={vi.fn()}
         onOpenOnboarding={vi.fn()}
+        onCurrentUserChange={vi.fn()}
       />
     );
 

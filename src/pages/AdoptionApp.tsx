@@ -83,6 +83,7 @@ const ADOPTION_USER_SETTINGS_KEY = 'nhs-digital-adoption-user-settings';
 const ADOPTION_REPORT_REMINDER_DISMISS_KEY = 'nhs-digital-adoption-report-reminder-dismissed';
 const ADOPTION_ENGAGEMENT_KEY = 'nhs-digital-adoption-engagement';
 const ADOPTION_ONBOARDING_SEEN_KEY = 'nhs-digital-adoption-onboarding-seen';
+const ADOPTION_CURRENT_USER_KEY = 'nhs-digital-adoption-current-user-id';
 const DEFAULT_GUIDANCE_TARGET: MaturityGuidanceTarget = 'Default';
 const MAX_IMPORT_FILE_BYTES = 5 * 1024 * 1024;
 const ACCEPTED_IMPORT_MIME_TYPES = new Set(['application/json', 'text/json']);
@@ -369,6 +370,7 @@ export function AdoptionApp() {
 
   const [showMatrix, setShowMatrix] = useState<Record<string, boolean>>({});
   const [activeLensInfo, setActiveLensInfo] = useState('');
+  const [currentUserId, setCurrentUserId] = useState<string>(() => load<string>(ADOPTION_CURRENT_USER_KEY) || '');
   const [userSettings, setUserSettings] = useState<AdoptionUserSettings>(() => {
     const persisted = load<Partial<AdoptionUserSettings>>(ADOPTION_USER_SETTINGS_KEY);
     return {
@@ -498,6 +500,10 @@ export function AdoptionApp() {
   useEffect(() => {
     save(ADOPTION_USER_SETTINGS_KEY, userSettings);
   }, [userSettings]);
+
+  useEffect(() => {
+    save(ADOPTION_CURRENT_USER_KEY, currentUserId);
+  }, [currentUserId]);
 
   useEffect(() => {
     save(ADOPTION_ENGAGEMENT_KEY, engagement);
@@ -2058,6 +2064,8 @@ export function AdoptionApp() {
               getEntry={getEntry}
               onComponentClick={openComponentAssessment}
               onOpenOnboarding={() => setShowOnboarding(true)}
+              currentUserId={currentUserId}
+              onCurrentUserChange={setCurrentUserId}
               darkMode={Boolean(userSettings.darkMode)}
             />
           )}
@@ -2201,6 +2209,7 @@ export function AdoptionApp() {
               projectName={store.orgProfile.projectName}
               themeColor={userSettings.themeColor}
               onLayoutSaved={handleHighlightLayoutSaved}
+              currentUserId={currentUserId}
               darkMode={Boolean(userSettings.darkMode)}
             />
           )}

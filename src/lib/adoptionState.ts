@@ -109,6 +109,12 @@ export interface DraftEntry {
   actions: DraftAction[];
 }
 
+export interface TeamMember {
+  id: string;
+  name: string;
+  role: string;
+}
+
 export interface OrgProfile {
   trustName: string;
   region: string;
@@ -117,6 +123,7 @@ export interface OrgProfile {
   leadName?: string;
   cst: CstProfile;
   linkOverrides?: LinkOverrides;
+  teamMembers?: TeamMember[];
 }
 
 export type PathwayChecklistState = Record<string, Partial<Record<CstPathwayKey, string[]>>>;
@@ -168,6 +175,7 @@ export function normalizeOrgProfile(profile?: Partial<OrgProfile>): OrgProfile {
       ...(profile?.cst || {}),
     },
     linkOverrides: profile?.linkOverrides,
+    teamMembers: profile?.teamMembers || [],
   };
 }
 

@@ -21,6 +21,7 @@ describe('adoptionState', () => {
     expect(defaults.objectives).toEqual({});
     expect(defaults.suppressedAutoActions).toEqual({});
     expect(defaults.auditLog).toEqual([]);
+    expect(defaults.orgProfile.teamMembers).toEqual([]);
 
     const persisted = initializeStore({
       view: 'settings',
@@ -35,6 +36,22 @@ describe('adoptionState', () => {
     });
     expect(persisted.view).toBe('settings');
     expect(persisted.orgProfile.trustName).toBe('Trust');
+  });
+
+  it('persists team members through normalization', () => {
+    const withTeam = initializeStore({
+      orgProfile: {
+        trustName: 'Trust',
+        region: 'North',
+        trustType: 'Acute',
+        cst: initializeStore().orgProfile.cst,
+        teamMembers: [{ id: 'm1', name: 'Alex', role: 'Change Lead' }],
+      },
+      currentDraft: {},
+      history: [],
+    });
+
+    expect(withTeam.orgProfile.teamMembers).toEqual([{ id: 'm1', name: 'Alex', role: 'Change Lead' }]);
   });
 
   it('creates and clones entries safely', () => {

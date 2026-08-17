@@ -10,6 +10,13 @@ import { calculateChecklistCompletion } from '@lib/pathwayAnalysis';
 import { FilterSummaryBar } from '@components/ui/FilterSummaryBar';
 import { getComponentDescription, getLensDescription } from '@data/descriptions';
 import { PHASE_NAMES } from '../../types/constants';
+import {
+  getBragStatusFromAverage,
+  getBragStatusFromGap,
+  BRAG_BADGE_STYLES,
+  BRAG_BADGE_STYLES_COLOR_BLIND,
+  type BragStatus,
+} from '@lib/bragStatus';
 
 export interface DashboardProps {
   store: AdoptionStore;
@@ -32,7 +39,6 @@ export interface DashboardProps {
   onResetPhaseFocus?: () => void;
 }
 
-type BragStatus = 'Blue' | 'Red' | 'Amber' | 'Green';
 type DeliveryStatus = BragStatus | 'N/A';
 
 function InfoIcon(): JSX.Element {
@@ -52,34 +58,6 @@ function InfoIcon(): JSX.Element {
       />
     </svg>
   );
-}
-
-function getBragStatusFromGap(gapToTarget: number): BragStatus {
-  if (gapToTarget <= 0) {
-    return 'Green';
-  }
-  if (gapToTarget >= 2) {
-    return 'Red';
-  }
-  if (gapToTarget >= 1) {
-    return 'Amber';
-  }
-  return 'Blue';
-}
-
-function getBragStatusFromAverage(avgScore: number, targetScore: number): BragStatus {
-  if (avgScore <= 0) {
-    return 'Amber';
-  }
-
-  const gap = targetScore - avgScore;
-  if (gap >= 2) {
-    return 'Red';
-  }
-  if (gap > 0) {
-    return 'Amber';
-  }
-  return 'Green';
 }
 
 function getDeliveryStatusFromAverage(
@@ -106,13 +84,6 @@ function getDeliveryStatusFromAverage(
 
 const DELIVERY_BADGE_STYLES: Record<DeliveryStatus, string> = {
   'N/A': 'text-slate-600 bg-slate-200',
-  Blue: 'text-sky-800 bg-sky-100',
-  Red: 'text-red-800 bg-red-100',
-  Amber: 'text-amber-800 bg-amber-100',
-  Green: 'text-green-800 bg-green-100',
-};
-
-const BRAG_BADGE_STYLES: Record<BragStatus, string> = {
   Blue: 'text-sky-800 bg-sky-100',
   Red: 'text-red-800 bg-red-100',
   Amber: 'text-amber-800 bg-amber-100',
@@ -420,12 +391,7 @@ export function AdoptionDashboard({
 
   const bragBadgeStyles =
     colorAccessibilityMode === 'color-blind-friendly'
-      ? {
-          Blue: 'text-cyan-900 bg-cyan-100',
-          Red: 'text-rose-900 bg-rose-100',
-          Amber: 'text-orange-900 bg-orange-100',
-          Green: 'text-teal-900 bg-teal-100',
-        }
+      ? BRAG_BADGE_STYLES_COLOR_BLIND
       : BRAG_BADGE_STYLES;
 
   return (

@@ -1,447 +1,331 @@
 {
-  "component": {
-    "id": "ORG_CHANGE_READINESS",
-    "name": "Org Change Readiness"
-  },
+  "component": { "id": "ORG_CHANGE_READINESS", "name": "Org Change Readiness" },
   "outcomes": [
     {
-      "id": "REINF_O1",
-      "name": "Organisational readiness has been assessed and understood",
-      "description": ""
+      "id": "OCR_O1",
+      "name": "Organisational readiness factors are understood",
+      "description": "Readiness drivers, barriers, strengths, capacity constraints and organisational conditions affecting change success have been identified and assessed."
     },
     {
-      "id": "REINF_O2",
-      "name": "Readiness gaps are being actively addressed",
-      "description": ""
+      "id": "OCR_O2",
+      "name": "Readiness gaps are addressed and readiness is improved",
+      "description": "Actions are implemented to strengthen readiness, remove barriers and increase organisational preparedness."
     },
     {
-      "id": "REINF_O3",
-      "name": "The organisation is prepared to successfully absorb and sustain the change",
-      "description": ""
+      "id": "OCR_O3",
+      "name": "Organisational readiness supports successful and sustainable change",
+      "description": "Readiness is actively managed, monitored and embedded into organisational change delivery."
     }
   ],
   "actions": [
     {
-      "id": "REINF_001",
-      "fromStatus": "Emerging",
-      "toStatus": "Developing",
-      "lens": "Strategic Direction & Leadership",
-      "category": "Design",
-      "action": "Define what successful long-term adoption and sustainment will look like.",
-      "outcomeIds": [
-        "REINF_O1"
-      ],
-      "readinessScore": 1
+      "id": "OCR_001",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "Recognise that organisational readiness will influence the success of the change.",
+      "outcomeIds": ["OCR_O1"],
+      "readinessScore": 0
     },
     {
-      "id": "REINF_002",
-      "fromStatus": "Emerging",
-      "toStatus": "Developing",
+      "id": "OCR_002",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
       "lens": "Strategic Direction & Leadership",
-      "category": "Measurement & Evaluation",
-      "action": "Identify indicators that will demonstrate whether the change is being sustained.",
-      "outcomeIds": [
-        "REINF_O1"
-      ],
-      "readinessScore": 1
+      "category": "Engagement",
+      "action": "Begin discussions with leaders regarding the organisation's ability to absorb and support the change.",
+      "outcomeIds": ["OCR_O1"],
+      "readinessScore": 0
     },
     {
-      "id": "REINF_003",
-      "fromStatus": "Emerging",
-      "toStatus": "Developing",
+      "id": "OCR_003",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "Explore stakeholder perceptions of preparedness, capacity and support requirements.",
+      "outcomeIds": ["OCR_O1"],
+      "readinessScore": 0
+    },
+    {
+      "id": "OCR_004",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Analysis & Insight",
+      "category": "Analysis & Insight",
+      "action": "Identify high-level organisational factors that may support or hinder the change.",
+      "outcomeIds": ["OCR_O1"],
+      "readinessScore": 0
+    },
+    {
+      "id": "OCR_005",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
-      "action": "Assign ownership and accountability for reinforcement activities.",
-      "outcomeIds": [
-        "REINF_O1"
-      ],
+      "action": "Secure initial agreement that organisational readiness will be assessed and managed throughout the change lifecycle.",
+      "outcomeIds": ["OCR_O1"],
+      "readinessScore": 0
+    },
+    {
+      "id": "OCR_006",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Communication",
+      "category": "Communication",
+      "action": "Begin raising awareness of organisational readiness considerations and expectations.",
+      "outcomeIds": ["OCR_O1"],
+      "readinessScore": 0
+    },
+    {
+      "id": "OCR_007",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Analysis & Insight",
+      "category": "Analysis & Insight",
+      "action": "Review lessons learned from previous organisational changes relating to readiness and preparedness.",
+      "outcomeIds": ["OCR_O1"],
+      "readinessScore": 0
+    },
+    {
+      "id": "OCR_008",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "Identify potential readiness risks, constraints and competing organisational priorities.",
+      "outcomeIds": ["OCR_O1"],
+      "readinessScore": 0
+    },
+    {
+      "id": "OCR_009",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "Conduct a structured organisational readiness assessment.",
+      "outcomeIds": ["OCR_O1"],
       "readinessScore": 1
     },
     {
-      "id": "REINF_004",
+      "id": "OCR_010",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
-      "lens": "Planning & Measurement",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "Assess organisational capacity, workload pressures and competing priorities.",
+      "outcomeIds": ["OCR_O1"],
+      "readinessScore": 1
+    },
+    {
+      "id": "OCR_011",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "Assess organisational attitudes towards change, confidence levels and change fatigue.",
+      "outcomeIds": ["OCR_O1"],
+      "readinessScore": 1
+    },
+    {
+      "id": "OCR_012",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Risk",
+      "category": "Measurement & Evaluation",
+      "action": "Define readiness indicators, measures and assessment criteria.",
+      "outcomeIds": ["OCR_O1"],
+      "readinessScore": 1
+    },
+    {
+      "id": "OCR_013",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "Identify organisational readiness strengths, weaknesses, risks and barriers.",
+      "outcomeIds": ["OCR_O1"],
+      "readinessScore": 1
+    },
+    {
+      "id": "OCR_014",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "Validate readiness findings with stakeholders, leaders and operational teams.",
+      "outcomeIds": ["OCR_O1"],
+      "readinessScore": 1
+    },
+    {
+      "id": "OCR_015",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Risk",
       "category": "Dependency Management",
-      "action": "Identify dependencies between adoption, benefits, leadership and reinforcement activity.",
-      "outcomeIds": [
-        "REINF_O1"
-      ],
+      "action": "Assess dependencies affecting organisational readiness across programmes, services and operational activities.",
+      "outcomeIds": ["OCR_O1"],
       "readinessScore": 1
     },
     {
-      "id": "REINF_005",
+      "id": "OCR_016",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
-      "lens": "Planning & Measurement",
+      "lens": "Strategic Direction & Leadership",
       "category": "Design",
-      "action": "Develop an initial reinforcement approach aligned to adoption goals.",
-      "outcomeIds": [
-        "REINF_O1"
-      ],
+      "action": "Develop a readiness improvement approach to address identified gaps and barriers.",
+      "outcomeIds": ["OCR_O2"],
       "readinessScore": 1
     },
     {
-      "id": "REINF_006",
+      "id": "OCR_017",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
-      "lens": "People Experience & Culture",
-      "category": "Analysis & Insight",
-      "action": "Identify factors that may help or hinder long-term sustainment of the change.",
-      "outcomeIds": [
-        "REINF_O1"
-      ],
-      "readinessScore": 1
-    },
-    {
-      "id": "REINF_007",
-      "fromStatus": "Emerging",
-      "toStatus": "Developing",
-      "lens": "People Experience & Culture",
-      "category": "Engagement",
-      "action": "Engage stakeholders to understand what support is needed to maintain new behaviours.",
-      "outcomeIds": [
-        "REINF_O1"
-      ],
-      "readinessScore": 1
-    },
-    {
-      "id": "REINF_008",
-      "fromStatus": "Emerging",
-      "toStatus": "Developing",
-      "lens": "People Experience & Culture",
-      "category": "Analysis & Insight",
-      "action": "Identify groups where adoption may be difficult to sustain without additional support.",
-      "outcomeIds": [
-        "REINF_O1"
-      ],
-      "readinessScore": 1
-    },
-    {
-      "id": "REINF_009",
-      "fromStatus": "Emerging",
-      "toStatus": "Developing",
-      "lens": "People Experience & Culture",
-      "category": "Communication",
-      "action": "Communicate expectations regarding sustained adoption and future-state behaviours.",
-      "outcomeIds": [
-        "REINF_O1"
-      ],
-      "readinessScore": 1
-    },
-    {
-      "id": "REINF_010",
-      "fromStatus": "Emerging",
-      "toStatus": "Developing",
-      "lens": "People Experience & Culture",
-      "category": "Measurement & Evaluation",
-      "action": "Establish baseline sustainment and reinforcement measures.",
-      "outcomeIds": [
-        "REINF_O1"
-      ],
-      "readinessScore": 1
-    },
-    {
-      "id": "REINF_011",
-      "fromStatus": "Developing",
-      "toStatus": "Embedding",
-      "lens": "Strategic Direction & Leadership",
-      "category": "Reinforcement",
-      "action": "Ensure leaders and managers visibly reinforce desired behaviours and ways of working.",
-      "outcomeIds": [
-        "REINF_O2"
-      ],
-      "readinessScore": 2
-    },
-    {
-      "id": "REINF_012",
-      "fromStatus": "Developing",
-      "toStatus": "Embedding",
-      "lens": "Strategic Direction & Leadership",
-      "category": "Communication",
-      "action": "Communicate adoption successes, improvements and positive outcomes.",
-      "outcomeIds": [
-        "REINF_O2"
-      ],
-      "readinessScore": 2
-    },
-    {
-      "id": "REINF_013",
-      "fromStatus": "Developing",
-      "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
-      "action": "Review reinforcement indicators and sustainment risks through governance mechanisms.",
-      "outcomeIds": [
-        "REINF_O2"
-      ],
-      "readinessScore": 2
+      "action": "Define ownership and accountability for organisational readiness improvement activities.",
+      "outcomeIds": ["OCR_O2"],
+      "readinessScore": 1
     },
     {
-      "id": "REINF_014",
-      "fromStatus": "Developing",
-      "toStatus": "Embedding",
-      "lens": "Planning & Measurement",
-      "category": "Measurement & Evaluation",
-      "action": "Monitor adoption, behaviour and performance indicators linked to sustained change.",
-      "outcomeIds": [
-        "REINF_O2"
-      ],
-      "readinessScore": 2
+      "id": "OCR_018",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Communication",
+      "category": "Communication",
+      "action": "Communicate organisational readiness findings and improvement priorities.",
+      "outcomeIds": ["OCR_O2"]
     },
     {
-      "id": "REINF_015",
+      "id": "OCR_019",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
-      "lens": "Planning & Measurement",
+      "lens": "Planning & Risk",
       "category": "Design",
-      "action": "Refine reinforcement plans using sustainment data and stakeholder feedback.",
-      "outcomeIds": [
-        "REINF_O2"
-      ],
+      "action": "Develop and implement readiness improvement plans to address identified organisational readiness gaps.",
+      "outcomeIds": ["OCR_O2"],
       "readinessScore": 2
     },
     {
-      "id": "REINF_016",
+      "id": "OCR_020",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
-      "lens": "People Experience & Culture",
-      "category": "Reinforcement",
-      "action": "Recognise and celebrate examples of successful adoption and positive behavioural change.",
-      "outcomeIds": [
-        "REINF_O2"
-      ],
+      "lens": "Planning & Risk",
+      "category": "Risk Management",
+      "action": "Implement actions to address organisational capacity constraints that could affect successful change delivery.",
+      "outcomeIds": ["OCR_O2"],
       "readinessScore": 2
     },
     {
-      "id": "REINF_017",
+      "id": "OCR_021",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Engagement",
-      "action": "Use change networks, champions and managers to reinforce desired behaviours locally.",
-      "outcomeIds": [
-        "REINF_O2"
-      ],
+      "action": "Address change fatigue, competing priorities and organisational barriers that may reduce readiness.",
+      "outcomeIds": ["OCR_O2"],
       "readinessScore": 2
     },
     {
-      "id": "REINF_018",
+      "id": "OCR_022",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Engagement",
+      "action": "Strengthen leadership readiness to support and champion the change effectively.",
+      "outcomeIds": ["OCR_O2"],
+      "readinessScore": 2
+    },
+    {
+      "id": "OCR_023",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Training & Learning",
-      "action": "Provide refresher support where adoption or confidence levels begin to decline.",
-      "outcomeIds": [
-        "REINF_O2"
-      ],
+      "action": "Build manager readiness to coach, support and guide teams through the change.",
+      "outcomeIds": ["OCR_O2"],
       "readinessScore": 2
     },
     {
-      "id": "REINF_019",
+      "id": "OCR_024",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
-      "category": "Communication",
-      "action": "Share success stories, learning and examples of improvements created by the change.",
-      "outcomeIds": [
-        "REINF_O2"
-      ],
+      "category": "Engagement",
+      "action": "Improve local team preparedness through targeted support, engagement and readiness interventions.",
+      "outcomeIds": ["OCR_O2"],
       "readinessScore": 2
     },
     {
-      "id": "REINF_020",
+      "id": "OCR_025",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
-      "lens": "People Experience & Culture",
-      "category": "Measurement & Evaluation",
-      "action": "Gather feedback regarding sustainment challenges and support needs.",
-      "outcomeIds": [
-        "REINF_O2"
-      ],
-      "readinessScore": 2
-    },
-    {
-      "id": "REINF_021",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
-      "lens": "Planning & Measurement",
-      "category": "Measurement & Evaluation",
-      "action": "Monitor sustainment indicators and identify areas where adoption is weakening.",
-      "outcomeIds": [
-        "REINF_O2",
-        "REINF_O3"
-      ],
-      "readinessScore": 3
-    },
-    {
-      "id": "REINF_022",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
-      "lens": "People Experience & Culture",
-      "category": "Engagement",
-      "action": "Target reinforcement activity towards groups showing reductions in adoption or compliance.",
-      "outcomeIds": [
-        "REINF_O2"
-      ],
-      "readinessScore": 3
-    },
-    {
-      "id": "REINF_023",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
-      "lens": "Strategic Direction & Leadership",
-      "category": "Reinforcement",
-      "action": "Ensure leaders consistently model desired behaviours and reinforce expectations.",
-      "outcomeIds": [
-        "REINF_O2",
-        "REINF_O3"
-      ],
-      "readinessScore": 3
-    },
-    {
-      "id": "REINF_024",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
-      "lens": "Governance",
-      "category": "Governance",
-      "action": "Review sustainment performance and improvement actions through governance processes.",
-      "outcomeIds": [
-        "REINF_O3"
-      ],
-      "readinessScore": 3
-    },
-    {
-      "id": "REINF_025",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
-      "lens": "Planning & Measurement",
-      "category": "Analysis & Insight",
-      "action": "Analyse performance, adoption and benefits data to identify sustainment opportunities.",
-      "outcomeIds": [
-        "REINF_O3"
-      ],
-      "readinessScore": 3
-    },
-    {
-      "id": "REINF_026",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
-      "lens": "People Experience & Culture",
-      "category": "Communication",
-      "action": "Demonstrate the ongoing value of the change through evidence and success stories.",
-      "outcomeIds": [
-        "REINF_O3"
-      ],
-      "readinessScore": 3
-    },
-    {
-      "id": "REINF_027",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
-      "lens": "People Experience & Culture",
-      "category": "Reinforcement",
-      "action": "Recognise teams and individuals who consistently demonstrate future-state behaviours.",
-      "outcomeIds": [
-        "REINF_O3"
-      ],
-      "readinessScore": 3
-    },
-    {
-      "id": "REINF_028",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
-      "lens": "People Experience & Culture",
-      "category": "Engagement",
-      "action": "Use stakeholder feedback to improve sustainment and reinforcement activities.",
-      "outcomeIds": [
-        "REINF_O3"
-      ],
-      "readinessScore": 3
-    },
-    {
-      "id": "REINF_029",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
-      "lens": "Planning & Measurement",
-      "category": "Risk Management",
-      "action": "Identify risks that may cause reversion to previous behaviours or ways of working.",
-      "outcomeIds": [
-        "REINF_O3"
-      ],
-      "readinessScore": 3
-    },
-    {
-      "id": "REINF_030",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
-      "lens": "Design",
-      "category": "Design",
-      "action": "Update reinforcement approaches using sustainment insight and lessons learned.",
-      "outcomeIds": [
-        "REINF_O3"
-      ],
-      "readinessScore": 3
-    },
-    {
-      "id": "REINF_031",
-      "fromStatus": "Adopted",
-      "toStatus": "Thriving",
-      "lens": "Governance",
-      "category": "Governance",
-      "action": "Embed reinforcement measures into operational management and performance processes.",
-      "outcomeIds": [
-        "REINF_O3"
-      ],
-      "readinessScore": 4
-    },
-    {
-      "id": "REINF_032",
-      "fromStatus": "Adopted",
-      "toStatus": "Thriving",
       "lens": "Measurement & Evaluation",
       "category": "Measurement & Evaluation",
-      "action": "Monitor long-term behavioural sustainment and continuous improvement outcomes.",
-      "outcomeIds": [
-        "REINF_O3"
-      ],
-      "readinessScore": 4
+      "action": "Monitor organisational readiness indicators and assess progress against readiness objectives.",
+      "outcomeIds": ["OCR_O2", "OCR_O3"],
+      "readinessScore": 2
     },
     {
-      "id": "REINF_033",
-      "fromStatus": "Adopted",
-      "toStatus": "Thriving",
-      "lens": "Design",
-      "category": "Design",
-      "action": "Use organisational learning to improve future reinforcement strategies.",
-      "outcomeIds": [
-        "REINF_O3"
-      ],
-      "readinessScore": 4
+      "id": "OCR_026",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Governance",
+      "category": "Governance",
+      "action": "Review organisational readiness performance and improvement actions through governance processes.",
+      "outcomeIds": ["OCR_O2", "OCR_O3"],
+      "readinessScore": 2
     },
     {
-      "id": "REINF_034",
-      "fromStatus": "Adopted",
-      "toStatus": "Thriving",
-      "lens": "Reinforcement",
-      "category": "Reinforcement",
-      "action": "Embed recognition, feedback and reinforcement practices into organisational culture.",
-      "outcomeIds": [
-        "REINF_O3"
-      ],
-      "readinessScore": 4
+      "id": "OCR_027",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Dependency Management",
+      "category": "Dependency Management",
+      "action": "Align readiness improvement activities with implementation milestones, programme dependencies and delivery schedules.",
+      "outcomeIds": ["OCR_O2"],
+      "readinessScore": 2
     },
     {
-      "id": "REINF_035",
-      "fromStatus": "Adopted",
-      "toStatus": "Thriving",
-      "lens": "People Experience & Culture",
-      "category": "Reinforcement",
-      "action": "Promote continuous improvement and ongoing enhancement of adopted ways of working.",
-      "outcomeIds": [
-        "REINF_O3"
-      ],
-      "readinessScore": 4
+      "id": "OCR_028",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Measurement & Evaluation",
+      "category": "Testing & Validation",
+      "action": "Reassess organisational readiness before key implementation events and delivery milestones.",
+      "outcomeIds": ["OCR_O2", "OCR_O3"],
+      "readinessScore": 2
+    },
+    {
+      "id": "OCR_029",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Measurement & Evaluation",
+      "category": "Measurement & Evaluation",
+      "action": "Measure organisational readiness performance across impacted areas and stakeholder groups.",
+      "outcomeIds": ["OCR_O3"],
+      "readinessScore": 3
+    },
+    {
+      "id": "OCR_030",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Testing & Validation",
+      "category": "Testing & Validation",
+      "action": "Validate organisational readiness before go-live activities and major implementation events.",
+      "outcomeIds": ["OCR_O3"],
+      "readinessScore": 3
+    },
+    {
+      "id": "OCR_031",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "Risk Management",
+      "action": "Address remaining readiness gaps that could affect implementation success.",
+      "outcomeIds": ["OCR_O3"],
+      "readinessScore": 3
     }
   ]
 }

@@ -5,6 +5,7 @@ const AdoptionApp = lazy(() => import('@pages/AdoptionApp'));
 const MaturityApp = lazy(() => import('./legacy/MaturityApp'));
 const CompareApp = lazy(() => import('@pages/CompareApp'));
 const ForceFieldAnalysisApp = lazy(() => import('@pages/ForceFieldAnalysisApp'));
+const ActionLibraryReviewApp = lazy(() => import('@pages/ActionLibraryReviewApp'));
 
 function RouteFallback(): JSX.Element {
   return (
@@ -79,6 +80,18 @@ function HomePage(): JSX.Element {
             Open force field tool <CtaArrow />
           </span>
         </a>
+
+        <a className="tool-card review" href="#/action-library-review">
+          <span className="tool-kicker">Content</span>
+          <h2 className="tool-title">Action Library Review</h2>
+          <p className="tool-desc">
+            Review and refine the default change-management actions behind every component - edit
+            wording, adjust which level an action sits at, and reorder them, then export your review.
+          </p>
+          <span className="tool-cta">
+            Open review tool <CtaArrow />
+          </span>
+        </a>
       </section>
 
       <p className="home-footer">Copyright NHS Digital Adoption</p>
@@ -96,6 +109,7 @@ export default function App(): JSX.Element {
           <Route path="/maturity" element={<MaturityApp />} />
           <Route path="/compare" element={<CompareApp />} />
           <Route path="/force-field-analysis" element={<ForceFieldAnalysisApp />} />
+          <Route path="/action-library-review" element={<ActionLibraryReviewApp />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>

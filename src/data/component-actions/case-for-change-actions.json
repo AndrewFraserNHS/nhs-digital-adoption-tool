@@ -1,5 +1,8 @@
 {
-  "component": { "id": "CASE_FOR_CHANGE", "name": "Case for Change" },
+  "component": {
+    "id": "CASE_FOR_CHANGE",
+    "name": "Case for Change"
+  },
   "outcomes": [
     {
       "id": "CFC_O1",
@@ -25,7 +28,9 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
       "action": "Recognise that a clear rationale and evidence base will be required to explain why change is necessary.",
-      "outcomeIds": ["CFC_O1"],
+      "outcomeIds": [
+        "CFC_O1"
+      ],
       "readinessScore": 0
     },
     {
@@ -35,17 +40,21 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Engagement",
       "action": "Begin discussions with leaders and stakeholders regarding the problems, opportunities or drivers prompting change.",
-      "outcomeIds": ["CFC_O1"],
+      "outcomeIds": [
+        "CFC_O1"
+      ],
       "readinessScore": 0
     },
     {
       "id": "CFC_003",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
-      "lens": "Analysis & Insight",
+      "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
       "action": "Identify high-level issues, challenges, opportunities or risks that may justify change.",
-      "outcomeIds": ["CFC_O1"],
+      "outcomeIds": [
+        "CFC_O1"
+      ],
       "readinessScore": 0
     },
     {
@@ -55,7 +64,9 @@
       "lens": "People Experience & Culture",
       "category": "Engagement",
       "action": "Explore stakeholder perceptions of current challenges, opportunities and improvement needs.",
-      "outcomeIds": ["CFC_O1"],
+      "outcomeIds": [
+        "CFC_O1"
+      ],
       "readinessScore": 0
     },
     {
@@ -65,7 +76,9 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
       "action": "Identify strategic, operational, regulatory or service drivers that may support the need for change.",
-      "outcomeIds": ["CFC_O1"],
+      "outcomeIds": [
+        "CFC_O1"
+      ],
       "readinessScore": 0
     },
     {
@@ -75,27 +88,33 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
       "action": "Gain initial sponsor agreement that a case for change should be developed.",
-      "outcomeIds": ["CFC_O1"],
+      "outcomeIds": [
+        "CFC_O1"
+      ],
       "readinessScore": 0
     },
     {
       "id": "CFC_007",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
-      "lens": "Communication",
+      "lens": "People Experience & Culture",
       "category": "Communication",
       "action": "Begin raising awareness that change may be required and that evidence is being gathered.",
-      "outcomeIds": ["CFC_O1"],
+      "outcomeIds": [
+        "CFC_O1"
+      ],
       "readinessScore": 0
     },
     {
       "id": "CFC_008",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
-      "lens": "Analysis & Insight",
+      "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
       "action": "Review previous organisational experience, lessons learned and available evidence relevant to the proposed change.",
-      "outcomeIds": ["CFC_O1"],
+      "outcomeIds": [
+        "CFC_O1"
+      ],
       "readinessScore": 0
     },
     {
@@ -105,7 +124,9 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
       "action": "Define and document the problem, opportunity, risk or requirement driving the need for change.",
-      "outcomeIds": ["CFC_O1"],
+      "outcomeIds": [
+        "CFC_O1"
+      ],
       "readinessScore": 1
     },
     {
@@ -115,7 +136,9 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
       "action": "Gather quantitative and qualitative evidence demonstrating the impact of the current situation.",
-      "outcomeIds": ["CFC_O1"],
+      "outcomeIds": [
+        "CFC_O1"
+      ],
       "readinessScore": 1
     },
     {
@@ -125,7 +148,9 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
       "action": "Assess alignment between the proposed change and organisational objectives, strategies and priorities.",
-      "outcomeIds": ["CFC_O1"],
+      "outcomeIds": [
+        "CFC_O1"
+      ],
       "readinessScore": 1
     },
     {
@@ -135,7 +160,10 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Design",
       "action": "Develop a structured case for change narrative explaining why change is required and why action is needed now.",
-      "outcomeIds": ["CFC_O1", "CFC_O2"],
+      "outcomeIds": [
+        "CFC_O1",
+        "CFC_O2"
+      ],
       "readinessScore": 1
     },
     {
@@ -145,7 +173,9 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
       "action": "Identify and secure sponsors and senior leaders who will champion the case for change.",
-      "outcomeIds": ["CFC_O2"],
+      "outcomeIds": [
+        "CFC_O2"
+      ],
       "readinessScore": 1
     },
     {
@@ -155,17 +185,21 @@
       "lens": "People Experience & Culture",
       "category": "Engagement",
       "action": "Conduct structured engagement activities to understand stakeholder experiences of current challenges and opportunities.",
-      "outcomeIds": ["CFC_O1"],
+      "outcomeIds": [
+        "CFC_O1"
+      ],
       "readinessScore": 1
     },
     {
       "id": "CFC_015",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
-      "lens": "Testing & Validation",
+      "lens": "People Experience & Culture",
       "category": "Testing & Validation",
       "action": "Validate whether stakeholders recognise, understand and agree with the need for change.",
-      "outcomeIds": ["CFC_O2"],
+      "outcomeIds": [
+        "CFC_O2"
+      ],
       "readinessScore": 1
     },
     {
@@ -175,7 +209,10 @@
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
       "action": "Gather local examples and supporting evidence that illustrate the impact of maintaining the current state.",
-      "outcomeIds": ["CFC_O1", "CFC_O2"],
+      "outcomeIds": [
+        "CFC_O1",
+        "CFC_O2"
+      ],
       "readinessScore": 1
     },
     {
@@ -185,7 +222,9 @@
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
       "action": "Assess misconceptions, assumptions and conflicting perceptions relating to the need for change.",
-      "outcomeIds": ["CFC_O2"],
+      "outcomeIds": [
+        "CFC_O2"
+      ],
       "readinessScore": 1
     },
     {
@@ -195,7 +234,10 @@
       "lens": "People Experience & Culture",
       "category": "Design",
       "action": "Refine and strengthen the case for change using evidence, stakeholder insight and feedback.",
-      "outcomeIds": ["CFC_O1", "CFC_O2"],
+      "outcomeIds": [
+        "CFC_O1",
+        "CFC_O2"
+      ],
       "readinessScore": 1
     },
     {
@@ -205,7 +247,10 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
       "action": "Obtain formal leadership and governance endorsement of the case for change.",
-      "outcomeIds": ["CFC_O1", "CFC_O3"],
+      "outcomeIds": [
+        "CFC_O1",
+        "CFC_O3"
+      ],
       "readinessScore": 2
     },
     {
@@ -215,7 +260,9 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Communication",
       "action": "Develop clear and consistent messaging explaining why change is necessary.",
-      "outcomeIds": ["CFC_O2"],
+      "outcomeIds": [
+        "CFC_O2"
+      ],
       "readinessScore": 2
     },
     {
@@ -225,7 +272,9 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
       "action": "Embed the case for change in programme governance, reporting and decision-making processes.",
-      "outcomeIds": ["CFC_O3"],
+      "outcomeIds": [
+        "CFC_O3"
+      ],
       "readinessScore": 2
     },
     {
@@ -235,7 +284,10 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Measurement & Evaluation",
       "action": "Establish baseline measures that evidence the current problem or opportunity.",
-      "outcomeIds": ["CFC_O1", "CFC_O3"],
+      "outcomeIds": [
+        "CFC_O1",
+        "CFC_O3"
+      ],
       "readinessScore": 2
     },
     {
@@ -245,7 +297,9 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Measurement & Evaluation",
       "action": "Define how evidence supporting the case for change will be reviewed and maintained throughout the change lifecycle.",
-      "outcomeIds": ["CFC_O3"],
+      "outcomeIds": [
+        "CFC_O3"
+      ],
       "readinessScore": 2
     },
     {
@@ -255,7 +309,9 @@
       "lens": "People Experience & Culture",
       "category": "Communication",
       "action": "Communicate the case for change through engagement and communication activities.",
-      "outcomeIds": ["CFC_O2"],
+      "outcomeIds": [
+        "CFC_O2"
+      ],
       "readinessScore": 2
     },
     {
@@ -265,7 +321,9 @@
       "lens": "People Experience & Culture",
       "category": "Testing & Validation",
       "action": "Validate stakeholder understanding of the rationale for change.",
-      "outcomeIds": ["CFC_O2"],
+      "outcomeIds": [
+        "CFC_O2"
+      ],
       "readinessScore": 2
     },
     {
@@ -275,7 +333,9 @@
       "lens": "People Experience & Culture",
       "category": "Engagement",
       "action": "Address concerns, challenges and areas of misunderstanding relating to the need for change.",
-      "outcomeIds": ["CFC_O2"],
+      "outcomeIds": [
+        "CFC_O2"
+      ],
       "readinessScore": 2
     },
     {
@@ -285,7 +345,10 @@
       "lens": "People Experience & Culture",
       "category": "Communication",
       "action": "Use local examples and evidence to illustrate the importance of the change.",
-      "outcomeIds": ["CFC_O1", "CFC_O2"],
+      "outcomeIds": [
+        "CFC_O1",
+        "CFC_O2"
+      ],
       "readinessScore": 2
     },
     {
@@ -295,7 +358,10 @@
       "lens": "People Experience & Culture",
       "category": "Measurement & Evaluation",
       "action": "Monitor stakeholder sentiment regarding the case for change.",
-      "outcomeIds": ["CFC_O2", "CFC_O3"],
+      "outcomeIds": [
+        "CFC_O2",
+        "CFC_O3"
+      ],
       "readinessScore": 2
     },
     {
@@ -305,7 +371,10 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Reinforcement",
       "action": "Ensure leaders consistently reinforce the rationale for change.",
-      "outcomeIds": ["CFC_O2", "CFC_O3"],
+      "outcomeIds": [
+        "CFC_O2",
+        "CFC_O3"
+      ],
       "readinessScore": 3
     },
     {
@@ -315,7 +384,9 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
       "action": "Use governance forums to review whether the original drivers for change remain valid.",
-      "outcomeIds": ["CFC_O3"],
+      "outcomeIds": [
+        "CFC_O3"
+      ],
       "readinessScore": 3
     },
     {
@@ -325,7 +396,9 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Measurement & Evaluation",
       "action": "Use organisational performance, service and outcome measures to support the case for change.",
-      "outcomeIds": ["CFC_O3"],
+      "outcomeIds": [
+        "CFC_O3"
+      ],
       "readinessScore": 3
     },
     {
@@ -335,7 +408,9 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
       "action": "Use the case for change to inform programme decisions, priorities and resource allocation.",
-      "outcomeIds": ["CFC_O3"],
+      "outcomeIds": [
+        "CFC_O3"
+      ],
       "readinessScore": 3
     },
     {
@@ -345,7 +420,9 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Risk Management",
       "action": "Review assumptions, emerging risks and external influences that may affect the credibility of the case for change.",
-      "outcomeIds": ["CFC_O3"],
+      "outcomeIds": [
+        "CFC_O3"
+      ],
       "readinessScore": 3
     },
     {
@@ -355,7 +432,10 @@
       "lens": "People Experience & Culture",
       "category": "Communication",
       "action": "Share evidence and examples demonstrating the impact of addressing the original problem or opportunity.",
-      "outcomeIds": ["CFC_O2", "CFC_O3"],
+      "outcomeIds": [
+        "CFC_O2",
+        "CFC_O3"
+      ],
       "readinessScore": 3
     },
     {
@@ -365,7 +445,9 @@
       "lens": "People Experience & Culture",
       "category": "Measurement & Evaluation",
       "action": "Evaluate stakeholder acceptance of the ongoing need for change.",
-      "outcomeIds": ["CFC_O2"],
+      "outcomeIds": [
+        "CFC_O2"
+      ],
       "readinessScore": 3
     },
     {
@@ -375,7 +457,9 @@
       "lens": "People Experience & Culture",
       "category": "Communication",
       "action": "Target communication and engagement activity where understanding remains low.",
-      "outcomeIds": ["CFC_O2"],
+      "outcomeIds": [
+        "CFC_O2"
+      ],
       "readinessScore": 3
     },
     {
@@ -385,7 +469,10 @@
       "lens": "People Experience & Culture",
       "category": "Design",
       "action": "Refine case for change messaging using stakeholder feedback and insight.",
-      "outcomeIds": ["CFC_O2", "CFC_O3"],
+      "outcomeIds": [
+        "CFC_O2",
+        "CFC_O3"
+      ],
       "readinessScore": 3
     },
     {
@@ -395,7 +482,9 @@
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
       "action": "Ensure change champions can confidently explain and reinforce the case for change.",
-      "outcomeIds": ["CFC_O2"],
+      "outcomeIds": [
+        "CFC_O2"
+      ],
       "readinessScore": 3
     },
     {
@@ -405,7 +494,9 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Measurement & Evaluation",
       "action": "Review the case for change periodically against organisational priorities and external drivers.",
-      "outcomeIds": ["CFC_O3"],
+      "outcomeIds": [
+        "CFC_O3"
+      ],
       "readinessScore": 4
     },
     {
@@ -415,7 +506,9 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Measurement & Evaluation",
       "action": "Use benefits and outcomes data to validate the continued relevance of the case for change.",
-      "outcomeIds": ["CFC_O3"],
+      "outcomeIds": [
+        "CFC_O3"
+      ],
       "readinessScore": 4
     },
     {
@@ -425,7 +518,9 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
       "action": "Embed the rationale for change into organisational planning and continuous improvement activities.",
-      "outcomeIds": ["CFC_O3"],
+      "outcomeIds": [
+        "CFC_O3"
+      ],
       "readinessScore": 4
     },
     {
@@ -435,7 +530,9 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Design",
       "action": "Use organisational learning and evidence to evolve the case for change where appropriate.",
-      "outcomeIds": ["CFC_O3"],
+      "outcomeIds": [
+        "CFC_O3"
+      ],
       "readinessScore": 4
     },
     {
@@ -445,7 +542,10 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Reinforcement",
       "action": "Ensure leaders continue to communicate and reinforce the rationale for change during routine business activity.",
-      "outcomeIds": ["CFC_O2", "CFC_O3"],
+      "outcomeIds": [
+        "CFC_O2",
+        "CFC_O3"
+      ],
       "readinessScore": 4
     },
     {
@@ -455,7 +555,10 @@
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
       "action": "Capture and share success stories that validate the original need for change.",
-      "outcomeIds": ["CFC_O2", "CFC_O3"],
+      "outcomeIds": [
+        "CFC_O2",
+        "CFC_O3"
+      ],
       "readinessScore": 4
     },
     {
@@ -465,7 +568,9 @@
       "lens": "People Experience & Culture",
       "category": "Measurement & Evaluation",
       "action": "Measure stakeholder belief that the change remains necessary and valuable.",
-      "outcomeIds": ["CFC_O2"],
+      "outcomeIds": [
+        "CFC_O2"
+      ],
       "readinessScore": 4
     },
     {
@@ -475,7 +580,9 @@
       "lens": "People Experience & Culture",
       "category": "Communication",
       "action": "Refresh messaging to reflect emerging evidence, learning and organisational priorities.",
-      "outcomeIds": ["CFC_O3"],
+      "outcomeIds": [
+        "CFC_O3"
+      ],
       "readinessScore": 4
     },
     {
@@ -485,7 +592,9 @@
       "lens": "People Experience & Culture",
       "category": "Engagement",
       "action": "Maintain ongoing engagement activities to sustain awareness of the reasons for change.",
-      "outcomeIds": ["CFC_O2"],
+      "outcomeIds": [
+        "CFC_O2"
+      ],
       "readinessScore": 4
     },
     {
@@ -495,7 +604,9 @@
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
       "action": "Encourage teams to identify opportunities to build on the original case for change.",
-      "outcomeIds": ["CFC_O3"],
+      "outcomeIds": [
+        "CFC_O3"
+      ],
       "readinessScore": 4
     }
   ]

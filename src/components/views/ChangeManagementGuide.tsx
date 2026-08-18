@@ -1,14 +1,20 @@
 import { JSX, useState, type ReactNode } from 'react';
-import { getComponentById } from '@data/components';
+import { getComponentById, type AssessmentComponent } from '@data/components';
 import {
   resolveGuidanceLinksForAdoptionComponent,
   type LinkOverrides,
   type MaturityGuidanceTarget,
 } from '@data/maturity-guidance-links';
 import { KEY_QUESTIONS } from '@data/key-questions';
+import { OVERARCHING_PHASES } from '@data/cst';
+import { getComponentObjectiveCounts } from '@lib/adoptionMetrics';
+import type { AdoptionStore, DraftEntry } from '@lib/adoptionState';
 
 export interface ChangeManagementGuideProps {
   onComponentClick: (componentId: string) => void;
+  components: AssessmentComponent[];
+  store: AdoptionStore;
+  getEntry: (componentId: string, lens: string) => DraftEntry;
   guidanceTarget?: MaturityGuidanceTarget;
   linkOverrides?: LinkOverrides;
   darkMode?: boolean;
@@ -144,7 +150,7 @@ const CM_RESPONSIBILITIES = [
   },
 ];
 
-type GuideSectionId = 'questions' | 'phases' | 'role';
+type GuideSectionId = 'questions' | 'phases' | 'role' | 'hierarchy';
 
 function AccordionSection({
   title,
@@ -200,6 +206,9 @@ function AccordionSection({
 
 export function ChangeManagementGuide({
   onComponentClick,
+  components,
+  store,
+  getEntry,
   guidanceTarget = 'Default',
   linkOverrides,
   darkMode = false,
@@ -210,6 +219,15 @@ export function ChangeManagementGuide({
   const toggleSection = (id: GuideSectionId) => {
     setExpandedSection((prev) => (prev === id ? null : id));
   };
+
+  const componentsByPhase = components.reduce<Record<number, AssessmentComponent[]>>(
+    (byPhase, component) => {
+      byPhase[component.phase] = byPhase[component.phase] || [];
+      byPhase[component.phase].push(component);
+      return byPhase;
+    },
+    {}
+  );
 
   const togglePhase = (phase: number) => {
     setExpandedPhase((prev) => (prev === phase ? null : phase));
@@ -457,6 +475,100 @@ export function ChangeManagementGuide({
               >
                 {r.body}
               </p>
+            </div>
+          ))}
+        </div>
+      </AccordionSection>
+
+      {/* Programme Hierarchy */}
+      <AccordionSection
+        title="Programme Hierarchy"
+        description={`Your programme has ${components.length} components, each viewed through one or more lenses. A component is a change topic you assess and track; a lens is the perspective used to assess it (e.g. leadership, risk, capability). Click a component to jump to its assessment.`}
+        isOpen={expandedSection === 'hierarchy'}
+        onToggle={() => toggleSection('hierarchy')}
+        darkMode={darkMode}
+      >
+        <div className="space-y-5">
+          {OVERARCHING_PHASES.filter((phase) => componentsByPhase[phase]?.length).map((phase) => (
+            <div key={`phase-group-${phase}`} className="space-y-3">
+              <h4
+                className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}
+              >
+                Phase {phase}
+              </h4>
+              <div className="space-y-2">
+                {componentsByPhase[phase].map((component) => {
+                  const lensActionCounts = component.lenses.reduce(
+                    (totals, lens) => {
+                      const entry = getEntry(component.id, lens);
+                      return {
+                        total: totals.total + entry.actions.length,
+                        completed:
+                          totals.completed +
+                          entry.actions.filter((action) => action.status === 'Completed').length,
+                      };
+                    },
+                    { total: 0, completed: 0 }
+                  );
+                  const objectiveCounts = getComponentObjectiveCounts(
+                    store,
+                    component.id,
+                    getEntry
+                  );
+
+                  return (
+                    <button
+                      key={component.id}
+                      type="button"
+                      data-testid={`cst-component-button-${component.id}`}
+                      onClick={() => onComponentClick(component.id)}
+                      className={`w-full text-left rounded-md border p-3 transition-colors ${darkMode ? 'border-slate-700 bg-slate-900 hover:border-blue-400 hover:bg-slate-800' : 'border-slate-200 hover:border-blue-300 hover:bg-blue-50/40'}`}
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <span
+                          className={`font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+                        >
+                          {component.label}
+                        </span>
+                        <span
+                          className={`text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
+                        >
+                          Target {component.target}
+                        </span>
+                      </div>
+                      <div className="mt-2 flex flex-wrap gap-1.5">
+                        {component.lenses.map((lens) => {
+                          const entry = getEntry(component.id, lens);
+                          return (
+                            <span
+                              key={lens}
+                              className={`text-xs px-2 py-1 rounded-full border ${
+                                entry.score >= component.target
+                                  ? darkMode
+                                    ? 'border-green-500/40 bg-green-500/15 text-green-200'
+                                    : 'bg-green-50 border-green-200 text-green-800'
+                                  : entry.score > 0
+                                    ? darkMode
+                                      ? 'border-amber-500/40 bg-amber-500/15 text-amber-200'
+                                      : 'bg-amber-50 border-amber-200 text-amber-800'
+                                    : darkMode
+                                      ? 'border-slate-600 bg-slate-800 text-slate-300'
+                                      : 'bg-slate-100 border-slate-200 text-slate-600'
+                              }`}
+                            >
+                              {lens}: {entry.score}/{component.target}
+                            </span>
+                          );
+                        })}
+                      </div>
+                      <p className={`mt-2 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
+                        Lens actions: {lensActionCounts.completed}/{lensActionCounts.total} complete
+                        · Outcomes: {objectiveCounts.completed}/{objectiveCounts.total} complete
+                      </p>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           ))}
         </div>

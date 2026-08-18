@@ -1,5 +1,8 @@
 {
-  "component": { "id": "RESISTANCE_MANAGEMENT", "name": "Resistance Management" },
+  "component": {
+    "id": "RESISTANCE_MANAGEMENT",
+    "name": "Resistance Management"
+  },
   "outcomes": [
     {
       "id": "RES_O1",
@@ -25,7 +28,9 @@
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
       "action": "Recognise that resistance is a normal response to change and may need to be actively managed.",
-      "outcomeIds": ["RES_O1"],
+      "outcomeIds": [
+        "RES_O1"
+      ],
       "readinessScore": 0
     },
     {
@@ -35,17 +40,21 @@
       "lens": "People Experience & Culture",
       "category": "Engagement",
       "action": "Begin discussing potential concerns and reactions to the change with stakeholders and leaders.",
-      "outcomeIds": ["RES_O1"],
+      "outcomeIds": [
+        "RES_O1"
+      ],
       "readinessScore": 0
     },
     {
       "id": "RES_003",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
-      "lens": "Analysis & Insight",
+      "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
       "action": "Identify stakeholder groups where resistance may emerge during the change.",
-      "outcomeIds": ["RES_O1"],
+      "outcomeIds": [
+        "RES_O1"
+      ],
       "readinessScore": 0
     },
     {
@@ -55,47 +64,57 @@
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
       "action": "Explore previous organisational experiences that may influence reactions to the change.",
-      "outcomeIds": ["RES_O1"],
+      "outcomeIds": [
+        "RES_O1"
+      ],
       "readinessScore": 0
     },
     {
       "id": "RES_005",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
-      "lens": "Planning & Risk",
+      "lens": "Skills & Behaviour",
       "category": "Analysis & Insight",
       "action": "Identify high-level risks that resistance could present to successful implementation.",
-      "outcomeIds": ["RES_O1"],
+      "outcomeIds": [
+        "RES_O1"
+      ],
       "readinessScore": 0
     },
     {
       "id": "RES_006",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
-      "lens": "Strategic Direction & Leadership",
+      "lens": "Skills & Behaviour",
       "category": "Governance",
       "action": "Gain initial sponsor and leadership agreement that resistance management activities may be required.",
-      "outcomeIds": ["RES_O1"],
+      "outcomeIds": [
+        "RES_O1"
+      ],
       "readinessScore": 0
     },
     {
       "id": "RES_007",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
-      "lens": "Communication",
+      "lens": "People Experience & Culture",
       "category": "Communication",
       "action": "Begin raising awareness amongst leaders and managers about the role of resistance management in successful change.",
-      "outcomeIds": ["RES_O1"],
+      "outcomeIds": [
+        "RES_O1"
+      ],
       "readinessScore": 0
     },
     {
       "id": "RES_008",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
-      "lens": "Analysis & Insight",
+      "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
       "action": "Review lessons learned from previous changes relating to resistance, concern and stakeholder opposition.",
-      "outcomeIds": ["RES_O1"],
+      "outcomeIds": [
+        "RES_O1"
+      ],
       "readinessScore": 0
     },
     {
@@ -105,7 +124,9 @@
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
       "action": "Identify and document potential sources of resistance across stakeholder groups, teams and impacted areas.",
-      "outcomeIds": ["RES_O1"],
+      "outcomeIds": [
+        "RES_O1"
+      ],
       "readinessScore": 1
     },
     {
@@ -115,7 +136,9 @@
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
       "action": "Assess causes, drivers and contributing factors likely to generate resistance.",
-      "outcomeIds": ["RES_O1"],
+      "outcomeIds": [
+        "RES_O1"
+      ],
       "readinessScore": 1
     },
     {
@@ -125,7 +148,9 @@
       "lens": "People Experience & Culture",
       "category": "Engagement",
       "action": "Conduct structured engagement to understand concerns, apprehensions and barriers to supporting the change.",
-      "outcomeIds": ["RES_O1"],
+      "outcomeIds": [
+        "RES_O1"
+      ],
       "readinessScore": 1
     },
     {
@@ -135,57 +160,70 @@
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
       "action": "Analyse restraining forces and resistance factors using recognised assessment approaches.",
-      "outcomeIds": ["RES_O1"],
+      "outcomeIds": [
+        "RES_O1"
+      ],
       "readinessScore": 1
     },
     {
       "id": "RES_013",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
-      "lens": "Planning & Risk",
+      "lens": "Skills & Behaviour",
       "category": "Risk Management",
       "action": "Assess likelihood, impact and priority of resistance risks affecting implementation and adoption.",
-      "outcomeIds": ["RES_O1", "RES_O2"],
+      "outcomeIds": [
+        "RES_O1",
+        "RES_O2"
+      ],
       "readinessScore": 1
     },
     {
       "id": "RES_014",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
-      "lens": "Strategic Direction & Leadership",
+      "lens": "Skills & Behaviour",
       "category": "Design",
       "action": "Develop a structured resistance management approach based on identified resistance drivers.",
-      "outcomeIds": ["RES_O2"],
+      "outcomeIds": [
+        "RES_O2"
+      ],
       "readinessScore": 1
     },
     {
       "id": "RES_015",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
-      "lens": "Strategic Direction & Leadership",
+      "lens": "Skills & Behaviour",
       "category": "Governance",
       "action": "Define ownership, accountabilities and escalation arrangements for resistance management.",
-      "outcomeIds": ["RES_O2"],
+      "outcomeIds": [
+        "RES_O2"
+      ],
       "readinessScore": 1
     },
     {
       "id": "RES_016",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
-      "lens": "Planning & Risk",
+      "lens": "Skills & Behaviour",
       "category": "Design",
       "action": "Develop preventative interventions intended to reduce the likelihood and impact of resistance.",
-      "outcomeIds": ["RES_O2"],
+      "outcomeIds": [
+        "RES_O2"
+      ],
       "readinessScore": 1
     },
     {
       "id": "RES_017",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
-      "lens": "Planning & Risk",
+      "lens": "Skills & Behaviour",
       "category": "Dependency Management",
       "action": "Assess dependencies between resistance management and engagement, communication, learning and sponsorship activities.",
-      "outcomeIds": ["RES_O2"],
+      "outcomeIds": [
+        "RES_O2"
+      ],
       "readinessScore": 1
     },
     {
@@ -195,7 +233,9 @@
       "lens": "People Experience & Culture",
       "category": "Measurement & Evaluation",
       "action": "Define measures and indicators that will be used to identify, track and monitor resistance.",
-      "outcomeIds": ["RES_O2"],
+      "outcomeIds": [
+        "RES_O2"
+      ],
       "readinessScore": 1
     },
     {
@@ -205,7 +245,10 @@
       "lens": "People Experience & Culture",
       "category": "Engagement",
       "action": "Establish mechanisms for identifying and escalating emerging resistance.",
-      "outcomeIds": ["RES_O2", "RES_O3"],
+      "outcomeIds": [
+        "RES_O2",
+        "RES_O3"
+      ],
       "readinessScore": 2
     },
     {
@@ -215,17 +258,22 @@
       "lens": "People Experience & Culture",
       "category": "Engagement",
       "action": "Use managers, change agents and change champions to gather insight into emerging concerns and resistance.",
-      "outcomeIds": ["RES_O3"],
+      "outcomeIds": [
+        "RES_O3"
+      ],
       "readinessScore": 2
     },
     {
       "id": "RES_021",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
-      "lens": "Communication",
+      "lens": "People Experience & Culture",
       "category": "Communication",
       "action": "Address misconceptions, rumours and misinformation through targeted communication activities.",
-      "outcomeIds": ["RES_O2", "RES_O3"],
+      "outcomeIds": [
+        "RES_O2",
+        "RES_O3"
+      ],
       "readinessScore": 2
     },
     {
@@ -235,47 +283,59 @@
       "lens": "People Experience & Culture",
       "category": "Engagement",
       "action": "Hold structured conversations with impacted groups to explore concerns and identify potential solutions.",
-      "outcomeIds": ["RES_O2", "RES_O3"],
+      "outcomeIds": [
+        "RES_O2",
+        "RES_O3"
+      ],
       "readinessScore": 2
     },
     {
       "id": "RES_023",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
-      "lens": "Strategic Direction & Leadership",
+      "lens": "Skills & Behaviour",
       "category": "Training & Learning",
       "action": "Prepare leaders and managers to identify, understand and respond to resistance effectively.",
-      "outcomeIds": ["RES_O2"],
+      "outcomeIds": [
+        "RES_O2"
+      ],
       "readinessScore": 2
     },
     {
       "id": "RES_024",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
-      "lens": "Planning & Risk",
+      "lens": "Skills & Behaviour",
       "category": "Risk Management",
       "action": "Integrate significant resistance themes into change risk management processes.",
-      "outcomeIds": ["RES_O2", "RES_O3"],
+      "outcomeIds": [
+        "RES_O2",
+        "RES_O3"
+      ],
       "readinessScore": 2
     },
     {
       "id": "RES_025",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
-      "lens": "Planning & Risk",
+      "lens": "Skills & Behaviour",
       "category": "Measurement & Evaluation",
       "action": "Monitor indicators of resistance across stakeholder groups and impacted areas.",
-      "outcomeIds": ["RES_O3"],
+      "outcomeIds": [
+        "RES_O3"
+      ],
       "readinessScore": 2
     },
     {
       "id": "RES_026",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
-      "lens": "Strategic Direction & Leadership",
+      "lens": "Skills & Behaviour",
       "category": "Governance",
       "action": "Review resistance themes and mitigation actions through governance forums.",
-      "outcomeIds": ["RES_O3"],
+      "outcomeIds": [
+        "RES_O3"
+      ],
       "readinessScore": 2
     },
     {
@@ -285,17 +345,23 @@
       "lens": "People Experience & Culture",
       "category": "Communication",
       "action": "Provide tailored responses and messaging for stakeholder groups showing elevated resistance.",
-      "outcomeIds": ["RES_O2", "RES_O3"],
+      "outcomeIds": [
+        "RES_O2",
+        "RES_O3"
+      ],
       "readinessScore": 2
     },
     {
       "id": "RES_028",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
-      "lens": "Design",
+      "lens": "Skills & Behaviour",
       "category": "Design",
       "action": "Refine resistance management interventions using stakeholder insight and feedback.",
-      "outcomeIds": ["RES_O2", "RES_O3"],
+      "outcomeIds": [
+        "RES_O2",
+        "RES_O3"
+      ],
       "readinessScore": 2
     },
     {
@@ -305,7 +371,9 @@
       "lens": "People Experience & Culture",
       "category": "Measurement & Evaluation",
       "action": "Monitor trends in stakeholder sentiment, concerns and resistance levels.",
-      "outcomeIds": ["RES_O3"],
+      "outcomeIds": [
+        "RES_O3"
+      ],
       "readinessScore": 3
     },
     {
@@ -315,7 +383,9 @@
       "lens": "People Experience & Culture",
       "category": "Engagement",
       "action": "Implement targeted interventions for stakeholder groups with high levels of resistance.",
-      "outcomeIds": ["RES_O3"],
+      "outcomeIds": [
+        "RES_O3"
+      ],
       "readinessScore": 3
     },
     {
@@ -325,37 +395,46 @@
       "lens": "People Experience & Culture",
       "category": "Communication",
       "action": "Adapt communication and engagement approaches in response to resistance trends.",
-      "outcomeIds": ["RES_O3"],
+      "outcomeIds": [
+        "RES_O3"
+      ],
       "readinessScore": 3
     },
     {
       "id": "RES_032",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
-      "lens": "Strategic Direction & Leadership",
+      "lens": "Skills & Behaviour",
       "category": "Reinforcement",
       "action": "Use visible leadership support to reinforce desired behaviours and address resistance.",
-      "outcomeIds": ["RES_O3"],
+      "outcomeIds": [
+        "RES_O3"
+      ],
       "readinessScore": 3
     },
     {
       "id": "RES_033",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
-      "lens": "Planning & Risk",
+      "lens": "Skills & Behaviour",
       "category": "Measurement & Evaluation",
       "action": "Assess the effectiveness of resistance management interventions.",
-      "outcomeIds": ["RES_O2", "RES_O3"],
+      "outcomeIds": [
+        "RES_O2",
+        "RES_O3"
+      ],
       "readinessScore": 3
     },
     {
       "id": "RES_034",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
-      "lens": "Planning & Risk",
+      "lens": "Skills & Behaviour",
       "category": "Risk Management",
       "action": "Review resistance-related risks and update mitigations where required.",
-      "outcomeIds": ["RES_O3"],
+      "outcomeIds": [
+        "RES_O3"
+      ],
       "readinessScore": 3
     },
     {
@@ -365,37 +444,45 @@
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
       "action": "Recognise and highlight examples of positive adoption and support for the change.",
-      "outcomeIds": ["RES_O3"],
+      "outcomeIds": [
+        "RES_O3"
+      ],
       "readinessScore": 3
     },
     {
       "id": "RES_036",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
-      "lens": "Engagement",
+      "lens": "People Experience & Culture",
       "category": "Engagement",
       "action": "Use feedback channels to identify unresolved concerns before they become entrenched resistance.",
-      "outcomeIds": ["RES_O3"],
+      "outcomeIds": [
+        "RES_O3"
+      ],
       "readinessScore": 3
     },
     {
       "id": "RES_037",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
-      "lens": "Governance",
+      "lens": "Skills & Behaviour",
       "category": "Governance",
       "action": "Review resistance themes and organisational responses through governance and leadership forums.",
-      "outcomeIds": ["RES_O3"],
+      "outcomeIds": [
+        "RES_O3"
+      ],
       "readinessScore": 3
     },
     {
       "id": "RES_038",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
-      "lens": "Design",
+      "lens": "Skills & Behaviour",
       "category": "Design",
       "action": "Refine resistance management plans based on implementation experience and lessons learned.",
-      "outcomeIds": ["RES_O3"],
+      "outcomeIds": [
+        "RES_O3"
+      ],
       "readinessScore": 3
     },
     {
@@ -405,27 +492,33 @@
       "lens": "People Experience & Culture",
       "category": "Measurement & Evaluation",
       "action": "Measure long-term trends in support, advocacy, confidence and resistance.",
-      "outcomeIds": ["RES_O3"],
+      "outcomeIds": [
+        "RES_O3"
+      ],
       "readinessScore": 4
     },
     {
       "id": "RES_040",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
-      "lens": "Strategic Direction & Leadership",
+      "lens": "Skills & Behaviour",
       "category": "Design",
       "action": "Use organisational learning to strengthen future resistance management approaches.",
-      "outcomeIds": ["RES_O3"],
+      "outcomeIds": [
+        "RES_O3"
+      ],
       "readinessScore": 4
     },
     {
       "id": "RES_041",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
-      "lens": "Governance",
+      "lens": "Skills & Behaviour",
       "category": "Governance",
       "action": "Embed resistance management disciplines into organisational change delivery standards.",
-      "outcomeIds": ["RES_O3"],
+      "outcomeIds": [
+        "RES_O3"
+      ],
       "readinessScore": 4
     },
     {
@@ -435,17 +528,21 @@
       "lens": "People Experience & Culture",
       "category": "Engagement",
       "action": "Maintain open dialogue with stakeholders to surface concerns early and prevent future resistance.",
-      "outcomeIds": ["RES_O3"],
+      "outcomeIds": [
+        "RES_O3"
+      ],
       "readinessScore": 4
     },
     {
       "id": "RES_043",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
-      "lens": "Reinforcement",
+      "lens": "People Experience & Culture",
       "category": "Reinforcement",
       "action": "Embed behaviours that promote openness, feedback and constructive challenge during change.",
-      "outcomeIds": ["RES_O3"],
+      "outcomeIds": [
+        "RES_O3"
+      ],
       "readinessScore": 4
     }
   ]

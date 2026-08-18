@@ -1,5 +1,8 @@
 {
-  "component": { "id": "CHANGE_IMPACT", "name": "Change Impact" },
+  "component": {
+    "id": "CHANGE_IMPACT",
+    "name": "Change Impact"
+  },
   "outcomes": [
     {
       "id": "CI_O1",
@@ -25,7 +28,9 @@
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
       "action": "Recognise that the change is likely to affect people, processes, services, roles and ways of working.",
-      "outcomeIds": ["CI_O1"],
+      "outcomeIds": [
+        "CI_O1"
+      ],
       "readinessScore": 0
     },
     {
@@ -35,17 +40,21 @@
       "lens": "Planning & Risk",
       "category": "Engagement",
       "action": "Begin discussions with leaders and stakeholders regarding who or what may be affected by the change.",
-      "outcomeIds": ["CI_O1"],
+      "outcomeIds": [
+        "CI_O1"
+      ],
       "readinessScore": 0
     },
     {
       "id": "CI_003",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
-      "lens": "Analysis & Insight",
+      "lens": "Planning & Risk",
       "category": "Analysis & Insight",
       "action": "Identify high-level business areas, services, teams and stakeholder groups likely to experience change impacts.",
-      "outcomeIds": ["CI_O1"],
+      "outcomeIds": [
+        "CI_O1"
+      ],
       "readinessScore": 0
     },
     {
@@ -55,7 +64,9 @@
       "lens": "People Experience & Culture",
       "category": "Engagement",
       "action": "Explore stakeholder perceptions of where change may affect their roles, activities or responsibilities.",
-      "outcomeIds": ["CI_O1"],
+      "outcomeIds": [
+        "CI_O1"
+      ],
       "readinessScore": 0
     },
     {
@@ -65,37 +76,45 @@
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
       "action": "Identify potential areas of disruption, opportunity or uncertainty associated with the change.",
-      "outcomeIds": ["CI_O1"],
+      "outcomeIds": [
+        "CI_O1"
+      ],
       "readinessScore": 0
     },
     {
       "id": "CI_006",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
-      "lens": "Strategic Direction & Leadership",
+      "lens": "Planning & Risk",
       "category": "Governance",
       "action": "Gain initial agreement that change impact assessment activities will be required.",
-      "outcomeIds": ["CI_O1"],
+      "outcomeIds": [
+        "CI_O1"
+      ],
       "readinessScore": 0
     },
     {
       "id": "CI_007",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
-      "lens": "Communication",
+      "lens": "People Experience & Culture",
       "category": "Communication",
       "action": "Begin raising awareness that different stakeholder groups may be affected in different ways.",
-      "outcomeIds": ["CI_O1"],
+      "outcomeIds": [
+        "CI_O1"
+      ],
       "readinessScore": 0
     },
     {
       "id": "CI_008",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
-      "lens": "Analysis & Insight",
+      "lens": "Planning & Risk",
       "category": "Analysis & Insight",
       "action": "Review previous change initiatives to identify common impact themes, challenges and lessons learned.",
-      "outcomeIds": ["CI_O1"],
+      "outcomeIds": [
+        "CI_O1"
+      ],
       "readinessScore": 0
     },
     {
@@ -105,7 +124,9 @@
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
       "action": "Identify and document the areas, services, teams, roles, processes and stakeholder groups affected by the change.",
-      "outcomeIds": ["CI_O1"],
+      "outcomeIds": [
+        "CI_O1"
+      ],
       "readinessScore": 1
     },
     {
@@ -115,7 +136,9 @@
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
       "action": "Develop an initial structured change impact assessment covering people, process, technology, information, governance and ways of working.",
-      "outcomeIds": ["CI_O1"],
+      "outcomeIds": [
+        "CI_O1"
+      ],
       "readinessScore": 1
     },
     {
@@ -125,7 +148,10 @@
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
       "action": "Identify and document intended and unintended impacts that could affect performance, service continuity or stakeholder experience.",
-      "outcomeIds": ["CI_O1", "CI_O2"],
+      "outcomeIds": [
+        "CI_O1",
+        "CI_O2"
+      ],
       "readinessScore": 1
     },
     {
@@ -135,7 +161,10 @@
       "lens": "Planning & Risk",
       "category": "Risk Management",
       "action": "Assess initial risks arising from identified change impacts.",
-      "outcomeIds": ["CI_O2", "CI_O3"],
+      "outcomeIds": [
+        "CI_O2",
+        "CI_O3"
+      ],
       "readinessScore": 1
     },
     {
@@ -145,7 +174,9 @@
       "lens": "Planning & Risk",
       "category": "Design",
       "action": "Define the impact assessment methodology, criteria, measures and evidence sources to be used.",
-      "outcomeIds": ["CI_O2"],
+      "outcomeIds": [
+        "CI_O2"
+      ],
       "readinessScore": 1
     },
     {
@@ -155,7 +186,9 @@
       "lens": "People Experience & Culture",
       "category": "Engagement",
       "action": "Engage affected stakeholder groups to understand current ways of working and expected impacts.",
-      "outcomeIds": ["CI_O1"],
+      "outcomeIds": [
+        "CI_O1"
+      ],
       "readinessScore": 1
     },
     {
@@ -165,37 +198,48 @@
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
       "action": "Assess stakeholder concerns, support requirements, perceived disruption and areas of uncertainty.",
-      "outcomeIds": ["CI_O1", "CI_O2"],
+      "outcomeIds": [
+        "CI_O1",
+        "CI_O2"
+      ],
       "readinessScore": 1
     },
     {
       "id": "CI_016",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
-      "lens": "Process & Sustainment",
+      "lens": "Planning & Risk",
       "category": "Analysis & Insight",
       "action": "Map affected processes, services and ways of working at a level sufficient to assess change impact.",
-      "outcomeIds": ["CI_O1"],
+      "outcomeIds": [
+        "CI_O1"
+      ],
       "readinessScore": 1
     },
     {
       "id": "CI_017",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
-      "lens": "Process & Sustainment",
+      "lens": "Planning & Risk",
       "category": "Analysis & Insight",
       "action": "Assess existing pain points, bottlenecks, duplication, workarounds and service pressures that may influence the scale of impact.",
-      "outcomeIds": ["CI_O1", "CI_O2"],
+      "outcomeIds": [
+        "CI_O1",
+        "CI_O2"
+      ],
       "readinessScore": 1
     },
     {
       "id": "CI_018",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
-      "lens": "Process & Sustainment",
+      "lens": "Planning & Risk",
       "category": "Measurement & Evaluation",
       "action": "Define and establish baseline measures that will enable comparison between current and future states.",
-      "outcomeIds": ["CI_O2", "CI_O3"],
+      "outcomeIds": [
+        "CI_O2",
+        "CI_O3"
+      ],
       "readinessScore": 1
     },
     {
@@ -206,7 +250,10 @@
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
       "action": "Complete a detailed change impact assessment across affected business areas, services, teams and roles.",
-      "outcomeIds": ["CI_O1", "CI_O2"],
+      "outcomeIds": [
+        "CI_O1",
+        "CI_O2"
+      ],
       "readinessScore": 2
     },
     {
@@ -217,7 +264,9 @@
       "lens": "Planning & Risk",
       "category": "Measurement & Evaluation",
       "action": "Assess the scale of impact using agreed criteria such as complexity, frequency, number of people affected and degree of difference from current ways of working.",
-      "outcomeIds": ["CI_O2"],
+      "outcomeIds": [
+        "CI_O2"
+      ],
       "readinessScore": 2
     },
     {
@@ -228,7 +277,10 @@
       "lens": "Planning & Risk",
       "category": "Risk Management",
       "action": "Translate significant change impacts into change risks, issues or mitigations where appropriate.",
-      "outcomeIds": ["CI_O2", "CI_O3"],
+      "outcomeIds": [
+        "CI_O2",
+        "CI_O3"
+      ],
       "readinessScore": 2
     },
     {
@@ -239,7 +291,9 @@
       "lens": "Planning & Risk",
       "category": "Governance",
       "action": "Review assessed impacts through appropriate governance routes so that decisions are informed by change impact evidence.",
-      "outcomeIds": ["CI_O3"],
+      "outcomeIds": [
+        "CI_O3"
+      ],
       "readinessScore": 2
     },
     {
@@ -250,7 +304,10 @@
       "lens": "Planning & Risk",
       "category": "Dependency Management",
       "action": "Identify dependencies that could affect impact management, including process, workforce, system, policy, operational or external dependencies.",
-      "outcomeIds": ["CI_O2", "CI_O3"],
+      "outcomeIds": [
+        "CI_O2",
+        "CI_O3"
+      ],
       "readinessScore": 2
     },
     {
@@ -261,7 +318,9 @@
       "lens": "People Experience & Culture",
       "category": "Engagement",
       "action": "Validate identified impacts with affected stakeholders and subject matter experts.",
-      "outcomeIds": ["CI_O2"],
+      "outcomeIds": [
+        "CI_O2"
+      ],
       "readinessScore": 2
     }
   ]

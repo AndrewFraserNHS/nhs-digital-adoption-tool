@@ -1,7 +1,14 @@
 {
-  "component": { "id": "PROCESS_CHANGE", "name": "Process Change" },
+  "component": {
+    "id": "PROCESS_CHANGE",
+    "name": "Process Change"
+  },
   "outcomes": [
-    { "id": "PC_O1", "name": "Current and future processes have been defined", "description": "" },
+    {
+      "id": "PC_O1",
+      "name": "Current and future processes have been defined",
+      "description": ""
+    },
     {
       "id": "PC_O2",
       "name": "Process changes have been implemented and adopted",
@@ -21,7 +28,9 @@
       "lens": "Process & Sustainment",
       "category": "Analysis & Insight",
       "action": "Recognise that business processes will need to change to deliver the intended outcomes.",
-      "outcomeIds": ["PC_O1"],
+      "outcomeIds": [
+        "PC_O1"
+      ],
       "readinessScore": 0
     },
     {
@@ -31,57 +40,69 @@
       "lens": "Process & Sustainment",
       "category": "Analysis & Insight",
       "action": "Identify high-level business areas likely to be affected by process change.",
-      "outcomeIds": ["PC_O1"],
+      "outcomeIds": [
+        "PC_O1"
+      ],
       "readinessScore": 0
     },
     {
       "id": "PC_003",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
-      "lens": "People Experience & Culture",
+      "lens": "Skills & Behaviour",
       "category": "Engagement",
       "action": "Engage process owners and stakeholders to explore how work may need to change.",
-      "outcomeIds": ["PC_O1"],
+      "outcomeIds": [
+        "PC_O1"
+      ],
       "readinessScore": 0
     },
     {
       "id": "PC_004",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
-      "lens": "Analysis & Insight",
+      "lens": "Process & Sustainment",
       "category": "Analysis & Insight",
       "action": "Identify known process challenges, issues and opportunities for improvement.",
-      "outcomeIds": ["PC_O1"],
+      "outcomeIds": [
+        "PC_O1"
+      ],
       "readinessScore": 0
     },
     {
       "id": "PC_005",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
-      "lens": "Governance",
+      "lens": "Process & Sustainment",
       "category": "Governance",
       "action": "Obtain initial agreement from leaders and process owners to review affected processes.",
-      "outcomeIds": ["PC_O1"],
+      "outcomeIds": [
+        "PC_O1"
+      ],
       "readinessScore": 0
     },
     {
       "id": "PC_006",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
-      "lens": "Communication",
+      "lens": "Skills & Behaviour",
       "category": "Communication",
       "action": "Begin raising awareness that changes to processes and ways of working may be required.",
-      "outcomeIds": ["PC_O1"],
+      "outcomeIds": [
+        "PC_O1"
+      ],
       "readinessScore": 0
     },
     {
       "id": "PC_007",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
-      "lens": "Analysis & Insight",
+      "lens": "Process & Sustainment",
       "category": "Analysis & Insight",
       "action": "Identify existing documentation, workflows or process maps that may support future analysis.",
-      "outcomeIds": ["PC_O1"],
+      "outcomeIds": [
+        "PC_O1"
+      ],
       "readinessScore": 0
     },
     {
@@ -91,7 +112,9 @@
       "lens": "Process & Sustainment",
       "category": "Analysis & Insight",
       "action": "Identify potential process dependencies that may need further investigation.",
-      "outcomeIds": ["PC_O1"],
+      "outcomeIds": [
+        "PC_O1"
+      ],
       "readinessScore": 0
     },
     {
@@ -101,7 +124,9 @@
       "lens": "Process & Sustainment",
       "category": "Analysis & Insight",
       "action": "Confirm and prioritise the business processes affected by the change.",
-      "outcomeIds": ["PC_O1"],
+      "outcomeIds": [
+        "PC_O1"
+      ],
       "readinessScore": 1
     },
     {
@@ -111,7 +136,9 @@
       "lens": "Process & Sustainment",
       "category": "Analysis & Insight",
       "action": "Conduct structured current-state process mapping and workflow analysis.",
-      "outcomeIds": ["PC_O1"],
+      "outcomeIds": [
+        "PC_O1"
+      ],
       "readinessScore": 1
     },
     {
@@ -121,7 +148,9 @@
       "lens": "Process & Sustainment",
       "category": "Analysis & Insight",
       "action": "Analyse process pain points, bottlenecks, duplication and inefficiencies in priority areas.",
-      "outcomeIds": ["PC_O1"],
+      "outcomeIds": [
+        "PC_O1"
+      ],
       "readinessScore": 1
     },
     {
@@ -131,17 +160,21 @@
       "lens": "Process & Sustainment",
       "category": "Measurement & Evaluation",
       "action": "Define and capture baseline process performance measures.",
-      "outcomeIds": ["PC_O1"],
+      "outcomeIds": [
+        "PC_O1"
+      ],
       "readinessScore": 1
     },
     {
       "id": "PC_013",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
-      "lens": "People Experience & Culture",
+      "lens": "Skills & Behaviour",
       "category": "Engagement",
       "action": "Validate current operational challenges and improvement opportunities with process users.",
-      "outcomeIds": ["PC_O1"],
+      "outcomeIds": [
+        "PC_O1"
+      ],
       "readinessScore": 1
     },
     {
@@ -151,7 +184,9 @@
       "lens": "Process & Sustainment",
       "category": "Design",
       "action": "Develop draft future-state process designs aligned to intended change outcomes.",
-      "outcomeIds": ["PC_O1"],
+      "outcomeIds": [
+        "PC_O1"
+      ],
       "readinessScore": 1
     },
     {
@@ -161,7 +196,9 @@
       "lens": "Process & Sustainment",
       "category": "Analysis & Insight",
       "action": "Conduct structured gap analysis between current-state and future-state processes.",
-      "outcomeIds": ["PC_O1"],
+      "outcomeIds": [
+        "PC_O1"
+      ],
       "readinessScore": 1
     },
     {
@@ -171,17 +208,21 @@
       "lens": "Process & Sustainment",
       "category": "Dependency Management",
       "action": "Assess process dependencies, interfaces and external touchpoints.",
-      "outcomeIds": ["PC_O1"],
+      "outcomeIds": [
+        "PC_O1"
+      ],
       "readinessScore": 1
     },
     {
       "id": "PC_017",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
-      "lens": "Governance",
+      "lens": "Process & Sustainment",
       "category": "Governance",
       "action": "Confirm process ownership and accountability arrangements for future-state processes.",
-      "outcomeIds": ["PC_O1"],
+      "outcomeIds": [
+        "PC_O1"
+      ],
       "readinessScore": 1
     },
     {
@@ -191,7 +232,9 @@
       "lens": "Process & Sustainment",
       "category": "Design",
       "action": "Document draft future-state processes, procedures and operating requirements.",
-      "outcomeIds": ["PC_O1"],
+      "outcomeIds": [
+        "PC_O1"
+      ],
       "readinessScore": 1
     },
     {
@@ -201,7 +244,9 @@
       "lens": "Process & Sustainment",
       "category": "Testing & Validation",
       "action": "Validate future-state processes with stakeholders and subject matter experts.",
-      "outcomeIds": ["PC_O2"],
+      "outcomeIds": [
+        "PC_O2"
+      ],
       "readinessScore": 2
     },
     {
@@ -211,7 +256,9 @@
       "lens": "Process & Sustainment",
       "category": "Testing & Validation",
       "action": "Test future-state workflows under realistic operating conditions.",
-      "outcomeIds": ["PC_O2"],
+      "outcomeIds": [
+        "PC_O2"
+      ],
       "readinessScore": 2
     },
     {
@@ -221,7 +268,9 @@
       "lens": "Process & Sustainment",
       "category": "Design",
       "action": "Refine future-state processes using validation and testing feedback.",
-      "outcomeIds": ["PC_O2"],
+      "outcomeIds": [
+        "PC_O2"
+      ],
       "readinessScore": 2
     },
     {
@@ -231,107 +280,130 @@
       "lens": "Process & Sustainment",
       "category": "Implementation",
       "action": "Implement approved future-state processes.",
-      "outcomeIds": ["PC_O2"],
+      "outcomeIds": [
+        "PC_O2"
+      ],
       "readinessScore": 2
     },
     {
       "id": "PC_023",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
-      "lens": "Dependency Management",
+      "lens": "Process & Sustainment",
       "category": "Dependency Management",
       "action": "Coordinate process implementation with learning, communications, adoption and operational readiness activities.",
-      "outcomeIds": ["PC_O2"],
+      "outcomeIds": [
+        "PC_O2"
+      ],
       "readinessScore": 2
     },
     {
       "id": "PC_024",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
-      "lens": "People Experience & Culture",
+      "lens": "Skills & Behaviour",
       "category": "Communication",
       "action": "Communicate process changes, responsibilities and expectations to stakeholders.",
-      "outcomeIds": ["PC_O2"],
+      "outcomeIds": [
+        "PC_O2"
+      ],
       "readinessScore": 2
     },
     {
       "id": "PC_025",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
-      "lens": "People Experience & Culture",
+      "lens": "Skills & Behaviour",
       "category": "Engagement",
       "action": "Support teams in understanding and applying new process requirements.",
-      "outcomeIds": ["PC_O2"],
+      "outcomeIds": [
+        "PC_O2"
+      ],
       "readinessScore": 2
     },
     {
       "id": "PC_026",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
-      "lens": "Governance",
+      "lens": "Process & Sustainment",
       "category": "Governance",
       "action": "Review implementation progress and process readiness through governance forums.",
-      "outcomeIds": ["PC_O2"],
+      "outcomeIds": [
+        "PC_O2"
+      ],
       "readinessScore": 2
     },
     {
       "id": "PC_027",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
-      "lens": "Planning & Risk",
+      "lens": "Process & Sustainment",
       "category": "Risk Management",
       "action": "Identify and manage risks associated with process implementation.",
-      "outcomeIds": ["PC_O2"],
+      "outcomeIds": [
+        "PC_O2"
+      ],
       "readinessScore": 2
     },
     {
       "id": "PC_028",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
-      "lens": "Measurement & Evaluation",
+      "lens": "Process & Sustainment",
       "category": "Measurement & Evaluation",
       "action": "Monitor early process performance following implementation.",
-      "outcomeIds": ["PC_O2"],
+      "outcomeIds": [
+        "PC_O2"
+      ],
       "readinessScore": 2
     },
     {
       "id": "PC_029",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
-      "lens": "Measurement & Evaluation",
+      "lens": "Process & Sustainment",
       "category": "Measurement & Evaluation",
       "action": "Measure process performance against baseline and target measures.",
-      "outcomeIds": ["PC_O2", "PC_O3"],
+      "outcomeIds": [
+        "PC_O2",
+        "PC_O3"
+      ],
       "readinessScore": 3
     },
     {
       "id": "PC_030",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
-      "lens": "Analysis & Insight",
+      "lens": "Process & Sustainment",
       "category": "Analysis & Insight",
       "action": "Analyse process performance trends and identify opportunities for optimisation.",
-      "outcomeIds": ["PC_O3"],
+      "outcomeIds": [
+        "PC_O3"
+      ],
       "readinessScore": 3
     },
     {
       "id": "PC_031",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
-      "lens": "Testing & Validation",
+      "lens": "Process & Sustainment",
       "category": "Testing & Validation",
       "action": "Validate that operational outcomes align with future-state process design objectives.",
-      "outcomeIds": ["PC_O3"],
+      "outcomeIds": [
+        "PC_O3"
+      ],
       "readinessScore": 3
     },
     {
       "id": "PC_032",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
-      "lens": "Governance",
+      "lens": "Process & Sustainment",
       "category": "Governance",
       "action": "Review process performance and improvement priorities through governance routes.",
-      "outcomeIds": ["PC_O3"],
+      "outcomeIds": [
+        "PC_O3"
+      ],
       "readinessScore": 3
     },
     {
@@ -341,107 +413,129 @@
       "lens": "Process & Sustainment",
       "category": "Design",
       "action": "Refine processes using implementation feedback, operational insight and performance data.",
-      "outcomeIds": ["PC_O3"],
+      "outcomeIds": [
+        "PC_O3"
+      ],
       "readinessScore": 3
     },
     {
       "id": "PC_034",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
-      "lens": "People Experience & Culture",
+      "lens": "Skills & Behaviour",
       "category": "Engagement",
       "action": "Gather user feedback on process usability and effectiveness.",
-      "outcomeIds": ["PC_O3"],
+      "outcomeIds": [
+        "PC_O3"
+      ],
       "readinessScore": 3
     },
     {
       "id": "PC_035",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
-      "lens": "Communication",
+      "lens": "Skills & Behaviour",
       "category": "Communication",
       "action": "Share process improvements, successes and lessons learned.",
-      "outcomeIds": ["PC_O3"],
+      "outcomeIds": [
+        "PC_O3"
+      ],
       "readinessScore": 3
     },
     {
       "id": "PC_036",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
-      "lens": "Reinforcement",
+      "lens": "Skills & Behaviour",
       "category": "Reinforcement",
       "action": "Recognise teams contributing to successful process adoption and improvement.",
-      "outcomeIds": ["PC_O3"],
+      "outcomeIds": [
+        "PC_O3"
+      ],
       "readinessScore": 3
     },
     {
       "id": "PC_037",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
-      "lens": "Dependency Management",
+      "lens": "Process & Sustainment",
       "category": "Dependency Management",
       "action": "Align process improvements with benefits realisation and adoption activities.",
-      "outcomeIds": ["PC_O3"],
+      "outcomeIds": [
+        "PC_O3"
+      ],
       "readinessScore": 3
     },
     {
       "id": "PC_038",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
-      "lens": "Implementation",
+      "lens": "Process & Sustainment",
       "category": "Implementation",
       "action": "Standardise new processes across relevant business areas.",
-      "outcomeIds": ["PC_O3"],
+      "outcomeIds": [
+        "PC_O3"
+      ],
       "readinessScore": 3
     },
     {
       "id": "PC_039",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
-      "lens": "Measurement & Evaluation",
+      "lens": "Process & Sustainment",
       "category": "Measurement & Evaluation",
       "action": "Continuously monitor process performance and operational outcomes.",
-      "outcomeIds": ["PC_O3"],
+      "outcomeIds": [
+        "PC_O3"
+      ],
       "readinessScore": 4
     },
     {
       "id": "PC_040",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
-      "lens": "Design",
+      "lens": "Process & Sustainment",
       "category": "Design",
       "action": "Use performance insight and organisational learning to optimise processes further.",
-      "outcomeIds": ["PC_O3"],
+      "outcomeIds": [
+        "PC_O3"
+      ],
       "readinessScore": 4
     },
     {
       "id": "PC_041",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
-      "lens": "Governance",
+      "lens": "Process & Sustainment",
       "category": "Governance",
       "action": "Embed process review and optimisation into BAU governance arrangements.",
-      "outcomeIds": ["PC_O3"],
+      "outcomeIds": [
+        "PC_O3"
+      ],
       "readinessScore": 4
     },
     {
       "id": "PC_042",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
-      "lens": "Implementation",
+      "lens": "Process & Sustainment",
       "category": "Implementation",
       "action": "Embed ownership for continuous process improvement into operational teams.",
-      "outcomeIds": ["PC_O3"],
+      "outcomeIds": [
+        "PC_O3"
+      ],
       "readinessScore": 4
     },
     {
       "id": "PC_043",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
-      "lens": "Reinforcement",
+      "lens": "Skills & Behaviour",
       "category": "Reinforcement",
       "action": "Promote a culture of process excellence, optimisation and continuous improvement.",
-      "outcomeIds": ["PC_O3"],
+      "outcomeIds": [
+        "PC_O3"
+      ],
       "readinessScore": 4
     }
   ]

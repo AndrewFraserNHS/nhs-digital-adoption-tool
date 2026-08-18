@@ -1,5 +1,8 @@
 {
-  "component": { "id": "ORG_CHANGE_READINESS", "name": "Org Change Readiness" },
+  "component": {
+    "id": "ORG_CHANGE_READINESS",
+    "name": "Org Change Readiness"
+  },
   "outcomes": [
     {
       "id": "OCR_O1",
@@ -22,10 +25,12 @@
       "id": "OCR_001",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
-      "lens": "Planning & Risk",
+      "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
       "action": "Recognise that organisational readiness will influence the success of the change.",
-      "outcomeIds": ["OCR_O1"],
+      "outcomeIds": [
+        "OCR_O1"
+      ],
       "readinessScore": 0
     },
     {
@@ -35,27 +40,33 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Engagement",
       "action": "Begin discussions with leaders regarding the organisation's ability to absorb and support the change.",
-      "outcomeIds": ["OCR_O1"],
+      "outcomeIds": [
+        "OCR_O1"
+      ],
       "readinessScore": 0
     },
     {
       "id": "OCR_003",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
-      "lens": "People Experience & Culture",
+      "lens": "Skills & Behaviour",
       "category": "Engagement",
       "action": "Explore stakeholder perceptions of preparedness, capacity and support requirements.",
-      "outcomeIds": ["OCR_O1"],
+      "outcomeIds": [
+        "OCR_O1"
+      ],
       "readinessScore": 0
     },
     {
       "id": "OCR_004",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
-      "lens": "Analysis & Insight",
+      "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
       "action": "Identify high-level organisational factors that may support or hinder the change.",
-      "outcomeIds": ["OCR_O1"],
+      "outcomeIds": [
+        "OCR_O1"
+      ],
       "readinessScore": 0
     },
     {
@@ -65,107 +76,129 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
       "action": "Secure initial agreement that organisational readiness will be assessed and managed throughout the change lifecycle.",
-      "outcomeIds": ["OCR_O1"],
+      "outcomeIds": [
+        "OCR_O1"
+      ],
       "readinessScore": 0
     },
     {
       "id": "OCR_006",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
-      "lens": "Communication",
+      "lens": "Strategic Direction & Leadership",
       "category": "Communication",
       "action": "Begin raising awareness of organisational readiness considerations and expectations.",
-      "outcomeIds": ["OCR_O1"],
+      "outcomeIds": [
+        "OCR_O1"
+      ],
       "readinessScore": 0
     },
     {
       "id": "OCR_007",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
-      "lens": "Analysis & Insight",
+      "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
       "action": "Review lessons learned from previous organisational changes relating to readiness and preparedness.",
-      "outcomeIds": ["OCR_O1"],
+      "outcomeIds": [
+        "OCR_O1"
+      ],
       "readinessScore": 0
     },
     {
       "id": "OCR_008",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
-      "lens": "Planning & Risk",
+      "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
       "action": "Identify potential readiness risks, constraints and competing organisational priorities.",
-      "outcomeIds": ["OCR_O1"],
+      "outcomeIds": [
+        "OCR_O1"
+      ],
       "readinessScore": 0
     },
     {
       "id": "OCR_009",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
-      "lens": "Planning & Risk",
+      "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
       "action": "Conduct a structured organisational readiness assessment.",
-      "outcomeIds": ["OCR_O1"],
+      "outcomeIds": [
+        "OCR_O1"
+      ],
       "readinessScore": 1
     },
     {
       "id": "OCR_010",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
-      "lens": "Planning & Risk",
+      "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
       "action": "Assess organisational capacity, workload pressures and competing priorities.",
-      "outcomeIds": ["OCR_O1"],
+      "outcomeIds": [
+        "OCR_O1"
+      ],
       "readinessScore": 1
     },
     {
       "id": "OCR_011",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
-      "lens": "People Experience & Culture",
+      "lens": "Skills & Behaviour",
       "category": "Analysis & Insight",
       "action": "Assess organisational attitudes towards change, confidence levels and change fatigue.",
-      "outcomeIds": ["OCR_O1"],
+      "outcomeIds": [
+        "OCR_O1"
+      ],
       "readinessScore": 1
     },
     {
       "id": "OCR_012",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
-      "lens": "Planning & Risk",
+      "lens": "Strategic Direction & Leadership",
       "category": "Measurement & Evaluation",
       "action": "Define readiness indicators, measures and assessment criteria.",
-      "outcomeIds": ["OCR_O1"],
+      "outcomeIds": [
+        "OCR_O1"
+      ],
       "readinessScore": 1
     },
     {
       "id": "OCR_013",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
-      "lens": "Planning & Risk",
+      "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
       "action": "Identify organisational readiness strengths, weaknesses, risks and barriers.",
-      "outcomeIds": ["OCR_O1"],
+      "outcomeIds": [
+        "OCR_O1"
+      ],
       "readinessScore": 1
     },
     {
       "id": "OCR_014",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
-      "lens": "People Experience & Culture",
+      "lens": "Skills & Behaviour",
       "category": "Engagement",
       "action": "Validate readiness findings with stakeholders, leaders and operational teams.",
-      "outcomeIds": ["OCR_O1"],
+      "outcomeIds": [
+        "OCR_O1"
+      ],
       "readinessScore": 1
     },
     {
       "id": "OCR_015",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
-      "lens": "Planning & Risk",
+      "lens": "Strategic Direction & Leadership",
       "category": "Dependency Management",
       "action": "Assess dependencies affecting organisational readiness across programmes, services and operational activities.",
-      "outcomeIds": ["OCR_O1"],
+      "outcomeIds": [
+        "OCR_O1"
+      ],
       "readinessScore": 1
     },
     {
@@ -175,7 +208,9 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Design",
       "action": "Develop a readiness improvement approach to address identified gaps and barriers.",
-      "outcomeIds": ["OCR_O2"],
+      "outcomeIds": [
+        "OCR_O2"
+      ],
       "readinessScore": 1
     },
     {
@@ -185,46 +220,56 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
       "action": "Define ownership and accountability for organisational readiness improvement activities.",
-      "outcomeIds": ["OCR_O2"],
+      "outcomeIds": [
+        "OCR_O2"
+      ],
       "readinessScore": 1
     },
     {
       "id": "OCR_018",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
-      "lens": "Communication",
+      "lens": "Strategic Direction & Leadership",
       "category": "Communication",
       "action": "Communicate organisational readiness findings and improvement priorities.",
-      "outcomeIds": ["OCR_O2"]
+      "outcomeIds": [
+        "OCR_O2"
+      ]
     },
     {
       "id": "OCR_019",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
-      "lens": "Planning & Risk",
+      "lens": "Strategic Direction & Leadership",
       "category": "Design",
       "action": "Develop and implement readiness improvement plans to address identified organisational readiness gaps.",
-      "outcomeIds": ["OCR_O2"],
+      "outcomeIds": [
+        "OCR_O2"
+      ],
       "readinessScore": 2
     },
     {
       "id": "OCR_020",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
-      "lens": "Planning & Risk",
+      "lens": "Strategic Direction & Leadership",
       "category": "Risk Management",
       "action": "Implement actions to address organisational capacity constraints that could affect successful change delivery.",
-      "outcomeIds": ["OCR_O2"],
+      "outcomeIds": [
+        "OCR_O2"
+      ],
       "readinessScore": 2
     },
     {
       "id": "OCR_021",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
-      "lens": "People Experience & Culture",
+      "lens": "Skills & Behaviour",
       "category": "Engagement",
       "action": "Address change fatigue, competing priorities and organisational barriers that may reduce readiness.",
-      "outcomeIds": ["OCR_O2"],
+      "outcomeIds": [
+        "OCR_O2"
+      ],
       "readinessScore": 2
     },
     {
@@ -234,97 +279,120 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Engagement",
       "action": "Strengthen leadership readiness to support and champion the change effectively.",
-      "outcomeIds": ["OCR_O2"],
+      "outcomeIds": [
+        "OCR_O2"
+      ],
       "readinessScore": 2
     },
     {
       "id": "OCR_023",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
-      "lens": "People Experience & Culture",
+      "lens": "Skills & Behaviour",
       "category": "Training & Learning",
       "action": "Build manager readiness to coach, support and guide teams through the change.",
-      "outcomeIds": ["OCR_O2"],
+      "outcomeIds": [
+        "OCR_O2"
+      ],
       "readinessScore": 2
     },
     {
       "id": "OCR_024",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
-      "lens": "People Experience & Culture",
+      "lens": "Skills & Behaviour",
       "category": "Engagement",
       "action": "Improve local team preparedness through targeted support, engagement and readiness interventions.",
-      "outcomeIds": ["OCR_O2"],
+      "outcomeIds": [
+        "OCR_O2"
+      ],
       "readinessScore": 2
     },
     {
       "id": "OCR_025",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
-      "lens": "Measurement & Evaluation",
+      "lens": "Strategic Direction & Leadership",
       "category": "Measurement & Evaluation",
       "action": "Monitor organisational readiness indicators and assess progress against readiness objectives.",
-      "outcomeIds": ["OCR_O2", "OCR_O3"],
+      "outcomeIds": [
+        "OCR_O2",
+        "OCR_O3"
+      ],
       "readinessScore": 2
     },
     {
       "id": "OCR_026",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
-      "lens": "Governance",
+      "lens": "Strategic Direction & Leadership",
       "category": "Governance",
       "action": "Review organisational readiness performance and improvement actions through governance processes.",
-      "outcomeIds": ["OCR_O2", "OCR_O3"],
+      "outcomeIds": [
+        "OCR_O2",
+        "OCR_O3"
+      ],
       "readinessScore": 2
     },
     {
       "id": "OCR_027",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
-      "lens": "Dependency Management",
+      "lens": "Strategic Direction & Leadership",
       "category": "Dependency Management",
       "action": "Align readiness improvement activities with implementation milestones, programme dependencies and delivery schedules.",
-      "outcomeIds": ["OCR_O2"],
+      "outcomeIds": [
+        "OCR_O2"
+      ],
       "readinessScore": 2
     },
     {
       "id": "OCR_028",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
-      "lens": "Measurement & Evaluation",
+      "lens": "Strategic Direction & Leadership",
       "category": "Testing & Validation",
       "action": "Reassess organisational readiness before key implementation events and delivery milestones.",
-      "outcomeIds": ["OCR_O2", "OCR_O3"],
+      "outcomeIds": [
+        "OCR_O2",
+        "OCR_O3"
+      ],
       "readinessScore": 2
     },
     {
       "id": "OCR_029",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
-      "lens": "Measurement & Evaluation",
+      "lens": "Strategic Direction & Leadership",
       "category": "Measurement & Evaluation",
       "action": "Measure organisational readiness performance across impacted areas and stakeholder groups.",
-      "outcomeIds": ["OCR_O3"],
+      "outcomeIds": [
+        "OCR_O3"
+      ],
       "readinessScore": 3
     },
     {
       "id": "OCR_030",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
-      "lens": "Testing & Validation",
+      "lens": "Strategic Direction & Leadership",
       "category": "Testing & Validation",
       "action": "Validate organisational readiness before go-live activities and major implementation events.",
-      "outcomeIds": ["OCR_O3"],
+      "outcomeIds": [
+        "OCR_O3"
+      ],
       "readinessScore": 3
     },
     {
       "id": "OCR_031",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
-      "lens": "Planning & Risk",
+      "lens": "Strategic Direction & Leadership",
       "category": "Risk Management",
       "action": "Address remaining readiness gaps that could affect implementation success.",
-      "outcomeIds": ["OCR_O3"],
+      "outcomeIds": [
+        "OCR_O3"
+      ],
       "readinessScore": 3
     }
   ]

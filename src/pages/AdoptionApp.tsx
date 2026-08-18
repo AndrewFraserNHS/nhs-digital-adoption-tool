@@ -2198,8 +2198,6 @@ export function AdoptionApp() {
               }}
               components={COMPONENTS}
               lenses={MUTABLE_LENSES}
-              store={store}
-              getEntry={getEntry}
               onComponentClick={openComponentAssessment}
               onOpenOnboarding={() => setShowOnboarding(true)}
               currentUserId={currentUserId}
@@ -2313,6 +2311,9 @@ export function AdoptionApp() {
           {view === 'cm-guide' && (
             <ChangeManagementGuide
               onComponentClick={openComponentAssessment}
+              components={COMPONENTS}
+              store={store}
+              getEntry={getEntry}
               guidanceTarget={DEFAULT_GUIDANCE_TARGET}
               linkOverrides={store.orgProfile.linkOverrides}
               darkMode={Boolean(userSettings.darkMode)}

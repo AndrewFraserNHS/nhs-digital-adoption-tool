@@ -127,7 +127,7 @@ export interface OrgProfile {
   /**
    * Stable identity for this CST, assigned once and carried through every export so two
    * copies of the same programme can be recognised as such after diverging. Never invented
-   * by normalizeOrgProfile — only backfilled for the app's own persisted document (see
+   * by normalizeOrgProfile - only backfilled for the app's own persisted document (see
    * AdoptionApp.tsx initial load), so an imported payload's absence of this field is a
    * meaningful signal, not a bug.
    */

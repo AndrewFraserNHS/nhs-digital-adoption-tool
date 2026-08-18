@@ -8,8 +8,8 @@
  */
 
 import type { CstProfile } from '@data/cst';
-import type { AuditEvent } from './auditLog';
-import { trimAuditEvents } from './auditLog';
+
+import { migrateSavedAdoptionAssessment, type SavedAdoptionAssessment } from './adoptionIO';
 import type {
   ActionTargetLink,
   AdoptionStore,
@@ -27,7 +27,8 @@ import {
   initializeStore,
   normalizeOrgProfile,
 } from './adoptionState';
-import { migrateSavedAdoptionAssessment, type SavedAdoptionAssessment } from './adoptionIO';
+import type { AuditEvent } from './auditLog';
+import { trimAuditEvents } from './auditLog';
 
 export type ConflictChoice = 'mine' | 'theirs';
 
@@ -81,7 +82,7 @@ function actionsEqual(a: DraftAction, b: DraftAction): boolean {
 }
 
 function summarizeAction(action: DraftAction): string {
-  return `${action.text || 'Untitled action'} — ${action.status}, owner: ${action.owner || 'Unassigned'}`;
+  return `${action.text || 'Untitled action'} - ${action.status}, owner: ${action.owner || 'Unassigned'}`;
 }
 
 function objectiveLinksEqual(a: ObjectiveActionLink[], b: ObjectiveActionLink[]): boolean {
@@ -102,7 +103,7 @@ function objectivesEqual(a: ComponentObjective, b: ComponentObjective): boolean 
 }
 
 function summarizeObjective(objective: ComponentObjective): string {
-  return `${objective.text || 'Untitled objective'} — owner: ${objective.owner || 'Unassigned'}`;
+  return `${objective.text || 'Untitled objective'} - owner: ${objective.owner || 'Unassigned'}`;
 }
 
 function teamMembersEqual(a: TeamMember, b: TeamMember): boolean {
@@ -110,7 +111,7 @@ function teamMembersEqual(a: TeamMember, b: TeamMember): boolean {
 }
 
 function summarizeTeamMember(member: TeamMember): string {
-  return member.role ? `${member.name || 'Unnamed'} — ${member.role}` : member.name || 'Unnamed';
+  return member.role ? `${member.name || 'Unnamed'} - ${member.role}` : member.name || 'Unnamed';
 }
 
 function entryCoreEqual(a: DraftEntry, b: DraftEntry): boolean {
@@ -119,7 +120,7 @@ function entryCoreEqual(a: DraftEntry, b: DraftEntry): boolean {
 
 function summarizeEntry(entry: DraftEntry): string {
   const scoreLabel = `Score ${entry.score}`;
-  return entry.justification ? `${scoreLabel} — ${entry.justification}` : scoreLabel;
+  return entry.justification ? `${scoreLabel} - ${entry.justification}` : scoreLabel;
 }
 
 /** Union-by-id merge with per-item conflict detection, generic over any id-keyed collection. */
@@ -282,7 +283,7 @@ function diffDraft(
         theirsEntry?.actions || [],
         actionsEqual,
         `action:${key}`,
-        (action) => `${componentId} / ${lens} — ${action.text || 'Untitled action'}`,
+        (action) => `${componentId} / ${lens} - ${action.text || 'Untitled action'}`,
         summarizeAction
       );
       actionConflicts.push(...actionDiff.conflicts);
@@ -357,7 +358,7 @@ function diffObjectives(
       theirs[componentId] || [],
       objectivesEqual,
       `objective:${componentId}`,
-      (objective) => `${componentId} — ${objective.text || 'Untitled objective'}`,
+      (objective) => `${componentId} - ${objective.text || 'Untitled objective'}`,
       summarizeObjective
     );
     conflicts.push(...diff.conflicts);
@@ -404,7 +405,7 @@ function diffPhaseOverrides(
     if (mineVal !== theirsVal) {
       conflicts.push({
         id: `phase:${key}`,
-        label: `Phase focus override — ${key}`,
+        label: `Phase focus override - ${key}`,
         mineSummary: mineVal,
         theirsSummary: theirsVal,
       });

@@ -96,18 +96,25 @@ function createProps(overrides?: {
 }
 
 describe('AssessmentPanel', () => {
-  it('notifies when the active component changes', () => {
+  it('SHOULD notify WHERE the active component changes', () => {
+    // arrange
     const props = createProps();
+
+    // act
     render(<AssessmentPanel {...props} />);
 
     const componentSelect = screen.getAllByRole('combobox')[0];
     fireEvent.change(componentSelect, { target: { value: 'benefits' } });
 
+    // assert
     expect(props.onComponentChange).toHaveBeenCalledWith('benefits');
   });
 
-  it('updates score and component justification through onEntryUpdate', () => {
+  it('SHOULD update score and component justification through onEntryUpdate', () => {
+    // arrange
     const props = createProps();
+
+    // act
     render(<AssessmentPanel {...props} />);
 
     const controls = screen.getAllByRole('combobox');
@@ -117,19 +124,26 @@ describe('AssessmentPanel', () => {
     fireEvent.change(areas[0], { target: { value: 'Updated justification' } });
 
     const updatedEntries = props.onEntryUpdate.mock.calls.map((call) => call[2]);
+
+    // assert
     expect(updatedEntries.some((entry: DraftEntry) => entry.score === 4)).toBe(true);
     expect(
       updatedEntries.some((entry: DraftEntry) => entry.justification === 'Updated justification')
     ).toBe(true);
   });
 
-  it('toggles matrix and allows selecting score from matrix cards', () => {
+  it('SHOULD toggle matrix and allows selecting score from matrix cards', () => {
+    // arrange
     const props = createProps({ showMatrix: true });
-    render(<AssessmentPanel {...props} />);
 
+    // act 1
+    render(<AssessmentPanel {...props} />);
     fireEvent.click(screen.getByRole('button', { name: 'Hide Full Guidance' }));
+
+    // assert 1
     expect(props.onMatrixToggle).toHaveBeenCalledWith('vision:Strategic Direction');
 
+    // act 2
     const levelFiveLabel = screen.getAllByText('Level 5')[0];
     const levelFiveButton = levelFiveLabel.closest('button');
     if (!levelFiveButton) {
@@ -138,36 +152,54 @@ describe('AssessmentPanel', () => {
 
     fireEvent.click(levelFiveButton);
     const updatedEntries = props.onEntryUpdate.mock.calls.map((call) => call[2]);
+
+    // assert 2
     expect(updatedEntries.some((entry: DraftEntry) => entry.score === 5)).toBe(true);
   });
 
-  it('opens lens info when clicking the lens header button', () => {
+  it('SHOULD open lens info WHERE clicking the lens header button', () => {
+    // arrange
     const props = createProps();
+    
+    // act
     render(<AssessmentPanel {...props} />);
-
     fireEvent.click(screen.getByRole('button', { name: 'Strategic Direction' }));
+
+    // assert
     expect(props.onOpenLensInfo).toHaveBeenCalledWith('Strategic Direction');
   });
 
-  it('adds and removes actions via callbacks', () => {
+  it('SHOULD add and remove actions via callbacks', () => {
+    // arrange
     const entry = createEntry();
     const props = createProps({ entry });
-    render(<AssessmentPanel {...props} />);
 
+    // act 1
+    render(<AssessmentPanel {...props} />);
     fireEvent.click(screen.getByRole('button', { name: 'Add Action' }));
     fireEvent.change(screen.getByLabelText('Description'), {
       target: { value: 'Created from modal' },
     });
     fireEvent.click(screen.getByRole('button', { name: 'Save Action' }));
+
+    // assert 1
     expect(props.onEntryUpdate).toHaveBeenCalled();
+
+    // act 2
     const lastUpdateEntry = props.onEntryUpdate.mock.calls.at(-1)[2] as DraftEntry;
+
+    // assert 3
     expect(lastUpdateEntry.actions.length).toBe(2);
 
+    // act 4
     fireEvent.click(screen.getByRole('button', { name: 'Remove' }));
+
+    // assert 4
     expect(props.onActionRemove).toHaveBeenCalledWith('vision', 'Strategic Direction', 'action-1');
   });
 
-  it('filters lens actions by action type', () => {
+  it('SHOULD filter lens actions by action type', () => {
+    // arrange
     const entry = createEntry({
       actions: [
         {
@@ -189,6 +221,8 @@ describe('AssessmentPanel', () => {
       ],
     });
     const props = createProps({ entry });
+
+    // act
     render(<AssessmentPanel {...props} />);
 
     fireEvent.change(
@@ -196,11 +230,13 @@ describe('AssessmentPanel', () => {
       { target: { value: 'Engagement' } }
     );
 
+    // assert
     expect(screen.getByText('Run workshop')).toBeInTheDocument();
     expect(screen.queryByText('Write admin note')).toBeNull();
   });
 
-  it('filters lens actions by owner', () => {
+  it('SHOULD filter lens actions by owner', () => {
+    // arrange
     const entry = createEntry({
       actions: [
         {
@@ -226,6 +262,8 @@ describe('AssessmentPanel', () => {
         { id: '2', name: 'Sam Patel', role: 'SRO' },
       ],
     });
+
+    // act
     render(<AssessmentPanel {...props} />);
 
     fireEvent.change(
@@ -233,14 +271,18 @@ describe('AssessmentPanel', () => {
       { target: { value: 'Andy Fraser' } }
     );
 
+    // assert
     expect(screen.getByText('Run workshop')).toBeInTheDocument();
     expect(screen.queryByText('Write admin note')).toBeNull();
   });
 
-  it('populates the action editor owner select from the CST team roster', () => {
+  it('SHOULD populate the action editor owner select from the CST team roster', () => {
+    // arrange
     const props = createProps({
       teamMembers: [{ id: '1', name: 'Andy Fraser', role: 'Change Lead' }],
     });
+
+    // act 1
     render(<AssessmentPanel {...props} />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Add Action' }));
@@ -249,27 +291,37 @@ describe('AssessmentPanel', () => {
     });
 
     const ownerSelect = screen.getByLabelText('Owner') as HTMLSelectElement;
-    expect(within(ownerSelect).getByText('Andy Fraser — Change Lead')).toBeInTheDocument();
 
+    // assert 1
+    expect(within(ownerSelect).getByText('Andy Fraser - Change Lead')).toBeInTheDocument();
+
+    // act 2
     fireEvent.change(ownerSelect, { target: { value: 'Andy Fraser' } });
     fireEvent.click(screen.getByRole('button', { name: 'Save Action' }));
 
     const lastUpdateEntry = props.onEntryUpdate.mock.calls.at(-1)[2] as DraftEntry;
+
+    // assert 2
     expect(lastUpdateEntry.actions.at(-1)?.owner).toBe('Andy Fraser');
   });
 
-  it('adds an evidence web link row in the action editor', () => {
+  it('SHOULD add an evidence web link row in the action editor', () => {
+    // arrange
     const props = createProps();
+
+    // act
     render(<AssessmentPanel {...props} />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Add Action' }));
     fireEvent.click(screen.getByRole('button', { name: 'Add web link' }));
 
+    // assert
     expect(screen.getByPlaceholderText('Link label')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('https://...')).toBeInTheDocument();
   });
 
   it('renders linked actions on linked targets and removes from source lens', () => {
+    // arrange
     const sourceEntry = createEntry({
       actions: [
         {
@@ -299,12 +351,19 @@ describe('AssessmentPanel', () => {
     props.getEntry = (componentId: string, lens: string) =>
       props.store.currentDraft[componentId][lens];
 
+
+    // act 1
     render(<AssessmentPanel {...props} />);
 
+
+    // assert 1
     expect(screen.getByText('Shared action')).toBeTruthy();
     expect(screen.getByText('Linked from Vision / Strategic Direction')).toBeTruthy();
 
+    // act 2 
     fireEvent.click(screen.getByRole('button', { name: 'Remove' }));
+
+    // assert 2
     expect(props.onActionRemove).toHaveBeenCalledWith(
       'vision',
       'Strategic Direction',
@@ -312,7 +371,8 @@ describe('AssessmentPanel', () => {
     );
   });
 
-  it('opens outcome details modal with status and linked actions', () => {
+  it('SHOULD open outcome details modal with status and linked actions', () => {
+    // arrange
     const props = createProps();
     props.store.objectives = {
       vision: [
@@ -325,25 +385,35 @@ describe('AssessmentPanel', () => {
         },
       ],
     };
+
+    // act 1
     render(<AssessmentPanel {...props} />);
 
+    // assert 1
     expect(screen.getByText('Vision objective')).toBeTruthy();
     expect(screen.getAllByText('In Progress').length).toBeGreaterThan(0);
+
+    // act 2
     fireEvent.click(screen.getByText('Vision objective').closest('tr')!);
 
     const dialog = screen.getByRole('dialog', { name: 'Outcome Details' });
     expect(within(dialog).getByText('Run workshop')).toBeTruthy();
     expect(within(dialog).getAllByText('In Progress').length).toBeGreaterThan(0);
     fireEvent.click(within(dialog).getByRole('button', { name: 'Open Action' }));
+
+    // assert 2
     expect(screen.getByText(/Edit Action · Vision \/ Strategic Direction/)).toBeTruthy();
 
+    // act 3
     fireEvent.click(screen.getByRole('button', { name: 'Close' }));
-    expect(screen.queryByText('Outcome Details')).toBeNull();
 
+    // assert 3
+    expect(screen.queryByText('Outcome Details')).toBeNull();
     expect(screen.queryByRole('button', { name: 'Add Objective' })).toBeNull();
   });
 
   it('links actions to objectives from the action editor hierarchy section', () => {
+    // arrange
     const props = createProps();
     props.store.objectives = {
       vision: [
@@ -357,6 +427,7 @@ describe('AssessmentPanel', () => {
       ],
     };
 
+    // act
     render(<AssessmentPanel {...props} />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Add Action' }));
@@ -366,6 +437,7 @@ describe('AssessmentPanel', () => {
     fireEvent.click(screen.getByRole('checkbox'));
     fireEvent.click(screen.getByRole('button', { name: 'Save Action' }));
 
+    // assert
     expect(props.onObjectivesUpdate).toHaveBeenCalledWith(
       'vision',
       expect.arrayContaining([

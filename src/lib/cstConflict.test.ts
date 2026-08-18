@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { applyConflictResolutions, buildConflictReport } from './cstConflict';
+
 import { buildAdoptionExportPayload, type SavedAdoptionAssessment } from './adoptionIO';
-import { initializeStore, type AdoptionStore } from './adoptionState';
+import { type AdoptionStore,initializeStore } from './adoptionState';
+import { applyConflictResolutions, buildConflictReport } from './cstConflict';
 
 function buildStore(overrides?: Partial<AdoptionStore>): AdoptionStore {
   return initializeStore({

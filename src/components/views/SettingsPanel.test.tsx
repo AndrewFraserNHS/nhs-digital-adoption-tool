@@ -9,7 +9,8 @@ const baseUserSettings = {
 };
 
 describe('SettingsPanel', () => {
-  it('updates user settings and triggers example data action', () => {
+  it('SHOULD update user settings and triggers example data action', () => {
+    // arrange
     const onUserSettingsUpdate = vi.fn();
     const onLoadExampleData = vi.fn();
     const onResetData = vi.fn();
@@ -23,6 +24,7 @@ describe('SettingsPanel', () => {
       />
     );
 
+    // act
     fireEvent.change(screen.getByLabelText('Your Name'), { target: { value: 'Taylor' } });
     fireEvent.change(screen.getByLabelText('Preferences'), {
       target: { value: 'Dark charts only' },
@@ -31,6 +33,7 @@ describe('SettingsPanel', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Example Data' }));
     fireEvent.click(screen.getByRole('button', { name: 'Reset Data' }));
 
+    // assert
     expect(onUserSettingsUpdate).toHaveBeenCalled();
     expect(onUserSettingsUpdate).toHaveBeenLastCalledWith(
       expect.objectContaining({

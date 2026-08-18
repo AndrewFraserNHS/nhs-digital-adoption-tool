@@ -56,13 +56,18 @@ function buildProps(overrides?: {
 }
 
 describe('MaturityAssessmentPanel', () => {
-  it('renders active component details and triggers top-level callbacks', () => {
+  it('SHOULD render active component details and triggers top-level callbacks', () => {
+    // arrange
     const props = buildProps();
+
+    // act 1
     render(<MaturityAssessmentPanel {...props} />);
 
+    // assert 1
     expect(screen.getAllByText('Vision').length).toBeGreaterThan(0);
     expect(screen.getByText('Stage 2 text')).toBeInTheDocument();
 
+    // act 2
     fireEvent.change(screen.getByLabelText('Current Maturity Stage'), { target: { value: '3' } });
     fireEvent.click(screen.getByRole('button', { name: 'View Matrix' }));
     fireEvent.click(screen.getByRole('button', { name: 'View Guidance' }));
@@ -75,16 +80,19 @@ describe('MaturityAssessmentPanel', () => {
     }
     fireEvent.click(benefitsButton);
 
+    // assert 2
     expect(props.onScoreChange).toHaveBeenCalledWith('Vision', 3);
     expect(props.onOpenMatrix).toHaveBeenCalledWith('Vision');
     expect(props.onOpenGuidance).toHaveBeenCalledWith('Vision');
     expect(props.onComponentChange).toHaveBeenCalledWith('Benefits');
   });
 
-  it('updates justification, notes, links, and actions through onDetailUpdate', () => {
+  it('SHOULD update justification, notes, links, and actions through onDetailUpdate', () => {
+    // arrange
     const props = buildProps();
     render(<MaturityAssessmentPanel {...props} />);
 
+    // act 
     fireEvent.change(screen.getByLabelText(/Justification/), {
       target: { value: 'Updated justification' },
     });
@@ -100,6 +108,7 @@ describe('MaturityAssessmentPanel', () => {
       target: { value: 'Updated action text' },
     });
 
+    // assert
     expect(props.onDetailUpdate).toHaveBeenCalled();
     const allUpdates = props.onDetailUpdate.mock.calls.map((call) => call[1] as ComponentDetail);
     expect(allUpdates.some((detail) => detail.justification === 'Updated justification')).toBe(
@@ -113,7 +122,8 @@ describe('MaturityAssessmentPanel', () => {
     ).toBe(true);
   });
 
-  it('exercises filter branches for links and actions', () => {
+  it('SHOULD exercises filter branches for links and actions', () => {
+    // arrange
     const props = buildProps({
       details: {
         Vision: buildDetail({
@@ -132,18 +142,25 @@ describe('MaturityAssessmentPanel', () => {
     });
     render(<MaturityAssessmentPanel {...props} />);
 
+    // act 1
     fireEvent.change(screen.getByPlaceholderText('Filter links...'), {
       target: { value: 'missing' },
     });
+
+    // assert 1
     expect(screen.getByText('No supporting links match the current filter.')).toBeInTheDocument();
 
+    // act 2
     fireEvent.change(screen.getByPlaceholderText('Search actions...'), {
       target: { value: 'nothing' },
     });
+
+    // assert 2
     expect(screen.getByText('No actions match the current filters.')).toBeInTheDocument();
   });
 
   it('shows no component match and empty details state branches', () => {
+    // arrange 
     const props = buildProps({
       activeComponent: 'Missing',
       details: {
@@ -153,20 +170,25 @@ describe('MaturityAssessmentPanel', () => {
       scores: { Vision: 2, Benefits: 1 },
     });
 
+    // act
     render(<MaturityAssessmentPanel {...props} />);
     fireEvent.change(screen.getByPlaceholderText('Search themes...'), { target: { value: 'zzz' } });
 
+    // assert
     expect(screen.getByText('No components match the current filters.')).toBeInTheDocument();
     expect(screen.getByText('Select a component to view details')).toBeInTheDocument();
   });
 
   it('toggles component and action sort direction controls', () => {
+    // arrange
     const props = buildProps();
     render(<MaturityAssessmentPanel {...props} />);
 
+    // act
     fireEvent.click(screen.getByRole('button', { name: 'Asc' }));
     fireEvent.click(screen.getByRole('button', { name: 'Ascending' }));
 
+    // assert
     expect(screen.getByRole('button', { name: 'Desc' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Descending' })).toBeInTheDocument();
   });

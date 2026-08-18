@@ -24,9 +24,9 @@ function buildReport(): ConflictReport {
         items: [
           {
             id: 'action:vision:Strategic Direction:action-1',
-            label: 'Vision / Strategic Direction — Run workshop',
-            mineSummary: 'Run workshop — Planned, owner: Andy Fraser',
-            theirsSummary: 'Run workshop — Completed, owner: Andy Fraser',
+            label: 'Vision / Strategic Direction - Run workshop',
+            mineSummary: 'Run workshop - Planned, owner: Andy Fraser',
+            theirsSummary: 'Run workshop - Completed, owner: Andy Fraser',
           },
         ],
       },
@@ -37,7 +37,8 @@ function buildReport(): ConflictReport {
 }
 
 describe('ImportConflictModal', () => {
-  it('renders conflict rows grouped by section with auto-merge summary', () => {
+  it('SHOULD render conflict rows grouped by section with auto-merge summary', () => {
+    // arrange + act
     render(
       <ImportConflictModal
         report={buildReport()}
@@ -48,12 +49,14 @@ describe('ImportConflictModal', () => {
       />
     );
 
+    // assert
     expect(screen.getByText('Trust name')).toBeInTheDocument();
-    expect(screen.getByText('Vision / Strategic Direction — Run workshop')).toBeInTheDocument();
+    expect(screen.getByText('Vision / Strategic Direction - Run workshop')).toBeInTheDocument();
     expect(screen.getByText(/also merging automatically: 1 new action\(s\)/)).toBeInTheDocument();
   });
 
-  it('defaults every row to "mine" and resolves with the current picks', () => {
+  it('SHOULD default every row to "mine" and resolves with the current picks', () => {
+    // arrange
     const onResolve = vi.fn();
     render(
       <ImportConflictModal
@@ -65,8 +68,10 @@ describe('ImportConflictModal', () => {
       />
     );
 
+    // act
     fireEvent.click(screen.getByTestId('import-conflict-apply'));
 
+    // assert
     expect(onResolve).toHaveBeenCalledWith({
       'profile:trustName': 'mine',
       'action:vision:Strategic Direction:action-1': 'mine',
@@ -74,6 +79,7 @@ describe('ImportConflictModal', () => {
   });
 
   it('lets a single row be switched to theirs', () => {
+    // arrange
     const onResolve = vi.fn();
     render(
       <ImportConflictModal
@@ -85,17 +91,21 @@ describe('ImportConflictModal', () => {
       />
     );
 
+    // act
     const row = screen.getByTestId('import-conflict-row-profile:trustName');
     fireEvent.click(within(row).getByText('Trust B'));
     fireEvent.click(screen.getByTestId('import-conflict-apply'));
 
+
+    // assert
     expect(onResolve).toHaveBeenCalledWith({
       'profile:trustName': 'theirs',
       'action:vision:Strategic Direction:action-1': 'mine',
     });
   });
 
-  it('use all theirs sets every row at once', () => {
+  it('SHOULD use all theirs sets every row at once', () => {
+    // arrange
     const onResolve = vi.fn();
     render(
       <ImportConflictModal
@@ -107,16 +117,20 @@ describe('ImportConflictModal', () => {
       />
     );
 
+    // act
     fireEvent.click(screen.getByRole('button', { name: 'Use all theirs' }));
     fireEvent.click(screen.getByTestId('import-conflict-apply'));
 
+
+    // assert
     expect(onResolve).toHaveBeenCalledWith({
       'profile:trustName': 'theirs',
       'action:vision:Strategic Direction:action-1': 'theirs',
     });
   });
 
-  it('calls onCancel from the footer button', () => {
+  it('SHOULD call onCancel from the footer button', () => {
+    // arrange
     const onCancel = vi.fn();
     render(
       <ImportConflictModal
@@ -128,7 +142,10 @@ describe('ImportConflictModal', () => {
       />
     );
 
+    // act
     fireEvent.click(screen.getByTestId('import-conflict-cancel'));
+
+    // assert
     expect(onCancel).toHaveBeenCalled();
   });
 });

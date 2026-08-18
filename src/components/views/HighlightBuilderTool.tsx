@@ -1341,7 +1341,7 @@ export function HighlightBuilderTool({
                                 {teamMembers.map((member) => (
                                   <option key={member.id} value={member.id}>
                                     {member.name || 'Unnamed'}
-                                    {member.role ? ` — ${member.role}` : ''}
+                                    {member.role ? ` - ${member.role}` : ''}
                                   </option>
                                 ))}
                               </select>

@@ -34,33 +34,50 @@ function buildProps() {
 }
 
 describe('MaturityModalManager', () => {
-  it('returns null when modalType is empty', () => {
+  it('SHOULD return null WHERE modalType is empty', () => {
+    // arrange
     const props = buildProps();
+
+    // act
     const { container } = render(<MaturityModalManager {...props} modalType="" />);
+
+    // assert
     expect(container.firstChild).toBeNull();
   });
 
-  it('renders matrix modal and handles score selection and close', () => {
+  it('SHOULD render matrix modal and handles score selection and close', () => {
+    // arrange
     const props = buildProps();
     render(<MaturityModalManager {...props} modalType="matrix" />);
 
+    // act 1
     fireEvent.click(screen.getByTestId('maturity-matrix-score-2'));
+
+    // assert 1
     expect(props.onSetScore).toHaveBeenCalledWith('Vision', 2);
 
+    // act 2
     fireEvent.click(screen.getByTestId('maturity-modal-close'));
+
+    // assert 2
     expect(props.onClose).toHaveBeenCalled();
   });
 
-  it('renders guidance modal and shows fallback when missing guidance', () => {
+  it('SHOULD render guidance modal and shows fallback WHERE missing guidance', () => {
+    // arrange
     const props = buildProps();
+
+    // act 1
     const { rerender } = render(<MaturityModalManager {...props} modalType="guidance" />);
 
+    // assert 1
     expect(screen.getByTestId('maturity-modal-guidance')).toBeInTheDocument();
     expect(screen.getByTestId('maturity-guidance-body').textContent).toContain('Purpose');
     expect(screen.getByTestId('maturity-guidance-body').textContent).toContain(
       'Inputs, tools and templates'
     );
 
+    // act 2
     rerender(
       <MaturityModalManager
         {...props}
@@ -69,15 +86,21 @@ describe('MaturityModalManager', () => {
         guidanceData={{}}
       />
     );
+
+    // assert 2
     expect(screen.getByTestId('maturity-guidance-body').textContent).toContain(
       'No guidance available.'
     );
   });
 
-  it('renders help modal with usage guidance', () => {
+  it('SHOULD render help modal with usage guidance', () => {
+    // arrange
     const props = buildProps();
+
+    // act
     render(<MaturityModalManager {...props} modalType="help" />);
 
+    // assert
     expect(screen.getByTestId('maturity-modal-help')).toBeInTheDocument();
     expect(screen.getByTestId('maturity-help-heading')).toBeInTheDocument();
     expect(screen.getByTestId('maturity-modal-help').textContent).toContain('Fill in CST Personalisation');
@@ -85,9 +108,14 @@ describe('MaturityModalManager', () => {
   });
 
   it('renders version history modal with release notes', () => {
+    // arrange
     const props = buildProps();
+
+    // act
     render(<MaturityModalManager {...props} modalType="versionHistory" />);
 
+
+    // assert
     expect(screen.getByTestId('maturity-modal-version-history')).toBeInTheDocument();
     expect(screen.getByTestId('maturity-version-history-heading')).toBeInTheDocument();
     expect(screen.getByTestId('maturity-modal-version-history').textContent).toContain(
@@ -98,7 +126,8 @@ describe('MaturityModalManager', () => {
     );
   });
 
-  it('renders report modal, prints, and exports csv from report rows', () => {
+  it('SHOULD render report modal, prints, and exports csv from report rows', () => {
+    // arrange
     const props = buildProps();
     vi.useFakeTimers();
     const write = vi.fn();
@@ -115,23 +144,27 @@ describe('MaturityModalManager', () => {
       focus,
     } as unknown as Window);
 
+    // act
     render(<MaturityModalManager {...props} modalType="report" />);
 
     fireEvent.click(screen.getByTestId('maturity-report-print-button'));
     vi.runAllTimers();
     fireEvent.click(screen.getByTestId('maturity-report-export-csv-button'));
 
+    // assert
     expect(openSpy).toHaveBeenCalled();
     expect(print).toHaveBeenCalled();
     expect(write).toHaveBeenCalled();
     expect(props.onExportCsv).toHaveBeenCalledWith(props.reportData.rows);
     expect(screen.getByTestId('maturity-report-content').textContent).toContain('Mock Report');
 
+    // restore
     openSpy.mockRestore();
     vi.useRealTimers();
   });
 
-  it('exports csv fallback rows when report rows are missing', () => {
+  it('SHOULD export csv fallback rows WHERE report rows are missing', () => {
+    // arrange
     const props = buildProps();
     render(
       <MaturityModalManager
@@ -141,7 +174,10 @@ describe('MaturityModalManager', () => {
       />
     );
 
+    // act
     fireEvent.click(screen.getByTestId('maturity-report-export-csv-button'));
+
+    // assert
     expect(props.onExportCsv).toHaveBeenCalledWith([
       { id: 'Vision', label: 'Vision', value: 2 },
       { id: 'Benefits', label: 'Benefits', value: 0 },

@@ -5,6 +5,7 @@
 
 import { AssessmentComponent } from '@data/components';
 import type { ChartData } from 'chart.js';
+
 import { isCompletedActionStatus } from './actionModel';
 import { AdoptionStore, deriveObjectiveStatus, DraftEntry } from './adoptionState';
 
@@ -440,11 +441,21 @@ export function buildComponentRadarChartData(
   const exemplarPhase =
     currentPhase && COMPONENT_PHASE_EXEMPLARS[currentPhase] ? currentPhase : null;
   const colorForScore = (score: number): string => {
-    if (score <= 0) return '#768692';
-    if (score < 1.5) return '#AE2521';
-    if (score < 2.5) return '#FFB81C';
-    if (score < 3.5) return '#005EB8';
-    if (score < 4.5) return '#330072';
+    if (score <= 0) {
+return '#768692';
+}
+    if (score < 1.5) {
+return '#AE2521';
+}
+    if (score < 2.5) {
+return '#FFB81C';
+}
+    if (score < 3.5) {
+return '#005EB8';
+}
+    if (score < 4.5) {
+return '#330072';
+}
     return '#00A499';
   };
   const averageScores = components.map((component) => {

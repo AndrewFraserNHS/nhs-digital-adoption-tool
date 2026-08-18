@@ -32,7 +32,8 @@ const components: AssessmentComponent[] = [
 ];
 
 describe('ProjectDetailsPage', () => {
-  it('propagates trust name updates', () => {
+  it('SHOULD propagate trust name updates', () => {
+    // arrange
     const onProfileUpdate = vi.fn();
 
     render(
@@ -46,17 +47,20 @@ describe('ProjectDetailsPage', () => {
         onCurrentUserChange={vi.fn()}
       />
     );
-
+    
+    // act
     fireEvent.change(screen.getByTestId('cst-trust-name-input'), {
       target: { value: 'Updated Trust' },
     });
 
+    // assert
     expect(onProfileUpdate).toHaveBeenLastCalledWith(
       expect.objectContaining({ trustName: 'Updated Trust' })
     );
   });
 
-  it('reopens the onboarding intro', () => {
+  it('SHOULD reopen the onboarding intro', () => {
+    // arrange
     const onOpenOnboarding = vi.fn();
 
     render(
@@ -71,11 +75,15 @@ describe('ProjectDetailsPage', () => {
       />
     );
 
+    // act
     fireEvent.click(screen.getByTestId('cst-show-intro-button'));
+
+    // assert
     expect(onOpenOnboarding).toHaveBeenCalled();
   });
 
   it('updates toolkit choice from CST Details', () => {
+    // arrange
     const onProfileUpdate = vi.fn();
 
     render(
@@ -90,10 +98,12 @@ describe('ProjectDetailsPage', () => {
       />
     );
 
+    // act
     fireEvent.change(screen.getByLabelText('Default toolkit for assistant preview'), {
       target: { value: 'change-management-v3-2023' },
     });
 
+    // assert
     expect(onProfileUpdate).toHaveBeenLastCalledWith(
       expect.objectContaining({
         cst: expect.objectContaining({ toolkitChoice: 'change-management-v3-2023' }),

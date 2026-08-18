@@ -107,7 +107,8 @@ function getEntry(componentId: string, lens: string): DraftEntry {
 }
 
 describe('AdoptionDashboard', () => {
-  it('renders summary cards from metrics and history', () => {
+  it('SHOULD render summary cards from metrics and history', () => {
+    // arrange + act
     render(
       <AdoptionDashboard
         store={store}
@@ -121,13 +122,15 @@ describe('AdoptionDashboard', () => {
       />
     );
 
+    // assert
     expect(screen.getByText('60%')).toBeInTheDocument();
     expect(screen.getAllByText('Pre-Discovery').length).toBeGreaterThan(0);
     expect(screen.getByText('0 of 0 actions completed.')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Hide change component radar' })).toBeInTheDocument();
   });
 
-  it('filters component cards by status', () => {
+  it('SHOULD filter component cards by status', () => {
+    // arrange + act
     render(
       <AdoptionDashboard
         store={store}
@@ -144,11 +147,15 @@ describe('AdoptionDashboard', () => {
     const filters = screen.getAllByRole('combobox');
     fireEvent.change(filters[0], { target: { value: 'not-started' } });
 
+    // assert
     expect(screen.getByText('No components match the current filters.')).toBeInTheDocument();
   });
 
   it('calls onComponentClick when a component is selected', () => {
+    // arrange
     const onComponentClick = vi.fn();
+
+    // act
     render(
       <AdoptionDashboard
         store={store}
@@ -163,14 +170,18 @@ describe('AdoptionDashboard', () => {
     );
 
     fireEvent.click(screen.getAllByText('Vision')[0]);
+
+    // assert
     expect(onComponentClick).toHaveBeenCalledWith('vision');
   });
 
-  it('shows a getting-started empty state when nothing has been assessed', () => {
+  it('SHOULD show a getting-started empty state WHERE nothing has been assessed', () => {
+    // arrange
     const onNavigate = vi.fn();
     const onComponentClick = vi.fn();
     const emptyMetrics: Metrics = { ...metrics, assessedCount: 0 };
 
+    // act
     render(
       <AdoptionDashboard
         store={store}
@@ -185,17 +196,25 @@ describe('AdoptionDashboard', () => {
       />
     );
 
+    // assert 1
     expect(screen.getByText('Getting started')).toBeInTheDocument();
     expect(screen.queryByText('Phase Progress (RAG)')).not.toBeInTheDocument();
 
+    // act 2
     fireEvent.click(screen.getByRole('button', { name: 'Set up your CST Personalisation' }));
+
+    // assert 2
     expect(onNavigate).toHaveBeenCalledWith('project-details');
 
+    // act 3
     fireEvent.click(screen.getByRole('button', { name: 'Start your first assessment' }));
+
+    // act 3
     expect(onComponentClick).toHaveBeenCalledWith('vision');
   });
 
-  it('shows Green for fully on-target work in the dashboard focus list', () => {
+  it('SHOULD show Green WHERE fully on-target work in the dashboard focus list', () => {
+    // arrange
     const completeMetrics: Metrics = {
       ...metrics,
       nextSteps: [
@@ -207,6 +226,7 @@ describe('AdoptionDashboard', () => {
       ],
     };
 
+    // act
     render(
       <AdoptionDashboard
         store={store}
@@ -225,13 +245,17 @@ describe('AdoptionDashboard', () => {
       button.textContent?.includes('Benefits are fully on target and complete.')
     );
 
+    // assert
     expect(focusCard).toBeTruthy();
     expect(focusCard && within(focusCard).getByText('Green')).toBeInTheDocument();
     expect(focusCard && within(focusCard).queryByText('Blue')).not.toBeInTheDocument();
   });
 
-  it('calls onOpenLensInfo when the lens explainer is clicked', () => {
+  it('SHOULD call onOpenLensInfo WHERE the lens explainer is clicked', () => {
+    // arrange
     const onOpenLensInfo = vi.fn();
+
+    // act
     render(
       <AdoptionDashboard
         store={store}
@@ -247,6 +271,8 @@ describe('AdoptionDashboard', () => {
     );
 
     fireEvent.click(screen.getByRole('button', { name: "What's a lens?" }));
+
+    // assert
     expect(onOpenLensInfo).toHaveBeenCalledWith('Strategic Lens');
   });
 });

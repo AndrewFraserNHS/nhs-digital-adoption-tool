@@ -8,6 +8,7 @@ import { ChangeManagementGuide } from '@components/views/ChangeManagementGuide';
 import { ProjectDetailsPage } from '@components/views/CSTDetailsPage';
 import { GuidanceRoadmapView } from '@components/views/GuidanceRoadmapView';
 import { HighlightBuilderTool } from '@components/views/HighlightBuilderTool';
+import { ImportConflictModal } from '@components/views/ImportConflictModal';
 import { LensInfoModal } from '@components/views/LensInfoModal';
 import { OnboardingOverviewPage } from '@components/views/OnboardingOverviewPage';
 import { type AdoptionUserSettings, SettingsPanel } from '@components/views/SettingsPanel';
@@ -42,6 +43,12 @@ import {
   flattenActions,
   getMetrics as computeMetrics,
 } from '@lib/adoptionMetrics';
+import {
+  applyConflictResolutions,
+  buildConflictReport,
+  type ConflictChoice,
+  type ConflictReport,
+} from '@lib/cstConflict';
 import type {
   AdoptionStore,
   ComponentObjective,
@@ -49,7 +56,7 @@ import type {
   DraftEntry,
   View,
 } from '@lib/adoptionState';
-import { cloneEntry, createEmptyEntry, initializeStore } from '@lib/adoptionState';
+import { cloneEntry, createCstId, createEmptyEntry, initializeStore } from '@lib/adoptionState';
 import { validateCstProfile } from '@lib/adoptionValidator';
 import { type AuditEvent, createAuditEvent, trimAuditEvents } from '@lib/auditLog';
 import { syncBenefitsDerivedContent } from '@lib/benefitsAutomation';
@@ -134,6 +141,20 @@ function cloneAction(action: DraftAction): DraftAction {
 
 function buildSuppressedAutoActionKey(componentId: string, lens: string): string {
   return `${componentId}:${lens}`;
+}
+
+/**
+ * Nothing entered yet, so an import can safely replace it wholesale with no conflict prompt.
+ * Every lens ships pre-populated with template actions from the start, so their mere presence
+ * doesn't indicate real user content — only a scored lens (or a named profile) does.
+ */
+function isCstEmpty(store: AdoptionStore): boolean {
+  if (store.orgProfile.trustName || store.orgProfile.projectName) {
+    return false;
+  }
+  return !Object.values(store.currentDraft).some((lenses) =>
+    Object.values(lenses).some((entry) => entry.score > 0)
+  );
 }
 
 function syncDerivedContent(store: AdoptionStore): AdoptionStore {
@@ -352,25 +373,36 @@ export function AdoptionApp() {
     } catch (error) {
       console.warn('Ignoring invalid persisted adoption data.', error);
     }
-    return syncDerivedContent(
-      initializeStore({
-        view: 'dashboard',
-        orgProfile: persisted?.orgProfile || state.adoption?.orgProfile,
-        currentDraft: persisted?.currentDraft || state.adoption?.currentDraft,
-        objectives: persisted?.objectives || state.adoption?.objectives,
-        suppressedAutoActions:
-          persisted?.suppressedAutoActions || state.adoption?.suppressedAutoActions,
-        auditLog: persisted?.auditLog || state.adoption?.auditLog,
-        history: persisted?.history || state.adoption?.history,
-        phaseOverrides: persisted?.phaseOverrides || state.adoption?.phaseOverrides,
-        pathwayChecks: persisted?.pathwayChecks || state.adoption?.pathwayChecks,
-      }) as AdoptionStore
-    );
+    const initialised = initializeStore({
+      view: 'dashboard',
+      orgProfile: persisted?.orgProfile || state.adoption?.orgProfile,
+      currentDraft: persisted?.currentDraft || state.adoption?.currentDraft,
+      objectives: persisted?.objectives || state.adoption?.objectives,
+      suppressedAutoActions:
+        persisted?.suppressedAutoActions || state.adoption?.suppressedAutoActions,
+      auditLog: persisted?.auditLog || state.adoption?.auditLog,
+      history: persisted?.history || state.adoption?.history,
+      phaseOverrides: persisted?.phaseOverrides || state.adoption?.phaseOverrides,
+      pathwayChecks: persisted?.pathwayChecks || state.adoption?.pathwayChecks,
+    }) as AdoptionStore;
+
+    // Backfill a stable programme identity for the app's own working document (never for an
+    // imported payload — see cstConflict.ts) so it can be recognised on later exports/imports.
+    if (!initialised.orgProfile.cstId) {
+      initialised.orgProfile = { ...initialised.orgProfile, cstId: createCstId() };
+    }
+
+    return syncDerivedContent(initialised);
   });
 
   const [showMatrix, setShowMatrix] = useState<Record<string, boolean>>({});
   const [activeLensInfo, setActiveLensInfo] = useState('');
   const [currentUserId, setCurrentUserId] = useState<string>(() => load<string>(ADOPTION_CURRENT_USER_KEY) || '');
+  const [importConflict, setImportConflict] = useState<{
+    file: File;
+    parsed: Partial<SavedAdoptionAssessment>;
+    report: ConflictReport;
+  } | null>(null);
   const [userSettings, setUserSettings] = useState<AdoptionUserSettings>(() => {
     const persisted = load<Partial<AdoptionUserSettings>>(ADOPTION_USER_SETTINGS_KEY);
     return {
@@ -936,25 +968,97 @@ export function AdoptionApp() {
       try {
         const text = await file.text();
         const parsed = parseImportedAdoptionAssessment(JSON.parse(text));
-        setStore((prev) => {
-          const merged = syncDerivedContent(mergeImportedAdoptionState(parsed, prev));
-          return {
-            ...merged,
-            auditLog: appendAuditEvents(merged, [
-              {
-                eventType: 'data-imported',
-                entityType: 'system',
-                summary: `Imported assessment data from ${file.name}`,
-                after: {
-                  fileName: file.name,
+
+        const applyWholesaleImport = () => {
+          setStore((prev) => {
+            const merged = syncDerivedContent(mergeImportedAdoptionState(parsed, prev));
+            // A wholesale replace can land without a cstId (imported file predates this
+            // feature, or never had one) — backfill immediately so this becomes a stable
+            // identity going forward rather than waiting for the next full page reload.
+            if (!merged.orgProfile.cstId) {
+              merged.orgProfile = { ...merged.orgProfile, cstId: createCstId() };
+            }
+            return {
+              ...merged,
+              auditLog: appendAuditEvents(merged, [
+                {
+                  eventType: 'data-imported',
+                  entityType: 'system',
+                  summary: `Imported assessment data from ${file.name}`,
+                  after: {
+                    fileName: file.name,
+                  },
+                  source: 'local',
                 },
-                source: 'local',
-              },
-            ]),
-          };
-        });
-        setView('dashboard');
-        announceStatus('Assessment import complete. Dashboard updated.');
+              ]),
+            };
+          });
+          setView('dashboard');
+          announceStatus('Assessment import complete. Dashboard updated.');
+        };
+
+        if (isCstEmpty(store)) {
+          applyWholesaleImport();
+          return;
+        }
+
+        const importedCstId = parsed.orgProfile?.cstId;
+        const currentCstId = store.orgProfile.cstId;
+        const currentLabel =
+          store.orgProfile.projectName || store.orgProfile.trustName || 'your currently loaded programme';
+        const theirLabel = parsed.orgProfile?.projectName || parsed.orgProfile?.trustName || file.name;
+
+        if (importedCstId && importedCstId !== currentCstId) {
+          const proceed = window.confirm(
+            `"${theirLabel}" looks like a different programme than "${currentLabel}".\n\nImporting will replace everything currently loaded. Continue?`
+          );
+          if (!proceed) {
+            announceStatus('Import cancelled.');
+            return;
+          }
+          applyWholesaleImport();
+          return;
+        }
+
+        if (!importedCstId) {
+          const treatAsUpdate = window.confirm(
+            `"${theirLabel}" doesn't carry a programme ID (it may predate this feature).\n\nClick OK to compare it against "${currentLabel}" and merge item by item, or Cancel to load it as a different programme (replace everything).`
+          );
+          if (!treatAsUpdate) {
+            applyWholesaleImport();
+            return;
+          }
+        }
+
+        const report = buildConflictReport(store, parsed);
+        if (!report.hasConflicts) {
+          setStore((prev) => {
+            const merged = syncDerivedContent(applyConflictResolutions(prev, parsed, {}));
+            return {
+              ...merged,
+              auditLog: appendAuditEvents(merged, [
+                {
+                  eventType: 'data-imported',
+                  entityType: 'system',
+                  summary: report.autoMergeSummary.length
+                    ? `Merged import from ${file.name} (${report.autoMergeSummary.join(', ')})`
+                    : `Imported ${file.name} — no changes (already up to date)`,
+                  after: { fileName: file.name },
+                  source: 'local',
+                },
+              ]),
+            };
+          });
+          setView('dashboard');
+          announceStatus(
+            report.autoMergeSummary.length
+              ? `Merged automatically: ${report.autoMergeSummary.join(', ')}.`
+              : 'Already up to date — nothing to import.'
+          );
+          return;
+        }
+
+        setImportConflict({ file, parsed, report });
       } catch (_error) {
         announceStatus('Import failed. Please verify the file contents.');
         window.alert('Unable to import adoption assessment. Please verify the file contents.');
@@ -962,8 +1066,42 @@ export function AdoptionApp() {
         event.target.value = '';
       }
     },
-    [announceStatus, appendAuditEvents]
+    [announceStatus, appendAuditEvents, store]
   );
+
+  const handleResolveImportConflict = useCallback(
+    (resolutions: Record<string, ConflictChoice>) => {
+      if (!importConflict) {
+        return;
+      }
+      const { file, parsed } = importConflict;
+      const conflictCount = Object.keys(resolutions).length;
+      setStore((prev) => {
+        const merged = syncDerivedContent(applyConflictResolutions(prev, parsed, resolutions));
+        return {
+          ...merged,
+          auditLog: appendAuditEvents(merged, [
+            {
+              eventType: 'data-imported',
+              entityType: 'system',
+              summary: `Merged import from ${file.name} (${conflictCount} item(s) resolved)`,
+              after: { fileName: file.name },
+              source: 'local',
+            },
+          ]),
+        };
+      });
+      setImportConflict(null);
+      setView('dashboard');
+      announceStatus('Import merged into current programme.');
+    },
+    [announceStatus, appendAuditEvents, importConflict]
+  );
+
+  const handleCancelImportConflict = useCallback(() => {
+    setImportConflict(null);
+    announceStatus('Import cancelled.');
+  }, [announceStatus]);
 
   const handleFinaliseMonth = useCallback(
     (options?: { replaceExisting?: boolean }) => {
@@ -2168,6 +2306,7 @@ export function AdoptionApp() {
             <ActionPlanTracker
               actions={actionRows}
               onComponentClick={openComponentAssessment}
+              teamMembers={store.orgProfile.teamMembers || []}
               darkMode={Boolean(userSettings.darkMode)}
             />
           )}
@@ -2235,6 +2374,21 @@ export function AdoptionApp() {
           <LensInfoModal
             lensName={activeLensInfo}
             onClose={() => setActiveLensInfo('')}
+            darkMode={Boolean(userSettings.darkMode)}
+          />
+        ) : null}
+
+        {importConflict ? (
+          <ImportConflictModal
+            report={importConflict.report}
+            myLabel={store.orgProfile.projectName || store.orgProfile.trustName || 'Mine'}
+            theirLabel={
+              importConflict.parsed.orgProfile?.projectName ||
+              importConflict.parsed.orgProfile?.trustName ||
+              importConflict.file.name
+            }
+            onResolve={handleResolveImportConflict}
+            onCancel={handleCancelImportConflict}
             darkMode={Boolean(userSettings.darkMode)}
           />
         ) : null}

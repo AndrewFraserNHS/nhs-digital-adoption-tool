@@ -124,6 +124,19 @@ export interface OrgProfile {
   cst: CstProfile;
   linkOverrides?: LinkOverrides;
   teamMembers?: TeamMember[];
+  /**
+   * Stable identity for this CST, assigned once and carried through every export so two
+   * copies of the same programme can be recognised as such after diverging. Never invented
+   * by normalizeOrgProfile — only backfilled for the app's own persisted document (see
+   * AdoptionApp.tsx initial load), so an imported payload's absence of this field is a
+   * meaningful signal, not a bug.
+   */
+  cstId?: string;
+}
+
+/** Generates a new stable CST identity. See OrgProfile.cstId. */
+export function createCstId(): string {
+  return `cst-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
 export type PathwayChecklistState = Record<string, Partial<Record<CstPathwayKey, string[]>>>;
@@ -176,6 +189,7 @@ export function normalizeOrgProfile(profile?: Partial<OrgProfile>): OrgProfile {
     },
     linkOverrides: profile?.linkOverrides,
     teamMembers: profile?.teamMembers || [],
+    cstId: profile?.cstId,
   };
 }
 

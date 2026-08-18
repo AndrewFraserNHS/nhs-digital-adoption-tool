@@ -229,6 +229,7 @@ function validateOrgProfile(value: unknown, path: string): void {
   assertOptionalString(value.trustType, `${path}.trustType`);
   assertOptionalString(value.projectName, `${path}.projectName`);
   assertOptionalString(value.leadName, `${path}.leadName`);
+  assertOptionalString(value.cstId, `${path}.cstId`);
 
   if (value.cst !== undefined) {
     assertRecord(value.cst, `${path}.cst`);

@@ -39,7 +39,11 @@ function createEntry(overrides?: Partial<DraftEntry>): DraftEntry {
   };
 }
 
-function createProps(overrides?: { showMatrix?: boolean; entry?: DraftEntry }) {
+function createProps(overrides?: {
+  showMatrix?: boolean;
+  entry?: DraftEntry;
+  teamMembers?: { id: string; name: string; role: string }[];
+}) {
   const entryByKey: Record<string, DraftEntry> = {
     'vision:Strategic Direction': overrides?.entry || createEntry(),
   };
@@ -63,6 +67,7 @@ function createProps(overrides?: { showMatrix?: boolean; entry?: DraftEntry }) {
           toolkitChoice: 'avt-v2-2026',
           phaseCapability: {},
         },
+        teamMembers: overrides?.teamMembers || [],
       },
       currentDraft: {
         vision: {
@@ -193,6 +198,64 @@ describe('AssessmentPanel', () => {
 
     expect(screen.getByText('Run workshop')).toBeInTheDocument();
     expect(screen.queryByText('Write admin note')).toBeNull();
+  });
+
+  it('filters lens actions by owner', () => {
+    const entry = createEntry({
+      actions: [
+        {
+          id: 'action-1',
+          text: 'Run workshop',
+          owner: 'Andy Fraser',
+          timescale: 'Q3',
+          status: 'In Progress',
+        },
+        {
+          id: 'action-2',
+          text: 'Write admin note',
+          owner: 'Sam Patel',
+          timescale: 'Q3',
+          status: 'Planned',
+        },
+      ],
+    });
+    const props = createProps({
+      entry,
+      teamMembers: [
+        { id: '1', name: 'Andy Fraser', role: 'Change Lead' },
+        { id: '2', name: 'Sam Patel', role: 'SRO' },
+      ],
+    });
+    render(<AssessmentPanel {...props} />);
+
+    fireEvent.change(
+      screen.getByRole('combobox', { name: 'Filter Strategic Direction actions by owner' }),
+      { target: { value: 'Andy Fraser' } }
+    );
+
+    expect(screen.getByText('Run workshop')).toBeInTheDocument();
+    expect(screen.queryByText('Write admin note')).toBeNull();
+  });
+
+  it('populates the action editor owner select from the CST team roster', () => {
+    const props = createProps({
+      teamMembers: [{ id: '1', name: 'Andy Fraser', role: 'Change Lead' }],
+    });
+    render(<AssessmentPanel {...props} />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Add Action' }));
+    fireEvent.change(screen.getByLabelText('Description'), {
+      target: { value: 'Created from modal' },
+    });
+
+    const ownerSelect = screen.getByLabelText('Owner') as HTMLSelectElement;
+    expect(within(ownerSelect).getByText('Andy Fraser — Change Lead')).toBeInTheDocument();
+
+    fireEvent.change(ownerSelect, { target: { value: 'Andy Fraser' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save Action' }));
+
+    const lastUpdateEntry = props.onEntryUpdate.mock.calls.at(-1)[2] as DraftEntry;
+    expect(lastUpdateEntry.actions.at(-1)?.owner).toBe('Andy Fraser');
   });
 
   it('adds an evidence web link row in the action editor', () => {

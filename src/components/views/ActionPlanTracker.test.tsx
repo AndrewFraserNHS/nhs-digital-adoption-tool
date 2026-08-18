@@ -45,6 +45,27 @@ describe('ActionPlanTracker', () => {
     expect(screen.queryByText('Run clinical workshop')).not.toBeInTheDocument();
   });
 
+  it('includes CST team roster members in the owner filter even without assigned actions', () => {
+    render(
+      <ActionPlanTracker
+        actions={actions}
+        onComponentClick={vi.fn()}
+        teamMembers={[{ id: '1', name: 'Casey Roster', role: 'SRO' }]}
+      />
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Show advanced controls' }));
+
+    const ownerSelect = screen
+      .getAllByRole('combobox')
+      .find((combobox) => within(combobox).queryByRole('option', { name: 'All owners' }));
+
+    expect(ownerSelect).toBeTruthy();
+    expect(
+      within(ownerSelect as HTMLSelectElement).getByText('Casey Roster')
+    ).toBeInTheDocument();
+  });
+
   it('notifies parent when a component link is clicked', () => {
     const onComponentClick = vi.fn();
     render(<ActionPlanTracker actions={actions} onComponentClick={onComponentClick} />);

@@ -1,17 +1,20 @@
 import { JSX, useCallback, useMemo, useState } from 'react';
 import { ActionRow } from '@lib/adoptionMetrics';
 import { ACTION_STATUS_BADGE_STYLES, ACTION_TYPES, normalizeActionStatus } from '@lib/actionModel';
+import type { TeamMember } from '@lib/adoptionState';
 import { FilterSummaryBar } from '@components/ui/FilterSummaryBar';
 
 export interface ActionPlanTrackerProps {
   actions: ActionRow[];
   onComponentClick: (componentId: string) => void;
+  teamMembers?: TeamMember[];
   darkMode?: boolean;
 }
 
 export function ActionPlanTracker({
   actions,
   onComponentClick,
+  teamMembers = [],
   darkMode = false,
 }: ActionPlanTrackerProps): JSX.Element {
   const [searchTerm, setSearchTerm] = useState('');
@@ -43,10 +46,13 @@ export function ActionPlanTracker({
 
   const ownerOptions = useMemo(
     () =>
-      Array.from(new Set(actions.map((row) => row.action.owner).filter(Boolean))).sort(
-        (left, right) => left.localeCompare(right)
-      ),
-    [actions]
+      Array.from(
+        new Set([
+          ...teamMembers.map((member) => member.name),
+          ...actions.map((row) => row.action.owner).filter(Boolean),
+        ])
+      ).sort((left, right) => left.localeCompare(right)),
+    [actions, teamMembers]
   );
 
   const statusOptions = useMemo(

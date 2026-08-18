@@ -4,6 +4,7 @@ import {
   cloneDraft,
   cloneEntry,
   cloneObjectivesMap,
+  createCstId,
   createEmptyEntry,
   createReactiveAdoptionStore,
   deriveObjectiveStatus,
@@ -52,6 +53,29 @@ describe('adoptionState', () => {
     });
 
     expect(withTeam.orgProfile.teamMembers).toEqual([{ id: 'm1', name: 'Alex', role: 'Change Lead' }]);
+  });
+
+  it('never invents a cstId, only passes through what is given', () => {
+    const withoutId = initializeStore();
+    expect(withoutId.orgProfile.cstId).toBeUndefined();
+
+    const withId = initializeStore({
+      orgProfile: {
+        trustName: '',
+        region: '',
+        trustType: '',
+        cst: initializeStore().orgProfile.cst,
+        cstId: 'cst-explicit-id',
+      },
+    });
+    expect(withId.orgProfile.cstId).toBe('cst-explicit-id');
+  });
+
+  it('createCstId generates unique, stably-shaped ids', () => {
+    const a = createCstId();
+    const b = createCstId();
+    expect(a).not.toBe(b);
+    expect(a).toMatch(/^cst-\d+-[a-z0-9]+$/);
   });
 
   it('creates and clones entries safely', () => {

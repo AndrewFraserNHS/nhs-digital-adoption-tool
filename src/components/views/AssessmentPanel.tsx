@@ -321,7 +321,11 @@ export function AssessmentPanel({
   const [showActionsSection, setShowActionsSection] = useState(true);
   const [expandedLensActions, setExpandedLensActions] = useState<Record<string, boolean>>({});
   const [lensActionTypeFilters, setLensActionTypeFilters] = useState<Record<string, string>>({});
+  const [lensActionOwnerFilters, setLensActionOwnerFilters] = useState<Record<string, string>>(
+    {}
+  );
   const objectives = store.objectives?.[component.id] || [];
+  const teamMembers = store.orgProfile.teamMembers || [];
 
   const componentActionsByLens = useMemo(() => {
     const map: Record<string, DraftAction[]> = {};
@@ -1063,6 +1067,7 @@ export function AssessmentPanel({
               entry.score === 0 && !hasNotStartedActions ? 1 : entry.score;
             const showMatrix = !!store.showMatrix?.[`${component.id}:${lens}`];
             const lensActionTypeFilter = lensActionTypeFilters[targetKey] || 'all';
+            const lensActionOwnerFilter = lensActionOwnerFilters[targetKey] || 'all';
             const lensActionTypeOptions = Array.from(
               new Set(
                 actionsForLens
@@ -1073,6 +1078,14 @@ export function AssessmentPanel({
                   )
               )
             ).sort((left, right) => String(left).localeCompare(String(right)));
+            const lensActionOwnerOptions = Array.from(
+              new Set([
+                ...teamMembers.map((member) => member.name),
+                ...actionsForLens
+                  .map((resolvedAction) => resolvedAction.action.owner)
+                  .filter((owner): owner is string => Boolean(owner)),
+              ])
+            ).sort((left, right) => left.localeCompare(right));
             const lensActions = [...actionsForLens]
               .filter(
                 (resolvedAction) => {
@@ -1085,9 +1098,16 @@ export function AssessmentPanel({
                     return false;
                   }
 
+                  if (
+                    lensActionTypeFilter !== 'all' &&
+                    (resolvedAction.action.actionType || '') !== lensActionTypeFilter
+                  ) {
+                    return false;
+                  }
+
                   return (
-                    lensActionTypeFilter === 'all' ||
-                    (resolvedAction.action.actionType || '') === lensActionTypeFilter
+                    lensActionOwnerFilter === 'all' ||
+                    (resolvedAction.action.owner || '') === lensActionOwnerFilter
                   );
                 }
               )
@@ -1259,6 +1279,24 @@ export function AssessmentPanel({
                             </option>
                           )
                         )}
+                      </select>
+                      <select
+                        aria-label={`Filter ${lens} actions by owner`}
+                        value={lensActionOwnerFilter}
+                        onChange={(event) =>
+                          setLensActionOwnerFilters((current) => ({
+                            ...current,
+                            [targetKey]: event.target.value,
+                          }))
+                        }
+                        className={`rounded-md border px-2.5 py-1.5 text-xs font-semibold ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-700'}`}
+                      >
+                        <option value="all">All owners</option>
+                        {lensActionOwnerOptions.map((owner) => (
+                          <option key={owner} value={owner}>
+                            {owner}
+                          </option>
+                        ))}
                       </select>
                       <button
                         onClick={() => openCreateActionModal(lens)}
@@ -1562,11 +1600,25 @@ export function AssessmentPanel({
                 </label>
                 <label className={`text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
                   <span className="mb-1 block font-semibold">Owner</span>
-                  <input
+                  <select
                     value={actionEditor.action.owner}
                     onChange={(event) => updateActionEditor({ owner: event.target.value })}
                     className={`w-full rounded-md border px-3 py-2 text-sm ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
-                  />
+                  >
+                    <option value="">Unassigned</option>
+                    {teamMembers.map((member) => (
+                      <option key={member.id} value={member.name}>
+                        {member.name}
+                        {member.role ? ` — ${member.role}` : ''}
+                      </option>
+                    ))}
+                    {actionEditor.action.owner &&
+                    !teamMembers.some((member) => member.name === actionEditor.action.owner) ? (
+                      <option value={actionEditor.action.owner}>
+                        {actionEditor.action.owner} (not on roster)
+                      </option>
+                    ) : null}
+                  </select>
                 </label>
                 <label className={`text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
                   <span className="mb-1 block font-semibold">Status</span>

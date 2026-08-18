@@ -14,58 +14,951 @@
       "fullAdoptionDate": "",
       "benefitRealizationDate": "",
       "phaseCapability": {
-        "1": { "competence": "D", "confidence": 2, "reason": "initial" }
+        "1": {
+          "competence": "D",
+          "confidence": 2,
+          "reason": "initial"
+        }
       }
-    }
+    },
+    "teamMembers": [
+      {
+        "id": "red-team-1",
+        "name": "Alex Morgan",
+        "role": "Change Lead"
+      },
+      {
+        "id": "red-team-2",
+        "name": "Priya Anand",
+        "role": "Programme Manager"
+      },
+      {
+        "id": "red-team-3",
+        "name": "Sam Whitfield",
+        "role": "Communications Officer"
+      }
+    ]
   },
   "currentDraft": {
     "vision": {
       "Strategic Direction and Leadership": {
-        "score": 1,
-        "justification": "Early vision statement drafted but not yet socialised.",
-        "evidence": "Kick-off notes",
+        "score": 2,
+        "justification": "Draft vision language exists but has not been tested with sponsors or shared beyond the core team.",
+        "evidence": "Kick-off workshop notes",
         "actions": [
           {
-            "id": "p1-vision-1",
-            "text": "Draft and approve vision one-pager",
-            "owner": "Programme Manager",
-            "timescale": "Sep 2026",
-            "status": "Planned"
+            "id": "vision-action:strategic-direction-and-leadership:0-1:0",
+            "text": "Facilitate an initial vision workshop with the SRO, sponsors and key programme stakeholders to explore the future state.",
+            "actionType": "Engagement",
+            "owner": "Alex Morgan",
+            "timescale": "Completed",
+            "status": "Completed",
+            "startDate": "2026-05-01",
+            "dueDate": "2026-06-15",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 0
+          },
+          {
+            "id": "vision-action:strategic-direction-and-leadership:1-2:0",
+            "text": "Draft a formal vision statement describing the future state and intended outcomes.",
+            "actionType": "Design",
+            "owner": "Priya Anand",
+            "timescale": "Completed",
+            "status": "Completed",
+            "startDate": "2026-05-01",
+            "dueDate": "2026-06-15",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 1
+          },
+          {
+            "id": "vision-action:strategic-direction-and-leadership:2-3:0",
+            "text": "Secure formal approval of the vision through programme governance.",
+            "actionType": "Governance",
+            "owner": "",
+            "timescale": "In progress",
+            "status": "Planned",
+            "startDate": "",
+            "dueDate": "2026-09-30",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 2
           }
         ]
       },
       "People Experience and Culture": {
-        "score": 0,
-        "justification": "",
-        "evidence": "",
-        "actions": []
+        "score": 2,
+        "justification": "Draft vision language exists but has not been tested with sponsors or shared beyond the core team.",
+        "evidence": "Kick-off workshop notes",
+        "actions": [
+          {
+            "id": "vision-action:people-experience-and-culture:0-1:0",
+            "text": "Gather information on organisational priorities, programme objectives and expected outcomes to inform vision development.",
+            "actionType": "Analysis & Insight",
+            "owner": "Sam Whitfield",
+            "timescale": "Completed",
+            "status": "Completed",
+            "startDate": "2026-05-01",
+            "dueDate": "2026-06-15",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 0
+          },
+          {
+            "id": "vision-action:people-experience-and-culture:1-2:0",
+            "text": "Test the draft vision with senior leaders to ensure strategic alignment.",
+            "actionType": "Testing & Validation",
+            "owner": "Alex Morgan",
+            "timescale": "Completed",
+            "status": "Completed",
+            "startDate": "2026-05-01",
+            "dueDate": "2026-06-15",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 1
+          },
+          {
+            "id": "vision-action:people-experience-and-culture:2-3:0",
+            "text": "Develop a leadership communication plan to support vision rollout.",
+            "actionType": "Design",
+            "owner": "",
+            "timescale": "In progress",
+            "status": "Planned",
+            "startDate": "",
+            "dueDate": "2026-09-30",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 2
+          }
+        ]
       }
     },
     "case_for_change": {
       "Strategic Direction and Leadership": {
-        "score": 1,
-        "justification": "Case for change exists but lacks local quantified evidence.",
-        "evidence": "Draft briefing",
+        "score": 2,
+        "justification": "A working narrative exists but lacks quantified local evidence to withstand scrutiny.",
+        "evidence": "Draft briefing paper",
         "actions": [
           {
-            "id": "p1-case-1",
-            "text": "Collect baseline turnaround and documentation burden",
-            "owner": "BI Lead",
-            "timescale": "Sep 2026",
-            "status": "In Progress"
+            "id": "case-for-change-action:strategic-direction-and-leadership:0-1:0",
+            "text": "Recognise that a clear rationale and evidence base will be required to explain why change is necessary.",
+            "actionType": "Analysis & Insight",
+            "owner": "Alex Morgan",
+            "timescale": "Completed",
+            "status": "Completed",
+            "startDate": "2026-05-01",
+            "dueDate": "2026-06-15",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 0
+          },
+          {
+            "id": "case-for-change-action:strategic-direction-and-leadership:1-2:0",
+            "text": "Define and document the problem, opportunity, risk or requirement driving the need for change.",
+            "actionType": "Analysis & Insight",
+            "owner": "Priya Anand",
+            "timescale": "Completed",
+            "status": "Completed",
+            "startDate": "2026-05-01",
+            "dueDate": "2026-06-15",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 1
+          },
+          {
+            "id": "case-for-change-action:strategic-direction-and-leadership:2-3:0",
+            "text": "Obtain formal leadership and governance endorsement of the case for change.",
+            "actionType": "Governance",
+            "owner": "",
+            "timescale": "In progress",
+            "status": "Planned",
+            "startDate": "",
+            "dueDate": "2026-09-30",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 2
+          }
+        ]
+      },
+      "People Experience and Culture": {
+        "score": 2,
+        "justification": "A working narrative exists but lacks quantified local evidence to withstand scrutiny.",
+        "evidence": "Draft briefing paper",
+        "actions": [
+          {
+            "id": "case-for-change-action:people-experience-and-culture:0-1:0",
+            "text": "Begin discussions with leaders and stakeholders regarding the problems, opportunities or drivers prompting change.",
+            "actionType": "Engagement",
+            "owner": "Sam Whitfield",
+            "timescale": "Completed",
+            "status": "Completed",
+            "startDate": "2026-05-01",
+            "dueDate": "2026-06-15",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 0
+          },
+          {
+            "id": "case-for-change-action:people-experience-and-culture:1-2:0",
+            "text": "Gather quantitative and qualitative evidence demonstrating the impact of the current situation.",
+            "actionType": "Analysis & Insight",
+            "owner": "Alex Morgan",
+            "timescale": "Completed",
+            "status": "Completed",
+            "startDate": "2026-05-01",
+            "dueDate": "2026-06-15",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 1
+          },
+          {
+            "id": "case-for-change-action:people-experience-and-culture:2-3:0",
+            "text": "Develop clear and consistent messaging explaining why change is necessary.",
+            "actionType": "Communication",
+            "owner": "",
+            "timescale": "In progress",
+            "status": "Planned",
+            "startDate": "",
+            "dueDate": "2026-09-30",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 2
+          }
+        ]
+      }
+    },
+    "sponsorship": {
+      "Strategic Direction and Leadership": {
+        "score": 0,
+        "justification": "A named SRO exists but visible sponsorship activity has not yet started.",
+        "evidence": "Programme initiation document",
+        "actions": [
+          {
+            "id": "sponsorship-action:strategic-direction-and-leadership:0-1:0",
+            "text": "Recognise the need for visible senior sponsorship and governance to support successful change delivery.",
+            "actionType": "Analysis & Insight",
+            "owner": "",
+            "timescale": "In progress",
+            "status": "Planned",
+            "startDate": "",
+            "dueDate": "2026-09-30",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 0
           }
         ]
       },
       "People Experience and Culture": {
         "score": 0,
-        "justification": "",
-        "evidence": "",
-        "actions": []
+        "justification": "A named SRO exists but visible sponsorship activity has not yet started.",
+        "evidence": "Programme initiation document",
+        "actions": [
+          {
+            "id": "sponsorship-action:people-experience-and-culture:0-1:0",
+            "text": "Begin discussions with senior leaders about their role in supporting and sponsoring the change.",
+            "actionType": "Engagement",
+            "owner": "",
+            "timescale": "In progress",
+            "status": "Planned",
+            "startDate": "",
+            "dueDate": "2026-09-30",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 0
+          }
+        ]
+      },
+      "Planning and Risk": {
+        "score": 0,
+        "justification": "A named SRO exists but visible sponsorship activity has not yet started.",
+        "evidence": "Programme initiation document",
+        "actions": [
+          {
+            "id": "sponsorship-action:planning-and-risk:0-1:0",
+            "text": "Identify areas where leadership support and governance oversight may be required.",
+            "actionType": "Analysis & Insight",
+            "owner": "",
+            "timescale": "In progress",
+            "status": "Planned",
+            "startDate": "",
+            "dueDate": "2026-09-30",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 0
+          }
+        ]
+      }
+    },
+    "change_network": {
+      "Strategic Direction and Leadership": {
+        "score": 0,
+        "justification": "Champion role has been scoped but no champions have been recruited yet.",
+        "evidence": "Champion role outline",
+        "actions": [
+          {
+            "id": "change-network-action:strategic-direction-and-leadership:0-1:0",
+            "text": "Recognise the need for a change network to support engagement, communication and adoption activities.",
+            "actionType": "Analysis & Insight",
+            "owner": "",
+            "timescale": "In progress",
+            "status": "Planned",
+            "startDate": "",
+            "dueDate": "2026-09-30",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 0
+          }
+        ]
+      },
+      "People Experience and Culture": {
+        "score": 0,
+        "justification": "Champion role has been scoped but no champions have been recruited yet.",
+        "evidence": "Champion role outline",
+        "actions": [
+          {
+            "id": "change-network-action:people-experience-and-culture:0-1:0",
+            "text": "Explore how a change network could support programme and organisational objectives.",
+            "actionType": "Analysis & Insight",
+            "owner": "",
+            "timescale": "In progress",
+            "status": "Planned",
+            "startDate": "",
+            "dueDate": "2026-09-30",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 0
+          }
+        ]
+      }
+    },
+    "benefits": {
+      "Process and Sustainment": {
+        "score": 0,
+        "justification": "Candidate benefits have been listed but not yet quantified or assigned an owner.",
+        "evidence": "Benefits long-list",
+        "actions": [
+          {
+            "id": "benefits-action:process-and-sustainment:0-1:0",
+            "text": "Recognise the importance of benefits realisation as part of successful change delivery.",
+            "actionType": "Analysis & Insight",
+            "owner": "",
+            "timescale": "In progress",
+            "status": "Planned",
+            "startDate": "",
+            "dueDate": "2026-09-30",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 0
+          }
+        ]
+      },
+      "Planning and Risk": {
+        "score": 0,
+        "justification": "Candidate benefits have been listed but not yet quantified or assigned an owner.",
+        "evidence": "Benefits long-list",
+        "actions": [
+          {
+            "id": "benefits-action:planning-and-risk:0-1:0",
+            "text": "Begin discussions with sponsors and leaders about the expected value of the change.",
+            "actionType": "Analysis & Insight",
+            "owner": "",
+            "timescale": "In progress",
+            "status": "Planned",
+            "startDate": "",
+            "dueDate": "2026-09-30",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 0
+          }
+        ]
+      }
+    },
+    "change_impact": {
+      "People Experience and Culture": {
+        "score": 0,
+        "justification": "Impacted service list is incomplete and detailed impact analysis has not started.",
+        "evidence": "Stakeholder long-list",
+        "actions": [
+          {
+            "id": "change-impact-action:people-experience-and-culture:0-1:0",
+            "text": "Recognise that the change is likely to affect people, processes, services, roles and ways of working.",
+            "actionType": "Analysis & Insight",
+            "owner": "",
+            "timescale": "In progress",
+            "status": "Planned",
+            "startDate": "",
+            "dueDate": "2026-09-30",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 0
+          }
+        ]
+      },
+      "Planning and Risk": {
+        "score": 0,
+        "justification": "Impacted service list is incomplete and detailed impact analysis has not started.",
+        "evidence": "Stakeholder long-list",
+        "actions": [
+          {
+            "id": "change-impact-action:planning-and-risk:0-1:0",
+            "text": "Begin discussions with leaders and stakeholders regarding who or what may be affected by the change.",
+            "actionType": "Engagement",
+            "owner": "",
+            "timescale": "In progress",
+            "status": "Planned",
+            "startDate": "",
+            "dueDate": "2026-09-30",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 0
+          }
+        ]
+      }
+    },
+    "risk_management": {
+      "Planning and Risk": {
+        "score": 1,
+        "justification": "A risk log has been opened but mitigation ownership is not yet assigned.",
+        "evidence": "Initial RAID log",
+        "actions": [
+          {
+            "id": "risk-management-action:planning-and-risk:0-1:0",
+            "text": "Recognise that change-related risks may affect successful delivery, adoption, benefits realisation and sustainment.",
+            "actionType": "Analysis & Insight",
+            "owner": "Alex Morgan",
+            "timescale": "Completed",
+            "status": "Completed",
+            "startDate": "2026-05-01",
+            "dueDate": "2026-06-15",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 0
+          },
+          {
+            "id": "risk-management-action:planning-and-risk:1-2:0",
+            "text": "Identify and document risks that could affect successful delivery, adoption, benefit realisation or sustainment of the change.",
+            "actionType": "Analysis & Insight",
+            "owner": "",
+            "timescale": "In progress",
+            "status": "Planned",
+            "startDate": "",
+            "dueDate": "2026-09-30",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 1
+          }
+        ]
+      },
+      "Process and Sustainment": {
+        "score": 1,
+        "justification": "A risk log has been opened but mitigation ownership is not yet assigned.",
+        "evidence": "Initial RAID log",
+        "actions": [
+          {
+            "id": "risk-management-action:process-and-sustainment:0-1:0",
+            "text": "Begin discussions with sponsors, leaders and stakeholders about potential risks associated with the change.",
+            "actionType": "Engagement",
+            "owner": "Priya Anand",
+            "timescale": "Completed",
+            "status": "Completed",
+            "startDate": "2026-05-01",
+            "dueDate": "2026-06-15",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 0
+          },
+          {
+            "id": "risk-management-action:process-and-sustainment:1-2:0",
+            "text": "Conduct structured change risk assessment activities involving stakeholders and subject matter experts.",
+            "actionType": "Analysis & Insight",
+            "owner": "",
+            "timescale": "In progress",
+            "status": "Planned",
+            "startDate": "",
+            "dueDate": "2026-09-30",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 1
+          }
+        ]
+      }
+    },
+    "cm_readiness": {
+      "Strategic Direction and Leadership": {
+        "score": 0,
+        "justification": "A readiness approach has not yet been agreed with the programme.",
+        "evidence": "Draft readiness framework",
+        "actions": [
+          {
+            "id": "cm-readiness-action:strategic-direction-and-leadership:0-1:0",
+            "text": "Recognise the need for structured change management planning and readiness assessment to support successful implementation.",
+            "actionType": "Analysis & Insight",
+            "owner": "",
+            "timescale": "In progress",
+            "status": "Planned",
+            "startDate": "",
+            "dueDate": "2026-09-30",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 0
+          }
+        ]
+      },
+      "Planning and Risk": {
+        "score": 0,
+        "justification": "A readiness approach has not yet been agreed with the programme.",
+        "evidence": "Draft readiness framework",
+        "actions": [
+          {
+            "id": "cm-readiness-action:planning-and-risk:0-1:0",
+            "text": "Begin discussions with sponsors, leaders and stakeholders about organisational preparedness for the change.",
+            "actionType": "Engagement",
+            "owner": "",
+            "timescale": "In progress",
+            "status": "Planned",
+            "startDate": "",
+            "dueDate": "2026-09-30",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 0
+          }
+        ]
+      }
+    },
+    "stakeholder": {
+      "Strategic Direction and Leadership": {
+        "score": 1,
+        "justification": "Stakeholder map is in early draft and engagement channels are not yet active.",
+        "evidence": "Draft stakeholder map",
+        "actions": [
+          {
+            "id": "stakeholder-action:strategic-direction-and-leadership:0-1:0",
+            "text": "Recognise the importance of stakeholder engagement and communication in achieving successful change outcomes.",
+            "actionType": "Analysis & Insight",
+            "owner": "Alex Morgan",
+            "timescale": "Completed",
+            "status": "Completed",
+            "startDate": "2026-05-01",
+            "dueDate": "2026-06-15",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 0
+          },
+          {
+            "id": "stakeholder-action:strategic-direction-and-leadership:1-2:0",
+            "text": "Identify and document stakeholders likely to influence, support, be affected by or be impacted by the change.",
+            "actionType": "Analysis & Insight",
+            "owner": "",
+            "timescale": "In progress",
+            "status": "Planned",
+            "startDate": "",
+            "dueDate": "2026-09-30",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 1
+          }
+        ]
+      },
+      "People Experience and Culture": {
+        "score": 1,
+        "justification": "Stakeholder map is in early draft and engagement channels are not yet active.",
+        "evidence": "Draft stakeholder map",
+        "actions": [
+          {
+            "id": "stakeholder-action:people-experience-and-culture:0-1:0",
+            "text": "Begin discussions with leaders and teams about who may be affected by or interested in the change.",
+            "actionType": "Engagement",
+            "owner": "Priya Anand",
+            "timescale": "Completed",
+            "status": "Completed",
+            "startDate": "2026-05-01",
+            "dueDate": "2026-06-15",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 0
+          },
+          {
+            "id": "stakeholder-action:people-experience-and-culture:1-2:0",
+            "text": "Assess stakeholder influence, interest, commitment, capability and degree of impact.",
+            "actionType": "Analysis & Insight",
+            "owner": "",
+            "timescale": "In progress",
+            "status": "Planned",
+            "startDate": "",
+            "dueDate": "2026-09-30",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 1
+          }
+        ]
+      }
+    },
+    "resistance": {
+      "People Experience and Culture": {
+        "score": 0,
+        "justification": "Resistance has not yet been formally assessed; anecdotal concerns are surfacing.",
+        "evidence": "Informal feedback notes",
+        "actions": [
+          {
+            "id": "resistance-action:people-experience-and-culture:0-1:0",
+            "text": "Recognise that resistance is a normal response to change and may need to be actively managed.",
+            "actionType": "Analysis & Insight",
+            "owner": "",
+            "timescale": "In progress",
+            "status": "Planned",
+            "startDate": "",
+            "dueDate": "2026-09-30",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 0
+          }
+        ]
+      },
+      "Skills and Behaviour": {
+        "score": 0,
+        "justification": "Resistance has not yet been formally assessed; anecdotal concerns are surfacing.",
+        "evidence": "Informal feedback notes",
+        "actions": [
+          {
+            "id": "resistance-action:skills-and-behaviour:0-1:0",
+            "text": "Begin discussing potential concerns and reactions to the change with stakeholders and leaders.",
+            "actionType": "Engagement",
+            "owner": "",
+            "timescale": "In progress",
+            "status": "Planned",
+            "startDate": "",
+            "dueDate": "2026-09-30",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 0
+          }
+        ]
+      }
+    },
+    "skills_learning": {
+      "People Experience and Culture": {
+        "score": 0,
+        "justification": "Training needs analysis has not yet started for affected roles.",
+        "evidence": "Role impact list",
+        "actions": [
+          {
+            "id": "skills-learning-action:people-experience-and-culture:0-1:0",
+            "text": "Recognise that stakeholders will need appropriate knowledge, skills and learning support to operate successfully in the future state.",
+            "actionType": "Analysis & Insight",
+            "owner": "",
+            "timescale": "In progress",
+            "status": "Planned",
+            "startDate": "",
+            "dueDate": "2026-09-30",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 0
+          }
+        ]
+      },
+      "Skills and Behaviour": {
+        "score": 0,
+        "justification": "Training needs analysis has not yet started for affected roles.",
+        "evidence": "Role impact list",
+        "actions": [
+          {
+            "id": "skills-learning-action:skills-and-behaviour:0-1:0",
+            "text": "Begin discussions with leaders, managers and stakeholders about likely learning and development needs.",
+            "actionType": "Engagement",
+            "owner": "",
+            "timescale": "In progress",
+            "status": "Planned",
+            "startDate": "",
+            "dueDate": "2026-09-30",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 0
+          }
+        ]
+      }
+    },
+    "capability": {
+      "People Experience and Culture": {
+        "score": 0,
+        "justification": "Confidence and competence have not yet been baselined for frontline teams.",
+        "evidence": "Baseline survey plan",
+        "actions": [
+          {
+            "id": "capability-action:people-experience-and-culture:0-1:0",
+            "text": "Recognise that people will require new capabilities and confidence to operate successfully in the future state.",
+            "actionType": "Analysis & Insight",
+            "owner": "",
+            "timescale": "In progress",
+            "status": "Planned",
+            "startDate": "",
+            "dueDate": "2026-09-30",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 0
+          }
+        ]
+      },
+      "Skills and Behaviour": {
+        "score": 0,
+        "justification": "Confidence and competence have not yet been baselined for frontline teams.",
+        "evidence": "Baseline survey plan",
+        "actions": [
+          {
+            "id": "capability-action:skills-and-behaviour:0-1:0",
+            "text": "Begin discussions with leaders, managers and stakeholders about future capability requirements.",
+            "actionType": "Engagement",
+            "owner": "",
+            "timescale": "In progress",
+            "status": "Planned",
+            "startDate": "",
+            "dueDate": "2026-09-30",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 0
+          }
+        ]
+      }
+    },
+    "change_adoption": {
+      "Process and Sustainment": {
+        "score": 0,
+        "justification": "Adoption metrics have not yet been defined for go-live.",
+        "evidence": "Adoption metric proposal",
+        "actions": [
+          {
+            "id": "change-adoption-action:process-and-sustainment:0-1:0",
+            "text": "Recognise that successful implementation requires sustained adoption of new ways of working.",
+            "actionType": "Analysis & Insight",
+            "owner": "",
+            "timescale": "In progress",
+            "status": "Planned",
+            "startDate": "",
+            "dueDate": "2026-09-30",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 0
+          }
+        ]
+      },
+      "Skills and Behaviour": {
+        "score": 0,
+        "justification": "Adoption metrics have not yet been defined for go-live.",
+        "evidence": "Adoption metric proposal",
+        "actions": [
+          {
+            "id": "change-adoption-action:skills-and-behaviour:0-1:0",
+            "text": "Begin discussions with leaders and stakeholders about what successful adoption may look like.",
+            "actionType": "Engagement",
+            "owner": "",
+            "timescale": "In progress",
+            "status": "Planned",
+            "startDate": "",
+            "dueDate": "2026-09-30",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 0
+          }
+        ]
+      },
+      "Planning and Risk": {
+        "score": 0,
+        "justification": "Adoption metrics have not yet been defined for go-live.",
+        "evidence": "Adoption metric proposal",
+        "actions": [
+          {
+            "id": "change-adoption-action:planning-and-risk:0-1:0",
+            "text": "Identify high-level behaviours and ways of working expected to change.",
+            "actionType": "Analysis & Insight",
+            "owner": "",
+            "timescale": "In progress",
+            "status": "Planned",
+            "startDate": "",
+            "dueDate": "2026-09-30",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 0
+          }
+        ]
+      }
+    },
+    "process_change": {
+      "Process and Sustainment": {
+        "score": 0,
+        "justification": "Future-state process maps are still in draft and not yet validated with staff.",
+        "evidence": "Draft process maps",
+        "actions": [
+          {
+            "id": "process-change-action:process-and-sustainment:0-1:0",
+            "text": "Recognise that business processes will need to change to deliver the intended outcomes.",
+            "actionType": "Analysis & Insight",
+            "owner": "",
+            "timescale": "In progress",
+            "status": "Planned",
+            "startDate": "",
+            "dueDate": "2026-09-30",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 0
+          }
+        ]
+      },
+      "Skills and Behaviour": {
+        "score": 0,
+        "justification": "Future-state process maps are still in draft and not yet validated with staff.",
+        "evidence": "Draft process maps",
+        "actions": [
+          {
+            "id": "process-change-action:skills-and-behaviour:0-1:0",
+            "text": "Identify high-level business areas likely to be affected by process change.",
+            "actionType": "Analysis & Insight",
+            "owner": "",
+            "timescale": "In progress",
+            "status": "Planned",
+            "startDate": "",
+            "dueDate": "2026-09-30",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 0
+          }
+        ]
+      }
+    },
+    "reinforcement": {
+      "People Experience and Culture": {
+        "score": 0,
+        "justification": "Reinforcement activity has not yet been planned beyond go-live support.",
+        "evidence": "Go-live support plan",
+        "actions": [
+          {
+            "id": "reinforcement-action:people-experience-and-culture:0-1:0",
+            "text": "Recognise the need to sustain change outcomes beyond implementation and initial adoption.",
+            "actionType": "Analysis & Insight",
+            "owner": "",
+            "timescale": "In progress",
+            "status": "Planned",
+            "startDate": "",
+            "dueDate": "2026-09-30",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 0
+          }
+        ]
+      },
+      "Process and Sustainment": {
+        "score": 0,
+        "justification": "Reinforcement activity has not yet been planned beyond go-live support.",
+        "evidence": "Go-live support plan",
+        "actions": [
+          {
+            "id": "reinforcement-action:process-and-sustainment:0-1:0",
+            "text": "Discuss with sponsors and leaders how the change will be sustained after go-live.",
+            "actionType": "Engagement",
+            "owner": "",
+            "timescale": "In progress",
+            "status": "Planned",
+            "startDate": "",
+            "dueDate": "2026-09-30",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 0
+          }
+        ]
+      }
+    },
+    "org_maturity": {
+      "Strategic Direction and Leadership": {
+        "score": 0,
+        "justification": "Organisational change capability has not yet been assessed against this rollout.",
+        "evidence": "Capability scoping notes",
+        "actions": [
+          {
+            "id": "org-change-readiness-action:strategic-direction-and-leadership:0-1:0",
+            "text": "Recognise that organisational readiness will influence the success of the change.",
+            "actionType": "Analysis & Insight",
+            "owner": "",
+            "timescale": "In progress",
+            "status": "Planned",
+            "startDate": "",
+            "dueDate": "2026-09-30",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 0
+          }
+        ]
+      },
+      "Skills and Behaviour": {
+        "score": 0,
+        "justification": "Organisational change capability has not yet been assessed against this rollout.",
+        "evidence": "Capability scoping notes",
+        "actions": [
+          {
+            "id": "org-change-readiness-action:skills-and-behaviour:0-1:0",
+            "text": "Begin discussions with leaders regarding the organisation's ability to absorb and support the change.",
+            "actionType": "Engagement",
+            "owner": "",
+            "timescale": "In progress",
+            "status": "Planned",
+            "startDate": "",
+            "dueDate": "2026-09-30",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 0
+          }
+        ]
+      }
+    },
+    "transfer_bau": {
+      "Strategic Direction and Leadership": {
+        "score": 0,
+        "justification": "BAU ownership for post-go-live support has not yet been agreed.",
+        "evidence": "Draft handover plan",
+        "actions": [
+          {
+            "id": "transfer-bau-action:strategic-direction-and-leadership:0-1:0",
+            "text": "Recognise that ownership of the change will need to transfer from the programme into business-as-usual operations.",
+            "actionType": "Analysis & Insight",
+            "owner": "",
+            "timescale": "In progress",
+            "status": "Planned",
+            "startDate": "",
+            "dueDate": "2026-09-30",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 0
+          }
+        ]
+      },
+      "Process and Sustainment": {
+        "score": 0,
+        "justification": "BAU ownership for post-go-live support has not yet been agreed.",
+        "evidence": "Draft handover plan",
+        "actions": [
+          {
+            "id": "transfer-bau-action:process-and-sustainment:0-1:0",
+            "text": "Begin discussions with operational leaders regarding future ownership and sustainment responsibilities.",
+            "actionType": "Engagement",
+            "owner": "",
+            "timescale": "In progress",
+            "status": "Planned",
+            "startDate": "",
+            "dueDate": "2026-09-30",
+            "notes": "",
+            "evidence": "",
+            "readinessScore": 0
+          }
+        ]
       }
     }
   },
   "objectives": {},
-  "history": [],
+  "history": [
+    {
+      "monthLabel": "Jul 2026",
+      "overallPercentage": 8,
+      "data": {}
+    }
+  ],
   "phaseOverrides": {},
   "pathwayChecks": {}
 }

@@ -85,6 +85,7 @@ interface RawAction {
   category?: string;
   action?: string;
   outcomeIds?: string[];
+  readinessScore?: number;
 }
 
 interface RawComponentFile {

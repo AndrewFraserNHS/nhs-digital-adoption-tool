@@ -23,13 +23,22 @@
   },
   "case_for_change": {
     "component": "Case for Change",
-    "description": "",
-    "whatIsIt": "",
-    "userInsight": "",
-    "whyThisMatters": "",
-    "quickRealityCheck": "",
-    "whatGoodLooksLike": [],
-    "risksIfYouDont": []
+    "description": "AVT must solve a problem that staff clearly recognise",
+    "whatIsIt": "A Case for Change explains the real clinical and operational pressures AVT is responding to, why change is needed now and why current  Ways of working are becoming unsustainable.",
+    "userInsight": "AVT was most effective when it clearly addressed real operational pressures such as backlogs, wait times and admin burdens.",
+    "whyThisMatters": "Prevents confusion over whether AVT is about productivity, wellbeing, backlog reduction or system replacement. Helps teams agree on the workflow changes needed to realise the benefits. Reduces early resistance by focusing on the problem that needs solving, not the novelty of AVT.", 
+    "quickRealityCheck": "Can we explain why change is needed now? Are the benefits specific and measurable? Can leaders explain the change in one simple story? Is the problem clearly defined or are you starting with AVT as the answer?",
+    "whatGoodLooksLike": [ { "title": "AVT NOT SEEN AS A TECHNICAL ROLLOUT", "body": "AVT is consistently understood as a clinical workflow and behaviour change, not a technology rollout" }, {"title": "LOWER COGNITIVE LOAD", "body": "Clinicians experience lower cognitive load, better patient interaction and stronger day-to-day usability" },
+{"title": "RESISTANCE REDUCTION", "body": "Reduces early resistance by focusing on the problem that needs solving, not the novelty of AVT" },
+{"title": "CLEAR PROBLEM STATEMENT", "body": "The problem AVT is solving is specific, evidence-based and easy to explain." },
+{"title": "COMPELLING REASON TO ACT NOW", "body": "There is urgency, not just a general desire to improve." }],
+    "risksIfYouDont": [
+{"title": "STALLED ADOPTION", "body": "Adoption stalls once the novelty fades because the purpose was never clear." },
+{"title": "DISENGAGEMENT", "body": "Productivity narratives trigger suspicion and disengagement in AVTs introduction." },
+{"title": "SCALING JUSTIFICATION STRUGGLES", "body": "Leaders struggle to justify scaling because there is no credible “why now” and “what problem”" },
+{"title": "BUSINESS OUTCOMES NOT LINKED", "body": "Business Outcomes are not clearly linked to AVT" },
+{"title": "DISAGREEMENTS REGARDING THE PROBLEM", "body": "Stakeholders do not agree on the problem statement." }
+    ]
   },
   "sponsorship": {
     "component": "Senior Sponsorship & Governance",

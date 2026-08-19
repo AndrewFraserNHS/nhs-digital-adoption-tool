@@ -229,7 +229,8 @@ describe('adoptionIO', () => {
     ]);
   });
 
-  it('builds history snapshots with cloned draft data', () => {
+  it('SHOULD build history snapshots with cloned draft data', () => {
+    // arrange
     const draft = {
       vision: {
         'Strategic Direction and Leadership': {
@@ -243,9 +244,11 @@ describe('adoptionIO', () => {
       },
     };
 
+    // act
     const snapshot = buildHistorySnapshot(draft, 72, new Date('2026-07-01T00:00:00Z'));
     draft.vision['Strategic Direction and Leadership'].actions[0].text = 'Changed';
 
+    // assert
     expect(snapshot.monthLabel).toBe('Jul 2026');
     expect(snapshot.overallPercentage).toBe(72);
     expect(snapshot.data.vision['Strategic Direction and Leadership'].actions[0].text).toBe(
@@ -253,12 +256,16 @@ describe('adoptionIO', () => {
     );
   });
 
-  it('rejects malformed payloads before import merge', () => {
+  it('SHOULD reject malformed payloads before import merge', () => {
+    // arrange + act + assert 1
     expect(() => parseImportedAdoptionAssessment({ currentDraft: [] })).toThrow(
       /Invalid adoption assessment payload at currentDraft/
     );
 
+    // act 2
     const fallback = initializeStore();
+
+    // assert 2
     expect(() =>
       mergeImportedAdoptionState(
         { currentDraft: [] } as unknown as Partial<ReturnType<typeof buildAdoptionExportPayload>>,
@@ -267,7 +274,8 @@ describe('adoptionIO', () => {
     ).toThrow(/Invalid adoption assessment payload at currentDraft/);
   });
 
-  it('accepts partial payloads with only org profile', () => {
+  it('SHOULD accept partial payloads with only org profile', () => {
+    // arrange + act
     const parsed = parseImportedAdoptionAssessment({
       orgProfile: {
         trustName: 'Safe import',
@@ -276,10 +284,12 @@ describe('adoptionIO', () => {
       },
     });
 
+    // assert
     expect(parsed.orgProfile?.trustName).toBe('Safe import');
   });
 
-  it('accepts suppression and legacy action audit metadata in imported payloads', () => {
+  it('SHOULD accept suppression and legacy action audit metadata in imported payloads', () => {
+    // arrange + act
     const parsed = parseImportedAdoptionAssessment({
       suppressedAutoActions: {
         'vision:Strategic Direction and Leadership': [
@@ -300,13 +310,15 @@ describe('adoptionIO', () => {
       ],
     });
 
+    // assert
     expect(parsed.suppressedAutoActions?.['vision:Strategic Direction and Leadership']).toEqual([
       'vision-action:strategic-direction-and-leadership:0-1:0',
     ]);
     expect(parsed.actionAuditLog?.[0]?.reason).toBe('Locally replaced');
   });
 
-  it('appends imported audit events to existing log', () => {
+  it('SHOULD append imported audit events to existing log', () => {
+    // arrange
     const current = initializeStore({
       auditLog: [
         {
@@ -321,6 +333,7 @@ describe('adoptionIO', () => {
       ],
     });
 
+    // act
     const merged = mergeImportedAdoptionState(
       {
         auditLog: [
@@ -338,6 +351,7 @@ describe('adoptionIO', () => {
       current
     );
 
+    // assert
     expect(merged.auditLog.length).toBe(2);
     expect(merged.auditLog[0].id).toBe('local-1');
     expect(merged.auditLog[1].id).toBe('imported-1');

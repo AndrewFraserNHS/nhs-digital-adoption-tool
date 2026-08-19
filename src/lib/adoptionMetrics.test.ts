@@ -90,7 +90,8 @@ function getComponentOrThrow(id: string): AssessmentComponent {
 }
 
 describe('adoptionMetrics', () => {
-  it('computes aggregate metrics', () => {
+  it('SHOULD compute aggregate metrics', () => {
+    // arrange + act + assert
     expect(getMetrics(store, components)).toEqual({
       totalCurrent: 6,
       assessedCount: 2,
@@ -123,7 +124,8 @@ describe('adoptionMetrics', () => {
     });
   });
 
-  it('suggests next steps for out-of-target components', () => {
+  it('SHOULD suggest next steps WHERE out-of-target components', () => {
+    // arrange
     const belowTargetStore: AdoptionStore = {
       ...store,
       currentDraft: {
@@ -152,7 +154,10 @@ describe('adoptionMetrics', () => {
       },
     };
 
+    // act
     const metrics = getMetrics(belowTargetStore, components);
+
+// assert
     expect(metrics.currentPhase).toBe(1);
     expect(metrics.nextSteps.length).toBeGreaterThan(0);
     expect(metrics.nextSteps[0]).toMatchObject({
@@ -161,7 +166,8 @@ describe('adoptionMetrics', () => {
     });
   });
 
-  it('stops at the first phase with any component below expected readiness', () => {
+  it('SHOULD stop at the first phase WHERE any component below expected readiness', () => {
+    // arrange 1
     const phaseComponents: AssessmentComponent[] = [
       {
         id: 'vision',
@@ -216,9 +222,13 @@ describe('adoptionMetrics', () => {
       },
     } as AdoptionStore;
 
+    // act 1
     const metricsAtPhaseTwo = getMetrics(readyForPhaseOne, phaseComponents);
+
+    // assert 1
     expect(metricsAtPhaseTwo.currentPhase).toBe(2);
 
+    // arrange 2
     const phaseTwoReady: AdoptionStore = {
       ...readyForPhaseOne,
       currentDraft: {
@@ -234,25 +244,32 @@ describe('adoptionMetrics', () => {
       },
     } as AdoptionStore;
 
+    // act 2
     const metricsAtLatestPhase = getMetrics(phaseTwoReady, phaseComponents);
+
+    // assert 2
     expect(metricsAtLatestPhase.currentPhase).toBe(2);
     expect(metricsAtLatestPhase.phaseSummaries.find((p) => p.phase === 2)?.onTrackComponents).toBe(1);
   });
 
-  it('computes current and target radar series', () => {
+  it('SHOULD compute current and target radar series', () => {
+    // arrange + act + assert
     expect(computeRadarData(store, ['Lens A', 'Lens B'], components, getEntry)).toEqual([3, 0]);
     expect(computeTargetRadarData(['Lens A', 'Lens B'], components)).toEqual([3, 4]);
   });
 
-  it('flattens actions with component labels', () => {
+  it('SHOULD flatten actions with component labels', () => {
+    // arrange + act
     const rows = flattenActions(store, getComponentOrThrow, getEntry);
 
+    // assert
     expect(rows).toHaveLength(2);
     expect(rows[0]).toMatchObject({ compId: 'vision', component: 'Vision', lens: 'Lens A' });
     expect(rows[1]).toMatchObject({ compId: 'benefits', component: 'Benefits', lens: 'Lens A' });
   });
 
-  it('counts objectives as completed only once every linked action is completed', () => {
+  it('SHOULD count objectives as completed WHERE once every linked action is completed', () => {
+    // arrange
     const storeWithObjectives: AdoptionStore = {
       ...store,
       objectives: {
@@ -269,19 +286,31 @@ describe('adoptionMetrics', () => {
       },
     };
 
-    // action '1' in Lens A has status 'In Progress' per the base store fixture
+    // NB: action '1' in Lens A has status 'In Progress' per the base store fixture
+
+    // act 1
     const counts = getComponentObjectiveCounts(storeWithObjectives, 'vision', getEntry);
+
+    // assert 1
     expect(counts).toEqual({ total: 2, completed: 0 });
 
-    // metrics/flattenActions must not double-count objective-linked actions - they're already
-    // counted once via the lens loop
+    // NB: metrics/flattenActions must not double-count objective-linked actions - they're already counted once via the lens loop
+
+    // act 2 
     const metrics = getMetrics(storeWithObjectives, components);
+
+    // assert 2
     expect(metrics.totalActions).toBe(2);
+
+    // act 3
     const rows = flattenActions(storeWithObjectives, getComponentOrThrow, getEntry);
+
+    // assert 3
     expect(rows).toHaveLength(2);
   });
 
-  it('expands linked actions across every linked target row', () => {
+  it('SHOULD expand linked actions across every linked target row', () => {
+    // arrange
     const linkedStore: AdoptionStore = {
       ...store,
       currentDraft: {
@@ -308,12 +337,14 @@ describe('adoptionMetrics', () => {
       },
     };
 
+    // act
     const rows = flattenActions(
       linkedStore,
       getComponentOrThrow,
       (componentId, lens) => linkedStore.currentDraft[componentId][lens]
     );
 
+    // assert
     expect(rows).toHaveLength(3);
     expect(
       rows.find(
@@ -327,9 +358,11 @@ describe('adoptionMetrics', () => {
     ).toBeTruthy();
   });
 
-  it('builds chart.js radar data structure with current and target datasets', () => {
+  it('SHOULD build chart.js radar data structure with current and target datasets', () => {
+    // arrange + act
     const chartData = buildRadarChartData(store, ['Lens A', 'Lens B'], components, getEntry);
 
+    // assert
     expect(chartData.labels).toEqual(['Lens A', 'Lens B']);
     expect(chartData.datasets).toHaveLength(2);
     expect(chartData.datasets[0]).toMatchObject({ label: 'Current Score', data: [3, 0] });

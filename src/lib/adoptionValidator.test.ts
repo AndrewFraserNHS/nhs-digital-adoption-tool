@@ -11,7 +11,8 @@ import {
 } from './adoptionValidator';
 
 describe('adoptionValidator', () => {
-  it('validates score parsing and bounds', () => {
+  it('SHOULD validate score parsing and bounds', () => {
+    // arrange + act + assert
     expect(validateScore('3').isValid).toBe(true);
     expect(validateScore('abc')).toEqual({
       isValid: false,
@@ -23,7 +24,8 @@ describe('adoptionValidator', () => {
     });
   });
 
-  it('validates draft entry constraints', () => {
+  it('SHOULD validate draft entry constraints', () => {
+    // arrange + act
     const invalid = validateEntry({
       score: 2,
       justification: 'x'.repeat(5001),
@@ -31,12 +33,14 @@ describe('adoptionValidator', () => {
       actions: [],
     });
 
+    // assert
     expect(invalid.isValid).toBe(false);
     expect(invalid.errors.some((error) => error.field === 'justification')).toBe(true);
     expect(invalid.errors.some((error) => error.field === 'evidence')).toBe(true);
   });
 
-  it('validates organisation profile constraints', () => {
+  it('SHOULD validate organisation profile constraints', () => {
+    // arrange + act
     const result = validateOrgProfile({
       trustName: '',
       region: 'r'.repeat(101),
@@ -52,13 +56,15 @@ describe('adoptionValidator', () => {
       },
     });
 
+    // assert
     expect(result.isValid).toBe(false);
     expect(result.errors.some((error) => error.field === 'trustName')).toBe(true);
     expect(result.errors.some((error) => error.field === 'region')).toBe(true);
     expect(result.errors.some((error) => error.field === 'cst.goLiveDate')).toBe(true);
   });
 
-  it('validates CST timeline ordering rules', () => {
+  it('SHOULD validate CST timeline ordering rules', () => {
+    // arrange + act
     const invalid = validateCstProfile({
       trustName: 'Trust',
       region: '',
@@ -74,10 +80,12 @@ describe('adoptionValidator', () => {
       },
     });
 
+    // assert
     expect(invalid.isValid).toBe(false);
     expect(invalid.errors.some((error) => error.field === 'cst.fullAdoptionDate')).toBe(true);
     expect(invalid.errors.some((error) => error.field === 'cst.benefitRealizationDate')).toBe(true);
 
+    // act 2
     const valid = validateCstProfile({
       trustName: 'Trust',
       region: '',
@@ -92,16 +100,20 @@ describe('adoptionValidator', () => {
         phaseCapability: {},
       },
     });
+
+    // assert 2
     expect(valid.isValid).toBe(true);
   });
 
-  it('combines validation errors from multiple results', () => {
+  it('SHOULD combine validation errors from multiple results', () => {
+    // arrange + act
     const combined = combineValidationResults(
       { isValid: true, errors: [] },
       { isValid: false, errors: [{ field: 'a', message: 'A invalid' }] },
       { isValid: false, errors: [{ field: 'b', message: 'B invalid' }] }
     );
 
+    // assert
     expect(combined).toEqual({
       isValid: false,
       errors: [
@@ -111,8 +123,8 @@ describe('adoptionValidator', () => {
     });
   });
 
-  it('validates action readiness scores', () => {
-    // Valid scores
+  it('SHOULD validate action readiness scores', () => {
+    // NB: Valid scores
     expect(validateActionReadinessScore(0).isValid).toBe(true);
     expect(validateActionReadinessScore(1).isValid).toBe(true);
     expect(validateActionReadinessScore(2).isValid).toBe(true);
@@ -120,30 +132,40 @@ describe('adoptionValidator', () => {
     expect(validateActionReadinessScore(4).isValid).toBe(true);
     expect(validateActionReadinessScore(5).isValid).toBe(true);
 
-    // Undefined is valid (optional field)
+    // NB: Undefined is valid (optional field)
     expect(validateActionReadinessScore(undefined).isValid).toBe(true);
 
-    // Invalid scores
+    // NB: Invalid scores
     expect(validateActionReadinessScore(-1).isValid).toBe(false);
     expect(validateActionReadinessScore(6).isValid).toBe(false);
     expect(validateActionReadinessScore(NaN).isValid).toBe(false);
   });
 
-  it('validates all action readiness scores in a collection', () => {
+  it('SHOULD validate all action readiness scores in a collection WHERE valid', () => {
+    // arrange
     const validActions = [
       { id: 'A1', text: 'Action 1', owner: 'Owner', timescale: '2 weeks', status: 'Planned' as const, readinessScore: 1 },
       { id: 'A2', text: 'Action 2', owner: 'Owner', timescale: '2 weeks', status: 'Planned' as const, readinessScore: 2 },
     ];
 
+    // act
     const result = validateActionsReadinessScores(validActions);
-    expect(result.isValid).toBe(true);
 
+    // assert
+    expect(result.isValid).toBe(true);
+  });
+
+  it('SHOULD validate all action readiness scores in a collection WHERE invalid', () => {
+    // arrange
     const invalidActions = [
       { id: 'A1', text: 'Action 1', owner: 'Owner', timescale: '2 weeks', status: 'Planned' as const, readinessScore: 1 },
       { id: 'A2', text: 'Action 2', owner: 'Owner', timescale: '2 weeks', status: 'Planned' as const, readinessScore: 6 },
     ];
 
+    // act
     const invalidResult = validateActionsReadinessScores(invalidActions);
+
+    // assert
     expect(invalidResult.isValid).toBe(false);
     expect(invalidResult.errors.some(e => e.field === 'readinessScore')).toBe(true);
   });

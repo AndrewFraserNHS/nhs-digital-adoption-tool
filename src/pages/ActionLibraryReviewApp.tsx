@@ -25,6 +25,25 @@ const STORAGE_KEY = 'nhs-action-library-review';
 
 const BAND_LABELS = ['Not Started', 'Emerging', 'Developing', 'Embedding', 'Adopted', 'Thriving'] as const;
 
+/**
+ * The bundled component-actions/*.json files write lenses with an ampersand ("Strategic
+ * Direction & Leadership"), while src/data/components.ts (the real, authoritative lens list per
+ * component, used to build this tool's group headings) spells them out with "and". Both forms
+ * mean the same 5 lenses - normalise to the "and" form internally so grouping/matching against
+ * components.ts works, and convert back to "&" on export to match the source files' convention.
+ */
+function normalizeLensName(value: string): string {
+  return value.replace(/&/g, 'and').replace(/\s+/g, ' ').trim();
+}
+
+const LENS_EXPORT_FORM: Record<string, string> = {
+  'Strategic Direction and Leadership': 'Strategic Direction & Leadership',
+  'People Experience and Culture': 'People Experience & Culture',
+  'Planning and Risk': 'Planning & Risk',
+  'Process and Sustainment': 'Process & Sustainment',
+  'Skills and Behaviour': 'Skills & Behaviour',
+};
+
 const LEVEL_OPTIONS = [0, 1, 2, 3, 4].map((band) => ({
   value: band,
   label: `Level ${band} · ${BAND_LABELS[band]} → ${BAND_LABELS[band + 1]}`,
@@ -94,6 +113,10 @@ interface RawComponentFile {
   actions?: RawAction[];
 }
 
+function createId(): string {
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
 function bandFromStatus(status: string | undefined): number {
   const index = BAND_LABELS.indexOf((status || '') as (typeof BAND_LABELS)[number]);
   return index >= 0 ? Math.min(index, 4) : 0;
@@ -125,7 +148,7 @@ function parseActionsFromRaw(rawActions: unknown, componentId: string): LibraryA
         typeof action.readinessScore === 'number' && Number.isFinite(action.readinessScore)
           ? Math.max(0, Math.min(4, Math.round(action.readinessScore)))
           : bandFromStatus(action.fromStatus),
-      lens: action.lens || '',
+      lens: normalizeLensName(action.lens || ''),
       category: action.category || '',
       outcomeIds: Array.isArray(action.outcomeIds) ? action.outcomeIds : [],
     }));
@@ -260,7 +283,7 @@ function toExportAction(action: LibraryAction): RawAction & { readinessScore: nu
     id: action.id,
     fromStatus: BAND_LABELS[action.band],
     toStatus: BAND_LABELS[action.band + 1],
-    lens: action.lens,
+    lens: LENS_EXPORT_FORM[action.lens] || action.lens,
     category: action.category,
     action: action.description,
     outcomeIds: action.outcomeIds,
@@ -330,6 +353,7 @@ function ActionRow({
   onUpdate,
   onMove,
   onReset,
+  onRemove,
   canMoveUp,
   canMoveDown,
 }: {
@@ -338,16 +362,24 @@ function ActionRow({
   onUpdate: (updates: Partial<Pick<LibraryAction, 'description' | 'band'>>) => void;
   onMove: (direction: -1 | 1) => void;
   onReset: () => void;
+  onRemove: () => void;
   canMoveUp: boolean;
   canMoveDown: boolean;
 }): JSX.Element {
+  const isNew = !original;
   const isEdited =
     Boolean(original) &&
     (original!.description !== action.description || original!.band !== action.band);
 
   return (
     <div
-      className={`rounded-md border p-3 ${isEdited ? 'border-amber-300 bg-amber-50/60' : 'border-slate-200 bg-white'}`}
+      className={`rounded-md border p-3 ${
+        isNew
+          ? 'border-blue-300 bg-blue-50/60'
+          : isEdited
+            ? 'border-amber-300 bg-amber-50/60'
+            : 'border-slate-200 bg-white'
+      }`}
     >
       <div className="flex items-start gap-3">
         <div className="flex shrink-0 flex-col gap-1">
@@ -376,6 +408,7 @@ function ActionRow({
             value={action.description}
             onChange={(event) => onUpdate({ description: event.target.value })}
             rows={2}
+            placeholder={isNew ? 'Describe the new action...' : undefined}
             className="w-full rounded-md border border-slate-300 px-2.5 py-1.5 text-sm"
           />
           <div className="flex flex-wrap items-center gap-2">
@@ -393,10 +426,16 @@ function ActionRow({
             <span className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs text-slate-500">
               {action.lens}
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs text-slate-500">
-              {action.category}
-            </span>
-            {isEdited ? (
+            {action.category ? (
+              <span className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs text-slate-500">
+                {action.category}
+              </span>
+            ) : null}
+            {isNew ? (
+              <span className="rounded-full bg-blue-200 px-2 py-0.5 text-xs font-semibold text-blue-900">
+                New
+              </span>
+            ) : isEdited ? (
               <span className="rounded-full bg-amber-200 px-2 py-0.5 text-xs font-semibold text-amber-900">
                 Edited
               </span>
@@ -410,6 +449,13 @@ function ActionRow({
                 Reset
               </button>
             ) : null}
+            <button
+              type="button"
+              onClick={onRemove}
+              className="ml-auto text-xs font-semibold text-red-600 underline hover:text-red-800"
+            >
+              Remove
+            </button>
           </div>
         </div>
       </div>
@@ -445,9 +491,11 @@ export default function ActionLibraryReviewApp(): JSX.Element {
       const original = DEFAULT_COMPONENTS[component.id];
       counts[component.id] = current.actions.filter((action) => {
         const originalAction = original.actions.find((candidate) => candidate.id === action.id);
+        if (!originalAction) {
+          return true; // newly added
+        }
         return (
-          originalAction &&
-          (originalAction.description !== action.description || originalAction.band !== action.band)
+          originalAction.description !== action.description || originalAction.band !== action.band
         );
       }).length;
     });
@@ -513,6 +561,34 @@ export default function ActionLibraryReviewApp(): JSX.Element {
     );
   };
 
+  const addAction = (componentId: string, band: number, lens: string) => {
+    updateComponentActions(componentId, (actions) => [
+      ...actions,
+      {
+        id: `${componentId}-new-${createId()}`,
+        description: '',
+        band,
+        lens,
+        category: '',
+        outcomeIds: [],
+      },
+    ]);
+  };
+
+  const removeAction = (componentId: string, actionId: string) => {
+    updateComponentActions(componentId, (actions) =>
+      actions.filter((action) => action.id !== actionId)
+    );
+  };
+
+  const restoreAction = (componentId: string, actionId: string) => {
+    const original = DEFAULT_COMPONENTS[componentId].actions.find((a) => a.id === actionId);
+    if (!original) {
+      return;
+    }
+    updateComponentActions(componentId, (actions) => [...actions, { ...original }]);
+  };
+
   const toggleReviewed = (componentId: string) => {
     setState((current) => ({
       ...current,
@@ -552,11 +628,6 @@ export default function ActionLibraryReviewApp(): JSX.Element {
       event.target.value = '';
     }
   };
-
-  const lensesInComponent = useMemo(
-    () => Array.from(new Set(selectedData.actions.map((a) => a.lens))),
-    [selectedData]
-  );
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800">
@@ -625,9 +696,11 @@ export default function ActionLibraryReviewApp(): JSX.Element {
           <p className="mt-1">
             Pick a component on the left. Each action can have its wording edited, be moved to a
             different level using the dropdown, or reordered with the ▲▼ buttons within its group.
-            Your changes save automatically in this browser. Tick "Reviewed" once you're happy with a
-            component, then use <strong>Export my review</strong> when you're done and send the
-            downloaded file back.
+            Use <strong>+ Add action</strong> at the bottom of a group to add a new one, or
+            <strong> Remove</strong> on a row to take it out (removed actions can be restored further
+            down if you change your mind). Your changes save automatically in this browser. Tick
+            "Reviewed" once you're happy with a component, then use{' '}
+            <strong>Export my review</strong> when you're done and send the downloaded file back.
           </p>
         </div>
 
@@ -679,7 +752,7 @@ export default function ActionLibraryReviewApp(): JSX.Element {
               <div>
                 <h2 className="text-lg font-bold text-slate-800">{selectedComponent.label}</h2>
                 <p className="text-xs text-slate-500">
-                  {selectedData.actions.length} actions across {lensesInComponent.length} lens(es)
+                  {selectedData.actions.length} actions across {selectedComponent.lenses.length} lens(es)
                 </p>
               </div>
               <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
@@ -706,7 +779,6 @@ export default function ActionLibraryReviewApp(): JSX.Element {
                   action.band === level.value &&
                   (!filterText || action.description.toLowerCase().includes(filterText.toLowerCase()))
               );
-              const lensGroups = Array.from(new Set(actionsInBand.map((a) => a.lens)));
 
               return (
                 <AccordionSection
@@ -715,41 +787,86 @@ export default function ActionLibraryReviewApp(): JSX.Element {
                   isOpen={openBand === level.value}
                   onToggle={() => setOpenBand((current) => (current === level.value ? null : level.value))}
                 >
-                  {lensGroups.length ? (
-                    <div className="space-y-5">
-                      {lensGroups.map((lens) => {
-                        const groupActions = actionsInBand.filter((action) => action.lens === lens);
-                        return (
-                          <div key={lens}>
-                            <h5 className="mb-2 text-xs font-bold uppercase tracking-wide text-slate-500">
-                              {lens}
-                            </h5>
-                            <div className="space-y-2">
-                              {groupActions.map((action, index) => (
-                                <ActionRow
-                                  key={action.id}
-                                  action={action}
-                                  original={originalData.actions.find((a) => a.id === action.id)}
-                                  onUpdate={(updates) =>
-                                    updateAction(selectedComponentId, action.id, updates)
-                                  }
-                                  onMove={(direction) => moveAction(selectedComponentId, action.id, direction)}
-                                  onReset={() => resetAction(selectedComponentId, action.id)}
-                                  canMoveUp={index > 0}
-                                  canMoveDown={index < groupActions.length - 1}
-                                />
-                              ))}
-                            </div>
+                  <div className="space-y-5">
+                    {selectedComponent.lenses.map((lens) => {
+                      const groupActions = actionsInBand.filter((action) => action.lens === lens);
+                      return (
+                        <div key={lens}>
+                          <h5 className="mb-2 text-xs font-bold uppercase tracking-wide text-slate-500">
+                            {lens}
+                          </h5>
+                          <div className="space-y-2">
+                            {groupActions.map((action, index) => (
+                              <ActionRow
+                                key={action.id}
+                                action={action}
+                                original={originalData.actions.find((a) => a.id === action.id)}
+                                onUpdate={(updates) =>
+                                  updateAction(selectedComponentId, action.id, updates)
+                                }
+                                onMove={(direction) => moveAction(selectedComponentId, action.id, direction)}
+                                onReset={() => resetAction(selectedComponentId, action.id)}
+                                onRemove={() => removeAction(selectedComponentId, action.id)}
+                                canMoveUp={index > 0}
+                                canMoveDown={index < groupActions.length - 1}
+                              />
+                            ))}
+                            {!groupActions.length ? (
+                              <p className="text-sm text-slate-400">No actions here yet.</p>
+                            ) : null}
                           </div>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <p className="text-sm text-slate-500">No actions at this level.</p>
-                  )}
+                          {!filterText ? (
+                            <button
+                              type="button"
+                              onClick={() => addAction(selectedComponentId, level.value, lens)}
+                              className="mt-2 text-xs font-semibold text-[#005eb8] hover:underline"
+                            >
+                              + Add action
+                            </button>
+                          ) : null}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </AccordionSection>
               );
             })}
+
+            {(() => {
+              const removedOriginals = originalData.actions.filter(
+                (original) => !selectedData.actions.some((action) => action.id === original.id)
+              );
+              if (!removedOriginals.length) {
+                return null;
+              }
+              return (
+                <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4">
+                  <p className="text-sm font-semibold text-slate-700">
+                    Removed actions ({removedOriginals.length})
+                  </p>
+                  <p className="mt-0.5 text-xs text-slate-500">
+                    Removed from this component. Restore one if you removed it by mistake.
+                  </p>
+                  <div className="mt-3 space-y-1.5">
+                    {removedOriginals.map((original) => (
+                      <div
+                        key={original.id}
+                        className="flex items-center justify-between gap-3 rounded-md border border-slate-200 bg-white px-3 py-2"
+                      >
+                        <span className="text-sm text-slate-600">{original.description}</span>
+                        <button
+                          type="button"
+                          onClick={() => restoreAction(selectedComponentId, original.id)}
+                          className="shrink-0 text-xs font-semibold text-[#005eb8] hover:underline"
+                        >
+                          Restore
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         </div>
       </main>

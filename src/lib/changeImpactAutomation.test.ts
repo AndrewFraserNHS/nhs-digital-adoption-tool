@@ -4,7 +4,8 @@ import { initializeStore } from './adoptionState';
 import { syncChangeImpactDerivedContent } from './changeImpactAutomation';
 
 describe('syncChangeImpactDerivedContent', () => {
-  it('parses available actions from partially malformed source and links outcomes', () => {
+  it('SHOULD parse available actions WHERE partially malformed source and links outcomes', () => {
+    // arrange
     const store = initializeStore({
       currentDraft: {
         change_impact: {
@@ -25,9 +26,11 @@ describe('syncChangeImpactDerivedContent', () => {
       objectives: {},
     });
 
+    // act
     const nextStore = syncChangeImpactDerivedContent(store);
     const planningEntry = nextStore.currentDraft.change_impact['Planning and Risk'];
 
+    // assert
     expect(
       planningEntry.actions.some((action) =>
         action.text.includes('Identify the areas, services, teams, roles')

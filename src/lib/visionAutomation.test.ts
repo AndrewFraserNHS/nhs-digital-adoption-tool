@@ -4,7 +4,8 @@ import { initializeStore } from './adoptionState';
 import { syncVisionDerivedContent } from './visionAutomation';
 
 describe('syncVisionDerivedContent', () => {
-  it('adds current-stage lens actions and creates the 3 named vision outcomes', () => {
+  it('SHOULD adds current-stage lens actions and creates the 3 named vision outcomes', () => {
+    // arrange
     const store = initializeStore({
       currentDraft: {
         vision: {
@@ -25,10 +26,12 @@ describe('syncVisionDerivedContent', () => {
       objectives: {},
     });
 
+    // act
     const nextStore = syncVisionDerivedContent(store);
     const strategicEntry = nextStore.currentDraft.vision['Strategic Direction and Leadership'];
     const peopleEntry = nextStore.currentDraft.vision['People Experience and Culture'];
 
+    // assert
     expect(strategicEntry.actions.some((action) => action.text.includes('vision workshop'))).toBe(
       true
     );
@@ -51,7 +54,8 @@ describe('syncVisionDerivedContent', () => {
     );
   });
 
-  it('gives every named vision outcome at least one linked action', () => {
+  it('SHOULD give every named vision outcome at least one linked action', () => {
+    // arrange
     const store = initializeStore({
       currentDraft: {
         vision: {
@@ -72,18 +76,21 @@ describe('syncVisionDerivedContent', () => {
       objectives: {},
     });
 
+    // act
     const nextStore = syncVisionDerivedContent(store);
     const outcomes = (nextStore.objectives.vision || []).filter((objective) =>
       /^vision:outcome:o[123]$/.test(objective.id)
     );
 
+    // assert
     expect(outcomes).toHaveLength(3);
     outcomes.forEach((objective) => {
       expect(objective.linkedActions.length).toBeGreaterThan(0);
     });
   });
 
-  it('does not create duplicate auto-generated vision action or outcome text', () => {
+  it('SHOULD not create duplicate auto-generated vision action or outcome text', () => {
+    // arrange
     const store = initializeStore({
       currentDraft: {
         vision: {
@@ -104,6 +111,7 @@ describe('syncVisionDerivedContent', () => {
       objectives: {},
     });
 
+    // act
     const nextStore = syncVisionDerivedContent(store);
     const allActionTexts = Object.values(nextStore.currentDraft.vision || {}).flatMap((entry) =>
       entry.actions.map((action) => action.text.trim().replace(/\s+/g, ' ').toLowerCase())
@@ -112,11 +120,13 @@ describe('syncVisionDerivedContent', () => {
       objective.text.trim().replace(/\s+/g, ' ').toLowerCase()
     );
 
+    // assert
     expect(new Set(allActionTexts).size).toBe(allActionTexts.length);
     expect(new Set(allObjectiveTexts).size).toBe(allObjectiveTexts.length);
   });
 
-  it('does not re-add a suppressed auto-generated vision action', () => {
+  it('SHOULD not re-add a suppressed auto-generated vision action', () => {
+    // arrange
     const store = initializeStore({
       currentDraft: {
         vision: {
@@ -136,9 +146,11 @@ describe('syncVisionDerivedContent', () => {
       objectives: {},
     });
 
+    // act
     const nextStore = syncVisionDerivedContent(store);
     const strategicEntry = nextStore.currentDraft.vision['Strategic Direction and Leadership'];
 
+    // assert
     expect(
       strategicEntry.actions.some(
         (action) => action.id === 'vision-action:strategic-direction-and-leadership:0-1:0'

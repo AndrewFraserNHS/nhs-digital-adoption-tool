@@ -4,7 +4,8 @@ import { initializeStore } from './adoptionState';
 import { syncReinforcementDerivedContent } from './reinforcementAutomation';
 
 describe('syncReinforcementDerivedContent', () => {
-  it('parses malformed source and still adds actions/outcomes', () => {
+  it('SHOULD parse malformed source and still adds actions/outcomes', () => {
+    // arrange
     const store = initializeStore({
       currentDraft: {
         reinforcement: {
@@ -27,8 +28,10 @@ describe('syncReinforcementDerivedContent', () => {
       },
     });
 
+    // act
     const nextStore = syncReinforcementDerivedContent(store);
 
+    // assert
     expect(nextStore.currentDraft.reinforcement['Process and Sustainment'].actions.length).toBeGreaterThan(0);
     expect(nextStore.objectives.reinforcement.length).toBeGreaterThan(0);
     expect(nextStore.objectives.reinforcement[0].id.startsWith('reinforcement:outcome:')).toBe(true);

@@ -10,7 +10,8 @@ import {
 } from './validation';
 
 describe('validation helpers', () => {
-  it('validates score required, numeric, and range branches', () => {
+  it('SHOULD validates score required, numeric, and range branches', () => {
+    // arrange + act + assert
     expect(validateScore(null)).toEqual({
       isValid: false,
       errors: [{ field: 'score', message: 'Score is required' }],
@@ -26,7 +27,8 @@ describe('validation helpers', () => {
     expect(validateScore(4).isValid).toBe(true);
   });
 
-  it('validates required and email formats', () => {
+  it('SHOULD validates required and email formats', () => {
+    // arrange + act + assert 
     expect(validateRequired('')).toEqual({
       isValid: false,
       errors: [{ field: 'field', message: 'field is required' }],
@@ -35,19 +37,22 @@ describe('validation helpers', () => {
     expect(validateEmail('a@b.com').isValid).toBe(true);
   });
 
-  it('validates date and url branches', () => {
+  it('SHOULD validates date and url branches', () => {
+    // arrange + act + assert
     expect(validateDate('not-a-date').isValid).toBe(false);
     expect(validateDate('2026-08-01').isValid).toBe(true);
     expect(validateUrl('notaurl').isValid).toBe(false);
     expect(validateUrl('https://example.com').isValid).toBe(true);
   });
 
-  it('combines validation result arrays', () => {
+  it('SHOULD combine validation result arrays', () => {
+    // arrange + act
     const combined = combineValidationResults([
       { isValid: true, errors: [] },
       { isValid: false, errors: [{ field: 'x', message: 'x bad' }] },
     ]);
 
+    // assert
     expect(combined).toEqual({
       isValid: false,
       errors: [{ field: 'x', message: 'x bad' }],

@@ -4,7 +4,8 @@ import { initializeStore } from './adoptionState';
 import { syncBenefitsDerivedContent } from './benefitsAutomation';
 
 describe('syncBenefitsDerivedContent', () => {
-  it('maps actions to benefits lenses and creates named outcomes', () => {
+  it('SHOULD map actions to benefits lenses and creates named outcomes', () => {
+    // arrange
     const store = initializeStore({
       currentDraft: {
         benefits: {
@@ -25,10 +26,12 @@ describe('syncBenefitsDerivedContent', () => {
       objectives: {},
     });
 
+    // act
     const nextStore = syncBenefitsDerivedContent(store);
     const planningEntry = nextStore.currentDraft.benefits['Planning and Risk'];
     const processEntry = nextStore.currentDraft.benefits['Process and Sustainment'];
 
+    // assert
     expect(
       planningEntry.actions.some(
         (action) =>

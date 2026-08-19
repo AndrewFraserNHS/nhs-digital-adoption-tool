@@ -4,7 +4,8 @@ import { initializeStore } from './adoptionState';
 import { syncChangeNetworkDerivedContent } from './changeNetworkAutomation';
 
 describe('syncChangeNetworkDerivedContent', () => {
-  it('adds templates and linked outcomes for change network', () => {
+  it('SHOULD add templates and linked outcomes WHERE change network', () => {
+    // arrange
     const store = initializeStore({
       currentDraft: {
         change_network: {
@@ -27,8 +28,10 @@ describe('syncChangeNetworkDerivedContent', () => {
       },
     });
 
+    // act
     const nextStore = syncChangeNetworkDerivedContent(store);
 
+    // assert
     expect(
       nextStore.currentDraft.change_network['Strategic Direction and Leadership'].actions.length
     ).toBeGreaterThan(0);

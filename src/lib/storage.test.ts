@@ -17,24 +17,37 @@ describe('storage', () => {
 
   (globalThis as { localStorage?: unknown }).localStorage = mockStorage;
 
-  it('saves, loads, and removes values', () => {
+  it('SHOULD save, load, and removes values', () => {
+    // arrange + act 1
     save('key-a', { value: 1 });
+
+    // assert 1
     expect(load<{ value: number }>('key-a')).toEqual({ value: 1 });
+
+    // act 2
     remove('key-a');
+
+    // assert 2
     expect(load('key-a')).toBeNull();
   });
 
-  it('handles JSON parse failures gracefully', () => {
+  it('SHOULD handles JSON parse failures gracefully', () => {
+    // arrange
     memory.set('bad-json', '{bad');
+
+    // act
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
+    // assert
     expect(load('bad-json')).toBeNull();
     expect(warnSpy).toHaveBeenCalled();
 
+    // reset
     warnSpy.mockRestore();
   });
 
-  it('handles storage set/remove failures gracefully', () => {
+  it('SHOULD handle storage set/remove failures gracefully', () => {
+    // arrange
     const setSpy = vi.spyOn(mockStorage, 'setItem').mockImplementation(() => {
       throw new Error('set fail');
     });
@@ -43,11 +56,14 @@ describe('storage', () => {
     });
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
+    // act
     save('x', 'y');
     remove('x');
 
+    // assert 1
     expect(warnSpy).toHaveBeenCalled();
 
+    // reset
     setSpy.mockRestore();
     removeSpy.mockRestore();
     warnSpy.mockRestore();

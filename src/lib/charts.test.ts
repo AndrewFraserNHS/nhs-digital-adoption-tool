@@ -48,7 +48,8 @@ vi.mock('chart.js/auto', () => {
 import Chart from 'chart.js/auto';
 
 describe('wrapChartLabel', () => {
-  it('wraps long lens titles onto multiple lines', () => {
+  it('SHOULD wrap long lens titles onto multiple lines', () => {
+    // arrange + act + assert
     expect(wrapChartLabel('People Experience and Culture')).toEqual([
       'People Experience',
       'and Culture',
@@ -62,24 +63,31 @@ describe('createChart', () => {
     vi.clearAllMocks();
   });
 
-  it('destroys an existing chart before reusing the same canvas', () => {
+  it('SHOULD destroy an existing chart before reusing the same canvas', () => {
+    // arrange
     const canvas = document.createElement('canvas');
     const existingChart = { destroy: vi.fn() };
     vi.mocked(Chart.getChart).mockReturnValue(existingChart);
 
+    // act
     createChart('line', canvas, { labels: [], datasets: [] });
 
+    // assert
     expect(existingChart.destroy).toHaveBeenCalledTimes(1);
   });
 
-  it('uses wrapped multiline labels for radar charts', () => {
+  it('SHOULD use wrapped multiline labels for radar charts', () => {
+    // arrange
     const canvas = document.createElement('canvas');
+
+    // act
     const chart = createRadarChart(canvas, {
       labels: ['People Experience and Culture'],
       datasets: [],
     });
     const options = (chart as unknown as { config: MockChartConfig }).config.options;
 
+    // assert
     expect(options?.scales?.r?.pointLabels?.display).toBe(false);
     expect(options?.scales?.r?.pointLabels?.callback?.('People Experience and Culture')).toBe(
       'People Experience\nand Culture'

@@ -1,25 +1,24 @@
-import { type ChangeEvent, type JSX, type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import benefitsRaw from '@data/component-actions/benefits-actions.json';
+import capabilityRaw from '@data/component-actions/capability-and-confidence-actions.json';
+import caseForChangeRaw from '@data/component-actions/case-for-change-actions.json';
+import changeAdoptionRaw from '@data/component-actions/change-adoption-actions.json';
+import changeImpactRaw from '@data/component-actions/change-impact-actions.json';
+import changeNetworkRaw from '@data/component-actions/change-network-actions.json';
+import cmReadinessRaw from '@data/component-actions/cm-readiness-and-planning-actions.json';
+import orgMaturityRaw from '@data/component-actions/org-change-readiness-actions.json';
+import processChangeRaw from '@data/component-actions/process-change-actions.json';
+import reinforcementRaw from '@data/component-actions/reinforcement-actions.json';
+import resistanceRaw from '@data/component-actions/resistance-management-actions.json';
+import riskManagementRaw from '@data/component-actions/risk-management-actions.json';
+import sponsorshipRaw from '@data/component-actions/senior-sponsorship-and-governance-actions.json';
+import skillsLearningRaw from '@data/component-actions/skills-and-learning-actions.json';
+import stakeholderRaw from '@data/component-actions/stakeholder-engagement-and-outcomes-actions.json';
+import transferBauRaw from '@data/component-actions/transfer-to-bau-actions.json';
+import visionRaw from '@data/component-actions/vision-actions.json';
 import { ASSESSMENT_COMPONENTS } from '@data/components';
 import { OVERARCHING_PHASES } from '@data/cst';
 import { downloadFile } from '@lib/utils';
-
-import visionRaw from '@data/component-actions/vision-actions.json';
-import caseForChangeRaw from '@data/component-actions/case-for-change-actions.json';
-import sponsorshipRaw from '@data/component-actions/senior-sponsorship-and-governance-actions.json';
-import changeNetworkRaw from '@data/component-actions/change-network-actions.json';
-import benefitsRaw from '@data/component-actions/benefits-actions.json';
-import changeImpactRaw from '@data/component-actions/change-impact-actions.json';
-import riskManagementRaw from '@data/component-actions/risk-management-actions.json';
-import cmReadinessRaw from '@data/component-actions/cm-readiness-and-planning-actions.json';
-import stakeholderRaw from '@data/component-actions/stakeholder-engagement-and-outcomes-actions.json';
-import resistanceRaw from '@data/component-actions/resistance-management-actions.json';
-import skillsLearningRaw from '@data/component-actions/skills-and-learning-actions.json';
-import capabilityRaw from '@data/component-actions/capability-and-confidence-actions.json';
-import changeAdoptionRaw from '@data/component-actions/change-adoption-actions.json';
-import processChangeRaw from '@data/component-actions/process-change-actions.json';
-import reinforcementRaw from '@data/component-actions/reinforcement-actions.json';
-import orgMaturityRaw from '@data/component-actions/org-change-readiness-actions.json';
-import transferBauRaw from '@data/component-actions/transfer-to-bau-actions.json';
+import { type ChangeEvent, type JSX, type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 
 const STORAGE_KEY = 'nhs-action-library-review';
 

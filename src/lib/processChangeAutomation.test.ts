@@ -4,7 +4,8 @@ import { initializeStore } from './adoptionState';
 import { syncProcessChangeDerivedContent } from './processChangeAutomation';
 
 describe('syncProcessChangeDerivedContent', () => {
-  it('adds templates and linked outcomes for process change', () => {
+  it('SHOULD add templates and linked outcomes for process change', () => {
+    // arrange
     const store = initializeStore({
       currentDraft: {
         process_change: {
@@ -27,8 +28,10 @@ describe('syncProcessChangeDerivedContent', () => {
       },
     });
 
+    // act
     const nextStore = syncProcessChangeDerivedContent(store);
 
+    // assert
     expect(nextStore.currentDraft.process_change['Process and Sustainment'].actions.length).toBeGreaterThan(0);
     expect(nextStore.objectives.process_change.length).toBeGreaterThan(0);
     expect(nextStore.objectives.process_change[0].id.startsWith('process-change:outcome:')).toBe(true);

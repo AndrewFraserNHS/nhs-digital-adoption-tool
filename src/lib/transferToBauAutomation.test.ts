@@ -4,7 +4,8 @@ import { initializeStore } from './adoptionState';
 import { syncTransferToBauDerivedContent } from './transferToBauAutomation';
 
 describe('syncTransferToBauDerivedContent', () => {
-  it('adds templates and linked outcomes for transfer to BAU', () => {
+  it('SHOULD add templates and linked outcomes for transfer to BAU', () => {
+    // arrange
     const store = initializeStore({
       currentDraft: {
         transfer_bau: {
@@ -27,8 +28,10 @@ describe('syncTransferToBauDerivedContent', () => {
       },
     });
 
+    // act
     const nextStore = syncTransferToBauDerivedContent(store);
 
+    // assert
     expect(
       nextStore.currentDraft.transfer_bau['Strategic Direction and Leadership'].actions.length
     ).toBeGreaterThan(0);

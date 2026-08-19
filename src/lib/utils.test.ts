@@ -3,7 +3,8 @@ import { describe, expect, it, vi } from 'vitest';
 import { downloadFile, esc, escapeCsv, escapeHtml } from './utils';
 
 describe('utils', () => {
-  it('escapes html characters and handles nullish values', () => {
+  it('SHOULD escape html characters and handles nullish values', () => {
+    // arrange + act + assert
     expect(escapeHtml(null)).toBe('');
     expect(escapeHtml(undefined)).toBe('');
     expect(escapeHtml('<div>"x" & y\'</div>')).toBe(
@@ -12,14 +13,16 @@ describe('utils', () => {
     expect(esc('<b>ok</b>')).toBe('&lt;b&gt;ok&lt;/b&gt;');
   });
 
-  it('escapes csv with and without special characters', () => {
+  it('SHOULD escape csv with and without special characters', () => {
+    // arrange + act + assert
     expect(escapeCsv(null)).toBe('');
     expect(escapeCsv('plain')).toBe('plain');
     expect(escapeCsv('one,two')).toBe('"one,two"');
     expect(escapeCsv('say "hello"')).toBe('"say ""hello"""');
   });
 
-  it('triggers file download flow', () => {
+  it('SHOULD trigger file download flow', () => {
+    // arrange
     const appendSpy = vi.spyOn(document.body, 'appendChild');
     const removeSpy = vi.spyOn(HTMLAnchorElement.prototype, 'remove');
     const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
@@ -38,13 +41,16 @@ describe('utils', () => {
       'revokeObjectURL'
     );
 
+    // act
     downloadFile('report.csv', 'a,b,c');
 
+    // assert
     expect(appendSpy).toHaveBeenCalled();
     expect(clickSpy).toHaveBeenCalled();
     expect(removeSpy).toHaveBeenCalled();
     expect(revokeSpy).toHaveBeenCalledWith('blob:mock');
 
+    // reset
     appendSpy.mockRestore();
     removeSpy.mockRestore();
     clickSpy.mockRestore();

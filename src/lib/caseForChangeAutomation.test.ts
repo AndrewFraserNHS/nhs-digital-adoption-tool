@@ -4,7 +4,8 @@ import { initializeStore } from './adoptionState';
 import { syncCaseForChangeDerivedContent } from './caseForChangeAutomation';
 
 describe('syncCaseForChangeDerivedContent', () => {
-  it('adds mapped default actions and creates named case-for-change outcomes', () => {
+  it('SHOULD add mapped default actions and creates named case-for-change outcomes', () => {
+    // arrange
     const store = initializeStore({
       currentDraft: {
         case_for_change: {
@@ -25,11 +26,13 @@ describe('syncCaseForChangeDerivedContent', () => {
       objectives: {},
     });
 
+    // act
     const nextStore = syncCaseForChangeDerivedContent(store);
     const strategicEntry =
       nextStore.currentDraft.case_for_change['Strategic Direction and Leadership'];
     const peopleEntry = nextStore.currentDraft.case_for_change['People Experience and Culture'];
 
+    // assert
     expect(
       strategicEntry.actions.some(
         (action) =>
@@ -54,7 +57,8 @@ describe('syncCaseForChangeDerivedContent', () => {
     );
   });
 
-  it('does not re-add a suppressed auto-generated case-for-change action', () => {
+  it('SHOULD not re-add a suppressed auto-generated case-for-change action', () => {
+    // arrange
     const store = initializeStore({
       currentDraft: {
         case_for_change: {
@@ -74,10 +78,12 @@ describe('syncCaseForChangeDerivedContent', () => {
       objectives: {},
     });
 
+    // act
     const nextStore = syncCaseForChangeDerivedContent(store);
     const strategicEntry =
       nextStore.currentDraft.case_for_change['Strategic Direction and Leadership'];
 
+    // assert
     expect(
       strategicEntry.actions.some(
         (action) => action.id === 'case-for-change-action:strategic-direction-and-leadership:1-2:0'

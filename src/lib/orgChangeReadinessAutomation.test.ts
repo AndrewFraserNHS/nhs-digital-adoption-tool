@@ -4,7 +4,8 @@ import { initializeStore } from './adoptionState';
 import { syncOrgChangeReadinessDerivedContent } from './orgChangeReadinessAutomation';
 
 describe('syncOrgChangeReadinessDerivedContent', () => {
-  it('adds templates and linked outcomes for org change readiness', () => {
+  it('SHOULD add templates and linked outcomes for org change readiness', () => {
+    // arrange
     const store = initializeStore({
       currentDraft: {
         org_maturity: {
@@ -27,8 +28,10 @@ describe('syncOrgChangeReadinessDerivedContent', () => {
       },
     });
 
+    // act
     const nextStore = syncOrgChangeReadinessDerivedContent(store);
 
+    // assert
     expect(
       nextStore.currentDraft.org_maturity['Strategic Direction and Leadership'].actions.length
     ).toBeGreaterThan(0);

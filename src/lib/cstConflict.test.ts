@@ -63,33 +63,40 @@ function toPayload(store: AdoptionStore): Partial<SavedAdoptionAssessment> {
 }
 
 describe('buildConflictReport', () => {
-  it('reports no conflicts for an identical payload', () => {
+  it('SHOULD report no conflicts WHERE an identical payload', () => {
+    // arrange
     const mine = buildStore();
     const theirs = toPayload(buildStore());
 
+    // act
     const report = buildConflictReport(mine, theirs);
 
+// assert
     expect(report.hasConflicts).toBe(false);
     expect(report.sections).toEqual([]);
     expect(report.autoMergeSummary).toEqual([]);
   });
 
-  it('flags a single differing profile field as a conflict', () => {
+  it('SHOULD flag a single differing profile field as a conflict', () => {
+    // arrange
     const mine = buildStore();
     const theirsStore = buildStore();
     theirsStore.orgProfile.trustName = 'Trust B';
     const theirs = toPayload(theirsStore);
 
+    // act
     const report = buildConflictReport(mine, theirs);
-
     const profileSection = report.sections.find((section) => section.id === 'profile');
+
+    // assert
     expect(profileSection).toBeDefined();
     expect(profileSection?.items).toEqual([
       expect.objectContaining({ id: 'profile:trustName', mineSummary: 'Trust A', theirsSummary: 'Trust B' }),
     ]);
   });
 
-  it('auto-merges a one-sided new action with no conflict prompt', () => {
+  it('SHOULD auto-merge a one-sided new action with no conflict prompt', () => {
+    // arrange
     const mine = buildStore();
     const theirsStore = buildStore();
     theirsStore.currentDraft.vision['Strategic Direction'].actions.push({
@@ -101,52 +108,63 @@ describe('buildConflictReport', () => {
     });
     const theirs = toPayload(theirsStore);
 
+    // act
     const report = buildConflictReport(mine, theirs);
 
+    // assert
     expect(report.hasConflicts).toBe(false);
     expect(report.autoMergeSummary).toEqual(['1 new action(s)']);
   });
 
-  it('flags a true conflict when the same action id differs on both sides', () => {
+  it('SHOULD flag a true conflict WHERE the same action id differs on both sides', () => {
+    // arrange
     const mine = buildStore();
     const theirsStore = buildStore();
     theirsStore.currentDraft.vision['Strategic Direction'].actions[0].status = 'Completed';
     const theirs = toPayload(theirsStore);
 
+    // act
     const report = buildConflictReport(mine, theirs);
-
     const actionsSection = report.sections.find((section) => section.id === 'actions');
+
+    // assert
     expect(actionsSection?.items).toHaveLength(1);
     expect(actionsSection?.items[0].id).toBe('action:vision:Strategic Direction:action-1');
   });
 
-  it('flags a true conflict when the same objective id differs on both sides', () => {
+  it('SHOULD flag a true conflict WHERE the same objective id differs on both sides', () => {
+    // arrange
     const mine = buildStore();
     const theirsStore = buildStore();
     theirsStore.objectives.vision[0].owner = 'Sam Patel';
     const theirs = toPayload(theirsStore);
 
+    // act
     const report = buildConflictReport(mine, theirs);
-
     const objectivesSection = report.sections.find((section) => section.id === 'objectives');
+
+    // assert
     expect(objectivesSection?.items).toHaveLength(1);
     expect(objectivesSection?.items[0].id).toBe('objective:vision:obj-1');
   });
 });
 
 describe('applyConflictResolutions', () => {
-  it('keeps mine by default when a resolution is not supplied for a conflict', () => {
+  it('SHOULD keep mine by default WHERE a resolution is not supplied for a conflict', () => {
+    // arrange
     const mine = buildStore();
     const theirsStore = buildStore();
     theirsStore.orgProfile.trustName = 'Trust B';
     const theirs = toPayload(theirsStore);
 
+    // act
     const merged = applyConflictResolutions(mine, theirs, {});
 
+    // assert
     expect(merged.orgProfile.trustName).toBe('Trust A');
   });
 
-  it('takes theirs when explicitly resolved that way', () => {
+  it('SHOULD take theirs WHERE explicitly resolved that way', () => {
     const mine = buildStore();
     const theirsStore = buildStore();
     theirsStore.orgProfile.trustName = 'Trust B';
@@ -157,7 +175,8 @@ describe('applyConflictResolutions', () => {
     expect(merged.orgProfile.trustName).toBe('Trust B');
   });
 
-  it('includes one-sided additions regardless of the resolutions map', () => {
+  it('SHOULD include one-sided additions regardless of the resolutions map', () => {
+    // arrange
     const mine = buildStore();
     const theirsStore = buildStore();
     theirsStore.currentDraft.vision['Strategic Direction'].actions.push({
@@ -173,8 +192,10 @@ describe('applyConflictResolutions', () => {
     ];
     const theirs = toPayload(theirsStore);
 
+    // act
     const merged = applyConflictResolutions(mine, theirs, {});
 
+    // assert
     expect(merged.currentDraft.vision['Strategic Direction'].actions.map((a) => a.id)).toEqual([
       'action-1',
       'action-2',
@@ -182,16 +203,19 @@ describe('applyConflictResolutions', () => {
     expect(merged.orgProfile.teamMembers?.map((m) => m.id)).toEqual(['member-1', 'member-2']);
   });
 
-  it('resolves an action-level conflict per the supplied choice', () => {
+  it('SHOULD resolve an action-level conflict per the supplied choice', () => {
+    // arrange
     const mine = buildStore();
     const theirsStore = buildStore();
     theirsStore.currentDraft.vision['Strategic Direction'].actions[0].status = 'Completed';
     const theirs = toPayload(theirsStore);
 
+    // act
     const merged = applyConflictResolutions(mine, theirs, {
       'action:vision:Strategic Direction:action-1': 'theirs',
     });
 
+    // assert
     expect(merged.currentDraft.vision['Strategic Direction'].actions[0].status).toBe('Completed');
   });
 });

@@ -42,33 +42,69 @@
   },
   "sponsorship": {
     "component": "Senior Sponsorship & Governance",
-    "description": "",
-    "whatIsIt": "",
-    "userInsight": "",
-    "whyThisMatters": "",
-    "quickRealityCheck": "",
-    "whatGoodLooksLike": [],
-    "risksIfYouDont": []
+    "description": "Make AVT clinically led and operationally owned, not IT driven",
+    "whatIsIt": "Sponsorship means visible clinical and operational senior leaders driving AVT as service improvement, supporting teams, removing barriers and building confidence to support adoption. Governance provides the structure for making clear timely decisions, so AVT is introduced safely, consistently and at scale by having the right clinical, digital and safety checks in place.",
+    "userInsight": "AVT succeeded when strong clinical and operational sponsorship ensured AVT was delivered as a clinical service improvement, not an IT led change, with leaders driving adoption, behaviours and redesign. Clear proportionate governance enabled safe timely decisions and supported AVT scaling across clinical, operational and digital teams.",
+    "whyThisMatters": "Visible senior clinical and operational leadership builds trust, reduces resistance and enables pace and scale.\n Ensures AVT is a clinical workflow change with clinical direction and operational ownership of local redesign.\n Sponsors remove barriers, support teams and make the decisions related to risk and workflow needed to embed change.\n Drives timely and clear decisions through defined decision making, governance cadence and active oversight.\n Enables safe, compliant use by ensuring assurance (IG, DPIA, Cyber, clinical safety and consent) is in place before clinical deployment.\n Supports scaling beyond pilots by managing risks transparently and creating a controlled organisation wide approach.",
+    "quickRealityCheck": "Are senior leaders actively showing support? Do sponsors demonstrate behaviours they expect from others?\n Are sponsors listening to feedback and responding? Are sponsors using the same consistent story?\n Are roles clear across business, tech, legal, risk and Ops? Who actually owns the decision, risk and sign off?\n Is there a clear escalation path when something fails? Are policies being followed in practice, not just documented?",
+    "whatGoodLooksLike": [
+      { "title": "CLEAR SPONSORSHIP IN PLACE", "body": "Clear credible sponsorship in place – named SRO, clinical sponsor (e.g. Medical Director/CCIO) and operational lead with ownership beyond digital/IT." },
+      { "title": "VISIBLE LEADERSHIP", "body": "Visible leadership driving change on the ground – actively engaging teams, reinforcing new behaviours and removing barriers to adoption." },
+      { "title": "OPERATIONAL OWNERSHIP", "body": "Operational ownership embedded early and leading workflow redesign." },
+      { "title": "FRONTLINE FEEDBACK", "body": "Frontline feedback is heard and acted on." },
+      { "title": "CLEAR GOVERNANCE", "body": "There is a clear AVT governance forum aligned to existing clinical and operational structures, with clear decision rights, escalation routes and documented approval authority." }
+    ],
+    "risksIfYouDont": [
+      { "title": "FAILURE TO SCALE", "body": "Without senior clinical and operational leadership, adoption depends on individual enthusiasts and fails to scale across services." },
+      { "title": "NO HUMAN IN THE LOOP", "body": "Workflow issues and new ways of working, including \"Human in the Loop\" review and approval, may not be owned or resolved." },
+      { "title": "SLOW UPTAKE", "body": "Without visible senior backing, teams are less confident to change practice, delaying adoption and limiting impact." },
+      { "title": "DELAYED DECISION MAKING", "body": "Decisions are delayed because ownership is unclear." },
+      { "title": "NO GOVERNANCE", "body": "Without governance, there is no clear decision making between IG, IT and clinical/operational teams, which may lead to delays, hidden risk and pilots that never transition into controlled organisation wide roll outs." }
+    ]
   },
   "change_network": {
     "component": "Change Network",
-    "description": "",
-    "whatIsIt": "",
-    "userInsight": "",
-    "whyThisMatters": "",
-    "quickRealityCheck": "",
-    "whatGoodLooksLike": [],
-    "risksIfYouDont": []
+    "description": "Use trusted peers as champions to drive adoption and improvement",
+    "whatIsIt": "A Change Network brings together trusted clinical, operational and admin champions to share clear messages, surface issues early and support peer to peer adoption of AVT.",
+    "userInsight": "Adoption spread through trusted peer to peer influence with champions often emerging organically who helped to drive uptake and sustain engagement over time.",
+    "whyThisMatters": "Building trust enabling two-way engagement helps to drive adoption by involving staff in the change from the start.\n Local networks help to build local confidence and support by using trusted peers.\n Champions can help to surface workflow and template issues early through frontline insight, speeding up improvements.",
+    "quickRealityCheck": "Do you have champions across the right roles, teams and locations? Do network members know what they have been asked to do?\n Has protected time been discussed and agreed with managers? Have feedback channels been set up and shared?",
+    "whatGoodLooksLike": [
+      { "title": "VISIBLE CHAMPIONS", "body": "Champions are visible and active locally with peer learning, coaching and demonstration driving confidence and adoption as part of a Change Network." },
+      { "title": "TWO WAY ENGAGEMENT", "body": "Two-way engagement is working with clear, consistent messages and early feedback shaping decisions." },
+      { "title": "USE OF INSIGHTS", "body": "Insights are used to improve rollout, with champions surfacing issues early and informing workflow and template refinement." },
+      { "title": "SUPPORTS ADOPTION", "body": "The network supports adoption before, during and after launch." },
+      { "title": "HELP WITH VALIDATION", "body": "Champions help validate real world scenarios and user impacts." }
+    ],
+    "risksIfYouDont": [
+      { "title": "LIMITED SUPPORT", "body": "Limited local support and influence. Change stays centralised with no trusted peers to explain, support and encourage adoption." },
+      { "title": "LOW TRUST", "body": "Low trust and engagement. People don't feel involved or heard so confidence drops and resistance increases." },
+      { "title": "NO PEER SUPPORT", "body": "Poor adoption and inconsistent use. Without peer support and reinforcement, take up is patchy and new ways of working don't stick." },
+      { "title": "LACK OF REPRESENTATION", "body": "Champions are not representative of affected teams." },
+      { "title": "STOPPED ACTIVITY", "body": "Network activity stops after launch." }
+    ]
   },
   "benefits": {
-    "component": "Benefits",
-    "description": "",
-    "whatIsIt": "",
-    "userInsight": "",
-    "whyThisMatters": "",
-    "quickRealityCheck": "",
-    "whatGoodLooksLike": [],
-    "risksIfYouDont": []
+    "component": "What's In It For Me (WIIFM) Benefits",
+    "description": "Make the benefits real, relevant and meaningful for everyone",
+    "whatIsIt": "What's in it for me (WIIFM) translates AVT benefits into clear, personal messages so staff can see how the change will make their own work easier or better.",
+    "userInsight": "WIIFM benefits landed more effectively when they reflected real practical clinical experience – reduced cognitive load, increased patient focus and clinical safety.",
+    "whyThisMatters": "WIIFM messaging is a primary driver of engagement and can support resistance reduction.\n Role-specific benefits help reduce fear about workforce impact and job loss narratives.\n Credible WIIFM support safer adoption by reinforcing correct use and \"Human in the Loop\" review and approval of AVT outputs.",
+    "quickRealityCheck": "Do people understand what's in it for them? Are the benefits relevant to the real workforce pressures?\n Are we communicating WIIFM benefits in the right way? Are people showing they understand the reason for the AVT introduction?",
+    "whatGoodLooksLike": [
+      { "title": "STAFF EXPLANATION", "body": "Staff can explain the benefits in their own words, not just repeat generic transformation language." },
+      { "title": "REAL DAY TO DAY IMPROVEMENTS", "body": "Communications focus on real day to day improvements." },
+      { "title": "CLEAR ADMIN IMPACTS", "body": "Admin impacts are clearly explained, including how roles may evolve and how staff will be supported." },
+      { "title": "FEEDBACK LED ADOPTION", "body": "Concerns are captured and used to refine messaging, training and support." },
+      { "title": "ROLE SPECIFIC BENEFITS", "body": "Benefits are tailored by audience, especially for clinicians." }
+    ],
+    "risksIfYouDont": [
+      { "title": "DOMINATING MYTHS", "body": "Productivity enforcement myths dominate and reduce uptake." },
+      { "title": "INCREASED ANXIETY", "body": "Admin staff assume AVT is workforce reduction leading to increased anxiety." },
+      { "title": "ENTHUSIASM FADES", "body": "Benefits remain theoretical; enthusiasm fades quickly." },
+      { "title": "TRAINING LANDS POORLY", "body": "Staff attend training but do not apply AVT because the 'Why' is unclear." },
+      { "title": "MOMENTUM FADES", "body": "Early interest drops off before AVT becomes embedded in ways of working." }
+    ]
   },
   "change_impact": {
     "component": "Change Impact",
@@ -101,12 +137,12 @@
     "risksIfYouDont": []
   },
   "stakeholder": {
-    "component": "Stakeholder Engagement & Comms",
-    "description": "",
-    "whatIsIt": "",
-    "userInsight": "",
-    "whyThisMatters": "",
-    "quickRealityCheck": "",
+    "component": "Stakeholder Engagement and Communication",
+    "description": "Engage early and involve staff in shaping how AVT will work",
+    "whatIsIt": "Stakeholder Engagement and Communications build understanding, trust and commitment through early, two-way engagement with clinicians, admin teams, leaders and patients.",
+    "userInsight": "Adoption was strongest where trusted peers led the change, clinical and admin teams were engaged early and patients and clinicians had clarity and confidence around the change.",
+    "whyThisMatters": "Engagement reduces resistance by building understanding and addressing misconceptions early.\n When people are involved in design, they become advocates.\n Patient trust and understanding is increased when communication is transparent and choice based.",
+    "quickRealityCheck": "Is there a feedback loop after communications go out? Are comms understandable to non-technical staff?\n Are issues tracked through to closure? Are real life scenarios included in validations?",
     "whatGoodLooksLike": [],
     "risksIfYouDont": []
   },
@@ -121,14 +157,26 @@
     "risksIfYouDont": []
   },
   "skills_learning": {
-    "component": "Skills/ Learning",
+    "component": "Skills and Learning",
     "description": "",
     "whatIsIt": "",
     "userInsight": "",
     "whyThisMatters": "",
     "quickRealityCheck": "",
-    "whatGoodLooksLike": [],
-    "risksIfYouDont": []
+    "whatGoodLooksLike": [
+      { "title": "ROLE BASED TRAINING", "body": "Training is role-based and reinforces \"Human in the Loop\" review and approval of AVT outputs, with clear clinical accountability." },
+      { "title": "AT THE ELBOW", "body": "\"At the elbow\" or in-service support exists for early use and those lacking confidence." },
+      { "title": "HELP", "body": "Refreshers and rapid help routes exist; small irritants are fixed quickly." },
+      { "title": "PREPARATION FOR NEW WAYS OF WORKING", "body": "Frontline teams are prepared for new ways of working." },
+      { "title": "PRE-GO LIVE ASSESSMENTS", "body": "Confidence and readiness are assessed before go live." }
+    ],
+    "risksIfYouDont": [
+      { "title": "NON-ADOPTION", "body": "People attend training but still don't adopt because confidence is low and support isn't available." },
+      { "title": "MIXED MESSAGES", "body": "Mixed messages on \"Human in the Loop\" review and approval of AVT outputs can lead to unsafe practice or avoidance." },
+      { "title": "SUPPLIER RELIANCE", "body": "Reliance on suppliers persists because local super-user capability is not built." },
+      { "title": "LATE IDENTIFICATION", "body": "Skills gaps are identified too late." },
+      { "title": "GENERIC TRAINING", "body": "Training is too generic and not tailored to real use." }
+    ]
   },
   "capability": {
     "component": "Capability And Confidence",
@@ -154,21 +202,33 @@
   },
   "change_adoption": {
     "component": "Change Adoption",
-    "description": "",
-    "whatIsIt": "",
-    "userInsight": "",
-    "whyThisMatters": "",
-    "quickRealityCheck": "",
-    "whatGoodLooksLike": [],
-    "risksIfYouDont": []
+    "description": "Focus on how AVT is used in practice, not just whether it is used",
+    "whatIsIt": "Change adoption is the extent to which AVT is used confidently and consistently in day-to-day practice beyond go-live. It involves regularly reviewing real usage and feedback to identify where support or reinforcement is needed.",
+    "userInsight": "Adoption improved when organisations looked beyond usage data to understand user experience and variation in use, using structured pilots as learning opportunities with clear decision points rather than scaling up too early.",
+    "whyThisMatters": "If people don't use AVT properly, you won't get the benefits and understanding why, helps you fix issues and scale safely.\n Understanding \"why not\" enables targeted support for low confidence, workarounds and resistance.\n Clear adoption decision points support safe scaling and protects trust.",
+    "quickRealityCheck": "Is AVT being used as intended in real clinical workflows? Is use consistent across different teams and roles?\n Do staff feel confident using AVT in their day-to-day work? Do you understand why some staff are not using AVT?",
+    "whatGoodLooksLike": [
+      { "title": "ACTIVE MONITORING", "body": "Adoption is actively monitored using usage data and feedback from high and low users." },
+      { "title": "TARGETED REINFORCEMENT", "body": "Targeted support is put in place where needed to support confident and consistent use." },
+      { "title": "LEARNING IN PRACTICE", "body": "Use early learning to refine support and strengthen stakeholder confidence." },
+      { "title": "VISIBLE SUPPORT", "body": "Champions are active post go-live providing targeted support to address issues and improve adoption." },
+      { "title": "CONSISTENT USE", "body": "AVT is used in a consistent way across teams and services in day-to-day practice." }
+    ],
+    "risksIfYouDont": [
+      { "title": "UNREALISED BENEFITS", "body": "If adoption is inconsistent, the benefits of AVT will not be realised." },
+      { "title": "PATCHY USE", "body": "Variation in how AVT is used across teams leads to inconsistent use, reducing confidence." },
+      { "title": "HIDDEN ISSUES", "body": "Without understanding why people are not using AVT, underlying issues are missed." },
+      { "title": "PERSISTENT WORKAROUNDS", "body": "Low confidence, workarounds and resistance persist without targeted reinforcement, undermining effective use." },
+      { "title": "SCALING TOO EARLY", "body": "Without clear adoption insights and decision points, organisations risk scaling too quickly." }
+    ]
   },
   "process_change": {
-    "component": "Process Change",
-    "description": "",
-    "whatIsIt": "",
-    "userInsight": "",
-    "whyThisMatters": "",
-    "quickRealityCheck": "",
+    "component": "Ways of Working",
+    "description": "Make AVT part of everyday practice – set clear expectations and co-design locally",
+    "whatIsIt": "Ways of Working define the new behaviours, habits and expectations needed to use AVT safely and consistently across different clinical settings.",
+    "userInsight": "AVT only transformed practice when teams changed habits — otherwise old ways persisted.",
+    "whyThisMatters": "Inconsistent practice can emerge across teams and settings.\n Clinicians slip back into old habits rewriting notes or just dictation.\n Safety risks increase when \"Human in the Loop\" review and approval and clinical ownership drop when it gets busy.",
+    "quickRealityCheck": "Can staff explain how AVT fits with the workflow? Do supporting materials match actual practice?\n Are workarounds being spotted? Is feedback being used to refine the workflow?",
     "whatGoodLooksLike": [],
     "risksIfYouDont": []
   },
@@ -217,14 +277,26 @@
     ]
   },
   "transfer_bau": {
-    "component": "Transfer to BAU",
-    "description": "",
-    "whatIsIt": "",
-    "userInsight": "",
-    "whyThisMatters": "",
-    "quickRealityCheck": "",
-    "whatGoodLooksLike": [],
-    "risksIfYouDont": []
+    "component": "Transfer to Business as Usual (BAU)",
+    "description": "Plan how AVT will be owned and sustained after Go-Live",
+    "whatIsIt": "Transfer to BAU ensures AVT moves from a time-limited rollout into routine clinical and operational practice, with clear ownership, ongoing support and sustained adoption.",
+    "userInsight": "Where AVT remained owned only by a project or digital team, workflow and behaviour issues resurfaced without clear operational accountability.",
+    "whyThisMatters": "Without a clear BAU transition, AVT risks becoming \"something we tried\" rather than how we work.\n BAU ownership ensures clinical safety behaviours are maintained under everyday operational pressure.\n Embedding AVT into BAU enables continuous optimisation (templates, workflows, support) rather than freezing practice at go-live.",
+    "quickRealityCheck": "Can you name who owns AVT in BAU? Is AVT being used consistently across teams?\n Do staff know where to go when something goes wrong? Are issues being fixed and improvements made?",
+    "whatGoodLooksLike": [
+      { "title": "CLEAR OWNERSHIP", "body": "There is named BAU ownership for adoption, safety, support and optimisation." },
+      { "title": "ACTIVE MONITORING", "body": "Adoption, confidence and safety signals are reviewed." },
+      { "title": "CONTINUOUS IMPROVEMENT", "body": "Feedback loops and reinforcement activity continue after go-live, with visible fixes and updates." },
+      { "title": "VISIBLE VALUE", "body": "AVT performance and benefits are discussed within routine service or operational forums." },
+      { "title": "ACCESSIBLE SUPPORT", "body": "People know where to go for support and how to get help quickly." }
+    ],
+    "risksIfYouDont": [
+      { "title": "UNCLEAR OWNERSHIP", "body": "Adoption slowly erodes as early enthusiasm fades and no one \"owns\" sustained use." },
+      { "title": "REDUCED OVERSIGHT", "body": "Safety practices (review and approval of AVT outputs and consent recording) weaken under pressure without reinforcement." },
+      { "title": "PERSISTENT ISSUES", "body": "Workflow and template issues persist, leading to frustration and workarounds." },
+      { "title": "UNPROVEN VALUE", "body": "Organisations struggle to evidence value, making further scale or funding decisions harder." },
+      { "title": "LIMITED SUPPORT", "body": "Support routes are unclear, so issues persist or are ignored." }
+    ]
   },
   "celebrating_success": {
     "component": "Celebrating Success",

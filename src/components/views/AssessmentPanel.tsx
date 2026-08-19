@@ -17,6 +17,7 @@ import {
   normalizeActionStatus,
 } from '@lib/actionModel';
 import { PHASE_NAMES } from '../../types/constants';
+import componentDetailsText from '@data/component-descriptors/component-details.json?raw';
 
 type AssessmentPanelStore = AdoptionStore & {
   showMatrix?: Record<string, boolean>;
@@ -79,6 +80,193 @@ const OBJECTIVE_STATUS_BADGE_STYLES: Record<ObjectiveStatus, string> = {
   Blocked: 'bg-amber-100 text-amber-800 border-amber-200',
   Completed: 'bg-green-100 text-green-800 border-green-200',
 };
+
+interface ComponentDetailPoint {
+  title: string;
+  body: string;
+}
+
+interface ComponentDetail {
+  component: string;
+  description: string;
+  whatIsIt: string;
+  userInsight: string;
+  whyThisMatters: string;
+  quickRealityCheck: string;
+  whatGoodLooksLike: ComponentDetailPoint[];
+  risksIfYouDont: ComponentDetailPoint[];
+}
+
+const COMPONENT_DETAILS: Record<string, ComponentDetail> = JSON.parse(componentDetailsText);
+
+function splitSentences(value: string): string[] {
+  return value
+    .split('\n')
+    .map((part) => part.trim())
+    .filter(Boolean);
+}
+
+function ComponentOverviewPointList({
+  points,
+  darkMode,
+}: {
+  points: ComponentDetailPoint[];
+  darkMode?: boolean;
+}): JSX.Element {
+  return (
+    <ul className="space-y-3">
+      {points.map((point) => (
+        <li key={point.title}>
+          <p
+            className={`text-xs font-semibold uppercase tracking-wide ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
+          >
+            {point.title}
+          </p>
+          <p className={`mt-0.5 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>{point.body}</p>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function ComponentOverviewSubsection({
+  title,
+  points,
+  isOpen,
+  onToggle,
+  darkMode,
+}: {
+  title: string;
+  points: ComponentDetailPoint[];
+  isOpen: boolean;
+  onToggle: () => void;
+  darkMode?: boolean;
+}): JSX.Element {
+  return (
+    <div className={`rounded-md border ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}>
+      <button
+        type="button"
+        onClick={onToggle}
+        className={`flex w-full items-center justify-between px-3 py-2 text-left text-sm font-semibold ${darkMode ? 'text-slate-100 hover:bg-slate-800' : 'text-slate-700 hover:bg-slate-50'}`}
+      >
+        {title}
+        <span aria-hidden="true">{isOpen ? '−' : '+'}</span>
+      </button>
+      {isOpen && (
+        <div className={`border-t px-3 py-3 ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}>
+          <ComponentOverviewPointList points={points} darkMode={darkMode} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ComponentOverviewSection({
+  detail,
+  darkMode,
+}: {
+  detail: ComponentDetail;
+  darkMode?: boolean;
+}): JSX.Element {
+  const [isOpen, setIsOpen] = useState(false);
+  const [showGoodPractice, setShowGoodPractice] = useState(false);
+  const [showRisks, setShowRisks] = useState(false);
+
+  return (
+    <div
+      className={`mb-6 rounded-lg border ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-white'}`}
+    >
+      <button
+        type="button"
+        onClick={() => setIsOpen((prev) => !prev)}
+        className="flex w-full items-center justify-between gap-4 px-4 py-3 text-left"
+      >
+        <div>
+          <p
+            className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
+          >
+            Component overview
+          </p>
+          {detail.description && (
+            <p className={`mt-0.5 text-sm ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>
+              {detail.description}
+            </p>
+          )}
+        </div>
+        <span
+          className={`shrink-0 text-xs font-semibold ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
+          aria-hidden="true"
+        >
+          {isOpen ? 'Hide details −' : 'What is this? +'}
+        </span>
+      </button>
+      {isOpen && (
+        <div className={`space-y-4 border-t px-4 py-4 ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}>
+          {detail.whatIsIt && (
+            <p className={`text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>{detail.whatIsIt}</p>
+          )}
+          {detail.userInsight && (
+            <blockquote
+              className={`border-l-2 pl-3 text-sm italic ${darkMode ? 'border-slate-600 text-slate-300' : 'border-slate-300 text-slate-600'}`}
+            >
+              “{detail.userInsight}”
+            </blockquote>
+          )}
+          {detail.whyThisMatters && (
+            <div>
+              <p
+                className={`text-xs font-semibold uppercase tracking-wide ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
+              >
+                Why this matters
+              </p>
+              <ul className={`mt-1 list-disc space-y-1 pl-5 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                {splitSentences(detail.whyThisMatters).map((sentence) => (
+                  <li key={sentence}>{sentence}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {detail.quickRealityCheck && (
+            <div>
+              <p
+                className={`text-xs font-semibold uppercase tracking-wide ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
+              >
+                Quick reality check
+              </p>
+              <ul className={`mt-1 list-disc space-y-1 pl-5 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                {splitSentences(detail.quickRealityCheck).map((question) => (
+                  <li key={question}>{question}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {(detail.whatGoodLooksLike.length > 0 || detail.risksIfYouDont.length > 0) && (
+            <div className="space-y-2">
+              {detail.whatGoodLooksLike.length > 0 && (
+                <ComponentOverviewSubsection
+                  title="What good looks like"
+                  points={detail.whatGoodLooksLike}
+                  isOpen={showGoodPractice}
+                  onToggle={() => setShowGoodPractice((prev) => !prev)}
+                  darkMode={darkMode}
+                />
+              )}
+              {detail.risksIfYouDont.length > 0 && (
+                <ComponentOverviewSubsection
+                  title="Risks if you don't"
+                  points={detail.risksIfYouDont}
+                  isOpen={showRisks}
+                  onToggle={() => setShowRisks((prev) => !prev)}
+                  darkMode={darkMode}
+                />
+              )}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
 
 const EVIDENCE_JSON_PREFIX = '__evidence_json__:';
 const MAX_EMBEDDED_EVIDENCE_FILE_BYTES = 1024 * 1024;
@@ -314,6 +502,9 @@ export function AssessmentPanel({
   darkMode = false,
 }: AssessmentPanelProps): JSX.Element {
   const component = components.find((c) => c.id === activeComponentId) || components[0];
+  const componentDetail = COMPONENT_DETAILS[component.id]?.whatIsIt
+    ? COMPONENT_DETAILS[component.id]
+    : undefined;
   const [actionEditor, setActionEditor] = useState<ActionEditorState | null>(null);
   const [objectiveViewer, setObjectiveViewer] = useState<ObjectiveViewerState | null>(null);
   const [showScoringSection, setShowScoringSection] = useState(true);
@@ -851,6 +1042,8 @@ export function AssessmentPanel({
           ))}
         </select>
       </div>
+
+      {componentDetail && <ComponentOverviewSection detail={componentDetail} darkMode={darkMode} />}
 
       <div
         className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} mb-6 rounded-lg border p-4`}

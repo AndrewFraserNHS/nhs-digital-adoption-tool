@@ -1,0 +1,242 @@
+{
+  "vision": {
+    "component": "Vision for Change",
+    "description": "Set the direction before you design the solution",
+    "whatIsIt": "Vision for Change sets out why AVT matters, how it will improve patient care and staff experience and what good looks like in everyday clinical and administrative work.",
+    "userInsight": "AVT landed best when it was framed as a clinical workflow and behaviour change, not a technology rollout",
+    "whyThisMatters": "Reduces confusion about what AVT is (and isn't) and protects trust in the change early.\n Prevents the programme being judged only on technology rather than the intended workflow improvement.\n Provides a consistent narrative across clinical, operational and admin audiences, reducing rumour-driven resistance.",
+    "quickRealityCheck": "Can staff describe AVT in one sentence? Does it reflect real pressures, not just programme goals?\n Are leaders saying the same thing consistently? Do people understand what will change in their day-to-day work?",
+    "whatGoodLooksLike": [
+      { "title": "CLEAR AND COMPELLING", "body": "Vision is simple, inspiring and focused on patient care, staff experience and better ways of working." },
+      { "title": "UNDERSTOOD AND SHARED", "body": "Staff at all levels can explain in their own words why AVT matters and what will change.." },
+      { "title": "CONSISTENTLY COMMUNICATED", "body": "Leaders reinforce the vision regularly and use it to guide decisions and priorities." },
+      { "title": "GROUNDED IN REAL SITUATIONS", "body": "Vision reflects the day-to-day challenges teams face and the improvements AVT will bring." },
+      { "title": "GUIDES ACTIONS", "body": "Vision helps teams make choices, solve problems and stay focused on what matters" }
+    ],
+    "risksIfYouDont": [
+      { "title": "SEEN AS A TECHNOLOGY ROLLOUT", "body": "Focus stays on the tool rather than the workflow and behaviour change." },
+      { "title": "CONFUSION AND MIXED MESSAGES", "body": "Different teams hear different things, leading to uncertainty about the reason AVT is being introduced." },
+      { "title": "LOW ENGAGEMENT AND RESISTANCE", "body": "Staff don't see the relevance to their day-to-day work and are less likely to adopt AVT." },
+      { "title": "INCONSISTENT ADOPTION", "body": "Without a shared vision, use will vary widely across teams and services." },
+      { "title": "BENEFITS NOT REALISED", "body": "Without a clear direction, efforts drift and the value of AVT is not achieved" }
+    ]
+  },
+  "case_for_change": {
+    "component": "Case for Change",
+    "description": "",
+    "whatIsIt": "",
+    "userInsight": "",
+    "whyThisMatters": "",
+    "quickRealityCheck": "",
+    "whatGoodLooksLike": [],
+    "risksIfYouDont": []
+  },
+  "sponsorship": {
+    "component": "Senior Sponsorship & Governance",
+    "description": "",
+    "whatIsIt": "",
+    "userInsight": "",
+    "whyThisMatters": "",
+    "quickRealityCheck": "",
+    "whatGoodLooksLike": [],
+    "risksIfYouDont": []
+  },
+  "change_network": {
+    "component": "Change Network",
+    "description": "",
+    "whatIsIt": "",
+    "userInsight": "",
+    "whyThisMatters": "",
+    "quickRealityCheck": "",
+    "whatGoodLooksLike": [],
+    "risksIfYouDont": []
+  },
+  "benefits": {
+    "component": "Benefits",
+    "description": "",
+    "whatIsIt": "",
+    "userInsight": "",
+    "whyThisMatters": "",
+    "quickRealityCheck": "",
+    "whatGoodLooksLike": [],
+    "risksIfYouDont": []
+  },
+  "change_impact": {
+    "component": "Change Impact",
+    "description": "",
+    "whatIsIt": "",
+    "userInsight": "",
+    "whyThisMatters": "",
+    "quickRealityCheck": "",
+    "whatGoodLooksLike": [],
+    "risksIfYouDont": []
+  },
+  "risk_management": {
+    "component": "Risk Management",
+    "description": "",
+    "whatIsIt": "",
+    "userInsight": "",
+    "whyThisMatters": "",
+    "quickRealityCheck": "",
+    "whatGoodLooksLike": [],
+    "risksIfYouDont": []
+  },
+  "cm_readiness": {
+    "component": "CM Readiness & Planning",
+    "description": "",
+    "whatIsIt": "",
+    "userInsight": "",
+    "whyThisMatters": "",
+    "quickRealityCheck": "",
+    "whatGoodLooksLike": [],
+    "risksIfYouDont": []
+  },
+  "stakeholder": {
+    "component": "Stakeholder Engagement & Comms",
+    "description": "",
+    "whatIsIt": "",
+    "userInsight": "",
+    "whyThisMatters": "",
+    "quickRealityCheck": "",
+    "whatGoodLooksLike": [],
+    "risksIfYouDont": []
+  },
+  "resistance": {
+    "component": "Resistance Management",
+    "description": "",
+    "whatIsIt": "",
+    "userInsight": "",
+    "whyThisMatters": "",
+    "quickRealityCheck": "",
+    "whatGoodLooksLike": [],
+    "risksIfYouDont": []
+  },
+  "skills_learning": {
+    "component": "Skills/ Learning",
+    "description": "",
+    "whatIsIt": "",
+    "userInsight": "",
+    "whyThisMatters": "",
+    "quickRealityCheck": "",
+    "whatGoodLooksLike": [],
+    "risksIfYouDont": []
+  },
+  "capability": {
+    "component": "Capability And Confidence",
+    "description": "Confidence grows when AVT makes work easier in practice",
+    "whatIsIt": "Capability and Confidence focus on building the organisational skills and confidence needed to make AVT a trusted routine part of everyday practice.",
+    "userInsight": "Adoption was driven by proven performance in practice through proof of concepts, whilst reliability issues quickly reduced trust.",
+    "whyThisMatters": "Capability and confidence determines whether AVT becomes routine practice or use remains limited.\n Confidence supports safe \"Human in the Loop\" review and approval of AVT outputs, even under pressure.\n Internal capability reduces supplier dependence and helps scale up AVT.",
+    "quickRealityCheck": "Can staff use AVT without step-by-step instructions? Do confidence levels match training completion?\n Have staff had safe practice time? Is peer support available locally?",
+    "whatGoodLooksLike": [
+      { "title": "RELIABLE AVT USE", "body": "Users can use AVT reliably in real settings and maintain full clinical responsibility through \"Human in the Loop\" review and approval." },
+      { "title": "CHANGE CHAMPIONS SUPPORT", "body": "Local champions/super-users exist and are supported with customisation skills." },
+      { "title": "IMPROVED COMPLIANCE BEHAVIOURS", "body": "Compliance behaviours (e.g. consent recording) improve through reinforcement and clearer workflows." },
+      { "title": "CONFIDENCE BUILDS GRADUALLY", "body": "Users are supported to move from basic familiarity to confident, routine use." },
+      { "title": "LEARNING IS REVISITED", "body": "Training is revisited as systems, workflows or staff needs change." }
+    ],
+    "risksIfYouDont": [
+      { "title": "STALLED ADOPTION", "body": "Early trust issues spread socially and adoption stalls." },
+      { "title": "UNSAFE PRACTICES", "body": "Unsafe practice arises when \"Human in the Loop\" review and approval and clinical accountability are not embedded." },
+      { "title": "VENDOR DEPENDENCY", "body": "Organisations remain dependent on vendors for day-to-day optimisation." },
+      { "title": "GENERIC TRAINING", "body": "Support does not reflect different roles, workflows or confidence levels." },
+      { "title": "LOW CONFIDENCE", "body": "Some users avoid AVT because they are uncomfortable with the technology." }
+    ]
+  },
+  "change_adoption": {
+    "component": "Change Adoption",
+    "description": "",
+    "whatIsIt": "",
+    "userInsight": "",
+    "whyThisMatters": "",
+    "quickRealityCheck": "",
+    "whatGoodLooksLike": [],
+    "risksIfYouDont": []
+  },
+  "process_change": {
+    "component": "Process Change",
+    "description": "",
+    "whatIsIt": "",
+    "userInsight": "",
+    "whyThisMatters": "",
+    "quickRealityCheck": "",
+    "whatGoodLooksLike": [],
+    "risksIfYouDont": []
+  },
+  "reinforcement": {
+    "component": "Reinforcement",
+    "description": "",
+    "whatIsIt": "",
+    "userInsight": "",
+    "whyThisMatters": "",
+    "quickRealityCheck": "",
+    "whatGoodLooksLike": [
+      { "title": "TARGETED REINFORCEMENT ACTIONS", "body": "Regular review of adoption plus feedback is used to target reinforcement actions." },
+      { "title": "FIXED PAIN POINTS", "body": "Known pain points are fixed quickly and communicated back to users." },
+      { "title": "ONGOING BENEFITS", "body": "Ongoing optimisation and benefits tracking continues beyond initial rollout. Benefits and successes are shared widely to reinforce value." },
+      { "title": "AVT BECOMES ROUTINE", "body": "AVT is embedded into everyday workflows, meetings, supervision and operational conversations." },
+      { "title": "DATA GUIDES REINFORCEMENT", "body": "Usage data, feedback and adoption patterns show where extra reinforcement is needed." }
+    ],
+    "risksIfYouDont": [
+      { "title": "FALLEN ADOPTION", "body": "Adoption falls after initial friction because no one closes the loop." },
+      { "title": "ENTRENCHED BEHAVIOURS", "body": "Small irritants become entrenched behaviours and workarounds." },
+      { "title": "UNPROVEN BENEFITS", "body": "Benefits remain unproven and scaling loses momentum." },
+      { "title": "OLD HABITS RETURN", "body": "Teams revert to previous ways of working when AVT in not embedded into daily routines." },
+      { "title": "ONE OFF TRAINING", "body": "Staff receive go live training but no refresher support as context changes." }
+    ]
+  },
+  "org_maturity": {
+    "component": "Organisational Change Management Maturity",
+    "description": "AVT success depends on managing adoption, not just implementation.",
+    "whatIsIt": "Organisational Change Management Maturity helps organisations reflect on their wider ability to manage and sustain change, so change adoption strengthens long-term capability rather than adding to change fatigue.",
+    "userInsight": "Breaking readiness into clear repeatable categories (leadership, governance, technology, people and service readiness) supported more consistent AVT success.",
+    "whyThisMatters": "Change maturity informs how much support and structure is needed for safe, sustained change.\n It prevents labelling organisations as being resistant, when issues are related to capability, resourcing or readiness gaps.\n It enables repeatable scaling by applying consistent readiness criteria and governance discipline.",
+    "quickRealityCheck": "Is AVT being managed as a people and workflow change? Is there enough change capability?\n Have stakeholders shaped the approach? Are managers and champions equipped?",
+    "whatGoodLooksLike": [
+      { "title": "STRUCTURED READINESS", "body": "Structured readiness criteria are used before scaling." },
+      { "title": "USEFUL LEARNING CAPTURED", "body": "Learning is captured and reused through evidence and examples." },
+      { "title": "REPEATABLE CHANGE PRACTICES", "body": "Change practices become repeatable, with clear ownership, cadence and measures." },
+      { "title": "LEADERSHIP ALIGNMENT", "body": "Senior leaders are aligned on why AVT matters and what success look like." },
+      { "title": "BENEFITS ARE OWNED", "body": "Expected benefits are clearly defined, tracked and owned beyond go live." }
+    ],
+    "risksIfYouDont": [
+      { "title": "INCONSISTENT CHANGE", "body": "Change becomes reactive and inconsistent; fatigue increases as lessons are not implemented." },
+      { "title": "EVIDENCE LED DECISIONS", "body": "Scaling decisions become enthusiasm driven rather than evidence led." },
+      { "title": "GOVERNANCE GAPS", "body": "Governance and readiness gaps create avoidable disruption and loss of trust." },
+      { "title": "ADOPTION NOT ACTIVELY MANAGED", "body": "Focus stays on go live, with limited tracking of usage, confidence or barriers." },
+      { "title": "INSUFFICIENT CHANGE CAPABILITY", "body": "Teams lack the time, resource or skills to support adoption properly." }
+    ]
+  },
+  "transfer_bau": {
+    "component": "Transfer to BAU",
+    "description": "",
+    "whatIsIt": "",
+    "userInsight": "",
+    "whyThisMatters": "",
+    "quickRealityCheck": "",
+    "whatGoodLooksLike": [],
+    "risksIfYouDont": []
+  },
+  "celebrating_success": {
+    "component": "Celebrating Success",
+    "description": "Seeing successes makes adoption feel real",
+    "whatIsIt": "Celebrating successes not only increases morale but it builds support among those that may need to \"see it to believe it\". Recognition is needed in order to cement or reinforce the change.",
+    "userInsight": "Celebrating success was most effective when staff saw what worked from their peers, as real examples from colleagues strengthened engagement and adoption.",
+    "whyThisMatters": "Saying exactly what went well helps everyone feel proud and ready for the next step.\n It creates a culture of appreciation where people feel valued, recognised and encouraged to keep improving.\n It reinforces positive behaviours by showing what good looks like and encouraging others to follow it.",
+    "quickRealityCheck": "Are you celebrating genuine progress, not just activity? Are you recognising small and large successes?\n Do you have a criteria for what success looks like? Are you learning from successes and not just measuring them?",
+    "whatGoodLooksLike": [
+      { "title": "PROGRESS IS MADE VISIBLE", "body": "Achievements are shared clearly so people can see what has improved and why it matters." },
+      { "title": "USEFUL LEARNING CAPTURED", "body": "Celebrating success includes reflecting on what worked well, so the learning can be used again." },
+      { "title": "PEOPLE RECOGNITION", "body": "Recognise the people behind the success, including quieter contributions and team effort." },
+      { "title": "SUCCESS MEASURES DEFINED", "body": "Clear definitions for measuring success is shared and understood." },
+      { "title": "TIMELY RECOGNITION", "body": "Success is acknowledged soon after it happens, so staff feel their contribution has been noticed and valued." }
+    ],
+    "risksIfYouDont": [
+      { "title": "MOTIVATION DROPS", "body": "People may feel their effort goes unnoticed, which can reduce energy, commitment and enthusiasm." },
+      { "title": "PROGRESS BECOMES INVISIBLE", "body": "Without celebration, improvements and achievements can be overlooked or forgotten." },
+      { "title": "LEARNING IS LOST", "body": "If AVT does not pause to recognise success, it may also miss the opportunity to understand what worked well." },
+      { "title": "CONFIDENCE IS REDUCED", "body": "Staff may be less likely to take initiative or try new approaches if success is not acknowledged." },
+      { "title": "TEAM SPIRIT WEAKENS", "body": "A lack of recognition can reduce shared pride, connection and collaboration across AVT." }
+    ]
+  }
+}

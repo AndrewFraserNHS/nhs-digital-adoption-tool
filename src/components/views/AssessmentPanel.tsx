@@ -1609,7 +1609,7 @@ export function AssessmentPanel({
                     {teamMembers.map((member) => (
                       <option key={member.id} value={member.name}>
                         {member.name}
-                        {member.role ? ` — ${member.role}` : ''}
+                        {member.role ? ` - ${member.role}` : ''}
                       </option>
                     ))}
                     {actionEditor.action.owner &&

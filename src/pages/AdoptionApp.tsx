@@ -43,12 +43,6 @@ import {
   flattenActions,
   getMetrics as computeMetrics,
 } from '@lib/adoptionMetrics';
-import {
-  applyConflictResolutions,
-  buildConflictReport,
-  type ConflictChoice,
-  type ConflictReport,
-} from '@lib/cstConflict';
 import type {
   AdoptionStore,
   ComponentObjective,
@@ -63,10 +57,16 @@ import { syncBenefitsDerivedContent } from '@lib/benefitsAutomation';
 import { syncCapabilityDerivedContent } from '@lib/capabilityAutomation';
 import { syncCaseForChangeDerivedContent } from '@lib/caseForChangeAutomation';
 import { syncChangeAdoptionDerivedContent } from '@lib/changeAdoptionAutomation';
-import { syncCmReadinessDerivedContent } from '@lib/cmReadinessAutomation';
 import { syncChangeImpactDerivedContent } from '@lib/changeImpactAutomation';
 import { syncChangeNetworkDerivedContent } from '@lib/changeNetworkAutomation';
 import { createLineChart, createRadarChart } from '@lib/charts';
+import { syncCmReadinessDerivedContent } from '@lib/cmReadinessAutomation';
+import {
+  applyConflictResolutions,
+  buildConflictReport,
+  type ConflictChoice,
+  type ConflictReport,
+} from '@lib/cstConflict';
 import { syncOrgChangeReadinessDerivedContent } from '@lib/orgChangeReadinessAutomation';
 import { syncPathwayObjectives } from '@lib/pathwayObjectives';
 import { syncProcessChangeDerivedContent } from '@lib/processChangeAutomation';
@@ -75,8 +75,8 @@ import { syncResistanceDerivedContent } from '@lib/resistanceAutomation';
 import { syncRiskManagementDerivedContent } from '@lib/riskManagementAutomation';
 import { syncSkillsLearningDerivedContent } from '@lib/skillsLearningAutomation';
 import { syncSponsorshipDerivedContent } from '@lib/sponsorshipAutomation';
-import AppState from '@lib/state';
 import { syncStakeholderDerivedContent } from '@lib/stakeholderAutomation';
+import AppState from '@lib/state';
 import { load, save } from '@lib/storage';
 import { syncTransferToBauDerivedContent } from '@lib/transferToBauAutomation';
 import { downloadFile, escapeHtml } from '@lib/utils';
@@ -146,7 +146,7 @@ function buildSuppressedAutoActionKey(componentId: string, lens: string): string
 /**
  * Nothing entered yet, so an import can safely replace it wholesale with no conflict prompt.
  * Every lens ships pre-populated with template actions from the start, so their mere presence
- * doesn't indicate real user content — only a scored lens (or a named profile) does.
+ * doesn't indicate real user content - only a scored lens (or a named profile) does.
  */
 function isCstEmpty(store: AdoptionStore): boolean {
   if (store.orgProfile.trustName || store.orgProfile.projectName) {
@@ -387,7 +387,7 @@ export function AdoptionApp() {
     }) as AdoptionStore;
 
     // Backfill a stable programme identity for the app's own working document (never for an
-    // imported payload — see cstConflict.ts) so it can be recognised on later exports/imports.
+    // imported payload - see cstConflict.ts) so it can be recognised on later exports/imports.
     if (!initialised.orgProfile.cstId) {
       initialised.orgProfile = { ...initialised.orgProfile, cstId: createCstId() };
     }
@@ -973,7 +973,7 @@ export function AdoptionApp() {
           setStore((prev) => {
             const merged = syncDerivedContent(mergeImportedAdoptionState(parsed, prev));
             // A wholesale replace can land without a cstId (imported file predates this
-            // feature, or never had one) — backfill immediately so this becomes a stable
+            // feature, or never had one) - backfill immediately so this becomes a stable
             // identity going forward rather than waiting for the next full page reload.
             if (!merged.orgProfile.cstId) {
               merged.orgProfile = { ...merged.orgProfile, cstId: createCstId() };
@@ -1042,7 +1042,7 @@ export function AdoptionApp() {
                   entityType: 'system',
                   summary: report.autoMergeSummary.length
                     ? `Merged import from ${file.name} (${report.autoMergeSummary.join(', ')})`
-                    : `Imported ${file.name} — no changes (already up to date)`,
+                    : `Imported ${file.name} - no changes (already up to date)`,
                   after: { fileName: file.name },
                   source: 'local',
                 },
@@ -1053,7 +1053,7 @@ export function AdoptionApp() {
           announceStatus(
             report.autoMergeSummary.length
               ? `Merged automatically: ${report.autoMergeSummary.join(', ')}.`
-              : 'Already up to date — nothing to import.'
+              : 'Already up to date - nothing to import.'
           );
           return;
         }

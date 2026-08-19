@@ -1,6 +1,6 @@
+import { isToolkitOptionKey } from '@data/toolkits';
+
 import { normalizeActionStatus } from './actionModel';
-import type { AuditEvent } from './auditLog';
-import { trimAuditEvents } from './auditLog';
 import type {
   AdoptionStore,
   ComponentObjective,
@@ -16,7 +16,8 @@ import {
   initializeStore,
   normalizeOrgProfile,
 } from './adoptionState';
-import { isToolkitOptionKey } from '@data/toolkits';
+import type { AuditEvent } from './auditLog';
+import { trimAuditEvents } from './auditLog';
 
 export const ADOPTION_STORAGE_KEY = 'nhs-digital-adoption-store';
 

@@ -11,11 +11,13 @@ import {
 import { initializeStore } from './adoptionState';
 
 describe('adoptionIO', () => {
-  it('builds a stable month label', () => {
+  it('SHOULD build a stable month label', () => {
+    // arrange + act + assert
     expect(buildSnapshotLabel(new Date('2026-07-20T12:00:00Z'))).toBe('Jul 2026');
   });
 
-  it('deep clones adoption export payloads', () => {
+  it('SHOULD deep clone adoption export payloads', () => {
+    // arrange
     const store = initializeStore({
       orgProfile: {
         trustName: 'Test Trust',
@@ -82,7 +84,10 @@ describe('adoptionIO', () => {
       history: [],
     });
 
+    // act
     const payload = buildAdoptionExportPayload(store);
+
+    // assert
     expect(payload.schemaVersion).toBe('4.0');
     payload.currentDraft.vision['Strategic Direction and Leadership'].actions[0].text = 'Changed';
     if (!payload.suppressedAutoActions) {
@@ -109,7 +114,8 @@ describe('adoptionIO', () => {
     expect(store.auditLog[0].reason).toBe('Superseded by local pathway action');
   });
 
-  it('merges imported state over the current store', () => {
+  it('SHOULD merge imported state over the current store', () => {
+    // arrange
     const current = initializeStore({
       orgProfile: {
         trustName: 'Fallback',
@@ -142,6 +148,7 @@ describe('adoptionIO', () => {
       history: [],
     });
 
+    // act
     const merged = mergeImportedAdoptionState(
       {
         orgProfile: {
@@ -164,13 +171,15 @@ describe('adoptionIO', () => {
       current
     );
 
+    // assert
     expect(merged.orgProfile.trustName).toBe('Imported');
     expect(merged.orgProfile.projectName).toBe('Portal');
     expect(merged.orgProfile.cst.pathway).toBe('pathway-3');
     expect(merged.objectives.vision[0].text).toBe('Existing objective');
   });
 
-  it('migrates legacy payloads by adding CST defaults, pathway-1, and empty objectives', () => {
+  it('SHOULD migrate legacy payloads by adding CST defaults, pathway-1, and empty objectives', () => {
+    // arrange + act
     const migrated = migrateSavedAdoptionAssessment({
       orgProfile: {
         trustName: 'Legacy Trust',
@@ -179,12 +188,14 @@ describe('adoptionIO', () => {
       },
     });
 
+    // assert
     expect(migrated.orgProfile?.cst.pathway).toBe('pathway-1');
     expect(migrated.schemaVersion).toBe('2.0');
     expect(migrated.objectives).toEqual({});
   });
 
-  it('migrates legacy schema 3.0 componentActions into objectives with no linked actions', () => {
+  it('SHOULD migrate legacy schema 3.0 componentActions into objectives with no linked actions', () => {
+    // arrange
     const legacyPayload = {
       schemaVersion: '3.0',
       orgProfile: { trustName: 'Legacy Trust', region: '', trustType: '' },
@@ -200,8 +211,11 @@ describe('adoptionIO', () => {
         ],
       },
     };
+
+    // act
     const migrated = migrateSavedAdoptionAssessment(parseImportedAdoptionAssessment(legacyPayload));
 
+    // assert
     expect(migrated.objectives?.vision).toEqual([
       {
         id: 'c1',

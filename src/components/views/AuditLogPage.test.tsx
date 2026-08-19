@@ -4,7 +4,8 @@ import { describe, expect, it } from 'vitest';
 import { AuditLogPage } from './AuditLogPage';
 
 describe('AuditLogPage', () => {
-  it('renders audit entries with summary and actor', () => {
+  it('SHOULD render audit entries with summary and actor', () => {
+    // arrange + act
     render(
       <AuditLogPage
         events={[
@@ -24,6 +25,7 @@ describe('AuditLogPage', () => {
       />
     );
 
+    // assert
     expect(screen.getByText('Audit Log')).toBeInTheDocument();
     expect(
       screen.getByText(

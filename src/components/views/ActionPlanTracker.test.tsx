@@ -31,21 +31,28 @@ const actions: ActionRow[] = [
 ];
 
 describe('ActionPlanTracker', () => {
-  it('filters rows by selected status', () => {
+  it('SHOULD filter rows by selected status', () => {
+    // arrange + act
     render(<ActionPlanTracker actions={actions} onComponentClick={vi.fn()} />);
 
     const statusSelect = screen
       .getAllByRole('combobox')
       .find((combobox) => within(combobox).queryByRole('option', { name: 'All statuses' }));
 
+    // assert 1
     expect(statusSelect).toBeTruthy();
+
+    // act 2
     fireEvent.change(statusSelect as HTMLSelectElement, { target: { value: 'Completed' } });
 
+
+    // assert 2
     expect(screen.getByText('Publish baseline metrics')).toBeInTheDocument();
     expect(screen.queryByText('Run clinical workshop')).not.toBeInTheDocument();
   });
 
-  it('includes CST team roster members in the owner filter even without assigned actions', () => {
+  it('SHOULD include CST team roster members in the owner filter WHERE no assigned actions', () => {
+    // arrange + act
     render(
       <ActionPlanTracker
         actions={actions}
@@ -60,18 +67,23 @@ describe('ActionPlanTracker', () => {
       .getAllByRole('combobox')
       .find((combobox) => within(combobox).queryByRole('option', { name: 'All owners' }));
 
+    
+    // assert
     expect(ownerSelect).toBeTruthy();
     expect(
       within(ownerSelect as HTMLSelectElement).getByText('Casey Roster')
     ).toBeInTheDocument();
   });
 
-  it('notifies parent when a component link is clicked', () => {
+  it('SHOULD notify parent WHERE a component link is clicked', () => {
+    // arrange
     const onComponentClick = vi.fn();
+    
+    // act
     render(<ActionPlanTracker actions={actions} onComponentClick={onComponentClick} />);
-
     fireEvent.click(screen.getByRole('button', { name: 'Vision' }));
 
+    // assert
     expect(onComponentClick).toHaveBeenCalledWith('vision');
   });
 });

@@ -24,19 +24,25 @@ function buildProps() {
 }
 
 describe('MaturityOverview', () => {
-  it('renders key project overview details', () => {
+  it('SHOULD render key project overview details', () => {
+    // arrange
     const props = buildProps();
+
+    // act
     render(<MaturityOverview {...props} />);
 
+    // assert
     expect(screen.getByText('Change Maturity Assessment Tool')).toBeInTheDocument();
     expect(screen.getByDisplayValue('Example Trust')).toBeInTheDocument();
     expect(screen.getByText('2.75 - Developing')).toBeInTheDocument();
   });
 
-  it('propagates input and phase changes', () => {
+  it('SHOULD propagate input and phase changes', () => {
+    // arrange
     const props = buildProps();
     render(<MaturityOverview {...props} />);
 
+    // act
     fireEvent.change(screen.getByLabelText('Organisation Name'), {
       target: { value: 'Updated Trust' },
     });
@@ -48,22 +54,28 @@ describe('MaturityOverview', () => {
     });
     fireEvent.change(screen.getByLabelText('Guidance Target'), { target: { value: 'EPR' } });
 
+
+    // assert
     expect(props.onOrganisationNameChange).toHaveBeenCalledWith('Updated Trust');
     expect(props.onProjectNameChange).toHaveBeenCalledWith('Updated Project');
     expect(props.onProjectPhaseChange).toHaveBeenCalledWith('3 Development');
     expect(props.onGuidanceTargetChange).toHaveBeenCalledWith('EPR');
   });
 
-  it('triggers toolbar and summary toggle actions', () => {
+  it('SHOULD trigger toolbar and summary toggle actions', () => {
+    // arrange
     const props = buildProps();
     render(<MaturityOverview {...props} />);
 
+    // act
     fireEvent.click(screen.getByRole('button', { name: 'Reports' }));
     fireEvent.click(screen.getByRole('button', { name: 'Save As...' }));
     fireEvent.click(screen.getByRole('button', { name: 'Load' }));
     fireEvent.click(screen.getByRole('button', { name: 'Reset' }));
     fireEvent.click(screen.getByRole('button', { name: 'By Status' }));
 
+
+    // assert
     expect(props.onReportsClick).toHaveBeenCalled();
     expect(props.onSaveClick).toHaveBeenCalled();
     expect(props.onLoadClick).toHaveBeenCalled();

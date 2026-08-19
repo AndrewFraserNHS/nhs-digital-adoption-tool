@@ -45,7 +45,7 @@ export function resolveEffectiveLink(link: GuidanceLink, overrides?: LinkOverrid
     return { ...link, label: overrideLabel, url: overrideUrl };
   }
 
-  // no per-link url — check fallback
+  // no per-link url - check fallback
   const fallback = perLink?.fallback ?? 'base';
   if (fallback === 'base' && overrides.base?.url?.trim()) {
     return { ...link, label: overrideLabel, url: overrides.base.url.trim() };

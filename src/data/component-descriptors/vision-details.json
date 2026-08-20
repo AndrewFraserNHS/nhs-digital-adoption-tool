@@ -1,10 +1,10 @@
 {
   "component": "Vision for Change",
   "description": "Set the direction before you design the solution",
-  "whatIsIt": "Vision for Change sets out why AVT matters, how it will improve patient care and staff experience and what good looks like in everyday clinical and administrative work.",
-  "userInsight": "AVT landed best when it was framed as a clinical workflow and behaviour change, not a technology rollout",
-  "whyThisMatters": "Reduces confusion about what AVT is (and isn't) and protects trust in the change early.\n Prevents the programme being judged only on technology rather than the intended workflow improvement.\n Provides a consistent narrative across clinical, operational and admin audiences, reducing rumour-driven resistance.", 
-  "quickRealityCheck": "Can staff describe AVT in one sentence? Does it reflect real pressures, not just programme goals?\n Are leaders saying the same thing consistently? Do people understand what will change in their day-to-day work?",
+  "whatIsIt": "Vision for Change sets out why $projectName matters, how it will improve patient care and staff experience and what good looks like in everyday clinical and administrative work.",
+  "userInsight": "$projectName landed best when it was framed as a clinical workflow and behaviour change, not a technology rollout",
+  "whyThisMatters": "Reduces confusion about what $projectName is (and isn't) and protects trust in the change early.\n Prevents the programme being judged only on technology rather than the intended workflow improvement.\n Provides a consistent narrative across clinical, operational and admin audiences, reducing rumour-driven resistance.", 
+  "quickRealityCheck": "Can staff describe $projectName in one sentence? Does it reflect real pressures, not just programme goals?\n Are leaders saying the same thing consistently? Do people understand what will change in their day-to-day work?",
   "whatGoodLooksLike": [
     {
       "title": "CLEAR AND COMPELLING",
@@ -12,7 +12,7 @@
     },
     {
       "title": "UNDERSTOOD AND SHARED",
-      "body": "Staff at all levels can explain in their own words why AVT matters and what will change.."
+      "body": "Staff at all levels can explain in their own words why $projectName matters and what will change.."
     },
     {
       "title": "CONSISTENTLY COMMUNICATED",
@@ -20,7 +20,7 @@
     },
     {
       "title": "GROUNDED IN REAL SITUATIONS",
-      "body": "Vision reflects the day-to-day challenges teams face and the improvements AVT will bring."
+      "body": "Vision reflects the day-to-day challenges teams face and the improvements $projectName will bring."
     },
     {
       "title": "GUIDES ACTIONS",
@@ -34,11 +34,11 @@
     },
     {
       "title": "CONFUSION AND MIXED MESSAGES",
-      "body": "Different teams hear different things, leading to uncertainty about the reason AVT is being introduced."
+      "body": "Different teams hear different things, leading to uncertainty about the reason $projectName is being introduced."
     },
     {
       "title": "LOW ENGAGEMENT AND RESISTANCE",
-      "body": "Staff don't see the relevance to their day-to-day work and are less likely to adopt AVT."
+      "body": "Staff don't see the relevance to their day-to-day work and are less likely to adopt $projectName."
     },
     {
       "title": "INCONSISTENT ADOPTION",
@@ -46,7 +46,7 @@
     },
     {
       "title": "BENEFITS NOT REALISED",
-      "body": "Without a clear direction, efforts drift and the value of AVT is not achieved"
+      "body": "Without a clear direction, efforts drift and the value of $projectName is not achieved"
     }
   ]
 }

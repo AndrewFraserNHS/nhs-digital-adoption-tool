@@ -1,54 +1,54 @@
-Pathway 1 - We are starting AVT for the first time
+Pathway 1 - We are starting $projectName for the first time
 Vision
 Are you on track?
-Descriptor: Organisations are defining what AVT is for and why it matters for care and staff
+Descriptor: Organisations are defining what $projectName is for and why it matters for care and staff
 experience.
-☐ Define a clear purpose for AVT focused on improving patient care and clinician experience.
-☐ Articulate how AVT improves interaction, workflow and time back to care.
+☐ Define a clear purpose for $projectName focused on improving patient care and clinician experience.
+☐ Articulate how $projectName improves interaction, workflow and time back to care.
 ☐ Align the vision with organisational priorities and local pressures.
-☐ Position AVT as service transformation, not just a technology deployment.
-☐ Develop a simple, repeatable explanation of AVT in plain English.
+☐ Position $projectName as service transformation, not just a technology deployment.
+☐ Develop a simple, repeatable explanation of $projectName in plain English.
 ☐ Ensure leaders and early adopters communicate the same core message.
 ☐ Test understanding with frontline staff and refine the message based on feedback.
-☐ Explain what will change in practice, not just why AVT exists for different staff groups.
+☐ Explain what will change in practice, not just why $projectName exists for different staff groups.
 ARE YOU ON TRACK? – VISION
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 2 - We have piloted AVT and need to scale up
+Pathway 2 - We have piloted $projectName and need to scale up
 Vision
 Are you on track?
 Descriptor: Organisations are ensuring the vision is understood, consistent and reinforced across
 teams.
 ☐ Ensure the vision is understood consistently across teams and services.
-☐ Reinforce the purpose of AVT through leaders, champions and day-to-day conversations.
-☐ Use real examples from early adopters to show how AVT improves care and experience.
+☐ Reinforce the purpose of $projectName through leaders, champions and day-to-day conversations.
+☐ Use real examples from early adopters to show how $projectName improves care and experience.
 ☐ Challenge misconceptions such as ‘just dictation’ or ‘just a productivity tool’.
 ☐ Keep the vision focused on patient outcomes and staff experience.
-☐ Ensure teams understand how AVT changes behaviours and workflows.
+☐ Ensure teams understand how $projectName changes behaviours and workflows.
 ☐ Repeat and refresh messaging regularly as rollout expands.
 ARE YOU ON TRACK? – VISION
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 3 - AVT is live but adoption is patchy
+Pathway 3 - $projectName is live but adoption is patchy
 Vision
 Are you on track?
 Descriptor: Organisations are correcting misunderstanding and reinforcing the original purpose of
-AVT.
-☐ Ask staff what they believe AVT is for and identify inconsistencies.
-☐ Identify where AVT is being used as dictation rather than as intended.
+$projectName.
+☐ Ask staff what they believe $projectName is for and identify inconsistencies.
+☐ Identify where $projectName is being used as dictation rather than as intended.
 ☐ Pinpoint where the vision has become diluted or misunderstood.
-☐ Reset the purpose of AVT using simple, practical language.
+☐ Reset the purpose of $projectName using simple, practical language.
 ☐ Reinforce the vision through visible local clinical leadership.
 ARE YOU ON TRACK? – VISION
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 1 - We are starting AVT for the first time
+Pathway 1 - We are starting $projectName for the first time
 Case for Change
 Are you on track?
-Descriptor: Organisations are building a credible, evidence-based reason for AVT.
-☐ Define the core problem AVT is solving for your organisation.
+Descriptor: Organisations are building a credible, evidence-based reason for $projectName.
+☐ Define the core problem $projectName is solving for your organisation.
 ☐ Use local evidence to show the scale of the problem.
-☐ Link AVT to real frontline pain points for clinical and admin teams.
+☐ Link $projectName to real frontline pain points for clinical and admin teams.
 ☐ Align the case for change with organisational priorities.
 ☐ Focus the case on staff experience and patient care, not just efficiency.
 ☐ Avoid over-promising productivity gains at this stage.
@@ -56,12 +56,12 @@ Descriptor: Organisations are building a credible, evidence-based reason for AVT
 ARE YOU ON TRACK? – CASE FOR CHANGE
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 2 - We have piloted AVT and need to scale up
+Pathway 2 - We have piloted $projectName and need to scale up
 Case for Change
 Are you on track?
 Descriptor: Organisations are strengthening and validating the case using real evidence.
 ☐ Update the case for change using real pilot data and staff experience.
-☐ Show how AVT is improving workflow, experience or care in early adopters.
+☐ Show how $projectName is improving workflow, experience or care in early adopters.
 ☐ Ensure the case is understood consistently across services.
 ☐ Tailor the case to different teams and specialties.
 ☐ Balance qualitative benefits with measurable indicators.
@@ -69,34 +69,34 @@ Descriptor: Organisations are strengthening and validating the case using real e
 ARE YOU ON TRACK? – CASE FOR CHANGE
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 3 - AVT is live but adoption is patchy
+Pathway 3 - $projectName is live but adoption is patchy
 Case for Change
 Are you on track?
-Descriptor: Organisations are reconnecting AVT to real pressures and needs.
-☐ Ask staff whether AVT is solving a meaningful problem for them.
+Descriptor: Organisations are reconnecting $projectName to real pressures and needs.
+☐ Ask staff whether $projectName is solving a meaningful problem for them.
 ☐ Identify where the original case for change no longer resonates.
 ☐ Pinpoint whether resistance is driven by experience, workflow or perception.
 ☐ Reset the case using local, credible examples.
-☐ Challenge the perception that AVT adds work without value.
+☐ Challenge the perception that $projectName adds work without value.
 ARE YOU ON TRACK? – CASE FOR CHANGE
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 1 - We are starting AVT for the first time
+Pathway 1 - We are starting $projectName for the first time
 Senior Sponsorship and Governance
 Are you on track?
-Descriptor: Organisations are establishing governance structures and decision-making for AVT.
-☐ Identify a credible clinical sponsor and an executive sponsor for AVT.
+Descriptor: Organisations are establishing governance structures and decision-making for $projectName.
+☐ Identify a credible clinical sponsor and an executive sponsor for $projectName.
 ☐ Define clear ownership across clinical, operational, digital and governance teams.
 ☐ Establish a governance structure with the right representation.
 ☐ Agree how key decisions will be made and escalated.
 ☐ Involve Information Governance and clinical safety early.
-☐ Align AVT governance to existing trust governance structures.
+☐ Align $projectName governance to existing trust governance structures.
 ☐ Clarify expectations for clinician accountability and sign-off.
-☐ Ensure sponsors can clearly explain why AVT matters.
+☐ Ensure sponsors can clearly explain why $projectName matters.
 ARE YOU ON TRACK? – SENIOR SPONSORSHIP AND GOVERNANCE
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 2 - We have piloted AVT and need to scale up
+Pathway 2 - We have piloted $projectName and need to scale up
 Senior Sponsorship and Governance
 Are you on track?
 Descriptor: Organisations are maintaining active sponsorship and consistent governance as rollout
@@ -111,7 +111,7 @@ expands.
 ARE YOU ON TRACK? – SENIOR SPONSORSHIP AND GOVERNANCE
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 3 - AVT is live but adoption is patchy
+Pathway 3 - $projectName is live but adoption is patchy
 Senior Sponsorship and Governance
 Are you on track?
 Descriptor: Organisations are fixing gaps in accountability, ownership and decision-making.
@@ -123,19 +123,19 @@ Descriptor: Organisations are fixing gaps in accountability, ownership and decis
 ARE YOU ON TRACK? – SENIOR SPONSORSHIP AND GOVERNANCE
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 1 - We are starting AVT for the first time
+Pathway 1 - We are starting $projectName for the first time
 Benefits and WIIFM
 Are you on track?
 Descriptor: Organisations are defining the benefits that matter for staff, patients and services.
 ☐ Define clear, realistic benefits for staff, patients and services before rollout begins.
 ☐ Prioritise the benefits that matter most for the pilot setting and use case.
-☐ Link expected benefits directly to the case for change and vision for AVT.
+☐ Link expected benefits directly to the case for change and vision for $projectName.
 ☐ Agree how benefits will be measured using both qualitative and quantitative evidence.
 ☐ Set realistic expectations about when benefits are likely to emerge and where they may be limited.
 ARE YOU ON TRACK? – BENEFITS AND WHAT’S IN IT FOR ME (WIIFM)
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 2 - We have piloted AVT and need to scale up
+Pathway 2 - We have piloted $projectName and need to scale up
 Benefits and WIIFM
 Are you on track?
 Descriptor: Organisations are using real evidence to strengthen and spread the benefits case.
@@ -149,7 +149,7 @@ Descriptor: Organisations are using real evidence to strengthen and spread the b
 ARE YOU ON TRACK? – BENEFITS AND WHAT’S IN IT FOR ME (WIIFM)
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 3 - AVT is live but adoption is patchy
+Pathway 3 - $projectName is live but adoption is patchy
 Benefits and WIIFM
 Are you on track?
 Descriptor: Organisations are rebuilding belief where benefits are unclear or not being realised.
@@ -162,12 +162,12 @@ Descriptor: Organisations are rebuilding belief where benefits are unclear or no
 ARE YOU ON TRACK? – BENEFITS AND WHAT’S IN IT FOR ME (WIIFM)
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 1 - We are starting AVT for the first time
+Pathway 1 - We are starting $projectName for the first time
 Stakeholder Engagement and Communication
 Are you on track?
 Descriptor: Organisations are building early awareness, trust and understanding.
-☐ Define clear, simple messages about what AVT is and what it is not.
-☐ Explain why AVT is being introduced in terms staff care about.
+☐ Define clear, simple messages about what $projectName is and what it is not.
+☐ Explain why $projectName is being introduced in terms staff care about.
 ☐ Identify key stakeholder groups across clinical, admin, operational and digital areas.
 ☐ Tailor messages to different roles and workflows.
 ☐ Identify early adopters and involve them early.
@@ -176,14 +176,14 @@ ARE YOU ON TRACK? – STAKEHOLDER ENGAGEMENT AND
 COMMUNICATION
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 2 - We have piloted AVT and need to scale up
+Pathway 2 - We have piloted $projectName and need to scale up
 Stakeholder Engagement and Communication
 Are you on track?
 Descriptor: Organisations are reinforcing messaging and maintaining consistency across teams.
 ☐ Ensure communication is consistent across services and teams.
 ☐ Reinforce messages through leaders, champions and everyday conversations.
-☐ Share real examples of AVT use in practice.
-☐ Communicate how AVT is improving care and experience locally.
+☐ Share real examples of $projectName use in practice.
+☐ Communicate how $projectName is improving care and experience locally.
 ☐ Challenge misinformation and unhelpful narratives.
 ☐ Keep feedback channels visible and accessible.
 ☐ Use feedback to adapt messaging and address emerging concerns.
@@ -192,7 +192,7 @@ ARE YOU ON TRACK? – STAKEHOLDER ENGAGEMENT AND
 COMMUNICATION
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 3 - AVT is live but adoption is patchy
+Pathway 3 - $projectName is live but adoption is patchy
 Stakeholder Engagement and Communication
 Are you on track?
 Descriptor: Organisations are addressing confusion, disengagement and mixed messages.
@@ -206,28 +206,28 @@ ARE YOU ON TRACK? – STAKEHOLDER ENGAGEMENT AND
 COMMUNICATION
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 1 - We are starting AVT for the first time
+Pathway 1 - We are starting $projectName for the first time
 Process Change and Ways of Working
 Are you on track?
-Descriptor: Organisations are designing AVT-enabled workflows across clinical and administrative
+Descriptor: Organisations are designing $projectName-enabled workflows across clinical and administrative
 practice.
-☐ Map current clinical and administrative workflows before introducing AVT.
+☐ Map current clinical and administrative workflows before introducing $projectName.
 ☐ Identify where documentation burdens, delays and handoff issues currently occur.
-☐ Define future workflows that incorporate AVT into real operational practice.
+☐ Define future workflows that incorporate $projectName into real operational practice.
 ☐ Involve clinicians, admin staff and operational teams in designing new workflows.
-☐ Define how AVT fits into consultations, documentation and follow-up processes.
-☐ Design how clinical and admin handoffs will work with AVT in place.
+☐ Define how $projectName fits into consultations, documentation and follow-up processes.
+☐ Design how clinical and admin handoffs will work with $projectName in place.
 ☐ Identify where workflows differ by service or specialty.
 ☐ Test new workflows in practice and refine them before wider rollout.
 ☐ Ensure operational leaders are involved in agreeing and owning new ways of working.
 ARE YOU ON TRACK? – PROCESS CHANGE AND WAYS OF WORKING
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 2 - We have piloted AVT and need to scale up
+Pathway 2 - We have piloted $projectName and need to scale up
 Process Change and Ways of Working
 Are you on track?
-Descriptor: Organisations are embedding and standardising AVT-enabled workflows across services.
-☐ Define clear and repeatable workflows for AVT-enabled practice.
+Descriptor: Organisations are embedding and standardising $projectName-enabled workflows across services.
+☐ Define clear and repeatable workflows for $projectName-enabled practice.
 ☐ Update SOPs and operational guidance to reflect those workflows.
 ☐ Clarify roles and responsibilities across clinical and admin teams.
 ☐ Standardise key handoffs while allowing for local service differences.
@@ -238,7 +238,7 @@ Descriptor: Organisations are embedding and standardising AVT-enabled workflows 
 ARE YOU ON TRACK? – PROCESS CHANGE AND WAYS OF WORKING
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 3 - AVT is live but adoption is patchy
+Pathway 3 - $projectName is live but adoption is patchy
 Process Change and Ways of Working
 Are you on track?
 Descriptor: Organisations are fixing broken workflows and removing workarounds.
@@ -247,15 +247,15 @@ Descriptor: Organisations are fixing broken workflows and removing workarounds.
 ☐ Pinpoint the specific parts of the workflow that are failing.
 ☐ Retire old processes that are still running in parallel.
 ☐ Reinforce correct workflows through local leadership and support.
-☐ Remove practical barriers preventing teams from using AVT properly.
+☐ Remove practical barriers preventing teams from using $projectName properly.
 ARE YOU ON TRACK? – PROCESS CHANGE AND WAYS OF WORKING
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 1 - We are starting AVT for the first time
+Pathway 1 - We are starting $projectName for the first time
 Change Impact and Risk
 Are you on track?
 Descriptor: Organisations are understanding who is impacted and where risk sits before rollout.
-☐ Identify all roles impacted by AVT across clinical, admin and operational areas.
+☐ Identify all roles impacted by $projectName across clinical, admin and operational areas.
 ☐ Define how workflows, responsibilities and behaviours will change for each role.
 ☐ Assess where impact differs across specialties and services.
 ☐ Identify high-risk use cases and workflows early.
@@ -265,7 +265,7 @@ Descriptor: Organisations are understanding who is impacted and where risk sits 
 ARE YOU ON TRACK? – CHANGE IMPACT AND RISK
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 2 - We have piloted AVT and need to scale up
+Pathway 2 - We have piloted $projectName and need to scale up
 Change Impact and Risk
 Are you on track?
 Descriptor: Organisations are monitoring real-world impact and managing emerging risks.
@@ -278,11 +278,11 @@ Descriptor: Organisations are monitoring real-world impact and managing emerging
 ARE YOU ON TRACK? – CHANGE IMPACT AND RISK
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 3 - AVT is live but adoption is patchy
+Pathway 3 - $projectName is live but adoption is patchy
 Change Impact and Risk
 Are you on track?
 Descriptor: Organisations are addressing the impacts and risks that are limiting adoption.
-☐ Identify where AVT is creating unintended burden, frustration or risk.
+☐ Identify where $projectName is creating unintended burden, frustration or risk.
 ☐ Pinpoint the roles or teams most negatively impacted.
 ☐ Distinguish between real risks, perceived risks and misunderstood risks.
 ☐ Address the specific issues preventing safe and confident use.
@@ -290,20 +290,20 @@ Descriptor: Organisations are addressing the impacts and risks that are limiting
 ARE YOU ON TRACK? – CHANGE IMPACT AND RISK
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 1 - We are starting AVT for the first time
+Pathway 1 - We are starting $projectName for the first time
 Skills, Learning, Capability and Confidence
 Are you on track?
 Descriptor: Organisations are introducing role-based learning and practical support.
 ☐ Design learning around real clinical and administrative workflows rather than system features alone.
-☐ Show staff how AVT fits their role, tasks and day-to-day practice.
-☐ Provide practical hands-on opportunities to try AVT in relevant scenarios.
+☐ Show staff how $projectName fits their role, tasks and day-to-day practice.
+☐ Provide practical hands-on opportunities to try $projectName in relevant scenarios.
 ☐ Make support available during early live use, not just before go-live.
 ☐ Set expectations that confidence will build through use and repetition.
 ☐ Explain what good use looks like in practice for different roles and settings.
 ARE YOU ON TRACK? – SKILLS, LEARNING, CAPABILITY AND CONFIDENCE
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 2 - We have piloted AVT and need to scale up
+Pathway 2 - We have piloted $projectName and need to scale up
 Skills, Learning, Capability and Confidence
 Are you on track?
 Descriptor: Organisations are reinforcing learning through real use and ongoing support.
@@ -318,11 +318,11 @@ Descriptor: Organisations are reinforcing learning through real use and ongoing 
 ARE YOU ON TRACK? – SKILLS, LEARNING, CAPABILITY AND CONFIDENCE
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 3 - AVT is live but adoption is patchy
+Pathway 3 - $projectName is live but adoption is patchy
 Skills, Learning, Capability and Confidence
 Are you on track?
 Descriptor: Organisations are closing capability gaps that are preventing confident use.
-☐ Identify where staff lack confidence or practical capability to use AVT well.
+☐ Identify where staff lack confidence or practical capability to use $projectName well.
 ☐ Target support to the roles, teams or services where capability gaps are most visible.
 ☐ Deliver support in the workflow rather than relying on more classroom-style training.
 ☐ Use local super users to model and reinforce good practice in real settings.
@@ -330,7 +330,7 @@ Descriptor: Organisations are closing capability gaps that are preventing confid
 ARE YOU ON TRACK? – SKILLS, LEARNING, CAPABILITY AND CONFIDENCE
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 1 - We are starting AVT for the first time
+Pathway 1 - We are starting $projectName for the first time
 Change Adoption
 Are you on track?
 Descriptor: Organisations are defining what good adoption looks like from the start.
@@ -343,14 +343,14 @@ Descriptor: Organisations are defining what good adoption looks like from the st
 ARE YOU ON TRACK? – CHANGE ADOPTION
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 2 - We have piloted AVT and need to scale up
+Pathway 2 - We have piloted $projectName and need to scale up
 Change Adoption
 Are you on track?
 Descriptor: Organisations are monitoring, guiding and strengthening adoption at scale.
 ☐ Monitor adoption across teams, roles and services as rollout expands.
-☐ Identify variation in how AVT is being used across specialties and settings.
+☐ Identify variation in how $projectName is being used across specialties and settings.
 ☐ Target support to areas with lower confidence, lower uptake or inconsistent use.
-☐ Reinforce expected AVT behaviours through leaders, champions and practice-based support.
+☐ Reinforce expected $projectName behaviours through leaders, champions and practice-based support.
 ☐ Use both data and frontline insight to guide rollout decisions and adjustments.
 ☐ Distinguish between access, trial, routine use and selective use when reviewing adoption.
 ☐ Adjust the rollout approach where adoption patterns show mismatch between the tool and the
@@ -359,7 +359,7 @@ workflow.
 ARE YOU ON TRACK? – CHANGE ADOPTION
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 3 - AVT is live but adoption is patchy
+Pathway 3 - $projectName is live but adoption is patchy
 Change Adoption
 Are you on track?
 Descriptor: Organisations are identifying why use is inconsistent and taking action.
@@ -368,55 +368,55 @@ Descriptor: Organisations are identifying why use is inconsistent and taking act
 ☐ Address specific behaviours or barriers that are undermining confident routine use.
 ☐ Reset expectations through targeted frontline engagement and support.
 ☐ Use local leaders and peers to reinforce intended use where credibility is low.
-☐ Reassess whether AVT is being used in services where it genuinely fits the workflow.
+☐ Reassess whether $projectName is being used in services where it genuinely fits the workflow.
 ARE YOU ON TRACK? – CHANGE ADOPTION
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 1 - We are starting AVT for the first time
+Pathway 1 - We are starting $projectName for the first time
 Transfer to BAU
 Are you on track?
-Descriptor: Organisations are planning how AVT will be supported and owned beyond rollout.
-☐ Define who will own AVT after the pilot and what that ownership includes.
-☐ Plan how AVT will be supported operationally once initial rollout activity reduces.
-☐ Define how AVT will be reviewed, improved and maintained beyond go-live.
-☐ Identify the governance routes AVT will sit within once it becomes business as usual.
+Descriptor: Organisations are planning how $projectName will be supported and owned beyond rollout.
+☐ Define who will own $projectName after the pilot and what that ownership includes.
+☐ Plan how $projectName will be supported operationally once initial rollout activity reduces.
+☐ Define how $projectName will be reviewed, improved and maintained beyond go-live.
+☐ Identify the governance routes $projectName will sit within once it becomes business as usual.
 ☐ Clarify how issues, template changes and workflow changes will be managed over time.
 ☐ Decide how benefits, adoption and risk will continue to be monitored after rollout.
 ARE YOU ON TRACK? – TRANSFER TO BUSINESS AS USUAL (BAU)
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 2 - We have piloted AVT and need to scale up
+Pathway 2 - We have piloted $projectName and need to scale up
 Transfer to BAU
 Are you on track?
-Descriptor: Organisations are embedding AVT into business-as-usual governance and support.
-☐ Confirm ownership of AVT at organisational, service and operational level as rollout expands.
-☐ Embed AVT into routine governance, reporting and operational review forums.
-☐ Ensure support routes are clear and accessible across all services using AVT.
-☐ Review and refine templates, workflows and guidance as AVT use spreads.
+Descriptor: Organisations are embedding $projectName into business-as-usual governance and support.
+☐ Confirm ownership of $projectName at organisational, service and operational level as rollout expands.
+☐ Embed $projectName into routine governance, reporting and operational review forums.
+☐ Ensure support routes are clear and accessible across all services using $projectName.
+☐ Review and refine templates, workflows and guidance as $projectName use spreads.
 ☐ Capture learning from early adopters and use it to strengthen BAU arrangements.
-☐ Align onboarding, induction and refresher support so new users can adopt AVT reliably.
+☐ Align onboarding, induction and refresher support so new users can adopt $projectName reliably.
 ☐ Ensure BAU arrangements support sustained use, not just technical availability.
 ARE YOU ON TRACK? – TRANSFER TO BUSINESS AS USUAL (BAU)
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 3 - AVT is live but adoption is patchy
+Pathway 3 - $projectName is live but adoption is patchy
 Transfer to BAU
 Are you on track?
-Descriptor: Organisations are re-establishing AVT as routine operational practice.
-☐ Identify where AVT has drifted out of routine use or lost operational ownership.
+Descriptor: Organisations are re-establishing $projectName as routine operational practice.
+☐ Identify where $projectName has drifted out of routine use or lost operational ownership.
 ☐ Reconfirm who is responsible for adoption, support and improvement at service level.
 ☐ Fix gaps in support routes where staff do not know how to get help.
-☐ Re-embed AVT into normal governance and operational forums if necessary.
-☐ Reset BAU expectations where AVT is still being treated as a temporary project tool.
+☐ Re-embed $projectName into normal governance and operational forums if necessary.
+☐ Reset BAU expectations where $projectName is still being treated as a temporary project tool.
 ARE YOU ON TRACK? – TRANSFER TO BUSINESS AS USUAL (BAU)
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 1 - We are starting AVT for the first time
+Pathway 1 - We are starting $projectName for the first time
 Change Network
 Are you on track?
 Descriptor: Organisations are establishing a credible network of local champions and supporters.
 ☐ Identify credible local champions who are respected by peers and close to frontline work.
-☐ Define what the change network is there to do beyond simple promotion of AVT.
+☐ Define what the change network is there to do beyond simple promotion of $projectName.
 ☐ Involve champions early in testing messages, workflows and early use cases.
 ☐ Ensure the network includes relevant clinical, admin and operational voices where possible.
 ☐ Give champions the information and support they need to answer questions credibly.
@@ -424,12 +424,12 @@ Descriptor: Organisations are establishing a credible network of local champions
 ARE YOU ON TRACK? – CHANGE NETWORK
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 2 - We have piloted AVT and need to scale up
+Pathway 2 - We have piloted $projectName and need to scale up
 Change Network
 Are you on track?
 Descriptor: Organisations are using the network to spread learning and support local adoption.
-☐ Use the change network to share practical examples of AVT use across services.
-☐ Support champions to help teams adapt AVT to local workflows.
+☐ Use the change network to share practical examples of $projectName use across services.
+☐ Support champions to help teams adapt $projectName to local workflows.
 ☐ Keep the network active through regular contact, shared learning and visible support.
 ☐ Use champions to surface emerging issues early rather than waiting for formal escalation.
 ☐ Expand the network as rollout spreads into new areas and specialties.
@@ -438,12 +438,12 @@ Descriptor: Organisations are using the network to spread learning and support l
 ARE YOU ON TRACK? – CHANGE NETWORK
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 3 - AVT is live but adoption is patchy
+Pathway 3 - $projectName is live but adoption is patchy
 Change Network
 Are you on track?
 Descriptor: Organisations are reactivating the network to support struggling teams.
 ☐ Identify where or if there is no credible local championing or peer support.
-☐ Re-engage trusted local people who can model AVT use in practice.
+☐ Re-engage trusted local people who can model $projectName use in practice.
 ☐ Use the network to understand why specific teams have disengaged or stalled.
 ☐ Use peer influence to rebuild credibility where central messaging is no longer landing.
 ☐ Reconnect the network to practical support and local problem-solving where it has drifted into
@@ -451,26 +451,26 @@ inactivity.
 ARE YOU ON TRACK? – CHANGE NETWORK
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 1 - We are starting AVT for the first time
+Pathway 1 - We are starting $projectName for the first time
 Reinforcement
 Are you on track?
 Descriptor: Organisations are reinforcing early use through support, feedback and visible examples
-☐ Define how AVT use will be reinforced during the early learning period.
-☐ Reinforce the purpose of AVT through repeated messages from leaders and champions.
-☐ Build in opportunities for staff to review, correct and learn from early AVT outputs.
+☐ Define how $projectName use will be reinforced during the early learning period.
+☐ Reinforce the purpose of $projectName through repeated messages from leaders and champions.
+☐ Build in opportunities for staff to review, correct and learn from early $projectName outputs.
 ☐ Set clear expectations that early friction is normal and support will be available.
 ☐ Use visible early examples of success to strengthen confidence and belief.
 ☐ Decide how feedback from early use will be acted on and communicated back.
 ARE YOU ON TRACK? – REINFORCEMENT
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 2 - We have piloted AVT and need to scale up
+Pathway 2 - We have piloted $projectName and need to scale up
 Reinforcement
 Are you on track?
 Descriptor: Organisations are reinforcing confident and routine use in practice.
-☐ Reinforce AVT use through visible peer practice and trusted local champions.
+☐ Reinforce $projectName use through visible peer practice and trusted local champions.
 ☐ Keep support available at the point of use as rollout widens.
-☐ Share practical examples of how teams are making AVT work in real settings.
+☐ Share practical examples of how teams are making $projectName work in real settings.
 ☐ Show clearly what has changed in response to staff feedback.
 ☐ Reinforce the personal and workflow benefits staff are actually experiencing.
 ☐ Protect teams through the early dip in confidence rather than judging success too soon.
@@ -478,12 +478,12 @@ Descriptor: Organisations are reinforcing confident and routine use in practice.
 ARE YOU ON TRACK? – REINFORCEMENT
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 3 - AVT is live but adoption is patchy
+Pathway 3 - $projectName is live but adoption is patchy
 Reinforcement
 Are you on track?
-Descriptor: Organisations are restoring why AVT is important where usage has dropped and support
+Descriptor: Organisations are restoring why $projectName is important where usage has dropped and support
 is not there.
-☐ Identify where AVT usage has dropped away or workarounds have appeared.
+☐ Identify where $projectName usage has dropped away or workarounds have appeared.
 ☐ Reintroduce local support, peer-to-peer support and visible leadership where use has drifted.
 ☐ Use practical examples and feedback loops to rebuild confidence and routine use.
 ☐ Address the specific issues teams are encountering rather than repeating generic rollout messages.
@@ -492,20 +492,20 @@ awareness.
 ARE YOU ON TRACK? – REINFORCEMENT
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 1 - We are starting AVT for the first time
+Pathway 1 - We are starting $projectName for the first time
 Resistance
 Are you on track?
 Descriptor: Organisations are identifying and addressing likely concerns before rollout.
-☐ Identify the main concerns staff are likely to have about AVT before rollout begins.
+☐ Identify the main concerns staff are likely to have about $projectName before rollout begins.
 ☐ Distinguish between legitimate concerns, misconceptions and assumptions about the technology.
 ☐ Address likely issues such as accuracy, workflow fit, trust, consent and accountability early.
 ☐ Give staff permission to voice concerns without being labelled resistant.
-☐ Build realistic expectations about what AVT can and cannot do at this stage.
-☐ Explain where AVT may not fit every setting perfectly and why professional judgement still matters.
+☐ Build realistic expectations about what $projectName can and cannot do at this stage.
+☐ Explain where $projectName may not fit every setting perfectly and why professional judgement still matters.
 ARE YOU ON TRACK? – RESISTANCE MANAGEMENT
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 2 - We have piloted AVT and need to scale up
+Pathway 2 - We have piloted $projectName and need to scale up
 Resistance
 Are you on track?
 Descriptor: Organisations are managing emerging resistance as rollout expands.
@@ -519,7 +519,7 @@ Descriptor: Organisations are managing emerging resistance as rollout expands.
 ARE YOU ON TRACK? – RESISTANCE MANAGEMENT
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 3 - AVT is live but adoption is patchy
+Pathway 3 - $projectName is live but adoption is patchy
 Resistance
 Are you on track?
 Descriptor: Organisations are identifying and resolving embedded resistance and workarounds.
@@ -531,11 +531,11 @@ Descriptor: Organisations are identifying and resolving embedded resistance and 
 ARE YOU ON TRACK? – RESISTANCE MANAGEMENT
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 1 - We are starting AVT for the first time
+Pathway 1 - We are starting $projectName for the first time
 Readiness and Planning
 Are you on track?
 Descriptor: Organisations are preparing and assessing readiness for a safe and credible pilot.
-☐ Assess organisational readiness for AVT across clinical, operational, digital and governance areas.
+☐ Assess organisational readiness for $projectName across clinical, operational, digital and governance areas.
 ☐ Identify the minimum conditions needed for a safe and credible pilot to begin.
 ☐ Confirm readiness of core enablers such as devices, connectivity, workflow design and support
 arrangements.
@@ -548,7 +548,7 @@ programme pressure alone.
 ARE YOU ON TRACK? – READINESS AND PLANNING
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 2 - We have piloted AVT and need to scale up
+Pathway 2 - We have piloted $projectName and need to scale up
 Readiness and Planning
 Are you on track?
 Descriptor: Organisations are planning rollout based on readiness, not just pace.
@@ -566,7 +566,7 @@ increases.
 ARE YOU ON TRACK? – READINESS AND PLANNING
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 3 - AVT is live but adoption is patchy
+Pathway 3 - $projectName is live but adoption is patchy
 Readiness and Planning
 Are you on track?
 Descriptor: Organisations are correcting issues following rollout.
@@ -579,21 +579,21 @@ governance clarity or infrastructure issues).
 ARE YOU ON TRACK? – READINESS AND PLANNING
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 1 - We are starting AVT for the first time
+Pathway 1 - We are starting $projectName for the first time
 Organisational Change Management Maturity
 Are you on track?
 Descriptor: Organisations are identifying and addressing likely concerns before rollout.
-☐ Identify the main concerns staff are likely to have about AVT before rollout begins.
+☐ Identify the main concerns staff are likely to have about $projectName before rollout begins.
 ☐ Distinguish between legitimate concerns, misconceptions and assumptions about the technology.
 ☐ Address likely issues such as accuracy, workflow fit, trust, consent and accountability early.
 ☐ Give staff permission to voice concerns without being labelled resistant.
-☐ Build realistic expectations about what AVT can and cannot do at this stage.
-☐ Explain where AVT may not fit every setting perfectly and why professional judgement still matters.
+☐ Build realistic expectations about what $projectName can and cannot do at this stage.
+☐ Explain where $projectName may not fit every setting perfectly and why professional judgement still matters.
 ARE YOU ON TRACK? – ORGANISATIONAL CHANGE MANAGEMENT
 MATURITY
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 2 - We have piloted AVT and need to scale up
+Pathway 2 - We have piloted $projectName and need to scale up
 Organisational Change Management Maturity
 Are you on track?
 Descriptor: Organisations are strengthening change capability to support wider rollout.
@@ -613,7 +613,7 @@ ARE YOU ON TRACK? – ORGANISATIONAL CHANGE MANAGEMENT
 MATURITY
 Map with pin with solid fill
 Line arrow: Horizontal U-turn with solid fill
-Pathway 3 - AVT is live but adoption is patchy
+Pathway 3 - $projectName is live but adoption is patchy
 Organisational Change Management Maturity
 Are you on track?
 Descriptor: Organisations are addressing maturity gaps that are causing inconsistent adoption.
@@ -623,7 +623,7 @@ the technology alone.
 contributing to low adoption.
 ☐ Use maturity insight to focus recovery activity on the weakest change mechanisms in affected
 teams.
-☐ Strengthen practical change disciplines where organisations are relying on access to AVT without
+☐ Strengthen practical change disciplines where organisations are relying on access to $projectName without
 enough support to embed it.
 ☐ Reassess maturity after corrective action to test whether the organisation is better placed to sustain
 adoption.

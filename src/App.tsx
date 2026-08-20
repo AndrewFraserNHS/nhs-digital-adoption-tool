@@ -2,7 +2,6 @@ import { type JSX, lazy, Suspense } from 'react';
 import { HashRouter, Navigate, Route, Routes } from 'react-router-dom';
 
 const AdoptionApp = lazy(() => import('@pages/AdoptionApp'));
-const MaturityApp = lazy(() => import('./legacy/MaturityApp'));
 const CompareApp = lazy(() => import('@pages/CompareApp'));
 const ForceFieldAnalysisApp = lazy(() => import('@pages/ForceFieldAnalysisApp'));
 const ActionLibraryReviewApp = lazy(() => import('@pages/ActionLibraryReviewApp'));
@@ -106,7 +105,6 @@ export default function App(): JSX.Element {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/adoption" element={<AdoptionApp />} />
-          <Route path="/maturity" element={<MaturityApp />} />
           <Route path="/compare" element={<CompareApp />} />
           <Route path="/force-field-analysis" element={<ForceFieldAnalysisApp />} />
           <Route path="/action-library-review" element={<ActionLibraryReviewApp />} />

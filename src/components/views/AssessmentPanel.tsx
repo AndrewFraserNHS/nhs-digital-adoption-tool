@@ -588,7 +588,7 @@ function createEmptyAction(phase: number, componentId: string, lens: string): Dr
   return {
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     text: '',
-    actionType: 'Admin',
+    actionType: undefined,
     owner: '',
     timescale: '',
     status: 'Planned',

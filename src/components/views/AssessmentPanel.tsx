@@ -197,14 +197,15 @@ const OVERVIEW_TONE_STYLES: Record<
   good: {
     border: 'border-emerald-200',
     bg: 'bg-emerald-50 hover:bg-emerald-100',
-    text: 'text-emerald-800',
-    titleText: 'text-black',
+    text: 'text-black',
+    // titleText: 'text-black',
+    titleText: 'text-emerald-700',
   },
   risk: {
     border: 'border-rose-200',
     bg: 'bg-rose-50 hover:bg-rose-100',
-    text: 'text-rose-800',
-    titleText: 'text-black',
+    text: 'text-black',
+    titleText: 'text-rose-800',
   },
 };
 

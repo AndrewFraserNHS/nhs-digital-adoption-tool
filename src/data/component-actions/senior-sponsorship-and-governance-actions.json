@@ -584,7 +584,7 @@
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "Planning & Risk",
-      "category": "",
+      "category": "Risk Management",
       "action": "Identify high-level governance, decision-making and sponsorship risks that may affect delivery",
       "outcomeIds": [],
       "readinessScore": 0
@@ -594,7 +594,7 @@
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Planning & Risk",
-      "category": "",
+      "category": "Risk Management",
       "action": "Identify sponsorship and governance risks that could affect delivery, adoption or benefits realisation",
       "outcomeIds": [],
       "readinessScore": 1
@@ -604,7 +604,7 @@
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Planning & Risk",
-      "category": "",
+      "category": "Dependency Management",
       "action": "Assess dependencies between governance effectiveness and other change management initiatives",
       "outcomeIds": [],
       "readinessScore": 1
@@ -614,7 +614,7 @@
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Planning & Risk",
-      "category": "",
+      "category": "Measurement & Evaluation",
       "action": "Define measures and indicators to monitor sponsorship and governance effectiveness.",
       "outcomeIds": [],
       "readinessScore": 1
@@ -624,7 +624,7 @@
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
-      "category": "",
+      "category": "Risk Management",
       "action": "Implement actions to address sponsorship, governance and decision-making risks",
       "outcomeIds": [],
       "readinessScore": 2
@@ -634,7 +634,7 @@
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
-      "category": "",
+      "category": "Measurement & Evaluation",
       "action": "Monitor governance effectiveness and sponsor engagement against agreed measures.",
       "outcomeIds": [],
       "readinessScore": 2
@@ -644,7 +644,7 @@
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
-      "category": "",
+      "category": "Dependency Management",
       "action": "Align governance activities with implementation milestones, programme plans and change management priorities",
       "outcomeIds": [],
       "readinessScore": 2
@@ -654,7 +654,7 @@
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Planning & Risk",
-      "category": "",
+      "category": "Measurement & Evaluation",
       "action": "Measure and address address readiness gaps and residual organisational barriers affecting successful implementation.",
       "outcomeIds": [],
       "readinessScore": 3
@@ -664,7 +664,7 @@
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Planning & Risk",
-      "category": "",
+      "category": "Risk Management",
       "action": "Monitor readiness-related risks and implement additional mitigations where readiness concerns emerge.",
       "outcomeIds": [],
       "readinessScore": 3
@@ -674,7 +674,7 @@
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Planning & Risk",
-      "category": "",
+      "category": "Measurement & Evaluation",
       "action": "Monitor long-term organisational change capacity, resilience and preparedness for future transformation activity",
       "outcomeIds": [],
       "readinessScore": 4
@@ -684,7 +684,7 @@
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Planning & Risk",
-      "category": "",
+      "category": "Reinforcement",
       "action": "Embed organisational readiness assessment into standard organisational change and transformation methodologies",
       "outcomeIds": [],
       "readinessScore": 4

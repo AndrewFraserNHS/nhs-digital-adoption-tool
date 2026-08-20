@@ -543,7 +543,7 @@
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
-      "category": "",
+      "category": "Communication",
       "action": "Engagement and communication strategy and plans to be approved and shared across the organisation ",
       "outcomeIds": [],
       "readinessScore": 2
@@ -553,7 +553,7 @@
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
-      "category": "",
+      "category": "Analysis & Insight",
       "action": "Identify potential change network members to support engagement and communication activities",
       "outcomeIds": [],
       "readinessScore": 1
@@ -563,7 +563,7 @@
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
-      "category": "",
+      "category": "Measurement & Evaluation",
       "action": "Change Network continues to act as a 2-way conduit between the programme and stakeholders and monitors engagement impact and effectiveness",
       "outcomeIds": [],
       "readinessScore": 4
@@ -573,7 +573,7 @@
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
-      "category": "",
+      "category": "Communication",
       "action": "Share success stories around the change and adoption to inspire others ",
       "outcomeIds": [],
       "readinessScore": 4

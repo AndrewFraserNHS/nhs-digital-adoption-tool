@@ -319,7 +319,7 @@
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Planning & Risk",
-      "category": "",
+      "category": "Measurement & Evaluation",
       "action": "Measure the effectiveness of change impact management activities across impacted stakeholder groups, services and business areas",
       "outcomeIds": [],
       "readinessScore": 3
@@ -329,7 +329,7 @@
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Planning & Risk",
-      "category": "",
+      "category": "Analysis & Insight",
       "action": "Review impact assessment findings to identify remaining high-impact areas requiring support or intervention.",
       "outcomeIds": [],
       "readinessScore": 3
@@ -339,7 +339,7 @@
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Planning & Risk",
-      "category": "",
+      "category": "Risk Management",
       "action": "Address residual risks arising from identified people, process, service and operational impacts.",
       "outcomeIds": [],
       "readinessScore": 3
@@ -349,7 +349,7 @@
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
-      "category": "",
+      "category": "Engagement",
       "action": "Gather stakeholder feedback regarding actual impacts experienced during implementation.",
       "outcomeIds": [],
       "readinessScore": 3
@@ -359,7 +359,7 @@
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
-      "category": "",
+      "category": "Testing & Validation",
       "action": "Validate that identified impacts, mitigations and support activities remain relevant and effective",
       "outcomeIds": [],
       "readinessScore": 3
@@ -369,7 +369,7 @@
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Planning & Risk",
-      "category": "",
+      "category": "Implementation",
       "action": "Adjust impact management interventions using implementation experience, stakeholder feedback and operational insight.\",",
       "outcomeIds": [],
       "readinessScore": 3
@@ -379,7 +379,7 @@
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Planning & Risk",
-      "category": "",
+      "category": "Measurement & Evaluation",
       "action": "Assess whether anticipated impacts have occurred and whether mitigation activities achieved the desired outcome.\",",
       "outcomeIds": [],
       "readinessScore": 3
@@ -389,7 +389,7 @@
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Planning & Risk",
-      "category": "",
+      "category": "Measurement & Evaluation",
       "action": "Monitor long-term impact trends, outcomes and organisational consequences of change initiatives",
       "outcomeIds": [],
       "readinessScore": 4
@@ -399,7 +399,7 @@
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Planning & Risk",
-      "category": "",
+      "category": "Measurement & Evaluation",
       "action": "Benchmark change impact management performance and maturity across programmes and change initiatives.",
       "outcomeIds": [],
       "readinessScore": 4
@@ -409,7 +409,7 @@
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
-      "category": "",
+      "category": "Analysis & Insight",
       "action": "Maintain organisation-wide insight mechanisms to identify emerging or cumulative impacts from ongoing change activity",
       "outcomeIds": [],
       "readinessScore": 4
@@ -419,7 +419,7 @@
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
-      "category": "",
+      "category": "Reinforcement",
       "action": "Recognise and reinforce good practice in identifying, managing and mitigating change impacts",
       "outcomeIds": [],
       "readinessScore": 4
@@ -429,7 +429,7 @@
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Planning & Risk",
-      "category": "",
+      "category": "Training & Learning",
       "action": "Capture and apply organisational learning from change impact successes, challenges and implementation experience",
       "outcomeIds": [],
       "readinessScore": 4
@@ -439,7 +439,7 @@
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Planning & Risk",
-      "category": "",
+      "category": "Risk Management",
       "action": "Continuously review future impact-related risks, dependencies and emerging organisational pressures",
       "outcomeIds": [],
       "readinessScore": 4
@@ -449,7 +449,7 @@
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
-      "category": "",
+      "category": "Reinforcement",
       "action": "Promote a culture where change impacts are proactively assessed, managed and used to inform organisational improvement",
       "outcomeIds": [],
       "readinessScore": 4

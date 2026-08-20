@@ -542,7 +542,7 @@
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Skills & Behaviour",
-      "category": "",
+      "category": "Reinforcement",
       "action": "Recognise achievement and application of learning within teams and stakeholder groups.",
       "outcomeIds": [],
       "readinessScore": 3
@@ -552,7 +552,7 @@
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Skills & Behaviour",
-      "category": "",
+      "category": "Reinforcement",
       "action": "Promote a culture of continuous learning and development across the organisation.",
       "outcomeIds": [],
       "readinessScore": 4

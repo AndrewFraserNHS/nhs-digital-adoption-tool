@@ -506,7 +506,7 @@
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
-      "category": "",
+      "category": "Governance",
       "action": "Senior leaders should have visibility of areas in the organisation where readiness is low and impact of the change is high",
       "outcomeIds": [],
       "readinessScore": 4
@@ -553,7 +553,7 @@
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
-      "category": "",
+      "category": "Measurement & Evaluation",
       "action": "Review progress against readiness acceptance criteria to inform go live decision",
       "outcomeIds": [],
       "readinessScore": 4
@@ -611,7 +611,7 @@
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
-      "category": "",
+      "category": "Governance",
       "action": "Agree readiness acceptance criteria to support go live decisions",
       "outcomeIds": [],
       "readinessScore": 2

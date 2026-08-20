@@ -529,7 +529,7 @@
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "Process & Sustainment",
-      "category": "",
+      "category": "Analysis & Insight",
       "action": "Recognise that successful adoption requires changes to operational behaviours, processes and ways of working",
       "outcomeIds": [],
       "readinessScore": 0
@@ -539,7 +539,7 @@
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "Process & Sustainment",
-      "category": "",
+      "category": "Analysis & Insight",
       "action": "Identify operational areas, services and processes where adoption of new ways of working will be required",
       "outcomeIds": [],
       "readinessScore": 0
@@ -549,7 +549,7 @@
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Process & Sustainment",
-      "category": "",
+      "category": "Design",
       "action": "Define how adoption will be evidenced through operational behaviours, process execution and future-state ways of working",
       "outcomeIds": [],
       "readinessScore": 1
@@ -559,7 +559,7 @@
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Process & Sustainment",
-      "category": "",
+      "category": "Measurement & Evaluation",
       "action": "Identify operational indicators and process measures that can be used to assess adoption",
       "outcomeIds": [],
       "readinessScore": 1
@@ -569,7 +569,7 @@
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Process & Sustainment",
-      "category": "",
+      "category": "Dependency Management",
       "action": "Assess dependencies between adoption activities, process implementation and operational readiness",
       "outcomeIds": [],
       "readinessScore": 1
@@ -579,7 +579,7 @@
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Process & Sustainment",
-      "category": "",
+      "category": "Measurement & Evaluation",
       "action": "Monitor operational usage, process compliance and behavioural adoption across affected business areas",
       "outcomeIds": [],
       "readinessScore": 2
@@ -589,7 +589,7 @@
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Process & Sustainment",
-      "category": "",
+      "category": "Analysis & Insight",
       "action": "Analyse adoption trends across processes, services and operational areas to identify opportunities for improvement",
       "outcomeIds": [],
       "readinessScore": 3
@@ -599,7 +599,7 @@
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Process & Sustainment",
-      "category": "",
+      "category": "Reinforcement",
       "action": "Embed adoption monitoring and performance review into business-as-usual operational governance processes.",
       "outcomeIds": [],
       "readinessScore": 4
@@ -609,7 +609,7 @@
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Skills & Behaviour",
-      "category": "",
+      "category": "Reinforcement",
       "action": "Embed adoption-related capability development within ongoing organisational learning and development activities.",
       "outcomeIds": [],
       "readinessScore": 4
@@ -619,7 +619,7 @@
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Skills & Behaviour",
-      "category": "",
+      "category": "Measurement & Evaluation",
       "action": "Monitor capability, proficiency and confidence levels associated with sustained adoption of future-state ways of working.",
       "outcomeIds": [],
       "readinessScore": 4
@@ -629,7 +629,7 @@
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Skills & Behaviour",
-      "category": "",
+      "category": "Analysis & Insight",
       "action": "Identify emerging capability requirements, skill gaps and development opportunities that may influence future adoption performance.",
       "outcomeIds": [],
       "readinessScore": 4
@@ -639,7 +639,7 @@
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Skills & Behaviour",
-      "category": "",
+      "category": "Training & Learning",
       "action": "Use adoption insight and organisational learning to continuously improve capability-building approaches for future change initiatives.",
       "outcomeIds": [],
       "readinessScore": 4

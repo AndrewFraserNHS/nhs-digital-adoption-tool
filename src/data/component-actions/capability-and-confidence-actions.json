@@ -299,7 +299,7 @@
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Skills & Behaviour",
-      "category": "",
+      "category": "Measurement & Evaluation",
       "action": "Measure capability attainment and confidence levels across impacted stakeholder groups",
       "outcomeIds": [],
       "readinessScore": 3
@@ -309,7 +309,7 @@
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Skills & Behaviour",
-      "category": "",
+      "category": "Testing & Validation",
       "action": "Ensure there are processes in place to validate that individuals can successfully perform required activities within the future-state environment",
       "outcomeIds": [],
       "readinessScore": 3
@@ -319,7 +319,7 @@
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
-      "category": "",
+      "category": "Reinforcement",
       "action": "Ensure effective application of new skills, behaviours and capabilities are recognised and reinforced",
       "outcomeIds": [],
       "readinessScore": 3
@@ -329,7 +329,7 @@
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Skills & Behaviour",
-      "category": "",
+      "category": "Training & Learning",
       "action": "Provide targeted capability development and confidence-building interventions where gaps remain",
       "outcomeIds": [],
       "readinessScore": 3
@@ -339,7 +339,7 @@
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Skills & Behaviour",
-      "category": "",
+      "category": "Testing & Validation",
       "action": "Validate that capability and confidence levels are sufficient to support sustainable performance improvement",
       "outcomeIds": [],
       "readinessScore": 3
@@ -349,7 +349,7 @@
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
-      "category": "",
+      "category": "Engagement",
       "action": "Gather stakeholder feedback regarding confidence, performance and practical application of learning",
       "outcomeIds": [],
       "readinessScore": 3
@@ -359,7 +359,7 @@
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
-      "category": "",
+      "category": "Communication",
       "action": "Communicate capability achievements, confidence improvements and examples of successful application",
       "outcomeIds": [],
       "readinessScore": 3
@@ -369,7 +369,7 @@
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Skills & Behaviour",
-      "category": "",
+      "category": "Reinforcement",
       "action": "Embed continuous capability development into organisational learning and development practices",
       "outcomeIds": [],
       "readinessScore": 4
@@ -379,7 +379,7 @@
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Skills & Behaviour",
-      "category": "",
+      "category": "Measurement & Evaluation",
       "action": "Monitor long-term capability, proficiency and confidence trends across the organisation",
       "outcomeIds": [],
       "readinessScore": 4
@@ -389,7 +389,7 @@
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Skills & Behaviour",
-      "category": "",
+      "category": "Measurement & Evaluation",
       "action": "Benchmark capability and confidence maturity across programmes, teams and organisational areas",
       "outcomeIds": [],
       "readinessScore": 4
@@ -399,7 +399,7 @@
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Skills & Behaviour",
-      "category": "",
+      "category": "Training & Learning",
       "action": "Continuously improve capability development approaches using organisational learning and implementation experience",
       "outcomeIds": [],
       "readinessScore": 4
@@ -409,7 +409,7 @@
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
-      "category": "",
+      "category": "Measurement & Evaluation",
       "action": "Maintain mechanisms that monitor workforce confidence, development needs and emerging capability requirements",
       "outcomeIds": [],
       "readinessScore": 4
@@ -419,7 +419,7 @@
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
-      "category": "",
+      "category": "Reinforcement",
       "action": "Recognise and reward sustained demonstration of future-state capabilities and behaviours",
       "outcomeIds": [],
       "readinessScore": 4
@@ -429,7 +429,7 @@
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
-      "category": "",
+      "category": "Reinforcement",
       "action": "Promote a culture of continuous learning, confidence building and professional growth",
       "outcomeIds": [],
       "readinessScore": 4

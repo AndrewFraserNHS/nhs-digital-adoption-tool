@@ -291,7 +291,7 @@
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Skills & Behaviour",
-      "category": "",
+      "category": "Design",
       "action": "Develop a resistance management plan  ",
       "outcomeIds": [],
       "readinessScore": 2
@@ -399,7 +399,7 @@
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Skills & Behaviour",
-      "category": "",
+      "category": "Governance",
       "action": "Resistance management plan to be approved by governance and forms part of the change management plan.",
       "outcomeIds": [],
       "readinessScore": 3
@@ -555,7 +555,7 @@
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Skills & Behaviour",
-      "category": "",
+      "category": "Reinforcement",
       "action": "Embed behaviours that promote openness and psychological safety to encourage feedback and constructive challenge during change",
       "outcomeIds": [],
       "readinessScore": 4

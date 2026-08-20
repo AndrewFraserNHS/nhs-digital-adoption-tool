@@ -8,7 +8,8 @@ import {
   type ActionTargetLink,
   type ObjectiveStatus,
 } from '@lib/adoptionState';
-import { AssessmentComponent } from '@data/components';
+import { ASSESSMENT_COMPONENTS, AssessmentComponent } from '@data/components';
+import { type GuidanceLink, resolveGuidanceLinksForAdoptionComponent } from '@data/maturity-guidance-links';
 import {
   ACTION_STATUS_BADGE_STYLES,
   ACTION_TYPES,
@@ -58,6 +59,8 @@ export interface AssessmentPanelProps {
   onMatrixToggle: (key: string) => void;
   onActionRemove: (componentId: string, lens: string, actionId: string) => void;
   onObjectivesUpdate: (componentId: string, objectives: ComponentObjective[]) => void;
+  hideGuidedWorkflow?: boolean;
+  onHideGuidedWorkflow?: () => void;
   darkMode?: boolean;
 }
 
@@ -99,6 +102,62 @@ interface ComponentDetail {
 
 const COMPONENT_DETAILS: Record<string, ComponentDetail> = JSON.parse(componentDetailsText);
 
+const MIN_GUIDANCE_LINK_LABEL_LENGTH = 4;
+
+const GUIDANCE_LINKS_BY_COMPONENT: Record<string, GuidanceLink[]> = ASSESSMENT_COMPONENTS.reduce(
+  (map, comp) => {
+    const inputs = resolveGuidanceLinksForAdoptionComponent('Default', comp.id, 'inputs');
+    const deliverables = resolveGuidanceLinksForAdoptionComponent('Default', comp.id, 'deliverables');
+    const byLabel = new Map<string, GuidanceLink>();
+    [...inputs, ...deliverables].forEach((link) => {
+      if (link.label && link.label.trim().length >= MIN_GUIDANCE_LINK_LABEL_LENGTH) {
+        byLabel.set(link.label.toLowerCase(), link);
+      }
+    });
+    map[comp.id] = [...byLabel.values()];
+    return map;
+  },
+  {} as Record<string, GuidanceLink[]>
+);
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function renderActionTextWithGuidanceLinks(
+  text: string,
+  links: GuidanceLink[],
+  darkMode?: boolean
+): React.ReactNode {
+  const safeText = text || 'Untitled action';
+  if (links.length === 0) {
+    return safeText;
+  }
+
+  const sortedLinks = [...links].sort((a, b) => b.label.length - a.label.length);
+  const pattern = sortedLinks.map((link) => escapeRegExp(link.label)).join('|');
+  const parts = safeText.split(new RegExp(`(${pattern})`, 'gi'));
+
+  return parts.map((part, index) => {
+    const match = sortedLinks.find((link) => link.label.toLowerCase() === part.toLowerCase());
+    if (!match) {
+      return part;
+    }
+    return (
+      <a
+        key={`${match.key}-${index}`}
+        href={match.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={(event) => event.stopPropagation()}
+        className={`underline decoration-dotted underline-offset-2 ${darkMode ? 'text-blue-300 hover:text-blue-200' : 'text-[#005eb8] hover:text-blue-800'}`}
+      >
+        {part}
+      </a>
+    );
+  });
+}
+
 function splitSentences(value: string): string[] {
   return value
     .split('\n')
@@ -106,23 +165,85 @@ function splitSentences(value: string): string[] {
     .filter(Boolean);
 }
 
+const DEFAULT_PROJECT_NAME_PLACEHOLDER = 'Your Project';
+
+function substituteProjectName(value: string, projectName: string): string {
+  return value.replace(/\$projectName/g, projectName);
+}
+
+function resolveComponentDetail(detail: ComponentDetail, projectName: string): ComponentDetail {
+  const resolveText = (value: string) => substituteProjectName(value, projectName);
+  const resolvePoints = (points: ComponentDetailPoint[]) =>
+    points.map((point) => ({ title: resolveText(point.title), body: resolveText(point.body) }));
+
+  return {
+    component: resolveText(detail.component),
+    description: resolveText(detail.description),
+    whatIsIt: resolveText(detail.whatIsIt),
+    userInsight: resolveText(detail.userInsight),
+    whyThisMatters: resolveText(detail.whyThisMatters),
+    quickRealityCheck: resolveText(detail.quickRealityCheck),
+    whatGoodLooksLike: resolvePoints(detail.whatGoodLooksLike),
+    risksIfYouDont: resolvePoints(detail.risksIfYouDont),
+  };
+}
+
+type OverviewTone = 'good' | 'risk';
+
+const OVERVIEW_TONE_STYLES: Record<
+  OverviewTone,
+  { border: string; bg: string; text: string; titleText: string }
+> = {
+  good: {
+    border: 'border-emerald-200',
+    bg: 'bg-emerald-50 hover:bg-emerald-100',
+    text: 'text-emerald-800',
+    titleText: 'text-emerald-700',
+  },
+  risk: {
+    border: 'border-rose-200',
+    bg: 'bg-rose-50 hover:bg-rose-100',
+    text: 'text-rose-800',
+    titleText: 'text-rose-700',
+  },
+};
+
+const OVERVIEW_TONE_STYLES_DARK: Record<
+  OverviewTone,
+  { border: string; bg: string; text: string; titleText: string }
+> = {
+  good: {
+    border: 'border-emerald-500/40',
+    bg: 'bg-emerald-500/10 hover:bg-emerald-500/15',
+    text: 'text-emerald-200',
+    titleText: 'text-emerald-300',
+  },
+  risk: {
+    border: 'border-rose-500/40',
+    bg: 'bg-rose-500/10 hover:bg-rose-500/15',
+    text: 'text-rose-200',
+    titleText: 'text-rose-300',
+  },
+};
+
 function ComponentOverviewPointList({
   points,
+  tone,
   darkMode,
 }: {
   points: ComponentDetailPoint[];
+  tone: OverviewTone;
   darkMode?: boolean;
 }): JSX.Element {
+  const styles = darkMode ? OVERVIEW_TONE_STYLES_DARK[tone] : OVERVIEW_TONE_STYLES[tone];
   return (
     <ul className="space-y-3">
       {points.map((point) => (
         <li key={point.title}>
-          <p
-            className={`text-xs font-semibold uppercase tracking-wide ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
-          >
+          <p className={`text-xs font-semibold uppercase tracking-wide ${styles.titleText}`}>
             {point.title}
           </p>
-          <p className={`mt-0.5 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>{point.body}</p>
+          <p className={`mt-0.5 text-sm ${styles.text}`}>{point.body}</p>
         </li>
       ))}
     </ul>
@@ -132,29 +253,32 @@ function ComponentOverviewPointList({
 function ComponentOverviewSubsection({
   title,
   points,
+  tone,
   isOpen,
   onToggle,
   darkMode,
 }: {
   title: string;
   points: ComponentDetailPoint[];
+  tone: OverviewTone;
   isOpen: boolean;
   onToggle: () => void;
   darkMode?: boolean;
 }): JSX.Element {
+  const styles = darkMode ? OVERVIEW_TONE_STYLES_DARK[tone] : OVERVIEW_TONE_STYLES[tone];
   return (
-    <div className={`rounded-md border ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}>
+    <div className={`rounded-md border ${styles.border}`}>
       <button
         type="button"
         onClick={onToggle}
-        className={`flex w-full items-center justify-between px-3 py-2 text-left text-sm font-semibold ${darkMode ? 'text-slate-100 hover:bg-slate-800' : 'text-slate-700 hover:bg-slate-50'}`}
+        className={`flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm font-semibold transition-colors ${styles.bg} ${styles.text}`}
       >
         {title}
         <span aria-hidden="true">{isOpen ? '−' : '+'}</span>
       </button>
       {isOpen && (
-        <div className={`border-t px-3 py-3 ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}>
-          <ComponentOverviewPointList points={points} darkMode={darkMode} />
+        <div className={`border-t px-3 py-3 ${styles.border}`}>
+          <ComponentOverviewPointList points={points} tone={tone} darkMode={darkMode} />
         </div>
       )}
     </div>
@@ -195,7 +319,6 @@ function ComponentOverviewSection({
         </div>
         <span
           className={`shrink-0 text-xs font-semibold ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
-          aria-hidden="true"
         >
           {isOpen ? 'Hide details −' : 'What is this? +'}
         </span>
@@ -246,6 +369,7 @@ function ComponentOverviewSection({
                 <ComponentOverviewSubsection
                   title="What good looks like"
                   points={detail.whatGoodLooksLike}
+                  tone="good"
                   isOpen={showGoodPractice}
                   onToggle={() => setShowGoodPractice((prev) => !prev)}
                   darkMode={darkMode}
@@ -255,6 +379,7 @@ function ComponentOverviewSection({
                 <ComponentOverviewSubsection
                   title="Risks if you don't"
                   points={detail.risksIfYouDont}
+                  tone="risk"
                   isOpen={showRisks}
                   onToggle={() => setShowRisks((prev) => !prev)}
                   darkMode={darkMode}
@@ -499,14 +624,18 @@ export function AssessmentPanel({
   onMatrixToggle,
   onActionRemove,
   onObjectivesUpdate,
+  hideGuidedWorkflow = false,
+  onHideGuidedWorkflow,
   darkMode = false,
 }: AssessmentPanelProps): JSX.Element {
   const component = components.find((c) => c.id === activeComponentId) || components[0];
+  const projectName = store.orgProfile?.projectName?.trim() || DEFAULT_PROJECT_NAME_PLACEHOLDER;
   const componentDetail = COMPONENT_DETAILS[component.id]?.whatIsIt
-    ? COMPONENT_DETAILS[component.id]
+    ? resolveComponentDetail(COMPONENT_DETAILS[component.id], projectName)
     : undefined;
   const [actionEditor, setActionEditor] = useState<ActionEditorState | null>(null);
   const [objectiveViewer, setObjectiveViewer] = useState<ObjectiveViewerState | null>(null);
+  const [guidedWorkflowDismissed, setGuidedWorkflowDismissed] = useState(false);
   const [showScoringSection, setShowScoringSection] = useState(true);
   const [showObjectivesSection, setShowObjectivesSection] = useState(true);
   const [showActionsSection, setShowActionsSection] = useState(true);
@@ -1045,38 +1174,59 @@ export function AssessmentPanel({
 
       {componentDetail && <ComponentOverviewSection detail={componentDetail} darkMode={darkMode} />}
 
-      <div
-        className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} mb-6 rounded-lg border p-4`}
-      >
-        <p
-          className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+      {!hideGuidedWorkflow && !guidedWorkflowDismissed && (
+        <div
+          className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} mb-6 rounded-lg border p-4`}
         >
-          Guided workflow
-        </p>
-        <div className="mt-2 flex flex-wrap gap-2">
-          <button
-            type="button"
-            onClick={() => scrollToSection('assessment-scoring')}
-            className={`${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 hover:bg-slate-700' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'} rounded-md border px-3 py-1.5 text-xs font-semibold`}
-          >
-            1. Justify
-          </button>
-          <button
-            type="button"
-            onClick={() => scrollToSection('assessment-objectives')}
-            className={`${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 hover:bg-slate-700' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'} rounded-md border px-3 py-1.5 text-xs font-semibold`}
-          >
-            2. Review outcomes
-          </button>
-          <button
-            type="button"
-            onClick={() => scrollToSection('assessment-actions')}
-            className={`${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 hover:bg-slate-700' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'} rounded-md border px-3 py-1.5 text-xs font-semibold`}
-          >
-            3. Plan lens actions
-          </button>
+          <div className="flex items-start justify-between gap-2">
+            <p
+              className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+            >
+              Guided workflow
+            </p>
+            <button
+              type="button"
+              onClick={() => setGuidedWorkflowDismissed(true)}
+              aria-label="Dismiss guided workflow"
+              className={`text-xs font-semibold leading-none ${darkMode ? 'text-slate-400 hover:text-slate-200' : 'text-slate-400 hover:text-slate-700'}`}
+            >
+              ×
+            </button>
+          </div>
+          <div className="mt-2 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => scrollToSection('assessment-scoring')}
+              className={`${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 hover:bg-slate-700' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'} rounded-md border px-3 py-1.5 text-xs font-semibold`}
+            >
+              1. Justify
+            </button>
+            <button
+              type="button"
+              onClick={() => scrollToSection('assessment-objectives')}
+              className={`${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 hover:bg-slate-700' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'} rounded-md border px-3 py-1.5 text-xs font-semibold`}
+            >
+              2. Review outcomes
+            </button>
+            <button
+              type="button"
+              onClick={() => scrollToSection('assessment-actions')}
+              className={`${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 hover:bg-slate-700' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'} rounded-md border px-3 py-1.5 text-xs font-semibold`}
+            >
+              3. Plan lens actions
+            </button>
+          </div>
+          {onHideGuidedWorkflow && (
+            <button
+              type="button"
+              onClick={onHideGuidedWorkflow}
+              className={`mt-3 text-xs underline ${darkMode ? 'text-slate-400 hover:text-slate-200' : 'text-slate-500 hover:text-slate-700'}`}
+            >
+              Don't show this again
+            </button>
+          )}
         </div>
-      </div>
+      )}
 
       <div
         className={`mb-6 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium ${darkMode ? 'border-emerald-500/40 bg-emerald-500/15 text-emerald-200' : 'border-emerald-200 bg-emerald-50 text-emerald-800'}`}
@@ -1583,7 +1733,13 @@ export function AssessmentPanel({
                                 <td
                                   className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
                                 >
-                                  <div>{action.text || 'Untitled action'}</div>
+                                  <div>
+                                    {renderActionTextWithGuidanceLinks(
+                                      action.text,
+                                      GUIDANCE_LINKS_BY_COMPONENT[resolvedAction.sourceComponentId] || [],
+                                      darkMode
+                                    )}
+                                  </div>
                                   {resolvedAction.isLinkedView ? (
                                     <div
                                       className={`mt-1 text-xs ${darkMode ? 'text-indigo-300' : 'text-indigo-700'}`}

@@ -450,4 +450,98 @@ describe('AssessmentPanel', () => {
       ])
     );
   });
+
+  it('SHOULD substitute the project name into the component overview text', () => {
+    // arrange
+    const props = createProps();
+
+    // act
+    render(<AssessmentPanel {...props} />);
+    fireEvent.click(screen.getByRole('button', { name: /What is this\?/ }));
+
+    // assert
+    expect(screen.getByText(/Programme landed best/)).toBeTruthy();
+  });
+
+  it('SHOULD fall back to a placeholder project name WHERE none is set', () => {
+    // arrange
+    const props = createProps();
+    props.store.orgProfile.projectName = '';
+
+    // act
+    render(<AssessmentPanel {...props} />);
+    fireEvent.click(screen.getByRole('button', { name: /What is this\?/ }));
+
+    // assert
+    expect(screen.getByText(/Your Project landed best/)).toBeTruthy();
+  });
+
+  it('SHOULD render a matching CST toolkit link inside an action description', () => {
+    // arrange
+    const readinessComponents: AssessmentComponent[] = [
+      ...components,
+      { id: 'cm_readiness', label: 'CM Readiness & Planning', lenses: ['Planning and Risk'], phase: 1, target: 4 },
+    ];
+    const entry = createEntry({
+      actions: [
+        {
+          id: 'action-1',
+          text: 'Prepare a RACI Matrix for this workstream.',
+          owner: 'PMO',
+          timescale: 'Q3',
+          status: 'Planned',
+        },
+      ],
+    });
+    const props = createProps({ entry });
+    props.components = readinessComponents;
+    props.activeComponentId = 'cm_readiness';
+    props.store.currentDraft = { cm_readiness: { 'Planning and Risk': entry } };
+    props.getEntry = () => entry;
+
+    // act
+    render(<AssessmentPanel {...props} />);
+
+    // assert
+    const link = screen.getByRole('link', { name: 'RACI Matrix' });
+    expect(link).toHaveAttribute('href', 'https://future.nhs.uk/CMN/view?objectId=34040240');
+    expect(link).toHaveAttribute('target', '_blank');
+  });
+
+  it('SHOULD dismiss the guided workflow box and offer to hide it permanently', () => {
+    // arrange
+    const props = createProps();
+    const onHideGuidedWorkflow = vi.fn();
+
+    // act
+    render(
+      <AssessmentPanel {...props} onHideGuidedWorkflow={onHideGuidedWorkflow} />
+    );
+
+    // assert 1
+    expect(screen.getByText('Guided workflow')).toBeTruthy();
+
+    // act 2
+    fireEvent.click(screen.getByRole('button', { name: "Don't show this again" }));
+
+    // assert 2
+    expect(onHideGuidedWorkflow).toHaveBeenCalled();
+
+    // act 3
+    fireEvent.click(screen.getByRole('button', { name: 'Dismiss guided workflow' }));
+
+    // assert 3
+    expect(screen.queryByText('Guided workflow')).toBeNull();
+  });
+
+  it('SHOULD hide the guided workflow box WHERE hideGuidedWorkflow is set', () => {
+    // arrange
+    const props = createProps();
+
+    // act
+    render(<AssessmentPanel {...props} hideGuidedWorkflow />);
+
+    // assert
+    expect(screen.queryByText('Guided workflow')).toBeNull();
+  });
 });

@@ -84,7 +84,7 @@ import { syncVisionDerivedContent } from '@lib/visionAutomation';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { nhsButtonPrimary, nhsButtonSecondary, nhsFocusRing } from '../styles/nhsTheme';
-import { SPECIFIC_RUBRICS } from '../types/constants';
+import { PHASE_NAMES, SPECIFIC_RUBRICS } from '../types/constants';
 
 const ADOPTION_USER_SETTINGS_KEY = 'nhs-digital-adoption-user-settings';
 const ADOPTION_REPORT_REMINDER_DISMISS_KEY = 'nhs-digital-adoption-report-reminder-dismissed';
@@ -117,6 +117,7 @@ const DEFAULT_USER_SETTINGS: AdoptionUserSettings = {
   colorAccessibilityMode: 'standard',
   phaseFocusMode: 'auto',
   manualPhaseFocus: 1,
+  hideGuidedWorkflow: false,
 };
 
 const DEFAULT_ENGAGEMENT_STATE: EngagementState = {
@@ -1775,33 +1776,45 @@ export function AdoptionApp() {
             Change Components
           </div>
           <nav className="space-y-1">
-            {COMPONENTS.map((comp) => {
+            {COMPONENTS.map((comp, index) => {
               const isActive = view === 'assessment' && activeComponentId === comp.id;
               const status = getComponentStatus(comp);
+              const previousPhase = index > 0 ? COMPONENTS[index - 1].phase : null;
+              const showPhaseHeader = comp.phase !== previousPhase;
               return (
-                <button
-                  key={comp.id}
-                  ref={(el) => {
-                    navItemRefs.current[`component:${comp.id}`] = el;
-                  }}
-                  onClick={() => {
-                    openComponentAssessment(comp.id);
-                  }}
-                  className={`w-full text-left px-4 py-2 text-sm flex items-center justify-between transition-colors ${
-                    isActive
-                      ? 'bg-white font-medium text-[#005eb8]'
-                      : `hover:bg-blue-800 ${status.color}`
-                  }`}
-                >
-                  <span className="truncate pr-2">{escapeHtml(comp.label)}</span>
-                  <span
-                    className="text-xs flex-shrink-0"
-                    title={status.label}
-                    aria-label={status.label}
+                <React.Fragment key={comp.id}>
+                  {showPhaseHeader && (
+                    <div
+                      className={`px-4 text-[10px] font-semibold uppercase tracking-wider text-blue-300 ${
+                        index === 0 ? 'pb-1' : 'pt-3 pb-1'
+                      }`}
+                    >
+                      {PHASE_NAMES[comp.phase] || `Phase ${comp.phase}`}
+                    </div>
+                  )}
+                  <button
+                    ref={(el) => {
+                      navItemRefs.current[`component:${comp.id}`] = el;
+                    }}
+                    onClick={() => {
+                      openComponentAssessment(comp.id);
+                    }}
+                    className={`w-full text-left px-4 py-2 text-sm flex items-center justify-between transition-colors ${
+                      isActive
+                        ? 'bg-white font-medium text-[#005eb8]'
+                        : `hover:bg-blue-800 ${status.color}`
+                    }`}
                   >
-                    {status.icon}
-                  </span>
-                </button>
+                    <span className="truncate pr-2">{escapeHtml(comp.label)}</span>
+                    <span
+                      className="text-xs flex-shrink-0"
+                      title={status.label}
+                      aria-label={status.label}
+                    >
+                      {status.icon}
+                    </span>
+                  </button>
+                </React.Fragment>
               );
             })}
           </nav>
@@ -2297,6 +2310,10 @@ export function AdoptionApp() {
                 });
               }}
               onObjectivesUpdate={updateComponentObjectives}
+              hideGuidedWorkflow={Boolean(userSettings.hideGuidedWorkflow)}
+              onHideGuidedWorkflow={() =>
+                setUserSettings((prev) => ({ ...prev, hideGuidedWorkflow: true }))
+              }
               darkMode={Boolean(userSettings.darkMode)}
             />
           )}

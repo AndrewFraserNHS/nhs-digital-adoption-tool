@@ -10,6 +10,7 @@ export interface AdoptionUserSettings {
   colorAccessibilityMode?: 'standard' | 'color-blind-friendly';
   phaseFocusMode?: 'auto' | 'manual';
   manualPhaseFocus?: number;
+  hideGuidedWorkflow?: boolean;
 }
 
 export interface SettingsPanelProps {
@@ -344,6 +345,18 @@ export function SettingsPanel({
               type="checkbox"
               checked={Boolean(settings.darkMode)}
               onChange={(e) => updateUserSettings({ darkMode: e.target.checked })}
+              className="h-4 w-4"
+            />
+          </label>
+
+          <label
+            className={`flex items-center justify-between rounded-md border px-3 py-2 text-sm ${darkMode ? 'border-slate-700 bg-slate-900 text-slate-100' : 'border-slate-200 bg-slate-50 text-slate-700'}`}
+          >
+            <span>Show guided workflow tips on each component</span>
+            <input
+              type="checkbox"
+              checked={!settings.hideGuidedWorkflow}
+              onChange={(e) => updateUserSettings({ hideGuidedWorkflow: !e.target.checked })}
               className="h-4 w-4"
             />
           </label>

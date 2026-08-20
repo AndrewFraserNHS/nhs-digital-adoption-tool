@@ -25,7 +25,8 @@ export interface LinkBaseOverride {
 export interface PerLinkOverride {
   label?: string;
   url?: string;
-  /** what to fall back to when no override url is set */ fallback: 'base' | 'default';
+  /** what to fall back to when no override url is set */
+  fallback: 'base' | 'default';
 }
 
 export interface LinkOverrides {
@@ -127,49 +128,42 @@ export const DEFAULT_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
         'core',
         'Supports development and communication of a clear future vision.'
       ),
-
       futureNhsLink(
         '34039056',
         'Mind Map',
         'core',
         'Captures and organises stakeholder viewpoints when developing the vision.'
       ),
-
       futureNhsLink(
         '34039088',
         'Rich Picture and Storytelling',
         'core',
         'Creates a visual and narrative representation of the desired future state.'
       ),
-
       futureNhsLink(
         '34039184',
         "Sinek's Golden Circle",
         'core',
         'Structures the vision around why, how and what.'
       ),
-
       futureNhsLink(
         '34037808',
         'Systems Thinking',
         'core',
         'Supports consideration of the wider system when defining the future state.'
       ),
-
       futureNhsLink(
         '34018288',
         'Stakeholder Analysis Tool',
         'core',
         'Identifies the stakeholders who should help shape and validate the vision.'
       ),
-
       futureNhsLink(
         '34039024',
         'Sponsor Coalition Map',
         'additional',
         'Identifies leaders and visible supporters who can reinforce the vision.'
       ),
-
       futureNhsLink(
         '69484112',
         'SHIFT: A Strategic Change Management Approach',
@@ -187,91 +181,78 @@ export const DEFAULT_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
         'core',
         'Supports creation of a clear and compelling rationale for change.'
       ),
-
       futureNhsLink(
         '42608592',
         "Beckhard and Harris' Change Formula",
         'core',
         'Tests whether the conditions needed to overcome the perceived cost of change are present.'
       ),
-
       futureNhsLink(
         '34037360',
         'Force Field Analysis',
         'core',
         'Identifies the forces driving and restraining the change.'
       ),
-
       futureNhsLink(
         '34037232',
         'Benefits Workshop',
         'core',
         'Brings stakeholders together to identify and develop the benefits of change.'
       ),
-
       futureNhsLink(
         '34040176',
         'Benefits Map',
         'core',
         'Links benefits, outcomes, enabling changes and strategic objectives.'
       ),
-
       futureNhsLink(
         '45000208',
         "What's in it for me? Benefits",
         'core',
         'Defines relevant benefits for each stakeholder group.'
       ),
-
       futureNhsLink(
         '69191376',
         '5 Whys Technique',
         'additional',
         'Supports root-cause exploration of the problem the change is intended to address.'
       ),
-
       futureNhsLink(
         '34037712',
         'SWOT Analysis',
         'additional',
         'Examines strengths, weaknesses, opportunities and threats relating to the change.'
       ),
-
       futureNhsLink(
         '34037072',
         'PESTLE Analysis',
         'additional',
         'Examines external factors influencing the need for change.'
       ),
-
       futureNhsLink(
         '34037680',
         "Porter's Five Forces",
         'additional',
         'Supports analysis of wider environmental and market pressures.'
       ),
-
       futureNhsLink(
         '34037040',
         'GAP Analysis',
         'additional',
         'Compares current and future states and identifies what needs to change.'
       ),
-
       futureNhsLink(
         '42608624',
         'AIDA Model',
         'additional',
         'Provides a structure for moving audiences from awareness towards action.'
       ),
-
       futureNhsLink(
         '34037744',
         "Kotter's 8 Steps",
         'additional',
         'Provides an additional framework for creating urgency and mobilising change.'
       ),
-
       futureNhsLink(
         '34039024',
         'Sponsor Coalition Map',
@@ -292,49 +273,42 @@ export const DEFAULT_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
         'core',
         'Identifies senior leaders and visible supporters required to drive the change.'
       ),
-
       futureNhsLink(
         '34037520',
         'What Makes a Good Sponsor?',
         'core',
         'Supports sponsors to understand the behaviours expected of them.'
       ),
-
       futureNhsLink(
         '34040240',
         'RACI/RASCI Matrix',
         'core',
         'Clarifies governance roles, responsibilities and accountability.'
       ),
-
       futureNhsLink(
         '34037552',
         'Change Network',
         'core',
         'Connects senior sponsorship with change agents and champions.'
       ),
-
       futureNhsLink(
         '42042672',
         'Change Management Strategy',
         'core',
         'Defines the strategic approach and leadership responsibilities for change.'
       ),
-
       futureNhsLink(
         '34018288',
         'Stakeholder Analysis Tool',
         'additional',
         'Identifies influential stakeholders and required sponsor coverage.'
       ),
-
       futureNhsLink(
         '34038032',
         'Change Management Plan',
         'additional',
         'Translates governance and sponsorship responsibilities into planned activity.'
       ),
-
       futureNhsLink(
         '69484112',
         'SHIFT: A Strategic Change Management Approach',
@@ -352,49 +326,42 @@ export const DEFAULT_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
         'core',
         'Supports formation and operation of a network of change agents and champions.'
       ),
-
       futureNhsLink(
         '34039024',
         'Sponsor Coalition Map',
         'core',
         'Connects the change network with visible senior sponsors.'
       ),
-
       futureNhsLink(
         '34018288',
         'Stakeholder Analysis Tool',
         'core',
         'Helps ensure the network represents the right stakeholder groups.'
       ),
-
       futureNhsLink(
         '34037520',
         'What Makes a Good Sponsor?',
         'core',
         'Clarifies how sponsors should support and use the network.'
       ),
-
       futureNhsLink(
         '34039408',
         'Feedback Cycle',
         'additional',
         'Supports two-way feedback between the network, programme and affected staff.'
       ),
-
       futureNhsLink(
         '69501968',
         'Psychological Safety',
         'additional',
         'Supports an environment in which network members can raise concerns safely.'
       ),
-
       futureNhsLink(
         '34040240',
         'RACI/RASCI Matrix',
         'additional',
         'Clarifies the roles of sponsors, change agents and change champions.'
       ),
-
       futureNhsLink(
         '34038672',
         'User Surveys',
@@ -412,63 +379,54 @@ export const DEFAULT_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
         'core',
         'Identifies and develops benefits with relevant stakeholders.'
       ),
-
       futureNhsLink(
         '34040176',
         'Benefits Map',
         'core',
         'Links benefits to outcomes, enabling changes and strategic objectives.'
       ),
-
       futureNhsLink(
         '34030736',
         'Benefits Realisation Plan',
         'core',
         'Defines baselines, measures, owners and arrangements for tracking benefits.'
       ),
-
       futureNhsLink(
         '45000208',
         "What's in it for me? Benefits",
         'core',
         'Translates organisational benefits into relevant stakeholder benefits.'
       ),
-
       futureNhsLink(
         '69511824',
         'Measuring Digital Adoption',
         'core',
         'Supports definition of adoption measures linked to intended benefits.'
       ),
-
       futureNhsLink(
         '44287088',
         'Case for Change',
         'additional',
         'Connects the benefits to the rationale and intended outcomes of the change.'
       ),
-
       futureNhsLink(
         '34038608',
         'Creating Short-Term Wins',
         'additional',
         'Uses early progress to demonstrate value and maintain momentum.'
       ),
-
       futureNhsLink(
         '34038864',
         'Celebrate Successes',
         'additional',
         'Recognises evidence that benefits and positive outcomes are emerging.'
       ),
-
       futureNhsLink(
         '34038544',
         'End of Pilot Report',
         'additional',
         'Captures pilot evidence relevant to benefits and wider rollout.'
       ),
-
       futureNhsLink(
         '34038672',
         'User Surveys',
@@ -486,56 +444,48 @@ export const DEFAULT_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
         'core',
         'Assesses impacts on people, teams, processes and business units.'
       ),
-
       futureNhsLink(
         '34039344',
         'Impact Analysis',
         'core',
         'Supports structured analysis of intended and unintended impacts.'
       ),
-
       futureNhsLink(
         '34037968',
         'Heat Map',
         'core',
         'Provides a visual view of impact across business areas.'
       ),
-
       futureNhsLink(
         '34037040',
         'GAP Analysis',
         'core',
         'Identifies differences between current and future states.'
       ),
-
       futureNhsLink(
         '34040208',
         'McKinsey 7S Model',
         'core',
         'Examines alignment across interdependent organisational factors.'
       ),
-
       futureNhsLink(
         '34037840',
         'Process Mapping',
         'additional',
         'Identifies impacts created by changes between current and future processes.'
       ),
-
       futureNhsLink(
         '34037392',
         'Change Management Capability Review',
         'additional',
         'Assesses the capability implications of the future state.'
       ),
-
       futureNhsLink(
         '34038000',
         'Proof of Concept',
         'additional',
         'Provides early evidence about likely organisational and user impacts.'
       ),
-
       futureNhsLink(
         '34037488',
         'Training Impact Assessment',
@@ -553,49 +503,42 @@ export const DEFAULT_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
         'core',
         'Identifies and assesses risks, issues and barriers to successful adoption.'
       ),
-
       futureNhsLink(
         '34038640',
         'Sustainability Risk Assessment',
         'core',
         'Identifies risks that could prevent the change from being sustained.'
       ),
-
       futureNhsLink(
         '34037424',
         'Change Impact Assessment',
         'core',
         'Provides evidence about impact-related risks and mitigation needs.'
       ),
-
       futureNhsLink(
         '34037360',
         'Force Field Analysis',
         'core',
         'Identifies forces that may support or obstruct the change.'
       ),
-
       futureNhsLink(
         '34030736',
         'Benefits Realisation Plan',
         'additional',
         'Helps identify and monitor risks to benefit realisation.'
       ),
-
       futureNhsLink(
         '34037968',
         'Heat Map',
         'additional',
         'Highlights areas where high impact and low readiness may create risk.'
       ),
-
       futureNhsLink(
         '34307760',
         'Resistance Management Plan',
         'additional',
         'Defines actions for managing resistance-related adoption risks.'
       ),
-
       futureNhsLink(
         '69191376',
         '5 Whys Technique',

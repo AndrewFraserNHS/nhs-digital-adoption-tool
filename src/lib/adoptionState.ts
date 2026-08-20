@@ -123,6 +123,8 @@ export interface OrgProfile {
   leadName?: string;
   cst: CstProfile;
   linkOverrides?: LinkOverrides;
+  /** Further reading URL per component id (see ASSESSMENT_COMPONENTS), shown on that component's overview. */
+  componentFurtherReading?: Record<string, string>;
   teamMembers?: TeamMember[];
   /**
    * Stable identity for this CST, assigned once and carried through every export so two
@@ -188,6 +190,7 @@ export function normalizeOrgProfile(profile?: Partial<OrgProfile>): OrgProfile {
       ...(profile?.cst || {}),
     },
     linkOverrides: profile?.linkOverrides,
+    componentFurtherReading: profile?.componentFurtherReading,
     teamMembers: profile?.teamMembers || [],
     cstId: profile?.cstId,
   };

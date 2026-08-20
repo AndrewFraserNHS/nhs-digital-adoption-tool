@@ -198,13 +198,13 @@ const OVERVIEW_TONE_STYLES: Record<
     border: 'border-emerald-200',
     bg: 'bg-emerald-50 hover:bg-emerald-100',
     text: 'text-emerald-800',
-    titleText: 'text-emerald-700',
+    titleText: 'text-black',
   },
   risk: {
     border: 'border-rose-200',
     bg: 'bg-rose-50 hover:bg-rose-100',
     text: 'text-rose-800',
-    titleText: 'text-rose-700',
+    titleText: 'text-black',
   },
 };
 
@@ -216,13 +216,13 @@ const OVERVIEW_TONE_STYLES_DARK: Record<
     border: 'border-emerald-500/40',
     bg: 'bg-emerald-500/10 hover:bg-emerald-500/15',
     text: 'text-emerald-200',
-    titleText: 'text-emerald-300',
+    titleText: 'text-slate-100',
   },
   risk: {
     border: 'border-rose-500/40',
     bg: 'bg-rose-500/10 hover:bg-rose-500/15',
     text: 'text-rose-200',
-    titleText: 'text-rose-300',
+    titleText: 'text-slate-100',
   },
 };
 
@@ -287,9 +287,11 @@ function ComponentOverviewSubsection({
 
 function ComponentOverviewSection({
   detail,
+  furtherReadingUrl,
   darkMode,
 }: {
   detail: ComponentDetail;
+  furtherReadingUrl?: string;
   darkMode?: boolean;
 }): JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
@@ -325,6 +327,16 @@ function ComponentOverviewSection({
       </button>
       {isOpen && (
         <div className={`space-y-4 border-t px-4 py-4 ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}>
+          {furtherReadingUrl && (
+            <a
+              href={furtherReadingUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`inline-flex items-center gap-1 rounded-md border px-3 py-1.5 text-xs font-semibold ${darkMode ? 'border-slate-600 bg-slate-800 text-blue-300 hover:bg-slate-700' : 'border-slate-300 bg-white text-[#005eb8] hover:bg-slate-50'}`}
+            >
+              Further Reading ↗
+            </a>
+          )}
           {detail.whatIsIt && (
             <p className={`text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>{detail.whatIsIt}</p>
           )}
@@ -1172,7 +1184,13 @@ export function AssessmentPanel({
         </select>
       </div>
 
-      {componentDetail && <ComponentOverviewSection detail={componentDetail} darkMode={darkMode} />}
+      {componentDetail && (
+        <ComponentOverviewSection
+          detail={componentDetail}
+          furtherReadingUrl={store.orgProfile?.componentFurtherReading?.[component.id]}
+          darkMode={darkMode}
+        />
+      )}
 
       {!hideGuidedWorkflow && !guidedWorkflowDismissed && (
         <div

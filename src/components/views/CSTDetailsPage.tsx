@@ -247,6 +247,21 @@ export function ProjectDetailsPage({
     [profile, onProfileUpdate]
   );
 
+  const handleComponentFurtherReadingChange = useCallback(
+    (componentId: string, url: string) => {
+      const next = { ...profile.componentFurtherReading };
+      if (url.trim()) {
+        next[componentId] = url.trim();
+      } else {
+        delete next[componentId];
+      }
+      const updated = { ...profile, componentFurtherReading: next };
+      setProfile(updated);
+      onProfileUpdate(updated);
+    },
+    [profile, onProfileUpdate]
+  );
+
   const handleAddTeamMember = useCallback(() => {
     const newMember: TeamMember = {
       id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
@@ -945,6 +960,57 @@ export function ProjectDetailsPage({
                   )}
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Component further reading */}
+          <div
+            className={`mt-4 rounded-md border p-4 space-y-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
+          >
+            <div>
+              <p
+                className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+              >
+                Component Further Reading
+              </p>
+              <p className={`text-xs mt-0.5 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
+                Add a link for each component's "Further Reading" button on its overview panel.
+                Leave blank to hide the button for that component.
+              </p>
+            </div>
+            <div className="space-y-2">
+              {components.map((component) => (
+                <div
+                  key={component.id}
+                  className="grid grid-cols-1 md:grid-cols-[1fr,2fr] gap-2 items-center"
+                >
+                  <span
+                    className={`text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}
+                  >
+                    {component.label}
+                  </span>
+                  <div className="flex gap-2">
+                    <input
+                      type="url"
+                      placeholder="https://..."
+                      value={profile.componentFurtherReading?.[component.id] ?? ''}
+                      onChange={(e) =>
+                        handleComponentFurtherReadingChange(component.id, e.target.value)
+                      }
+                      className={`flex-1 min-w-0 rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
+                    />
+                    {profile.componentFurtherReading?.[component.id] && (
+                      <button
+                        type="button"
+                        onClick={() => handleComponentFurtherReadingChange(component.id, '')}
+                        className={`shrink-0 rounded border px-2 py-1.5 text-xs font-medium ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-50'}`}
+                      >
+                        Clear
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 

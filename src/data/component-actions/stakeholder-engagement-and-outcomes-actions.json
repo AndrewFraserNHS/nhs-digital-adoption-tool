@@ -6,18 +6,15 @@
   "outcomes": [
     {
       "id": "SEC_O1",
-      "name": "Stakeholders have been identified, analysed and prioritised",
-      "description": "Stakeholders are understood, segmented and prioritised according to their influence, impact, needs and level of involvement."
+      "name": "Stakeholders have been identified, analysed and prioritised"
     },
     {
       "id": "SEC_O2",
-      "name": "Stakeholders are actively engaged and informed",
-      "description": "Stakeholders receive appropriate communication, have opportunities to participate, and can provide feedback throughout the change lifecycle."
+      "name": "Stakeholders are actively engaged and informed"
     },
     {
       "id": "SEC_O3",
-      "name": "Engagement and communications support successful adoption",
-      "description": "Stakeholder insight, engagement and communications are actively managed, measured and adapted to support sustained change adoption."
+      "name": "Engagement and communications support successful adoption"
     }
   ],
   "actions": [
@@ -75,7 +72,7 @@
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
       "category": "Communication",
-      "action": "Begin communicating the purpose of the change and the importance of stakeholder involvement.",
+      "action": "Begin communicating the reason for the change and the importance of stakeholder involvement.",
       "outcomeIds": [
         "SEC_O1"
       ],
@@ -244,8 +241,8 @@
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
-      "category": "Communication",
-      "action": "Implement targeted communications tailored to different stakeholder groups.",
+      "category": "Engagement",
+      "action": "Implement stakeholder engagement activities using appropriate channels and methods.",
       "outcomeIds": [
         "SEC_O2"
       ],
@@ -256,8 +253,8 @@
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
-      "category": "Engagement",
-      "action": "Implement stakeholder engagement activities using appropriate channels and methods.",
+      "category": "Communication",
+      "action": "Implement targeted communications tailored to different stakeholder groups.",
       "outcomeIds": [
         "SEC_O2"
       ],
@@ -342,7 +339,7 @@
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
       "category": "Design",
-      "action": "Develop a detailed stakeholder engagement and communications plan.",
+      "action": "Develop a detailed stakeholder engagement and communications strategy and plan.",
       "outcomeIds": [
         "SEC_O2",
         "SEC_O3"
@@ -355,7 +352,7 @@
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
       "category": "Communication",
-      "action": "Equip sponsors, managers and change agents with communication materials and engagement guidance.",
+      "action": "Equip sponsors, managers and change agents and change champions with communication materials and engagement guidance.",
       "outcomeIds": [
         "SEC_O2"
       ],
@@ -403,7 +400,7 @@
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
       "category": "Engagement",
-      "action": "Use stakeholder representatives, champions and networks to strengthen engagement activity.",
+      "action": "Use stakeholder representatives, change agents and change champions and other networks to strengthen engagement activity.",
       "outcomeIds": [
         "SEC_O3"
       ],
@@ -439,7 +436,7 @@
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
       "category": "Design",
-      "action": "Refine engagement and communication approaches using evidence, insight and lessons learned.",
+      "action": "Use feedback to refine engagement and communication approaches using evidence, insight and lessons learned.",
       "outcomeIds": [
         "SEC_O3"
       ],
@@ -539,6 +536,46 @@
       "outcomeIds": [
         "SEC_O3"
       ],
+      "readinessScore": 4
+    },
+    {
+      "id": "SEC_044",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "",
+      "action": "Engagement and communication strategy and plans to be approved and shared across the organisation ",
+      "outcomeIds": [],
+      "readinessScore": 2
+    },
+    {
+      "id": "SEC_045",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "",
+      "action": "Identify potential change network members to support engagement and communication activities",
+      "outcomeIds": [],
+      "readinessScore": 1
+    },
+    {
+      "id": "SEC_046",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "",
+      "action": "Change Network continues to act as a 2-way conduit between the programme and stakeholders and monitors engagement impact and effectiveness",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "SEC_047",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "",
+      "action": "Share success stories around the change and adoption to inspire others ",
+      "outcomeIds": [],
       "readinessScore": 4
     }
   ]

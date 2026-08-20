@@ -6,18 +6,15 @@
   "outcomes": [
     {
       "id": "SL_O1",
-      "name": "Future learning and capability requirements have been identified",
-      "description": "The knowledge, skills and capability requirements needed to operate successfully in the future state have been assessed and documented."
+      "name": "Future learning and capability requirements have been identified"
     },
     {
       "id": "SL_O2",
-      "name": "Learning interventions have been designed and delivered",
-      "description": "Appropriate learning, development and support activities have been developed and delivered to affected stakeholders."
+      "name": "Learning interventions have been designed and delivered"
     },
     {
       "id": "SL_O3",
-      "name": "Learning outcomes are achieved and sustained",
-      "description": "People demonstrate the required knowledge and skills, and learning approaches are evaluated and continuously improved."
+      "name": "Learning outcomes are achieved and sustained"
     }
   ],
   "actions": [
@@ -63,7 +60,7 @@
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
       "category": "Engagement",
-      "action": "Explore stakeholder views on likely learning preferences, barriers and support needs.",
+      "action": "Explore stakeholder views on likely learning preferences, barriers and support needs to ensure inclusivity.",
       "outcomeIds": [
         "SL_O1"
       ],
@@ -207,7 +204,7 @@
       "toStatus": "Developing",
       "lens": "Skills & Behaviour",
       "category": "Dependency Management",
-      "action": "Assess dependencies between learning activities and communications, readiness, process and implementation plans.",
+      "action": "Assess dependencies between learning activities and engagement and communications, readiness, process and implementation plans.",
       "outcomeIds": [
         "SL_O2"
       ],
@@ -231,14 +228,14 @@
       "toStatus": "Developing",
       "lens": "Skills & Behaviour",
       "category": "Design",
-      "action": "Define the learning methods, channels and support mechanisms that will be used to deliver learning and development activities.",
+      "action": "Define a training plan to include the learning methods, channels and support mechanisms that will be used to deliver learning and development activities.",
       "outcomeIds": [
         "SL_O2"
       ],
       "readinessScore": 1
     },
     {
-      "id": "SL_011",
+      "id": "SL_019",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Skills & Behaviour",
@@ -250,7 +247,7 @@
       "readinessScore": 2
     },
     {
-      "id": "SL_012",
+      "id": "SL_020",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Skills & Behaviour",
@@ -262,7 +259,7 @@
       "readinessScore": 2
     },
     {
-      "id": "SL_013",
+      "id": "SL_021",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Skills & Behaviour",
@@ -274,7 +271,7 @@
       "readinessScore": 2
     },
     {
-      "id": "SL_014",
+      "id": "SL_022",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Skills & Behaviour",
@@ -286,7 +283,7 @@
       "readinessScore": 2
     },
     {
-      "id": "SL_015",
+      "id": "SL_023",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Skills & Behaviour",
@@ -299,7 +296,7 @@
       "readinessScore": 2
     },
     {
-      "id": "SL_016",
+      "id": "SL_024",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
@@ -311,20 +308,7 @@
       "readinessScore": 2
     },
     {
-      "id": "SL_017",
-      "fromStatus": "Developing",
-      "toStatus": "Embedding",
-      "lens": "People Experience & Culture",
-      "category": "Engagement",
-      "action": "Gather learner feedback to improve learning content and delivery.",
-      "outcomeIds": [
-        "SL_O2",
-        "SL_O3"
-      ],
-      "readinessScore": 2
-    },
-    {
-      "id": "SL_018",
+      "id": "SL_025",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Skills & Behaviour",
@@ -336,7 +320,7 @@
       "readinessScore": 2
     },
     {
-      "id": "SL_019",
+      "id": "SL_026",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Skills & Behaviour",
@@ -348,7 +332,7 @@
       "readinessScore": 2
     },
     {
-      "id": "SL_020",
+      "id": "SL_027",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Skills & Behaviour",
@@ -361,7 +345,7 @@
       "readinessScore": 2
     },
     {
-      "id": "SL_021",
+      "id": "SL_028",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Skills & Behaviour",
@@ -373,7 +357,7 @@
       "readinessScore": 3
     },
     {
-      "id": "SL_022",
+      "id": "SL_029",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Skills & Behaviour",
@@ -385,31 +369,7 @@
       "readinessScore": 3
     },
     {
-      "id": "SL_023",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
-      "lens": "Skills & Behaviour",
-      "category": "Training & Learning",
-      "action": "Provide refresher learning and targeted support where capability gaps remain.",
-      "outcomeIds": [
-        "SL_O3"
-      ],
-      "readinessScore": 3
-    },
-    {
-      "id": "SL_024",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
-      "lens": "Skills & Behaviour",
-      "category": "Training & Learning",
-      "action": "Offer ongoing coaching and support to reinforce learning transfer.",
-      "outcomeIds": [
-        "SL_O3"
-      ],
-      "readinessScore": 3
-    },
-    {
-      "id": "SL_025",
+      "id": "SL_030",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Skills & Behaviour",
@@ -421,7 +381,44 @@
       "readinessScore": 3
     },
     {
-      "id": "SL_026",
+      "id": "SL_031",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Skills & Behaviour",
+      "category": "Training & Learning",
+      "action": "Provide refresher learning and targeted support where capability gaps remain.",
+      "outcomeIds": [
+        "SL_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "SL_032",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Skills & Behaviour",
+      "category": "Training & Learning",
+      "action": "Offer ongoing coaching and support to reinforce learning transfer.",
+      "outcomeIds": [
+        "SL_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "SL_033",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "Gather learner feedback to improve learning content and delivery.",
+      "outcomeIds": [
+        "SL_O2",
+        "SL_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "SL_034",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
@@ -433,19 +430,7 @@
       "readinessScore": 3
     },
     {
-      "id": "SL_027",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
-      "lens": "People Experience & Culture",
-      "category": "Communication",
-      "action": "Share learning successes, progress and achievement milestones.",
-      "outcomeIds": [
-        "SL_O3"
-      ],
-      "readinessScore": 3
-    },
-    {
-      "id": "SL_028",
+      "id": "SL_035",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Skills & Behaviour",
@@ -457,7 +442,7 @@
       "readinessScore": 3
     },
     {
-      "id": "SL_029",
+      "id": "SL_036",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Skills & Behaviour",
@@ -469,7 +454,7 @@
       "readinessScore": 3
     },
     {
-      "id": "SL_030",
+      "id": "SL_037",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
@@ -481,7 +466,19 @@
       "readinessScore": 3
     },
     {
-      "id": "SL_031",
+      "id": "SL_038",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "Share learning successes, progress and achievement milestones.",
+      "outcomeIds": [
+        "SL_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "SL_039",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Skills & Behaviour",
@@ -493,7 +490,7 @@
       "readinessScore": 4
     },
     {
-      "id": "SL_032",
+      "id": "SL_040",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Skills & Behaviour",
@@ -505,7 +502,7 @@
       "readinessScore": 4
     },
     {
-      "id": "SL_033",
+      "id": "SL_041",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Skills & Behaviour",
@@ -517,7 +514,7 @@
       "readinessScore": 4
     },
     {
-      "id": "SL_034",
+      "id": "SL_042",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Skills & Behaviour",
@@ -529,7 +526,7 @@
       "readinessScore": 4
     },
     {
-      "id": "SL_035",
+      "id": "SL_043",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
@@ -538,6 +535,26 @@
       "outcomeIds": [
         "SL_O3"
       ],
+      "readinessScore": 4
+    },
+    {
+      "id": "SL_044",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Skills & Behaviour",
+      "category": "",
+      "action": "Recognise achievement and application of learning within teams and stakeholder groups.",
+      "outcomeIds": [],
+      "readinessScore": 3
+    },
+    {
+      "id": "SL_045",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Skills & Behaviour",
+      "category": "",
+      "action": "Promote a culture of continuous learning and development across the organisation.",
+      "outcomeIds": [],
       "readinessScore": 4
     }
   ]

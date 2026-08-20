@@ -6,18 +6,15 @@
   "outcomes": [
     {
       "id": "REINF_O1",
-      "name": "Reinforcement strategy and sustainment measures are defined",
-      "description": "A clear reinforcement approach is in place, including ownership, measures and dependencies needed to sustain adoption."
+      "name": "Reinforcement strategy and sustainment measures are defined"
     },
     {
       "id": "REINF_O2",
-      "name": "Reinforcement activities support sustained adoption and behaviour change",
-      "description": "Reinforcement actions are actively delivered to embed desired behaviours, confidence and consistent use of new ways of working."
+      "name": "Reinforcement activities support sustained adoption and behaviour change"
     },
     {
       "id": "REINF_O3",
-      "name": "Sustained change outcomes are embedded and continuously improved",
-      "description": "Reinforcement is monitored and adapted over time so that change outcomes are maintained, improved and integrated into BAU."
+      "name": "Sustained change outcomes are embedded and continuously improved"
     }
   ],
   "actions": [
@@ -39,7 +36,7 @@
       "toStatus": "Emerging",
       "lens": "Process & Sustainment",
       "category": "Engagement",
-      "action": "Discuss with sponsors and leaders how the change will be sustained after go-live.",
+      "action": "Discuss with sponsors and leaders how the change will need to be sustained after go-live.",
       "outcomeIds": [
         "REINF_O1"
       ],
@@ -99,7 +96,7 @@
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
       "category": "Communication",
-      "action": "Begin raising awareness that reinforcement activities will be required after implementation.",
+      "action": "Begin raising awareness that reinforcement activities will be available if required where adoption is low. ",
       "outcomeIds": [
         "REINF_O1"
       ],
@@ -243,7 +240,7 @@
       "toStatus": "Embedding",
       "lens": "Process & Sustainment",
       "category": "Reinforcement",
-      "action": "Ensure leaders and managers visibly reinforce desired behaviours and ways of working.",
+      "action": "Ensure leaders and managers visibly reinforce desired behaviours and new ways of working.",
       "outcomeIds": [
         "REINF_O2"
       ],
@@ -303,7 +300,7 @@
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
-      "action": "Recognise and celebrate examples of successful adoption and positive behavioural change.",
+      "action": "Recognise and celebrate examples of successful adoption, positive behavioural change and improvements to ways of working. ",
       "outcomeIds": [
         "REINF_O2"
       ],
@@ -338,18 +335,6 @@
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
-      "category": "Communication",
-      "action": "Share success stories, learning and examples of improvements created by the change.",
-      "outcomeIds": [
-        "REINF_O2"
-      ],
-      "readinessScore": 2
-    },
-    {
-      "id": "REINF_028",
-      "fromStatus": "Developing",
-      "toStatus": "Embedding",
-      "lens": "People Experience & Culture",
       "category": "Measurement & Evaluation",
       "action": "Gather feedback regarding sustainment challenges and support needs.",
       "outcomeIds": [
@@ -358,7 +343,7 @@
       "readinessScore": 2
     },
     {
-      "id": "REINF_029",
+      "id": "REINF_028",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Process & Sustainment",
@@ -371,7 +356,7 @@
       "readinessScore": 3
     },
     {
-      "id": "REINF_030",
+      "id": "REINF_029",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
@@ -383,7 +368,7 @@
       "readinessScore": 3
     },
     {
-      "id": "REINF_031",
+      "id": "REINF_030",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Process & Sustainment",
@@ -396,7 +381,7 @@
       "readinessScore": 3
     },
     {
-      "id": "REINF_032",
+      "id": "REINF_031",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Process & Sustainment",
@@ -408,7 +393,7 @@
       "readinessScore": 3
     },
     {
-      "id": "REINF_033",
+      "id": "REINF_032",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Process & Sustainment",
@@ -420,7 +405,7 @@
       "readinessScore": 3
     },
     {
-      "id": "REINF_034",
+      "id": "REINF_033",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
@@ -432,7 +417,7 @@
       "readinessScore": 3
     },
     {
-      "id": "REINF_035",
+      "id": "REINF_034",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
@@ -444,7 +429,7 @@
       "readinessScore": 3
     },
     {
-      "id": "REINF_036",
+      "id": "REINF_035",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
@@ -456,7 +441,7 @@
       "readinessScore": 3
     },
     {
-      "id": "REINF_037",
+      "id": "REINF_036",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Process & Sustainment",
@@ -468,7 +453,7 @@
       "readinessScore": 3
     },
     {
-      "id": "REINF_038",
+      "id": "REINF_037",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Process & Sustainment",
@@ -480,7 +465,7 @@
       "readinessScore": 3
     },
     {
-      "id": "REINF_039",
+      "id": "REINF_038",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Process & Sustainment",
@@ -492,7 +477,7 @@
       "readinessScore": 4
     },
     {
-      "id": "REINF_040",
+      "id": "REINF_039",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Process & Sustainment",
@@ -504,7 +489,7 @@
       "readinessScore": 4
     },
     {
-      "id": "REINF_041",
+      "id": "REINF_040",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Process & Sustainment",
@@ -516,7 +501,7 @@
       "readinessScore": 4
     },
     {
-      "id": "REINF_042",
+      "id": "REINF_041",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
@@ -528,7 +513,7 @@
       "readinessScore": 4
     },
     {
-      "id": "REINF_043",
+      "id": "REINF_042",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",

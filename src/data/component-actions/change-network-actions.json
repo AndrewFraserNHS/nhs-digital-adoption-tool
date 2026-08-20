@@ -6,18 +6,15 @@
   "outcomes": [
     {
       "id": "CN_O1",
-      "name": "A representative and effective change network has been established",
-      "description": ""
+      "name": "A representative and effective change network has been established"
     },
     {
       "id": "CN_O2",
-      "name": "The change network actively enables engagement and adoption",
-      "description": ""
+      "name": "The change network actively enables engagement and adoption"
     },
     {
       "id": "CN_O3",
-      "name": "The change network is embedded and delivers ongoing value",
-      "description": ""
+      "name": "The change network is embedded and delivers ongoing value"
     }
   ],
   "actions": [
@@ -63,7 +60,7 @@
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
       "category": "Engagement",
-      "action": "Discuss the concept of change champions and change agents with sponsors and stakeholder groups.",
+      "action": "Discuss the concept of change agents and change champions with sponsors and stakeholder groups.",
       "outcomeIds": [
         "CN_O1"
       ],
@@ -75,7 +72,7 @@
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
-      "action": "Identify individuals who may have influence, credibility or interest in supporting change locally.",
+      "action": "Assess whether useful local networks, forums or communities already exist that could support change activities.",
       "outcomeIds": [
         "CN_O1"
       ],
@@ -111,14 +108,14 @@
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
-      "action": "Assess whether useful local networks, forums or communities already exist that could support change activities.",
+      "action": "Identify possible individuals who may have influence, credibility or interest in supporting change locally.",
       "outcomeIds": [
         "CN_O1"
       ],
       "readinessScore": 0
     },
     {
-      "id": "CN_009",
+      "id": "CN_0009",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
@@ -130,7 +127,7 @@
       "readinessScore": 1
     },
     {
-      "id": "CN_010",
+      "id": "CN_0010",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
@@ -142,7 +139,7 @@
       "readinessScore": 1
     },
     {
-      "id": "CN_011",
+      "id": "CN_0011",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
@@ -154,7 +151,7 @@
       "readinessScore": 1
     },
     {
-      "id": "CN_012",
+      "id": "CN_0012",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
@@ -166,7 +163,7 @@
       "readinessScore": 1
     },
     {
-      "id": "CN_013",
+      "id": "CN_0013",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
@@ -178,7 +175,7 @@
       "readinessScore": 1
     },
     {
-      "id": "CN_014",
+      "id": "CN_0014",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
@@ -190,7 +187,7 @@
       "readinessScore": 1
     },
     {
-      "id": "CN_015",
+      "id": "CN_0015",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
@@ -202,7 +199,7 @@
       "readinessScore": 1
     },
     {
-      "id": "CN_016",
+      "id": "CN_0016",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
@@ -214,7 +211,7 @@
       "readinessScore": 1
     },
     {
-      "id": "CN_017",
+      "id": "CN_0017",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
@@ -227,7 +224,7 @@
       "readinessScore": 1
     },
     {
-      "id": "CN_018",
+      "id": "CN_0018",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
@@ -239,7 +236,7 @@
       "readinessScore": 1
     },
     {
-      "id": "CN_019",
+      "id": "CN_0019",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
@@ -251,7 +248,7 @@
       "readinessScore": 2
     },
     {
-      "id": "CN_020",
+      "id": "CN_0020",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
@@ -263,7 +260,7 @@
       "readinessScore": 2
     },
     {
-      "id": "CN_021",
+      "id": "CN_0021",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
@@ -275,7 +272,7 @@
       "readinessScore": 2
     },
     {
-      "id": "CN_022",
+      "id": "CN_0022",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
@@ -287,7 +284,7 @@
       "readinessScore": 2
     },
     {
-      "id": "CN_023",
+      "id": "CN_0023",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
@@ -300,7 +297,7 @@
       "readinessScore": 2
     },
     {
-      "id": "CN_024",
+      "id": "CN_0024",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
@@ -312,7 +309,7 @@
       "readinessScore": 2
     },
     {
-      "id": "CN_025",
+      "id": "CN_0025",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
@@ -324,19 +321,19 @@
       "readinessScore": 2
     },
     {
-      "id": "CN_026",
+      "id": "CN_0026",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Engagement",
-      "action": "Enable network members to represent stakeholder concerns within programme discussions.",
+      "action": "Empower network members to represent stakeholder concerns within programme discussions.",
       "outcomeIds": [
         "CN_O2"
       ],
       "readinessScore": 2
     },
     {
-      "id": "CN_027",
+      "id": "CN_0027",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
@@ -348,7 +345,7 @@
       "readinessScore": 2
     },
     {
-      "id": "CN_028",
+      "id": "CN_0028",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
@@ -361,7 +358,7 @@
       "readinessScore": 2
     },
     {
-      "id": "CN_029",
+      "id": "CN_0029",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
@@ -373,7 +370,7 @@
       "readinessScore": 3
     },
     {
-      "id": "CN_030",
+      "id": "CN_0030",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
@@ -385,7 +382,7 @@
       "readinessScore": 3
     },
     {
-      "id": "CN_031",
+      "id": "CN_0031",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
@@ -397,7 +394,7 @@
       "readinessScore": 3
     },
     {
-      "id": "CN_032",
+      "id": "CN_0032",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
@@ -409,20 +406,7 @@
       "readinessScore": 3
     },
     {
-      "id": "CN_033",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
-      "lens": "Strategic Direction & Leadership",
-      "category": "Governance",
-      "action": "Expand network involvement in implementation and decision-support activities.",
-      "outcomeIds": [
-        "CN_O2",
-        "CN_O3"
-      ],
-      "readinessScore": 3
-    },
-    {
-      "id": "CN_034",
+      "id": "CN_0033",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
@@ -434,7 +418,19 @@
       "readinessScore": 3
     },
     {
-      "id": "CN_035",
+      "id": "CN_0034",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "Use network members to reinforce desired behaviours and ways of working.",
+      "outcomeIds": [
+        "CN_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "CN_0035",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
@@ -447,7 +443,7 @@
       "readinessScore": 3
     },
     {
-      "id": "CN_036",
+      "id": "CN_0036",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
@@ -459,7 +455,7 @@
       "readinessScore": 3
     },
     {
-      "id": "CN_037",
+      "id": "CN_0037",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
@@ -472,19 +468,7 @@
       "readinessScore": 3
     },
     {
-      "id": "CN_038",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
-      "lens": "People Experience & Culture",
-      "category": "Reinforcement",
-      "action": "Use network members to reinforce desired behaviours and ways of working.",
-      "outcomeIds": [
-        "CN_O2"
-      ],
-      "readinessScore": 3
-    },
-    {
-      "id": "CN_039",
+      "id": "CN_0038",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
@@ -496,7 +480,7 @@
       "readinessScore": 4
     },
     {
-      "id": "CN_040",
+      "id": "CN_0039",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
@@ -508,7 +492,7 @@
       "readinessScore": 4
     },
     {
-      "id": "CN_041",
+      "id": "CN_0040",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
@@ -520,7 +504,7 @@
       "readinessScore": 4
     },
     {
-      "id": "CN_042",
+      "id": "CN_0041",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
@@ -532,7 +516,7 @@
       "readinessScore": 4
     },
     {
-      "id": "CN_043",
+      "id": "CN_0042",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
@@ -544,7 +528,7 @@
       "readinessScore": 4
     },
     {
-      "id": "CN_044",
+      "id": "CN_0043",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
@@ -557,19 +541,19 @@
       "readinessScore": 4
     },
     {
-      "id": "CN_045",
+      "id": "CN_0044",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
-      "action": "Embed change champion and change agent roles into organisational culture.",
+      "action": "Embed change agents and change champion roles into organisational culture.",
       "outcomeIds": [
         "CN_O3"
       ],
       "readinessScore": 4
     },
     {
-      "id": "CN_046",
+      "id": "CN_0045",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
@@ -581,7 +565,7 @@
       "readinessScore": 4
     },
     {
-      "id": "CN_047",
+      "id": "CN_0046",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
@@ -593,7 +577,7 @@
       "readinessScore": 4
     },
     {
-      "id": "CN_048",
+      "id": "CN_0047",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",

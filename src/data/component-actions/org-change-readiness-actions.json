@@ -6,18 +6,15 @@
   "outcomes": [
     {
       "id": "OCR_O1",
-      "name": "Organisational readiness factors are understood",
-      "description": "Readiness drivers, barriers, strengths, capacity constraints and organisational conditions affecting change success have been identified and assessed."
+      "name": "Organisational readiness factors are understood"
     },
     {
       "id": "OCR_O2",
-      "name": "Readiness gaps are addressed and readiness is improved",
-      "description": "Actions are implemented to strengthen readiness, remove barriers and increase organisational preparedness."
+      "name": "Readiness gaps are addressed and readiness is improved"
     },
     {
       "id": "OCR_O3",
-      "name": "Organisational readiness supports successful and sustainable change",
-      "description": "Readiness is actively managed, monitored and embedded into organisational change delivery."
+      "name": "Organisational readiness supports successful and sustainable change"
     }
   ],
   "actions": [
@@ -234,7 +231,8 @@
       "action": "Communicate organisational readiness findings and improvement priorities.",
       "outcomeIds": [
         "OCR_O2"
-      ]
+      ],
+      "readinessScore": 1
     },
     {
       "id": "OCR_019",
@@ -278,7 +276,7 @@
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
       "category": "Engagement",
-      "action": "Strengthen leadership readiness to support and champion the change effectively.",
+      "action": "Strengthen leadership readiness by upskilling senior leaders in Change Management to support and champion the change effectively.",
       "outcomeIds": [
         "OCR_O2"
       ],
@@ -290,7 +288,7 @@
       "toStatus": "Embedding",
       "lens": "Skills & Behaviour",
       "category": "Training & Learning",
-      "action": "Build manager readiness to coach, support and guide teams through the change.",
+      "action": "Build operational manager readiness to coach, support and guide teams through the change.",
       "outcomeIds": [
         "OCR_O2"
       ],
@@ -394,6 +392,166 @@
         "OCR_O3"
       ],
       "readinessScore": 3
+    },
+    {
+      "id": "OCR_032",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "",
+      "action": "Embed organisational readiness assessment into organisational change governance, assurance and decision-making processes.",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "OCR_033",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "",
+      "action": "Establish organisational accountability for maintaining readiness standards across change portfolios and programmes.",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "OCR_034",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "",
+      "action": "Benchmark organisational readiness maturity across programmes, projects and transformation initiatives.",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "OCR_035",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "",
+      "action": "Continuously improve organisational readiness methodologies, frameworks and assessment approaches using organisational learning.",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "OCR_036",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "",
+      "action": "Embed readiness metrics and reporting within organisational governance, portfolio management and assurance arrangements.",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "OCR_037",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Skills & Behaviour",
+      "category": "",
+      "action": "Identify emerging workforce capability requirements that could influence future organisational readiness levels.",
+      "outcomeIds": [],
+      "readinessScore": 3
+    },
+    {
+      "id": "OCR_038",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Skills & Behaviour",
+      "category": "",
+      "action": "Validate that managers and local leaders have the skills and confidence required to support implementation activities.",
+      "outcomeIds": [],
+      "readinessScore": 3
+    },
+    {
+      "id": "OCR_039",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Skills & Behaviour",
+      "category": "",
+      "action": "Reinforce behaviours and practices that demonstrate organisational preparedness and readiness for change.",
+      "outcomeIds": [],
+      "readinessScore": 3
+    },
+    {
+      "id": "OCR_040",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Skills & Behaviour",
+      "category": "",
+      "action": "Verify that capability-building activities have improved organisational readiness and preparedness.",
+      "outcomeIds": [],
+      "readinessScore": 3
+    },
+    {
+      "id": "OCR_041",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Skills & Behaviour",
+      "category": "",
+      "action": "Recognise and reinforce behaviours that demonstrate proactive preparedness, adaptability and readiness for change.",
+      "outcomeIds": [],
+      "readinessScore": 3
+    },
+    {
+      "id": "OCR_042",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Skills & Behaviour",
+      "category": "",
+      "action": "Embed organisational readiness capability development into ongoing learning, development and workforce planning activities.",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "OCR_043",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Skills & Behaviour",
+      "category": "",
+      "action": "Monitor long-term organisational preparedness, workforce capability and readiness competency across the organisation.",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "OCR_044",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Skills & Behaviour",
+      "category": "",
+      "action": "Benchmark organisational readiness capability and preparedness maturity across programmes, teams and organisational functions.",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "OCR_045",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Skills & Behaviour",
+      "category": "",
+      "action": "Capture and apply organisational learning relating to capability, preparedness and readiness outcomes.",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "OCR_046",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Skills & Behaviour",
+      "category": "",
+      "action": "Assess the effectiveness of organisational readiness capability-building activities in supporting future change initiatives.",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "OCR_047",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Skills & Behaviour",
+      "category": "",
+      "action": "Promote a culture of continuous capability development, preparedness and readiness for change.",
+      "outcomeIds": [],
+      "readinessScore": 4
     }
   ]
 }

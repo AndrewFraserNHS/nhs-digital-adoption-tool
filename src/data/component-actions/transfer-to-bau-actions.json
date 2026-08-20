@@ -6,18 +6,15 @@
   "outcomes": [
     {
       "id": "BAU_O1",
-      "name": "Operational ownership and accountability have been established",
-      "description": ""
+      "name": "Operational ownership and accountability have been established"
     },
     {
       "id": "BAU_O2",
-      "name": "Business-as-usual capabilities and support arrangements are in place",
-      "description": ""
+      "name": "Business-as-usual capabilities and support arrangements are in place"
     },
     {
       "id": "BAU_O3",
-      "name": "The change is fully embedded within normal operational management",
-      "description": ""
+      "name": "The change is fully embedded within normal operational management"
     }
   ],
   "actions": [
@@ -46,7 +43,7 @@
       "readinessScore": 0
     },
     {
-      "id": "BAU_0003",
+      "id": "BAU_003",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "Strategic Direction & Leadership",
@@ -123,7 +120,7 @@
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
-      "action": "Identify and confirm future operational owners for the change, associated processes and ongoing outcomes.",
+      "action": "Identify potential future operational owners for the change, associated processes and ongoing outcomes.",
       "outcomeIds": [
         "BAU_O1"
       ],
@@ -183,7 +180,7 @@
       "toStatus": "Developing",
       "lens": "Process & Sustainment",
       "category": "Engagement",
-      "action": "Engage future operational owners to validate expectations, responsibilities and support requirements.",
+      "action": "Engage potential operational owners to validate expectations, responsibilities and support requirements.",
       "outcomeIds": [
         "BAU_O1"
       ],

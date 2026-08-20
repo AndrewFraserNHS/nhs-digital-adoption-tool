@@ -6,18 +6,15 @@
   "outcomes": [
     {
       "id": "CFC_O1",
-      "name": "The need for change has been clearly defined and evidenced",
-      "description": "A clear, evidence-based explanation exists describing the problem, opportunity, risk or regulatory requirement that necessitates change."
+      "name": "The need for change has been clearly defined and evidenced"
     },
     {
       "id": "CFC_O2",
-      "name": "The case for change is understood and accepted",
-      "description": "Stakeholders understand why the change is required and recognise the relevance, urgency and importance of the issue being addressed."
+      "name": "The case for change is understood and accepted"
     },
     {
       "id": "CFC_O3",
-      "name": "The case for change remains credible and relevant",
-      "description": "The rationale for change is regularly reviewed, supported by evidence, and reinforced through communications, governance and programme activity."
+      "name": "The case for change remains credible and relevant"
     }
   ],
   "actions": [
@@ -135,7 +132,7 @@
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
-      "action": "Gather quantitative and qualitative evidence demonstrating the impact of the current situation.",
+      "action": "Gather quantitative and qualitative evidence demonstrating the impact the change will have on the current situation.",
       "outcomeIds": [
         "CFC_O1"
       ],
@@ -147,7 +144,7 @@
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
-      "action": "Assess alignment between the proposed change and organisational objectives, strategies and priorities.",
+      "action": "Assess alignment between the proposed change and organisational objectives, strategies and priorities. ",
       "outcomeIds": [
         "CFC_O1"
       ],
@@ -158,12 +155,9 @@
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
-      "category": "Design",
-      "action": "Develop a structured case for change narrative explaining why change is required and why action is needed now.",
-      "outcomeIds": [
-        "CFC_O1",
-        "CFC_O2"
-      ],
+      "category": "",
+      "action": "Identify potential strategic and operational barriers to the proposed change",
+      "outcomeIds": [],
       "readinessScore": 1
     },
     {
@@ -171,9 +165,10 @@
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
-      "category": "Governance",
-      "action": "Identify and secure sponsors and senior leaders who will champion the case for change.",
+      "category": "Design",
+      "action": "Develop a draft case for change explaining why change is required, why action is needed now and the potential benefits associated with the change.",
       "outcomeIds": [
+        "CFC_O1",
         "CFC_O2"
       ],
       "readinessScore": 1
@@ -233,7 +228,7 @@
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
       "category": "Design",
-      "action": "Refine and strengthen the case for change using evidence, stakeholder insight and feedback.",
+      "action": "Refine the draft case for change using evidence, stakeholder insight and feedback ",
       "outcomeIds": [
         "CFC_O1",
         "CFC_O2"
@@ -246,7 +241,7 @@
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
-      "action": "Obtain formal leadership and governance endorsement of the case for change.",
+      "action": "Obtain approval and formal leadership and governance endorsement of the draft case for change.",
       "outcomeIds": [
         "CFC_O1",
         "CFC_O3"
@@ -283,9 +278,8 @@
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
       "category": "Measurement & Evaluation",
-      "action": "Establish baseline measures that evidence the current problem or opportunity.",
+      "action": "Define how evidence supporting the case for change will be reviewed and maintained throughout the change lifecycle.",
       "outcomeIds": [
-        "CFC_O1",
         "CFC_O3"
       ],
       "readinessScore": 2
@@ -294,28 +288,16 @@
       "id": "CFC_023",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
-      "lens": "Strategic Direction & Leadership",
-      "category": "Measurement & Evaluation",
-      "action": "Define how evidence supporting the case for change will be reviewed and maintained throughout the change lifecycle.",
-      "outcomeIds": [
-        "CFC_O3"
-      ],
-      "readinessScore": 2
-    },
-    {
-      "id": "CFC_024",
-      "fromStatus": "Developing",
-      "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Communication",
-      "action": "Communicate the case for change through engagement and communication activities.",
+      "action": "Communicate through engagement and communication activities why the change is necessary",
       "outcomeIds": [
         "CFC_O2"
       ],
       "readinessScore": 2
     },
     {
-      "id": "CFC_025",
+      "id": "CFC_024",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
@@ -327,7 +309,7 @@
       "readinessScore": 2
     },
     {
-      "id": "CFC_026",
+      "id": "CFC_025",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
@@ -339,7 +321,7 @@
       "readinessScore": 2
     },
     {
-      "id": "CFC_027",
+      "id": "CFC_026",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
@@ -352,7 +334,7 @@
       "readinessScore": 2
     },
     {
-      "id": "CFC_028",
+      "id": "CFC_027",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
@@ -365,7 +347,7 @@
       "readinessScore": 2
     },
     {
-      "id": "CFC_029",
+      "id": "CFC_028",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
@@ -378,7 +360,7 @@
       "readinessScore": 3
     },
     {
-      "id": "CFC_030",
+      "id": "CFC_029",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
@@ -390,7 +372,7 @@
       "readinessScore": 3
     },
     {
-      "id": "CFC_031",
+      "id": "CFC_030",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
@@ -402,7 +384,7 @@
       "readinessScore": 3
     },
     {
-      "id": "CFC_032",
+      "id": "CFC_031",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
@@ -414,7 +396,7 @@
       "readinessScore": 3
     },
     {
-      "id": "CFC_033",
+      "id": "CFC_032",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
@@ -426,7 +408,7 @@
       "readinessScore": 3
     },
     {
-      "id": "CFC_034",
+      "id": "CFC_033",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
@@ -439,7 +421,7 @@
       "readinessScore": 3
     },
     {
-      "id": "CFC_035",
+      "id": "CFC_034",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
@@ -451,7 +433,7 @@
       "readinessScore": 3
     },
     {
-      "id": "CFC_036",
+      "id": "CFC_035",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
@@ -463,7 +445,7 @@
       "readinessScore": 3
     },
     {
-      "id": "CFC_037",
+      "id": "CFC_036",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
@@ -476,7 +458,7 @@
       "readinessScore": 3
     },
     {
-      "id": "CFC_038",
+      "id": "CFC_037",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
@@ -488,7 +470,7 @@
       "readinessScore": 3
     },
     {
-      "id": "CFC_039",
+      "id": "CFC_038",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
@@ -500,7 +482,7 @@
       "readinessScore": 4
     },
     {
-      "id": "CFC_040",
+      "id": "CFC_039",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
@@ -512,7 +494,7 @@
       "readinessScore": 4
     },
     {
-      "id": "CFC_041",
+      "id": "CFC_040",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
@@ -524,7 +506,7 @@
       "readinessScore": 4
     },
     {
-      "id": "CFC_042",
+      "id": "CFC_041",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
@@ -536,7 +518,7 @@
       "readinessScore": 4
     },
     {
-      "id": "CFC_043",
+      "id": "CFC_042",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
@@ -549,7 +531,7 @@
       "readinessScore": 4
     },
     {
-      "id": "CFC_044",
+      "id": "CFC_043",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
@@ -562,7 +544,7 @@
       "readinessScore": 4
     },
     {
-      "id": "CFC_045",
+      "id": "CFC_044",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
@@ -574,7 +556,7 @@
       "readinessScore": 4
     },
     {
-      "id": "CFC_046",
+      "id": "CFC_045",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
@@ -586,7 +568,7 @@
       "readinessScore": 4
     },
     {
-      "id": "CFC_047",
+      "id": "CFC_046",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
@@ -598,7 +580,7 @@
       "readinessScore": 4
     },
     {
-      "id": "CFC_048",
+      "id": "CFC_047",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
@@ -608,6 +590,31 @@
         "CFC_O3"
       ],
       "readinessScore": 4
+    },
+    {
+      "id": "CFC_048",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "Establish baseline measures that evidence the current problem or opportunity.",
+      "outcomeIds": [
+        "CFC_O1",
+        "CFC_O3"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "CFC_049",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "Identify and secure sponsors and senior leaders who will champion the case for change.",
+      "outcomeIds": [
+        "CFC_O2"
+      ],
+      "readinessScore": 1
     }
   ]
 }

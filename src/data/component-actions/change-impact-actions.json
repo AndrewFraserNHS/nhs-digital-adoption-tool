@@ -6,18 +6,15 @@
   "outcomes": [
     {
       "id": "CI_O1",
-      "name": "The impact of the change has been identified and understood",
-      "description": "There is a clear understanding of who and what will be affected by the change, including impacts on people, processes, roles, responsibilities, services, customers, stakeholders and business-as-usual operations."
+      "name": "The impact of the change has been identified and understood"
     },
     {
       "id": "CI_O2",
-      "name": "Impacts have been assessed, validated and prioritised",
-      "description": "The scale, complexity, significance and variability of change impacts have been assessed and validated with affected stakeholders, enabling prioritisation of support and planning activity."
+      "name": "Impacts have been assessed, validated and prioritised"
     },
     {
       "id": "CI_O3",
-      "name": "Change impacts are actively managed through plans, governance and support",
-      "description": "Impact insight is used to shape change plans, communications, engagement, learning, risk management, governance decisions and sustainment activity throughout the change lifecycle."
+      "name": "Change impacts are actively managed through plans, governance and support"
     }
   ],
   "actions": [
@@ -147,7 +144,7 @@
       "toStatus": "Developing",
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
-      "action": "Identify and document intended and unintended impacts that could affect performance, service continuity or stakeholder experience.",
+      "action": "Identify and document intended impacts that could affect performance, service continuity or stakeholder experience.",
       "outcomeIds": [
         "CI_O1",
         "CI_O2"
@@ -244,7 +241,6 @@
     },
     {
       "id": "CI_019",
-      "componentId": "CHANGE_IMPACT",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
@@ -258,7 +254,6 @@
     },
     {
       "id": "CI_020",
-      "componentId": "CHANGE_IMPACT",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
@@ -271,7 +266,6 @@
     },
     {
       "id": "CI_021",
-      "componentId": "CHANGE_IMPACT",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
@@ -285,7 +279,6 @@
     },
     {
       "id": "CI_022",
-      "componentId": "CHANGE_IMPACT",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
@@ -298,7 +291,6 @@
     },
     {
       "id": "CI_023",
-      "componentId": "CHANGE_IMPACT",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
@@ -312,7 +304,6 @@
     },
     {
       "id": "CI_024",
-      "componentId": "CHANGE_IMPACT",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
@@ -322,6 +313,146 @@
         "CI_O2"
       ],
       "readinessScore": 2
+    },
+    {
+      "id": "CI_025",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "",
+      "action": "Measure the effectiveness of change impact management activities across impacted stakeholder groups, services and business areas",
+      "outcomeIds": [],
+      "readinessScore": 3
+    },
+    {
+      "id": "CI_026",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "",
+      "action": "Review impact assessment findings to identify remaining high-impact areas requiring support or intervention.",
+      "outcomeIds": [],
+      "readinessScore": 3
+    },
+    {
+      "id": "CI_027",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "",
+      "action": "Address residual risks arising from identified people, process, service and operational impacts.",
+      "outcomeIds": [],
+      "readinessScore": 3
+    },
+    {
+      "id": "CI_028",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "",
+      "action": "Gather stakeholder feedback regarding actual impacts experienced during implementation.",
+      "outcomeIds": [],
+      "readinessScore": 3
+    },
+    {
+      "id": "CI_029",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "",
+      "action": "Validate that identified impacts, mitigations and support activities remain relevant and effective",
+      "outcomeIds": [],
+      "readinessScore": 3
+    },
+    {
+      "id": "CI_030",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "",
+      "action": "Adjust impact management interventions using implementation experience, stakeholder feedback and operational insight.\",",
+      "outcomeIds": [],
+      "readinessScore": 3
+    },
+    {
+      "id": "CI_031",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "",
+      "action": "Assess whether anticipated impacts have occurred and whether mitigation activities achieved the desired outcome.\",",
+      "outcomeIds": [],
+      "readinessScore": 3
+    },
+    {
+      "id": "CI_032",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Planning & Risk",
+      "category": "",
+      "action": "Monitor long-term impact trends, outcomes and organisational consequences of change initiatives",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "CI_033",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Planning & Risk",
+      "category": "",
+      "action": "Benchmark change impact management performance and maturity across programmes and change initiatives.",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "CI_034",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "",
+      "action": "Maintain organisation-wide insight mechanisms to identify emerging or cumulative impacts from ongoing change activity",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "CI_035",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "",
+      "action": "Recognise and reinforce good practice in identifying, managing and mitigating change impacts",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "CI_036",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Planning & Risk",
+      "category": "",
+      "action": "Capture and apply organisational learning from change impact successes, challenges and implementation experience",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "CI_037",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Planning & Risk",
+      "category": "",
+      "action": "Continuously review future impact-related risks, dependencies and emerging organisational pressures",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "CI_038",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "",
+      "action": "Promote a culture where change impacts are proactively assessed, managed and used to inform organisational improvement",
+      "outcomeIds": [],
+      "readinessScore": 4
     }
   ]
 }

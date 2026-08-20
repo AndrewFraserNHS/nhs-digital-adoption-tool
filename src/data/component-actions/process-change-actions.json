@@ -6,18 +6,15 @@
   "outcomes": [
     {
       "id": "PC_O1",
-      "name": "Current and future processes have been defined",
-      "description": ""
+      "name": "Current and future processes have been defined"
     },
     {
       "id": "PC_O2",
-      "name": "Process changes have been implemented and adopted",
-      "description": ""
+      "name": "Process changes have been implemented and adopted"
     },
     {
       "id": "PC_O3",
-      "name": "Processes are optimised and continuously improved",
-      "description": ""
+      "name": "Processes are optimised and continuously improved"
     }
   ],
   "actions": [
@@ -363,7 +360,7 @@
       "toStatus": "Adopted",
       "lens": "Process & Sustainment",
       "category": "Measurement & Evaluation",
-      "action": "Measure process performance against baseline and target measures.",
+      "action": "Measure whether the future state processes are working against baseline and target measures.",
       "outcomeIds": [
         "PC_O2",
         "PC_O3"
@@ -376,7 +373,7 @@
       "toStatus": "Adopted",
       "lens": "Process & Sustainment",
       "category": "Analysis & Insight",
-      "action": "Analyse process performance trends and identify opportunities for optimisation.",
+      "action": "Analyse trends in the future state process performance and identify opportunities for optimisation.",
       "outcomeIds": [
         "PC_O3"
       ],
@@ -388,7 +385,7 @@
       "toStatus": "Adopted",
       "lens": "Process & Sustainment",
       "category": "Testing & Validation",
-      "action": "Validate that operational outcomes align with future-state process design objectives.",
+      "action": "Validate that new ways of working align with the objectives of the future-state processes.",
       "outcomeIds": [
         "PC_O3"
       ],
@@ -436,7 +433,7 @@
       "toStatus": "Adopted",
       "lens": "Skills & Behaviour",
       "category": "Communication",
-      "action": "Share process improvements, successes and lessons learned.",
+      "action": "Share successes and lessons learned from the new ways of working.",
       "outcomeIds": [
         "PC_O3"
       ],
@@ -448,7 +445,7 @@
       "toStatus": "Adopted",
       "lens": "Skills & Behaviour",
       "category": "Reinforcement",
-      "action": "Recognise teams contributing to successful process adoption and improvement.",
+      "action": "Recognise teams contributing to successful new ways of working and improvement.",
       "outcomeIds": [
         "PC_O3"
       ],
@@ -460,7 +457,7 @@
       "toStatus": "Adopted",
       "lens": "Process & Sustainment",
       "category": "Dependency Management",
-      "action": "Align process improvements with benefits realisation and adoption activities.",
+      "action": "Align any improvements to the new ways of working with benefits realisation and adoption activities.",
       "outcomeIds": [
         "PC_O3"
       ],
@@ -484,7 +481,7 @@
       "toStatus": "Thriving",
       "lens": "Process & Sustainment",
       "category": "Measurement & Evaluation",
-      "action": "Continuously monitor process performance and operational outcomes.",
+      "action": "Continuously monitor consistency of new ways of working and operational outcomes.",
       "outcomeIds": [
         "PC_O3"
       ],
@@ -520,7 +517,7 @@
       "toStatus": "Thriving",
       "lens": "Process & Sustainment",
       "category": "Implementation",
-      "action": "Embed ownership for continuous process improvement into operational teams.",
+      "action": "Embed ownership for continuous improvement in the new ways of working into operational teams.",
       "outcomeIds": [
         "PC_O3"
       ],
@@ -532,7 +529,7 @@
       "toStatus": "Thriving",
       "lens": "Skills & Behaviour",
       "category": "Reinforcement",
-      "action": "Promote a culture of process excellence, optimisation and continuous improvement.",
+      "action": "Promote a culture of continuous improvement and optimisation to ways of working.",
       "outcomeIds": [
         "PC_O3"
       ],

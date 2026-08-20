@@ -6,18 +6,15 @@
   "outcomes": [
     {
       "id": "BEN_O1",
-      "name": "Benefits and disbenefits have been identified and defined",
-      "description": ""
+      "name": "Benefits and disbenefits have been identified and defined"
     },
     {
       "id": "BEN_O2",
-      "name": "Benefits are actively managed and monitored",
-      "description": ""
+      "name": "Benefits are actively managed and monitored"
     },
     {
       "id": "BEN_O3",
-      "name": "Benefits are realised, evidenced and sustained",
-      "description": ""
+      "name": "Benefits are realised, evidenced and sustained"
     }
   ],
   "actions": [
@@ -75,7 +72,7 @@
       "toStatus": "Emerging",
       "lens": "Process & Sustainment",
       "category": "Analysis & Insight",
-      "action": "Identify stakeholder groups likely to experience value from the change.",
+      "action": "Identify stakeholder groups likely to experience benefits from the change.",
       "outcomeIds": [
         "BEN_O1"
       ],
@@ -99,7 +96,7 @@
       "toStatus": "Emerging",
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
-      "action": "Review available evidence that may indicate potential benefits or value opportunities.",
+      "action": "Review available evidence that may indicate potential benefits.",
       "outcomeIds": [
         "BEN_O1"
       ],
@@ -147,7 +144,7 @@
       "toStatus": "Developing",
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
-      "action": "Document likely disbenefits, trade-offs and unintended consequences associated with the change.",
+      "action": "Document likely disbenefits and trade-offs associated with the change.",
       "outcomeIds": [
         "BEN_O1"
       ],
@@ -256,7 +253,7 @@
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
       "category": "Measurement & Evaluation",
-      "action": "Define measures, KPIs and reporting arrangements for each benefit.",
+      "action": "Define measures, KPIs and reporting arrangements for each benefit and record this in the benefits register.",
       "outcomeIds": [
         "BEN_O2"
       ],
@@ -268,7 +265,7 @@
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
       "category": "Measurement & Evaluation",
-      "action": "Establish baseline measures against which benefits can be assessed.",
+      "action": "Establish baseline measures against which benefits can be assessed and include in the business case.",
       "outcomeIds": [
         "BEN_O2"
       ],
@@ -341,7 +338,7 @@
       "toStatus": "Embedding",
       "lens": "Process & Sustainment",
       "category": "Communication",
-      "action": "Use stakeholder-facing benefit messages to build support and momentum.",
+      "action": "Use stakeholder-facing benefit messages (WIIFM benefits) to build support and momentum.",
       "outcomeIds": [
         "BEN_O2"
       ],
@@ -365,7 +362,7 @@
       "toStatus": "Adopted",
       "lens": "Planning & Risk",
       "category": "Measurement & Evaluation",
-      "action": "Track benefit performance against agreed measures and targets.",
+      "action": "Track benefit performance against agreed KPI's, measures and targets.",
       "outcomeIds": [
         "BEN_O2",
         "BEN_O3"
@@ -403,7 +400,7 @@
       "toStatus": "Adopted",
       "lens": "Planning & Risk",
       "category": "Measurement & Evaluation",
-      "action": "Assess whether expected benefits are being achieved and why.",
+      "action": "Assess whether expected benefits are being achieved and if not, why.",
       "outcomeIds": [
         "BEN_O3"
       ],
@@ -415,7 +412,7 @@
       "toStatus": "Adopted",
       "lens": "Planning & Risk",
       "category": "Dependency Management",
-      "action": "Manage dependencies that affect benefit delivery.",
+      "action": "Manage dependencies that affect benefit realisation.",
       "outcomeIds": [
         "BEN_O2",
         "BEN_O3"
@@ -428,7 +425,7 @@
       "toStatus": "Adopted",
       "lens": "Process & Sustainment",
       "category": "Communication",
-      "action": "Share evidence of realised benefits with stakeholders.",
+      "action": "Share evidence of realised benefits and unintentional consequences with stakeholders.",
       "outcomeIds": [
         "BEN_O3"
       ],
@@ -453,7 +450,7 @@
       "toStatus": "Adopted",
       "lens": "Process & Sustainment",
       "category": "Measurement & Evaluation",
-      "action": "Monitor stakeholder perceptions of realised value and improvement.",
+      "action": "Monitor stakeholder perceptions of realised benefits and improvement.",
       "outcomeIds": [
         "BEN_O3"
       ],
@@ -465,7 +462,7 @@
       "toStatus": "Adopted",
       "lens": "Process & Sustainment",
       "category": "Communication",
-      "action": "Use benefit stories and examples to reinforce adoption.",
+      "action": "Use WIIFM benefit stories and examples to reinforce adoption.",
       "outcomeIds": [
         "BEN_O3"
       ],
@@ -489,7 +486,7 @@
       "toStatus": "Thriving",
       "lens": "Planning & Risk",
       "category": "Measurement & Evaluation",
-      "action": "Continuously monitor long-term benefit performance.",
+      "action": "Continuously monitor long-term benefit realisation.",
       "outcomeIds": [
         "BEN_O3"
       ],
@@ -501,7 +498,7 @@
       "toStatus": "Thriving",
       "lens": "Planning & Risk",
       "category": "Governance",
-      "action": "Embed benefits management into normal business and performance management processes.",
+      "action": "Embed benefits management into normal business and adoption management processes.",
       "outcomeIds": [
         "BEN_O3"
       ],
@@ -561,7 +558,7 @@
       "toStatus": "Thriving",
       "lens": "Process & Sustainment",
       "category": "Engagement",
-      "action": "Use stakeholder feedback to identify opportunities for further value realisation.",
+      "action": "Use stakeholder feedback to identify opportunities for further benefits realisation.",
       "outcomeIds": [
         "BEN_O3"
       ],
@@ -573,7 +570,7 @@
       "toStatus": "Thriving",
       "lens": "Process & Sustainment",
       "category": "Measurement & Evaluation",
-      "action": "Measure ongoing stakeholder perception of value delivered by the change.",
+      "action": "Measure ongoing stakeholder perception of benefit delivered by the change.",
       "outcomeIds": [
         "BEN_O3"
       ],
@@ -597,7 +594,7 @@
       "toStatus": "Thriving",
       "lens": "Process & Sustainment",
       "category": "Reinforcement",
-      "action": "Promote a culture of continuous benefits realisation and improvement.",
+      "action": "Promote a culture of continuous benefits realisation and adoption.",
       "outcomeIds": [
         "BEN_O3"
       ],

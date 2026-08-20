@@ -6,18 +6,15 @@
   "outcomes": [
     {
       "id": "RP_O1",
-      "name": "Organisational readiness has been assessed",
-      "description": "The organisation understands its current level of readiness, including strengths, weaknesses, barriers, dependencies and areas requiring additional support."
+      "name": "Organisational readiness has been assessed"
     },
     {
       "id": "RP_O2",
-      "name": "A robust change management plan has been developed",
-      "description": "A structured, evidence-based change management plan exists that reflects readiness findings, priorities, risks, impacts and dependencies."
+      "name": "A robust change management plan has been developed"
     },
     {
       "id": "RP_O3",
-      "name": "Readiness and planning activities actively support successful implementation",
-      "description": "Readiness is continually reviewed and the change management plan is actively managed and adjusted in response to progress, issues and organisational needs."
+      "name": "Readiness and planning activities actively support successful implementation"
     }
   ],
   "actions": [
@@ -70,7 +67,7 @@
       "readinessScore": 0
     },
     {
-      "id": "RP_0005",
+      "id": "RP_005",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "Planning & Risk",
@@ -87,7 +84,7 @@
       "toStatus": "Emerging",
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
-      "action": "Gain initial agreement that readiness assessment and change management planning activities will be required.",
+      "action": "Gain initial agreement that change readiness needs to be assessed and change management planning activities will be required.",
       "outcomeIds": [
         "RP_O1"
       ],
@@ -266,18 +263,6 @@
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
-      "category": "Governance",
-      "action": "Obtain approval of the change management plan through appropriate governance routes.",
-      "outcomeIds": [
-        "RP_O2"
-      ],
-      "readinessScore": 2
-    },
-    {
-      "id": "RP_022",
-      "fromStatus": "Developing",
-      "toStatus": "Embedding",
-      "lens": "Planning & Risk",
       "category": "Measurement & Evaluation",
       "action": "Define readiness indicators, implementation checkpoints and progress measures.",
       "outcomeIds": [
@@ -287,7 +272,7 @@
       "readinessScore": 2
     },
     {
-      "id": "RP_023",
+      "id": "RP_022",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
@@ -300,7 +285,7 @@
       "readinessScore": 2
     },
     {
-      "id": "RP_024",
+      "id": "RP_023",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
@@ -313,19 +298,7 @@
       "readinessScore": 2
     },
     {
-      "id": "RP_025",
-      "fromStatus": "Developing",
-      "toStatus": "Embedding",
-      "lens": "Planning & Risk",
-      "category": "Communication",
-      "action": "Communicate implementation timelines, expected activities and preparation requirements.",
-      "outcomeIds": [
-        "RP_O2"
-      ],
-      "readinessScore": 2
-    },
-    {
-      "id": "RP_026",
+      "id": "RP_024",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
@@ -337,7 +310,7 @@
       "readinessScore": 2
     },
     {
-      "id": "RP_027",
+      "id": "RP_025",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
@@ -349,7 +322,7 @@
       "readinessScore": 2
     },
     {
-      "id": "RP_028",
+      "id": "RP_026",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
@@ -359,6 +332,30 @@
         "RP_O3"
       ],
       "readinessScore": 2
+    },
+    {
+      "id": "RP_027",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "Governance",
+      "action": "Obtain approval of the change management plan through appropriate governance routes.",
+      "outcomeIds": [
+        "RP_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "RP_028",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "Communication",
+      "action": "Communicate implementation timelines, expected activities and preparation requirements.",
+      "outcomeIds": [
+        "RP_O2"
+      ],
+      "readinessScore": 3
     },
     {
       "id": "RP_029",
@@ -462,7 +459,7 @@
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
       "category": "Testing & Validation",
-      "action": "Validate organisational readiness before key implementation events and go-live activities.",
+      "action": "Validate organisational readiness and acceptance criteria before key implementation events and go-live activities start.",
       "outcomeIds": [
         "RP_O3"
       ],
@@ -509,11 +506,9 @@
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
-      "category": "Governance",
-      "action": "Embed readiness reviews and change planning disciplines into organisational change delivery standards.",
-      "outcomeIds": [
-        "RP_O3"
-      ],
+      "category": "",
+      "action": "Senior leaders should have visibility of areas in the organisation where readiness is low and impact of the change is high",
+      "outcomeIds": [],
       "readinessScore": 4
     },
     {
@@ -558,11 +553,9 @@
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
-      "category": "Reinforcement",
-      "action": "Recognise teams and leaders that consistently demonstrate strong change preparedness and planning discipline.",
-      "outcomeIds": [
-        "RP_O3"
-      ],
+      "category": "",
+      "action": "Review progress against readiness acceptance criteria to inform go live decision",
+      "outcomeIds": [],
       "readinessScore": 4
     },
     {
@@ -582,6 +575,30 @@
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "Embed readiness reviews and change planning disciplines into organisational change delivery standards.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "RP_048",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Reinforcement",
+      "action": "Recognise teams and leaders that consistently demonstrate strong change preparedness and planning discipline.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "RP_049",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
       "category": "Design",
       "action": "Continuously improve change planning templates, standards and guidance using organisational learning.",
       "outcomeIds": [
@@ -590,7 +607,17 @@
       "readinessScore": 4
     },
     {
-      "id": "RP_048",
+      "id": "RP_050",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "",
+      "action": "Agree readiness acceptance criteria to support go live decisions",
+      "outcomeIds": [],
+      "readinessScore": 2
+    },
+    {
+      "id": "RP_051",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",

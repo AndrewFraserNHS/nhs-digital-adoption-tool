@@ -34,20 +34,6 @@
   "actions": [
     {
       "id": "VISION_001",
-      "componentId": "VISION",
-      "fromStatus": "Not Started",
-      "toStatus": "Emerging",
-      "lens": "Strategic Direction & Leadership",
-      "category": "Engagement",
-      "action": "Facilitate an initial vision workshop with the SRO, sponsors and key programme stakeholders to explore the future state.",
-      "outcomeIds": [
-        "VISION_O1"
-      ],
-      "readinessScore": 0
-    },
-    {
-      "id": "VISION_002",
-      "componentId": "VISION",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "Strategic Direction & Leadership",
@@ -59,22 +45,7 @@
       "readinessScore": 0
     },
     {
-      "id": "VISION_003",
-      "componentId": "VISION",
-      "fromStatus": "Not Started",
-      "toStatus": "Emerging",
-      "lens": "Strategic Direction & Leadership",
-      "category": "Design",
-      "action": "Document initial themes describing why the change is needed and what success may look like.",
-      "outcomeIds": [
-        "VISION_O1",
-        "VISION_O2"
-      ],
-      "readinessScore": 0
-    },
-    {
-      "id": "VISION_004",
-      "componentId": "VISION",
+      "id": "VISION_002",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "Strategic Direction & Leadership",
@@ -87,8 +58,32 @@
       "readinessScore": 0
     },
     {
+      "id": "VISION_003",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Engagement",
+      "action": "Facilitate an initial vision workshop with the SRO, sponsors and key programme stakeholders to explore the future state.",
+      "outcomeIds": [
+        "VISION_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "VISION_004",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "Document initial themes describing why the change is needed and what success may look like.",
+      "outcomeIds": [
+        "VISION_O1",
+        "VISION_O2"
+      ],
+      "readinessScore": 0
+    },
+    {
       "id": "VISION_005",
-      "componentId": "VISION",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "Strategic Direction & Leadership",
@@ -101,7 +96,31 @@
     },
     {
       "id": "VISION_006",
-      "componentId": "VISION",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "Create simple awareness messages explaining that a vision is being developed.",
+      "outcomeIds": [
+        "VISION_O2"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "VISION_007",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "Identify key stakeholder groups that need to be involved in early vision discussions.",
+      "outcomeIds": [
+        "VISION_O1",
+        "VISION_O2"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "VISION_008",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
@@ -114,8 +133,7 @@
       "readinessScore": 0
     },
     {
-      "id": "VISION_007",
-      "componentId": "VISION",
+      "id": "VISION_009",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
@@ -128,8 +146,7 @@
       "readinessScore": 0
     },
     {
-      "id": "VISION_008",
-      "componentId": "VISION",
+      "id": "VISION_010",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
@@ -141,35 +158,7 @@
       "readinessScore": 0
     },
     {
-      "id": "VISION_009",
-      "componentId": "VISION",
-      "fromStatus": "Not Started",
-      "toStatus": "Emerging",
-      "lens": "People Experience & Culture",
-      "category": "Communication",
-      "action": "Create simple awareness messages explaining that a vision is being developed.",
-      "outcomeIds": [
-        "VISION_O2"
-      ],
-      "readinessScore": 0
-    },
-    {
-      "id": "VISION_010",
-      "componentId": "VISION",
-      "fromStatus": "Not Started",
-      "toStatus": "Emerging",
-      "lens": "People Experience & Culture",
-      "category": "Engagement",
-      "action": "Ensure representation from key stakeholder groups in early vision discussions.",
-      "outcomeIds": [
-        "VISION_O1",
-        "VISION_O2"
-      ],
-      "readinessScore": 0
-    },
-    {
       "id": "VISION_011",
-      "componentId": "VISION",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
@@ -182,7 +171,6 @@
     },
     {
       "id": "VISION_012",
-      "componentId": "VISION",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
@@ -196,7 +184,6 @@
     },
     {
       "id": "VISION_013",
-      "componentId": "VISION",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
@@ -210,7 +197,6 @@
     },
     {
       "id": "VISION_014",
-      "componentId": "VISION",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
@@ -223,7 +209,6 @@
     },
     {
       "id": "VISION_015",
-      "componentId": "VISION",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
@@ -237,7 +222,6 @@
     },
     {
       "id": "VISION_016",
-      "componentId": "VISION",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
@@ -250,7 +234,6 @@
     },
     {
       "id": "VISION_017",
-      "componentId": "VISION",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
@@ -264,7 +247,6 @@
     },
     {
       "id": "VISION_018",
-      "componentId": "VISION",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
@@ -278,7 +260,6 @@
     },
     {
       "id": "VISION_019",
-      "componentId": "VISION",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
@@ -292,7 +273,6 @@
     },
     {
       "id": "VISION_020",
-      "componentId": "VISION",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
@@ -305,7 +285,6 @@
     },
     {
       "id": "VISION_021",
-      "componentId": "VISION",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
@@ -319,7 +298,6 @@
     },
     {
       "id": "VISION_022",
-      "componentId": "VISION",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
@@ -333,7 +311,6 @@
     },
     {
       "id": "VISION_023",
-      "componentId": "VISION",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
@@ -347,7 +324,6 @@
     },
     {
       "id": "VISION_024",
-      "componentId": "VISION",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
@@ -360,7 +336,6 @@
     },
     {
       "id": "VISION_025",
-      "componentId": "VISION",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
@@ -374,7 +349,6 @@
     },
     {
       "id": "VISION_026",
-      "componentId": "VISION",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
@@ -387,7 +361,6 @@
     },
     {
       "id": "VISION_027",
-      "componentId": "VISION",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
@@ -400,7 +373,6 @@
     },
     {
       "id": "VISION_028",
-      "componentId": "VISION",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
@@ -413,7 +385,6 @@
     },
     {
       "id": "VISION_029",
-      "componentId": "VISION",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
@@ -427,7 +398,6 @@
     },
     {
       "id": "VISION_030",
-      "componentId": "VISION",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
@@ -440,7 +410,6 @@
     },
     {
       "id": "VISION_031",
-      "componentId": "VISION",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
@@ -454,12 +423,11 @@
     },
     {
       "id": "VISION_032",
-      "componentId": "VISION",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
-      "action": "Integrate the vision into programme decision-making and governance discussions.",
+      "action": "Embed the vision into organisational planning, governance and decision-making processes.",
       "outcomeIds": [
         "VISION_O3"
       ],
@@ -467,7 +435,6 @@
     },
     {
       "id": "VISION_033",
-      "componentId": "VISION",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
@@ -481,12 +448,11 @@
     },
     {
       "id": "VISION_034",
-      "componentId": "VISION",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
-      "category": "Training & Learning",
-      "action": "Provide coaching to sponsors and leaders on vision-led leadership behaviours.",
+      "category": "Measurement & Evaluation",
+      "action": "Monitor leadership engagement in promoting the vision.",
       "outcomeIds": [
         "VISION_O3"
       ],
@@ -494,20 +460,6 @@
     },
     {
       "id": "VISION_035",
-      "componentId": "VISION",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
-      "lens": "Strategic Direction & Leadership",
-      "category": "Measurement & Evaluation",
-      "action": "Measure leadership engagement in promoting the vision.",
-      "outcomeIds": [
-        "VISION_O3"
-      ],
-      "readinessScore": 3
-    },
-    {
-      "id": "VISION_036",
-      "componentId": "VISION",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
@@ -520,8 +472,7 @@
       "readinessScore": 3
     },
     {
-      "id": "VISION_037",
-      "componentId": "VISION",
+      "id": "VISION_036",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
@@ -533,8 +484,7 @@
       "readinessScore": 3
     },
     {
-      "id": "VISION_038",
-      "componentId": "VISION",
+      "id": "VISION_037",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
@@ -546,8 +496,7 @@
       "readinessScore": 3
     },
     {
-      "id": "VISION_039",
-      "componentId": "VISION",
+      "id": "VISION_038",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
@@ -560,8 +509,7 @@
       "readinessScore": 3
     },
     {
-      "id": "VISION_040",
-      "componentId": "VISION",
+      "id": "VISION_039",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
@@ -574,34 +522,19 @@
       "readinessScore": 3
     },
     {
-      "id": "VISION_041",
-      "componentId": "VISION",
-      "fromStatus": "Adopted",
-      "toStatus": "Thriving",
-      "lens": "Strategic Direction & Leadership",
-      "category": "Governance",
-      "action": "Embed the vision into organisational planning, governance and decision-making processes.",
-      "outcomeIds": [
-        "VISION_O3"
-      ],
-      "readinessScore": 4
-    },
-    {
-      "id": "VISION_042",
-      "componentId": "VISION",
+      "id": "VISION_040",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
       "category": "Reinforcement",
-      "action": "Ensure leaders consistently reference the vision when making strategic and operational decisions.",
+      "action": "Ensure leaders consistently reference the vision during planning, governance and decision-making processes",
       "outcomeIds": [
         "VISION_O3"
       ],
       "readinessScore": 4
     },
     {
-      "id": "VISION_043",
-      "componentId": "VISION",
+      "id": "VISION_041",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
@@ -614,8 +547,7 @@
       "readinessScore": 4
     },
     {
-      "id": "VISION_044",
-      "componentId": "VISION",
+      "id": "VISION_042",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
@@ -628,8 +560,7 @@
       "readinessScore": 4
     },
     {
-      "id": "VISION_045",
-      "componentId": "VISION",
+      "id": "VISION_043",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
@@ -641,8 +572,7 @@
       "readinessScore": 4
     },
     {
-      "id": "VISION_046",
-      "componentId": "VISION",
+      "id": "VISION_044",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
@@ -654,8 +584,7 @@
       "readinessScore": 4
     },
     {
-      "id": "VISION_047",
-      "componentId": "VISION",
+      "id": "VISION_045",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
@@ -668,8 +597,7 @@
       "readinessScore": 4
     },
     {
-      "id": "VISION_048",
-      "componentId": "VISION",
+      "id": "VISION_046",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
@@ -681,8 +609,7 @@
       "readinessScore": 4
     },
     {
-      "id": "VISION_049",
-      "componentId": "VISION",
+      "id": "VISION_047",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
@@ -695,8 +622,7 @@
       "readinessScore": 4
     },
     {
-      "id": "VISION_050",
-      "componentId": "VISION",
+      "id": "VISION_048",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
@@ -709,8 +635,7 @@
       "readinessScore": 4
     },
     {
-      "id": "VISION_051",
-      "componentId": "VISION",
+      "id": "VISION_049",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",

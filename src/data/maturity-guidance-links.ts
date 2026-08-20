@@ -70,11 +70,11 @@ export const GUIDANCE_WORKSTREAMS_STORAGE_KEY = 'nhs-guidance-workstreams';
 const ADOPTION_COMPONENT_TO_GUIDANCE_KEYS: Record<string, string[]> = {
   vision: ['Vision'],
   case_for_change: ['Case for Change'],
-  sponsorship: ['Sponsorship/ Change Network'],
-  change_network: ['Sponsorship/ Change Network'],
+  sponsorship: ['Senior Sponsorship & Governance'],
+  change_network: ['Change Network'],
   benefits: ['Benefits'],
-  change_impact: ['Change Impact & Risk'],
-  risk_management: ['Change Impact & Risk'],
+  change_impact: ['Change Impact'],
+  risk_management: ['Risk Management'],
   cm_readiness: ['Change Management Readiness & Planning'],
   stakeholder: ['Stakeholder Engagement & Comms'],
   resistance: ['Resistance Management'],
@@ -655,27 +655,30 @@ export function resolveGuidanceLinks(
   target: MaturityGuidanceTarget,
   componentName: string,
   section: keyof GuidanceSectionLinks,
-  overrides?: LinkOverrides
+  overrides?: LinkOverrides,
+  includeAdditional = true
 ): GuidanceLink[] {
   const byTarget = getGuidanceLinkMapByTarget(target)?.[componentName]?.[section] || [];
   const raw =
     byTarget.length > 0 ? byTarget : DEFAULT_GUIDANCE_LINK_MAP?.[componentName]?.[section] || [];
+  const filtered = includeAdditional ? raw : raw.filter((link) => link.type === 'core');
   if (!overrides) {
-    return raw;
+    return filtered;
   }
-  return raw.map((link) => resolveEffectiveLink(link, overrides));
+  return filtered.map((link) => resolveEffectiveLink(link, overrides));
 }
 
 export function resolveGuidanceLinksForAdoptionComponent(
   target: MaturityGuidanceTarget,
   componentId: string,
   section: keyof GuidanceSectionLinks,
-  overrides?: LinkOverrides
+  overrides?: LinkOverrides,
+  includeAdditional = true
 ): GuidanceLink[] {
   const keys = ADOPTION_COMPONENT_TO_GUIDANCE_KEYS[componentId] || [];
   const deduped = new Map<string, GuidanceLink>();
   keys.forEach((key) => {
-    resolveGuidanceLinks(target, key, section, overrides).forEach((link) => {
+    resolveGuidanceLinks(target, key, section, overrides, includeAdditional).forEach((link) => {
       const dedupeKey = `${link.label}::${link.url}`;
       if (!deduped.has(dedupeKey)) {
         deduped.set(dedupeKey, link);

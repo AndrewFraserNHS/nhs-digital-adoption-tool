@@ -17,6 +17,7 @@ export interface ChangeManagementGuideProps {
   getEntry: (componentId: string, lens: string) => DraftEntry;
   guidanceTarget?: MaturityGuidanceTarget;
   linkOverrides?: LinkOverrides;
+  showAdditionalGuidanceLinks?: boolean;
   darkMode?: boolean;
 }
 
@@ -211,6 +212,7 @@ export function ChangeManagementGuide({
   getEntry,
   guidanceTarget = 'Default',
   linkOverrides,
+  showAdditionalGuidanceLinks = true,
   darkMode = false,
 }: ChangeManagementGuideProps): JSX.Element {
   const [expandedSection, setExpandedSection] = useState<GuideSectionId | null>('questions');
@@ -274,7 +276,8 @@ export function ChangeManagementGuide({
               guidanceTarget,
               keyQuestion.componentIds[0],
               'inputs',
-              linkOverrides
+              linkOverrides,
+              showAdditionalGuidanceLinks
             ).slice(0, 2);
 
             return (

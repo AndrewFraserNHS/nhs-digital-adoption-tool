@@ -1024,7 +1024,8 @@ export function ProjectDetailsPage({
             <p className={`text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
               Leave a URL blank to use the fallback. Set fallback to <strong>Base</strong> to use
               your base override above, or <strong>Default</strong> to keep the original NHS Future
-              link.
+              link. Each link is tagged <strong>Core</strong> or <strong>Additional</strong> -
+              users can hide additional links from Settings if they only want the essentials.
             </p>
             {(Object.entries(DEFAULT_GUIDANCE_LINK_MAP) as [string, GuidanceSectionLinks][]).map(
               ([sectionName, sectionLinks]) => {
@@ -1071,10 +1072,25 @@ export function ProjectDetailsPage({
                               ] ?? { fallback: 'base' };
                               return (
                                 <div key={link.key} className="grid grid-cols-1 gap-1.5">
-                                  <span
-                                    className={`text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}
-                                  >
-                                    {link.label}
+                                  <span className="flex items-center gap-2">
+                                    <span
+                                      className={`text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}
+                                    >
+                                      {link.label}
+                                    </span>
+                                    <span
+                                      className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
+                                        link.type === 'core'
+                                          ? darkMode
+                                            ? 'bg-blue-500/20 text-blue-300'
+                                            : 'bg-blue-100 text-blue-700'
+                                          : darkMode
+                                            ? 'bg-slate-700 text-slate-300'
+                                            : 'bg-slate-200 text-slate-600'
+                                      }`}
+                                    >
+                                      {link.type === 'core' ? 'Core' : 'Additional'}
+                                    </span>
                                   </span>
                                   <p
                                     className={`text-xs truncate ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}

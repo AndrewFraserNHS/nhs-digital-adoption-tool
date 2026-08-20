@@ -478,15 +478,15 @@ describe('AssessmentPanel', () => {
 
   it('SHOULD render a matching CST toolkit link inside an action description', () => {
     // arrange
-    const readinessComponents: AssessmentComponent[] = [
+    const sponsorshipComponents: AssessmentComponent[] = [
       ...components,
-      { id: 'cm_readiness', label: 'CM Readiness & Planning', lenses: ['Planning and Risk'], phase: 1, target: 4 },
+      { id: 'sponsorship', label: 'Senior Sponsorship & Governance', lenses: ['Planning and Risk'], phase: 1, target: 4 },
     ];
     const entry = createEntry({
       actions: [
         {
           id: 'action-1',
-          text: 'Prepare a RACI Matrix for this workstream.',
+          text: 'Prepare a RACI/RASCI Matrix for this workstream.',
           owner: 'PMO',
           timescale: 'Q3',
           status: 'Planned',
@@ -494,18 +494,57 @@ describe('AssessmentPanel', () => {
       ],
     });
     const props = createProps({ entry });
-    props.components = readinessComponents;
-    props.activeComponentId = 'cm_readiness';
-    props.store.currentDraft = { cm_readiness: { 'Planning and Risk': entry } };
+    props.components = sponsorshipComponents;
+    props.activeComponentId = 'sponsorship';
+    props.store.currentDraft = { sponsorship: { 'Planning and Risk': entry } };
     props.getEntry = () => entry;
 
     // act
     render(<AssessmentPanel {...props} />);
 
     // assert
-    const link = screen.getByRole('link', { name: 'RACI Matrix' });
+    const link = screen.getByRole('link', { name: 'RACI/RASCI Matrix' });
     expect(link).toHaveAttribute('href', 'https://future.nhs.uk/CMN/view?objectId=34040240');
     expect(link).toHaveAttribute('target', '_blank');
+  });
+
+  it('SHOULD hide additional guidance links from action descriptions WHERE showAdditionalGuidanceLinks is false', () => {
+    // arrange
+    const sponsorshipComponents: AssessmentComponent[] = [
+      ...components,
+      { id: 'sponsorship', label: 'Senior Sponsorship & Governance', lenses: ['Planning and Risk'], phase: 1, target: 4 },
+    ];
+    const entry = createEntry({
+      actions: [
+        {
+          id: 'action-1',
+          text: 'Use the Stakeholder Analysis Tool and RACI/RASCI Matrix for this workstream.',
+          owner: 'PMO',
+          timescale: 'Q3',
+          status: 'Planned',
+        },
+      ],
+    });
+    const props = createProps({ entry });
+    props.components = sponsorshipComponents;
+    props.activeComponentId = 'sponsorship';
+    props.store.currentDraft = { sponsorship: { 'Planning and Risk': entry } };
+    props.getEntry = () => entry;
+
+    // act 1: additional links shown by default
+    const { unmount } = render(<AssessmentPanel {...props} />);
+
+    // assert 1
+    expect(screen.getByRole('link', { name: 'Stakeholder Analysis Tool' })).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'RACI/RASCI Matrix' })).toBeTruthy();
+    unmount();
+
+    // act 2: additional links hidden
+    render(<AssessmentPanel {...props} showAdditionalGuidanceLinks={false} />);
+
+    // assert 2
+    expect(screen.queryByRole('link', { name: 'Stakeholder Analysis Tool' })).toBeNull();
+    expect(screen.getByRole('link', { name: 'RACI/RASCI Matrix' })).toBeTruthy();
   });
 
   it('SHOULD dismiss the guided workflow box and offer to hide it permanently', () => {

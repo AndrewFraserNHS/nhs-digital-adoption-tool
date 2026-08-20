@@ -60,6 +60,7 @@ export interface AssessmentPanelProps {
   onActionRemove: (componentId: string, lens: string, actionId: string) => void;
   onObjectivesUpdate: (componentId: string, objectives: ComponentObjective[]) => void;
   hideGuidedWorkflow?: boolean;
+  showAdditionalGuidanceLinks?: boolean;
   onHideGuidedWorkflow?: () => void;
   darkMode?: boolean;
 }
@@ -104,21 +105,38 @@ const COMPONENT_DETAILS: Record<string, ComponentDetail> = JSON.parse(componentD
 
 const MIN_GUIDANCE_LINK_LABEL_LENGTH = 4;
 
-const GUIDANCE_LINKS_BY_COMPONENT: Record<string, GuidanceLink[]> = ASSESSMENT_COMPONENTS.reduce(
-  (map, comp) => {
-    const inputs = resolveGuidanceLinksForAdoptionComponent('Default', comp.id, 'inputs');
-    const deliverables = resolveGuidanceLinksForAdoptionComponent('Default', comp.id, 'deliverables');
-    const byLabel = new Map<string, GuidanceLink>();
-    [...inputs, ...deliverables].forEach((link) => {
-      if (link.label && link.label.trim().length >= MIN_GUIDANCE_LINK_LABEL_LENGTH) {
-        byLabel.set(link.label.toLowerCase(), link);
-      }
-    });
-    map[comp.id] = [...byLabel.values()];
-    return map;
-  },
-  {} as Record<string, GuidanceLink[]>
-);
+function buildGuidanceLinksByComponent(includeAdditional: boolean): Record<string, GuidanceLink[]> {
+  return ASSESSMENT_COMPONENTS.reduce(
+    (map, comp) => {
+      const inputs = resolveGuidanceLinksForAdoptionComponent(
+        'Default',
+        comp.id,
+        'inputs',
+        undefined,
+        includeAdditional
+      );
+      const deliverables = resolveGuidanceLinksForAdoptionComponent(
+        'Default',
+        comp.id,
+        'deliverables',
+        undefined,
+        includeAdditional
+      );
+      const byLabel = new Map<string, GuidanceLink>();
+      [...inputs, ...deliverables].forEach((link) => {
+        if (link.label && link.label.trim().length >= MIN_GUIDANCE_LINK_LABEL_LENGTH) {
+          byLabel.set(link.label.toLowerCase(), link);
+        }
+      });
+      map[comp.id] = [...byLabel.values()];
+      return map;
+    },
+    {} as Record<string, GuidanceLink[]>
+  );
+}
+
+const GUIDANCE_LINKS_BY_COMPONENT_ALL = buildGuidanceLinksByComponent(true);
+const GUIDANCE_LINKS_BY_COMPONENT_CORE = buildGuidanceLinksByComponent(false);
 
 function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -638,6 +656,7 @@ export function AssessmentPanel({
   onActionRemove,
   onObjectivesUpdate,
   hideGuidedWorkflow = false,
+  showAdditionalGuidanceLinks = true,
   onHideGuidedWorkflow,
   darkMode = false,
 }: AssessmentPanelProps): JSX.Element {
@@ -646,6 +665,9 @@ export function AssessmentPanel({
   const componentDetail = COMPONENT_DETAILS[component.id]?.whatIsIt
     ? resolveComponentDetail(COMPONENT_DETAILS[component.id], projectName)
     : undefined;
+  const guidanceLinksByComponent = showAdditionalGuidanceLinks
+    ? GUIDANCE_LINKS_BY_COMPONENT_ALL
+    : GUIDANCE_LINKS_BY_COMPONENT_CORE;
   const [actionEditor, setActionEditor] = useState<ActionEditorState | null>(null);
   const [objectiveViewer, setObjectiveViewer] = useState<ObjectiveViewerState | null>(null);
   const [guidedWorkflowDismissed, setGuidedWorkflowDismissed] = useState(false);
@@ -1755,7 +1777,7 @@ export function AssessmentPanel({
                                   <div>
                                     {renderActionTextWithGuidanceLinks(
                                       action.text,
-                                      GUIDANCE_LINKS_BY_COMPONENT[resolvedAction.sourceComponentId] || [],
+                                      guidanceLinksByComponent[resolvedAction.sourceComponentId] || [],
                                       darkMode
                                     )}
                                   </div>

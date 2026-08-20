@@ -118,6 +118,7 @@ const DEFAULT_USER_SETTINGS: AdoptionUserSettings = {
   phaseFocusMode: 'auto',
   manualPhaseFocus: 1,
   hideGuidedWorkflow: false,
+  showAdditionalGuidanceLinks: true,
 };
 
 const DEFAULT_ENGAGEMENT_STATE: EngagementState = {
@@ -485,6 +486,7 @@ export function AdoptionApp() {
     [store]
   );
 
+  const showAdditionalGuidanceLinks = userSettings.showAdditionalGuidanceLinks !== false;
   const metrics = useMemo(() => {
     const baseMetrics = computeMetrics(store, COMPONENTS);
     return {
@@ -494,11 +496,13 @@ export function AdoptionApp() {
         toolkitLinks: resolveGuidanceLinksForAdoptionComponent(
           DEFAULT_GUIDANCE_TARGET,
           step.componentId,
-          'inputs'
+          'inputs',
+          undefined,
+          showAdditionalGuidanceLinks
         ).slice(0, 3),
       })),
     };
-  }, [store]);
+  }, [store, showAdditionalGuidanceLinks]);
   const effectivePhaseFocus =
     userSettings.phaseFocusMode === 'manual' && userSettings.manualPhaseFocus
       ? userSettings.manualPhaseFocus
@@ -2314,6 +2318,7 @@ export function AdoptionApp() {
               onHideGuidedWorkflow={() =>
                 setUserSettings((prev) => ({ ...prev, hideGuidedWorkflow: true }))
               }
+              showAdditionalGuidanceLinks={showAdditionalGuidanceLinks}
               darkMode={Boolean(userSettings.darkMode)}
             />
           )}
@@ -2333,6 +2338,7 @@ export function AdoptionApp() {
               getEntry={getEntry}
               guidanceTarget={DEFAULT_GUIDANCE_TARGET}
               linkOverrides={store.orgProfile.linkOverrides}
+              showAdditionalGuidanceLinks={showAdditionalGuidanceLinks}
               darkMode={Boolean(userSettings.darkMode)}
             />
           )}

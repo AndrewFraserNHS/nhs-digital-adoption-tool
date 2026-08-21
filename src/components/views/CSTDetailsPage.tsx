@@ -647,7 +647,7 @@ export function ProjectDetailsPage({
       >
         <div>
           <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
-            Team Members
+            Step 3: Team Members
           </h3>
           <p className={`text-sm mt-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
             Add the people working on this programme so actions and readiness slides can be assigned

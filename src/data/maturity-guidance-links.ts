@@ -67,7 +67,7 @@ export interface GuidanceWorkstreamDefinition {
 
 export const GUIDANCE_WORKSTREAMS_STORAGE_KEY = 'nhs-guidance-workstreams';
 
-const ADOPTION_COMPONENT_TO_GUIDANCE_KEYS: Record<string, string[]> = {
+export const ADOPTION_COMPONENT_TO_GUIDANCE_KEYS: Record<string, string[]> = {
   vision: ['Vision'],
   case_for_change: ['Case for Change'],
   sponsorship: ['Senior Sponsorship & Governance'],

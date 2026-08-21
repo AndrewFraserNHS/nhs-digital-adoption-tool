@@ -6,11 +6,11 @@ import { downloadFile } from '@lib/utils';
 import { PageHelpButton, PageIntroModal, usePageIntroSeen } from '@components/onboarding/PageIntroModal';
 import { AssessmentComponent } from '@data/components';
 import {
+  ADOPTION_COMPONENT_TO_GUIDANCE_KEYS,
   CORE_LINKS,
   DEFAULT_GUIDANCE_LINK_MAP,
   TOOLKIT_BASE_DEFAULTS,
   type GuidanceLink,
-  type GuidanceSectionLinks,
   type LinkOverrides,
   type PerLinkOverride,
 } from '@data/maturity-guidance-links';
@@ -24,6 +24,29 @@ import { TOOLKIT_OPTIONS, type ToolkitOptionKey } from '@data/toolkits';
 
 function sanitizeFileNamePart(value: string): string {
   return value.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'export';
+}
+
+interface ComponentGuidanceLinks {
+  inputs: GuidanceLink[];
+  deliverables: GuidanceLink[];
+}
+
+/** Merges every guidance-section's inputs/deliverables mapped to this component id, deduped by key. */
+function getGuidanceLinksForComponent(componentId: string): ComponentGuidanceLinks {
+  const sectionNames = ADOPTION_COMPONENT_TO_GUIDANCE_KEYS[componentId] || [];
+  const inputsByKey = new Map<string, GuidanceLink>();
+  const deliverablesByKey = new Map<string, GuidanceLink>();
+
+  sectionNames.forEach((sectionName) => {
+    const section = DEFAULT_GUIDANCE_LINK_MAP[sectionName];
+    (section?.inputs ?? []).forEach((link) => inputsByKey.set(link.key, link));
+    (section?.deliverables ?? []).forEach((link) => deliverablesByKey.set(link.key, link));
+  });
+
+  return {
+    inputs: [...inputsByKey.values()],
+    deliverables: [...deliverablesByKey.values()],
+  };
 }
 
 export interface ProjectDetailsPageProps {
@@ -819,57 +842,6 @@ export function ProjectDetailsPage({
             </div>
           </div>
 
-          {/* Component further reading */}
-          <div
-            className={`mt-4 rounded-md border p-4 space-y-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
-          >
-            <div>
-              <p
-                className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
-              >
-                Component Further Reading
-              </p>
-              <p className={`text-xs mt-0.5 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-                Add a link for each component's "Further Reading" button on its overview panel.
-                Leave blank to hide the button for that component.
-              </p>
-            </div>
-            <div className="space-y-2">
-              {components.map((component) => (
-                <div
-                  key={component.id}
-                  className="grid grid-cols-1 md:grid-cols-[1fr,2fr] gap-2 items-center"
-                >
-                  <span
-                    className={`text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}
-                  >
-                    {component.label}
-                  </span>
-                  <div className="flex gap-2">
-                    <input
-                      type="url"
-                      placeholder="https://..."
-                      value={profile.componentFurtherReading?.[component.id] ?? ''}
-                      onChange={(e) =>
-                        handleComponentFurtherReadingChange(component.id, e.target.value)
-                      }
-                      className={`flex-1 min-w-0 rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
-                    />
-                    {profile.componentFurtherReading?.[component.id] && (
-                      <button
-                        type="button"
-                        onClick={() => handleComponentFurtherReadingChange(component.id, '')}
-                        className={`shrink-0 rounded border px-2 py-1.5 text-xs font-medium ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-50'}`}
-                      >
-                        Clear
-                      </button>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
           {/* Core links - global reference links not tied to any one component */}
           <div
             className={`mt-4 rounded-md border p-4 space-y-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
@@ -920,37 +892,45 @@ export function ProjectDetailsPage({
             </button>
           </div>
 
-          {/* Per-link overrides grouped by section */}
+          {/* Per-component links: further reading + per-link overrides, grouped by component */}
           <div className="mt-4 space-y-3">
             <p
               className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
             >
-              Per-link overrides
+              Component links
             </p>
             <p className={`text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-              Leave a URL blank to use the fallback. Set fallback to <strong>Base</strong> to use
-              your base override above, or <strong>Default</strong> to keep the original NHS Future
-              link. Each link is tagged <strong>Core</strong> or <strong>Additional</strong> -
-              users can hide additional links from Settings if they only want the essentials.
+              Set the "Further Reading" link shown on each component's overview panel, and override
+              any of its individual guidance links. Leave a URL blank to use the fallback. Set
+              fallback to <strong>Base</strong> to use your base override above, or{' '}
+              <strong>Default</strong> to keep the original NHS Future link. Each link is tagged{' '}
+              <strong>Core</strong> or <strong>Additional</strong> - users can hide additional links
+              from Settings if they only want the essentials.
             </p>
-            {(Object.entries(DEFAULT_GUIDANCE_LINK_MAP) as [string, GuidanceSectionLinks][]).map(
-              ([sectionName, sectionLinks]) => {
-                const allLinks = [
-                  ...(sectionLinks.inputs ?? []),
-                  ...(sectionLinks.deliverables ?? []),
-                ];
-                const overrideCount = allLinks.filter((l) =>
-                  profile.linkOverrides?.links?.[l.key]?.url?.trim()
-                ).length;
-                return (
-                  <details
-                    key={sectionName}
-                    className={`rounded-md border ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}
+            {components.map((component) => {
+              const sectionLinks = getGuidanceLinksForComponent(component.id);
+              const allLinks = [...sectionLinks.inputs, ...sectionLinks.deliverables];
+              const overrideCount = allLinks.filter((l) =>
+                profile.linkOverrides?.links?.[l.key]?.url?.trim()
+              ).length;
+              const hasFurtherReading = Boolean(profile.componentFurtherReading?.[component.id]);
+              return (
+                <details
+                  key={component.id}
+                  className={`rounded-md border ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}
+                >
+                  <summary
+                    className={`flex cursor-pointer items-center justify-between gap-2 p-3 text-sm font-medium ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
                   >
-                    <summary
-                      className={`flex cursor-pointer items-center justify-between gap-2 p-3 text-sm font-medium ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
-                    >
-                      <span>{sectionName}</span>
+                    <span>{component.label}</span>
+                    <span className="flex items-center gap-2">
+                      {hasFurtherReading && (
+                        <span
+                          className={`rounded-full px-2 py-0.5 text-xs font-semibold ${darkMode ? 'bg-emerald-500/20 text-emerald-300' : 'bg-emerald-100 text-emerald-700'}`}
+                        >
+                          Further reading set
+                        </span>
+                      )}
                       {overrideCount > 0 && (
                         <span
                           className={`rounded-full px-2 py-0.5 text-xs font-semibold ${darkMode ? 'bg-blue-500/20 text-blue-300' : 'bg-blue-100 text-blue-700'}`}
@@ -958,14 +938,45 @@ export function ProjectDetailsPage({
                           {overrideCount} override{overrideCount !== 1 ? 's' : ''}
                         </span>
                       )}
-                    </summary>
-                    <div
-                      className={`divide-y ${darkMode ? 'divide-slate-700' : 'divide-slate-100'}`}
-                    >
-                      {(['inputs', 'deliverables'] as const).map((sect) => {
-                        const links = sectionLinks[sect] ?? [];
-                        if (!links.length) return null;
-                        return (
+                    </span>
+                  </summary>
+                  <div className={`divide-y ${darkMode ? 'divide-slate-700' : 'divide-slate-100'}`}>
+                    <div className="p-3 space-y-1.5">
+                      <p
+                        className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
+                      >
+                        Further reading
+                      </p>
+                      <div className="flex gap-2">
+                        <input
+                          type="url"
+                          placeholder="https://..."
+                          value={profile.componentFurtherReading?.[component.id] ?? ''}
+                          onChange={(e) =>
+                            handleComponentFurtherReadingChange(component.id, e.target.value)
+                          }
+                          className={`flex-1 min-w-0 rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
+                        />
+                        {hasFurtherReading && (
+                          <button
+                            type="button"
+                            onClick={() => handleComponentFurtherReadingChange(component.id, '')}
+                            className={`shrink-0 rounded border px-2 py-1.5 text-xs font-medium ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-50'}`}
+                          >
+                            Clear
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                    {!allLinks.length && (
+                      <p className={`p-3 text-xs ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>
+                        No guidance links added for this component yet.
+                      </p>
+                    )}
+                    {(['inputs', 'deliverables'] as const).map((sect) => {
+                      const links = sectionLinks[sect] ?? [];
+                      if (!links.length) return null;
+                      return (
                           <div key={sect} className="p-3 space-y-2">
                             <p
                               className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
@@ -1067,8 +1078,7 @@ export function ProjectDetailsPage({
                     </div>
                   </details>
                 );
-              }
-            )}
+              })}
           </div>
         </details>
       </div>

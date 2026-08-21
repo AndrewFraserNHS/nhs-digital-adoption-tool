@@ -12,7 +12,7 @@ const VISION_CONFIG: DerivedComponentConfig = {
   outcomePrefix: 'vision:outcome',
   fallbackOutcomes: [
     { id: 'vision:outcome:o1', text: 'A compelling future state has been defined' },
-    { id: 'vision:outcome:o2', text: 'The vision is understood and shared' },
+    { id: 'vision:outcome:o2', text: 'The vision is shared and understood' },
     { id: 'vision:outcome:o3', text: 'The vision is visible and guides the change' },
   ],
 };

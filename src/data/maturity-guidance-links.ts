@@ -126,8 +126,8 @@ export const futureNhsLinkTbc = (
  * AssessmentPanel.tsx), unlike DEFAULT_GUIDANCE_LINK_MAP below which is looked up per component.
  */
 export const CORE_LINKS: GuidanceLink[] = [
-  futureNhsLinkTbc(
-    'futures_change_management_network',
+  futureNhsLink(
+    '44704752',
     'FuturesNHS Change Management Network',
     'core',
     'The wider NHS community for change management practice, discussion and shared resources.'

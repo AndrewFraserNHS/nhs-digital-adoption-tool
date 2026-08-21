@@ -28,11 +28,11 @@ const CONFIDENCE_LABELS: Record<ConfidenceScore, string> = {
 };
 
 const COMPETENCE_LABELS: Record<CompetenceGrade, string> = {
-  A: 'Well embedded in practice',
-  B: 'Mostly embedded in practice',
-  C: 'Partly embedded in practice',
+  E: 'Not started embedding',
   D: 'Early adoption in practice',
-  E: 'Not yet embedded in practice',
+  C: 'Partly embedded in practice',
+  B: 'Mostly embedded in practice',
+  A: 'Well embedded in practice',
 };
 
 function getConfidenceBand(confidence: ConfidenceScore): 'high' | 'average' | 'below' {

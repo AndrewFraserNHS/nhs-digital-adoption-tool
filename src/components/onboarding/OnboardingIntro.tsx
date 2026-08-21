@@ -92,7 +92,7 @@ export function buildOnboardingSteps(): Step[] {
       body: (
         <div className="text-sm text-slate-700 space-y-2">
           <p>
-            The engine is built around components such as Vision, Sponsorship, Engagement,
+            The engine is built around change components such as Vision, Sponsorship, Engagement,
             Capability and Benefits.
           </p>
           <p>
@@ -106,8 +106,7 @@ export function buildOnboardingSteps(): Step[] {
             <li>Process and Sustainment</li>
           </ul>
           <p>
-            As you assess each area, the engine recommends actions, resources and evidence to help
-            improve adoption.
+            As you assess your readiness of each change component through the lenses, the engine recommends actions, resources and evidence to help improve adoption.
           </p>
         </div>
       ),

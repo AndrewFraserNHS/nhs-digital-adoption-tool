@@ -483,10 +483,10 @@ export function ChangeManagementGuide({
         </div>
       </AccordionSection>
 
-      {/* Programme Hierarchy */}
+      {/* Programme Change Hierarchy */}
       <AccordionSection
-        title="Programme Hierarchy"
-        description={`Your programme has ${components.length} components, each viewed through one or more lenses. A component is a change topic you assess and track; a lens is the perspective used to assess it (e.g. leadership, risk, capability). Click a component to jump to its assessment.`}
+        title="Programme Change Hierarchy"
+        description={`Your programme has ${components.length} components, each viewed through one or more lenses. A component is a change topic you assess and track. \bA lens is the perspective used to assess it (e.g. leadership, risk, capability). Click a component to jump to its assessment.`}
         isOpen={expandedSection === 'hierarchy'}
         onToggle={() => toggleSection('hierarchy')}
         darkMode={darkMode}

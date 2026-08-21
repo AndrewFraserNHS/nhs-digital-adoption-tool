@@ -25,10 +25,6 @@ describe('SettingsPanel', () => {
     );
 
     // act
-    fireEvent.change(screen.getByLabelText('Your Name'), { target: { value: 'Taylor' } });
-    fireEvent.change(screen.getByLabelText('Preferences'), {
-      target: { value: 'Dark charts only' },
-    });
     fireEvent.change(screen.getByLabelText('Theme Colour'), { target: { value: '#00a499' } });
     fireEvent.click(screen.getByRole('button', { name: 'Example Data' }));
     fireEvent.click(screen.getByRole('button', { name: 'Reset Data' }));
@@ -37,8 +33,6 @@ describe('SettingsPanel', () => {
     expect(onUserSettingsUpdate).toHaveBeenCalled();
     expect(onUserSettingsUpdate).toHaveBeenLastCalledWith(
       expect.objectContaining({
-        name: 'Taylor',
-        preferences: 'Dark charts only',
         themeColor: '#00a499',
       })
     );

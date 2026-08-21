@@ -9,7 +9,11 @@ import {
   type ObjectiveStatus,
 } from '@lib/adoptionState';
 import { ASSESSMENT_COMPONENTS, AssessmentComponent } from '@data/components';
-import { type GuidanceLink, resolveGuidanceLinksForAdoptionComponent } from '@data/maturity-guidance-links';
+import {
+  CORE_LINKS,
+  type GuidanceLink,
+  resolveGuidanceLinksForAdoptionComponent,
+} from '@data/maturity-guidance-links';
 import {
   ACTION_STATUS_BADGE_STYLES,
   ACTION_TYPES,
@@ -19,6 +23,7 @@ import {
 } from '@lib/actionModel';
 import { PHASE_NAMES } from '../../types/constants';
 import componentDetailsText from '@data/component-descriptors/component-details.json?raw';
+import { PageHelpButton, PageIntroModal, usePageIntroSeen } from '@components/onboarding/PageIntroModal';
 
 type AssessmentPanelStore = AdoptionStore & {
   showMatrix?: Record<string, boolean>;
@@ -142,6 +147,25 @@ function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+/**
+ * A label ending in a single "s" (not "ss") also matches its singular form, e.g. "User Surveys"
+ * also matches "user survey" in body text. Labels ending in "ss" (e.g. "Celebrate Successes") are
+ * left alone - naively stripping one "s" there produces a malformed word that could false-match
+ * inside unrelated text (e.g. "Succes" inside "Successful").
+ */
+function buildLabelVariants(label: string): string[] {
+  const variants = new Set([label]);
+  if (/(?<!s)s$/i.test(label)) {
+    variants.add(label.slice(0, -1));
+  }
+  return [...variants];
+}
+
+interface GuidanceLinkVariant {
+  variant: string;
+  link: GuidanceLink;
+}
+
 function renderActionTextWithGuidanceLinks(
   text: string,
   links: GuidanceLink[],
@@ -152,15 +176,21 @@ function renderActionTextWithGuidanceLinks(
     return safeText;
   }
 
-  const sortedLinks = [...links].sort((a, b) => b.label.length - a.label.length);
-  const pattern = sortedLinks.map((link) => escapeRegExp(link.label)).join('|');
+  const variantEntries: GuidanceLinkVariant[] = links.flatMap((link) =>
+    buildLabelVariants(link.label).map((variant) => ({ variant, link }))
+  );
+  const sortedEntries = variantEntries.sort((a, b) => b.variant.length - a.variant.length);
+  const pattern = sortedEntries.map((entry) => `\\b${escapeRegExp(entry.variant)}\\b`).join('|');
   const parts = safeText.split(new RegExp(`(${pattern})`, 'gi'));
 
   return parts.map((part, index) => {
-    const match = sortedLinks.find((link) => link.label.toLowerCase() === part.toLowerCase());
-    if (!match) {
+    const matchEntry = sortedEntries.find(
+      (entry) => entry.variant.toLowerCase() === part.toLowerCase()
+    );
+    if (!matchEntry) {
       return part;
     }
+    const match = matchEntry.link;
     return (
       <a
         key={`${match.key}-${index}`}
@@ -248,10 +278,12 @@ const OVERVIEW_TONE_STYLES_DARK: Record<
 function ComponentOverviewPointList({
   points,
   tone,
+  guidanceLinks,
   darkMode,
 }: {
   points: ComponentDetailPoint[];
   tone: OverviewTone;
+  guidanceLinks: GuidanceLink[];
   darkMode?: boolean;
 }): JSX.Element {
   const styles = darkMode ? OVERVIEW_TONE_STYLES_DARK[tone] : OVERVIEW_TONE_STYLES[tone];
@@ -262,7 +294,9 @@ function ComponentOverviewPointList({
           <p className={`text-xs font-semibold uppercase tracking-wide ${styles.titleText}`}>
             {point.title}
           </p>
-          <p className={`mt-0.5 text-sm ${styles.text}`}>{point.body}</p>
+          <p className={`mt-0.5 text-sm ${styles.text}`}>
+            {renderActionTextWithGuidanceLinks(point.body, guidanceLinks, darkMode)}
+          </p>
         </li>
       ))}
     </ul>
@@ -275,6 +309,7 @@ function ComponentOverviewSubsection({
   tone,
   isOpen,
   onToggle,
+  guidanceLinks,
   darkMode,
 }: {
   title: string;
@@ -282,6 +317,7 @@ function ComponentOverviewSubsection({
   tone: OverviewTone;
   isOpen: boolean;
   onToggle: () => void;
+  guidanceLinks: GuidanceLink[];
   darkMode?: boolean;
 }): JSX.Element {
   const styles = darkMode ? OVERVIEW_TONE_STYLES_DARK[tone] : OVERVIEW_TONE_STYLES[tone];
@@ -297,7 +333,12 @@ function ComponentOverviewSubsection({
       </button>
       {isOpen && (
         <div className={`border-t px-3 py-3 ${styles.border}`}>
-          <ComponentOverviewPointList points={points} tone={tone} darkMode={darkMode} />
+          <ComponentOverviewPointList
+            points={points}
+            tone={tone}
+            guidanceLinks={guidanceLinks}
+            darkMode={darkMode}
+          />
         </div>
       )}
     </div>
@@ -307,10 +348,12 @@ function ComponentOverviewSubsection({
 function ComponentOverviewSection({
   detail,
   furtherReadingUrl,
+  guidanceLinks,
   darkMode,
 }: {
   detail: ComponentDetail;
   furtherReadingUrl?: string;
+  guidanceLinks: GuidanceLink[];
   darkMode?: boolean;
 }): JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
@@ -357,13 +400,15 @@ function ComponentOverviewSection({
             </a>
           )}
           {detail.whatIsIt && (
-            <p className={`text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>{detail.whatIsIt}</p>
+            <p className={`text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+              {renderActionTextWithGuidanceLinks(detail.whatIsIt, guidanceLinks, darkMode)}
+            </p>
           )}
           {detail.userInsight && (
             <blockquote
               className={`border-l-2 pl-3 text-sm italic ${darkMode ? 'border-slate-600 text-slate-300' : 'border-slate-300 text-slate-600'}`}
             >
-              “{detail.userInsight}”
+              “{renderActionTextWithGuidanceLinks(detail.userInsight, guidanceLinks, darkMode)}”
             </blockquote>
           )}
           {detail.whyThisMatters && (
@@ -375,7 +420,9 @@ function ComponentOverviewSection({
               </p>
               <ul className={`mt-1 list-disc space-y-1 pl-5 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
                 {splitSentences(detail.whyThisMatters).map((sentence) => (
-                  <li key={sentence}>{sentence}</li>
+                  <li key={sentence}>
+                    {renderActionTextWithGuidanceLinks(sentence, guidanceLinks, darkMode)}
+                  </li>
                 ))}
               </ul>
             </div>
@@ -389,7 +436,9 @@ function ComponentOverviewSection({
               </p>
               <ul className={`mt-1 list-disc space-y-1 pl-5 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
                 {splitSentences(detail.quickRealityCheck).map((question) => (
-                  <li key={question}>{question}</li>
+                  <li key={question}>
+                    {renderActionTextWithGuidanceLinks(question, guidanceLinks, darkMode)}
+                  </li>
                 ))}
               </ul>
             </div>
@@ -403,6 +452,7 @@ function ComponentOverviewSection({
                   tone="good"
                   isOpen={showGoodPractice}
                   onToggle={() => setShowGoodPractice((prev) => !prev)}
+                  guidanceLinks={guidanceLinks}
                   darkMode={darkMode}
                 />
               )}
@@ -413,6 +463,7 @@ function ComponentOverviewSection({
                   tone="risk"
                   isOpen={showRisks}
                   onToggle={() => setShowRisks((prev) => !prev)}
+                  guidanceLinks={guidanceLinks}
                   darkMode={darkMode}
                 />
               )}
@@ -441,6 +492,12 @@ interface EvidenceItem {
   type: 'url' | 'file';
   label: string;
   href: string;
+}
+
+interface EvidenceRow {
+  actionText: string;
+  lens: string;
+  item: EvidenceItem;
 }
 
 function normalizeUrl(value: string): string {
@@ -509,6 +566,117 @@ function serializeEvidenceItems(items: EvidenceItem[]): string {
   }
 
   return `${EVIDENCE_JSON_PREFIX}${JSON.stringify(normalized)}`;
+}
+
+function EvidenceLinksAndDocsSection({
+  rows,
+  isOpen,
+  onToggle,
+  darkMode,
+}: {
+  rows: EvidenceRow[];
+  isOpen: boolean;
+  onToggle: () => void;
+  darkMode?: boolean;
+}): JSX.Element {
+  return (
+    <div
+      className={`mb-8 rounded-lg border ${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'}`}
+    >
+      <button
+        type="button"
+        onClick={onToggle}
+        className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
+      >
+        <div>
+          <h3 className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
+            Evidence Links and Docs
+          </h3>
+          <p className={`mt-0.5 text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+            {rows.length
+              ? `${rows.length} item${rows.length === 1 ? '' : 's'} attached across this component's actions.`
+              : 'Everything attached as evidence across this component\'s actions, in one place.'}
+          </p>
+        </div>
+        <span
+          className={`shrink-0 text-xs font-semibold ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
+        >
+          {isOpen ? 'Hide −' : 'Show +'}
+        </span>
+      </button>
+      {isOpen && (
+        <div className={`border-t px-5 py-4 ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}>
+          {rows.length ? (
+            <div className="overflow-x-auto rounded-md border border-slate-200">
+              <table
+                className={`min-w-full ${darkMode ? 'divide-slate-700 bg-slate-800' : 'divide-slate-200 bg-white'} divide-y`}
+              >
+                <thead className={darkMode ? 'bg-slate-900' : 'bg-slate-50'}>
+                  <tr>
+                    <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                      Action
+                    </th>
+                    <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                      Lens
+                    </th>
+                    <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                      Type
+                    </th>
+                    <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                      Link / Doc
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className={`${darkMode ? 'divide-slate-700' : 'divide-slate-100'} divide-y`}>
+                  {rows.map((row, index) => (
+                    <tr key={`${row.lens}:${index}`}>
+                      <td
+                        className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+                      >
+                        {row.actionText}
+                      </td>
+                      <td
+                        className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+                      >
+                        {row.lens}
+                      </td>
+                      <td className="px-3 py-2">
+                        <span
+                          className={`${row.item.type === 'file' ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'} inline-flex rounded-full px-2 py-1 text-[11px] font-semibold uppercase tracking-wide`}
+                        >
+                          {row.item.type === 'file' ? 'File' : 'Link'}
+                        </span>
+                      </td>
+                      <td
+                        className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+                      >
+                        {row.item.href ? (
+                          <a
+                            href={row.item.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={`underline ${darkMode ? 'text-blue-300 hover:text-blue-200' : 'text-[#005eb8] hover:text-blue-800'}`}
+                          >
+                            {row.item.label || row.item.href}
+                          </a>
+                        ) : (
+                          row.item.label || '—'
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p className={`text-sm ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+              No evidence added yet. Attach links or documents to an action to see them here.
+            </p>
+          )}
+        </div>
+      )}
+    </div>
+  );
 }
 
 function readFileAsDataUrl(file: File): Promise<string> {
@@ -665,15 +833,37 @@ export function AssessmentPanel({
   const componentDetail = COMPONENT_DETAILS[component.id]?.whatIsIt
     ? resolveComponentDetail(COMPONENT_DETAILS[component.id], projectName)
     : undefined;
-  const guidanceLinksByComponent = showAdditionalGuidanceLinks
-    ? GUIDANCE_LINKS_BY_COMPONENT_ALL
-    : GUIDANCE_LINKS_BY_COMPONENT_CORE;
+  const effectiveCoreLinks =
+    store.orgProfile?.coreLinks && store.orgProfile.coreLinks.length > 0
+      ? store.orgProfile.coreLinks
+      : CORE_LINKS;
+  const guidanceLinksByComponent = useMemo(() => {
+    const base = showAdditionalGuidanceLinks
+      ? GUIDANCE_LINKS_BY_COMPONENT_ALL
+      : GUIDANCE_LINKS_BY_COMPONENT_CORE;
+    const coreForToggle = showAdditionalGuidanceLinks
+      ? effectiveCoreLinks
+      : effectiveCoreLinks.filter((link) => link.type === 'core');
+    const merged: Record<string, GuidanceLink[]> = {};
+    Object.keys(base).forEach((componentId) => {
+      const byLabel = new Map<string, GuidanceLink>();
+      [...base[componentId], ...coreForToggle].forEach((link) => {
+        if (link.label && link.label.trim().length >= MIN_GUIDANCE_LINK_LABEL_LENGTH) {
+          byLabel.set(link.label.toLowerCase(), link);
+        }
+      });
+      merged[componentId] = [...byLabel.values()];
+    });
+    return merged;
+  }, [showAdditionalGuidanceLinks, effectiveCoreLinks]);
   const [actionEditor, setActionEditor] = useState<ActionEditorState | null>(null);
   const [objectiveViewer, setObjectiveViewer] = useState<ObjectiveViewerState | null>(null);
   const [guidedWorkflowDismissed, setGuidedWorkflowDismissed] = useState(false);
   const [showScoringSection, setShowScoringSection] = useState(true);
   const [showObjectivesSection, setShowObjectivesSection] = useState(true);
   const [showActionsSection, setShowActionsSection] = useState(true);
+  const [showEvidenceSection, setShowEvidenceSection] = useState(false);
+  const pageIntro = usePageIntroSeen('assessment');
   const [expandedLensActions, setExpandedLensActions] = useState<Record<string, boolean>>({});
   const [lensActionTypeFilters, setLensActionTypeFilters] = useState<Record<string, string>>({});
   const [lensActionOwnerFilters, setLensActionOwnerFilters] = useState<Record<string, string>>(
@@ -753,6 +943,21 @@ export function AssessmentPanel({
     });
     return map;
   }, [components]);
+
+  const evidenceRows = useMemo(() => {
+    const rows: EvidenceRow[] = [];
+    component.lenses.forEach((lens) => {
+      const resolvedActions = actionsByTarget[`${component.id}:${lens}`] || [];
+      resolvedActions
+        .filter((resolvedAction) => !resolvedAction.isLinkedView)
+        .forEach((resolvedAction) => {
+          parseEvidenceItems(resolvedAction.action.evidence || '').forEach((item) => {
+            rows.push({ actionText: resolvedAction.action.text || 'Untitled action', lens, item });
+          });
+        });
+    });
+    return rows;
+  }, [actionsByTarget, component.id, component.lenses]);
 
   const componentJustification = useMemo(() => {
     const firstLens = component.lenses[0];
@@ -1188,6 +1393,9 @@ export function AssessmentPanel({
             <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded ml-4 border border-blue-200">
               {PHASE_NAMES[component.phase] || `Phase ${component.phase}`}
             </span>
+            <span className="ml-2">
+              <PageHelpButton onClick={pageIntro.reopen} darkMode={darkMode} />
+            </span>
           </h2>
           <p className={`mt-2 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
             Assess readiness at lens level. Change Component justification, outcomes, and actions are
@@ -1211,6 +1419,7 @@ export function AssessmentPanel({
         <ComponentOverviewSection
           detail={componentDetail}
           furtherReadingUrl={store.orgProfile?.componentFurtherReading?.[component.id]}
+          guidanceLinks={guidanceLinksByComponent[component.id] || []}
           darkMode={darkMode}
         />
       )}
@@ -1926,6 +2135,13 @@ export function AssessmentPanel({
         </div>
       ) : null}
 
+      <EvidenceLinksAndDocsSection
+        rows={evidenceRows}
+        isOpen={showEvidenceSection}
+        onToggle={() => setShowEvidenceSection((prev) => !prev)}
+        darkMode={darkMode}
+      />
+
       {actionEditor ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 p-4">
           <div
@@ -2503,6 +2719,26 @@ export function AssessmentPanel({
           </div>
         </div>
       ) : null}
+
+      <PageIntroModal
+        open={pageIntro.isOpen}
+        onClose={pageIntro.close}
+        title="Assessing a component"
+        darkMode={darkMode}
+        body={
+          <>
+            <p>
+              Each component is assessed lens by lens: justify where you are, review its outcomes,
+              then plan and track delivery actions for each readiness level.
+            </p>
+            <p>
+              The "Component overview" panel explains what the component covers, and "Evidence
+              Links and Docs" at the bottom rounds up everything attached as evidence across all of
+              its actions.
+            </p>
+          </>
+        }
+      />
     </div>
   );
 }

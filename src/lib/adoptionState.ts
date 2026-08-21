@@ -4,7 +4,7 @@
  */
 
 import { type CstPathwayKey, type CstProfile, DEFAULT_CST_PROFILE } from '@data/cst';
-import type { LinkOverrides } from '@data/maturity-guidance-links';
+import type { GuidanceLink, LinkOverrides } from '@data/maturity-guidance-links';
 
 import type { ActionType, UnifiedActionStatus } from './actionModel';
 import type { AuditEvent } from './auditLog';
@@ -125,6 +125,13 @@ export interface OrgProfile {
   linkOverrides?: LinkOverrides;
   /** Further reading URL per component id (see ASSESSMENT_COMPONENTS), shown on that component's overview. */
   componentFurtherReading?: Record<string, string>;
+  /**
+   * Global reference links not tied to any one component (e.g. the FuturesNHS Change Management
+   * Network). Shown in their own "Core links" section on CST Personalisation, and matched into
+   * every component's auto-linked action/summary text alongside that component's own guidance
+   * links. Falls back to CORE_LINKS (maturity-guidance-links.ts) when unset.
+   */
+  coreLinks?: GuidanceLink[];
   teamMembers?: TeamMember[];
   /**
    * Stable identity for this CST, assigned once and carried through every export so two
@@ -160,7 +167,8 @@ export type View =
   | 'highlight-builder'
   | 'audit-log'
   | 'project-details'
-  | 'settings';
+  | 'settings'
+  | 'profile';
 
 export interface AdoptionStore {
   view: View;
@@ -191,6 +199,7 @@ export function normalizeOrgProfile(profile?: Partial<OrgProfile>): OrgProfile {
     },
     linkOverrides: profile?.linkOverrides,
     componentFurtherReading: profile?.componentFurtherReading,
+    coreLinks: profile?.coreLinks,
     teamMembers: profile?.teamMembers || [],
     cstId: profile?.cstId,
   };

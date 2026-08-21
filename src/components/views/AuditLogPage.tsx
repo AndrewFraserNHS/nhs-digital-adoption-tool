@@ -1,5 +1,6 @@
 import type { AuditEvent } from '@lib/auditLog';
 import { useMemo, useState, type JSX } from 'react';
+import { PageHelpButton, PageIntroModal, usePageIntroSeen } from '@components/onboarding/PageIntroModal';
 
 interface AuditLogPageProps {
   events: AuditEvent[];
@@ -23,6 +24,7 @@ function formatTimestamp(value: string): string {
 }
 
 export function AuditLogPage({ events, darkMode = false }: AuditLogPageProps): JSX.Element {
+  const pageIntro = usePageIntroSeen('audit-log');
   const [eventTypeFilter, setEventTypeFilter] = useState('all');
   const [componentFilter, setComponentFilter] = useState('all');
   const [actorFilter, setActorFilter] = useState('all');
@@ -69,13 +71,29 @@ export function AuditLogPage({ events, darkMode = false }: AuditLogPageProps): J
   return (
     <section className="space-y-4">
       <div>
-        <h2 className={`text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>
-          Audit Log
-        </h2>
+        <div className="flex items-center gap-2">
+          <h2 className={`text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>
+            Audit Log
+          </h2>
+          <PageHelpButton onClick={pageIntro.reopen} darkMode={darkMode} />
+        </div>
         <p className={`text-sm mt-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
           Timestamped history of CST changes, including who made each change.
         </p>
       </div>
+      <PageIntroModal
+        open={pageIntro.isOpen}
+        onClose={pageIntro.close}
+        title="Audit Log"
+        darkMode={darkMode}
+        body={
+          <p>
+            A timestamped history of changes made to your CST, including who made each change.
+            Filter by event type, component, or actor, and expand a row to see exactly what
+            changed.
+          </p>
+        }
+      />
 
       <div
         className={`grid gap-3 md:grid-cols-4 rounded-lg border p-4 ${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'}`}

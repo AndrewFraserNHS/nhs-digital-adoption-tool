@@ -3,6 +3,7 @@ import { ActionRow } from '@lib/adoptionMetrics';
 import { ACTION_STATUS_BADGE_STYLES, ACTION_TYPES, normalizeActionStatus } from '@lib/actionModel';
 import type { TeamMember } from '@lib/adoptionState';
 import { FilterSummaryBar } from '@components/ui/FilterSummaryBar';
+import { PageHelpButton, PageIntroModal, usePageIntroSeen } from '@components/onboarding/PageIntroModal';
 
 export interface ActionPlanTrackerProps {
   actions: ActionRow[];
@@ -17,6 +18,7 @@ export function ActionPlanTracker({
   teamMembers = [],
   darkMode = false,
 }: ActionPlanTrackerProps): JSX.Element {
+  const pageIntro = usePageIntroSeen('action-tracker');
   const [searchTerm, setSearchTerm] = useState('');
   const [componentFilter, setComponentFilter] = useState('all');
   const [ownerFilter, setOwnerFilter] = useState('all');
@@ -211,9 +213,25 @@ export function ActionPlanTracker({
 
   return (
     <div className="max-w-6xl mx-auto">
-      <h2 className={`text-2xl font-bold mb-6 ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
-        Action Tracker
-      </h2>
+      <div className="mb-6 flex items-center gap-2">
+        <h2 className={`text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
+          Action Tracker
+        </h2>
+        <PageHelpButton onClick={pageIntro.reopen} darkMode={darkMode} />
+      </div>
+      <PageIntroModal
+        open={pageIntro.isOpen}
+        onClose={pageIntro.close}
+        title="Action Tracker"
+        darkMode={darkMode}
+        body={
+          <p>
+            Every action across every component in one searchable, filterable, sortable table.
+            Filter by component, owner, status, action type or readiness score, and click a row's
+            component to jump straight to its assessment.
+          </p>
+        }
+      />
       <div
         className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-4 mb-6 space-y-3`}
       >

@@ -10,6 +10,7 @@ import { calculateChecklistCompletion } from '@lib/pathwayAnalysis';
 import { FilterSummaryBar } from '@components/ui/FilterSummaryBar';
 import { getComponentDescription, getLensDescription } from '@data/descriptions';
 import { PHASE_NAMES } from '../../types/constants';
+import { PageHelpButton, PageIntroModal, usePageIntroSeen } from '@components/onboarding/PageIntroModal';
 import {
   getBragStatusFromAverage,
   getBragStatusFromGap,
@@ -120,6 +121,7 @@ export function AdoptionDashboard({
   onManualPhaseFocusChange,
   onResetPhaseFocus,
 }: DashboardProps): JSX.Element {
+  const pageIntro = usePageIntroSeen('dashboard');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<
     'all' | 'not-started' | 'below-target' | 'on-track'
@@ -463,9 +465,12 @@ export function AdoptionDashboard({
       )}
 
       <div className="mb-1 flex flex-wrap items-center justify-between gap-3">
-        <h2 className={`text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
-          Adoption Engine Dashboard
-        </h2>
+        <div className="flex items-center gap-2">
+          <h2 className={`text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
+            Adoption Engine Dashboard
+          </h2>
+          <PageHelpButton onClick={pageIntro.reopen} darkMode={darkMode} />
+        </div>
         {onOpenOnboarding ? (
           <button
             type="button"
@@ -1240,6 +1245,19 @@ export function AdoptionDashboard({
           </div>
         </>
       )}
+      <PageIntroModal
+        open={pageIntro.isOpen}
+        onClose={pageIntro.close}
+        title="Adoption Engine Dashboard"
+        darkMode={darkMode}
+        body={
+          <p>
+            This tracks how ready your programme is for adoption, based on your change-management
+            components, each assessed through several lenses. Use the filters and sort controls to
+            focus on what needs attention, and click a component to open its assessment.
+          </p>
+        }
+      />
     </div>
   );
 }

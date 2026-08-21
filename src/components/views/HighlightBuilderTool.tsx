@@ -6,6 +6,7 @@ import { type Metrics } from '@lib/adoptionMetrics';
 import { normalizeActionStatus } from '@lib/actionModel';
 import { getBragStatusFromAverage, BRAG_BADGE_STYLES } from '@lib/bragStatus';
 import { RichTextEditor } from '@components/common/RichTextEditor';
+import { PageHelpButton, PageIntroModal, usePageIntroSeen } from '@components/onboarding/PageIntroModal';
 
 export interface BragActionRow {
   id: string;
@@ -206,6 +207,7 @@ export function HighlightBuilderTool({
   darkMode?: boolean;
   currentUserId?: string;
 }): JSX.Element {
+  const pageIntro = usePageIntroSeen('highlight-builder');
   const teamMembers = store.orgProfile.teamMembers || [];
   const [layout, setLayout] = useState<HighlightBuilderLayout>(() => {
     const stored = readStoredLayout();
@@ -957,7 +959,10 @@ export function HighlightBuilderTool({
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">
               Highlight Builder Tool
             </p>
-            <h2 className="text-2xl font-bold text-slate-900">Create a polished highlight pack</h2>
+            <div className="flex items-center gap-2">
+              <h2 className="text-2xl font-bold text-slate-900">Create a polished highlight pack</h2>
+              <PageHelpButton onClick={pageIntro.reopen} />
+            </div>
           </div>
           <div className="flex flex-wrap gap-2">
             <button
@@ -1406,6 +1411,17 @@ export function HighlightBuilderTool({
           </div>
         </div>
       </div>
+      <PageIntroModal
+        open={pageIntro.isOpen}
+        onClose={pageIntro.close}
+        title="Highlight Builder Tool"
+        body={
+          <p>
+            Build a polished, presentation-ready highlight pack summarising progress across your
+            programme - pick a layout, edit the content, and save or export it when you're happy.
+          </p>
+        }
+      />
     </section>
   );
 }

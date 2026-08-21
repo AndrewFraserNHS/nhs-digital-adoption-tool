@@ -5,6 +5,7 @@ import type { Metrics } from '@lib/adoptionMetrics';
 import type { CstPathwayKey } from '@data/cst';
 import { getPathwayRulesForComponent } from '@data/pathway-rules';
 import { evaluatePathwayTrackStatus } from '@lib/pathwayAnalysis';
+import { PageHelpButton, PageIntroModal, usePageIntroSeen } from '@components/onboarding/PageIntroModal';
 
 interface GuidanceRoadmapViewProps {
   components: AssessmentComponent[];
@@ -122,6 +123,7 @@ export function GuidanceRoadmapView({
   pathwayChecks,
   darkMode = false,
 }: GuidanceRoadmapViewProps): JSX.Element {
+  const pageIntro = usePageIntroSeen('component-delivery-timeline');
   const rows = components.map((component) => {
     const average = getComponentAverage(component, getEntry);
     const checkedItemKeys = pathwayChecks[component.id]?.[pathway] || [];
@@ -147,17 +149,32 @@ export function GuidanceRoadmapView({
         <p
           className={`text-sm font-semibold uppercase tracking-[0.18em] ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
         >
-          Roadmap View
+          Component Delivery Timeline
         </p>
-        <h2 className={`mt-2 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>
-          Component delivery timeline
-        </h2>
+        <div className="mt-2 flex items-center gap-2">
+          <h2 className={`text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>
+            Component delivery timeline
+          </h2>
+          <PageHelpButton onClick={pageIntro.reopen} darkMode={darkMode} />
+        </div>
         <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
           This gantt-style view shows when each component should be completed by phase. Components
           are coloured by whether they are on track against the current phase. Select a row to jump
           into the matching assessment tab.
         </p>
       </div>
+      <PageIntroModal
+        open={pageIntro.isOpen}
+        onClose={pageIntro.close}
+        title="Component Delivery Timeline"
+        darkMode={darkMode}
+        body={
+          <p>
+            A gantt-style view of when each component should be completed by phase, coloured by
+            whether it's on track. Select a row to jump straight into that component's assessment.
+          </p>
+        }
+      />
 
       <div className="lg:hidden space-y-3">
         {rows.map(({ component, average, status }) => (

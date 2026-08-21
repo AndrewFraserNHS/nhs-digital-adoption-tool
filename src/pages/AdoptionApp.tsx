@@ -12,6 +12,7 @@ import { ImportConflictModal } from '@components/views/ImportConflictModal';
 import { LensInfoModal } from '@components/views/LensInfoModal';
 import { OnboardingOverviewPage } from '@components/views/OnboardingOverviewPage';
 import { type AdoptionUserSettings, SettingsPanel } from '@components/views/SettingsPanel';
+import { ProfilePage } from '@components/views/ProfilePage';
 import { ASSESSMENT_COMPONENTS, getComponentById } from '@data/components';
 import {
   COMPETENCE_OPTIONS,
@@ -48,6 +49,7 @@ import type {
   ComponentObjective,
   DraftAction,
   DraftEntry,
+  OrgProfile,
   View,
 } from '@lib/adoptionState';
 import { cloneEntry, createCstId, createEmptyEntry, initializeStore } from '@lib/adoptionState';
@@ -1603,6 +1605,42 @@ export function AdoptionApp() {
     [themeUnlocked]
   );
 
+  const handleProfileUpdate = useCallback((updatedProfile: OrgProfile) => {
+    setStore((prev) => {
+      const nextStore = syncPathwayObjectives({
+        ...prev,
+        orgProfile: updatedProfile,
+      });
+
+      const changed = JSON.stringify(prev.orgProfile) !== JSON.stringify(updatedProfile);
+      if (!changed) {
+        return nextStore;
+      }
+
+      return {
+        ...nextStore,
+        auditLog: appendAuditEvents(prev, [
+          {
+            eventType: 'profile-updated',
+            entityType: 'profile',
+            summary: 'Updated CST profile details',
+            before: {
+              trustName: prev.orgProfile.trustName,
+              projectName: prev.orgProfile.projectName,
+              cst: prev.orgProfile.cst,
+            },
+            after: {
+              trustName: updatedProfile.trustName,
+              projectName: updatedProfile.projectName,
+              cst: updatedProfile.cst,
+            },
+            source: 'local',
+          },
+        ]),
+      };
+    });
+  }, []);
+
   const getComponentStatus = (comp: (typeof COMPONENTS)[0]) => {
     let scoredCount = 0;
     let justifiedCount = 0;
@@ -1745,7 +1783,7 @@ export function AdoptionApp() {
                   ? 'Dashboard'
                   : v === 'action-plan'
                     ? 'Action Tracker'
-                    : 'Roadmap View'}
+                    : 'Component Delivery Timeline'}
               </button>
             ))}
           </nav>
@@ -1754,7 +1792,7 @@ export function AdoptionApp() {
             Tools
           </div>
           <nav className="space-y-1 mb-8">
-            {(['highlight-builder', 'audit-log', 'settings'] as View[]).map((v) => (
+            {(['highlight-builder', 'audit-log', 'settings', 'profile'] as View[]).map((v) => (
               <button
                 key={v}
                 ref={(el) => {
@@ -1771,7 +1809,9 @@ export function AdoptionApp() {
                   ? 'Highlight Builder'
                   : v === 'audit-log'
                     ? 'Audit Log'
-                    : 'Settings & Profile'}
+                    : v === 'settings'
+                      ? 'Settings'
+                      : 'Profile'}
               </button>
             ))}
           </nav>
@@ -2178,41 +2218,7 @@ export function AdoptionApp() {
           {view === 'project-details' && (
             <ProjectDetailsPage
               orgProfile={store.orgProfile}
-              onProfileUpdate={(updatedProfile) => {
-                setStore((prev) => {
-                  const nextStore = syncPathwayObjectives({
-                    ...prev,
-                    orgProfile: updatedProfile,
-                  });
-
-                  const changed = JSON.stringify(prev.orgProfile) !== JSON.stringify(updatedProfile);
-                  if (!changed) {
-                    return nextStore;
-                  }
-
-                  return {
-                    ...nextStore,
-                    auditLog: appendAuditEvents(prev, [
-                      {
-                        eventType: 'profile-updated',
-                        entityType: 'profile',
-                        summary: 'Updated CST profile details',
-                        before: {
-                          trustName: prev.orgProfile.trustName,
-                          projectName: prev.orgProfile.projectName,
-                          cst: prev.orgProfile.cst,
-                        },
-                        after: {
-                          trustName: updatedProfile.trustName,
-                          projectName: updatedProfile.projectName,
-                          cst: updatedProfile.cst,
-                        },
-                        source: 'local',
-                      },
-                    ]),
-                  };
-                });
-              }}
+              onProfileUpdate={handleProfileUpdate}
               components={COMPONENTS}
               lenses={MUTABLE_LENSES}
               onComponentClick={openComponentAssessment}
@@ -2386,6 +2392,15 @@ export function AdoptionApp() {
               onLoadExampleData={handleLoadExampleData}
               onResetData={handleResetData}
               canUseCustomTheme={themeUnlocked}
+              darkMode={Boolean(userSettings.darkMode)}
+            />
+          )}
+          {view === 'profile' && (
+            <ProfilePage
+              orgProfile={store.orgProfile}
+              onProfileUpdate={handleProfileUpdate}
+              userSettings={userSettings}
+              onUserSettingsUpdate={handleUserSettingsUpdate}
               engagementGrade={engagementGrade}
               engagementLevel={engagement.level}
               engagementXp={engagement.xp}

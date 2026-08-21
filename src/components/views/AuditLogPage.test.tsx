@@ -26,7 +26,7 @@ describe('AuditLogPage', () => {
     );
 
     // assert
-    expect(screen.getByText('Audit Log')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Audit Log', level: 2 })).toBeInTheDocument();
     expect(
       screen.getByText(
         'Updated readiness score for vision / Strategic Direction and Leadership: 2 -> 3'

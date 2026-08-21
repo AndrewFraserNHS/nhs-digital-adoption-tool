@@ -1,5 +1,6 @@
-import { useState, useCallback, JSX, useEffect, useRef } from 'react';
+import { useState, useCallback, JSX, useEffect } from 'react';
 import { nhsButtonPrimary, nhsFocusRing } from '../../styles/nhsTheme';
+import { PageHelpButton, PageIntroModal, usePageIntroSeen } from '@components/onboarding/PageIntroModal';
 
 export interface AdoptionUserSettings {
   name: string;
@@ -20,9 +21,6 @@ export interface SettingsPanelProps {
   onLoadExampleData: () => void;
   onResetData: () => void;
   canUseCustomTheme?: boolean;
-  engagementGrade?: string;
-  engagementLevel?: number;
-  engagementXp?: number;
   darkMode?: boolean;
 }
 
@@ -41,17 +39,10 @@ export function SettingsPanel({
   onLoadExampleData,
   onResetData,
   canUseCustomTheme = true,
-  engagementGrade,
-  engagementLevel,
-  engagementXp,
   darkMode = false,
 }: SettingsPanelProps): JSX.Element {
   const [settings, setSettings] = useState<AdoptionUserSettings>(userSettings);
-  const [fileInputKey, setFileInputKey] = useState(0);
-  const [activeEngagementHelp, setActiveEngagementHelp] = useState<'grade' | 'level' | 'xp' | null>(
-    null
-  );
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const pageIntro = usePageIntroSeen('settings');
 
   useEffect(() => {
     setSettings(userSettings);
@@ -66,264 +57,34 @@ export function SettingsPanel({
     [settings, onUserSettingsUpdate]
   );
 
-  const handleProfileImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) {
-      return;
-    }
-
-    const dataUrl = await new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(String(reader.result || ''));
-      reader.onerror = () => reject(new Error('Unable to read selected profile image.'));
-      reader.readAsDataURL(file);
-    });
-
-    updateUserSettings({ profileImageDataUrl: dataUrl });
-    setFileInputKey((current) => current + 1);
-  };
-
-  const handleRemoveProfileImage = () => {
-    updateUserSettings({ profileImageDataUrl: undefined });
-  };
-
   const handlePresetTheme = (color: string) => {
     updateUserSettings({ themeColor: color });
   };
 
-  const engagementHelp = {
-    grade:
-      'Your grade shows your overall engagement trend. S = excellent, A = strong, B = solid, C = steady, D = building, E = starting out.',
-    level:
-      'Your level reflects cumulative XP gained through consistent engagement. Higher levels unlock more personalised options and features.',
-    xp: 'XP increases as you complete important actions, finalise months on time, and keep returning to the tool.',
-  };
-
-  const resolvedLevel = engagementLevel ?? 1;
-  const resolvedXp = engagementXp ?? 0;
-  const currentLevelFloorXp = Math.max(0, (resolvedLevel - 1) * 120);
-  const xpIntoCurrentLevel = Math.max(0, resolvedXp - currentLevelFloorXp);
-  const xpProgressPct = Math.max(0, Math.min(100, Math.round((xpIntoCurrentLevel / 120) * 100)));
-  const xpToNextLevel = Math.max(0, resolvedLevel * 120 - resolvedXp);
-
-  const engagementMetrics: Array<{
-    key: 'grade' | 'level' | 'xp';
-    label: string;
-    value: string | number;
-    tooltip: string;
-  }> = [
-    {
-      key: 'grade',
-      label: 'Grade',
-      value: engagementGrade || 'N/A',
-      tooltip: engagementHelp.grade,
-    },
-    {
-      key: 'level',
-      label: 'Level',
-      value: resolvedLevel,
-      tooltip: engagementHelp.level,
-    },
-    {
-      key: 'xp',
-      label: 'XP',
-      value: resolvedXp,
-      tooltip: engagementHelp.xp,
-    },
-  ];
-
   return (
     <div className="max-w-3xl mx-auto space-y-6">
-      <h2 className={`text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
-        Settings
-      </h2>
-      <p className={`text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-        Use this page to manage your profile, personal preferences, and support options.
-      </p>
-
-      {(engagementGrade || engagementLevel || engagementXp !== undefined) && (
-        <div
-          className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-4`}
-        >
-          <div>
-            <h3
-              className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
-            >
-              Engagement and Progress
-            </h3>
-            <p className={`mt-1 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-              A quick view of how consistently the tool is being used over time.
-            </p>
-          </div>
-          <div
-            className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} rounded-md border p-4`}
-          >
-            <h4
-              className={`text-sm font-semibold mb-2 ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
-            >
-              Engagement Summary
-            </h4>
-            <p className={`mb-3 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-              Tap the info icon beside each metric for a plain-language explanation.
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {engagementMetrics.map((metric) => (
-                <div key={metric.key} className="relative">
-                  <div className="flex items-center gap-1.5">
-                    <p className={`text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-                      {metric.label}
-                    </p>
-                    <button
-                      type="button"
-                      aria-label={`${metric.label} information`}
-                      aria-expanded={activeEngagementHelp === metric.key}
-                      onClick={() =>
-                        setActiveEngagementHelp((current) =>
-                          current === metric.key ? null : metric.key
-                        )
-                      }
-                      className={`inline-flex h-4 w-4 items-center justify-center rounded-full border border-[#005eb8] text-[9px] font-bold text-[#005eb8] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ffeb3b] ${darkMode ? 'bg-[#1d334f]' : 'bg-[#e8f1fb]'}`}
-                    >
-                      i
-                    </button>
-                  </div>
-                  <p
-                    className={`text-lg font-bold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
-                  >
-                    {metric.value}
-                  </p>
-                  {activeEngagementHelp === metric.key ? (
-                    <div
-                      className={`absolute left-0 top-11 z-10 w-64 rounded-md border px-3 py-2 text-xs shadow-lg ${
-                        darkMode
-                          ? 'border-slate-600 bg-slate-800 text-slate-100'
-                          : 'border-slate-200 bg-white text-slate-700'
-                      }`}
-                    >
-                      {metric.tooltip}
-                    </div>
-                  ) : null}
-                </div>
-              ))}
-            </div>
-            <div className="mt-4">
-              <div className="flex items-center justify-between gap-2">
-                <p className={`text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-                  Progress to next level
-                </p>
-                <p className={`text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-                  {xpToNextLevel} XP to Level {resolvedLevel + 1}
-                </p>
-              </div>
-              <div
-                className={`mt-1 h-2.5 w-full overflow-hidden rounded-full ${
-                  darkMode ? 'bg-slate-700' : 'bg-slate-200'
-                }`}
-              >
-                <div
-                  className="h-full rounded-full bg-[#005eb8] transition-all"
-                  style={{ width: `${xpProgressPct}%` }}
-                />
-              </div>
-            </div>
-            <p className={`mt-3 text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
-              This reflects consistency over time, not perfection. Small, regular updates are what
-              move this forwards.
-            </p>
-          </div>
-        </div>
-      )}
-
-      <div
-        className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-5`}
-      >
-        <div>
-          <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
-            Your Profile
-          </h3>
-          <p className={`mt-1 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-            These details personalise your experience and reports.
-          </p>
-        </div>
-
-        <div>
-          <label
-            htmlFor="user-name"
-            className={`block text-sm font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
-          >
-            Your Name
-          </label>
-          <input
-            id="user-name"
-            type="text"
-            className={`w-full rounded-md border shadow-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8] sm:text-sm p-2 ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-[#768692] bg-white text-slate-900'}`}
-            value={settings.name}
-            onChange={(e) => updateUserSettings({ name: e.target.value })}
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="user-preferences"
-            className={`block text-sm font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
-          >
-            Preferences
-          </label>
-          <textarea
-            id="user-preferences"
-            className={`w-full rounded-md border shadow-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8] sm:text-sm p-2 h-24 ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-[#768692] bg-white text-slate-900'}`}
-            value={settings.preferences}
-            onChange={(e) => updateUserSettings({ preferences: e.target.value })}
-          />
-        </div>
-
-        <div>
-          <label
-            className={`block text-sm font-medium mb-2 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
-          >
-            Profile Picture
-          </label>
-          <div className="flex items-start gap-4">
-            {settings.profileImageDataUrl ? (
-              <img
-                src={settings.profileImageDataUrl}
-                alt="Profile"
-                className="h-20 w-20 rounded-md border border-slate-300 object-cover"
-              />
-            ) : (
-              <div className="h-20 w-20 rounded-md border-2 border-dashed border-slate-300 bg-slate-50 flex items-center justify-center">
-                <span className="text-xs text-slate-500">No image</span>
-              </div>
-            )}
-            <div className="space-y-2">
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${darkMode ? 'bg-slate-700 text-slate-100 hover:bg-slate-600' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}
-              >
-                {settings.profileImageDataUrl ? 'Change Picture' : 'Upload Picture'}
-              </button>
-              {settings.profileImageDataUrl ? (
-                <button
-                  type="button"
-                  onClick={handleRemoveProfileImage}
-                  className={`rounded-md border px-3 py-2 text-sm font-medium transition-colors ${darkMode ? 'border-red-500/40 bg-red-500/15 text-red-200 hover:bg-red-500/25' : 'border-red-200 bg-red-50 text-red-700 hover:bg-red-100'}`}
-                >
-                  Remove
-                </button>
-              ) : null}
-              <input
-                key={fileInputKey}
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleProfileImageUpload}
-              />
-            </div>
-          </div>
-        </div>
+      <div className="flex items-center gap-2">
+        <h2 className={`text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
+          Settings
+        </h2>
+        <PageHelpButton onClick={pageIntro.reopen} darkMode={darkMode} />
       </div>
+      <p className={`text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+        Use this page to manage app appearance, guidance preferences, and data/support options.
+      </p>
+      <PageIntroModal
+        open={pageIntro.isOpen}
+        onClose={pageIntro.close}
+        title="Settings"
+        darkMode={darkMode}
+        body={
+          <p>
+            Manage app-wide appearance (theme, dark mode, guided-workflow and guidance-link
+            preferences) and data/support tools like example data, reset, and bug reporting. For
+            your personal profile and engagement progress, see the Profile page.
+          </p>
+        }
+      />
 
       <div
         className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-4`}

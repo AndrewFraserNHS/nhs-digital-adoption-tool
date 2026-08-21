@@ -119,6 +119,21 @@ export const futureNhsLinkTbc = (
   };
 };
 
+/**
+ * Global reference links not tied to any single component - shown in their own "Core links"
+ * section on CST Personalisation (org-wide, editable via OrgProfile.coreLinks) and merged into
+ * every component's guidance-link pool for auto-linking (see buildGuidanceLinksByComponent in
+ * AssessmentPanel.tsx), unlike DEFAULT_GUIDANCE_LINK_MAP below which is looked up per component.
+ */
+export const CORE_LINKS: GuidanceLink[] = [
+  futureNhsLinkTbc(
+    'futures_change_management_network',
+    'FuturesNHS Change Management Network',
+    'core',
+    'The wider NHS community for change management practice, discussion and shared resources.'
+  ),
+];
+
 export const DEFAULT_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
   Vision: {
     inputs: [

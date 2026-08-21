@@ -1,96 +1,29 @@
-import { useCallback, useEffect, useMemo, useState, type JSX } from 'react';
-import { OrgProfile, type TeamMember } from '@lib/adoptionState';
+import { useCallback, useEffect, useMemo, useRef, useState, type JSX } from 'react';
+import { normalizeOrgProfile, OrgProfile, type TeamMember } from '@lib/adoptionState';
 import { nhsButtonSecondary } from '../../styles/nhsTheme';
 import { validateOrgProfile } from '@lib/adoptionValidator';
+import { downloadFile } from '@lib/utils';
+import { PageHelpButton, PageIntroModal, usePageIntroSeen } from '@components/onboarding/PageIntroModal';
 import { AssessmentComponent } from '@data/components';
 import {
+  CORE_LINKS,
   DEFAULT_GUIDANCE_LINK_MAP,
   TOOLKIT_BASE_DEFAULTS,
+  type GuidanceLink,
   type GuidanceSectionLinks,
   type LinkOverrides,
   type PerLinkOverride,
 } from '@data/maturity-guidance-links';
 import {
-  COMPETENCE_OPTIONS,
-  CONFIDENCE_OPTIONS,
   CST_TYPE_OPTIONS,
-  OVERARCHING_PHASES,
   PATHWAY_OPTIONS,
-  type CompetenceGrade,
-  type ConfidenceScore,
   type CstPathwayKey,
   type CstType,
-  type OverarchingPhase,
 } from '@data/cst';
 import { TOOLKIT_OPTIONS, type ToolkitOptionKey } from '@data/toolkits';
 
-const PHASE_SUMMARY: Record<OverarchingPhase, string> = {
-  1: 'Pre go-live planning and early mobilisation.',
-  2: 'Go-live readiness and immediate launch support.',
-  3: 'Early adoption reinforcement and consistency.',
-  4: 'Embedding new ways of working across teams.',
-  5: 'Sustained adoption and benefits realisation at scale.',
-};
-
-const CONFIDENCE_LABELS: Record<ConfidenceScore, string> = {
-  1: 'Low confidence',
-  2: 'Some confidence',
-  3: 'Moderate confidence',
-  4: 'High confidence',
-  5: 'Very high confidence',
-};
-
-const COMPETENCE_LABELS: Record<CompetenceGrade, string> = {
-  A: 'Well embedded in practice',
-  B: 'Mostly embedded in practice',
-  C: 'Partly embedded in practice',
-  D: 'Early adoption in practice',
-  E: 'Not yet embedded in practice',
-};
-
-function getConfidenceBand(confidence: ConfidenceScore): 'high' | 'average' | 'below' {
-  if (confidence >= 4) {
-    return 'high';
-  }
-  if (confidence === 3) {
-    return 'average';
-  }
-  return 'below';
-}
-
-function getCapabilityBand(competence: CompetenceGrade): 'high' | 'average' | 'below' {
-  if (competence === 'A' || competence === 'B') {
-    return 'high';
-  }
-  if (competence === 'C') {
-    return 'average';
-  }
-  return 'below';
-}
-
-function getPhaseBrag(
-  competence: CompetenceGrade,
-  confidence: ConfidenceScore
-): 'Blue' | 'Green' | 'Amber' | 'Red' {
-  const capabilityBand = getCapabilityBand(competence);
-  const confidenceBand = getConfidenceBand(confidence);
-
-  const bothHigh = capabilityBand === 'high' && confidenceBand === 'high';
-  const bothBelowAverage = capabilityBand === 'below' && confidenceBand === 'below';
-  const eitherHighOtherAverageOrAbove =
-    (capabilityBand === 'high' && confidenceBand !== 'below') ||
-    (confidenceBand === 'high' && capabilityBand !== 'below');
-
-  if (bothHigh) {
-    return 'Blue';
-  }
-  if (bothBelowAverage) {
-    return 'Red';
-  }
-  if (eitherHighOtherAverageOrAbove) {
-    return 'Green';
-  }
-  return 'Amber';
+function sanitizeFileNamePart(value: string): string {
+  return value.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'export';
 }
 
 export interface ProjectDetailsPageProps {
@@ -116,7 +49,8 @@ export function ProjectDetailsPage({
   onCurrentUserChange,
 }: ProjectDetailsPageProps): JSX.Element {
   const [profile, setProfile] = useState<OrgProfile>(orgProfile);
-  const [activePhaseHelp, setActivePhaseHelp] = useState<OverarchingPhase | null>(null);
+  const cstImportInputRef = useRef<HTMLInputElement>(null);
+  const pageIntro = usePageIntroSeen('cst-personalisation');
   const profileValidation = validateOrgProfile(profile);
   const validationByField = useMemo(() => {
     return profileValidation.errors.reduce<Record<string, string[]>>((next, error) => {
@@ -209,35 +143,6 @@ export function ProjectDetailsPage({
     [profile, onProfileUpdate]
   );
 
-  const handlePhaseCapabilityChange = useCallback(
-    (
-      phase: OverarchingPhase,
-      field: 'competence' | 'confidence',
-      value: CompetenceGrade | ConfidenceScore
-    ) => {
-      const current = profile.cst.phaseCapability[phase] || { competence: 'C', confidence: 3 };
-      const updated = {
-        ...profile,
-        cst: {
-          ...profile.cst,
-          phaseCapability: {
-            ...profile.cst.phaseCapability,
-            [phase]: {
-              competence: current.competence,
-              confidence: current.confidence,
-              assessedAt: new Date().toISOString(),
-              reason: 'manual',
-              [field]: value,
-            },
-          },
-        },
-      };
-      setProfile(updated);
-      onProfileUpdate(updated);
-    },
-    [profile, onProfileUpdate]
-  );
-
   const handleLinkOverridesChange = useCallback(
     (overrides: LinkOverrides) => {
       const updated = { ...profile, linkOverrides: overrides };
@@ -302,20 +207,127 @@ export function ProjectDetailsPage({
     [profile, onProfileUpdate, currentUserId, onCurrentUserChange]
   );
 
+  const effectiveCoreLinks = profile.coreLinks && profile.coreLinks.length > 0 ? profile.coreLinks : CORE_LINKS;
+
+  const handleAddCoreLink = useCallback(() => {
+    const newLink: GuidanceLink = {
+      key: `core-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      label: '',
+      url: '',
+      type: 'core',
+    };
+    const updated = { ...profile, coreLinks: [...effectiveCoreLinks, newLink] };
+    setProfile(updated);
+    onProfileUpdate(updated);
+  }, [profile, effectiveCoreLinks, onProfileUpdate]);
+
+  const handleUpdateCoreLink = useCallback(
+    (key: string, field: 'label' | 'url', value: string) => {
+      const updated = {
+        ...profile,
+        coreLinks: effectiveCoreLinks.map((link) =>
+          link.key === key ? { ...link, [field]: value } : link
+        ),
+      };
+      setProfile(updated);
+      onProfileUpdate(updated);
+    },
+    [profile, effectiveCoreLinks, onProfileUpdate]
+  );
+
+  const handleRemoveCoreLink = useCallback(
+    (key: string) => {
+      const updated = {
+        ...profile,
+        coreLinks: effectiveCoreLinks.filter((link) => link.key !== key),
+      };
+      setProfile(updated);
+      onProfileUpdate(updated);
+    },
+    [profile, effectiveCoreLinks, onProfileUpdate]
+  );
+
+  const handleExportCst = useCallback(() => {
+    const payload = {
+      schemaVersion: 'cst-v1',
+      exportedAt: new Date().toISOString(),
+      orgProfile: profile,
+    };
+    const filename = `cst-personalisation-${profile.trustName ? sanitizeFileNamePart(profile.trustName) : 'export'}.json`;
+    downloadFile(filename, JSON.stringify(payload, null, 2), 'application/json');
+  }, [profile]);
+
+  const handleImportCstClick = useCallback(() => {
+    cstImportInputRef.current?.click();
+  }, []);
+
+  const handleImportCstFile = useCallback(
+    async (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      event.target.value = '';
+      if (!file) {
+        return;
+      }
+      try {
+        const text = await file.text();
+        const parsed = JSON.parse(text) as { orgProfile?: unknown };
+        if (!parsed.orgProfile || typeof parsed.orgProfile !== 'object') {
+          window.alert('This file does not contain CST Personalisation data.');
+          return;
+        }
+        const nextProfile = normalizeOrgProfile(parsed.orgProfile as Partial<OrgProfile>);
+        const validation = validateOrgProfile(nextProfile);
+        if (
+          !window.confirm(
+            'Import this CST Personalisation file? This replaces your current organisation profile, pathway/timeline, toolkit links, further reading, core links and team members.' +
+              (validation.errors.length
+                ? `\n\nNote: the imported data has ${validation.errors.length} validation warning(s) you can fix after importing.`
+                : '')
+          )
+        ) {
+          return;
+        }
+        setProfile(nextProfile);
+        onProfileUpdate(nextProfile);
+      } catch (_error) {
+        window.alert('Unable to read this file. Please choose a valid CST Personalisation export.');
+      }
+    },
+    [onProfileUpdate]
+  );
+
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className={`text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
-          CST Personalisation
-        </h2>
-        <button
-          type="button"
-          onClick={onOpenOnboarding}
-          className={nhsButtonSecondary}
-          data-testid="cst-show-intro-button"
-        >
-          Show introduction again
-        </button>
+        <div className="flex items-center gap-2">
+          <h2 className={`text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
+            CST Personalisation
+          </h2>
+          <PageHelpButton onClick={pageIntro.reopen} darkMode={darkMode} />
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <button type="button" onClick={handleImportCstClick} className={nhsButtonSecondary}>
+            Import CST
+          </button>
+          <input
+            ref={cstImportInputRef}
+            type="file"
+            accept="application/json"
+            className="hidden"
+            onChange={handleImportCstFile}
+          />
+          <button type="button" onClick={handleExportCst} className={nhsButtonSecondary}>
+            Export CST
+          </button>
+          <button
+            type="button"
+            onClick={onOpenOnboarding}
+            className={nhsButtonSecondary}
+            data-testid="cst-show-intro-button"
+          >
+            Show introduction again
+          </button>
+        </div>
       </div>
       <p className={`text-sm -mt-4 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
         This is the Context Specific Template (CST) for your programme: who it belongs to, which of
@@ -605,162 +617,6 @@ export function ProjectDetailsPage({
             </div>
           ) : null}
         </details>
-
-        <details
-          className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} rounded-md border p-4`}
-        >
-          <summary
-            className={`cursor-pointer text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
-          >
-            Step 3: Confidence and capability by phase
-          </summary>
-          <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
-            <p className={`text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-              Capture your starting position, then refresh when readiness phase changes or after
-              major milestones.
-            </p>
-          </div>
-
-          <div className="mt-3 rounded-md border border-blue-200 bg-blue-50 p-3 text-xs text-blue-900">
-            <p className="font-semibold">How this self-assessment works</p>
-            <p className="mt-1">
-              Confidence is how sure your team feels. Delivery readiness is how embedded the new way
-              of working is in practice.
-            </p>
-            <p className="mt-1">
-              Cards now use BRAG backgrounds: Blue = both high, Green = one high and the other at
-              least average, Amber = neither high, Red = both below average.
-            </p>
-          </div>
-
-          <div className="mt-3 space-y-3">
-            {OVERARCHING_PHASES.map((phase) => {
-              const value = profile.cst.phaseCapability[phase] || {
-                competence: 'C',
-                confidence: 3,
-              };
-              const brag = getPhaseBrag(value.competence, value.confidence);
-              const bragCardClass =
-                brag === 'Blue'
-                  ? 'border-sky-300 bg-sky-50'
-                  : brag === 'Green'
-                    ? 'border-emerald-300 bg-emerald-50'
-                    : brag === 'Red'
-                      ? 'border-red-300 bg-red-50'
-                      : 'border-amber-300 bg-amber-50';
-              const bragLabelClass =
-                brag === 'Blue'
-                  ? 'text-sky-800 bg-sky-100'
-                  : brag === 'Green'
-                    ? 'text-emerald-800 bg-emerald-100'
-                    : brag === 'Red'
-                      ? 'text-red-800 bg-red-100'
-                      : 'text-amber-800 bg-amber-100';
-
-              return (
-                <div
-                  key={`phase-capability-${phase}`}
-                  className={`${darkMode ? 'border-slate-700 bg-slate-800' : bragCardClass} rounded-md border p-3`}
-                >
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <div className="relative flex items-center gap-2">
-                      <span
-                        className={`font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}
-                      >
-                        Phase {phase}
-                      </span>
-                      <button
-                        type="button"
-                        onMouseEnter={() => setActivePhaseHelp(phase)}
-                        onMouseLeave={() =>
-                          setActivePhaseHelp((current) => (current === phase ? null : current))
-                        }
-                        onFocus={() => setActivePhaseHelp(phase)}
-                        onBlur={() =>
-                          setActivePhaseHelp((current) => (current === phase ? null : current))
-                        }
-                        onClick={() =>
-                          setActivePhaseHelp((current) => (current === phase ? null : phase))
-                        }
-                        className="h-5 w-5 rounded-full border border-slate-300 text-xs font-semibold text-slate-600"
-                        aria-expanded={activePhaseHelp === phase}
-                        aria-controls={`phase-help-${phase}`}
-                        aria-label={`Phase ${phase} guidance`}
-                      >
-                        i
-                      </button>
-                      {activePhaseHelp === phase ? (
-                        <div
-                          id={`phase-help-${phase}`}
-                          role="tooltip"
-                          className="absolute left-0 top-7 z-10 w-72 rounded-md border border-slate-200 bg-slate-900 px-3 py-2 text-xs text-white shadow-xl"
-                        >
-                          {PHASE_SUMMARY[phase]}
-                        </div>
-                      ) : null}
-                    </div>
-                    <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${darkMode ? 'bg-slate-700 text-slate-100' : bragLabelClass}`}>
-                      {brag}
-                    </span>
-                  </div>
-                  <p className={`mt-1 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-                    {PHASE_SUMMARY[phase]}
-                  </p>
-                  <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                    <label className="space-y-1">
-                      <span
-                        className={`text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
-                      >
-                        Delivery readiness
-                      </span>
-                      <select
-                        value={value.competence}
-                        onChange={(event) =>
-                          handlePhaseCapabilityChange(
-                            phase,
-                            'competence',
-                            event.target.value as CompetenceGrade
-                          )
-                        }
-                        className={`w-full rounded-md border px-2 py-2 pr-10 ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
-                      >
-                        {COMPETENCE_OPTIONS.map((option) => (
-                          <option key={`${phase}-competence-${option}`} value={option}>
-                            {COMPETENCE_LABELS[option]} ({option})
-                          </option>
-                        ))}
-                      </select>
-                    </label>
-                    <label className="space-y-1">
-                      <span
-                        className={`text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
-                      >
-                        Confidence
-                      </span>
-                      <select
-                        value={value.confidence}
-                        onChange={(event) =>
-                          handlePhaseCapabilityChange(
-                            phase,
-                            'confidence',
-                            Number(event.target.value) as ConfidenceScore
-                          )
-                        }
-                        className={`w-full rounded-md border px-2 py-2 pr-10 ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
-                      >
-                        {CONFIDENCE_OPTIONS.map((option) => (
-                          <option key={`${phase}-confidence-${option}`} value={option}>
-                            {CONFIDENCE_LABELS[option]} ({option})
-                          </option>
-                        ))}
-                      </select>
-                    </label>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </details>
       </div>
 
       <div
@@ -1014,6 +870,56 @@ export function ProjectDetailsPage({
             </div>
           </div>
 
+          {/* Core links - global reference links not tied to any one component */}
+          <div
+            className={`mt-4 rounded-md border p-4 space-y-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
+          >
+            <div>
+              <p
+                className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+              >
+                Core links
+              </p>
+              <p className={`text-xs mt-0.5 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
+                General reference links that aren't tied to a single component - shown here and
+                matched into action/summary text across every component.
+              </p>
+            </div>
+            <div className="space-y-2">
+              {effectiveCoreLinks.map((link) => (
+                <div
+                  key={link.key}
+                  className="grid grid-cols-1 md:grid-cols-[1fr,2fr,auto] gap-2 items-center"
+                >
+                  <input
+                    type="text"
+                    placeholder="Link name"
+                    value={link.label}
+                    onChange={(e) => handleUpdateCoreLink(link.key, 'label', e.target.value)}
+                    className={`rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
+                  />
+                  <input
+                    type="url"
+                    placeholder="https://..."
+                    value={link.url}
+                    onChange={(e) => handleUpdateCoreLink(link.key, 'url', e.target.value)}
+                    className={`rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveCoreLink(link.key)}
+                    className={`shrink-0 rounded border px-2 py-1.5 text-xs font-medium ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-50'}`}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+            <button type="button" onClick={handleAddCoreLink} className={nhsButtonSecondary}>
+              + Add Core Link
+            </button>
+          </div>
+
           {/* Per-link overrides grouped by section */}
           <div className="mt-4 space-y-3">
             <p
@@ -1167,6 +1073,20 @@ export function ProjectDetailsPage({
         </details>
       </div>
 
+      <PageIntroModal
+        open={pageIntro.isOpen}
+        onClose={pageIntro.close}
+        title="CST Personalisation"
+        darkMode={darkMode}
+        body={
+          <p>
+            This is the Context Specific Template (CST) for your programme: who it belongs to,
+            which of the three pathways it follows, and how it's tracking against its readiness
+            phases. You can export or import just this page's data, and manage the external links
+            shown throughout the tool.
+          </p>
+        }
+      />
     </div>
   );
 }

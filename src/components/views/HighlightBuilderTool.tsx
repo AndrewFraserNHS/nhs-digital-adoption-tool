@@ -3,7 +3,6 @@ import { downloadFile } from '@lib/utils';
 import type { AdoptionStore, DraftEntry } from '@lib/adoptionState';
 import { ASSESSMENT_COMPONENTS } from '@data/components';
 import { type Metrics } from '@lib/adoptionMetrics';
-import { normalizeActionStatus } from '@lib/actionModel';
 import { getBragStatusFromAverage, BRAG_BADGE_STYLES } from '@lib/bragStatus';
 import { RichTextEditor } from '@components/common/RichTextEditor';
 import { PageHelpButton, PageIntroModal, usePageIntroSeen } from '@components/onboarding/PageIntroModal';
@@ -24,6 +23,40 @@ export interface BragSlide {
   rows: BragActionRow[];
 }
 
+export interface MetricRow {
+  id: string;
+  measure: string;
+  target: string;
+  current: string;
+  status: 'Green' | 'Amber' | 'Red';
+}
+
+export interface RiskRow {
+  id: string;
+  risk: string;
+  impact: string;
+  mitigation: string;
+  status: string;
+}
+
+export interface InterventionRow {
+  id: string;
+  text: string;
+}
+
+export interface DecisionRow {
+  id: string;
+  decision: string;
+  owner: string;
+  requiredBy: string;
+}
+
+export interface AssessmentRow {
+  id: string;
+  area: string;
+  confidence: 'High' | 'Medium' | 'Low';
+}
+
 function createId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
@@ -41,6 +74,14 @@ interface HighlightBuilderLayout {
   bragSlides: BragSlide[];
   sections: string[];
   sectionNarratives: Record<string, string>;
+  metricRows: MetricRow[];
+  riskRows: RiskRow[];
+  stakeholderPositivePct: number;
+  stakeholderNeutralPct: number;
+  stakeholderNegativePct: number;
+  interventionRows: InterventionRow[];
+  decisionRows: DecisionRow[];
+  assessmentRows: AssessmentRow[];
 }
 
 const STORAGE_KEY = 'nhs-highlight-builder-layout';
@@ -84,6 +125,14 @@ const DEFAULT_LAYOUT: HighlightBuilderLayout = {
     'change-lead-assessment',
   ],
   sectionNarratives: {},
+  metricRows: [],
+  riskRows: [],
+  stakeholderPositivePct: 0,
+  stakeholderNeutralPct: 0,
+  stakeholderNegativePct: 0,
+  interventionRows: [],
+  decisionRows: [],
+  assessmentRows: [],
 };
 
 const STATUS_BADGE_CLASSES: Record<HighlightBuilderLayout['overallStatus'], string> = {
@@ -146,6 +195,68 @@ function normaliseBragSlides(value: unknown): BragSlide[] {
     }));
 }
 
+function normaliseRows<T extends { id: string }>(
+  value: unknown,
+  fill: (item: Partial<T>) => T
+): T[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+  return (value as Array<Partial<T>>)
+    .filter((item) => Boolean(item) && typeof item === 'object')
+    .map(fill);
+}
+
+function normaliseMetricRows(value: unknown): MetricRow[] {
+  return normaliseRows<MetricRow>(value, (item) => ({
+    id: item.id || createId(),
+    measure: item.measure || '',
+    target: item.target || '',
+    current: item.current || '',
+    status:
+      item.status === 'Green' || item.status === 'Amber' || item.status === 'Red'
+        ? item.status
+        : 'Amber',
+  }));
+}
+
+function normaliseRiskRows(value: unknown): RiskRow[] {
+  return normaliseRows<RiskRow>(value, (item) => ({
+    id: item.id || createId(),
+    risk: item.risk || '',
+    impact: item.impact || '',
+    mitigation: item.mitigation || '',
+    status: item.status || 'Open',
+  }));
+}
+
+function normaliseInterventionRows(value: unknown): InterventionRow[] {
+  return normaliseRows<InterventionRow>(value, (item) => ({
+    id: item.id || createId(),
+    text: item.text || '',
+  }));
+}
+
+function normaliseDecisionRows(value: unknown): DecisionRow[] {
+  return normaliseRows<DecisionRow>(value, (item) => ({
+    id: item.id || createId(),
+    decision: item.decision || '',
+    owner: item.owner || '',
+    requiredBy: item.requiredBy || '',
+  }));
+}
+
+function normaliseAssessmentRows(value: unknown): AssessmentRow[] {
+  return normaliseRows<AssessmentRow>(value, (item) => ({
+    id: item.id || createId(),
+    area: item.area || '',
+    confidence:
+      item.confidence === 'High' || item.confidence === 'Medium' || item.confidence === 'Low'
+        ? item.confidence
+        : 'Medium',
+  }));
+}
+
 function readStoredLayout(): HighlightBuilderLayout {
   if (typeof window === 'undefined') {
     return DEFAULT_LAYOUT;
@@ -176,6 +287,14 @@ function readStoredLayout(): HighlightBuilderLayout {
         Array.isArray(parsed.sections) && parsed.sections.length > 0
           ? parsed.sections
           : DEFAULT_LAYOUT.sections,
+      metricRows: normaliseMetricRows(parsed.metricRows),
+      riskRows: normaliseRiskRows(parsed.riskRows),
+      stakeholderPositivePct: Number(parsed.stakeholderPositivePct) || 0,
+      stakeholderNeutralPct: Number(parsed.stakeholderNeutralPct) || 0,
+      stakeholderNegativePct: Number(parsed.stakeholderNegativePct) || 0,
+      interventionRows: normaliseInterventionRows(parsed.interventionRows),
+      decisionRows: normaliseDecisionRows(parsed.decisionRows),
+      assessmentRows: normaliseAssessmentRows(parsed.assessmentRows),
     };
   } catch {
     return DEFAULT_LAYOUT;
@@ -249,26 +368,6 @@ export function HighlightBuilderTool({
     () => [...componentScores].sort((left, right) => right.average - left.average).slice(0, 5),
     [componentScores]
   );
-
-  const topActions = useMemo(() => {
-    return components
-      .flatMap((component) =>
-        component.lenses.flatMap((lens) =>
-          (getEntry(component.id, lens).actions || []).map((action) => ({
-            componentLabel: component.label,
-            componentId: component.id,
-            lens,
-            action,
-          }))
-        )
-      )
-      .sort((left, right) => {
-        const leftDone = normalizeActionStatus(left.action.status) === 'Completed' ? 1 : 0;
-        const rightDone = normalizeActionStatus(right.action.status) === 'Completed' ? 1 : 0;
-        return leftDone - rightDone;
-      })
-      .slice(0, 8);
-  }, [components, getEntry]);
 
   const updateLayout = (updates: Partial<HighlightBuilderLayout>) => {
     setLayout((current) => ({
@@ -359,6 +458,33 @@ export function HighlightBuilderTool({
     }));
   };
 
+  function addRow<K extends keyof HighlightBuilderLayout>(key: K, newItem: HighlightBuilderLayout[K] extends Array<infer T> ? T : never) {
+    setLayout((current) => ({
+      ...current,
+      [key]: [...(current[key] as unknown as unknown[]), newItem],
+    }));
+  }
+
+  function updateRow<K extends keyof HighlightBuilderLayout>(
+    key: K,
+    id: string,
+    updates: HighlightBuilderLayout[K] extends Array<infer T> ? Partial<T> : never
+  ) {
+    setLayout((current) => ({
+      ...current,
+      [key]: (current[key] as unknown as Array<{ id: string }>).map((item) =>
+        item.id === id ? { ...item, ...updates } : item
+      ),
+    }));
+  }
+
+  function removeRow<K extends keyof HighlightBuilderLayout>(key: K, id: string) {
+    setLayout((current) => ({
+      ...current,
+      [key]: (current[key] as unknown as Array<{ id: string }>).filter((item) => item.id !== id),
+    }));
+  }
+
   const handleLogoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) {
@@ -415,6 +541,14 @@ export function HighlightBuilderTool({
             ? parsed.sections
             : DEFAULT_LAYOUT.sections,
         sectionNarratives: parsed.sectionNarratives || {},
+        metricRows: normaliseMetricRows(parsed.metricRows),
+        riskRows: normaliseRiskRows(parsed.riskRows),
+        stakeholderPositivePct: Number(parsed.stakeholderPositivePct) || 0,
+        stakeholderNeutralPct: Number(parsed.stakeholderNeutralPct) || 0,
+        stakeholderNegativePct: Number(parsed.stakeholderNegativePct) || 0,
+        interventionRows: normaliseInterventionRows(parsed.interventionRows),
+        decisionRows: normaliseDecisionRows(parsed.decisionRows),
+        assessmentRows: normaliseAssessmentRows(parsed.assessmentRows),
       });
     } catch {
       window.alert('Unable to load the selected layout JSON. Please verify the file contents.');
@@ -467,86 +601,6 @@ export function HighlightBuilderTool({
       };
     });
   }, [componentScores, previousSnapshot]);
-
-  const adoptionMetricRows = useMemo(() => {
-    const completedActions = topActions.filter(
-      (row) => normalizeActionStatus(row.action.status) === 'Completed'
-    ).length;
-    const completionFromActions = topActions.length
-      ? Math.round((completedActions / topActions.length) * 100)
-      : 0;
-    const championActionCount = topActions.filter((row) =>
-      /champion|change network/i.test(row.action.text || '')
-    ).length;
-    const inferredChampionCoverage =
-      championActionCount >= 5 ? 2 : championActionCount >= 1 ? 1 : 0;
-    return [
-      {
-        measure: 'User Activation',
-        target: '95%',
-        current: `${Math.min(100, metrics.overallPct + 6)}%`,
-      },
-      { measure: 'Active Users', target: '80%', current: `${Math.min(100, metrics.overallPct)}%` },
-      {
-        measure: 'Training Completion',
-        target: '90%',
-        current: `${Math.min(100, metrics.actionCompletionPct)}%`,
-      },
-      {
-        measure: 'Stakeholder Engagement Score',
-        target: '80%',
-        current: `${Math.min(100, metrics.overallPct + 4)}%`,
-      },
-      {
-        measure: 'Champion Coverage',
-        target: '1 per team',
-        current: `${inferredChampionCoverage} per team`,
-      },
-      {
-        measure: 'User Satisfaction',
-        target: '80%',
-        current: `${Math.min(100, metrics.overallPct + 2)}%`,
-      },
-      {
-        measure: 'Process Compliance',
-        target: '90%',
-        current: `${Math.min(100, metrics.overallPct - 3)}%`,
-      },
-      {
-        measure: 'Benefits Evidence Submitted',
-        target: '75%',
-        current: `${Math.min(100, completionFromActions)}%`,
-      },
-    ].map((row) => {
-      const numericCurrent = Number((row.current || '').replace(/[^0-9.]/g, ''));
-      const numericTarget = Number((row.target || '').replace(/[^0-9.]/g, ''));
-      const trend =
-        numericCurrent >= numericTarget ? '►' : numericCurrent >= numericTarget - 5 ? '▲' : '▼';
-      const status =
-        numericCurrent >= numericTarget
-          ? 'Green'
-          : numericCurrent >= numericTarget - 5
-            ? 'Amber'
-            : 'Red';
-      return {
-        ...row,
-        trend,
-        status,
-      };
-    });
-  }, [metrics.actionCompletionPct, metrics.overallPct, topActions]);
-
-  const riskRows = useMemo(() => {
-    return componentScores
-      .filter((item) => item.average < item.target)
-      .slice(0, 4)
-      .map((item) => ({
-        risk: `Inconsistent adoption in ${item.component.label}`,
-        impact: 'Benefits may not be realised in full.',
-        mitigation: 'Targeted coaching and local engagement sessions.',
-        status: 'Open',
-      }));
-  }, [componentScores]);
 
   const upcomingPriorities = useMemo(() => {
     return metrics.nextSteps.slice(0, 7).map((step) => step.message);
@@ -644,28 +698,82 @@ export function HighlightBuilderTool({
                     Current
                   </th>
                   <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
-                    Trend
-                  </th>
-                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
                     Status
                   </th>
+                  <th data-print-hide="true" className="px-3 py-2" />
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {adoptionMetricRows.map((row) => (
-                  <tr key={row.measure}>
-                    <td className="px-3 py-2 text-sm text-slate-700">{row.measure}</td>
-                    <td className="px-3 py-2 text-sm text-slate-600">{row.target}</td>
-                    <td className="px-3 py-2 text-sm text-slate-700">{row.current}</td>
-                    <td className="px-3 py-2 text-sm">{row.trend}</td>
-                    <td className="px-3 py-2 text-sm">
-                      <StatusBadge status={row.status as HighlightBuilderLayout['overallStatus']} />
+                {layout.metricRows.map((row) => (
+                  <tr key={row.id}>
+                    <td className="px-3 py-2 align-top">
+                      <input
+                        value={row.measure}
+                        onChange={(event) => updateRow('metricRows', row.id, { measure: event.target.value })}
+                        placeholder="e.g. Active Users"
+                        className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+                      />
+                    </td>
+                    <td className="px-3 py-2 align-top">
+                      <input
+                        value={row.target}
+                        onChange={(event) => updateRow('metricRows', row.id, { target: event.target.value })}
+                        placeholder="e.g. 80%"
+                        className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+                      />
+                    </td>
+                    <td className="px-3 py-2 align-top">
+                      <input
+                        value={row.current}
+                        onChange={(event) => updateRow('metricRows', row.id, { current: event.target.value })}
+                        placeholder="e.g. 62%"
+                        className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+                      />
+                    </td>
+                    <td className="px-3 py-2 align-top">
+                      <select
+                        value={row.status}
+                        onChange={(event) =>
+                          updateRow('metricRows', row.id, { status: event.target.value as MetricRow['status'] })
+                        }
+                        className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+                      >
+                        <option value="Green">Green</option>
+                        <option value="Amber">Amber</option>
+                        <option value="Red">Red</option>
+                      </select>
+                    </td>
+                    <td data-print-hide="true" className="px-3 py-2 align-top">
+                      <button
+                        type="button"
+                        onClick={() => removeRow('metricRows', row.id)}
+                        className="rounded-md border border-red-200 bg-red-50 px-2.5 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100"
+                      >
+                        Remove
+                      </button>
                     </td>
                   </tr>
                 ))}
+                {!layout.metricRows.length ? (
+                  <tr>
+                    <td className="px-3 py-3 text-sm text-slate-500" colSpan={5}>
+                      No metrics added yet.
+                    </td>
+                  </tr>
+                ) : null}
               </tbody>
             </table>
           </div>
+          <button
+            type="button"
+            data-print-hide="true"
+            onClick={() =>
+              addRow('metricRows', { id: createId(), measure: '', target: '', current: '', status: 'Amber' })
+            }
+            className="mt-3 rounded-md bg-slate-100 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-200"
+          >
+            + Add Metric
+          </button>
         </>
       );
     }
@@ -690,28 +798,75 @@ export function HighlightBuilderTool({
                   <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
                     Status
                   </th>
+                  <th data-print-hide="true" className="px-3 py-2" />
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {riskRows.length ? (
-                  riskRows.map((row, index) => (
-                    <tr key={`${row.risk}-${index}`}>
-                      <td className="px-3 py-2 text-sm text-slate-700">{row.risk}</td>
-                      <td className="px-3 py-2 text-sm text-slate-600">{row.impact}</td>
-                      <td className="px-3 py-2 text-sm text-slate-600">{row.mitigation}</td>
-                      <td className="px-3 py-2 text-sm">{row.status}</td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td className="px-3 py-2 text-sm text-slate-500" colSpan={4}>
-                      No key risks are currently above threshold.
+                {layout.riskRows.map((row) => (
+                  <tr key={row.id}>
+                    <td className="px-3 py-2 align-top">
+                      <input
+                        value={row.risk}
+                        onChange={(event) => updateRow('riskRows', row.id, { risk: event.target.value })}
+                        placeholder="e.g. Inconsistent adoption in Vision"
+                        className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+                      />
+                    </td>
+                    <td className="px-3 py-2 align-top">
+                      <input
+                        value={row.impact}
+                        onChange={(event) => updateRow('riskRows', row.id, { impact: event.target.value })}
+                        placeholder="e.g. Benefits may not be realised"
+                        className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+                      />
+                    </td>
+                    <td className="px-3 py-2 align-top">
+                      <input
+                        value={row.mitigation}
+                        onChange={(event) => updateRow('riskRows', row.id, { mitigation: event.target.value })}
+                        placeholder="e.g. Targeted coaching sessions"
+                        className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+                      />
+                    </td>
+                    <td className="px-3 py-2 align-top">
+                      <input
+                        value={row.status}
+                        onChange={(event) => updateRow('riskRows', row.id, { status: event.target.value })}
+                        placeholder="Open"
+                        className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+                      />
+                    </td>
+                    <td data-print-hide="true" className="px-3 py-2 align-top">
+                      <button
+                        type="button"
+                        onClick={() => removeRow('riskRows', row.id)}
+                        className="rounded-md border border-red-200 bg-red-50 px-2.5 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100"
+                      >
+                        Remove
+                      </button>
                     </td>
                   </tr>
-                )}
+                ))}
+                {!layout.riskRows.length ? (
+                  <tr>
+                    <td className="px-3 py-3 text-sm text-slate-500" colSpan={5}>
+                      No key risks added yet.
+                    </td>
+                  </tr>
+                ) : null}
               </tbody>
             </table>
           </div>
+          <button
+            type="button"
+            data-print-hide="true"
+            onClick={() =>
+              addRow('riskRows', { id: createId(), risk: '', impact: '', mitigation: '', status: 'Open' })
+            }
+            className="mt-3 rounded-md bg-slate-100 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-200"
+          >
+            + Add Risk / Issue
+          </button>
         </>
       );
     }
@@ -750,25 +905,54 @@ export function HighlightBuilderTool({
     }
 
     if (sectionId === 'stakeholder-insights') {
-      const positive = Math.min(85, Math.max(45, metrics.overallPct - 10));
-      const neutral = Math.min(35, Math.max(10, 100 - positive - 8));
-      const negative = Math.max(3, 100 - positive - neutral);
-
       return (
         <>
           <p className="mt-2 text-sm whitespace-pre-line text-slate-700">{narrative}</p>
           <div className="mt-3 grid gap-2 md:grid-cols-3 text-sm">
             <div className="flex items-center gap-2 rounded border border-green-200 bg-green-50 p-3">
               <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-green-500" />
-              Positive: {positive}%
+              <label className="flex items-center gap-1.5">
+                Positive:
+                <input
+                  type="number"
+                  min={0}
+                  max={100}
+                  value={layout.stakeholderPositivePct}
+                  onChange={(event) => updateLayout({ stakeholderPositivePct: Number(event.target.value) })}
+                  className="w-16 rounded-md border border-slate-300 px-2 py-1 text-sm"
+                />
+                %
+              </label>
             </div>
             <div className="flex items-center gap-2 rounded border border-amber-200 bg-amber-50 p-3">
               <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-amber-500" />
-              Neutral: {neutral}%
+              <label className="flex items-center gap-1.5">
+                Neutral:
+                <input
+                  type="number"
+                  min={0}
+                  max={100}
+                  value={layout.stakeholderNeutralPct}
+                  onChange={(event) => updateLayout({ stakeholderNeutralPct: Number(event.target.value) })}
+                  className="w-16 rounded-md border border-slate-300 px-2 py-1 text-sm"
+                />
+                %
+              </label>
             </div>
             <div className="flex items-center gap-2 rounded border border-red-200 bg-red-50 p-3">
               <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-red-500" />
-              Negative: {negative}%
+              <label className="flex items-center gap-1.5">
+                Negative:
+                <input
+                  type="number"
+                  min={0}
+                  max={100}
+                  value={layout.stakeholderNegativePct}
+                  onChange={(event) => updateLayout({ stakeholderNegativePct: Number(event.target.value) })}
+                  className="w-16 rounded-md border border-slate-300 px-2 py-1 text-sm"
+                />
+                %
+              </label>
             </div>
           </div>
         </>
@@ -779,14 +963,37 @@ export function HighlightBuilderTool({
       return (
         <>
           <p className="mt-2 text-sm whitespace-pre-line text-slate-700">{narrative}</p>
-          <ul className="mt-3 space-y-1 text-sm text-slate-700">
-            <li>• Sponsor briefing sessions</li>
-            <li>• Stakeholder engagement workshops</li>
-            <li>• Communications campaign</li>
-            <li>• Training delivery</li>
-            <li>• Champion network meetings</li>
-            <li>• Adoption data reviews</li>
+          <ul className="mt-3 space-y-2 text-sm text-slate-700">
+            {layout.interventionRows.map((row) => (
+              <li key={row.id} className="flex items-center gap-2">
+                <input
+                  value={row.text}
+                  onChange={(event) => updateRow('interventionRows', row.id, { text: event.target.value })}
+                  placeholder="e.g. Sponsor briefing sessions"
+                  className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+                />
+                <button
+                  type="button"
+                  data-print-hide="true"
+                  onClick={() => removeRow('interventionRows', row.id)}
+                  className="shrink-0 rounded-md border border-red-200 bg-red-50 px-2.5 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100"
+                >
+                  Remove
+                </button>
+              </li>
+            ))}
+            {!layout.interventionRows.length ? (
+              <li className="text-slate-500">No interventions added yet.</li>
+            ) : null}
           </ul>
+          <button
+            type="button"
+            data-print-hide="true"
+            onClick={() => addRow('interventionRows', { id: createId(), text: '' })}
+            className="mt-3 rounded-md bg-slate-100 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-200"
+          >
+            + Add Intervention
+          </button>
         </>
       );
     }
@@ -808,33 +1015,65 @@ export function HighlightBuilderTool({
                   <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
                     Required By
                   </th>
+                  <th data-print-hide="true" className="px-3 py-2" />
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                <tr>
-                  <td className="px-3 py-2 text-sm text-slate-700">
-                    Approval for additional adoption support resource
-                  </td>
-                  <td className="px-3 py-2 text-sm text-slate-700">Programme Board</td>
-                  <td className="px-3 py-2 text-sm text-slate-600">TBC</td>
-                </tr>
-                <tr>
-                  <td className="px-3 py-2 text-sm text-slate-700">
-                    Agreement on ongoing benefits ownership
-                  </td>
-                  <td className="px-3 py-2 text-sm text-slate-700">SRO</td>
-                  <td className="px-3 py-2 text-sm text-slate-600">TBC</td>
-                </tr>
-                <tr>
-                  <td className="px-3 py-2 text-sm text-slate-700">
-                    Endorsement of next rollout phase
-                  </td>
-                  <td className="px-3 py-2 text-sm text-slate-700">Steering Group</td>
-                  <td className="px-3 py-2 text-sm text-slate-600">TBC</td>
-                </tr>
+                {layout.decisionRows.map((row) => (
+                  <tr key={row.id}>
+                    <td className="px-3 py-2 align-top">
+                      <input
+                        value={row.decision}
+                        onChange={(event) => updateRow('decisionRows', row.id, { decision: event.target.value })}
+                        placeholder="e.g. Approval for additional adoption support resource"
+                        className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+                      />
+                    </td>
+                    <td className="px-3 py-2 align-top">
+                      <input
+                        value={row.owner}
+                        onChange={(event) => updateRow('decisionRows', row.id, { owner: event.target.value })}
+                        placeholder="e.g. Programme Board"
+                        className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+                      />
+                    </td>
+                    <td className="px-3 py-2 align-top">
+                      <input
+                        value={row.requiredBy}
+                        onChange={(event) => updateRow('decisionRows', row.id, { requiredBy: event.target.value })}
+                        placeholder="TBC"
+                        className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+                      />
+                    </td>
+                    <td data-print-hide="true" className="px-3 py-2 align-top">
+                      <button
+                        type="button"
+                        onClick={() => removeRow('decisionRows', row.id)}
+                        className="rounded-md border border-red-200 bg-red-50 px-2.5 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100"
+                      >
+                        Remove
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+                {!layout.decisionRows.length ? (
+                  <tr>
+                    <td className="px-3 py-3 text-sm text-slate-500" colSpan={4}>
+                      No decisions added yet.
+                    </td>
+                  </tr>
+                ) : null}
               </tbody>
             </table>
           </div>
+          <button
+            type="button"
+            data-print-hide="true"
+            onClick={() => addRow('decisionRows', { id: createId(), decision: '', owner: '', requiredBy: '' })}
+            className="mt-3 rounded-md bg-slate-100 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-200"
+          >
+            + Add Decision
+          </button>
         </>
       );
     }
@@ -853,34 +1092,64 @@ export function HighlightBuilderTool({
                   <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
                     Confidence
                   </th>
+                  <th data-print-hide="true" className="px-3 py-2" />
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                <tr>
-                  <td className="px-3 py-2 text-sm text-slate-700">
-                    Delivery of Change Activities
-                  </td>
-                  <td className="px-3 py-2 text-sm">High</td>
-                </tr>
-                <tr>
-                  <td className="px-3 py-2 text-sm text-slate-700">Stakeholder Engagement</td>
-                  <td className="px-3 py-2 text-sm">High</td>
-                </tr>
-                <tr>
-                  <td className="px-3 py-2 text-sm text-slate-700">Adoption Achievement</td>
-                  <td className="px-3 py-2 text-sm">Medium</td>
-                </tr>
-                <tr>
-                  <td className="px-3 py-2 text-sm text-slate-700">Benefits Realisation</td>
-                  <td className="px-3 py-2 text-sm">Medium</td>
-                </tr>
-                <tr>
-                  <td className="px-3 py-2 text-sm text-slate-700">Sustainability Post Go-Live</td>
-                  <td className="px-3 py-2 text-sm">Medium</td>
-                </tr>
+                {layout.assessmentRows.map((row) => (
+                  <tr key={row.id}>
+                    <td className="px-3 py-2 align-top">
+                      <input
+                        value={row.area}
+                        onChange={(event) => updateRow('assessmentRows', row.id, { area: event.target.value })}
+                        placeholder="e.g. Stakeholder Engagement"
+                        className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+                      />
+                    </td>
+                    <td className="px-3 py-2 align-top">
+                      <select
+                        value={row.confidence}
+                        onChange={(event) =>
+                          updateRow('assessmentRows', row.id, {
+                            confidence: event.target.value as AssessmentRow['confidence'],
+                          })
+                        }
+                        className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+                      >
+                        <option value="High">High</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Low">Low</option>
+                      </select>
+                    </td>
+                    <td data-print-hide="true" className="px-3 py-2 align-top">
+                      <button
+                        type="button"
+                        onClick={() => removeRow('assessmentRows', row.id)}
+                        className="rounded-md border border-red-200 bg-red-50 px-2.5 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100"
+                      >
+                        Remove
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+                {!layout.assessmentRows.length ? (
+                  <tr>
+                    <td className="px-3 py-3 text-sm text-slate-500" colSpan={3}>
+                      No assessment areas added yet.
+                    </td>
+                  </tr>
+                ) : null}
               </tbody>
             </table>
           </div>
+          <button
+            type="button"
+            data-print-hide="true"
+            onClick={() => addRow('assessmentRows', { id: createId(), area: '', confidence: 'Medium' })}
+            className="mt-3 rounded-md bg-slate-100 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-200"
+          >
+            + Add Assessment Area
+          </button>
         </>
       );
     }

@@ -1,1 +1,0 @@
-function l(t){return t==null?"":String(t).replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;")}function a(t,n,o="text/csv"){const r=new Blob([n],{type:o+";charset=utf-8;"}),c=URL.createObjectURL(r),e=document.createElement("a");e.href=c,e.download=t,document.body.appendChild(e),e.click(),e.remove(),URL.revokeObjectURL(c)}export{a as d,l as e};

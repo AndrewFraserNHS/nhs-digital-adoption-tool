@@ -1663,7 +1663,7 @@ export function AssessmentPanel({
       </div>
 
       {showActionsSection ? (
-        <div className="space-y-8">
+        <div className="space-y-8 mb-8">
           {component.lenses.map((lens) => {
             const entry = getEntry(component.id, lens);
             const targetKey = `${component.id}:${lens}`;

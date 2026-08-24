@@ -95,8 +95,7 @@ export function ProjectDetailsPage({
   const stageOneComplete = Boolean(
     profile.trustName.trim() &&
     (profile.projectName || '').trim() &&
-    (profile.leadName || '').trim() &&
-    profile.cst.goLiveDate.trim()
+    (profile.leadName || '').trim()
   );
 
   useEffect(() => {
@@ -369,10 +368,10 @@ export function ProjectDetailsPage({
       >
         <div className="space-y-1">
           <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
-            Organisation profile
+            Step 1: Organisation profile
           </h3>
           <p className={`text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-            Step 1: Basic details.
+            Provide some initial details to the project name, and change manager
           </p>
         </div>
 
@@ -435,6 +434,8 @@ export function ProjectDetailsPage({
             onChange={(e) => handleLeadChange(e.target.value)}
           />
         </div>
+      </div>
+
 
         {stageOneComplete ? (
           <div
@@ -464,23 +465,22 @@ export function ProjectDetailsPage({
           <div
             className={`rounded-md border p-3 text-xs ${darkMode ? 'border-amber-500/40 bg-amber-500/10 text-amber-100' : 'border-amber-200 bg-amber-50 text-amber-900'}`}
           >
-            Stage 1 in progress: add organisation name, programme name, lead name, and go-live date
+            Stage 1 in progress: add organisation name, programme name and lead name
             to complete this step.
           </div>
         )}
 
-        <details
-          className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} rounded-md border p-4`}
-          open
-        >
-          <summary
-            className={`cursor-pointer text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
-          >
-            Step 2: Pathway and timeline (Context Specific Template)
-          </summary>
-          <p className={`mt-2 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+      <div
+        className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-6`}
+      >
+        <div className="space-y-1">
+          <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
+            Step 2: Pathway and timeline
+          </h3>
+        <p className={`text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
             Choose the full pathway title for your programme, then set key timeline dates.
           </p>
+          </div>
 
           <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -653,15 +653,14 @@ export function ProjectDetailsPage({
               </ul>
             </div>
           ) : null}
-        </details>
-      </div>
+        </div>
 
       <div
         className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-4`}
       >
         <div>
           <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
-            Team Members
+            Step 3: Team Members
           </h3>
           <p className={`text-sm mt-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
             Add the people working on this programme so actions and readiness slides can be assigned

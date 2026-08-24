@@ -1470,17 +1470,6 @@ export function AssessmentPanel({
             </button>
           )}
         </div>
-        <select
-          value={component.id}
-          onChange={handleComponentSelect}
-          className={`rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 text-sm font-medium border ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
-        >
-          {components.map((item) => (
-            <option key={item.id} value={item.id}>
-              {item.label}
-            </option>
-          ))}
-        </select>
       </div>
 
       {componentDetail && (
@@ -1547,13 +1536,13 @@ export function AssessmentPanel({
           )}
         </div>
       )}
-
+{/* 
       <div
         className={`mb-6 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium ${darkMode ? 'border-emerald-500/40 bg-emerald-500/15 text-emerald-200' : 'border-emerald-200 bg-emerald-50 text-emerald-800'}`}
       >
         <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" aria-hidden="true" />
         Auto-save is on for scoring and component notes.
-      </div>
+      </div> */}
 
       <div
         id="assessment-scoring"
@@ -1834,7 +1823,7 @@ export function AssessmentPanel({
                   </div>
                 </div>
 
-                <div
+                {/* <div
                   className={`${darkMode ? 'bg-slate-900 border-slate-700' : 'bg-blue-50/50 border-slate-100'} px-6 py-4 border-b text-sm`}
                 >
                   <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
@@ -1857,7 +1846,7 @@ export function AssessmentPanel({
                       {showMatrix ? 'Hide Full Guidance' : 'View Full Guidance'}
                     </button>
                   </div>
-                </div>
+                </div> */}
 
                 {showMatrix && (
                   <div
@@ -1997,9 +1986,9 @@ export function AssessmentPanel({
                             </th>
                             {/* <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Notes</th> */}
                             {/* <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Evidence</th> */}
-                            <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                            {/* <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
                               Affected Component Lenses
-                            </th>
+                            </th> */}
                             <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
                               Actions
                             </th>
@@ -2032,16 +2021,16 @@ export function AssessmentPanel({
                               action.id,
                               store.objectives || {}
                             );
-                            const linkedTargets = getNormalizedTargets(
-                              action,
-                              resolvedAction.sourceComponentId,
-                              resolvedAction.sourceLens
-                            )
-                              .map(
-                                (target) =>
-                                  `${componentById[target.componentId]?.label || target.componentId} / ${target.lens}`
-                              )
-                              .join(', ');
+                            // const linkedTargets = getNormalizedTargets(
+                            //   action,
+                            //   resolvedAction.sourceComponentId,
+                            //   resolvedAction.sourceLens
+                            // )
+                            //   .map(
+                            //     (target) =>
+                            //       `${componentById[target.componentId]?.label || target.componentId} / ${target.lens}`
+                            //   )
+                            //   .join(', ');
                             const badgeStyle =
                               ACTION_STATUS_BADGE_STYLES[displayStatus] ||
                               ACTION_STATUS_BADGE_STYLES.Planned;
@@ -2080,7 +2069,7 @@ export function AssessmentPanel({
                                   ) : null}
                                   {!linkedOutcomes.length && (
                                     <div
-                                      className={`mt-1 text-xs ${darkMode ? 'text-amber-200' : 'text-amber-700'}`}
+                                      className={`mt-1 text-center text-xs ${darkMode ? 'text-amber-200' : 'text-amber-700'}`}
                                     >
                                       Not yet linked
                                     </div>
@@ -2133,11 +2122,11 @@ export function AssessmentPanel({
                                   '-'
                                 )}
                               </td> */}
-                                <td
+                                {/* <td
                                   className={`px-3 py-2 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
                                 >
                                   {linkedTargets}
-                                </td>
+                                </td> */}
                                 <td className="px-3 py-2">
                                   <div className="flex gap-2">
                                     <button
@@ -2193,7 +2182,7 @@ export function AssessmentPanel({
                     >
                       {expandedLensActions[`${component.id}:${lens}`]
                         ? 'Show top 5 actions'
-                        : `Show all ${lensActions.length} actions`}
+                        : `Show additional ${lensActions.length > 5 ? lensActions.length - 5 : lensActions.length} action(s)`}
                     </button>
                   ) : (
                     ''

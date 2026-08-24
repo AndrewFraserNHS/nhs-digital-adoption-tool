@@ -622,7 +622,7 @@ export function AdoptionDashboard({
             </span>
           </div>
           <p className={`text-sm mt-2 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-            {metrics.completedActions} of {metrics.totalActions} actions completed.
+            {metrics.completedActions} actions completed. Keep it up!
           </p>
         </div>
       </div>

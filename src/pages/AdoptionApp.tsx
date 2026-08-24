@@ -1789,37 +1789,9 @@ export function AdoptionApp() {
           </nav>
 
           <div className="px-4 mb-2 text-xs font-semibold text-blue-300 uppercase tracking-wider">
-            Tools
-          </div>
-          <nav className="space-y-1 mb-8">
-            {(['highlight-builder', 'audit-log', 'settings', 'profile'] as View[]).map((v) => (
-              <button
-                key={v}
-                ref={(el) => {
-                  navItemRefs.current[`view:${v}`] = el;
-                }}
-                onClick={() => handleViewChange(v)}
-                className={`w-full flex items-center px-4 py-2.5 text-sm transition-colors ${
-                  view === v
-                    ? 'bg-blue-800 text-white font-medium border-l-4 border-white'
-                    : 'text-blue-100 hover:bg-blue-800 border-l-4 border-transparent'
-                }`}
-              >
-                {v === 'highlight-builder'
-                  ? 'Highlight Builder'
-                  : v === 'audit-log'
-                    ? 'Audit Log'
-                    : v === 'settings'
-                      ? 'Settings'
-                      : 'Profile'}
-              </button>
-            ))}
-          </nav>
-
-          <div className="px-4 mb-2 text-xs font-semibold text-blue-300 uppercase tracking-wider">
             Change Components
           </div>
-          <nav className="space-y-1">
+          <nav className="space-y-1 mb-8">
             {COMPONENTS.map((comp, index) => {
               const isActive = view === 'assessment' && activeComponentId === comp.id;
               const status = getComponentStatus(comp);
@@ -1861,6 +1833,35 @@ export function AdoptionApp() {
                 </React.Fragment>
               );
             })}
+          </nav>
+
+          
+          <div className="px-4 mb-2 text-xs font-semibold text-blue-300 uppercase tracking-wider">
+            Tools
+          </div>
+          <nav className="space-y-1 mb-8">
+            {(['highlight-builder', 'audit-log', 'settings', 'profile'] as View[]).map((v) => (
+              <button
+                key={v}
+                ref={(el) => {
+                  navItemRefs.current[`view:${v}`] = el;
+                }}
+                onClick={() => handleViewChange(v)}
+                className={`w-full flex items-center px-4 py-1 text-sm transition-colors ${
+                  view === v
+                    ? 'bg-blue-800 text-white font-medium border-l-4 border-white'
+                    : 'text-blue-100 hover:bg-blue-800 border-l-4 border-transparent'
+                }`}
+              >
+                {v === 'highlight-builder'
+                  ? 'Highlight Builder'
+                  : v === 'audit-log'
+                    ? 'Audit Log'
+                    : v === 'settings'
+                      ? 'Settings'
+                      : 'Profile'}
+              </button>
+            ))}
           </nav>
 
           <div className="mt-8 px-4 pb-4 border-t border-blue-800 pt-6">

@@ -32,7 +32,19 @@ export interface DashboardProps {
   onPhaseFocusModeChange?: (mode: 'auto' | 'manual') => void;
   onManualPhaseFocusChange?: (phase: number) => void;
   onResetPhaseFocus?: () => void;
+  componentRadarVisible?: boolean;
+  onComponentRadarVisibleChange?: (visible: boolean) => void;
+  componentRadarSize?: ComponentRadarSize;
+  onComponentRadarSizeChange?: (size: ComponentRadarSize) => void;
 }
+
+export type ComponentRadarSize = 'small' | 'medium' | 'large';
+
+export const COMPONENT_RADAR_SIZE_PX: Record<ComponentRadarSize, number> = {
+  small: 260,
+  medium: 380,
+  large: 560,
+};
 
 type DeliveryStatus = BragStatus | 'N/A';
 
@@ -114,6 +126,10 @@ export function AdoptionDashboard({
   onPhaseFocusModeChange,
   onManualPhaseFocusChange,
   onResetPhaseFocus,
+  componentRadarVisible = true,
+  onComponentRadarVisibleChange,
+  componentRadarSize = 'medium',
+  onComponentRadarSizeChange,
 }: DashboardProps): JSX.Element {
   const pageIntro = usePageIntroSeen('dashboard');
   const [searchTerm, setSearchTerm] = useState('');
@@ -127,7 +143,6 @@ export function AdoptionDashboard({
   const [sortBy, setSortBy] = useState<'name' | 'score' | 'target'>('score');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [showAdvancedComponentControls, setShowAdvancedComponentControls] = useState(false);
-  const [showComponentRadar, setShowComponentRadar] = useState(true);
   const [showLensBreakdownHelp, setShowLensBreakdownHelp] = useState(false);
 
   const phases = useMemo(
@@ -773,23 +788,50 @@ export function AdoptionDashboard({
                   to drill into delivery status.
                 </p>
               </div>
-              <div className="flex w-full justify-end">
+              <div className="flex w-full flex-wrap items-center justify-end gap-2">
+                {componentRadarVisible ? (
+                  <div
+                    role="group"
+                    aria-label="Change component radar size"
+                    className="flex items-center rounded-md border border-slate-300 overflow-hidden text-sm font-medium"
+                  >
+                    {(['small', 'medium', 'large'] as ComponentRadarSize[]).map((size) => (
+                      <button
+                        key={size}
+                        type="button"
+                        onClick={() => onComponentRadarSizeChange?.(size)}
+                        aria-pressed={componentRadarSize === size}
+                        className={`px-3 py-2 capitalize transition-colors ${
+                          componentRadarSize === size
+                            ? 'bg-slate-800 text-white'
+                            : 'bg-white text-slate-600 hover:bg-slate-100'
+                        }`}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
                 <button
                   type="button"
-                  onClick={() => setShowComponentRadar((current) => !current)}
+                  onClick={() => onComponentRadarVisibleChange?.(!componentRadarVisible)}
                   className="rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-white"
                 >
-                  {showComponentRadar ? 'Hide change component radar' : 'Show change component radar'}
+                  {componentRadarVisible ? 'Hide change component radar' : 'Show change component radar'}
                 </button>
               </div>
             </div>
 
-            {showComponentRadar ? (
+            {componentRadarVisible ? (
               <div
-                className={`w-full max-w-[700px] ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} rounded-md border p-4`}
+                className={`w-full ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} rounded-md border p-4`}
               >
                 <div
-                  className={`flex min-h-[220px] w-md items-center justify-center rounded border p-2 ${darkMode ? 'border-slate-700 bg-slate-950' : 'border-slate-100 bg-white'}`}
+                  className={`mx-auto flex items-center justify-center rounded border p-2 ${darkMode ? 'border-slate-700 bg-slate-950' : 'border-slate-100 bg-white'}`}
+                  style={{
+                    height: COMPONENT_RADAR_SIZE_PX[componentRadarSize],
+                    maxWidth: COMPONENT_RADAR_SIZE_PX[componentRadarSize] + 120,
+                  }}
                 >
                   <canvas id="adoption-component-radar-chart" className="block h-full w-full" />
                 </div>

@@ -2,7 +2,7 @@ import { OnboardingIntro } from '@components/onboarding/OnboardingIntro';
 import { CstSetupWizard } from '@components/onboarding/CstSetupWizard';
 import { ToolkitChatbot } from '@components/ui/ToolkitChatbot';
 import { ActionPlanTracker } from '@components/views/ActionPlanTracker';
-import { AdoptionDashboard } from '@components/views/AdoptionDashboard';
+import { AdoptionDashboard, type ComponentRadarSize } from '@components/views/AdoptionDashboard';
 import { AssessmentPanel } from '@components/views/AssessmentPanel';
 import { AuditLogPage } from '@components/views/AuditLogPage';
 import { ChangeManagementGuide } from '@components/views/ChangeManagementGuide';
@@ -402,6 +402,8 @@ export function AdoptionApp() {
   const [showFinaliseModal, setShowFinaliseModal] = useState(false);
   const [showCstSetupWizard, setShowCstSetupWizard] = useState(false);
   const hasAutoOpenedCstWizardRef = React.useRef(false);
+  const [componentRadarVisible, setComponentRadarVisible] = useState(true);
+  const [componentRadarSize, setComponentRadarSize] = useState<ComponentRadarSize>('medium');
   const navItemRefs = React.useRef<Record<string, HTMLButtonElement | null>>({});
 
   const dismissOnboarding = useCallback(() => {
@@ -542,6 +544,7 @@ export function AdoptionApp() {
             effectivePhaseFocus
           );
           createRadarChart(componentRadarCanvas, componentRadarData, {
+            maintainAspectRatio: false,
             scales: {
               r: {
                 min: 0,
@@ -575,7 +578,16 @@ export function AdoptionApp() {
         }
       }, 100);
     }
-  }, [view, store, getEntry, MUTABLE_LENSES, COMPONENTS, effectivePhaseFocus]);
+  }, [
+    view,
+    store,
+    getEntry,
+    MUTABLE_LENSES,
+    COMPONENTS,
+    effectivePhaseFocus,
+    componentRadarVisible,
+    componentRadarSize,
+  ]);
 
   useEffect(() => {
     const syncSidebarWithViewport = () => {
@@ -2193,6 +2205,10 @@ export function AdoptionApp() {
                 onOpenOnboarding={() => setShowOnboarding(true)}
                 colorAccessibilityMode={userSettings.colorAccessibilityMode || 'standard'}
                 darkMode={Boolean(userSettings.darkMode)}
+                componentRadarVisible={componentRadarVisible}
+                onComponentRadarVisibleChange={setComponentRadarVisible}
+                componentRadarSize={componentRadarSize}
+                onComponentRadarSizeChange={setComponentRadarSize}
               />
             </div>
           )}

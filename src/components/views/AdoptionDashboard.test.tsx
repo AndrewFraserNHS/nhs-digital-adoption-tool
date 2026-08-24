@@ -132,6 +132,80 @@ describe('AdoptionDashboard', () => {
     expect(screen.getByRole('button', { name: 'Hide change component radar' })).toBeInTheDocument();
   });
 
+  it('SHOULD call onComponentRadarVisibleChange WHEN the hide/show button is clicked', () => {
+    // arrange
+    const onComponentRadarVisibleChange = vi.fn();
+
+    render(
+      <AdoptionDashboard
+        store={store}
+        components={components}
+        lenses={['Strategic Lens']}
+        metrics={metrics}
+        getEntry={getEntry}
+        onComponentClick={vi.fn()}
+        pathway="pathway-1"
+        pathwayChecks={{}}
+        componentRadarVisible
+        onComponentRadarVisibleChange={onComponentRadarVisibleChange}
+      />
+    );
+
+    // act
+    fireEvent.click(screen.getByRole('button', { name: 'Hide change component radar' }));
+
+    // assert
+    expect(onComponentRadarVisibleChange).toHaveBeenCalledWith(false);
+  });
+
+  it('SHOULD call onComponentRadarSizeChange WHEN a size option is clicked, and shows Show button WHERE radar hidden', () => {
+    // arrange
+    const onComponentRadarSizeChange = vi.fn();
+
+    render(
+      <AdoptionDashboard
+        store={store}
+        components={components}
+        lenses={['Strategic Lens']}
+        metrics={metrics}
+        getEntry={getEntry}
+        onComponentClick={vi.fn()}
+        pathway="pathway-1"
+        pathwayChecks={{}}
+        componentRadarVisible
+        componentRadarSize="medium"
+        onComponentRadarSizeChange={onComponentRadarSizeChange}
+      />
+    );
+
+    // act
+    fireEvent.click(screen.getByRole('button', { name: 'large' }));
+
+    // assert
+    expect(onComponentRadarSizeChange).toHaveBeenCalledWith('large');
+  });
+
+  it('SHOULD hide the size selector and show the Show button WHERE the radar is not visible', () => {
+    // arrange + act
+    render(
+      <AdoptionDashboard
+        store={store}
+        components={components}
+        lenses={['Strategic Lens']}
+        metrics={metrics}
+        getEntry={getEntry}
+        onComponentClick={vi.fn()}
+        pathway="pathway-1"
+        pathwayChecks={{}}
+        componentRadarVisible={false}
+      />
+    );
+
+    // assert
+    expect(screen.getByRole('button', { name: 'Show change component radar' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'medium' })).not.toBeInTheDocument();
+  });
+
   it('SHOULD filter component cards by status', () => {
     // arrange + act
     render(

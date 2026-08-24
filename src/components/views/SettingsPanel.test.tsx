@@ -26,7 +26,7 @@ describe('SettingsPanel', () => {
 
     // act
     fireEvent.change(screen.getByLabelText('Theme Colour'), { target: { value: '#00a499' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Example: Amber (Progressing)' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Progressing Example' }));
     fireEvent.click(screen.getByRole('button', { name: 'Reset Data' }));
 
     // assert
@@ -54,8 +54,8 @@ describe('SettingsPanel', () => {
     );
 
     // act
-    fireEvent.click(screen.getByRole('button', { name: 'Example: Red (Early Stage)' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Example: Green (Near Exemplar)' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Early Stage Example' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Exemplar Example' }));
 
     // assert
     expect(onLoadExampleData).toHaveBeenCalledWith('red');

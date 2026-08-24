@@ -141,13 +141,55 @@ export interface PhaseSummary {
   rag: 'Red' | 'Amber' | 'Green';
 }
 
+export interface OutstandingAction {
+  id: string;
+  text: string;
+  lens: string;
+}
+
 export interface NextStep {
   componentId: string;
   componentLabel: string;
   phase: number;
   gapToTarget: number;
+  /** Short, number-free summary for the dashboard card (e.g. "2 outstanding actions at the current level."). */
+  summary: string;
+  /** `${componentLabel}: ${summary}` - for flat contexts with no visible label nearby, e.g. HighlightBuilderTool. */
   message: string;
+  outstandingActions: OutstandingAction[];
   toolkitLinks?: Array<{ label: string; url: string }>;
+}
+
+/**
+ * A lens with no score yet and no "Not Started" actions of its own is treated as already at level
+ * 1 (Emerging) so its band-1 actions show as the current work, matching AssessmentPanel's lens
+ * action table.
+ */
+export function getEffectiveLensScore(entry: DraftEntry | undefined): number {
+  const score = Number(entry?.score || 0);
+  const hasNotStartedActions = (entry?.actions || []).some(
+    (action) => action.readinessScore === 0
+  );
+  return score === 0 && !hasNotStartedActions ? 1 : score;
+}
+
+/** Every action across a component's lenses that sits at that lens's current readiness level and isn't complete. */
+export function getOutstandingActionsForComponent(
+  component: AssessmentComponent,
+  getEntry: (componentId: string, lens: string) => DraftEntry | undefined
+): OutstandingAction[] {
+  const outstanding: OutstandingAction[] = [];
+  component.lenses.forEach((lens) => {
+    const entry = getEntry(component.id, lens);
+    const effectiveScore = getEffectiveLensScore(entry);
+    (entry?.actions || []).forEach((action) => {
+      const actionScore = action.readinessScore ?? effectiveScore;
+      if (actionScore === effectiveScore && !isCompletedActionStatus(action.status)) {
+        outstanding.push({ id: action.id, text: action.text, lens });
+      }
+    });
+  });
+  return outstanding;
 }
 
 export interface ActionRow {
@@ -311,29 +353,25 @@ export function getMetrics(store: AdoptionStore, components: AssessmentComponent
       return right.gapToTarget - left.gapToTarget;
     })
     .slice(0, 3)
-    .map(
-      ({
+    .map(({ component, gapToTarget, assessedLenses, totalLenses }) => {
+      const outstandingActions = getOutstandingActionsForComponent(
         component,
-        avgScore,
+        (componentId, lens) => store.currentDraft[componentId]?.[lens]
+      );
+      const summary =
+        assessedLenses < totalLenses
+          ? `${totalLenses - assessedLenses} lens area(s) still need an initial score.`
+          : outstandingActions.length > 0
+            ? `${outstandingActions.length} outstanding action${outstandingActions.length === 1 ? '' : 's'} at the current level.`
+            : 'No open actions at the current level - add one to keep moving.';
+      return {
+        componentId: component.id,
+        componentLabel: component.label,
+        phase: component.phase,
         gapToTarget,
-        totalActions,
-        completedActions,
-        assessedLenses,
-        totalLenses,
-      }) => {
-        const remainingActions = Math.max(0, totalActions - completedActions);
-        const evidenceText =
-          assessedLenses < totalLenses
-            ? `Assess ${totalLenses - assessedLenses} remaining lens area(s).`
-            : remainingActions > 0
-              ? `Complete ${remainingActions} open action(s).`
-              : 'Create at least one delivery action linked to this component.';
-        return {
-          componentId: component.id,
-          componentLabel: component.label,
-          phase: component.phase,
-          gapToTarget,
-          message: `Raise ${component.label} from ${avgScore.toFixed(1)} to target ${component.target}. ${evidenceText}`,
+        summary,
+        message: `${component.label}: ${summary}`,
+        outstandingActions,
         };
       }
     );

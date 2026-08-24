@@ -96,8 +96,9 @@ const metrics: Metrics = {
       componentLabel: 'Benefits',
       phase: 1,
       gapToTarget: 1,
-      message:
-        'Raise Benefits from 1.0 to target 2. Create at least one delivery action linked to this component.',
+      summary: 'No open actions at the current level - add one to keep moving.',
+      message: 'Benefits: No open actions at the current level - add one to keep moving.',
+      outstandingActions: [],
     },
   ],
 };
@@ -221,7 +222,9 @@ describe('AdoptionDashboard', () => {
         {
           ...metrics.nextSteps[0],
           gapToTarget: 0,
-          message: 'Benefits are fully on target and complete.',
+          summary: 'Benefits are fully on target and complete.',
+          message: 'Benefits: Benefits are fully on target and complete.',
+          outstandingActions: [],
         },
       ],
     };
@@ -240,13 +243,16 @@ describe('AdoptionDashboard', () => {
       />
     );
 
-    const focusCards = screen.getAllByRole('button', { name: /Benefits/i });
-    const focusCard = focusCards.find((button) =>
-      button.textContent?.includes('Benefits are fully on target and complete.')
-    );
+    const benefitsButtons = screen.getAllByRole('button', { name: /^Benefits/ });
+    const focusCard = benefitsButtons
+      .map((button) => button.closest('div'))
+      .find((card) => card?.textContent?.includes('Benefits are fully on target and complete.'));
 
     // assert
     expect(focusCard).toBeTruthy();
+    expect(
+      focusCard && within(focusCard).getByText('Benefits are fully on target and complete.')
+    ).toBeInTheDocument();
     expect(focusCard && within(focusCard).getByText('Green')).toBeInTheDocument();
     expect(focusCard && within(focusCard).queryByText('Blue')).not.toBeInTheDocument();
   });

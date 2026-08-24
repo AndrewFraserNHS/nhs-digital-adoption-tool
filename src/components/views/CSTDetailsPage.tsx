@@ -535,6 +535,20 @@ export function ProjectDetailsPage({
             </div>
           </div>
 
+          {profile.cst.pathway !== 'pathway-1' && (
+            <div
+              className={`mt-3 rounded-md border p-3 text-xs ${darkMode ? 'border-amber-500/40 bg-amber-500/10 text-amber-100' : 'border-amber-300 bg-amber-50 text-amber-900'}`}
+            >
+              <p className="font-semibold">Objectives and actions are currently Pathway 1 only</p>
+              <p className="mt-1">
+                Every outcome and action in this tool right now is written for Pathway 1 (starting
+                from scratch). Pathway 2 and Pathway 3 will need their own objectives and
+                actions - those haven't been written yet, so what you see for this programme is
+                Pathway 1 content standing in until pathway-specific content is added.
+              </p>
+            </div>
+          )}
+
           <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label

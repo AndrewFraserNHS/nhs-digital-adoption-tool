@@ -880,13 +880,28 @@ export function AssessmentPanel({
     return map;
   }, [component.id, component.lenses, getEntry]);
 
+  /** Actions filtered to each lens's current readiness level, matching what the Plan lens actions table shows. */
+  const currentLevelActionsByLens = useMemo(() => {
+    const map: Record<string, DraftAction[]> = {};
+    component.lenses.forEach((lens) => {
+      const entry = getEntry(component.id, lens);
+      const actions = componentActionsByLens[lens] || [];
+      const hasNotStartedActions = actions.some((action) => action.readinessScore === 0);
+      const effectiveCurrentScore = entry.score === 0 && !hasNotStartedActions ? 1 : entry.score;
+      map[lens] = actions.filter(
+        (action) => (action.readinessScore ?? effectiveCurrentScore) === effectiveCurrentScore
+      );
+    });
+    return map;
+  }, [component.id, component.lenses, getEntry, componentActionsByLens]);
+
   const totalLensActions = useMemo(
     () =>
       component.lenses.reduce(
-        (sum, lens) => sum + (getEntry(component.id, lens).actions || []).length,
+        (sum, lens) => sum + (currentLevelActionsByLens[lens] || []).length,
         0
       ),
-    [component.id, component.lenses, getEntry]
+    [component.lenses, currentLevelActionsByLens]
   );
 
   const completedLensActions = useMemo(
@@ -894,12 +909,12 @@ export function AssessmentPanel({
       component.lenses.reduce(
         (sum, lens) =>
           sum +
-          (getEntry(component.id, lens).actions || []).filter(
+          (currentLevelActionsByLens[lens] || []).filter(
             (action) => normalizeActionStatus(action.status) === 'Completed'
           ).length,
         0
       ),
-    [component.id, component.lenses, getEntry]
+    [component.lenses, currentLevelActionsByLens]
   );
 
   const hasAnyScoreForComponent = useMemo(

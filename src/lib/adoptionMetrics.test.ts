@@ -118,7 +118,9 @@ describe('adoptionMetrics', () => {
           componentLabel: 'Vision',
           phase: 1,
           gapToTarget: 3,
-          message: 'Raise Vision from 2.0 to target 4. Assess 1 remaining lens area(s).',
+          summary: '1 lens area(s) still need an initial score.',
+          message: 'Vision: 1 lens area(s) still need an initial score.',
+          outstandingActions: [{ id: '1', text: 'Action A', lens: 'Lens A' }],
         },
       ],
     });

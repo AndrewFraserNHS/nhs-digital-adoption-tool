@@ -1,6 +1,6 @@
 import { AdoptionStore, DraftAction, DraftEntry, View } from '@lib/adoptionState';
 import { Metrics } from '@lib/adoptionMetrics';
-import { getComponentExemplarScore } from '@lib/adoptionMetrics';
+import { getComponentExemplarScore, getOutstandingActionsForComponent } from '@lib/adoptionMetrics';
 import { AssessmentComponent } from '@data/components';
 import { JSX, useMemo, useState } from 'react';
 import type { CstPathwayKey } from '@data/cst';
@@ -122,6 +122,7 @@ export function AdoptionDashboard({
   onResetPhaseFocus,
 }: DashboardProps): JSX.Element {
   const pageIntro = usePageIntroSeen('dashboard');
+  const [expandedNextSteps, setExpandedNextSteps] = useState<Record<string, boolean>>({});
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<
     'all' | 'not-started' | 'below-target' | 'on-track'
@@ -291,32 +292,29 @@ export function AdoptionDashboard({
     return components
       .map((component) => {
         let total = 0;
-        let actionCount = 0;
-        let completedActionCount = 0;
 
         component.lenses.forEach((lens) => {
           const entry = getEntry(component.id, lens);
           total += Number(entry.score || 0);
-          const actions = entry.actions || [];
-          actionCount += actions.length;
-          completedActionCount += actions.filter((action) => action.status === 'Completed').length;
         });
 
         const avgScore = Number((total / component.lenses.length).toFixed(1));
         const targetScore = getComponentExemplarScore(component.id, effectivePhase, component.target);
         const gapToTarget = Number(Math.max(0, targetScore - avgScore).toFixed(1));
-        const remainingActions = Math.max(0, actionCount - completedActionCount);
-        const evidenceText =
-          remainingActions > 0
-            ? `Complete ${remainingActions} open action(s).`
-            : 'Create at least one delivery action linked to this component.';
+        const outstandingActions = getOutstandingActionsForComponent(component, getEntry);
+        const summary =
+          outstandingActions.length > 0
+            ? `${outstandingActions.length} outstanding action${outstandingActions.length === 1 ? '' : 's'} at the current level.`
+            : 'No open actions at the current level - add one to keep moving.';
 
         return {
           componentId: component.id,
           componentLabel: component.label,
           phase: component.phase,
           gapToTarget,
-          message: `Raise ${component.label} from ${avgScore.toFixed(1)} to exemplar ${targetScore.toFixed(1)}. ${evidenceText}`,
+          summary,
+          message: `${component.label}: ${summary}`,
+          outstandingActions,
           toolkitLinks: [],
         };
       })
@@ -648,15 +646,20 @@ export function AdoptionDashboard({
           <div className="space-y-3">
             {focusedNextSteps.map((step) => {
               const bragStatus = getBragStatusFromGap(step.gapToTarget);
+              const isExpanded = Boolean(expandedNextSteps[step.componentId]);
+              const outstandingCount = step.outstandingActions?.length || 0;
               return (
-                <button
+                <div
                   key={`${step.componentId}-${step.phase}`}
-                  onClick={() => onComponentClick(step.componentId)}
-                  className={`w-full text-left rounded-md border p-3 hover:border-blue-300 transition-colors ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
+                  className={`rounded-md border p-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
                 >
-                  <div className="flex items-center justify-between gap-3">
+                  <button
+                    type="button"
+                    onClick={() => onComponentClick(step.componentId)}
+                    className="flex w-full items-center justify-between gap-3 text-left"
+                  >
                     <span
-                      className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+                      className={`text-sm font-semibold hover:underline ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
                     >
                       {step.componentLabel}
                     </span>
@@ -665,10 +668,10 @@ export function AdoptionDashboard({
                     >
                       {bragStatus}
                     </span>
-                  </div>
+                  </button>
 
                   <p className={`text-sm mt-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-                    {step.message}
+                    {step.summary}
                   </p>
                   {step.toolkitLinks?.length ? (
                     <div className="mt-2 flex flex-wrap gap-2">
@@ -678,7 +681,6 @@ export function AdoptionDashboard({
                           href={link.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          onClick={(event) => event.stopPropagation()}
                           className="text-xs font-medium text-[#005eb8] underline"
                         >
                           {link.label}
@@ -686,7 +688,35 @@ export function AdoptionDashboard({
                       ))}
                     </div>
                   ) : null}
-                </button>
+                  {outstandingCount > 0 && (
+                    <div className="mt-2">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setExpandedNextSteps((current) => ({
+                            ...current,
+                            [step.componentId]: !current[step.componentId],
+                          }))
+                        }
+                        className={`text-xs font-semibold underline ${darkMode ? 'text-slate-300 hover:text-slate-100' : 'text-slate-600 hover:text-slate-900'}`}
+                      >
+                        {isExpanded ? 'Hide' : 'Show'} outstanding action
+                        {outstandingCount === 1 ? '' : 's'} ({outstandingCount})
+                      </button>
+                      {isExpanded && (
+                        <ul
+                          className={`mt-2 space-y-1.5 border-l-2 pl-3 text-xs ${darkMode ? 'border-slate-700 text-slate-300' : 'border-slate-200 text-slate-600'}`}
+                        >
+                          {step.outstandingActions.map((action) => (
+                            <li key={action.id}>
+                              <span className="font-medium">{action.lens}:</span> {action.text}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  )}
+                </div>
               );
             })}
           </div>

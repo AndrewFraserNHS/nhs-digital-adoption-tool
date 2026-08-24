@@ -1494,7 +1494,7 @@ export function AssessmentPanel({
               onClick={() => setShowComponentOverviewModal(true)}
               className={`mt-2 text-sm font-semibold underline ${darkMode ? 'text-blue-300 hover:text-blue-200' : 'text-[#005eb8] hover:text-blue-800'}`}
             >
-              What is this? +
+              What is this?
             </button>
           )}
         </div>

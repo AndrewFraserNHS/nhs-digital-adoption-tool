@@ -22,7 +22,7 @@ export const TOOLKIT_OPTIONS: ToolkitOption[] = [
   },
 ];
 
-export const DEFAULT_TOOLKIT_KEY: ToolkitOptionKey = 'avt-v2-2026';
+export const DEFAULT_TOOLKIT_KEY: ToolkitOptionKey = 'change-management-v3-2023';
 
 export function isToolkitOptionKey(value: unknown): value is ToolkitOptionKey {
   return TOOLKIT_OPTIONS.some((option) => option.key === value);

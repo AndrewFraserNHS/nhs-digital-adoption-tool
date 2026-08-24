@@ -3,18 +3,18 @@ import { CstSetupWizard } from '@components/onboarding/CstSetupWizard';
 import { ToolkitChatbot } from '@components/ui/ToolkitChatbot';
 import { ActionPlanTracker } from '@components/views/ActionPlanTracker';
 import { AdoptionDashboard } from '@components/views/AdoptionDashboard';
-import { DailyCheckIn } from '@components/views/DailyCheckIn';
 import { AssessmentPanel } from '@components/views/AssessmentPanel';
 import { AuditLogPage } from '@components/views/AuditLogPage';
 import { ChangeManagementGuide } from '@components/views/ChangeManagementGuide';
 import { ProjectDetailsPage } from '@components/views/CSTDetailsPage';
+import { DailyCheckIn } from '@components/views/DailyCheckIn';
 import { GuidanceRoadmapView } from '@components/views/GuidanceRoadmapView';
 import { HighlightBuilderTool } from '@components/views/HighlightBuilderTool';
 import { ImportConflictModal } from '@components/views/ImportConflictModal';
 import { LensInfoModal } from '@components/views/LensInfoModal';
 import { OnboardingOverviewPage } from '@components/views/OnboardingOverviewPage';
-import { type AdoptionUserSettings, SettingsPanel } from '@components/views/SettingsPanel';
 import { ProfilePage } from '@components/views/ProfilePage';
+import { type AdoptionUserSettings, SettingsPanel } from '@components/views/SettingsPanel';
 import { ASSESSMENT_COMPONENTS, getComponentById } from '@data/components';
 import {
   COMPETENCE_OPTIONS,

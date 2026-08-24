@@ -368,13 +368,6 @@ export function ProjectDetailsPage({
       </p>
 
       <div
-        className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium ${darkMode ? 'border-emerald-500/40 bg-emerald-500/15 text-emerald-200' : 'border-emerald-200 bg-emerald-50 text-emerald-800'}`}
-      >
-        <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" aria-hidden="true" />
-        Auto-save is on for CST Personalisation.
-      </div>
-
-      <div
         className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-6`}
       >
         <div className="space-y-1">
@@ -446,40 +439,6 @@ export function ProjectDetailsPage({
           />
         </div>
       </div>
-
-
-        {stageOneComplete ? (
-          <div
-            className={`rounded-md border p-4 ${darkMode ? 'border-green-500/40 bg-green-500/10' : 'border-green-200 bg-green-50'}`}
-          >
-            <p
-              className={`text-sm font-semibold ${darkMode ? 'text-green-200' : 'text-green-900'}`}
-            >
-              Stage 1 complete: Project details captured.
-            </p>
-            <p className={`mt-1 text-xs ${darkMode ? 'text-green-100' : 'text-green-800'}`}>
-              Your details are saved. Continue to assign delivery actions against component lenses.
-            </p>
-            <button
-              type="button"
-              onClick={() => {
-                if (components[0]) {
-                  onComponentClick(components[0].id);
-                }
-              }}
-              className="mt-3 rounded-md bg-[#005eb8] px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
-            >
-              Continue to assigning actions
-            </button>
-          </div>
-        ) : (
-          <div
-            className={`rounded-md border p-3 text-xs ${darkMode ? 'border-amber-500/40 bg-amber-500/10 text-amber-100' : 'border-amber-200 bg-amber-50 text-amber-900'}`}
-          >
-            Stage 1 in progress: add organisation name, programme name and lead name
-            to complete this step.
-          </div>
-        )}
 
       <div
         className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-6`}
@@ -729,14 +688,12 @@ export function ProjectDetailsPage({
 
       {/* Step 4: External link overrides */}
       <div
-        className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-6`}
+        className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-4`}
       >
-        <details>
-          <summary
-            className={`cursor-pointer text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
-          >
+        <div>
+          <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
             Step 4: External links
-          </summary>
+          </h3>
           <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
             All toolkit links across the tool point to the NHS Future platform by default. You can
             override the base toolkit destination for your organisation, or change individual links
@@ -1092,7 +1049,7 @@ export function ProjectDetailsPage({
                 );
               })}
           </div>
-        </details>
+        </div>
       </div>
 
       {pendingPathwayChange && (

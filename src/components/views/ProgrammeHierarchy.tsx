@@ -3,6 +3,7 @@ import { OVERARCHING_PHASES } from '@data/cst';
 import { getComponentObjectiveCounts } from '@lib/adoptionMetrics';
 import type { AssessmentComponent } from '@data/components';
 import type { AdoptionStore, DraftEntry } from '@lib/adoptionState';
+import { PHASE_NAMES } from '../../types/constants';
 
 export interface ProgrammeHierarchyProps {
   components: AssessmentComponent[];
@@ -48,7 +49,7 @@ export function ProgrammeHierarchy({
         {OVERARCHING_PHASES.filter((phase) => componentsByPhase[phase]?.length).map((phase) => (
           <div key={`phase-group-${phase}`} className="space-y-3">
             <h4 className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
-              Phase {phase}
+              Phase {phase}: {PHASE_NAMES[phase]}
             </h4>
             <div className="space-y-2">
               {componentsByPhase[phase].map((component) => {

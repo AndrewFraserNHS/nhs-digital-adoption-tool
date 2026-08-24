@@ -41,9 +41,9 @@ export interface DashboardProps {
 export type ComponentRadarSize = 'small' | 'medium' | 'large';
 
 export const COMPONENT_RADAR_SIZE_PX: Record<ComponentRadarSize, number> = {
-  small: 260,
-  medium: 380,
-  large: 560,
+  small: 560,
+  medium: 680,
+  large: 1000,
 };
 
 type DeliveryStatus = BragStatus | 'N/A';

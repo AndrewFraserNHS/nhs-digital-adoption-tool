@@ -22,15 +22,21 @@ describe('OnboardingIntro', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
 
     // assert 2
-    expect(screen.getByText('What is a CST?')).toBeInTheDocument();
-
+    expect(screen.getByText('What benefit does this tool give me?')).toBeInTheDocument();
 
     // act 3
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+
+    // assert 3
+    expect(screen.getByText('What is a CST?')).toBeInTheDocument();
+
+
+    // act 4
+    fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
 
-    // assert 3
+    // assert 4
     expect(screen.getByText('Getting Started')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Go to dashboard' })).toBeInTheDocument();
   });
@@ -64,6 +70,7 @@ describe('OnboardingIntro', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     fireEvent.click(screen.getByRole('button', { name: 'Set up your CST Personalisation' }));
 
     // assert
@@ -77,6 +84,7 @@ describe('OnboardingIntro', () => {
     // act
     render(<OnboardingIntro open onClose={vi.fn()} onNavigateToGuide={onNavigateToGuide} />);
 
+    fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));

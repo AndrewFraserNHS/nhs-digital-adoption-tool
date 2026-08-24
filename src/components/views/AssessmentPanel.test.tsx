@@ -116,6 +116,7 @@ describe('AssessmentPanel', () => {
 
     // act
     render(<AssessmentPanel {...props} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
 
     const controls = screen.getAllByRole('combobox');
     fireEvent.change(controls[1], { target: { value: '4' } });
@@ -138,6 +139,7 @@ describe('AssessmentPanel', () => {
 
     // act 1
     render(<AssessmentPanel {...props} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
     fireEvent.click(screen.getByRole('button', { name: 'Hide Full Guidance' }));
 
     // assert 1
@@ -163,6 +165,7 @@ describe('AssessmentPanel', () => {
     
     // act
     render(<AssessmentPanel {...props} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
     fireEvent.click(screen.getByRole('button', { name: 'Strategic Direction' }));
 
     // assert
@@ -176,6 +179,7 @@ describe('AssessmentPanel', () => {
 
     // act 1
     render(<AssessmentPanel {...props} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
     fireEvent.click(screen.getByRole('button', { name: 'Add Action' }));
     fireEvent.change(screen.getByLabelText('Description'), {
       target: { value: 'Created from modal' },
@@ -224,6 +228,7 @@ describe('AssessmentPanel', () => {
 
     // act
     render(<AssessmentPanel {...props} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
 
     fireEvent.change(
       screen.getByRole('combobox', { name: 'Filter Strategic Direction actions by type' }),
@@ -265,6 +270,7 @@ describe('AssessmentPanel', () => {
 
     // act
     render(<AssessmentPanel {...props} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
 
     fireEvent.change(
       screen.getByRole('combobox', { name: 'Filter Strategic Direction actions by owner' }),
@@ -284,6 +290,7 @@ describe('AssessmentPanel', () => {
 
     // act 1
     render(<AssessmentPanel {...props} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
 
     fireEvent.click(screen.getByRole('button', { name: 'Add Action' }));
     fireEvent.change(screen.getByLabelText('Description'), {
@@ -311,6 +318,7 @@ describe('AssessmentPanel', () => {
 
     // act
     render(<AssessmentPanel {...props} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
 
     fireEvent.click(screen.getByRole('button', { name: 'Add Action' }));
     fireEvent.click(screen.getByRole('button', { name: 'Add web link' }));
@@ -354,6 +362,7 @@ describe('AssessmentPanel', () => {
 
     // act 1
     render(<AssessmentPanel {...props} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
 
 
     // assert 1
@@ -429,6 +438,7 @@ describe('AssessmentPanel', () => {
 
     // act
     render(<AssessmentPanel {...props} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
 
     fireEvent.click(screen.getByRole('button', { name: 'Add Action' }));
     fireEvent.change(screen.getByLabelText('Description'), {
@@ -501,6 +511,7 @@ describe('AssessmentPanel', () => {
 
     // act
     render(<AssessmentPanel {...props} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
 
     // assert
     const link = screen.getByRole('link', { name: 'RACI/RASCI Matrix' });
@@ -533,6 +544,7 @@ describe('AssessmentPanel', () => {
 
     // act 1: additional links shown by default
     const { unmount } = render(<AssessmentPanel {...props} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
 
     // assert 1
     expect(screen.getByRole('link', { name: 'Stakeholder Analysis Tool' })).toBeTruthy();
@@ -541,6 +553,7 @@ describe('AssessmentPanel', () => {
 
     // act 2: additional links hidden
     render(<AssessmentPanel {...props} showAdditionalGuidanceLinks={false} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
 
     // assert 2
     expect(screen.queryByRole('link', { name: 'Stakeholder Analysis Tool' })).toBeNull();

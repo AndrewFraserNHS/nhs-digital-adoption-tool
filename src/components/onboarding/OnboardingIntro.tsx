@@ -42,6 +42,31 @@ export function buildOnboardingSteps(): Step[] {
       ),
     },
     {
+      title: 'What benefit does this tool give me?',
+      body: (
+        <div className="text-sm text-slate-700 space-y-2">
+          <p>
+            Without it, adoption progress lives in scattered spreadsheets, memories and gut feel -
+            hard to prove, hard to hand over, and easy to lose momentum on.
+          </p>
+          <p>
+            With it, you get a single, evidenced picture of where your change effort actually stands:
+          </p>
+          <ul className="list-disc pl-5 space-y-1">
+            <li>See at a glance what's on track, what's at risk, and what to do next.</li>
+            <li>
+              Turn vague "how's it going?" conversations into a clear, evidence-backed status you can
+              show your sponsor or board.
+            </li>
+            <li>
+              Get a ready-made action plan for each area, so you're not starting from a blank page.
+            </li>
+            <li>Build a highlight report in minutes instead of an afternoon of copy-pasting.</li>
+          </ul>
+        </div>
+      ),
+    },
+    {
       title: 'What is a CST?',
       body: (
         <div className="text-sm text-slate-700 space-y-2">

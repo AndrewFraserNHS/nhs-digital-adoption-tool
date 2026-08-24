@@ -21,6 +21,7 @@ import {
   deriveTemporalActionStatus,
   normalizeActionStatus,
 } from '@lib/actionModel';
+import { detectScoreAdvancementOpportunities } from '@lib/componentDerivedAutomation';
 import { PHASE_NAMES } from '../../types/constants';
 import componentDetailsText from '@data/component-descriptors/component-details.json?raw';
 import { PageHelpButton, PageIntroModal, usePageIntroSeen } from '@components/onboarding/PageIntroModal';
@@ -345,7 +346,8 @@ function ComponentOverviewSubsection({
   );
 }
 
-function ComponentOverviewSection({
+/** Rendered inside a modal (see ComponentOverviewModal) - no inline collapsible wrapper of its own. */
+function ComponentOverviewContent({
   detail,
   furtherReadingUrl,
   guidanceLinks,
@@ -356,39 +358,17 @@ function ComponentOverviewSection({
   guidanceLinks: GuidanceLink[];
   darkMode?: boolean;
 }): JSX.Element {
-  const [isOpen, setIsOpen] = useState(false);
-  const [showGoodPractice, setShowGoodPractice] = useState(false);
-  const [showRisks, setShowRisks] = useState(false);
+  const [showGoodPractice, setShowGoodPractice] = useState(true);
+  const [showRisks, setShowRisks] = useState(true);
 
   return (
-    <div
-      className={`mb-6 rounded-lg border ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-white'}`}
-    >
-      <button
-        type="button"
-        onClick={() => setIsOpen((prev) => !prev)}
-        className="flex w-full items-center justify-between gap-4 px-4 py-3 text-left"
-      >
-        <div>
-          <p
-            className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
-          >
-            Component overview
-          </p>
-          {detail.description && (
-            <p className={`mt-0.5 text-sm ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>
-              {detail.description}
-            </p>
-          )}
-        </div>
-        <span
-          className={`shrink-0 text-xs font-semibold ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
-        >
-          {isOpen ? 'Hide details −' : 'What is this? +'}
-        </span>
-      </button>
-      {isOpen && (
-        <div className={`space-y-4 border-t px-4 py-4 ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}>
+    <div>
+      {detail.description && (
+        <p className={`text-sm ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>
+          {detail.description}
+        </p>
+      )}
+      <div className={`mt-4 space-y-4 ${detail.description ? 'border-t pt-4' : ''} ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}>
           {furtherReadingUrl && (
             <a
               href={furtherReadingUrl}
@@ -470,7 +450,58 @@ function ComponentOverviewSection({
             </div>
           )}
         </div>
-      )}
+    </div>
+  );
+}
+
+function ComponentOverviewModal({
+  open,
+  onClose,
+  detail,
+  furtherReadingUrl,
+  guidanceLinks,
+  darkMode,
+}: {
+  open: boolean;
+  onClose: () => void;
+  detail: ComponentDetail;
+  furtherReadingUrl?: string;
+  guidanceLinks: GuidanceLink[];
+  darkMode?: boolean;
+}): JSX.Element | null {
+  if (!open) {
+    return null;
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 p-4">
+      <div
+        className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-xl border p-6 shadow-2xl`}
+      >
+        <div className="flex items-start justify-between gap-3">
+          <p
+            className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
+          >
+            Component overview
+          </p>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close component overview"
+            className={`shrink-0 rounded-md border px-2 py-1 text-sm ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-50'}`}
+          >
+            ×
+          </button>
+        </div>
+        <div className="mt-2">
+          <ComponentOverviewContent
+            detail={detail}
+            furtherReadingUrl={furtherReadingUrl}
+            guidanceLinks={guidanceLinks}
+            darkMode={darkMode}
+          />
+        </div>
+      </div>
     </div>
   );
 }
@@ -770,6 +801,17 @@ function HeaderInfoIcon(): JSX.Element {
   );
 }
 
+/** Bumps a lens's readiness score while every action at its current band is Completed and a higher band exists. */
+function advanceScoreWhileActionsComplete(currentScore: number, actions: DraftAction[]): number {
+  let score = currentScore;
+  let advancement = detectScoreAdvancementOpportunities({ actions }, score);
+  while (advancement) {
+    score = advancement.nextScore;
+    advancement = detectScoreAdvancementOpportunities({ actions }, score);
+  }
+  return score;
+}
+
 function createEmptyAction(phase: number, componentId: string, lens: string): DraftAction {
   return {
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
@@ -861,8 +903,9 @@ export function AssessmentPanel({
   const [guidedWorkflowDismissed, setGuidedWorkflowDismissed] = useState(false);
   const [showScoringSection, setShowScoringSection] = useState(true);
   const [showObjectivesSection, setShowObjectivesSection] = useState(true);
-  const [showActionsSection, setShowActionsSection] = useState(true);
+  const [showActionsSection, setShowActionsSection] = useState(false);
   const [showEvidenceSection, setShowEvidenceSection] = useState(false);
+  const [showComponentOverviewModal, setShowComponentOverviewModal] = useState(false);
   const pageIntro = usePageIntroSeen('assessment');
   const [expandedLensActions, setExpandedLensActions] = useState<Record<string, boolean>>({});
   const [lensActionTypeFilters, setLensActionTypeFilters] = useState<Record<string, string>>({});
@@ -1155,6 +1198,7 @@ export function AssessmentPanel({
     onEntryUpdate(actionEditor.sourceComponentId, actionEditor.sourceLens, {
       ...entry,
       actions: nextActions,
+      score: advanceScoreWhileActionsComplete(entry.score, nextActions),
     });
 
     const selectedObjectiveIds = new Set(actionEditor.linkedObjectiveIds);
@@ -1416,6 +1460,15 @@ export function AssessmentPanel({
             Assess readiness at lens level. Change Component justification, outcomes, and actions are
             tracked below.
           </p>
+          {componentDetail && (
+            <button
+              type="button"
+              onClick={() => setShowComponentOverviewModal(true)}
+              className={`mt-2 text-sm font-semibold underline ${darkMode ? 'text-blue-300 hover:text-blue-200' : 'text-[#005eb8] hover:text-blue-800'}`}
+            >
+              What is this? +
+            </button>
+          )}
         </div>
         <select
           value={component.id}
@@ -1431,7 +1484,9 @@ export function AssessmentPanel({
       </div>
 
       {componentDetail && (
-        <ComponentOverviewSection
+        <ComponentOverviewModal
+          open={showComponentOverviewModal}
+          onClose={() => setShowComponentOverviewModal(false)}
           detail={componentDetail}
           furtherReadingUrl={store.orgProfile?.componentFurtherReading?.[component.id]}
           guidanceLinks={guidanceLinksByComponent[component.id] || []}
@@ -1631,7 +1686,7 @@ export function AssessmentPanel({
 
       <div
         id="assessment-actions"
-        className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} mb-3 rounded-lg border p-4`}
+        className={`${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'} mb-8 rounded-lg border p-5`}
       >
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
@@ -2747,9 +2802,9 @@ export function AssessmentPanel({
               then plan and track delivery actions for each readiness level.
             </p>
             <p>
-              The "Component overview" panel explains what the component covers, and "Evidence
-              Links and Docs" at the bottom rounds up everything attached as evidence across all of
-              its actions.
+              Click "What is this?" at the top for what the component covers, and "Evidence Links
+              and Docs" at the bottom rounds up everything attached as evidence across all of its
+              actions.
             </p>
           </>
         }

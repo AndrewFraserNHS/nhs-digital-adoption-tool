@@ -127,7 +127,9 @@ export function AdoptionDashboard({
   const [statusFilter, setStatusFilter] = useState<
     'all' | 'not-started' | 'below-target' | 'on-track'
   >('all');
-  const [componentPhaseFilter, setComponentPhaseFilter] = useState<number | 'all'>('all');
+  const [componentPhaseFilter, setComponentPhaseFilter] = useState<number | 'all'>(
+    () => metrics.currentPhase
+  );
   const [lensPhaseFilter, setLensPhaseFilter] = useState<number | 'all'>('all');
   const [sortBy, setSortBy] = useState<'name' | 'score' | 'target'>('score');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
@@ -704,15 +706,74 @@ export function AdoptionDashboard({
                         {outstandingCount === 1 ? '' : 's'} ({outstandingCount})
                       </button>
                       {isExpanded && (
-                        <ul
-                          className={`mt-2 space-y-1.5 border-l-2 pl-3 text-xs ${darkMode ? 'border-slate-700 text-slate-300' : 'border-slate-200 text-slate-600'}`}
+                        <div
+                          className={`mt-2 overflow-x-auto rounded-md border ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}
                         >
-                          {step.outstandingActions.map((action) => (
-                            <li key={action.id}>
-                              <span className="font-medium">{action.lens}:</span> {action.text}
-                            </li>
-                          ))}
-                        </ul>
+                          <table className="min-w-full divide-y text-xs">
+                            <thead className={darkMode ? 'bg-slate-800' : 'bg-slate-50'}>
+                              <tr>
+                                <th
+                                  className={`px-2 py-1.5 text-left font-semibold uppercase tracking-wide ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
+                                >
+                                  Lens
+                                </th>
+                                <th
+                                  className={`px-2 py-1.5 text-left font-semibold uppercase tracking-wide ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
+                                >
+                                  Action
+                                </th>
+                                <th
+                                  className={`px-2 py-1.5 text-left font-semibold uppercase tracking-wide ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
+                                >
+                                  Owner
+                                </th>
+                                <th
+                                  className={`px-2 py-1.5 text-left font-semibold uppercase tracking-wide ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
+                                >
+                                  Timescale
+                                </th>
+                                <th
+                                  className={`px-2 py-1.5 text-left font-semibold uppercase tracking-wide ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
+                                >
+                                  Status
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody
+                              className={`divide-y ${darkMode ? 'divide-slate-700' : 'divide-slate-100'}`}
+                            >
+                              {step.outstandingActions.map((action) => (
+                                <tr key={action.id}>
+                                  <td
+                                    className={`px-2 py-1.5 font-medium ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
+                                  >
+                                    {action.lens}
+                                  </td>
+                                  <td
+                                    className={`px-2 py-1.5 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+                                  >
+                                    {action.text}
+                                  </td>
+                                  <td
+                                    className={`px-2 py-1.5 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+                                  >
+                                    {action.owner || 'Unassigned'}
+                                  </td>
+                                  <td
+                                    className={`px-2 py-1.5 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+                                  >
+                                    {action.timescale || '-'}
+                                  </td>
+                                  <td
+                                    className={`px-2 py-1.5 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+                                  >
+                                    {action.status || '-'}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
                       )}
                     </div>
                   )}

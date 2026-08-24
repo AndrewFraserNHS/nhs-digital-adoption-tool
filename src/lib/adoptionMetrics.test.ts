@@ -120,7 +120,9 @@ describe('adoptionMetrics', () => {
           gapToTarget: 3,
           summary: '1 lens area(s) still need an initial score.',
           message: 'Vision: 1 lens area(s) still need an initial score.',
-          outstandingActions: [{ id: '1', text: 'Action A', lens: 'Lens A' }],
+          outstandingActions: [
+            { id: '1', text: 'Action A', lens: 'Lens A', owner: 'Alex', status: 'In Progress', timescale: 'Q3' },
+          ],
         },
       ],
     });

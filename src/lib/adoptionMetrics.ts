@@ -145,6 +145,9 @@ export interface OutstandingAction {
   id: string;
   text: string;
   lens: string;
+  owner: string;
+  status: string;
+  timescale: string;
 }
 
 export interface NextStep {
@@ -185,7 +188,14 @@ export function getOutstandingActionsForComponent(
     (entry?.actions || []).forEach((action) => {
       const actionScore = action.readinessScore ?? effectiveScore;
       if (actionScore === effectiveScore && !isCompletedActionStatus(action.status)) {
-        outstanding.push({ id: action.id, text: action.text, lens });
+        outstanding.push({
+          id: action.id,
+          text: action.text,
+          lens,
+          owner: action.owner || '',
+          status: action.status || '',
+          timescale: action.timescale || '',
+        });
       }
     });
   });

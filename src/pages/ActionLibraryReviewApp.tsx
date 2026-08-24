@@ -17,6 +17,7 @@ import transferBauRaw from '@data/component-actions/transfer-to-bau-actions.json
 import visionRaw from '@data/component-actions/vision-actions.json';
 import { ASSESSMENT_COMPONENTS } from '@data/components';
 import { OVERARCHING_PHASES } from '@data/cst';
+import { load, save } from '@lib/storage';
 import { downloadFile } from '@lib/utils';
 import { type ChangeEvent, type JSX, type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -217,18 +218,7 @@ function normaliseState(parsed: unknown): ReviewState {
 }
 
 function readStoredState(): ReviewState {
-  if (typeof window === 'undefined') {
-    return normaliseState(null);
-  }
-  const raw = window.localStorage.getItem(STORAGE_KEY);
-  if (!raw) {
-    return normaliseState(null);
-  }
-  try {
-    return normaliseState(JSON.parse(raw));
-  } catch {
-    return normaliseState(null);
-  }
+  return normaliseState(load(STORAGE_KEY));
 }
 
 function moveActionInGroup(
@@ -471,7 +461,7 @@ export default function ActionLibraryReviewApp(): JSX.Element {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(buildExportPayload(state)));
+    save(STORAGE_KEY, buildExportPayload(state));
   }, [state]);
 
   const componentsByPhase = useMemo(() => {

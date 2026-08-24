@@ -3,10 +3,11 @@ import type { AdoptionStore } from './adoptionState';
 import {
   type DerivedComponentConfig,
   parseDerivedComponentSource,
+  clearDerivedComponentContent,
   syncDerivedComponentContent,
 } from './componentDerivedAutomation';
 
-const CM_READINESS_CONFIG: DerivedComponentConfig = {
+export const CM_READINESS_CONFIG: DerivedComponentConfig = {
   componentId: 'cm_readiness',
   actionPrefix: 'cm-readiness-action',
   outcomePrefix: 'cm-readiness:outcome',
@@ -39,4 +40,8 @@ const CM_READINESS_SOURCE = parseDerivedComponentSource(cmReadinessActionsText, 
 
 export function syncCmReadinessDerivedContent(store: AdoptionStore): AdoptionStore {
   return syncDerivedComponentContent(store, CM_READINESS_CONFIG, CM_READINESS_SOURCE);
+}
+
+export function clearCmReadinessDerivedContent(store: AdoptionStore): AdoptionStore {
+  return clearDerivedComponentContent(store, CM_READINESS_CONFIG);
 }

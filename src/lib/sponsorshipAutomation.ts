@@ -3,10 +3,11 @@ import type { AdoptionStore } from './adoptionState';
 import {
   type DerivedComponentConfig,
   parseDerivedComponentSource,
+  clearDerivedComponentContent,
   syncDerivedComponentContent,
 } from './componentDerivedAutomation';
 
-const SPONSORSHIP_CONFIG: DerivedComponentConfig = {
+export const SPONSORSHIP_CONFIG: DerivedComponentConfig = {
   componentId: 'sponsorship',
   actionPrefix: 'sponsorship-action',
   outcomePrefix: 'sponsorship:outcome',
@@ -30,4 +31,8 @@ const SPONSORSHIP_SOURCE = parseDerivedComponentSource(sponsorshipActionsText, S
 
 export function syncSponsorshipDerivedContent(store: AdoptionStore): AdoptionStore {
   return syncDerivedComponentContent(store, SPONSORSHIP_CONFIG, SPONSORSHIP_SOURCE);
+}
+
+export function clearSponsorshipDerivedContent(store: AdoptionStore): AdoptionStore {
+  return clearDerivedComponentContent(store, SPONSORSHIP_CONFIG);
 }

@@ -3,10 +3,11 @@ import type { AdoptionStore } from './adoptionState';
 import {
   type DerivedComponentConfig,
   parseDerivedComponentSource,
+  clearDerivedComponentContent,
   syncDerivedComponentContent,
 } from './componentDerivedAutomation';
 
-const CAPABILITY_CONFIG: DerivedComponentConfig = {
+export const CAPABILITY_CONFIG: DerivedComponentConfig = {
   componentId: 'capability',
   actionPrefix: 'capability-action',
   outcomePrefix: 'capability:outcome',
@@ -40,4 +41,8 @@ const CAPABILITY_SOURCE = parseDerivedComponentSource(capabilityActionsText, CAP
 
 export function syncCapabilityDerivedContent(store: AdoptionStore): AdoptionStore {
   return syncDerivedComponentContent(store, CAPABILITY_CONFIG, CAPABILITY_SOURCE);
+}
+
+export function clearCapabilityDerivedContent(store: AdoptionStore): AdoptionStore {
+  return clearDerivedComponentContent(store, CAPABILITY_CONFIG);
 }

@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type JSX } from 'react';
+import { useCallback, useEffect, useRef, useState, type JSX } from 'react';
 import { normalizeOrgProfile, OrgProfile, type TeamMember } from '@lib/adoptionState';
 import { nhsButtonSecondary } from '../../styles/nhsTheme';
-import { validateOrgProfile } from '@lib/adoptionValidator';
+import { validateOrgProfile, useFieldError } from '@lib/adoptionValidator';
 import { downloadFile } from '@lib/utils';
 import { PageHelpButton, PageIntroModal, usePageIntroSeen } from '@components/onboarding/PageIntroModal';
+import { PathwayContentNotice } from '@components/common/PathwayContentNotice';
 import { AssessmentComponent } from '@data/components';
 import {
   ADOPTION_COMPONENT_TO_GUIDANCE_KEYS,
@@ -16,6 +17,7 @@ import {
 } from '@data/maturity-guidance-links';
 import {
   CST_TYPE_OPTIONS,
+  PATHWAY_LABELS,
   PATHWAY_OPTIONS,
   type CstPathwayKey,
   type CstType,
@@ -56,6 +58,7 @@ export interface ProjectDetailsPageProps {
   lenses: string[];
   onComponentClick: (componentId: string) => void;
   onOpenOnboarding: () => void;
+  onOpenGuidedSetup?: () => void;
   darkMode?: boolean;
   currentUserId?: string;
   onCurrentUserChange: (id: string) => void;
@@ -67,6 +70,7 @@ export function ProjectDetailsPage({
   components,
   onComponentClick,
   onOpenOnboarding,
+  onOpenGuidedSetup,
   darkMode = false,
   currentUserId,
   onCurrentUserChange,
@@ -75,22 +79,7 @@ export function ProjectDetailsPage({
   const cstImportInputRef = useRef<HTMLInputElement>(null);
   const pageIntro = usePageIntroSeen('cst-personalisation');
   const profileValidation = validateOrgProfile(profile);
-  const validationByField = useMemo(() => {
-    return profileValidation.errors.reduce<Record<string, string[]>>((next, error) => {
-      if (!next[error.field]) {
-        next[error.field] = [];
-      }
-      next[error.field].push(error.message);
-      return next;
-    }, {});
-  }, [profileValidation.errors]);
-
-  const fieldError = useCallback(
-    (field: string): string | undefined => {
-      return validationByField[field]?.[0];
-    },
-    [validationByField]
-  );
+  const fieldError = useFieldError(profileValidation);
 
   const stageOneComplete = Boolean(
     profile.trustName.trim() &&
@@ -138,14 +127,31 @@ export function ProjectDetailsPage({
     [profile, onProfileUpdate]
   );
 
-  const handlePathwayChange = useCallback(
+  const [pendingPathwayChange, setPendingPathwayChange] = useState<CstPathwayKey | null>(null);
+
+  const handlePathwaySelectChange = useCallback(
     (value: CstPathwayKey) => {
-      const updated = { ...profile, cst: { ...profile.cst, pathway: value } };
-      setProfile(updated);
-      onProfileUpdate(updated);
+      if (value === profile.cst.pathway) {
+        return;
+      }
+      setPendingPathwayChange(value);
     },
-    [profile, onProfileUpdate]
+    [profile.cst.pathway]
   );
+
+  const confirmPathwayChange = useCallback(() => {
+    if (!pendingPathwayChange) {
+      return;
+    }
+    const updated = { ...profile, cst: { ...profile.cst, pathway: pendingPathwayChange } };
+    setProfile(updated);
+    onProfileUpdate(updated);
+    setPendingPathwayChange(null);
+  }, [pendingPathwayChange, profile, onProfileUpdate]);
+
+  const cancelPathwayChange = useCallback(() => {
+    setPendingPathwayChange(null);
+  }, []);
 
   const handleCstDateChange = useCallback(
     (field: 'goLiveDate' | 'fullAdoptionDate' | 'benefitRealizationDate', value: string) => {
@@ -349,6 +355,11 @@ export function ProjectDetailsPage({
           >
             Show introduction again
           </button>
+          {onOpenGuidedSetup ? (
+            <button type="button" onClick={onOpenGuidedSetup} className={nhsButtonSecondary}>
+              Guided Setup
+            </button>
+          ) : null}
         </div>
       </div>
       <p className={`text-sm -mt-4 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
@@ -514,7 +525,7 @@ export function ProjectDetailsPage({
                 id="cst-pathway"
                 className={`w-full rounded-md border shadow-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8] sm:text-sm p-2 pr-10 ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100' : 'border-[#768692] bg-white text-slate-900'}`}
                 value={profile.cst.pathway}
-                onChange={(event) => handlePathwayChange(event.target.value as CstPathwayKey)}
+                onChange={(event) => handlePathwaySelectChange(event.target.value as CstPathwayKey)}
                 aria-invalid={Boolean(fieldError('cst.pathway'))}
                 aria-describedby={fieldError('cst.pathway') ? 'cst-pathway-error' : undefined}
               >
@@ -535,19 +546,7 @@ export function ProjectDetailsPage({
             </div>
           </div>
 
-          {profile.cst.pathway !== 'pathway-1' && (
-            <div
-              className={`mt-3 rounded-md border p-3 text-xs ${darkMode ? 'border-amber-500/40 bg-amber-500/10 text-amber-100' : 'border-amber-300 bg-amber-50 text-amber-900'}`}
-            >
-              <p className="font-semibold">Objectives and actions are currently Pathway 1 only</p>
-              <p className="mt-1">
-                Every outcome and action in this tool right now is written for Pathway 1 (starting
-                from scratch). Pathway 2 and Pathway 3 will need their own objectives and
-                actions - those haven't been written yet, so what you see for this programme is
-                Pathway 1 content standing in until pathway-specific content is added.
-              </p>
-            </div>
-          )}
+          <PathwayContentNotice pathway={profile.cst.pathway} darkMode={darkMode} />
 
           <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
@@ -1095,6 +1094,45 @@ export function ProjectDetailsPage({
           </div>
         </details>
       </div>
+
+      {pendingPathwayChange && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 p-4">
+          <div
+            className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} w-full max-w-lg rounded-xl border p-6 shadow-2xl`}
+          >
+            <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>
+              Change pathway to {PATHWAY_LABELS[pendingPathwayChange]}?
+            </h3>
+            <div className={`mt-3 space-y-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+              {pendingPathwayChange === 'pathway-1' ? (
+                <p>
+                  This will regenerate every component's outcomes and actions for Pathway 1. Any
+                  items you've added yourself are kept.
+                </p>
+              ) : (
+                <p>
+                  Pathway 2 and Pathway 3 don't have their own outcomes and actions written yet, so
+                  this will clear the Pathway 1 stand-in content instead of leaving it in place -
+                  components will show an honest empty state until pathway-specific content is
+                  added. Any items you've added yourself are kept.
+                </p>
+              )}
+            </div>
+            <div className="mt-5 flex justify-end gap-2">
+              <button type="button" onClick={cancelPathwayChange} className={nhsButtonSecondary}>
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={confirmPathwayChange}
+                className="inline-flex items-center justify-center rounded-md bg-[#005eb8] px-4 py-2 text-sm font-semibold text-white shadow-[0_3px_0_#003087] hover:bg-[#00417a] transition-colors focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2"
+              >
+                Confirm change
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <PageIntroModal
         open={pageIntro.isOpen}

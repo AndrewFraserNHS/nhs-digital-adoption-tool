@@ -9,6 +9,7 @@ import {
   type ObjectiveStatus,
 } from '@lib/adoptionState';
 import { ASSESSMENT_COMPONENTS, AssessmentComponent } from '@data/components';
+import { PATHWAY_LABELS } from '@data/cst';
 import {
   CORE_LINKS,
   type GuidanceLink,
@@ -877,6 +878,11 @@ export function AssessmentPanel({
   onFocusActionHandled,
 }: AssessmentPanelProps): JSX.Element {
   const component = components.find((c) => c.id === activeComponentId) || components[0];
+  const pathway = store.orgProfile?.cst?.pathway;
+  const noOutcomesOrActionsMessage = (defaultMessage: string): string =>
+    pathway && pathway !== 'pathway-1'
+      ? `No outcomes or actions are defined for ${PATHWAY_LABELS[pathway]} yet.`
+      : defaultMessage;
   const projectName = store.orgProfile?.projectName?.trim() || DEFAULT_PROJECT_NAME_PLACEHOLDER;
   const componentDetail = COMPONENT_DETAILS[component.id]?.whatIsIt
     ? resolveComponentDetail(COMPONENT_DETAILS[component.id], projectName)
@@ -1690,7 +1696,7 @@ export function AssessmentPanel({
               </table>
             </div>
           ) : (
-            <p className="text-sm text-slate-500">No outcomes yet.</p>
+            <p className="text-sm text-slate-500">{noOutcomesOrActionsMessage('No outcomes yet.')}</p>
           )
         ) : null}
       </div>
@@ -2187,7 +2193,7 @@ export function AssessmentPanel({
                     </div>
                   ) : (
                     <p className={`text-sm ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-                      No actions yet for this lens.
+                      {noOutcomesOrActionsMessage('No actions yet for this lens.')}
                     </p>
                   )}
 
@@ -2487,7 +2493,7 @@ export function AssessmentPanel({
                     <p
                       className={`px-2 py-1 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
                     >
-                      No outcomes are defined for this component yet.
+                      {noOutcomesOrActionsMessage('No outcomes are defined for this component yet.')}
                     </p>
                   )}
                 </div>

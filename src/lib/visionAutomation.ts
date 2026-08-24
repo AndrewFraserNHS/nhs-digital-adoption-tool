@@ -3,10 +3,11 @@ import type { AdoptionStore } from './adoptionState';
 import {
   type DerivedComponentConfig,
   parseDerivedComponentSource,
+  clearDerivedComponentContent,
   syncDerivedComponentContent,
 } from './componentDerivedAutomation';
 
-const VISION_CONFIG: DerivedComponentConfig = {
+export const VISION_CONFIG: DerivedComponentConfig = {
   componentId: 'vision',
   actionPrefix: 'vision-action',
   outcomePrefix: 'vision:outcome',
@@ -21,4 +22,8 @@ const VISION_SOURCE = parseDerivedComponentSource(visionActionsText, VISION_CONF
 
 export function syncVisionDerivedContent(store: AdoptionStore): AdoptionStore {
   return syncDerivedComponentContent(store, VISION_CONFIG, VISION_SOURCE);
+}
+
+export function clearVisionDerivedContent(store: AdoptionStore): AdoptionStore {
+  return clearDerivedComponentContent(store, VISION_CONFIG);
 }

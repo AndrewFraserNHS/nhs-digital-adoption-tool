@@ -1,3 +1,4 @@
+import { load, save } from '@lib/storage';
 import { downloadFile } from '@lib/utils';
 import { type ChangeEvent, JSX, useEffect, useRef, useState } from 'react';
 
@@ -98,18 +99,11 @@ function normaliseState(
 }
 
 function readStoredState(): ForceFieldAnalysisState {
-  if (typeof window === 'undefined') {
-    return DEFAULT_STATE;
-  }
-  const raw = window.localStorage.getItem(STORAGE_KEY);
+  const raw = load<Partial<ForceFieldAnalysisState>>(STORAGE_KEY);
   if (!raw) {
     return DEFAULT_STATE;
   }
-  try {
-    return normaliseState(JSON.parse(raw) as Partial<ForceFieldAnalysisState>);
-  } catch {
-    return DEFAULT_STATE;
-  }
+  return normaliseState(raw);
 }
 
 /**
@@ -621,7 +615,7 @@ export default function ForceFieldAnalysisApp(): JSX.Element {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    save(STORAGE_KEY, state);
   }, [state]);
 
   const updateProjectName = (value: string) => {

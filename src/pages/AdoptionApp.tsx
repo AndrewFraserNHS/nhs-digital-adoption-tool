@@ -1,4 +1,5 @@
 import { OnboardingIntro } from '@components/onboarding/OnboardingIntro';
+import { CstSetupWizard } from '@components/onboarding/CstSetupWizard';
 import { ToolkitChatbot } from '@components/ui/ToolkitChatbot';
 import { ActionPlanTracker } from '@components/views/ActionPlanTracker';
 import { AdoptionDashboard } from '@components/views/AdoptionDashboard';
@@ -56,34 +57,16 @@ import type {
 import { cloneEntry, createCstId, createEmptyEntry, initializeStore } from '@lib/adoptionState';
 import { validateCstProfile } from '@lib/adoptionValidator';
 import { type AuditEvent, createAuditEvent, trimAuditEvents } from '@lib/auditLog';
-import { syncBenefitsDerivedContent } from '@lib/benefitsAutomation';
-import { syncCapabilityDerivedContent } from '@lib/capabilityAutomation';
-import { syncCaseForChangeDerivedContent } from '@lib/caseForChangeAutomation';
-import { syncChangeAdoptionDerivedContent } from '@lib/changeAdoptionAutomation';
-import { syncChangeImpactDerivedContent } from '@lib/changeImpactAutomation';
-import { syncChangeNetworkDerivedContent } from '@lib/changeNetworkAutomation';
 import { createLineChart, createRadarChart } from '@lib/charts';
-import { syncCmReadinessDerivedContent } from '@lib/cmReadinessAutomation';
 import {
   applyConflictResolutions,
   buildConflictReport,
   type ConflictChoice,
   type ConflictReport,
 } from '@lib/cstConflict';
-import { syncOrgChangeReadinessDerivedContent } from '@lib/orgChangeReadinessAutomation';
-import { syncPathwayObjectives } from '@lib/pathwayObjectives';
-import { syncProcessChangeDerivedContent } from '@lib/processChangeAutomation';
-import { syncReinforcementDerivedContent } from '@lib/reinforcementAutomation';
-import { syncResistanceDerivedContent } from '@lib/resistanceAutomation';
-import { syncRiskManagementDerivedContent } from '@lib/riskManagementAutomation';
-import { syncSkillsLearningDerivedContent } from '@lib/skillsLearningAutomation';
-import { syncSponsorshipDerivedContent } from '@lib/sponsorshipAutomation';
-import { syncStakeholderDerivedContent } from '@lib/stakeholderAutomation';
-import AppState from '@lib/state';
+import { syncDerivedContent, regenerateContentForPathway } from '@lib/derivedContentSync';
 import { load, save } from '@lib/storage';
-import { syncTransferToBauDerivedContent } from '@lib/transferToBauAutomation';
 import { downloadFile, escapeHtml } from '@lib/utils';
-import { syncVisionDerivedContent } from '@lib/visionAutomation';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { nhsButtonPrimary, nhsButtonSecondary, nhsFocusRing } from '../styles/nhsTheme';
@@ -98,6 +81,12 @@ const DEFAULT_GUIDANCE_TARGET: MaturityGuidanceTarget = 'Default';
 const MAX_IMPORT_FILE_BYTES = 5 * 1024 * 1024;
 const ACCEPTED_IMPORT_MIME_TYPES = new Set(['application/json', 'text/json']);
 const DEFAULT_AUDIT_ACTOR = 'Unknown user';
+
+const EXAMPLE_DATA_FILES: Record<'red' | 'amber' | 'green', string> = {
+  red: 'test-data/adoption-phase1-red.json',
+  amber: 'test-data/adoption-phase2-amber.json',
+  green: 'test-data/adoption-phase3-green.json',
+};
 
 const THEME_PRESET_COLORS = ['#005eb8', '#003366', '#009b8a', '#6c28d9', '#059669', '#dc2626'];
 
@@ -162,40 +151,9 @@ function isCstEmpty(store: AdoptionStore): boolean {
   );
 }
 
-function syncDerivedContent(store: AdoptionStore): AdoptionStore {
-  return syncPathwayObjectives(
-    syncTransferToBauDerivedContent(
-      syncOrgChangeReadinessDerivedContent(
-        syncReinforcementDerivedContent(
-          syncProcessChangeDerivedContent(
-            syncCapabilityDerivedContent(
-              syncChangeAdoptionDerivedContent(
-                syncSkillsLearningDerivedContent(
-                  syncResistanceDerivedContent(
-                    syncStakeholderDerivedContent(
-                      syncCmReadinessDerivedContent(
-                        syncRiskManagementDerivedContent(
-                          syncChangeNetworkDerivedContent(
-                            syncChangeImpactDerivedContent(
-                              syncBenefitsDerivedContent(
-                                syncSponsorshipDerivedContent(
-                                  syncCaseForChangeDerivedContent(syncVisionDerivedContent(store))
-                                )
-                              )
-                            )
-                          )
-                        )
-                      )
-                    )
-                  )
-                )
-              )
-            )
-          )
-        )
-      )
-    )
-  );
+/** Gates the guided CST setup wizard's one-time auto-open - filling in a trust name is itself the "seen" signal. */
+function isCstUnconfigured(profile: OrgProfile): boolean {
+  return !profile.trustName.trim();
 }
 
 function getAuditActor(name: string): string {
@@ -369,8 +327,6 @@ export function AdoptionApp() {
     return window.innerWidth >= 1024;
   });
   const [store, setStore] = useState<AdoptionStore>(() => {
-    const state = AppState.getInstance();
-    state.loadFromWindow();
     let persisted: Partial<SavedAdoptionAssessment> = {};
     try {
       const rawPersisted = load<unknown>(ADOPTION_STORAGE_KEY);
@@ -380,15 +336,14 @@ export function AdoptionApp() {
     }
     const initialised = initializeStore({
       view: 'dashboard',
-      orgProfile: persisted?.orgProfile || state.adoption?.orgProfile,
-      currentDraft: persisted?.currentDraft || state.adoption?.currentDraft,
-      objectives: persisted?.objectives || state.adoption?.objectives,
-      suppressedAutoActions:
-        persisted?.suppressedAutoActions || state.adoption?.suppressedAutoActions,
-      auditLog: persisted?.auditLog || state.adoption?.auditLog,
-      history: persisted?.history || state.adoption?.history,
-      phaseOverrides: persisted?.phaseOverrides || state.adoption?.phaseOverrides,
-      pathwayChecks: persisted?.pathwayChecks || state.adoption?.pathwayChecks,
+      orgProfile: persisted?.orgProfile,
+      currentDraft: persisted?.currentDraft,
+      objectives: persisted?.objectives,
+      suppressedAutoActions: persisted?.suppressedAutoActions,
+      auditLog: persisted?.auditLog,
+      history: persisted?.history,
+      phaseOverrides: persisted?.phaseOverrides,
+      pathwayChecks: persisted?.pathwayChecks,
     }) as AdoptionStore;
 
     // Backfill a stable programme identity for the app's own working document (never for an
@@ -445,6 +400,8 @@ export function AdoptionApp() {
   const [showEngagementCard, setShowEngagementCard] = useState<boolean>(true);
   const [viewHistory, setViewHistory] = useState<View[]>([]);
   const [showFinaliseModal, setShowFinaliseModal] = useState(false);
+  const [showCstSetupWizard, setShowCstSetupWizard] = useState(false);
+  const hasAutoOpenedCstWizardRef = React.useRef(false);
   const navItemRefs = React.useRef<Record<string, HTMLButtonElement | null>>({});
 
   const dismissOnboarding = useCallback(() => {
@@ -524,17 +481,6 @@ export function AdoptionApp() {
 
   useEffect(() => {
     save(ADOPTION_STORAGE_KEY, store);
-    const appState = AppState.getInstance();
-    appState.adoption = {
-      orgProfile: store.orgProfile,
-      currentDraft: store.currentDraft,
-      objectives: store.objectives,
-      suppressedAutoActions: store.suppressedAutoActions,
-      auditLog: store.auditLog,
-      history: store.history,
-      phaseOverrides: store.phaseOverrides,
-      pathwayChecks: store.pathwayChecks,
-    };
   }, [store]);
 
   useEffect(() => {
@@ -567,6 +513,14 @@ export function AdoptionApp() {
   }, [reportReminder.previousMonthLabel, store.orgProfile.projectName, store.orgProfile.trustName]);
 
   // Render charts after dashboard mounts
+  useEffect(() => {
+    if (!hasAutoOpenedCstWizardRef.current && isCstUnconfigured(store.orgProfile)) {
+      hasAutoOpenedCstWizardRef.current = true;
+      setShowCstSetupWizard(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     if (view === 'dashboard' && dashboardRef.current) {
       setTimeout(() => {
@@ -1364,9 +1318,9 @@ export function AdoptionApp() {
     store.history,
   ]);
 
-  const handleLoadExampleData = useCallback(async () => {
+  const handleLoadExampleData = useCallback(async (profile: 'red' | 'amber' | 'green') => {
     try {
-      const response = await fetch('test-data/adoption-sample.json');
+      const response = await fetch(EXAMPLE_DATA_FILES[profile]);
       if (!response.ok) {
         throw new Error(`Failed to load sample data: ${response.status}`);
       }
@@ -1618,10 +1572,11 @@ export function AdoptionApp() {
 
   const handleProfileUpdate = useCallback((updatedProfile: OrgProfile) => {
     setStore((prev) => {
-      const nextStore = syncPathwayObjectives({
-        ...prev,
-        orgProfile: updatedProfile,
-      });
+      const pathwayChanged = prev.orgProfile.cst.pathway !== updatedProfile.cst.pathway;
+      const mergedStore = { ...prev, orgProfile: updatedProfile };
+      const nextStore = pathwayChanged
+        ? regenerateContentForPathway(mergedStore, updatedProfile.cst.pathway)
+        : mergedStore;
 
       const changed = JSON.stringify(prev.orgProfile) !== JSON.stringify(updatedProfile);
       if (!changed) {
@@ -1647,6 +1602,18 @@ export function AdoptionApp() {
             },
             source: 'local',
           },
+          ...(pathwayChanged
+            ? [
+                {
+                  eventType: 'pathway-changed' as const,
+                  entityType: 'profile' as const,
+                  summary: `Changed pathway from ${prev.orgProfile.cst.pathway} to ${updatedProfile.cst.pathway}`,
+                  before: { pathway: prev.orgProfile.cst.pathway },
+                  after: { pathway: updatedProfile.cst.pathway },
+                  source: 'local' as const,
+                },
+              ]
+            : []),
         ]),
       };
     });
@@ -2251,6 +2218,7 @@ export function AdoptionApp() {
               lenses={MUTABLE_LENSES}
               onComponentClick={openComponentAssessment}
               onOpenOnboarding={() => setShowOnboarding(true)}
+              onOpenGuidedSetup={() => setShowCstSetupWizard(true)}
               currentUserId={currentUserId}
               onCurrentUserChange={setCurrentUserId}
               darkMode={Boolean(userSettings.darkMode)}
@@ -2576,6 +2544,17 @@ export function AdoptionApp() {
             setView('cm-guide');
             dismissOnboarding();
           }}
+        />
+
+        <CstSetupWizard
+          open={showCstSetupWizard}
+          orgProfile={store.orgProfile}
+          onProfileUpdate={handleProfileUpdate}
+          onClose={() => setShowCstSetupWizard(false)}
+          onComplete={() => setShowCstSetupWizard(false)}
+          currentUserId={currentUserId}
+          onCurrentUserChange={setCurrentUserId}
+          darkMode={Boolean(userSettings.darkMode)}
         />
       </div>
     </div>

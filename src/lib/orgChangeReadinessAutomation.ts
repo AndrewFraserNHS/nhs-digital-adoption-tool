@@ -3,10 +3,11 @@ import type { AdoptionStore } from './adoptionState';
 import {
   type DerivedComponentConfig,
   parseDerivedComponentSource,
+  clearDerivedComponentContent,
   syncDerivedComponentContent,
 } from './componentDerivedAutomation';
 
-const ORG_CHANGE_READINESS_CONFIG: DerivedComponentConfig = {
+export const ORG_CHANGE_READINESS_CONFIG: DerivedComponentConfig = {
   componentId: 'org_maturity',
   actionPrefix: 'org-change-readiness-action',
   outcomePrefix: 'org-change-readiness:outcome',
@@ -42,4 +43,8 @@ const ORG_CHANGE_READINESS_SOURCE = parseDerivedComponentSource(
 
 export function syncOrgChangeReadinessDerivedContent(store: AdoptionStore): AdoptionStore {
   return syncDerivedComponentContent(store, ORG_CHANGE_READINESS_CONFIG, ORG_CHANGE_READINESS_SOURCE);
+}
+
+export function clearOrgChangeReadinessDerivedContent(store: AdoptionStore): AdoptionStore {
+  return clearDerivedComponentContent(store, ORG_CHANGE_READINESS_CONFIG);
 }

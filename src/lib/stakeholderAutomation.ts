@@ -3,10 +3,11 @@ import type { AdoptionStore } from './adoptionState';
 import {
   type DerivedComponentConfig,
   parseDerivedComponentSource,
+  clearDerivedComponentContent,
   syncDerivedComponentContent,
 } from './componentDerivedAutomation';
 
-const STAKEHOLDER_CONFIG: DerivedComponentConfig = {
+export const STAKEHOLDER_CONFIG: DerivedComponentConfig = {
   componentId: 'stakeholder',
   actionPrefix: 'stakeholder-action',
   outcomePrefix: 'stakeholder:outcome',
@@ -35,4 +36,8 @@ const STAKEHOLDER_SOURCE = parseDerivedComponentSource(stakeholderActionsText, S
 
 export function syncStakeholderDerivedContent(store: AdoptionStore): AdoptionStore {
   return syncDerivedComponentContent(store, STAKEHOLDER_CONFIG, STAKEHOLDER_SOURCE);
+}
+
+export function clearStakeholderDerivedContent(store: AdoptionStore): AdoptionStore {
+  return clearDerivedComponentContent(store, STAKEHOLDER_CONFIG);
 }

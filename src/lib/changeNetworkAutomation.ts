@@ -3,10 +3,11 @@ import type { AdoptionStore } from './adoptionState';
 import {
   type DerivedComponentConfig,
   parseDerivedComponentSource,
+  clearDerivedComponentContent,
   syncDerivedComponentContent,
 } from './componentDerivedAutomation';
 
-const CHANGE_NETWORK_CONFIG: DerivedComponentConfig = {
+export const CHANGE_NETWORK_CONFIG: DerivedComponentConfig = {
   componentId: 'change_network',
   actionPrefix: 'change-network-action',
   outcomePrefix: 'change-network:outcome',
@@ -39,4 +40,8 @@ const CHANGE_NETWORK_SOURCE = parseDerivedComponentSource(
 
 export function syncChangeNetworkDerivedContent(store: AdoptionStore): AdoptionStore {
   return syncDerivedComponentContent(store, CHANGE_NETWORK_CONFIG, CHANGE_NETWORK_SOURCE);
+}
+
+export function clearChangeNetworkDerivedContent(store: AdoptionStore): AdoptionStore {
+  return clearDerivedComponentContent(store, CHANGE_NETWORK_CONFIG);
 }

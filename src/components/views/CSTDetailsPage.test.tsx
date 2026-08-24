@@ -110,4 +110,62 @@ describe('ProjectDetailsPage', () => {
       })
     );
   });
+
+  it('SHOULD ask for confirmation before applying a pathway change, and applies it on confirm', () => {
+    // arrange
+    const onProfileUpdate = vi.fn();
+
+    render(
+      <ProjectDetailsPage
+        orgProfile={orgProfile}
+        onProfileUpdate={onProfileUpdate}
+        components={components}
+        lenses={['Strategic Direction and Leadership']}
+        onComponentClick={vi.fn()}
+        onOpenOnboarding={vi.fn()}
+        onCurrentUserChange={vi.fn()}
+      />
+    );
+
+    // act 1: selecting a new pathway does not commit it yet
+    fireEvent.change(screen.getByLabelText('Pathway'), { target: { value: 'pathway-2' } });
+
+    // assert 1
+    expect(onProfileUpdate).not.toHaveBeenCalled();
+    expect(screen.getByRole('heading', { name: /Change pathway to Pathway 2/ })).toBeInTheDocument();
+
+    // act 2
+    fireEvent.click(screen.getByRole('button', { name: 'Confirm change' }));
+
+    // assert 2
+    expect(onProfileUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({ cst: expect.objectContaining({ pathway: 'pathway-2' }) })
+    );
+    expect(screen.queryByRole('heading', { name: /Change pathway to/ })).not.toBeInTheDocument();
+  });
+
+  it('SHOULD leave the pathway unchanged WHERE the confirmation is cancelled', () => {
+    // arrange
+    const onProfileUpdate = vi.fn();
+
+    render(
+      <ProjectDetailsPage
+        orgProfile={orgProfile}
+        onProfileUpdate={onProfileUpdate}
+        components={components}
+        lenses={['Strategic Direction and Leadership']}
+        onComponentClick={vi.fn()}
+        onOpenOnboarding={vi.fn()}
+        onCurrentUserChange={vi.fn()}
+      />
+    );
+
+    // act
+    fireEvent.change(screen.getByLabelText('Pathway'), { target: { value: 'pathway-3' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+
+    // assert
+    expect(onProfileUpdate).not.toHaveBeenCalled();
+    expect(screen.getByLabelText('Pathway')).toHaveValue('pathway-1');
+  });
 });

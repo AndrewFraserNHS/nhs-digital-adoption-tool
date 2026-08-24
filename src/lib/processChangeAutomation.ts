@@ -3,10 +3,11 @@ import type { AdoptionStore } from './adoptionState';
 import {
   type DerivedComponentConfig,
   parseDerivedComponentSource,
+  clearDerivedComponentContent,
   syncDerivedComponentContent,
 } from './componentDerivedAutomation';
 
-const PROCESS_CHANGE_CONFIG: DerivedComponentConfig = {
+export const PROCESS_CHANGE_CONFIG: DerivedComponentConfig = {
   componentId: 'process_change',
   actionPrefix: 'process-change-action',
   outcomePrefix: 'process-change:outcome',
@@ -44,4 +45,8 @@ const PROCESS_CHANGE_SOURCE = parseDerivedComponentSource(
 
 export function syncProcessChangeDerivedContent(store: AdoptionStore): AdoptionStore {
   return syncDerivedComponentContent(store, PROCESS_CHANGE_CONFIG, PROCESS_CHANGE_SOURCE);
+}
+
+export function clearProcessChangeDerivedContent(store: AdoptionStore): AdoptionStore {
+  return clearDerivedComponentContent(store, PROCESS_CHANGE_CONFIG);
 }

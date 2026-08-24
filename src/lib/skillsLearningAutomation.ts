@@ -3,10 +3,11 @@ import type { AdoptionStore } from './adoptionState';
 import {
   type DerivedComponentConfig,
   parseDerivedComponentSource,
+  clearDerivedComponentContent,
   syncDerivedComponentContent,
 } from './componentDerivedAutomation';
 
-const SKILLS_LEARNING_CONFIG: DerivedComponentConfig = {
+export const SKILLS_LEARNING_CONFIG: DerivedComponentConfig = {
   componentId: 'skills_learning',
   actionPrefix: 'skills-learning-action',
   outcomePrefix: 'skills-learning:outcome',
@@ -47,4 +48,8 @@ const SKILLS_LEARNING_SOURCE = parseDerivedComponentSource(
 
 export function syncSkillsLearningDerivedContent(store: AdoptionStore): AdoptionStore {
   return syncDerivedComponentContent(store, SKILLS_LEARNING_CONFIG, SKILLS_LEARNING_SOURCE);
+}
+
+export function clearSkillsLearningDerivedContent(store: AdoptionStore): AdoptionStore {
+  return clearDerivedComponentContent(store, SKILLS_LEARNING_CONFIG);
 }

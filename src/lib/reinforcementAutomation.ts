@@ -3,10 +3,11 @@ import type { AdoptionStore } from './adoptionState';
 import {
   type DerivedComponentConfig,
   parseDerivedComponentSource,
+  clearDerivedComponentContent,
   syncDerivedComponentContent,
 } from './componentDerivedAutomation';
 
-const REINFORCEMENT_CONFIG: DerivedComponentConfig = {
+export const REINFORCEMENT_CONFIG: DerivedComponentConfig = {
   componentId: 'reinforcement',
   actionPrefix: 'reinforcement-action',
   outcomePrefix: 'reinforcement:outcome',
@@ -42,4 +43,8 @@ const REINFORCEMENT_SOURCE = parseDerivedComponentSource(
 
 export function syncReinforcementDerivedContent(store: AdoptionStore): AdoptionStore {
   return syncDerivedComponentContent(store, REINFORCEMENT_CONFIG, REINFORCEMENT_SOURCE);
+}
+
+export function clearReinforcementDerivedContent(store: AdoptionStore): AdoptionStore {
+  return clearDerivedComponentContent(store, REINFORCEMENT_CONFIG);
 }

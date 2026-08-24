@@ -3,10 +3,11 @@ import type { AdoptionStore } from './adoptionState';
 import {
   type DerivedComponentConfig,
   parseDerivedComponentSource,
+  clearDerivedComponentContent,
   syncDerivedComponentContent,
 } from './componentDerivedAutomation';
 
-const TRANSFER_TO_BAU_CONFIG: DerivedComponentConfig = {
+export const TRANSFER_TO_BAU_CONFIG: DerivedComponentConfig = {
   componentId: 'transfer_bau',
   actionPrefix: 'transfer-bau-action',
   outcomePrefix: 'transfer-bau:outcome',
@@ -47,4 +48,8 @@ const TRANSFER_TO_BAU_SOURCE = parseDerivedComponentSource(
 
 export function syncTransferToBauDerivedContent(store: AdoptionStore): AdoptionStore {
   return syncDerivedComponentContent(store, TRANSFER_TO_BAU_CONFIG, TRANSFER_TO_BAU_SOURCE);
+}
+
+export function clearTransferToBauDerivedContent(store: AdoptionStore): AdoptionStore {
+  return clearDerivedComponentContent(store, TRANSFER_TO_BAU_CONFIG);
 }

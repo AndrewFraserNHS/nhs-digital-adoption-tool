@@ -15,6 +15,7 @@ export type AuditEventType =
   | 'action-removed'
   | 'objectives-updated'
   | 'profile-updated'
+  | 'pathway-changed'
   | 'month-finalized'
   | 'prior-month-finalized'
   | 'data-imported'

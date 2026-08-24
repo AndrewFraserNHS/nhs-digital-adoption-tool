@@ -3,10 +3,11 @@ import type { AdoptionStore } from './adoptionState';
 import {
   type DerivedComponentConfig,
   parseDerivedComponentSource,
+  clearDerivedComponentContent,
   syncDerivedComponentContent,
 } from './componentDerivedAutomation';
 
-const BENEFITS_CONFIG: DerivedComponentConfig = {
+export const BENEFITS_CONFIG: DerivedComponentConfig = {
   componentId: 'benefits',
   actionPrefix: 'benefits-action',
   outcomePrefix: 'benefits:outcome',
@@ -31,4 +32,8 @@ const BENEFITS_SOURCE = parseDerivedComponentSource(benefitsActionsText, BENEFIT
 
 export function syncBenefitsDerivedContent(store: AdoptionStore): AdoptionStore {
   return syncDerivedComponentContent(store, BENEFITS_CONFIG, BENEFITS_SOURCE);
+}
+
+export function clearBenefitsDerivedContent(store: AdoptionStore): AdoptionStore {
+  return clearDerivedComponentContent(store, BENEFITS_CONFIG);
 }

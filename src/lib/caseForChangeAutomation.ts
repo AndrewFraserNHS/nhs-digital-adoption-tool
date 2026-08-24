@@ -3,10 +3,11 @@ import type { AdoptionStore } from './adoptionState';
 import {
   type DerivedComponentConfig,
   parseDerivedComponentSource,
+  clearDerivedComponentContent,
   syncDerivedComponentContent,
 } from './componentDerivedAutomation';
 
-const CASE_FOR_CHANGE_CONFIG: DerivedComponentConfig = {
+export const CASE_FOR_CHANGE_CONFIG: DerivedComponentConfig = {
   componentId: 'case_for_change',
   actionPrefix: 'case-for-change-action',
   outcomePrefix: 'case-for-change:outcome',
@@ -33,4 +34,8 @@ const CASE_FOR_CHANGE_SOURCE = parseDerivedComponentSource(
 
 export function syncCaseForChangeDerivedContent(store: AdoptionStore): AdoptionStore {
   return syncDerivedComponentContent(store, CASE_FOR_CHANGE_CONFIG, CASE_FOR_CHANGE_SOURCE);
+}
+
+export function clearCaseForChangeDerivedContent(store: AdoptionStore): AdoptionStore {
+  return clearDerivedComponentContent(store, CASE_FOR_CHANGE_CONFIG);
 }

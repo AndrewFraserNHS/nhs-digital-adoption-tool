@@ -26,7 +26,7 @@ describe('SettingsPanel', () => {
 
     // act
     fireEvent.change(screen.getByLabelText('Theme Colour'), { target: { value: '#00a499' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Example Data' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Example: Amber (Progressing)' }));
     fireEvent.click(screen.getByRole('button', { name: 'Reset Data' }));
 
     // assert
@@ -36,7 +36,29 @@ describe('SettingsPanel', () => {
         themeColor: '#00a499',
       })
     );
-    expect(onLoadExampleData).toHaveBeenCalled();
+    expect(onLoadExampleData).toHaveBeenCalledWith('amber');
     expect(onResetData).toHaveBeenCalled();
+  });
+
+  it('SHOULD load the red and green example profiles', () => {
+    // arrange
+    const onLoadExampleData = vi.fn();
+
+    render(
+      <SettingsPanel
+        userSettings={baseUserSettings}
+        onUserSettingsUpdate={vi.fn()}
+        onLoadExampleData={onLoadExampleData}
+        onResetData={vi.fn()}
+      />
+    );
+
+    // act
+    fireEvent.click(screen.getByRole('button', { name: 'Example: Red (Early Stage)' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Example: Green (Near Exemplar)' }));
+
+    // assert
+    expect(onLoadExampleData).toHaveBeenCalledWith('red');
+    expect(onLoadExampleData).toHaveBeenCalledWith('green');
   });
 });

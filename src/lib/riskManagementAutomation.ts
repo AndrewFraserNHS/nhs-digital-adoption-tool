@@ -3,10 +3,11 @@ import type { AdoptionStore } from './adoptionState';
 import {
   type DerivedComponentConfig,
   parseDerivedComponentSource,
+  clearDerivedComponentContent,
   syncDerivedComponentContent,
 } from './componentDerivedAutomation';
 
-const RISK_MANAGEMENT_CONFIG: DerivedComponentConfig = {
+export const RISK_MANAGEMENT_CONFIG: DerivedComponentConfig = {
   componentId: 'risk_management',
   actionPrefix: 'risk-management-action',
   outcomePrefix: 'risk-management:outcome',
@@ -42,4 +43,8 @@ const RISK_MANAGEMENT_SOURCE = parseDerivedComponentSource(
 
 export function syncRiskManagementDerivedContent(store: AdoptionStore): AdoptionStore {
   return syncDerivedComponentContent(store, RISK_MANAGEMENT_CONFIG, RISK_MANAGEMENT_SOURCE);
+}
+
+export function clearRiskManagementDerivedContent(store: AdoptionStore): AdoptionStore {
+  return clearDerivedComponentContent(store, RISK_MANAGEMENT_CONFIG);
 }

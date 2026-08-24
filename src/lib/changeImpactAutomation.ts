@@ -3,10 +3,11 @@ import type { AdoptionStore } from './adoptionState';
 import {
   type DerivedComponentConfig,
   parseDerivedComponentSource,
+  clearDerivedComponentContent,
   syncDerivedComponentContent,
 } from './componentDerivedAutomation';
 
-const CHANGE_IMPACT_CONFIG: DerivedComponentConfig = {
+export const CHANGE_IMPACT_CONFIG: DerivedComponentConfig = {
   componentId: 'change_impact',
   actionPrefix: 'change-impact-action',
   outcomePrefix: 'change-impact:outcome',
@@ -33,4 +34,8 @@ const CHANGE_IMPACT_SOURCE = parseDerivedComponentSource(
 
 export function syncChangeImpactDerivedContent(store: AdoptionStore): AdoptionStore {
   return syncDerivedComponentContent(store, CHANGE_IMPACT_CONFIG, CHANGE_IMPACT_SOURCE);
+}
+
+export function clearChangeImpactDerivedContent(store: AdoptionStore): AdoptionStore {
+  return clearDerivedComponentContent(store, CHANGE_IMPACT_CONFIG);
 }

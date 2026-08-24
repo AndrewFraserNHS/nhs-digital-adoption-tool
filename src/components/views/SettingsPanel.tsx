@@ -1,5 +1,5 @@
 import { useState, useCallback, JSX, useEffect } from 'react';
-import { nhsButtonPrimary, nhsFocusRing } from '../../styles/nhsTheme';
+import { nhsFocusRing } from '../../styles/nhsTheme';
 import { PageHelpButton, PageIntroModal, usePageIntroSeen } from '@components/onboarding/PageIntroModal';
 
 export interface AdoptionUserSettings {
@@ -18,7 +18,7 @@ export interface AdoptionUserSettings {
 export interface SettingsPanelProps {
   userSettings: AdoptionUserSettings;
   onUserSettingsUpdate: (settings: AdoptionUserSettings) => void;
-  onLoadExampleData: () => void;
+  onLoadExampleData: (profile: 'red' | 'amber' | 'green') => void;
   onResetData: () => void;
   canUseCustomTheme?: boolean;
   darkMode?: boolean;
@@ -232,8 +232,23 @@ export function SettingsPanel({
             Data Tools
           </h4>
           <div className="mt-3 flex flex-wrap gap-3">
-            <button onClick={onLoadExampleData} className={nhsButtonPrimary}>
-              Example Data
+            <button
+              onClick={() => onLoadExampleData('red')}
+              className="inline-flex items-center justify-center rounded-md bg-red-50 px-4 py-2 text-sm font-semibold text-red-800 border border-red-200 shadow-[0_3px_0_#fecaca] hover:bg-red-100 transition-colors"
+            >
+              Example: Red (Early Stage)
+            </button>
+            <button
+              onClick={() => onLoadExampleData('amber')}
+              className="inline-flex items-center justify-center rounded-md bg-amber-50 px-4 py-2 text-sm font-semibold text-amber-800 border border-amber-200 shadow-[0_3px_0_#fde68a] hover:bg-amber-100 transition-colors"
+            >
+              Example: Amber (Progressing)
+            </button>
+            <button
+              onClick={() => onLoadExampleData('green')}
+              className="inline-flex items-center justify-center rounded-md bg-green-50 px-4 py-2 text-sm font-semibold text-green-800 border border-green-200 shadow-[0_3px_0_#bbf7d0] hover:bg-green-100 transition-colors"
+            >
+              Example: Green (Near Exemplar)
             </button>
             <button
               onClick={onResetData}
@@ -243,7 +258,8 @@ export function SettingsPanel({
             </button>
           </div>
           <p className={`mt-2 text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
-            Example Data loads sample assessment content so you can explore the dashboards quickly.
+            Each Example Data button loads a full sample assessment at a different maturity stage,
+            so you can explore the dashboards and workflows quickly.
           </p>
         </div>
 
@@ -269,8 +285,9 @@ export function SettingsPanel({
             What does Example Data do?
           </summary>
           <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-            It populates the tool with the included sample JSON so you can explore dashboards and
-            workflows quickly.
+            Each button populates the tool with a full sample assessment at that maturity stage
+            (Red: early stage, Amber: progressing, Green: near exemplar) so you can explore
+            dashboards and workflows quickly.
           </p>
         </details>
         <details

@@ -3,10 +3,11 @@ import type { AdoptionStore } from './adoptionState';
 import {
   type DerivedComponentConfig,
   parseDerivedComponentSource,
+  clearDerivedComponentContent,
   syncDerivedComponentContent,
 } from './componentDerivedAutomation';
 
-const RESISTANCE_CONFIG: DerivedComponentConfig = {
+export const RESISTANCE_CONFIG: DerivedComponentConfig = {
   componentId: 'resistance',
   actionPrefix: 'resistance-action',
   outcomePrefix: 'resistance:outcome',
@@ -41,4 +42,8 @@ const RESISTANCE_SOURCE = parseDerivedComponentSource(resistanceActionsText, RES
 
 export function syncResistanceDerivedContent(store: AdoptionStore): AdoptionStore {
   return syncDerivedComponentContent(store, RESISTANCE_CONFIG, RESISTANCE_SOURCE);
+}
+
+export function clearResistanceDerivedContent(store: AdoptionStore): AdoptionStore {
+  return clearDerivedComponentContent(store, RESISTANCE_CONFIG);
 }

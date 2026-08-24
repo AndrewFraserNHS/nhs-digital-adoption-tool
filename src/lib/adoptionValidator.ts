@@ -3,6 +3,7 @@
  * Validates scores, entries, and organizational profiles
  */
 
+import { useMemo } from 'react';
 import { DraftAction, DraftEntry, OrgProfile } from './adoptionState';
 
 function isValidIsoDate(value: string): boolean {
@@ -80,6 +81,21 @@ export interface ValidationError {
 export interface ValidationResult {
   isValid: boolean;
   errors: ValidationError[];
+}
+
+/** First error message per field, keyed for quick per-input lookup - shared by the CST page and setup wizard. */
+export function useFieldError(validation: ValidationResult): (field: string) => string | undefined {
+  const byField = useMemo(() => {
+    return validation.errors.reduce<Record<string, string[]>>((next, error) => {
+      if (!next[error.field]) {
+        next[error.field] = [];
+      }
+      next[error.field].push(error.message);
+      return next;
+    }, {});
+  }, [validation.errors]);
+
+  return (field: string) => byField[field]?.[0];
 }
 
 /**

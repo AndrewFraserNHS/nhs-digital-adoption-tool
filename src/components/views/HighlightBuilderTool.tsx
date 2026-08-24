@@ -1,5 +1,6 @@
 import React, { JSX, useEffect, useMemo, useRef, useState } from 'react';
 import { downloadFile } from '@lib/utils';
+import { load, save } from '@lib/storage';
 import type { AdoptionStore, DraftEntry } from '@lib/adoptionState';
 import { ASSESSMENT_COMPONENTS } from '@data/components';
 import { type Metrics } from '@lib/adoptionMetrics';
@@ -258,17 +259,12 @@ function normaliseAssessmentRows(value: unknown): AssessmentRow[] {
 }
 
 function readStoredLayout(): HighlightBuilderLayout {
-  if (typeof window === 'undefined') {
-    return DEFAULT_LAYOUT;
-  }
-
-  const raw = window.localStorage.getItem(STORAGE_KEY);
-  if (!raw) {
+  const parsed = load<Partial<HighlightBuilderLayout>>(STORAGE_KEY);
+  if (!parsed) {
     return DEFAULT_LAYOUT;
   }
 
   try {
-    const parsed = JSON.parse(raw) as Partial<HighlightBuilderLayout>;
     return {
       ...DEFAULT_LAYOUT,
       ...parsed,
@@ -507,9 +503,8 @@ export function HighlightBuilderTool({
   };
 
   const saveLayoutJson = () => {
-    const serialised = JSON.stringify(layout, null, 2);
-    window.localStorage.setItem(STORAGE_KEY, serialised);
-    downloadFile('highlight-builder-layout.json', serialised, 'application/json');
+    save(STORAGE_KEY, layout);
+    downloadFile('highlight-builder-layout.json', JSON.stringify(layout, null, 2), 'application/json');
     onLayoutSaved?.();
   };
 
@@ -558,7 +553,7 @@ export function HighlightBuilderTool({
   };
 
   useEffect(() => {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(layout));
+    save(STORAGE_KEY, layout);
   }, [layout]);
 
   const previousSnapshot =

@@ -548,6 +548,51 @@ export function syncDerivedComponentContent(
 }
 
 /**
+ * Strips only auto-generated content for one component (ids prefixed with the config's
+ * actionPrefix/outcomePrefix) - used when switching to a pathway that has no content of its own
+ * yet, so the component shows an honest empty state. Anything the user added themselves is left
+ * untouched, since it never carries these prefixes.
+ */
+export function clearDerivedComponentContent(
+  store: AdoptionStore,
+  config: DerivedComponentConfig
+): AdoptionStore {
+  const outcomePrefixWithColon = `${config.outcomePrefix}:`;
+  const actionPrefixWithColon = `${config.actionPrefix}:`;
+
+  const remainingObjectives = (store.objectives?.[config.componentId] || []).filter(
+    (objective) => !objective.id.startsWith(outcomePrefixWithColon)
+  );
+
+  const componentDraft = store.currentDraft?.[config.componentId] || {};
+  const nextComponentDraft = Object.keys(componentDraft).reduce<Record<string, DraftEntry>>(
+    (accumulator, lens) => {
+      const entry = componentDraft[lens] || createEmptyEntry();
+      accumulator[lens] = {
+        ...entry,
+        actions: (entry.actions || []).filter(
+          (action) => !action.id.startsWith(actionPrefixWithColon)
+        ),
+      };
+      return accumulator;
+    },
+    {}
+  );
+
+  return {
+    ...store,
+    currentDraft: {
+      ...store.currentDraft,
+      [config.componentId]: nextComponentDraft,
+    },
+    objectives: {
+      ...store.objectives,
+      [config.componentId]: remainingObjectives,
+    },
+  };
+}
+
+/**
  * Detects if a component is ready to advance to the next readiness score.
  * Returns the current score and next score if advancement is possible, or null if not ready.
  * 

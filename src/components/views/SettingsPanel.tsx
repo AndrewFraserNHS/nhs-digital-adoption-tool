@@ -98,7 +98,7 @@ export function SettingsPanel({
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-1">
           <label
             className={`flex items-center justify-between rounded-md border px-3 py-2 text-sm ${darkMode ? 'border-slate-700 bg-slate-900 text-slate-100' : 'border-slate-200 bg-slate-50 text-slate-700'}`}
           >
@@ -236,20 +236,22 @@ export function SettingsPanel({
               onClick={() => onLoadExampleData('red')}
               className="inline-flex items-center justify-center rounded-md bg-red-50 px-4 py-2 text-sm font-semibold text-red-800 border border-red-200 shadow-[0_3px_0_#fecaca] hover:bg-red-100 transition-colors"
             >
-              Example: Red (Early Stage)
+              Early Stage Example
             </button>
             <button
               onClick={() => onLoadExampleData('amber')}
               className="inline-flex items-center justify-center rounded-md bg-amber-50 px-4 py-2 text-sm font-semibold text-amber-800 border border-amber-200 shadow-[0_3px_0_#fde68a] hover:bg-amber-100 transition-colors"
             >
-              Example: Amber (Progressing)
+              Progressing Example
             </button>
             <button
               onClick={() => onLoadExampleData('green')}
               className="inline-flex items-center justify-center rounded-md bg-green-50 px-4 py-2 text-sm font-semibold text-green-800 border border-green-200 shadow-[0_3px_0_#bbf7d0] hover:bg-green-100 transition-colors"
             >
-              Example: Green (Near Exemplar)
+              Exemplar Example
             </button>
+            </div>
+            <div className="mt-3 flex flex-wrap gap-3">
             <button
               onClick={onResetData}
               className={`inline-flex items-center justify-center rounded-md bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 border border-red-200 shadow-[0_3px_0_#fecaca] hover:bg-red-100 transition-colors ${nhsFocusRing}`}

@@ -752,7 +752,7 @@ export function AdoptionDashboard({
                 className={`text-xs text-center mt-4 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
               >
                 Visualises your current draft readiness score averaged across the 5 strategic lenses
-                against their specific target reiquirements.
+                against their specific target requirements.
               </p>
             </div>
             </div>
@@ -786,10 +786,10 @@ export function AdoptionDashboard({
 
             {showComponentRadar ? (
               <div
-                className={`w-full ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} rounded-md border p-4`}
+                className={`w-full max-w-[700px] ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} rounded-md border p-4`}
               >
                 <div
-                  className={`flex min-h-[420px] w-full items-center justify-center rounded border p-2 ${darkMode ? 'border-slate-700 bg-slate-950' : 'border-slate-100 bg-white'}`}
+                  className={`flex min-h-[220px] w-md items-center justify-center rounded border p-2 ${darkMode ? 'border-slate-700 bg-slate-950' : 'border-slate-100 bg-white'}`}
                 >
                   <canvas id="adoption-component-radar-chart" className="block h-full w-full" />
                 </div>

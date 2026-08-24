@@ -1,4 +1,4 @@
-import React, { JSX, useCallback, useMemo, useState } from 'react';
+import React, { JSX, useCallback, useEffect, useMemo, useState } from 'react';
 import {
   AdoptionStore,
   ComponentObjective,
@@ -69,6 +69,10 @@ export interface AssessmentPanelProps {
   showAdditionalGuidanceLinks?: boolean;
   onHideGuidedWorkflow?: () => void;
   darkMode?: boolean;
+  /** Deep-link into a specific action's edit modal, e.g. from the Daily Check-in "View" link. */
+  focusAction?: { lens: string; actionId: string } | null;
+  /** Called once the requested focusAction has been opened, so the caller can clear it. */
+  onFocusActionHandled?: () => void;
 }
 
 const STATUS_OPTIONS = UNIFIED_ACTION_STATUSES.filter(
@@ -869,6 +873,8 @@ export function AssessmentPanel({
   showAdditionalGuidanceLinks = true,
   onHideGuidedWorkflow,
   darkMode = false,
+  focusAction,
+  onFocusActionHandled,
 }: AssessmentPanelProps): JSX.Element {
   const component = components.find((c) => c.id === activeComponentId) || components[0];
   const projectName = store.orgProfile?.projectName?.trim() || DEFAULT_PROJECT_NAME_PLACEHOLDER;
@@ -1157,6 +1163,22 @@ export function AssessmentPanel({
     },
     [store.objectives]
   );
+
+  useEffect(() => {
+    if (!focusAction) {
+      return;
+    }
+    const entry = getEntry(component.id, focusAction.lens);
+    const action = entry.actions.find((candidate) => candidate.id === focusAction.actionId);
+    if (!action) {
+      onFocusActionHandled?.();
+      return;
+    }
+    setShowActionsSection(true);
+    openEditActionModal(component.id, focusAction.lens, action);
+    onFocusActionHandled?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [focusAction, component.id]);
 
   const closeActionModal = () => {
     setActionEditor(null);

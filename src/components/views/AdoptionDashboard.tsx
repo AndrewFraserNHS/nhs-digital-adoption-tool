@@ -1,6 +1,6 @@
 import { AdoptionStore, DraftAction, DraftEntry, View } from '@lib/adoptionState';
 import { Metrics } from '@lib/adoptionMetrics';
-import { getComponentExemplarScore, getOutstandingActionsForComponent } from '@lib/adoptionMetrics';
+import { getComponentExemplarScore } from '@lib/adoptionMetrics';
 import { AssessmentComponent } from '@data/components';
 import { JSX, useMemo, useState } from 'react';
 import type { CstPathwayKey } from '@data/cst';
@@ -11,13 +11,7 @@ import { FilterSummaryBar } from '@components/ui/FilterSummaryBar';
 import { getComponentDescription, getLensDescription } from '@data/descriptions';
 import { PHASE_NAMES } from '../../types/constants';
 import { PageHelpButton, PageIntroModal, usePageIntroSeen } from '@components/onboarding/PageIntroModal';
-import {
-  getBragStatusFromAverage,
-  getBragStatusFromGap,
-  BRAG_BADGE_STYLES,
-  BRAG_BADGE_STYLES_COLOR_BLIND,
-  type BragStatus,
-} from '@lib/bragStatus';
+import { getBragStatusFromAverage, type BragStatus } from '@lib/bragStatus';
 
 export interface DashboardProps {
   store: AdoptionStore;
@@ -122,7 +116,6 @@ export function AdoptionDashboard({
   onResetPhaseFocus,
 }: DashboardProps): JSX.Element {
   const pageIntro = usePageIntroSeen('dashboard');
-  const [expandedNextSteps, setExpandedNextSteps] = useState<Record<string, boolean>>({});
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<
     'all' | 'not-started' | 'below-target' | 'on-track'
@@ -286,50 +279,6 @@ export function AdoptionDashboard({
     statusFilter,
   ]);
 
-  const focusedNextSteps = useMemo<Metrics['nextSteps']>(() => {
-    if (phaseFocusMode === 'auto') {
-      return metrics.nextSteps;
-    }
-
-    return components
-      .map((component) => {
-        let total = 0;
-
-        component.lenses.forEach((lens) => {
-          const entry = getEntry(component.id, lens);
-          total += Number(entry.score || 0);
-        });
-
-        const avgScore = Number((total / component.lenses.length).toFixed(1));
-        const targetScore = getComponentExemplarScore(component.id, effectivePhase, component.target);
-        const gapToTarget = Number(Math.max(0, targetScore - avgScore).toFixed(1));
-        const outstandingActions = getOutstandingActionsForComponent(component, getEntry);
-        const summary =
-          outstandingActions.length > 0
-            ? `${outstandingActions.length} outstanding action${outstandingActions.length === 1 ? '' : 's'} at the current level.`
-            : 'No open actions at the current level - add one to keep moving.';
-
-        return {
-          componentId: component.id,
-          componentLabel: component.label,
-          phase: component.phase,
-          gapToTarget,
-          summary,
-          message: `${component.label}: ${summary}`,
-          outstandingActions,
-          toolkitLinks: [],
-        };
-      })
-      .filter((step) => step.phase <= effectivePhase + 1 && step.gapToTarget >= 0)
-      .sort((left, right) => {
-        if (left.phase !== right.phase) {
-          return left.phase - right.phase;
-        }
-        return right.gapToTarget - left.gapToTarget;
-      })
-      .slice(0, 3);
-  }, [components, effectivePhase, getEntry, metrics.nextSteps, phaseFocusMode]);
-
   const pathwaySummary = useMemo(() => {
     let required = 0;
     let checked = 0;
@@ -390,11 +339,6 @@ export function AdoptionDashboard({
           Green: 'text-teal-900 bg-teal-100',
         }
       : DELIVERY_BADGE_STYLES;
-
-  const bragBadgeStyles =
-    colorAccessibilityMode === 'color-blind-friendly'
-      ? BRAG_BADGE_STYLES_COLOR_BLIND
-      : BRAG_BADGE_STYLES;
 
   return (
     <div
@@ -627,168 +571,6 @@ export function AdoptionDashboard({
         </div>
       </div>
 
-      {/* Guided Next Steps */}
-      <div
-        className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm p-6 border mb-8`}
-      >
-        <div className="flex items-center justify-between mb-4">
-          <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
-            What To Do Next
-          </h3>
-          <span className={`text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
-            Prioritised for live delivery
-          </span>
-        </div>
-        <p className={`text-sm mb-4 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-          These are the biggest gaps to target for your
-          {phaseFocusMode === 'manual' ? ' selected focus phase' : ' current phase'}, largest gap
-          first.
-        </p>
-        {focusedNextSteps.length > 0 ? (
-          <div className="space-y-3">
-            {focusedNextSteps.map((step) => {
-              const bragStatus = getBragStatusFromGap(step.gapToTarget);
-              const isExpanded = Boolean(expandedNextSteps[step.componentId]);
-              const outstandingCount = step.outstandingActions?.length || 0;
-              return (
-                <div
-                  key={`${step.componentId}-${step.phase}`}
-                  className={`rounded-md border p-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
-                >
-                  <button
-                    type="button"
-                    onClick={() => onComponentClick(step.componentId)}
-                    className="flex w-full items-center justify-between gap-3 text-left"
-                  >
-                    <span
-                      className={`text-sm font-semibold hover:underline ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
-                    >
-                      {step.componentLabel}
-                    </span>
-                    <span
-                      className={`text-xs font-semibold rounded px-2.5 py-0.5 ${bragBadgeStyles[bragStatus]}`}
-                    >
-                      {bragStatus}
-                    </span>
-                  </button>
-
-                  <p className={`text-sm mt-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-                    {step.summary}
-                  </p>
-                  {step.toolkitLinks?.length ? (
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      {step.toolkitLinks.map((link) => (
-                        <a
-                          key={`${step.componentId}-${link.url}`}
-                          href={link.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-xs font-medium text-[#005eb8] underline"
-                        >
-                          {link.label}
-                        </a>
-                      ))}
-                    </div>
-                  ) : null}
-                  {outstandingCount > 0 && (
-                    <div className="mt-2">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setExpandedNextSteps((current) => ({
-                            ...current,
-                            [step.componentId]: !current[step.componentId],
-                          }))
-                        }
-                        className={`text-xs font-semibold underline ${darkMode ? 'text-slate-300 hover:text-slate-100' : 'text-slate-600 hover:text-slate-900'}`}
-                      >
-                        {isExpanded ? 'Hide' : 'Show'} outstanding action
-                        {outstandingCount === 1 ? '' : 's'} ({outstandingCount})
-                      </button>
-                      {isExpanded && (
-                        <div
-                          className={`mt-2 overflow-x-auto rounded-md border ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}
-                        >
-                          <table className="min-w-full divide-y text-xs">
-                            <thead className={darkMode ? 'bg-slate-800' : 'bg-slate-50'}>
-                              <tr>
-                                <th
-                                  className={`px-2 py-1.5 text-left font-semibold uppercase tracking-wide ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
-                                >
-                                  Lens
-                                </th>
-                                <th
-                                  className={`px-2 py-1.5 text-left font-semibold uppercase tracking-wide ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
-                                >
-                                  Action
-                                </th>
-                                <th
-                                  className={`px-2 py-1.5 text-left font-semibold uppercase tracking-wide ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
-                                >
-                                  Owner
-                                </th>
-                                <th
-                                  className={`px-2 py-1.5 text-left font-semibold uppercase tracking-wide ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
-                                >
-                                  Timescale
-                                </th>
-                                <th
-                                  className={`px-2 py-1.5 text-left font-semibold uppercase tracking-wide ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
-                                >
-                                  Status
-                                </th>
-                              </tr>
-                            </thead>
-                            <tbody
-                              className={`divide-y ${darkMode ? 'divide-slate-700' : 'divide-slate-100'}`}
-                            >
-                              {step.outstandingActions.map((action) => (
-                                <tr key={action.id}>
-                                  <td
-                                    className={`px-2 py-1.5 font-medium ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
-                                  >
-                                    {action.lens}
-                                  </td>
-                                  <td
-                                    className={`px-2 py-1.5 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
-                                  >
-                                    {action.text}
-                                  </td>
-                                  <td
-                                    className={`px-2 py-1.5 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
-                                  >
-                                    {action.owner || 'Unassigned'}
-                                  </td>
-                                  <td
-                                    className={`px-2 py-1.5 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
-                                  >
-                                    {action.timescale || '-'}
-                                  </td>
-                                  <td
-                                    className={`px-2 py-1.5 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
-                                  >
-                                    {action.status || '-'}
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          <p className="text-sm text-slate-500">
-            No priority gaps detected for the current phase. Continue tracking actions and maintain
-            evidence quality.
-          </p>
-        )}
-      </div>
-
       {/* Snapshot reminder - only when work exists but this month isn't captured */}
       {snapshotDue && (
         <div className="dashboard-callout dashboard-callout--snapshot rounded-lg border p-4 flex items-center gap-3 mb-8">
@@ -1007,7 +789,7 @@ export function AdoptionDashboard({
                 className={`w-full ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} rounded-md border p-4`}
               >
                 <div
-                  className={`flex min-h-[720px] w-full items-center justify-center rounded border p-2 ${darkMode ? 'border-slate-700 bg-slate-950' : 'border-slate-100 bg-white'}`}
+                  className={`flex min-h-[420px] w-full items-center justify-center rounded border p-2 ${darkMode ? 'border-slate-700 bg-slate-950' : 'border-slate-100 bg-white'}`}
                 >
                   <canvas id="adoption-component-radar-chart" className="block h-full w-full" />
                 </div>

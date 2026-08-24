@@ -159,6 +159,7 @@ export interface HistorySnapshot {
 export type View =
   | 'introduction'
   | 'dashboard'
+  | 'daily-checkin'
   | 'assessment'
   | 'action-plan'
   | 'cm-guide'

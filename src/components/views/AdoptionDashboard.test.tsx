@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { AdoptionDashboard } from './AdoptionDashboard';
 import type { AdoptionStore, DraftEntry } from '@lib/adoptionState';
@@ -96,8 +96,10 @@ const metrics: Metrics = {
       componentLabel: 'Benefits',
       phase: 1,
       gapToTarget: 1,
-      summary: 'No open actions at the current level - add one to keep moving.',
-      message: 'Benefits: No open actions at the current level - add one to keep moving.',
+      bragStatus: 'Green',
+      bragReason: 'No outstanding actions at the current level.',
+      summary: '0 actions pending completion.',
+      message: 'Benefits: 0 actions pending completion.',
       outstandingActions: [],
     },
   ],
@@ -126,7 +128,7 @@ describe('AdoptionDashboard', () => {
     // assert
     expect(screen.getByText('60%')).toBeInTheDocument();
     expect(screen.getAllByText('Pre-Discovery').length).toBeGreaterThan(0);
-    expect(screen.getByText('0 of 0 actions completed.')).toBeInTheDocument();
+    expect(screen.getByText('0 actions completed. Keep it up!')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Hide change component radar' })).toBeInTheDocument();
   });
 
@@ -212,49 +214,6 @@ describe('AdoptionDashboard', () => {
 
     // act 3
     expect(onComponentClick).toHaveBeenCalledWith('vision');
-  });
-
-  it('SHOULD show Green WHERE fully on-target work in the dashboard focus list', () => {
-    // arrange
-    const completeMetrics: Metrics = {
-      ...metrics,
-      nextSteps: [
-        {
-          ...metrics.nextSteps[0],
-          gapToTarget: 0,
-          summary: 'Benefits are fully on target and complete.',
-          message: 'Benefits: Benefits are fully on target and complete.',
-          outstandingActions: [],
-        },
-      ],
-    };
-
-    // act
-    render(
-      <AdoptionDashboard
-        store={store}
-        components={components}
-        lenses={['Strategic Lens']}
-        metrics={completeMetrics}
-        getEntry={getEntry}
-        onComponentClick={vi.fn()}
-        pathway="pathway-1"
-        pathwayChecks={{}}
-      />
-    );
-
-    const benefitsButtons = screen.getAllByRole('button', { name: /^Benefits/ });
-    const focusCard = benefitsButtons
-      .map((button) => button.closest('div'))
-      .find((card) => card?.textContent?.includes('Benefits are fully on target and complete.'));
-
-    // assert
-    expect(focusCard).toBeTruthy();
-    expect(
-      focusCard && within(focusCard).getByText('Benefits are fully on target and complete.')
-    ).toBeInTheDocument();
-    expect(focusCard && within(focusCard).getByText('Green')).toBeInTheDocument();
-    expect(focusCard && within(focusCard).queryByText('Blue')).not.toBeInTheDocument();
   });
 
   it('SHOULD call onOpenLensInfo WHERE the lens explainer is clicked', () => {

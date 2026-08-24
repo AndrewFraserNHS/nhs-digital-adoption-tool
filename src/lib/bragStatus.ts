@@ -33,6 +33,62 @@ export function getBragStatusFromAverage(avgScore: number, targetScore: number):
   return 'Green';
 }
 
+export interface TimelineBragAction {
+  text: string;
+  dueDate?: string;
+}
+
+export interface TimelineBragResult {
+  status: BragStatus;
+  reason: string;
+}
+
+/**
+ * BRAG based on due dates rather than readiness gap: Red if anything is overdue, Amber if
+ * something's due soon (or nothing has a due date at all, so risk can't be judged), Green
+ * otherwise. `reason` is meant for a hover tooltip explaining the colour.
+ */
+export function getTimelineBragStatus(
+  outstandingActions: TimelineBragAction[],
+  now: Date = new Date()
+): TimelineBragResult {
+  if (outstandingActions.length === 0) {
+    return { status: 'Green', reason: 'No outstanding actions at the current level.' };
+  }
+
+  const withParsedDueDate = outstandingActions
+    .map((action) => ({ action, due: action.dueDate ? new Date(action.dueDate) : null }))
+    .map(({ action, due }) => ({ action, due: due && !isNaN(due.getTime()) ? due : null }));
+
+  const overdue = withParsedDueDate.filter(({ due }) => due !== null && due < now);
+  if (overdue.length > 0) {
+    const extra = overdue.length > 1 ? ` and ${overdue.length - 1} more` : '';
+    return {
+      status: 'Red',
+      reason: `${overdue.length} action${overdue.length === 1 ? ' is' : 's are'} overdue: "${overdue[0].action.text}"${extra}.`,
+    };
+  }
+
+  const dueSoonCutoff = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000);
+  const dueSoon = withParsedDueDate.filter(({ due }) => due !== null && due <= dueSoonCutoff);
+  if (dueSoon.length > 0) {
+    return {
+      status: 'Amber',
+      reason: `${dueSoon.length} action${dueSoon.length === 1 ? ' is' : 's are'} due within 14 days: "${dueSoon[0].action.text}".`,
+    };
+  }
+
+  const withoutDueDate = withParsedDueDate.filter(({ due }) => due === null);
+  if (withoutDueDate.length === outstandingActions.length) {
+    return {
+      status: 'Amber',
+      reason: `${outstandingActions.length} action${outstandingActions.length === 1 ? ' has' : 's have'} no due date set, so timeline risk can't be assessed.`,
+    };
+  }
+
+  return { status: 'Green', reason: 'All outstanding actions are on track against their due dates.' };
+}
+
 export const BRAG_BADGE_STYLES: Record<BragStatus, string> = {
   Blue: 'text-sky-800 bg-sky-100',
   Red: 'text-red-800 bg-red-100',

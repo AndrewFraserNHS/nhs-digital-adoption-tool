@@ -8,6 +8,7 @@ import type { ChartData } from 'chart.js';
 
 import { isCompletedActionStatus } from './actionModel';
 import { AdoptionStore, deriveObjectiveStatus, DraftEntry } from './adoptionState';
+import { getTimelineBragStatus, type BragStatus } from './bragStatus';
 
 const COMPONENT_PHASE_EXEMPLARS: Record<number, Record<string, number>> = {
   1: {
@@ -147,7 +148,7 @@ export interface OutstandingAction {
   lens: string;
   owner: string;
   status: string;
-  timescale: string;
+  dueDate: string;
 }
 
 export interface NextStep {
@@ -155,7 +156,11 @@ export interface NextStep {
   componentLabel: string;
   phase: number;
   gapToTarget: number;
-  /** Short, number-free summary for the dashboard card (e.g. "2 outstanding actions at the current level."). */
+  /** Timeline-based status (Red = overdue, Amber = due soon or undated, Green = on track). */
+  bragStatus: BragStatus;
+  /** Explains the bragStatus, for a hover tooltip. */
+  bragReason: string;
+  /** Short, number-free summary for the dashboard card (e.g. "2 actions pending completion."). */
   summary: string;
   /** `${componentLabel}: ${summary}` - for flat contexts with no visible label nearby, e.g. HighlightBuilderTool. */
   message: string;
@@ -194,12 +199,50 @@ export function getOutstandingActionsForComponent(
           lens,
           owner: action.owner || '',
           status: action.status || '',
-          timescale: action.timescale || '',
+          dueDate: action.dueDate || '',
         });
       }
     });
   });
   return outstanding;
+}
+
+/**
+ * The "What To Do Next" list for a given phase: every phase-1 component that still has outstanding
+ * work, with a timeline-based BRAG status. Components with nothing outstanding (everything at the
+ * current level is done) are left out entirely, rather than shown as a lingering "no actions" card.
+ */
+export function computeNextSteps(
+  components: AssessmentComponent[],
+  getEntry: (componentId: string, lens: string) => DraftEntry | undefined,
+  phase: number
+): NextStep[] {
+  return components
+    .filter((component) => component.phase === phase)
+    .map((component) => {
+      const outstandingActions = getOutstandingActionsForComponent(component, getEntry);
+      const { status: bragStatus, reason: bragReason } = getTimelineBragStatus(outstandingActions);
+      const summary = `${outstandingActions.length} action${outstandingActions.length === 1 ? '' : 's'} pending completion.`;
+      return {
+        componentId: component.id,
+        componentLabel: component.label,
+        phase: component.phase,
+        gapToTarget: 0,
+        bragStatus,
+        bragReason,
+        summary,
+        message: `${component.label}: ${summary}`,
+        outstandingActions,
+      };
+    })
+    .filter((step) => step.outstandingActions.length > 0)
+    .sort((left, right) => {
+      const severity: Record<BragStatus, number> = { Red: 0, Amber: 1, Green: 2, Blue: 3 };
+      if (severity[left.bragStatus] !== severity[right.bragStatus]) {
+        return severity[left.bragStatus] - severity[right.bragStatus];
+      }
+      return right.outstandingActions.length - left.outstandingActions.length;
+    });
 }
 
 export interface ActionRow {
@@ -238,16 +281,6 @@ export function getMetrics(store: AdoptionStore, components: AssessmentComponent
     }
   >();
 
-  const componentProgress: Array<{
-    component: AssessmentComponent;
-    avgScore: number;
-    gapToTarget: number;
-    assessedLenses: number;
-    totalLenses: number;
-    totalActions: number;
-    completedActions: number;
-  }> = [];
-
   components.forEach((component) => {
     const phaseBucket = byPhase.get(component.phase) || {
       componentCount: 0,
@@ -261,9 +294,6 @@ export function getMetrics(store: AdoptionStore, components: AssessmentComponent
     phaseBucket.totalLenses += component.lenses.length;
 
     let componentTotal = 0;
-    let componentAssessed = 0;
-    let componentActions = 0;
-    let componentActionsCompleted = 0;
 
     component.lenses.forEach((lens) => {
       const entry = store.currentDraft[component.id]?.[lens];
@@ -272,18 +302,15 @@ export function getMetrics(store: AdoptionStore, components: AssessmentComponent
       componentTotal += score;
       if (score > 0) {
         assessedCount += 1;
-        componentAssessed += 1;
         phaseBucket.assessedLenses += 1;
       }
 
       const actions = entry?.actions || [];
       actions.forEach((action) => {
         totalActions += 1;
-        componentActions += 1;
         phaseBucket.totalActions += 1;
         if (isCompletedActionStatus(action.status)) {
           completedActions += 1;
-          componentActionsCompleted += 1;
           phaseBucket.completedActions += 1;
         }
       });
@@ -293,20 +320,9 @@ export function getMetrics(store: AdoptionStore, components: AssessmentComponent
       ? Number((componentTotal / component.lenses.length).toFixed(1))
       : 0;
     const phaseExpectedScore = getComponentExemplarScore(component.id, component.phase, component.target);
-    const gapToTarget = Number(Math.max(0, phaseExpectedScore - avgScore).toFixed(1));
     if (avgScore >= phaseExpectedScore) {
       phaseBucket.onTrackComponents += 1;
     }
-
-    componentProgress.push({
-      component,
-      avgScore,
-      gapToTarget,
-      assessedLenses: componentAssessed,
-      totalLenses: component.lenses.length,
-      totalActions: componentActions,
-      completedActions: componentActionsCompleted,
-    });
 
     byPhase.set(component.phase, phaseBucket);
   });
@@ -354,37 +370,11 @@ export function getMetrics(store: AdoptionStore, components: AssessmentComponent
 
   const currentPhase =
     firstPhaseNotReadinessReady?.phase || phaseSummaries[phaseSummaries.length - 1]?.phase || 1;
-  const nextSteps = componentProgress
-    .filter(({ component, gapToTarget }) => component.phase <= currentPhase + 1 && gapToTarget > 0)
-    .sort((left, right) => {
-      if (left.component.phase !== right.component.phase) {
-        return left.component.phase - right.component.phase;
-      }
-      return right.gapToTarget - left.gapToTarget;
-    })
-    .slice(0, 3)
-    .map(({ component, gapToTarget, assessedLenses, totalLenses }) => {
-      const outstandingActions = getOutstandingActionsForComponent(
-        component,
-        (componentId, lens) => store.currentDraft[componentId]?.[lens]
-      );
-      const summary =
-        assessedLenses < totalLenses
-          ? `${totalLenses - assessedLenses} lens area(s) still need an initial score.`
-          : outstandingActions.length > 0
-            ? `${outstandingActions.length} outstanding action${outstandingActions.length === 1 ? '' : 's'} at the current level.`
-            : 'No open actions at the current level - add one to keep moving.';
-      return {
-        componentId: component.id,
-        componentLabel: component.label,
-        phase: component.phase,
-        gapToTarget,
-        summary,
-        message: `${component.label}: ${summary}`,
-        outstandingActions,
-        };
-      }
-    );
+  const nextSteps = computeNextSteps(
+    components,
+    (componentId, lens) => store.currentDraft[componentId]?.[lens],
+    currentPhase
+  );
 
   return {
     totalCurrent,

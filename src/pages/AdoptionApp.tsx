@@ -2,6 +2,7 @@ import { OnboardingIntro } from '@components/onboarding/OnboardingIntro';
 import { ToolkitChatbot } from '@components/ui/ToolkitChatbot';
 import { ActionPlanTracker } from '@components/views/ActionPlanTracker';
 import { AdoptionDashboard } from '@components/views/AdoptionDashboard';
+import { DailyCheckIn } from '@components/views/DailyCheckIn';
 import { AssessmentPanel } from '@components/views/AssessmentPanel';
 import { AuditLogPage } from '@components/views/AuditLogPage';
 import { ChangeManagementGuide } from '@components/views/ChangeManagementGuide';
@@ -705,6 +706,16 @@ export function AdoptionApp() {
       scrollMainToTop();
     },
     [navigateToView, scrollMainToTop]
+  );
+
+  const [focusAction, setFocusAction] = useState<{ lens: string; actionId: string } | null>(null);
+
+  const openActionView = useCallback(
+    (componentId: string, lens: string, actionId: string) => {
+      setFocusAction({ lens, actionId });
+      openComponentAssessment(componentId);
+    },
+    [openComponentAssessment]
   );
 
   useEffect(() => {
@@ -1766,7 +1777,7 @@ export function AdoptionApp() {
             Overview
           </div>
           <nav className="space-y-1 mb-4">
-            {(['dashboard', 'action-plan', 'roadmap-view'] as View[]).map((v) => (
+            {(['dashboard', 'daily-checkin', 'action-plan', 'roadmap-view'] as View[]).map((v) => (
               <button
                 key={v}
                 ref={(el) => {
@@ -1780,10 +1791,12 @@ export function AdoptionApp() {
                 }`}
               >
                 {v === 'dashboard'
-                  ? 'Dashboard'
-                  : v === 'action-plan'
-                    ? 'Action Tracker'
-                    : 'Component Delivery Timeline'}
+                  ? 'Metrics Dashboard'
+                  : v === 'daily-checkin'
+                    ? 'Daily Check-in'
+                    : v === 'action-plan'
+                      ? 'Action Tracker'
+                      : 'Component Delivery Timeline'}
               </button>
             ))}
           </nav>
@@ -2011,7 +2024,7 @@ export function AdoptionApp() {
 
         {/* Main Content Area */}
         <main ref={mainContentRef} className="flex-1 overflow-y-auto p-8">
-          {view === 'dashboard' && showEngagementCard ? (
+          {view === 'daily-checkin' && showEngagementCard ? (
             <section
               className={`${userSettings.darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'} mb-6 rounded-xl border p-4 shadow-sm`}
             >
@@ -2216,6 +2229,20 @@ export function AdoptionApp() {
               />
             </div>
           )}
+          {view === 'daily-checkin' && (
+            <DailyCheckIn
+              store={store}
+              components={COMPONENTS}
+              metrics={metrics}
+              getEntry={getEntry}
+              onComponentClick={openComponentAssessment}
+              onActionView={openActionView}
+              phaseFocusMode={userSettings.phaseFocusMode || 'auto'}
+              manualPhaseFocus={userSettings.manualPhaseFocus}
+              colorAccessibilityMode={userSettings.colorAccessibilityMode || 'standard'}
+              darkMode={Boolean(userSettings.darkMode)}
+            />
+          )}
           {view === 'project-details' && (
             <ProjectDetailsPage
               orgProfile={store.orgProfile}
@@ -2327,6 +2354,8 @@ export function AdoptionApp() {
               }
               showAdditionalGuidanceLinks={showAdditionalGuidanceLinks}
               darkMode={Boolean(userSettings.darkMode)}
+              focusAction={focusAction}
+              onFocusActionHandled={() => setFocusAction(null)}
             />
           )}
           {view === 'action-plan' && (
@@ -2340,9 +2369,6 @@ export function AdoptionApp() {
           {view === 'cm-guide' && (
             <ChangeManagementGuide
               onComponentClick={openComponentAssessment}
-              components={COMPONENTS}
-              store={store}
-              getEntry={getEntry}
               guidanceTarget={DEFAULT_GUIDANCE_TARGET}
               linkOverrides={store.orgProfile.linkOverrides}
               showAdditionalGuidanceLinks={showAdditionalGuidanceLinks}

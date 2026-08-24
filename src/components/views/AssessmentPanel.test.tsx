@@ -172,6 +172,26 @@ describe('AssessmentPanel', () => {
     expect(props.onOpenLensInfo).toHaveBeenCalledWith('Strategic Direction');
   });
 
+  it('SHOULD open the edit modal for a focusAction and call onFocusActionHandled', () => {
+    // arrange
+    const entry = createEntry();
+    const props = createProps({ entry });
+    const onFocusActionHandled = vi.fn();
+
+    // act
+    render(
+      <AssessmentPanel
+        {...props}
+        focusAction={{ lens: 'Strategic Direction', actionId: 'action-1' }}
+        onFocusActionHandled={onFocusActionHandled}
+      />
+    );
+
+    // assert
+    expect(screen.getByDisplayValue('Run workshop')).toBeInTheDocument();
+    expect(onFocusActionHandled).toHaveBeenCalled();
+  });
+
   it('SHOULD add and remove actions via callbacks', () => {
     // arrange
     const entry = createEntry();

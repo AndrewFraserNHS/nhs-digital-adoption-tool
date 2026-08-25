@@ -196,7 +196,7 @@ export function GuidanceRoadmapView({
                 </div>
               </div>
               <span
-                className={`rounded-full px-2.5 py-1 text-xs font-semibold ${status.chipClass}`}
+                className={`rounded-full px-4 py-1 text-xs font-semibold ${status.chipClass}`}
               >
                 {status.label}
               </span>
@@ -307,7 +307,7 @@ export function GuidanceRoadmapView({
                 </div>
                 <div className="flex items-center justify-center">
                   <span
-                    className={`rounded-full px-2.5 py-1 text-xs font-semibold ${status.chipClass}`}
+                    className={`rounded-full text-center px-2.5 py-1 text-xs font-semibold ${status.chipClass}`}
                   >
                     {status.label}
                   </span>

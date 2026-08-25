@@ -220,7 +220,7 @@ export function CstSetupWizard({
             </div>
             <div>
               <label className={labelClass} htmlFor="wizard-full-adoption">
-                Full Adoption Date (optional)
+                Full Adoption (optional)
               </label>
               <input
                 id="wizard-full-adoption"
@@ -232,7 +232,7 @@ export function CstSetupWizard({
             </div>
             <div>
               <label className={labelClass} htmlFor="wizard-benefit">
-                Benefit Realisation Date (optional)
+                Benefit Realisation (optional)
               </label>
               <input
                 id="wizard-benefit"

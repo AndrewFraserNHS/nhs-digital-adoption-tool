@@ -138,8 +138,8 @@ function LinkOverrideModal({
   const autoVariant = buildLabelVariants(link.label).find((variant) => variant !== link.label);
 
   const sourceOptions: { value: LinkOverrideStatus; label: string; url: string }[] = [
-    { value: 'default', label: 'Use Default', url: link.url },
-    { value: 'base', label: 'Use Base', url: effectiveBaseUrl },
+    { value: 'default', label: 'General Toolkit', url: link.url },
+    { value: 'base', label: 'Project Specific Homepage', url: effectiveBaseUrl },
     { value: 'custom', label: 'Custom URL', url: customUrl },
   ];
 
@@ -211,11 +211,21 @@ function LinkOverrideModal({
                     placeholder="https://..."
                     className={`mt-1 w-full rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
                   />
+                ) : option.url ? (
+                  <a
+                    href={option.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className={`block truncate text-xs underline ${darkMode ? 'text-blue-300 hover:text-blue-200' : 'text-[#005eb8] hover:text-[#00417a]'}`}
+                  >
+                    {option.url}
+                  </a>
                 ) : (
                   <span
                     className={`block truncate text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
                   >
-                    {option.url || 'No URL set yet.'}
+                    No URL set yet.
                   </span>
                 )}
               </span>
@@ -1101,10 +1111,10 @@ export function ProjectDetailsPage({
           >
             <p className="font-semibold">Fallback reference</p>
             <p className="mt-1">
-              Base fallback: <span className="font-medium">{TOOLKIT_BASE_DEFAULTS.label}</span> ({TOOLKIT_BASE_DEFAULTS.url})
+              Project Specific Homepage: <span className="font-medium">{TOOLKIT_BASE_DEFAULTS.label}</span> ({TOOLKIT_BASE_DEFAULTS.url})
             </p>
             <p className="mt-1">
-              Default fallback: the original NHS Future link defined per guidance item.
+              General Toolkit: the original NHS Future link defined per guidance item.
             </p>
           </div>
 
@@ -1142,7 +1152,7 @@ export function ProjectDetailsPage({
               <p
                 className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
               >
-                Base override
+                Project Specific Homepage
               </p>
               <p className={`text-xs mt-0.5 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
                 Replaces the Change Management Toolkit destination for all links that fall back to
@@ -1339,11 +1349,11 @@ export function ProjectDetailsPage({
             </p>
             <p className={`text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
               Set the "Further Reading" link shown on each component's overview panel, and override
-              any of its individual guidance links. Leave a URL blank to use the fallback. Set
-              fallback to <strong>Base</strong> to use your base override above, or{' '}
-              <strong>Default</strong> to keep the original NHS Future link. Each link is tagged{' '}
-              <strong>Core</strong> or <strong>Additional</strong> - users can hide additional links
-              from Settings if they only want the essentials.
+              any of its individual guidance links. Each link shows whether it currently points at
+              the <strong>General Toolkit</strong> (the original NHS Future link),{' '}
+              <strong>Project Specific Homepage</strong> (your organisation's override above), or a{' '}
+              <strong>Custom</strong> URL you've set - click the pencil to change it. Additional
+              links can be hidden from Settings if you only want the essentials.
             </p>
             {components.map((component) => {
               const sectionLinks = getGuidanceLinksForComponent(component.id);
@@ -1437,47 +1447,36 @@ export function ProjectDetailsPage({
                                   : 'bg-red-50 border-red-100 text-red-700',
                               };
                               const statusLabel: Record<LinkOverrideStatus, string> = {
-                                default: 'Default',
+                                default: 'General Toolkit',
                                 custom: 'Custom',
-                                base: 'Base',
+                                base: 'Project Specific Homepage',
                               };
                               return (
-                                <div key={link.key} className="flex items-center gap-2">
+                                <div key={link.key} className="flex items-center justify-between gap-2">
                                   <span
                                     className={`text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}
                                   >
                                     {link.label}
                                   </span>
-                                  <span
-                                    className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
-                                      link.type === 'core'
-                                        ? darkMode
-                                          ? 'bg-blue-500/20 text-blue-300'
-                                          : 'bg-blue-100 text-blue-700'
-                                        : darkMode
-                                          ? 'bg-slate-700 text-slate-300'
-                                          : 'bg-slate-200 text-slate-600'
-                                    }`}
-                                  >
-                                    {link.type === 'core' ? 'Core' : 'Additional'}
-                                  </span>
-                                  <a
-                                    href={resolved.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    title={resolved.url}
-                                    className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${statusStyles[status]}`}
-                                  >
-                                    {statusLabel[status]}
-                                  </a>
-                                  <button
-                                    type="button"
-                                    onClick={() => setEditingLink(link)}
-                                    aria-label={`Edit ${link.label} link`}
-                                    className={`shrink-0 rounded-md border px-1.5 py-0.5 text-xs ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-100'}`}
-                                  >
-                                    ✎
-                                  </button>
+                                  <div className="flex items-center gap-2">
+                                    <a
+                                      href={resolved.url}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      title={resolved.url}
+                                      className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${statusStyles[status]}`}
+                                    >
+                                      {statusLabel[status]}
+                                    </a>
+                                    <button
+                                      type="button"
+                                      onClick={() => setEditingLink(link)}
+                                      aria-label={`Edit ${link.label} link`}
+                                      className={`shrink-0 rounded-md border px-1.5 py-0.5 text-xs ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-100'}`}
+                                    >
+                                      ✎
+                                    </button>
+                                  </div>
                                 </div>
                               );
                             })}

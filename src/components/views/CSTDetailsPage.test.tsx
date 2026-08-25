@@ -291,7 +291,7 @@ describe('ProjectDetailsPage', () => {
     expect(onProfileUpdate).toHaveBeenLastCalledWith(expect.objectContaining({ toolLinks: [] }));
   });
 
-  it('SHOULD show a "Default" badge for an unmodified component link, and no "Custom" badge yet', () => {
+  it('SHOULD show a "General Toolkit" badge for an unmodified component link, and no "Custom" badge yet', () => {
     // act
     render(
       <ProjectDetailsPage
@@ -306,8 +306,8 @@ describe('ProjectDetailsPage', () => {
     );
 
     // assert
-    expect(screen.getAllByText('Default').length).toBeGreaterThan(0);
-    expect(screen.queryByText('Custom')).not.toBeInTheDocument();
+    expect(screen.getAllByRole('link', { name: 'General Toolkit' }).length).toBeGreaterThan(0);
+    expect(screen.queryByRole('link', { name: 'Custom' })).not.toBeInTheDocument();
   });
 
   it('SHOULD open the link edit modal via the pencil icon, save a custom URL, and show a "Custom" badge afterwards', () => {
@@ -355,7 +355,7 @@ describe('ProjectDetailsPage', () => {
     );
 
     // assert 2
-    expect(screen.getAllByText('Custom').length).toBeGreaterThan(0);
+    expect(screen.getAllByRole('link', { name: 'Custom' }).length).toBeGreaterThan(0);
   });
 
   it('SHOULD add a match-text alias in the link edit modal', () => {

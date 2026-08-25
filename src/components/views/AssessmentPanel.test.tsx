@@ -588,6 +588,34 @@ describe('AssessmentPanel', () => {
     expect(screen.queryByText('Guided workflow')).toBeNull();
   });
 
+  it('SHOULD render a tool-link match as a button that calls onNavigateToTool', () => {
+    // arrange
+    const entry = createEntry({
+      actions: [
+        {
+          id: 'action-1',
+          text: 'Run workshop',
+          owner: 'PMO',
+          timescale: 'Q3',
+          status: 'In Progress',
+        },
+      ],
+    });
+    const props = createProps({ entry });
+    props.store.orgProfile.toolLinks = [
+      { key: 'tool-1', tool: 'highlight-builder', matchText: 'workshop' },
+    ];
+    const onNavigateToTool = vi.fn();
+
+    // act
+    render(<AssessmentPanel {...props} onNavigateToTool={onNavigateToTool} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
+    fireEvent.click(screen.getByRole('button', { name: 'workshop' }));
+
+    // assert
+    expect(onNavigateToTool).toHaveBeenCalledWith('highlight-builder');
+  });
+
   it('SHOULD hide the guided workflow box WHERE hideGuidedWorkflow is set', () => {
     // arrange
     const props = createProps();

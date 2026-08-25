@@ -13,8 +13,11 @@ import { PATHWAY_LABELS } from '@data/cst';
 import {
   CORE_LINKS,
   type GuidanceLink,
+  type LinkOverrides,
+  resolveEffectiveLink,
   resolveGuidanceLinksForAdoptionComponent,
 } from '@data/maturity-guidance-links';
+import type { InAppTool } from '@data/toolLinks';
 import {
   ACTION_STATUS_BADGE_STYLES,
   ACTION_TYPES,
@@ -57,9 +60,6 @@ interface ObjectiveEditorState {
   objectiveId?: string;
   text: string;
   owner: string;
-  timescale: string;
-  notes: string;
-  evidence: string;
 }
 
 /** Custom outcomes get this id prefix so they're never mistaken for auto-generated ones and are
@@ -82,6 +82,8 @@ export interface AssessmentPanelProps {
   onOpenLensInfo: (lensName: string) => void;
   onActionRemove: (componentId: string, lens: string, actionId: string) => void;
   onObjectivesUpdate: (componentId: string, objectives: ComponentObjective[]) => void;
+  /** Navigates to an embedded in-app tool view - called when a Tool Linking match is clicked. */
+  onNavigateToTool?: (tool: InAppTool) => void;
   hideGuidedWorkflow?: boolean;
   showAdditionalGuidanceLinks?: boolean;
   onHideGuidedWorkflow?: () => void;
@@ -132,7 +134,15 @@ const COMPONENT_DETAILS: Record<string, ComponentDetail> = JSON.parse(componentD
 
 const MIN_GUIDANCE_LINK_LABEL_LENGTH = 4;
 
-function buildGuidanceLinksByComponent(includeAdditional: boolean): Record<string, GuidanceLink[]> {
+/**
+ * Matching variants (label) always come from the default/base link so auto-linking keeps matching
+ * the static authored body text even when an org overrides a link's destination - only the URL
+ * that variant resolves to changes.
+ */
+function buildGuidanceLinksByComponent(
+  includeAdditional: boolean,
+  overrides?: LinkOverrides
+): Record<string, GuidanceLink[]> {
   return ASSESSMENT_COMPONENTS.reduce(
     (map, comp) => {
       const inputs = resolveGuidanceLinksForAdoptionComponent(
@@ -152,7 +162,8 @@ function buildGuidanceLinksByComponent(includeAdditional: boolean): Record<strin
       const byLabel = new Map<string, GuidanceLink>();
       [...inputs, ...deliverables].forEach((link) => {
         if (link.label && link.label.trim().length >= MIN_GUIDANCE_LINK_LABEL_LENGTH) {
-          byLabel.set(link.label.toLowerCase(), link);
+          const resolvedUrl = overrides ? resolveEffectiveLink(link, overrides).url : link.url;
+          byLabel.set(link.label.toLowerCase(), { ...link, url: resolvedUrl });
         }
       });
       map[comp.id] = [...byLabel.values()];
@@ -161,9 +172,6 @@ function buildGuidanceLinksByComponent(includeAdditional: boolean): Record<strin
     {} as Record<string, GuidanceLink[]>
   );
 }
-
-const GUIDANCE_LINKS_BY_COMPONENT_ALL = buildGuidanceLinksByComponent(true);
-const GUIDANCE_LINKS_BY_COMPONENT_CORE = buildGuidanceLinksByComponent(false);
 
 function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -183,15 +191,21 @@ function buildLabelVariants(label: string): string[] {
   return [...variants];
 }
 
+/** A guidance link (real URL) or a tool link (navigates in-app instead of opening a URL). */
+export type MatchableLink =
+  | (GuidanceLink & { kind: 'url' })
+  | { key: string; label: string; kind: 'tool'; tool: InAppTool };
+
 interface GuidanceLinkVariant {
   variant: string;
-  link: GuidanceLink;
+  link: MatchableLink;
 }
 
 function renderActionTextWithGuidanceLinks(
   text: string,
-  links: GuidanceLink[],
-  darkMode?: boolean
+  links: MatchableLink[],
+  darkMode?: boolean,
+  onNavigateToTool?: (tool: InAppTool) => void
 ): React.ReactNode {
   const safeText = text || 'Untitled action';
   if (links.length === 0) {
@@ -204,6 +218,7 @@ function renderActionTextWithGuidanceLinks(
   const sortedEntries = variantEntries.sort((a, b) => b.variant.length - a.variant.length);
   const pattern = sortedEntries.map((entry) => `\\b${escapeRegExp(entry.variant)}\\b`).join('|');
   const parts = safeText.split(new RegExp(`(${pattern})`, 'gi'));
+  const linkClassName = `underline decoration-dotted underline-offset-2 ${darkMode ? 'text-blue-300 hover:text-blue-200' : 'text-[#005eb8] hover:text-blue-800'}`;
 
   return parts.map((part, index) => {
     const matchEntry = sortedEntries.find(
@@ -213,6 +228,21 @@ function renderActionTextWithGuidanceLinks(
       return part;
     }
     const match = matchEntry.link;
+    if (match.kind === 'tool') {
+      return (
+        <button
+          key={`${match.key}-${index}`}
+          type="button"
+          onClick={(event) => {
+            event.stopPropagation();
+            onNavigateToTool?.(match.tool);
+          }}
+          className={linkClassName}
+        >
+          {part}
+        </button>
+      );
+    }
     return (
       <a
         key={`${match.key}-${index}`}
@@ -220,7 +250,7 @@ function renderActionTextWithGuidanceLinks(
         target="_blank"
         rel="noopener noreferrer"
         onClick={(event) => event.stopPropagation()}
-        className={`underline decoration-dotted underline-offset-2 ${darkMode ? 'text-blue-300 hover:text-blue-200' : 'text-[#005eb8] hover:text-blue-800'}`}
+        className={linkClassName}
       >
         {part}
       </a>
@@ -302,11 +332,13 @@ function ComponentOverviewPointList({
   tone,
   guidanceLinks,
   darkMode,
+  onNavigateToTool,
 }: {
   points: ComponentDetailPoint[];
   tone: OverviewTone;
-  guidanceLinks: GuidanceLink[];
+  guidanceLinks: MatchableLink[];
   darkMode?: boolean;
+  onNavigateToTool?: (tool: InAppTool) => void;
 }): JSX.Element {
   const styles = darkMode ? OVERVIEW_TONE_STYLES_DARK[tone] : OVERVIEW_TONE_STYLES[tone];
   return (
@@ -317,7 +349,7 @@ function ComponentOverviewPointList({
             {point.title}
           </p>
           <p className={`mt-0.5 text-sm ${styles.text}`}>
-            {renderActionTextWithGuidanceLinks(point.body, guidanceLinks, darkMode)}
+            {renderActionTextWithGuidanceLinks(point.body, guidanceLinks, darkMode, onNavigateToTool)}
           </p>
         </li>
       ))}
@@ -333,14 +365,16 @@ function ComponentOverviewSubsection({
   onToggle,
   guidanceLinks,
   darkMode,
+  onNavigateToTool,
 }: {
   title: string;
   points: ComponentDetailPoint[];
   tone: OverviewTone;
   isOpen: boolean;
   onToggle: () => void;
-  guidanceLinks: GuidanceLink[];
+  guidanceLinks: MatchableLink[];
   darkMode?: boolean;
+  onNavigateToTool?: (tool: InAppTool) => void;
 }): JSX.Element {
   const styles = darkMode ? OVERVIEW_TONE_STYLES_DARK[tone] : OVERVIEW_TONE_STYLES[tone];
   return (
@@ -360,6 +394,7 @@ function ComponentOverviewSubsection({
             tone={tone}
             guidanceLinks={guidanceLinks}
             darkMode={darkMode}
+            onNavigateToTool={onNavigateToTool}
           />
         </div>
       )}
@@ -373,11 +408,13 @@ function ComponentOverviewContent({
   furtherReadingUrl,
   guidanceLinks,
   darkMode,
+  onNavigateToTool,
 }: {
   detail: ComponentDetail;
   furtherReadingUrl?: string;
-  guidanceLinks: GuidanceLink[];
+  guidanceLinks: MatchableLink[];
   darkMode?: boolean;
+  onNavigateToTool?: (tool: InAppTool) => void;
 }): JSX.Element {
   const [showGoodPractice, setShowGoodPractice] = useState(true);
   const [showRisks, setShowRisks] = useState(true);
@@ -402,14 +439,14 @@ function ComponentOverviewContent({
           )}
           {detail.whatIsIt && (
             <p className={`text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-              {renderActionTextWithGuidanceLinks(detail.whatIsIt, guidanceLinks, darkMode)}
+              {renderActionTextWithGuidanceLinks(detail.whatIsIt, guidanceLinks, darkMode, onNavigateToTool)}
             </p>
           )}
           {detail.userInsight && (
             <blockquote
               className={`border-l-2 pl-3 text-sm italic ${darkMode ? 'border-slate-600 text-slate-300' : 'border-slate-300 text-slate-600'}`}
             >
-              “{renderActionTextWithGuidanceLinks(detail.userInsight, guidanceLinks, darkMode)}”
+              “{renderActionTextWithGuidanceLinks(detail.userInsight, guidanceLinks, darkMode, onNavigateToTool)}”
             </blockquote>
           )}
           {detail.whyThisMatters && (
@@ -422,7 +459,7 @@ function ComponentOverviewContent({
               <ul className={`mt-1 list-disc space-y-1 pl-5 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
                 {splitSentences(detail.whyThisMatters).map((sentence) => (
                   <li key={sentence}>
-                    {renderActionTextWithGuidanceLinks(sentence, guidanceLinks, darkMode)}
+                    {renderActionTextWithGuidanceLinks(sentence, guidanceLinks, darkMode, onNavigateToTool)}
                   </li>
                 ))}
               </ul>
@@ -438,7 +475,7 @@ function ComponentOverviewContent({
               <ul className={`mt-1 list-disc space-y-1 pl-5 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
                 {splitSentences(detail.quickRealityCheck).map((question) => (
                   <li key={question}>
-                    {renderActionTextWithGuidanceLinks(question, guidanceLinks, darkMode)}
+                    {renderActionTextWithGuidanceLinks(question, guidanceLinks, darkMode, onNavigateToTool)}
                   </li>
                 ))}
               </ul>
@@ -455,6 +492,7 @@ function ComponentOverviewContent({
                   onToggle={() => setShowGoodPractice((prev) => !prev)}
                   guidanceLinks={guidanceLinks}
                   darkMode={darkMode}
+                  onNavigateToTool={onNavigateToTool}
                 />
               )}
               {detail.risksIfYouDont.length > 0 && (
@@ -466,6 +504,7 @@ function ComponentOverviewContent({
                   onToggle={() => setShowRisks((prev) => !prev)}
                   guidanceLinks={guidanceLinks}
                   darkMode={darkMode}
+                  onNavigateToTool={onNavigateToTool}
                 />
               )}
             </div>
@@ -482,13 +521,15 @@ function ComponentOverviewModal({
   furtherReadingUrl,
   guidanceLinks,
   darkMode,
+  onNavigateToTool,
 }: {
   open: boolean;
   onClose: () => void;
   detail: ComponentDetail;
   furtherReadingUrl?: string;
-  guidanceLinks: GuidanceLink[];
+  guidanceLinks: MatchableLink[];
   darkMode?: boolean;
+  onNavigateToTool?: (tool: InAppTool) => void;
 }): JSX.Element | null {
   if (!open) {
     return null;
@@ -520,6 +561,7 @@ function ComponentOverviewModal({
             furtherReadingUrl={furtherReadingUrl}
             guidanceLinks={guidanceLinks}
             darkMode={darkMode}
+            onNavigateToTool={onNavigateToTool}
           />
         </div>
       </div>
@@ -841,6 +883,7 @@ export function AssessmentPanel({
   onOpenLensInfo,
   onActionRemove,
   onObjectivesUpdate,
+  onNavigateToTool,
   hideGuidedWorkflow = false,
   showAdditionalGuidanceLinks = true,
   onHideGuidedWorkflow,
@@ -862,25 +905,39 @@ export function AssessmentPanel({
     store.orgProfile?.coreLinks && store.orgProfile.coreLinks.length > 0
       ? store.orgProfile.coreLinks
       : CORE_LINKS;
+  const toolLinkMatches: MatchableLink[] = useMemo(
+    () =>
+      (store.orgProfile?.toolLinks || [])
+        .filter((link) => link.matchText.trim())
+        .map((link) => ({
+          key: link.key,
+          label: link.matchText,
+          kind: 'tool' as const,
+          tool: link.tool,
+        })),
+    [store.orgProfile?.toolLinks]
+  );
   const guidanceLinksByComponent = useMemo(() => {
-    const base = showAdditionalGuidanceLinks
-      ? GUIDANCE_LINKS_BY_COMPONENT_ALL
-      : GUIDANCE_LINKS_BY_COMPONENT_CORE;
+    const linkOverrides = store.orgProfile?.linkOverrides;
+    const base = buildGuidanceLinksByComponent(showAdditionalGuidanceLinks, linkOverrides);
     const coreForToggle = showAdditionalGuidanceLinks
       ? effectiveCoreLinks
       : effectiveCoreLinks.filter((link) => link.type === 'core');
-    const merged: Record<string, GuidanceLink[]> = {};
+    const merged: Record<string, MatchableLink[]> = {};
     Object.keys(base).forEach((componentId) => {
-      const byLabel = new Map<string, GuidanceLink>();
+      const byLabel = new Map<string, MatchableLink>();
       [...base[componentId], ...coreForToggle].forEach((link) => {
         if (link.label && link.label.trim().length >= MIN_GUIDANCE_LINK_LABEL_LENGTH) {
-          byLabel.set(link.label.toLowerCase(), link);
+          byLabel.set(link.label.toLowerCase(), { ...link, kind: 'url' });
         }
+      });
+      toolLinkMatches.forEach((link) => {
+        byLabel.set(link.label.toLowerCase(), link);
       });
       merged[componentId] = [...byLabel.values()];
     });
     return merged;
-  }, [showAdditionalGuidanceLinks, effectiveCoreLinks]);
+  }, [showAdditionalGuidanceLinks, effectiveCoreLinks, store.orgProfile?.linkOverrides, toolLinkMatches]);
   const [actionEditor, setActionEditor] = useState<ActionEditorState | null>(null);
   const [objectiveViewer, setObjectiveViewer] = useState<ObjectiveViewerState | null>(null);
   const [objectiveEditor, setObjectiveEditor] = useState<ObjectiveEditorState | null>(null);
@@ -1143,7 +1200,7 @@ export function AssessmentPanel({
   );
 
   const openCreateObjectiveModal = useCallback(() => {
-    setObjectiveEditor({ mode: 'create', text: '', owner: '', timescale: '', notes: '', evidence: '' });
+    setObjectiveEditor({ mode: 'create', text: '', owner: '' });
   }, []);
 
   const openEditObjectiveModal = useCallback((objective: ComponentObjective) => {
@@ -1152,9 +1209,6 @@ export function AssessmentPanel({
       objectiveId: objective.id,
       text: objective.text,
       owner: objective.owner,
-      timescale: objective.timescale,
-      notes: objective.notes || '',
-      evidence: objective.evidence || '',
     });
   }, []);
 
@@ -1177,9 +1231,7 @@ export function AssessmentPanel({
         id: `${CUSTOM_OUTCOME_PREFIX}${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
         text: objectiveEditor.text.trim(),
         owner: objectiveEditor.owner.trim(),
-        timescale: objectiveEditor.timescale.trim(),
-        notes: objectiveEditor.notes.trim(),
-        evidence: objectiveEditor.evidence.trim(),
+        timescale: '',
         linkedActions: [],
       };
       onObjectivesUpdate(component.id, [...objectives, newObjective]);
@@ -1192,9 +1244,6 @@ export function AssessmentPanel({
                 ...objective,
                 text: objectiveEditor.text.trim(),
                 owner: objectiveEditor.owner.trim(),
-                timescale: objectiveEditor.timescale.trim(),
-                notes: objectiveEditor.notes.trim(),
-                evidence: objectiveEditor.evidence.trim(),
               }
             : objective
         )
@@ -1549,6 +1598,7 @@ export function AssessmentPanel({
           furtherReadingUrl={store.orgProfile?.componentFurtherReading?.[component.id]}
           guidanceLinks={guidanceLinksByComponent[component.id] || []}
           darkMode={darkMode}
+          onNavigateToTool={onNavigateToTool}
         />
       )}
 
@@ -2068,7 +2118,8 @@ export function AssessmentPanel({
                                     {renderActionTextWithGuidanceLinks(
                                       action.text,
                                       guidanceLinksByComponent[resolvedAction.sourceComponentId] || [],
-                                      darkMode
+                                      darkMode,
+                                      onNavigateToTool
                                     )}
                                   </div>
                                   {resolvedAction.isLinkedView ? (
@@ -2733,6 +2784,17 @@ export function AssessmentPanel({
                 <p
                   className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
                 >
+                  Owner
+                </p>
+                <p className={`mt-1 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>
+                  {activeObjective.owner || 'Unassigned'}
+                </p>
+              </div>
+
+              <div>
+                <p
+                  className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
+                >
                   Status
                 </p>
                 <span
@@ -2879,64 +2941,28 @@ export function AssessmentPanel({
                 >
                   Owner
                 </label>
-                <input
+                <select
                   id="objective-editor-owner"
-                  type="text"
                   value={objectiveEditor.owner}
                   onChange={(event) =>
                     setObjectiveEditor({ ...objectiveEditor, owner: event.target.value })
                   }
                   className={`mt-1 w-full rounded-md border p-2 text-sm ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="objective-editor-timescale"
-                  className={`block text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}
                 >
-                  Timescale
-                </label>
-                <input
-                  id="objective-editor-timescale"
-                  type="text"
-                  value={objectiveEditor.timescale}
-                  onChange={(event) =>
-                    setObjectiveEditor({ ...objectiveEditor, timescale: event.target.value })
-                  }
-                  className={`mt-1 w-full rounded-md border p-2 text-sm ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="objective-editor-notes"
-                  className={`block text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}
-                >
-                  Notes
-                </label>
-                <textarea
-                  id="objective-editor-notes"
-                  value={objectiveEditor.notes}
-                  onChange={(event) =>
-                    setObjectiveEditor({ ...objectiveEditor, notes: event.target.value })
-                  }
-                  className={`mt-1 w-full rounded-md border p-2 text-sm h-16 ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="objective-editor-evidence"
-                  className={`block text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}
-                >
-                  Evidence
-                </label>
-                <textarea
-                  id="objective-editor-evidence"
-                  value={objectiveEditor.evidence}
-                  onChange={(event) =>
-                    setObjectiveEditor({ ...objectiveEditor, evidence: event.target.value })
-                  }
-                  className={`mt-1 w-full rounded-md border p-2 text-sm h-16 ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
-                />
+                  <option value="">Unassigned</option>
+                  {teamMembers.map((member) => (
+                    <option key={member.id} value={member.name}>
+                      {member.name || 'Unnamed'}
+                      {member.role ? ` - ${member.role}` : ''}
+                    </option>
+                  ))}
+                  {objectiveEditor.owner &&
+                  !teamMembers.some((member) => member.name === objectiveEditor.owner) ? (
+                    <option value={objectiveEditor.owner}>
+                      {objectiveEditor.owner} (not on roster)
+                    </option>
+                  ) : null}
+                </select>
               </div>
             </div>
 

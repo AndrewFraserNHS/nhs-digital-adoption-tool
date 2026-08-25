@@ -11,10 +11,17 @@ import {
   CORE_LINKS,
   DEFAULT_GUIDANCE_LINK_MAP,
   TOOLKIT_BASE_DEFAULTS,
+  resolveEffectiveLink,
   type GuidanceLink,
   type LinkOverrides,
   type PerLinkOverride,
 } from '@data/maturity-guidance-links';
+import {
+  IN_APP_TOOLS,
+  DEFAULT_TOOL_LINK_TEXT,
+  type InAppTool,
+  type ToolLinkEntry,
+} from '@data/toolLinks';
 import {
   CST_TYPE_OPTIONS,
   PATHWAY_LABELS,
@@ -62,6 +69,8 @@ export interface ProjectDetailsPageProps {
   darkMode?: boolean;
   currentUserId?: string;
   onCurrentUserChange: (id: string) => void;
+  /** Per-device override that force-shows the External Links section even after it's been marked initiated. */
+  showExternalLinksSection?: boolean;
 }
 
 export function ProjectDetailsPage({
@@ -74,8 +83,10 @@ export function ProjectDetailsPage({
   darkMode = false,
   currentUserId,
   onCurrentUserChange,
+  showExternalLinksSection = false,
 }: ProjectDetailsPageProps): JSX.Element {
   const [profile, setProfile] = useState<OrgProfile>(orgProfile);
+  const [customisingLinks, setCustomisingLinks] = useState<Record<string, boolean>>({});
   const cstImportInputRef = useRef<HTMLInputElement>(null);
   const pageIntro = usePageIntroSeen('cst-personalisation');
   const profileValidation = validateOrgProfile(profile);
@@ -273,6 +284,64 @@ export function ProjectDetailsPage({
       onProfileUpdate(updated);
     },
     [profile, effectiveCoreLinks, onProfileUpdate]
+  );
+
+  const toolLinks = profile.toolLinks || [];
+
+  const handleAddToolLink = useCallback(() => {
+    const defaultTool: InAppTool = 'highlight-builder';
+    const newLink: ToolLinkEntry = {
+      key: `tool-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      tool: defaultTool,
+      matchText: DEFAULT_TOOL_LINK_TEXT[defaultTool].matchText,
+    };
+    const updated = { ...profile, toolLinks: [...toolLinks, newLink] };
+    setProfile(updated);
+    onProfileUpdate(updated);
+  }, [profile, toolLinks, onProfileUpdate]);
+
+  const handleUpdateToolLinkTool = useCallback(
+    (key: string, tool: InAppTool) => {
+      const updated = {
+        ...profile,
+        toolLinks: toolLinks.map((link) =>
+          link.key === key ? { ...link, tool, matchText: DEFAULT_TOOL_LINK_TEXT[tool].matchText } : link
+        ),
+      };
+      setProfile(updated);
+      onProfileUpdate(updated);
+    },
+    [profile, toolLinks, onProfileUpdate]
+  );
+
+  const handleUpdateToolLinkMatchText = useCallback(
+    (key: string, matchText: string) => {
+      const updated = {
+        ...profile,
+        toolLinks: toolLinks.map((link) => (link.key === key ? { ...link, matchText } : link)),
+      };
+      setProfile(updated);
+      onProfileUpdate(updated);
+    },
+    [profile, toolLinks, onProfileUpdate]
+  );
+
+  const handleRemoveToolLink = useCallback(
+    (key: string) => {
+      const updated = { ...profile, toolLinks: toolLinks.filter((link) => link.key !== key) };
+      setProfile(updated);
+      onProfileUpdate(updated);
+    },
+    [profile, toolLinks, onProfileUpdate]
+  );
+
+  const handleExternalLinksInitiatedChange = useCallback(
+    (value: boolean) => {
+      const updated = { ...profile, externalLinksInitiated: value };
+      setProfile(updated);
+      onProfileUpdate(updated);
+    },
+    [profile, onProfileUpdate]
   );
 
   const handleExportCst = useCallback(() => {
@@ -691,9 +760,29 @@ export function ProjectDetailsPage({
         className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-4`}
       >
         <div>
-          <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
-            Step 4: External links
-          </h3>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
+              Step 4: External links
+            </h3>
+            <label
+              className={`flex items-center gap-2 text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+            >
+              <input
+                type="checkbox"
+                checked={Boolean(profile.externalLinksInitiated)}
+                onChange={(e) => handleExternalLinksInitiatedChange(e.target.checked)}
+              />
+              Links initiated
+            </label>
+          </div>
+          <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+            This is normally only set up once at the start of a project. Once you're done, tick
+            "Links initiated" to hide this section - re-enable "Show external links section" in
+            Settings if you need to come back to it.
+          </p>
+
+          {!profile.externalLinksInitiated || showExternalLinksSection ? (
+            <>
           <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
             All toolkit links across the tool point to the NHS Future platform by default. You can
             override the base toolkit destination for your organisation, or change individual links
@@ -751,6 +840,17 @@ export function ProjectDetailsPage({
               <p className={`text-xs mt-0.5 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
                 Replaces the Change Management Toolkit destination for all links that fall back to
                 it.
+              </p>
+              <p className="mt-1 text-xs">
+                Currently:{' '}
+                <a
+                  href={profile.linkOverrides?.base?.url?.trim() || TOOLKIT_BASE_DEFAULTS.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`underline ${darkMode ? 'text-blue-300 hover:text-blue-200' : 'text-[#005eb8] hover:text-[#00417a]'}`}
+                >
+                  {profile.linkOverrides?.base?.url?.trim() || TOOLKIT_BASE_DEFAULTS.url}
+                </a>
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -861,6 +961,60 @@ export function ProjectDetailsPage({
             </button>
           </div>
 
+          {/* Tool linking - matches text in action/summary bodies to in-app tools instead of URLs */}
+          <div
+            className={`mt-4 rounded-md border p-4 space-y-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
+          >
+            <div>
+              <p
+                className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+              >
+                Tool linking
+              </p>
+              <p className={`text-xs mt-0.5 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
+                Matches text in action/summary bodies and turns it into a button that opens an
+                in-app tool, instead of a link to a URL.
+              </p>
+            </div>
+            <div className="space-y-2">
+              {toolLinks.map((link) => (
+                <div
+                  key={link.key}
+                  className="grid grid-cols-1 md:grid-cols-[1fr,2fr,auto] gap-2 items-center"
+                >
+                  <select
+                    value={link.tool}
+                    onChange={(e) => handleUpdateToolLinkTool(link.key, e.target.value as InAppTool)}
+                    className={`rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
+                  >
+                    {IN_APP_TOOLS.map((tool) => (
+                      <option key={tool} value={tool}>
+                        {DEFAULT_TOOL_LINK_TEXT[tool].label}
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    type="text"
+                    placeholder="Matched text"
+                    value={link.matchText}
+                    onChange={(e) => handleUpdateToolLinkMatchText(link.key, e.target.value)}
+                    className={`rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveToolLink(link.key)}
+                    className={`shrink-0 rounded border px-2 py-1.5 text-xs font-medium ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-50'}`}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+            <button type="button" onClick={handleAddToolLink} className={nhsButtonSecondary}>
+              + Add Tool Link
+            </button>
+          </div>
+
           {/* Per-component links: further reading + per-link overrides, grouped by component */}
           <div className="mt-4 space-y-3">
             <p
@@ -955,7 +1109,9 @@ export function ProjectDetailsPage({
                             {links.map((link) => {
                               const perLink: PerLinkOverride = profile.linkOverrides?.links?.[
                                 link.key
-                              ] ?? { fallback: 'base' };
+                              ] ?? { fallback: 'default' };
+                              const resolved = resolveEffectiveLink(link, profile.linkOverrides);
+                              const isCustomising = Boolean(customisingLinks[link.key]);
                               return (
                                 <div key={link.key} className="grid grid-cols-1 gap-1.5">
                                   <span className="flex items-center gap-2">
@@ -978,66 +1134,86 @@ export function ProjectDetailsPage({
                                       {link.type === 'core' ? 'Core' : 'Additional'}
                                     </span>
                                   </span>
-                                  <p
-                                    className={`text-xs truncate ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}
-                                  >
-                                    {link.url}
-                                  </p>
-                                  <div className="flex gap-2">
-                                    <input
-                                      type="url"
-                                      placeholder="Override URL (leave blank to use fallback)"
-                                      value={perLink.url ?? ''}
-                                      onChange={(e) => {
-                                        const val = e.target.value || undefined;
-                                        handleLinkOverridesChange({
-                                          ...profile.linkOverrides,
-                                          links: {
-                                            ...profile.linkOverrides?.links,
-                                            [link.key]: { ...perLink, url: val },
-                                          },
-                                        });
-                                      }}
-                                      className={`flex-1 min-w-0 rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
-                                    />
-                                    {!perLink.url && (
-                                      <select
-                                        value={perLink.fallback ?? 'base'}
-                                        onChange={(e) =>
+                                  <div className="flex items-center gap-2">
+                                    <a
+                                      href={resolved.url}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className={`text-xs truncate underline ${darkMode ? 'text-blue-300 hover:text-blue-200' : 'text-[#005eb8] hover:text-[#00417a]'}`}
+                                      title="Opens the link this will actually resolve to"
+                                    >
+                                      {resolved.url}
+                                    </a>
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        setCustomisingLinks((current) => ({
+                                          ...current,
+                                          [link.key]: !current[link.key],
+                                        }))
+                                      }
+                                      className={`shrink-0 text-xs font-medium underline ${darkMode ? 'text-slate-300 hover:text-slate-100' : 'text-slate-600 hover:text-slate-800'}`}
+                                    >
+                                      {isCustomising ? 'Hide' : 'Customise'}
+                                    </button>
+                                  </div>
+                                  {isCustomising && (
+                                    <div className="flex gap-2">
+                                      <input
+                                        type="url"
+                                        placeholder="Override URL (leave blank to use fallback)"
+                                        value={perLink.url ?? ''}
+                                        onChange={(e) => {
+                                          const val = e.target.value || undefined;
                                           handleLinkOverridesChange({
                                             ...profile.linkOverrides,
                                             links: {
                                               ...profile.linkOverrides?.links,
-                                              [link.key]: {
-                                                ...perLink,
-                                                fallback: e.target.value as 'base' | 'default',
-                                              },
+                                              [link.key]: { ...perLink, url: val },
                                             },
-                                          })
-                                        }
-                                        className={`rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
-                                      >
-                                        <option value="base">Fallback: Base</option>
-                                        <option value="default">Fallback: Default</option>
-                                      </select>
-                                    )}
-                                    {perLink.url && (
-                                      <button
-                                        type="button"
-                                        onClick={() => {
-                                          const next = { ...profile.linkOverrides?.links };
-                                          delete next[link.key];
-                                          handleLinkOverridesChange({
-                                            ...profile.linkOverrides,
-                                            links: next,
                                           });
                                         }}
-                                        className={`shrink-0 rounded border px-2 py-1.5 text-xs font-medium ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-50'}`}
-                                      >
-                                        Clear
-                                      </button>
-                                    )}
-                                  </div>
+                                        className={`flex-1 min-w-0 rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
+                                      />
+                                      {!perLink.url && (
+                                        <select
+                                          value={perLink.fallback ?? 'default'}
+                                          onChange={(e) =>
+                                            handleLinkOverridesChange({
+                                              ...profile.linkOverrides,
+                                              links: {
+                                                ...profile.linkOverrides?.links,
+                                                [link.key]: {
+                                                  ...perLink,
+                                                  fallback: e.target.value as 'base' | 'default',
+                                                },
+                                              },
+                                            })
+                                          }
+                                          className={`rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
+                                        >
+                                          <option value="default">Fallback: Default</option>
+                                          <option value="base">Fallback: Base</option>
+                                        </select>
+                                      )}
+                                      {perLink.url && (
+                                        <button
+                                          type="button"
+                                          onClick={() => {
+                                            const next = { ...profile.linkOverrides?.links };
+                                            delete next[link.key];
+                                            handleLinkOverridesChange({
+                                              ...profile.linkOverrides,
+                                              links: next,
+                                            });
+                                          }}
+                                          className={`shrink-0 rounded border px-2 py-1.5 text-xs font-medium ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-50'}`}
+                                        >
+                                          Clear
+                                        </button>
+                                      )}
+                                    </div>
+                                  )}
                                 </div>
                               );
                             })}
@@ -1049,6 +1225,13 @@ export function ProjectDetailsPage({
                 );
               })}
           </div>
+            </>
+          ) : (
+            <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+              External links were set up at project start. Turn on "Show external links section"
+              in Settings if you need to come back and edit them.
+            </p>
+          )}
         </div>
       </div>
 

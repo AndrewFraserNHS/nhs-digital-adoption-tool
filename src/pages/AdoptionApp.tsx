@@ -11,6 +11,8 @@ import { ProjectDetailsPage } from '@components/views/CSTDetailsPage';
 import { DailyCheckIn } from '@components/views/DailyCheckIn';
 import { GuidanceRoadmapView } from '@components/views/GuidanceRoadmapView';
 import { HighlightBuilderTool } from '@components/views/HighlightBuilderTool';
+import ForceFieldAnalysisApp from '@pages/ForceFieldAnalysisApp';
+import CompareApp from '@pages/CompareApp';
 import { ImportConflictModal } from '@components/views/ImportConflictModal';
 import { LensInfoModal } from '@components/views/LensInfoModal';
 import { OnboardingOverviewPage } from '@components/views/OnboardingOverviewPage';
@@ -112,6 +114,7 @@ const DEFAULT_USER_SETTINGS: AdoptionUserSettings = {
   manualPhaseFocus: 1,
   hideGuidedWorkflow: false,
   showAdditionalGuidanceLinks: true,
+  showExternalLinksSection: false,
 };
 
 const DEFAULT_ENGAGEMENT_STATE: EngagementState = {
@@ -1902,7 +1905,9 @@ export function AdoptionApp() {
             Tools
           </div>
           <nav className="space-y-1 mb-8">
-            {(['highlight-builder', 'audit-log', 'settings', 'profile'] as View[]).map((v) => (
+            {(
+              ['highlight-builder', 'force-field-analysis', 'compare', 'audit-log'] as View[]
+            ).map((v) => (
               <button
                 key={v}
                 ref={(el) => {
@@ -1917,11 +1922,33 @@ export function AdoptionApp() {
               >
                 {v === 'highlight-builder'
                   ? 'Highlight Builder'
-                  : v === 'audit-log'
-                    ? 'Audit Log'
-                    : v === 'settings'
-                      ? 'Settings'
-                      : 'Profile'}
+                  : v === 'force-field-analysis'
+                    ? 'Force Field Analysis'
+                    : v === 'compare'
+                      ? 'Assess & Compare'
+                      : 'Audit Log'}
+              </button>
+            ))}
+          </nav>
+
+          <div className="px-4 mb-2 text-xs font-semibold text-blue-300 uppercase tracking-wider border-t border-blue-800 pt-6">
+            Account
+          </div>
+          <nav className="space-y-1 mb-8">
+            {(['settings', 'profile'] as View[]).map((v) => (
+              <button
+                key={v}
+                ref={(el) => {
+                  navItemRefs.current[`view:${v}`] = el;
+                }}
+                onClick={() => handleViewChange(v)}
+                className={`w-full flex items-center px-4 py-1 text-sm transition-colors ${
+                  view === v
+                    ? 'bg-blue-800 text-white font-medium border-l-4 border-white'
+                    : 'text-blue-100 hover:bg-blue-800 border-l-4 border-transparent'
+                }`}
+              >
+                {v === 'settings' ? 'Settings' : 'Profile'}
               </button>
             ))}
           </nav>
@@ -2307,6 +2334,7 @@ export function AdoptionApp() {
               onOpenGuidedSetup={() => setShowCstSetupWizard(true)}
               currentUserId={currentUserId}
               onCurrentUserChange={setCurrentUserId}
+              showExternalLinksSection={Boolean(userSettings.showExternalLinksSection)}
               darkMode={Boolean(userSettings.darkMode)}
             />
           )}
@@ -2396,6 +2424,7 @@ export function AdoptionApp() {
                 });
               }}
               onObjectivesUpdate={updateComponentObjectives}
+              onNavigateToTool={(tool) => handleViewChange(tool)}
               hideGuidedWorkflow={Boolean(userSettings.hideGuidedWorkflow)}
               onHideGuidedWorkflow={() =>
                 setUserSettings((prev) => ({ ...prev, hideGuidedWorkflow: true }))
@@ -2456,6 +2485,12 @@ export function AdoptionApp() {
               currentUserId={currentUserId}
               darkMode={Boolean(userSettings.darkMode)}
             />
+          )}
+          {view === 'force-field-analysis' && (
+            <ForceFieldAnalysisApp embedded onBack={() => handleViewChange('dashboard')} />
+          )}
+          {view === 'compare' && (
+            <CompareApp embedded onBack={() => handleViewChange('dashboard')} />
           )}
           {view === 'audit-log' && (
             <AuditLogPage events={store.auditLog} darkMode={Boolean(userSettings.darkMode)} />

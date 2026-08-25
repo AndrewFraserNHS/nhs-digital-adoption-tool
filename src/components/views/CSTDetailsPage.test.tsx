@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { ProjectDetailsPage } from './CSTDetailsPage';
 import type { OrgProfile } from '@lib/adoptionState';
@@ -167,5 +167,127 @@ describe('ProjectDetailsPage', () => {
     // assert
     expect(onProfileUpdate).not.toHaveBeenCalled();
     expect(screen.getByLabelText('Pathway')).toHaveValue('pathway-1');
+  });
+
+  it('SHOULD collapse the External Links section once marked initiated, and reshow via the Settings override', () => {
+    // arrange
+    const initiatedProfile: OrgProfile = { ...orgProfile, externalLinksInitiated: true };
+
+    // act 1 - collapsed by default
+    const { rerender } = render(
+      <ProjectDetailsPage
+        orgProfile={initiatedProfile}
+        onProfileUpdate={vi.fn()}
+        components={components}
+        lenses={['Strategic Direction and Leadership']}
+        onComponentClick={vi.fn()}
+        onOpenOnboarding={vi.fn()}
+        onCurrentUserChange={vi.fn()}
+      />
+    );
+
+    // assert 1
+    expect(screen.queryByText('Tool linking')).not.toBeInTheDocument();
+    expect(screen.getByText(/set up at project start/)).toBeInTheDocument();
+
+    // act 2 - reshown via the per-device override
+    rerender(
+      <ProjectDetailsPage
+        orgProfile={initiatedProfile}
+        onProfileUpdate={vi.fn()}
+        components={components}
+        lenses={['Strategic Direction and Leadership']}
+        onComponentClick={vi.fn()}
+        onOpenOnboarding={vi.fn()}
+        onCurrentUserChange={vi.fn()}
+        showExternalLinksSection
+      />
+    );
+
+    // assert 2
+    expect(screen.getByText('Tool linking')).toBeInTheDocument();
+  });
+
+  it('SHOULD write externalLinksInitiated WHERE the "Links initiated" checkbox is toggled', () => {
+    // arrange
+    const onProfileUpdate = vi.fn();
+
+    render(
+      <ProjectDetailsPage
+        orgProfile={orgProfile}
+        onProfileUpdate={onProfileUpdate}
+        components={components}
+        lenses={['Strategic Direction and Leadership']}
+        onComponentClick={vi.fn()}
+        onOpenOnboarding={vi.fn()}
+        onCurrentUserChange={vi.fn()}
+      />
+    );
+
+    // act
+    fireEvent.click(screen.getByLabelText('Links initiated'));
+
+    // assert
+    expect(onProfileUpdate).toHaveBeenLastCalledWith(
+      expect.objectContaining({ externalLinksInitiated: true })
+    );
+  });
+
+  it('SHOULD add a Tool Linking entry', () => {
+    // arrange
+    const onProfileUpdate = vi.fn();
+
+    render(
+      <ProjectDetailsPage
+        orgProfile={orgProfile}
+        onProfileUpdate={onProfileUpdate}
+        components={components}
+        lenses={['Strategic Direction and Leadership']}
+        onComponentClick={vi.fn()}
+        onOpenOnboarding={vi.fn()}
+        onCurrentUserChange={vi.fn()}
+      />
+    );
+
+    // act
+    fireEvent.click(screen.getByRole('button', { name: '+ Add Tool Link' }));
+
+    // assert
+    expect(onProfileUpdate).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        toolLinks: [
+          expect.objectContaining({ tool: 'highlight-builder', matchText: 'Highlight Builder' }),
+        ],
+      })
+    );
+  });
+
+  it('SHOULD remove a Tool Linking entry', () => {
+    // arrange
+    const onProfileUpdate = vi.fn();
+    const profileWithToolLink: OrgProfile = {
+      ...orgProfile,
+      toolLinks: [{ key: 'tool-1', tool: 'highlight-builder', matchText: 'Highlight Builder' }],
+    };
+
+    render(
+      <ProjectDetailsPage
+        orgProfile={profileWithToolLink}
+        onProfileUpdate={onProfileUpdate}
+        components={components}
+        lenses={['Strategic Direction and Leadership']}
+        onComponentClick={vi.fn()}
+        onOpenOnboarding={vi.fn()}
+        onCurrentUserChange={vi.fn()}
+      />
+    );
+    const toolLinkingContainer = screen.getByRole('button', { name: '+ Add Tool Link' })
+      .parentElement as HTMLElement;
+
+    // act
+    fireEvent.click(within(toolLinkingContainer).getByRole('button', { name: 'Remove' }));
+
+    // assert
+    expect(onProfileUpdate).toHaveBeenLastCalledWith(expect.objectContaining({ toolLinks: [] }));
   });
 });

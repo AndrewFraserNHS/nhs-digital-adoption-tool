@@ -2,6 +2,7 @@ import { useState, type JSX } from 'react';
 import { OVERARCHING_PHASES } from '@data/cst';
 import { getComponentObjectiveCounts } from '@lib/adoptionMetrics';
 import { ACTION_STATUS_BADGE_STYLES } from '@lib/actionModel';
+import { getStageLabel } from '@data/rubrics';
 import type { AssessmentComponent } from '@data/components';
 import type { AdoptionStore, DraftEntry } from '@lib/adoptionState';
 import { PHASE_NAMES } from '../../types/constants';
@@ -88,7 +89,7 @@ export function ProgrammeHierarchy({
                       </span>
                       <div className="flex items-center gap-3">
                         <span className={`text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-                          Target readiness: Level {component.target}
+                          Target readiness: {getStageLabel(component.target)}
                         </span>
                         <button
                           type="button"

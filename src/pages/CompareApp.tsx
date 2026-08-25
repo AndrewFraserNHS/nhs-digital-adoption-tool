@@ -1183,7 +1183,13 @@ interface LoadedFile {
   payload: SavedAdoptionAssessment;
 }
 
-export default function CompareApp(): JSX.Element {
+export interface CompareAppProps {
+  /** Rendered inside another app's shell (e.g. the Adoption tool's sidenav) - skips this page's own outer shell/header/back-link. */
+  embedded?: boolean;
+  onBack?: () => void;
+}
+
+export default function CompareApp({ embedded = false, onBack }: CompareAppProps = {}): JSX.Element {
   const [files, setFiles] = useState<LoadedFile[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [singleFileView, setSingleFileView] = useState<'engagement' | 'timeline'>('engagement');
@@ -1212,90 +1218,116 @@ export default function CompareApp(): JSX.Element {
     setSingleFileView('engagement');
   };
 
+  const header = (
+    <header
+      className={
+        embedded
+          ? 'flex items-center justify-between pb-4'
+          : 'bg-white border-b border-slate-200 shadow-sm px-6 py-4 flex items-center justify-between'
+      }
+    >
+      <div className="flex items-center gap-4">
+        <button
+          onClick={() => {
+            if (embedded) {
+              onBack?.();
+            } else {
+              window.location.hash = '#/';
+            }
+          }}
+          className="text-sm px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-md font-medium transition-colors"
+        >
+          ← Back
+        </button>
+        <div>
+          <h1 className="text-lg font-bold text-slate-800">Assess & Compare</h1>
+          <p className="text-xs text-slate-500">
+            Engagement analysis and side-by-side comparison of adoption assessments
+          </p>
+        </div>
+      </div>
+      {files.length > 0 && (
+        <button
+          onClick={reset}
+          className="text-sm px-4 py-2 border border-slate-300 rounded-md text-slate-600 hover:bg-slate-100 transition-colors"
+        >
+          Upload new files
+        </button>
+      )}
+    </header>
+  );
+
+  const body = (
+    <>
+      {error && (
+        <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+          {error}
+        </div>
+      )}
+
+      {files.length === 0 && <DropZone onFiles={handleFiles} />}
+
+      {files.length === 1 && (
+        <>
+          {(files[0].payload.history || []).length > 0 && (
+            <div
+              className="mb-6 inline-flex rounded-md border border-slate-300 overflow-hidden text-sm font-semibold"
+              role="group"
+              aria-label="Single file view"
+            >
+              <button
+                type="button"
+                onClick={() => setSingleFileView('engagement')}
+                aria-pressed={singleFileView === 'engagement'}
+                className={`px-4 py-2 transition-colors ${singleFileView === 'engagement' ? 'bg-[#005eb8] text-white' : 'bg-white text-slate-600 hover:bg-slate-100'}`}
+              >
+                Engagement Analysis
+              </button>
+              <button
+                type="button"
+                onClick={() => setSingleFileView('timeline')}
+                aria-pressed={singleFileView === 'timeline'}
+                className={`px-4 py-2 transition-colors border-l border-slate-300 ${singleFileView === 'timeline' ? 'bg-[#005eb8] text-white' : 'bg-white text-slate-600 hover:bg-slate-100'}`}
+              >
+                Timeline ({(files[0].payload.history || []).length})
+              </button>
+            </div>
+          )}
+
+          {singleFileView === 'timeline' && (files[0].payload.history || []).length > 0 ? (
+            <TimelineView
+              payload={files[0].payload}
+              result={files[0].result}
+              fileName={files[0].name}
+            />
+          ) : (
+            <SingleAnalysis result={files[0].result} fileName={files[0].name} />
+          )}
+        </>
+      )}
+
+      {files.length === 2 && (
+        <CompareView
+          results={[files[0].result, files[1].result]}
+          fileNames={[files[0].name, files[1].name]}
+        />
+      )}
+    </>
+  );
+
+  if (embedded) {
+    return (
+      <div className="text-slate-800">
+        {header}
+        {body}
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800">
-      <header className="bg-white border-b border-slate-200 shadow-sm px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => {
-              window.location.hash = '#/';
-            }}
-            className="text-sm px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-md font-medium transition-colors"
-          >
-            ← Back
-          </button>
-          <div>
-            <h1 className="text-lg font-bold text-slate-800">Assess & Compare</h1>
-            <p className="text-xs text-slate-500">
-              Engagement analysis and side-by-side comparison of adoption assessments
-            </p>
-          </div>
-        </div>
-        {files.length > 0 && (
-          <button
-            onClick={reset}
-            className="text-sm px-4 py-2 border border-slate-300 rounded-md text-slate-600 hover:bg-slate-100 transition-colors"
-          >
-            Upload new files
-          </button>
-        )}
-      </header>
-
-      <main className="max-w-5xl mx-auto px-6 py-8">
-        {error && (
-          <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-            {error}
-          </div>
-        )}
-
-        {files.length === 0 && <DropZone onFiles={handleFiles} />}
-
-        {files.length === 1 && (
-          <>
-            {(files[0].payload.history || []).length > 0 && (
-              <div
-                className="mb-6 inline-flex rounded-md border border-slate-300 overflow-hidden text-sm font-semibold"
-                role="group"
-                aria-label="Single file view"
-              >
-                <button
-                  type="button"
-                  onClick={() => setSingleFileView('engagement')}
-                  aria-pressed={singleFileView === 'engagement'}
-                  className={`px-4 py-2 transition-colors ${singleFileView === 'engagement' ? 'bg-[#005eb8] text-white' : 'bg-white text-slate-600 hover:bg-slate-100'}`}
-                >
-                  Engagement Analysis
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setSingleFileView('timeline')}
-                  aria-pressed={singleFileView === 'timeline'}
-                  className={`px-4 py-2 transition-colors border-l border-slate-300 ${singleFileView === 'timeline' ? 'bg-[#005eb8] text-white' : 'bg-white text-slate-600 hover:bg-slate-100'}`}
-                >
-                  Timeline ({(files[0].payload.history || []).length})
-                </button>
-              </div>
-            )}
-
-            {singleFileView === 'timeline' && (files[0].payload.history || []).length > 0 ? (
-              <TimelineView
-                payload={files[0].payload}
-                result={files[0].result}
-                fileName={files[0].name}
-              />
-            ) : (
-              <SingleAnalysis result={files[0].result} fileName={files[0].name} />
-            )}
-          </>
-        )}
-
-        {files.length === 2 && (
-          <CompareView
-            results={[files[0].result, files[1].result]}
-            fileNames={[files[0].name, files[1].name]}
-          />
-        )}
-      </main>
+      {header}
+      <main className="max-w-5xl mx-auto px-6 py-8">{body}</main>
     </div>
   );
 }

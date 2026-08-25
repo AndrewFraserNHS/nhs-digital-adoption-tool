@@ -608,7 +608,16 @@ function ActionsScreen({
   );
 }
 
-export default function ForceFieldAnalysisApp(): JSX.Element {
+export interface ForceFieldAnalysisAppProps {
+  /** Rendered inside another app's shell (e.g. the Adoption tool's sidenav) - skips this page's own outer shell/header/back-link. */
+  embedded?: boolean;
+  onBack?: () => void;
+}
+
+export default function ForceFieldAnalysisApp({
+  embedded = false,
+  onBack,
+}: ForceFieldAnalysisAppProps = {}): JSX.Element {
   const [state, setState] = useState<ForceFieldAnalysisState>(() => readStoredState());
   const [screen, setScreen] = useState<'forces' | 'actions'>('forces');
   const [importError, setImportError] = useState<string | null>(null);
@@ -702,99 +711,130 @@ export default function ForceFieldAnalysisApp(): JSX.Element {
     }
   };
 
+  const header = (
+    <header
+      className={
+        embedded
+          ? 'flex flex-wrap items-center justify-between gap-3 pb-4'
+          : 'bg-white border-b border-slate-200 shadow-sm px-6 py-4 flex flex-wrap items-center justify-between gap-3'
+      }
+    >
+      <div className="flex items-center gap-4">
+        <button
+          onClick={() => {
+            if (embedded) {
+              onBack?.();
+            } else {
+              window.location.hash = '#/';
+            }
+          }}
+          className="text-sm px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-md font-medium transition-colors"
+        >
+          ← Back
+        </button>
+        <div>
+          <h1 className="text-lg font-bold text-slate-800">Force Field Analysis</h1>
+          <p className="text-xs text-slate-500">
+            Weigh driving vs restraining forces and plan mitigation actions
+          </p>
+        </div>
+      </div>
+      <div className="flex flex-wrap items-center gap-3">
+        <button
+          type="button"
+          onClick={handleImportClick}
+          className="text-sm px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-md font-medium transition-colors"
+        >
+          Import JSON
+        </button>
+        <button
+          type="button"
+          onClick={handleExport}
+          className="text-sm px-4 py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-md font-medium transition-colors"
+        >
+          Export JSON
+        </button>
+        <div
+          className="flex items-center rounded-md border border-slate-300 overflow-hidden text-sm font-semibold"
+          role="group"
+          aria-label="Force field analysis screen"
+        >
+          <button
+            type="button"
+            onClick={() => setScreen('forces')}
+            aria-pressed={screen === 'forces'}
+            className={`px-4 py-2 transition-colors ${screen === 'forces' ? 'bg-[#005eb8] text-white' : 'bg-white text-slate-600 hover:bg-slate-100'}`}
+          >
+            1. Forces
+          </button>
+          <button
+            type="button"
+            onClick={() => setScreen('actions')}
+            aria-pressed={screen === 'actions'}
+            className={`px-4 py-2 transition-colors border-l border-slate-300 ${screen === 'actions' ? 'bg-[#005eb8] text-white' : 'bg-white text-slate-600 hover:bg-slate-100'}`}
+          >
+            2. Actions &amp; Mitigation
+          </button>
+        </div>
+      </div>
+    </header>
+  );
+
+  const body = (
+    <>
+      {importError ? (
+        <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+          {importError}
+        </div>
+      ) : null}
+
+      {screen === 'forces' ? (
+        <ForcesScreen
+          state={state}
+          onUpdateProjectName={updateProjectName}
+          onAddForce={addForce}
+          onUpdateText={updateForceText}
+          onUpdateScore={updateForceScore}
+          onRemoveForce={removeForce}
+          onContinue={() => setScreen('actions')}
+        />
+      ) : (
+        <ActionsScreen
+          state={state}
+          onUpdateAction={updateAction}
+          onAddAction={addAction}
+          onRemoveAction={removeAction}
+          onBack={() => setScreen('forces')}
+        />
+      )}
+    </>
+  );
+
+  const fileInput = (
+    <input
+      ref={fileInputRef}
+      type="file"
+      accept="application/json"
+      className="hidden"
+      onChange={handleImportFile}
+    />
+  );
+
+  if (embedded) {
+    return (
+      <div className="text-slate-800">
+        {fileInput}
+        {header}
+        {body}
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800">
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="application/json"
-        className="hidden"
-        onChange={handleImportFile}
-      />
-      <header className="bg-white border-b border-slate-200 shadow-sm px-6 py-4 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => {
-              window.location.hash = '#/';
-            }}
-            className="text-sm px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-md font-medium transition-colors"
-          >
-            ← Back
-          </button>
-          <div>
-            <h1 className="text-lg font-bold text-slate-800">Force Field Analysis</h1>
-            <p className="text-xs text-slate-500">
-              Weigh driving vs restraining forces and plan mitigation actions
-            </p>
-          </div>
-        </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <button
-            type="button"
-            onClick={handleImportClick}
-            className="text-sm px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-md font-medium transition-colors"
-          >
-            Import JSON
-          </button>
-          <button
-            type="button"
-            onClick={handleExport}
-            className="text-sm px-4 py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-md font-medium transition-colors"
-          >
-            Export JSON
-          </button>
-          <div
-            className="flex items-center rounded-md border border-slate-300 overflow-hidden text-sm font-semibold"
-            role="group"
-            aria-label="Force field analysis screen"
-          >
-            <button
-              type="button"
-              onClick={() => setScreen('forces')}
-              aria-pressed={screen === 'forces'}
-              className={`px-4 py-2 transition-colors ${screen === 'forces' ? 'bg-[#005eb8] text-white' : 'bg-white text-slate-600 hover:bg-slate-100'}`}
-            >
-              1. Forces
-            </button>
-            <button
-              type="button"
-              onClick={() => setScreen('actions')}
-              aria-pressed={screen === 'actions'}
-              className={`px-4 py-2 transition-colors border-l border-slate-300 ${screen === 'actions' ? 'bg-[#005eb8] text-white' : 'bg-white text-slate-600 hover:bg-slate-100'}`}
-            >
-              2. Actions &amp; Mitigation
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-5xl mx-auto px-6 py-8">
-        {importError ? (
-          <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-            {importError}
-          </div>
-        ) : null}
-
-        {screen === 'forces' ? (
-          <ForcesScreen
-            state={state}
-            onUpdateProjectName={updateProjectName}
-            onAddForce={addForce}
-            onUpdateText={updateForceText}
-            onUpdateScore={updateForceScore}
-            onRemoveForce={removeForce}
-            onContinue={() => setScreen('actions')}
-          />
-        ) : (
-          <ActionsScreen
-            state={state}
-            onUpdateAction={updateAction}
-            onAddAction={addAction}
-            onRemoveAction={removeAction}
-            onBack={() => setScreen('forces')}
-          />
-        )}
-      </main>
+      {fileInput}
+      {header}
+      <main className="max-w-5xl mx-auto px-6 py-8">{body}</main>
     </div>
   );
 }

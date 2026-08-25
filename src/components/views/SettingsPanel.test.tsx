@@ -61,4 +61,28 @@ describe('SettingsPanel', () => {
     expect(onLoadExampleData).toHaveBeenCalledWith('red');
     expect(onLoadExampleData).toHaveBeenCalledWith('green');
   });
+
+  it('SHOULD toggle showExternalLinksSection', () => {
+    // arrange
+    const onUserSettingsUpdate = vi.fn();
+
+    render(
+      <SettingsPanel
+        userSettings={baseUserSettings}
+        onUserSettingsUpdate={onUserSettingsUpdate}
+        onLoadExampleData={vi.fn()}
+        onResetData={vi.fn()}
+      />
+    );
+
+    // act
+    fireEvent.click(
+      screen.getByLabelText('Show external links section (CST Personalisation, even after marked initiated)')
+    );
+
+    // assert
+    expect(onUserSettingsUpdate).toHaveBeenLastCalledWith(
+      expect.objectContaining({ showExternalLinksSection: true })
+    );
+  });
 });

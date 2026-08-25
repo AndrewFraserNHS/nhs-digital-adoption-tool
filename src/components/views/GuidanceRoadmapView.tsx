@@ -5,6 +5,7 @@ import type { Metrics } from '@lib/adoptionMetrics';
 import type { CstPathwayKey } from '@data/cst';
 import { getPathwayRulesForComponent } from '@data/pathway-rules';
 import { evaluatePathwayTrackStatus } from '@lib/pathwayAnalysis';
+import { getStageLabel } from '@data/rubrics';
 import { PageHelpButton, PageIntroModal, usePageIntroSeen } from '@components/onboarding/PageIntroModal';
 
 interface GuidanceRoadmapViewProps {
@@ -192,7 +193,7 @@ export function GuidanceRoadmapView({
                   {component.label}
                 </div>
                 <div className={`mt-1 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-                  Target readiness: Level {component.target} · completes by Phase{' '}
+                  Target readiness: {getStageLabel(component.target)} · completes by Phase{' '}
                   {component.phase}
                 </div>
               </div>
@@ -273,7 +274,7 @@ export function GuidanceRoadmapView({
                     {component.label}
                   </div>
                   <div className={`mt-1 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-                    Target readiness: Level {component.target} · completes by Phase{' '}
+                    Target readiness: {getStageLabel(component.target)} · completes by Phase{' '}
                     {component.phase}
                   </div>
                 </div>

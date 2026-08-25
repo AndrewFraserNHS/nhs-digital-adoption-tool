@@ -87,7 +87,7 @@ describe('ProgrammeHierarchy', () => {
     expect(screen.queryByText('Agree sponsor cadence')).not.toBeInTheDocument();
   });
 
-  it('SHOULD show "Target readiness: Level N" wording', () => {
+  it('SHOULD show the target stage label instead of a raw number', () => {
     const store: AdoptionStore = initializeStore();
     render(
       <ProgrammeHierarchy
@@ -98,6 +98,6 @@ describe('ProgrammeHierarchy', () => {
       />
     );
 
-    expect(screen.getByText('Target readiness: Level 3')).toBeInTheDocument();
+    expect(screen.getByText('Target readiness: Maturing')).toBeInTheDocument();
   });
 });

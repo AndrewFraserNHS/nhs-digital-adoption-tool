@@ -5,6 +5,7 @@
 
 import { type CstPathwayKey, type CstProfile, DEFAULT_CST_PROFILE } from '@data/cst';
 import type { GuidanceLink, LinkOverrides } from '@data/maturity-guidance-links';
+import type { ToolLinkEntry } from '@data/toolLinks';
 
 import type { ActionType, UnifiedActionStatus } from './actionModel';
 import type { AuditEvent } from './auditLog';
@@ -132,6 +133,14 @@ export interface OrgProfile {
    * links. Falls back to CORE_LINKS (maturity-guidance-links.ts) when unset.
    */
   coreLinks?: GuidanceLink[];
+  /** Text-matched links to in-app tools (Highlight Builder, Force Field Analysis, Assess & Compare). */
+  toolLinks?: ToolLinkEntry[];
+  /**
+   * Once set, the CST Personalisation page's External Links section collapses by default -
+   * links are a one-time project-setup concern. Travels with export/import. Overridden locally
+   * (per device, not exported) by AdoptionUserSettings.showExternalLinksSection.
+   */
+  externalLinksInitiated?: boolean;
   teamMembers?: TeamMember[];
   /**
    * Stable identity for this CST, assigned once and carried through every export so two
@@ -166,6 +175,8 @@ export type View =
   | 'guidance-builder'
   | 'roadmap-view'
   | 'highlight-builder'
+  | 'force-field-analysis'
+  | 'compare'
   | 'audit-log'
   | 'project-details'
   | 'settings'
@@ -201,6 +212,8 @@ export function normalizeOrgProfile(profile?: Partial<OrgProfile>): OrgProfile {
     linkOverrides: profile?.linkOverrides,
     componentFurtherReading: profile?.componentFurtherReading,
     coreLinks: profile?.coreLinks,
+    toolLinks: profile?.toolLinks,
+    externalLinksInitiated: profile?.externalLinksInitiated,
     teamMembers: profile?.teamMembers || [],
     cstId: profile?.cstId,
   };

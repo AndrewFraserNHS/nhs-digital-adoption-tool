@@ -1236,7 +1236,7 @@ export function ProjectDetailsPage({
               <p
                 className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
               >
-                Core links
+                Additional Links
               </p>
               <p className={`text-xs mt-0.5 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
                 General reference links that aren't tied to a single component - shown here and

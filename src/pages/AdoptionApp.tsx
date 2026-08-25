@@ -373,6 +373,12 @@ export function AdoptionApp() {
 
   const [activeLensInfo, setActiveLensInfo] = useState('');
   const [currentUserId, setCurrentUserId] = useState<string>(() => load<string>(ADOPTION_CURRENT_USER_KEY) || '');
+  /* Several audit-logging callbacks are memoized with empty dep arrays, so they close over stale
+   * state on first render - refs keep the actor resolution reading live values instead. */
+  const currentUserIdRef = React.useRef(currentUserId);
+  useEffect(() => {
+    currentUserIdRef.current = currentUserId;
+  }, [currentUserId]);
   const [importConflict, setImportConflict] = useState<{
     file: File;
     parsed: Partial<SavedAdoptionAssessment>;
@@ -385,6 +391,10 @@ export function AdoptionApp() {
       ...persisted,
     };
   });
+  const userSettingsNameRef = React.useRef(userSettings.name);
+  useEffect(() => {
+    userSettingsNameRef.current = userSettings.name;
+  }, [userSettings.name]);
   const [engagement, setEngagement] = useState<EngagementState>(() => {
     const persisted = load<Partial<EngagementState>>(ADOPTION_ENGAGEMENT_KEY);
     return {
@@ -533,11 +543,15 @@ export function AdoptionApp() {
 
   // Render charts after dashboard mounts
   useEffect(() => {
-    if (!hasAutoOpenedCstWizardRef.current && isCstUnconfigured(store.orgProfile)) {
+    if (
+      !hasAutoOpenedCstWizardRef.current &&
+      !showOnboarding &&
+      isCstUnconfigured(store.orgProfile)
+    ) {
       hasAutoOpenedCstWizardRef.current = true;
       setShowCstSetupWizard(true);
     }
-  }, []);
+  }, [showOnboarding, store.orgProfile]);
 
   useEffect(() => {
     if (hasAutoOpenedSignInModalRef.current || showCstSetupWizard) {
@@ -723,7 +737,11 @@ export function AdoptionApp() {
       return prev.auditLog;
     }
 
-    const actor = resolveAuditActorName(prev.orgProfile, currentUserId, userSettings.name || '');
+    const actor = resolveAuditActorName(
+      prev.orgProfile,
+      currentUserIdRef.current,
+      userSettingsNameRef.current || ''
+    );
     const events = draftEvents.map((event) =>
       createAuditEvent({
         actor,
@@ -1393,7 +1411,7 @@ export function AdoptionApp() {
 
   const handleResetData = useCallback(() => {
     const confirmed = window.confirm(
-      'Warning: this will reset all assessment data (organisation profile, scores, actions, and history). If you are worried, please export your data first. Continue?'
+      'Warning: this will reset all assessment data (organisation profile, scores, actions, and history) and sign you out. If you are worried, please export your data first. Continue?'
     );
 
     if (!confirmed) {
@@ -1403,7 +1421,33 @@ export function AdoptionApp() {
     const resetStore = syncDerivedContent(initializeStore());
     setStore(resetStore);
     setView('dashboard');
-    announceStatus('Assessment data has been reset.');
+
+    setUserSettings(DEFAULT_USER_SETTINGS);
+    save(ADOPTION_USER_SETTINGS_KEY, DEFAULT_USER_SETTINGS);
+
+    setEngagement({ ...DEFAULT_ENGAGEMENT_STATE, level: calculateLevelFromXp(0), checkIns: {} });
+    save(ADOPTION_ENGAGEMENT_KEY, DEFAULT_ENGAGEMENT_STATE);
+
+    setDismissedReminderMonths({});
+    save(ADOPTION_REPORT_REMINDER_DISMISS_KEY, {});
+
+    setHasSeenOnboarding(false);
+    setShowOnboarding(true);
+    save(ADOPTION_ONBOARDING_SEEN_KEY, false);
+
+    setCurrentUserId('');
+    save(ADOPTION_CURRENT_USER_KEY, '');
+
+    hasAutoOpenedCstWizardRef.current = false;
+    setShowCstSetupWizard(false);
+    hasAutoOpenedSignInModalRef.current = false;
+    setShowSignInModal(false);
+
+    Object.keys(localStorage)
+      .filter((key) => key.startsWith('nhs-digital-adoption-page-intro-seen:'))
+      .forEach((key) => localStorage.removeItem(key));
+
+    announceStatus('Assessment data has been reset and you have been signed out.');
 
     if (shouldAutoCloseSidebar()) {
       setIsSidebarOpen(false);

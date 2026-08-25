@@ -101,7 +101,7 @@ describe('DailyCheckIn', () => {
     fireEvent.click(screen.getByRole('button', { name: 'View' }));
     expect(onActionView).toHaveBeenCalledWith('vision', 'Strategic Direction', 'action-1');
 
-    fireEvent.click(screen.getByTestId('cst-component-button-vision'));
+    fireEvent.click(screen.getByRole('button', { name: 'Open full assessment' }));
     expect(onComponentClick).toHaveBeenCalledWith('vision');
   });
 });

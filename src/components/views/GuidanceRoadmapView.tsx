@@ -192,7 +192,8 @@ export function GuidanceRoadmapView({
                   {component.label}
                 </div>
                 <div className={`mt-1 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-                  Target {component.target} · completes by Phase {component.phase}
+                  Target readiness: Level {component.target} · completes by Phase{' '}
+                  {component.phase}
                 </div>
               </div>
               <span
@@ -272,7 +273,8 @@ export function GuidanceRoadmapView({
                     {component.label}
                   </div>
                   <div className={`mt-1 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-                    Target score {component.target} · completes by Phase {component.phase}
+                    Target readiness: Level {component.target} · completes by Phase{' '}
+                    {component.phase}
                   </div>
                 </div>
 

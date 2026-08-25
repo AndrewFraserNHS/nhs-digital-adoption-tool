@@ -1,6 +1,7 @@
-import { JSX } from 'react';
+import { useState, type JSX } from 'react';
 import { OVERARCHING_PHASES } from '@data/cst';
 import { getComponentObjectiveCounts } from '@lib/adoptionMetrics';
+import { ACTION_STATUS_BADGE_STYLES } from '@lib/actionModel';
 import type { AssessmentComponent } from '@data/components';
 import type { AdoptionStore, DraftEntry } from '@lib/adoptionState';
 import { PHASE_NAMES } from '../../types/constants';
@@ -15,7 +16,7 @@ export interface ProgrammeHierarchyProps {
 
 /**
  * A programme-wide tree of every component grouped by phase, with lens scores and action/outcome
- * completion at a glance. Click a component to jump to its assessment.
+ * completion at a glance. Click a lens to expand its actions in place, or open the full assessment.
  */
 export function ProgrammeHierarchy({
   components,
@@ -24,6 +25,8 @@ export function ProgrammeHierarchy({
   onComponentClick,
   darkMode = false,
 }: ProgrammeHierarchyProps): JSX.Element {
+  const [expandedLens, setExpandedLens] = useState<string | null>(null);
+
   const componentsByPhase = components.reduce<Record<number, AssessmentComponent[]>>(
     (byPhase, component) => {
       byPhase[component.phase] = byPhase[component.phase] || [];
@@ -32,6 +35,11 @@ export function ProgrammeHierarchy({
     },
     {}
   );
+
+  const toggleLens = (componentId: string, lens: string) => {
+    const key = `${componentId}:${lens}`;
+    setExpandedLens((current) => (current === key ? null : key));
+  };
 
   return (
     <div
@@ -43,7 +51,8 @@ export function ProgrammeHierarchy({
       <p className={`mt-1 mb-4 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
         Your programme has {components.length} components, each viewed through one or more lenses.
         A component is a change topic you assess and track. A lens is the perspective used to
-        assess it (e.g. leadership, risk, capability). Click a component to jump to its assessment.
+        assess it (e.g. leadership, risk, capability). Click a lens to see its actions, or open the
+        full assessment.
       </p>
       <div className="space-y-5">
         {OVERARCHING_PHASES.filter((phase) => componentsByPhase[phase]?.length).map((phase) => (
@@ -68,43 +77,58 @@ export function ProgrammeHierarchy({
                 const objectiveCounts = getComponentObjectiveCounts(store, component.id, getEntry);
 
                 return (
-                  <button
+                  <div
                     key={component.id}
-                    type="button"
-                    data-testid={`cst-component-button-${component.id}`}
-                    onClick={() => onComponentClick(component.id)}
-                    className={`w-full text-left rounded-md border p-3 transition-colors ${darkMode ? 'border-slate-700 bg-slate-900 hover:border-blue-400 hover:bg-slate-800' : 'border-slate-200 hover:border-blue-300 hover:bg-blue-50/40'}`}
+                    data-testid={`cst-component-card-${component.id}`}
+                    className={`w-full rounded-md border p-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200'}`}
                   >
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <span className={`font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
                         {component.label}
                       </span>
-                      <span className={`text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-                        Target {component.target}
-                      </span>
+                      <div className="flex items-center gap-3">
+                        <span className={`text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
+                          Target readiness: Level {component.target}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => onComponentClick(component.id)}
+                          className={`text-xs font-semibold underline ${darkMode ? 'text-blue-300 hover:text-blue-200' : 'text-[#005eb8] hover:text-[#00417a]'}`}
+                        >
+                          Open full assessment
+                        </button>
+                      </div>
                     </div>
                     <div className="mt-2 flex flex-wrap gap-1.5">
                       {component.lenses.map((lens) => {
                         const entry = getEntry(component.id, lens);
+                        const isExpanded = expandedLens === `${component.id}:${lens}`;
                         return (
-                          <span
+                          <button
                             key={lens}
-                            className={`text-xs px-2 py-1 rounded-full border ${
-                              entry.score >= component.target
+                            type="button"
+                            onClick={() => toggleLens(component.id, lens)}
+                            aria-expanded={isExpanded}
+                            className={`text-xs px-2 py-1 rounded-full border transition-colors ${
+                              isExpanded
                                 ? darkMode
-                                  ? 'border-green-500/40 bg-green-500/15 text-green-200'
-                                  : 'bg-green-50 border-green-200 text-green-800'
-                                : entry.score > 0
+                                  ? 'border-blue-400 bg-blue-500/25 text-blue-100'
+                                  : 'border-blue-400 bg-blue-100 text-blue-900'
+                                : entry.score >= component.target
                                   ? darkMode
-                                    ? 'border-amber-500/40 bg-amber-500/15 text-amber-200'
-                                    : 'bg-amber-50 border-amber-200 text-amber-800'
-                                  : darkMode
-                                    ? 'border-slate-600 bg-slate-800 text-slate-300'
-                                    : 'bg-slate-100 border-slate-200 text-slate-600'
+                                    ? 'border-green-500/40 bg-green-500/15 text-green-200 hover:bg-green-500/25'
+                                    : 'bg-green-50 border-green-200 text-green-800 hover:bg-green-100'
+                                  : entry.score > 0
+                                    ? darkMode
+                                      ? 'border-amber-500/40 bg-amber-500/15 text-amber-200 hover:bg-amber-500/25'
+                                      : 'bg-amber-50 border-amber-200 text-amber-800 hover:bg-amber-100'
+                                    : darkMode
+                                      ? 'border-slate-600 bg-slate-800 text-slate-300 hover:bg-slate-700'
+                                      : 'bg-slate-100 border-slate-200 text-slate-600 hover:bg-slate-200'
                             }`}
                           >
                             {lens}: {entry.score}/{component.target}
-                          </span>
+                          </button>
                         );
                       })}
                     </div>
@@ -112,7 +136,72 @@ export function ProgrammeHierarchy({
                       Lens actions: {lensActionCounts.completed}/{lensActionCounts.total} complete
                       · Outcomes: {objectiveCounts.completed}/{objectiveCounts.total} complete
                     </p>
-                  </button>
+
+                    {component.lenses.map((lens) => {
+                      const isExpanded = expandedLens === `${component.id}:${lens}`;
+                      if (!isExpanded) {
+                        return null;
+                      }
+                      const entry = getEntry(component.id, lens);
+                      return (
+                        <div
+                          key={`${lens}-table`}
+                          className={`mt-3 overflow-x-auto rounded-md border ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}
+                        >
+                          {entry.actions.length ? (
+                            <table
+                              className={`min-w-full divide-y ${darkMode ? 'divide-slate-700 bg-slate-800' : 'divide-slate-200 bg-white'}`}
+                            >
+                              <thead className={darkMode ? 'bg-slate-900' : 'bg-slate-50'}>
+                                <tr>
+                                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                                    Action
+                                  </th>
+                                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                                    Status
+                                  </th>
+                                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                                    Owner
+                                  </th>
+                                </tr>
+                              </thead>
+                              <tbody
+                                className={`divide-y ${darkMode ? 'divide-slate-700' : 'divide-slate-100'}`}
+                              >
+                                {entry.actions.map((action) => (
+                                  <tr key={action.id}>
+                                    <td
+                                      className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+                                    >
+                                      {action.text || 'Untitled action'}
+                                    </td>
+                                    <td className="px-3 py-2">
+                                      <span
+                                        className={`inline-flex whitespace-nowrap rounded-full border px-2 py-1 text-xs font-semibold ${ACTION_STATUS_BADGE_STYLES[action.status]}`}
+                                      >
+                                        {action.status}
+                                      </span>
+                                    </td>
+                                    <td
+                                      className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+                                    >
+                                      {action.owner || 'Unassigned'}
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          ) : (
+                            <p
+                              className={`p-3 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
+                            >
+                              No actions yet for this lens.
+                            </p>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
                 );
               })}
             </div>

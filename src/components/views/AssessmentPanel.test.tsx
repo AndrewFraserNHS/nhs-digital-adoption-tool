@@ -598,4 +598,98 @@ describe('AssessmentPanel', () => {
     // assert
     expect(screen.queryByText('Guided workflow')).toBeNull();
   });
+
+  it('SHOULD show Delete Action only in edit mode and call onActionRemove', () => {
+    // arrange
+    const entry = createEntry();
+    const props = createProps({ entry });
+
+    // act 1: create mode has no Delete button
+    render(<AssessmentPanel {...props} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
+    fireEvent.click(screen.getByRole('button', { name: /Add Action/ }));
+
+    // assert 1
+    expect(screen.queryByRole('button', { name: 'Delete Action' })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+
+    // act 2: edit mode (via focusAction) has a Delete button
+    render(
+      <AssessmentPanel
+        {...props}
+        focusAction={{ lens: 'Strategic Direction', actionId: 'action-1' }}
+      />
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Delete Action' }));
+
+    // assert 2
+    expect(props.onActionRemove).toHaveBeenCalledWith('vision', 'Strategic Direction', 'action-1');
+  });
+
+  it('SHOULD add a custom outcome via the Add Outcome modal', () => {
+    // arrange
+    const props = createProps();
+
+    // act
+    render(<AssessmentPanel {...props} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Add Outcome' }));
+    fireEvent.change(screen.getByLabelText('Outcome description'), {
+      target: { value: 'Agree new outcome' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Save Outcome' }));
+
+    // assert
+    expect(props.onObjectivesUpdate).toHaveBeenCalledWith(
+      'vision',
+      expect.arrayContaining([
+        expect.objectContaining({
+          text: 'Agree new outcome',
+          id: expect.stringMatching(/^custom-outcome:/),
+        }),
+      ])
+    );
+  });
+
+  it('SHOULD show Edit/Delete for a custom outcome but not for an auto-generated one', () => {
+    // arrange
+    const props = createProps();
+    props.store.objectives = {
+      vision: [
+        {
+          id: 'auto:vision-1',
+          text: 'Auto-generated outcome',
+          owner: '',
+          timescale: '',
+          linkedActions: [],
+        },
+        {
+          id: 'custom-outcome:1',
+          text: 'My custom outcome',
+          owner: '',
+          timescale: '',
+          linkedActions: [],
+        },
+      ],
+    };
+
+    // act 1: auto-generated outcome has no Edit/Delete
+    render(<AssessmentPanel {...props} />);
+    fireEvent.click(screen.getByText('Auto-generated outcome').closest('tr')!);
+
+    // assert 1
+    expect(screen.queryByRole('button', { name: 'Edit' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Delete' })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }));
+
+    // act 2: custom outcome has Edit/Delete
+    fireEvent.click(screen.getByText('My custom outcome').closest('tr')!);
+
+    // assert 2
+    expect(screen.getByRole('button', { name: 'Edit' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Delete' }));
+    expect(props.onObjectivesUpdate).toHaveBeenCalledWith(
+      'vision',
+      expect.not.arrayContaining([expect.objectContaining({ id: 'custom-outcome:1' })])
+    );
+  });
 });

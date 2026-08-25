@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { CstSetupWizard } from './CstSetupWizard';
 import type { OrgProfile } from '@lib/adoptionState';
@@ -126,6 +126,68 @@ describe('CstSetupWizard', () => {
         teamMembers: [expect.objectContaining({ name: '', role: '' })],
       })
     );
+  });
+
+  it('SHOULD import a CST JSON file and jump to the team members step', async () => {
+    // arrange
+    const onProfileUpdate = vi.fn();
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    const file = new File(
+      [JSON.stringify({ orgProfile: { ...orgProfile, trustName: 'Imported Trust' } })],
+      'cst-export.json',
+      { type: 'application/json' }
+    );
+
+    // act
+    render(
+      <CstSetupWizard
+        open
+        orgProfile={orgProfile}
+        onProfileUpdate={onProfileUpdate}
+        onClose={vi.fn()}
+        onComplete={vi.fn()}
+        onCurrentUserChange={vi.fn()}
+      />
+    );
+    const input = document.querySelector('input[type="file"]') as HTMLInputElement;
+    fireEvent.change(input, { target: { files: [file] } });
+
+    // assert
+    await waitFor(() =>
+      expect(onProfileUpdate).toHaveBeenLastCalledWith(
+        expect.objectContaining({ trustName: 'Imported Trust' })
+      )
+    );
+    expect(screen.getByText('Team members')).toBeInTheDocument();
+  });
+
+  it('SHOULD alert and not update WHERE the imported file has no orgProfile', async () => {
+    // arrange
+    const onProfileUpdate = vi.fn();
+    const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {});
+    const file = new File([JSON.stringify({ notAProfile: true })], 'bad.json', {
+      type: 'application/json',
+    });
+
+    // act
+    render(
+      <CstSetupWizard
+        open
+        orgProfile={orgProfile}
+        onProfileUpdate={onProfileUpdate}
+        onClose={vi.fn()}
+        onComplete={vi.fn()}
+        onCurrentUserChange={vi.fn()}
+      />
+    );
+    const input = document.querySelector('input[type="file"]') as HTMLInputElement;
+    fireEvent.change(input, { target: { files: [file] } });
+
+    // assert
+    await waitFor(() =>
+      expect(alertSpy).toHaveBeenCalledWith('This file does not contain CST Personalisation data.')
+    );
+    expect(onProfileUpdate).not.toHaveBeenCalled();
   });
 
   it('SHOULD call onClose WHERE closed early', () => {

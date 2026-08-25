@@ -52,6 +52,25 @@ interface ObjectiveViewerState {
   objectiveId: string;
 }
 
+interface ObjectiveEditorState {
+  mode: 'create' | 'edit';
+  objectiveId?: string;
+  text: string;
+  owner: string;
+  timescale: string;
+  notes: string;
+  evidence: string;
+}
+
+/** Custom outcomes get this id prefix so they're never mistaken for auto-generated ones and are
+ * always preserved by the derived-content sync/clear logic (which only strips ids matching a
+ * component's own outcome prefix). */
+const CUSTOM_OUTCOME_PREFIX = 'custom-outcome:';
+
+function isCustomOutcome(objectiveId: string): boolean {
+  return objectiveId.startsWith(CUSTOM_OUTCOME_PREFIX);
+}
+
 export interface AssessmentPanelProps {
   store: AssessmentPanelStore;
   components: AssessmentComponent[];
@@ -864,6 +883,7 @@ export function AssessmentPanel({
   }, [showAdditionalGuidanceLinks, effectiveCoreLinks]);
   const [actionEditor, setActionEditor] = useState<ActionEditorState | null>(null);
   const [objectiveViewer, setObjectiveViewer] = useState<ObjectiveViewerState | null>(null);
+  const [objectiveEditor, setObjectiveEditor] = useState<ObjectiveEditorState | null>(null);
   const [guidedWorkflowDismissed, setGuidedWorkflowDismissed] = useState(false);
   const [showScoringSection, setShowScoringSection] = useState(true);
   const [showObjectivesSection, setShowObjectivesSection] = useState(true);
@@ -1121,6 +1141,75 @@ export function AssessmentPanel({
     },
     [store.objectives]
   );
+
+  const openCreateObjectiveModal = useCallback(() => {
+    setObjectiveEditor({ mode: 'create', text: '', owner: '', timescale: '', notes: '', evidence: '' });
+  }, []);
+
+  const openEditObjectiveModal = useCallback((objective: ComponentObjective) => {
+    setObjectiveEditor({
+      mode: 'edit',
+      objectiveId: objective.id,
+      text: objective.text,
+      owner: objective.owner,
+      timescale: objective.timescale,
+      notes: objective.notes || '',
+      evidence: objective.evidence || '',
+    });
+  }, []);
+
+  const closeObjectiveModal = () => {
+    setObjectiveEditor(null);
+  };
+
+  const saveObjectiveModal = () => {
+    if (!objectiveEditor) {
+      return;
+    }
+
+    if (!objectiveEditor.text.trim()) {
+      window.alert('Outcome description is required.');
+      return;
+    }
+
+    if (objectiveEditor.mode === 'create') {
+      const newObjective: ComponentObjective = {
+        id: `${CUSTOM_OUTCOME_PREFIX}${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        text: objectiveEditor.text.trim(),
+        owner: objectiveEditor.owner.trim(),
+        timescale: objectiveEditor.timescale.trim(),
+        notes: objectiveEditor.notes.trim(),
+        evidence: objectiveEditor.evidence.trim(),
+        linkedActions: [],
+      };
+      onObjectivesUpdate(component.id, [...objectives, newObjective]);
+    } else {
+      onObjectivesUpdate(
+        component.id,
+        objectives.map((objective) =>
+          objective.id === objectiveEditor.objectiveId
+            ? {
+                ...objective,
+                text: objectiveEditor.text.trim(),
+                owner: objectiveEditor.owner.trim(),
+                timescale: objectiveEditor.timescale.trim(),
+                notes: objectiveEditor.notes.trim(),
+                evidence: objectiveEditor.evidence.trim(),
+              }
+            : objective
+        )
+      );
+    }
+
+    setObjectiveEditor(null);
+  };
+
+  const deleteObjective = (objectiveId: string) => {
+    onObjectivesUpdate(
+      component.id,
+      objectives.filter((objective) => objective.id !== objectiveId)
+    );
+  };
 
   useEffect(() => {
     if (!focusAction) {
@@ -1572,13 +1661,22 @@ export function AssessmentPanel({
           <h3 className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
             Step 2: Review outcomes
           </h3>
-          <button
-            type="button"
-            onClick={() => setShowObjectivesSection((current) => !current)}
-            className={`${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100 hover:bg-slate-700' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'} rounded-md border px-2.5 py-1 text-xs font-semibold`}
-          >
-            {showObjectivesSection ? 'Hide' : 'Show'}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={openCreateObjectiveModal}
+              className={`${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100 hover:bg-slate-700' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'} rounded-md border px-2.5 py-1 text-xs font-semibold`}
+            >
+              Add Outcome
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowObjectivesSection((current) => !current)}
+              className={`${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100 hover:bg-slate-700' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'} rounded-md border px-2.5 py-1 text-xs font-semibold`}
+            >
+              {showObjectivesSection ? 'Hide' : 'Show'}
+            </button>
+          </div>
         </div>
         <p className={`text-xs mb-3 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
           Owned by this component as a whole. Status is derived automatically from the lens actions
@@ -2534,7 +2632,23 @@ export function AssessmentPanel({
               </div>
             </div>
 
-            <div className="mt-4 flex justify-end gap-2">
+            <div className="mt-4 flex items-center justify-end gap-2">
+              {actionEditor.mode === 'edit' && actionEditor.actionId ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onActionRemove(
+                      actionEditor.sourceComponentId,
+                      actionEditor.sourceLens,
+                      actionEditor.actionId as string
+                    );
+                    closeActionModal();
+                  }}
+                  className="mr-auto rounded-md border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-100"
+                >
+                  Delete Action
+                </button>
+              ) : null}
               <button
                 type="button"
                 onClick={closeActionModal}
@@ -2568,13 +2682,39 @@ export function AssessmentPanel({
               >
                 Outcome Details
               </h3>
-              <button
-                type="button"
-                onClick={() => setObjectiveViewer(null)}
-                className={`${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100 hover:bg-slate-700' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'} rounded-md border px-3 py-1.5 text-sm`}
-              >
-                Close
-              </button>
+              <div className="flex items-center gap-2">
+                {activeObjective && isCustomOutcome(activeObjective.id) ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        openEditObjectiveModal(activeObjective);
+                        setObjectiveViewer(null);
+                      }}
+                      className={`${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100 hover:bg-slate-700' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'} rounded-md border px-3 py-1.5 text-sm`}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        deleteObjective(activeObjective.id);
+                        setObjectiveViewer(null);
+                      }}
+                      className="rounded-md border border-red-200 bg-red-50 px-3 py-1.5 text-sm font-semibold text-red-700 hover:bg-red-100"
+                    >
+                      Delete
+                    </button>
+                  </>
+                ) : null}
+                <button
+                  type="button"
+                  onClick={() => setObjectiveViewer(null)}
+                  className={`${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100 hover:bg-slate-700' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'} rounded-md border px-3 py-1.5 text-sm`}
+                >
+                  Close
+                </button>
+              </div>
             </div>
 
             <div className="mt-4 space-y-4">
@@ -2698,6 +2838,123 @@ export function AssessmentPanel({
                   </p>
                 )}
               </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {objectiveEditor ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 p-4">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label={objectiveEditor.mode === 'create' ? 'Add Outcome' : 'Edit Outcome'}
+            className={`w-full max-w-lg max-h-[calc(100vh-2rem)] overflow-y-auto rounded-xl border p-6 shadow-2xl ${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'}`}
+          >
+            <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>
+              {objectiveEditor.mode === 'create' ? 'Add Outcome' : 'Edit Outcome'}
+            </h3>
+
+            <div className="mt-4 space-y-3">
+              <div>
+                <label
+                  htmlFor="objective-editor-text"
+                  className={`block text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}
+                >
+                  Outcome description
+                </label>
+                <textarea
+                  id="objective-editor-text"
+                  value={objectiveEditor.text}
+                  onChange={(event) =>
+                    setObjectiveEditor({ ...objectiveEditor, text: event.target.value })
+                  }
+                  className={`mt-1 w-full rounded-md border p-2 text-sm h-20 ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="objective-editor-owner"
+                  className={`block text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}
+                >
+                  Owner
+                </label>
+                <input
+                  id="objective-editor-owner"
+                  type="text"
+                  value={objectiveEditor.owner}
+                  onChange={(event) =>
+                    setObjectiveEditor({ ...objectiveEditor, owner: event.target.value })
+                  }
+                  className={`mt-1 w-full rounded-md border p-2 text-sm ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="objective-editor-timescale"
+                  className={`block text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}
+                >
+                  Timescale
+                </label>
+                <input
+                  id="objective-editor-timescale"
+                  type="text"
+                  value={objectiveEditor.timescale}
+                  onChange={(event) =>
+                    setObjectiveEditor({ ...objectiveEditor, timescale: event.target.value })
+                  }
+                  className={`mt-1 w-full rounded-md border p-2 text-sm ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="objective-editor-notes"
+                  className={`block text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}
+                >
+                  Notes
+                </label>
+                <textarea
+                  id="objective-editor-notes"
+                  value={objectiveEditor.notes}
+                  onChange={(event) =>
+                    setObjectiveEditor({ ...objectiveEditor, notes: event.target.value })
+                  }
+                  className={`mt-1 w-full rounded-md border p-2 text-sm h-16 ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="objective-editor-evidence"
+                  className={`block text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}
+                >
+                  Evidence
+                </label>
+                <textarea
+                  id="objective-editor-evidence"
+                  value={objectiveEditor.evidence}
+                  onChange={(event) =>
+                    setObjectiveEditor({ ...objectiveEditor, evidence: event.target.value })
+                  }
+                  className={`mt-1 w-full rounded-md border p-2 text-sm h-16 ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
+                />
+              </div>
+            </div>
+
+            <div className="mt-4 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={closeObjectiveModal}
+                className={`${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100 hover:bg-slate-700' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'} rounded-md border px-4 py-2 text-sm font-semibold`}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={saveObjectiveModal}
+                className="rounded-md bg-[#005eb8] px-4 py-2 text-sm font-semibold text-white shadow-[0_3px_0_#003087] hover:bg-[#00417a] focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2"
+              >
+                Save Outcome
+              </button>
             </div>
           </div>
         </div>

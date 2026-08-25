@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState, type JSX } from 'react';
-import type { OrgProfile, TeamMember } from '@lib/adoptionState';
+import { useCallback, useEffect, useRef, useState, type JSX } from 'react';
+import { normalizeOrgProfile, type OrgProfile, type TeamMember } from '@lib/adoptionState';
 import { validateOrgProfile, useFieldError } from '@lib/adoptionValidator';
 import { CST_TYPE_OPTIONS, PATHWAY_OPTIONS, type CstPathwayKey, type CstType } from '@data/cst';
 import { PathwayContentNotice } from '@components/common/PathwayContentNotice';
@@ -97,6 +97,47 @@ export function CstSetupWizard({
     [draft, updateProfile, currentUserId, onCurrentUserChange]
   );
 
+  const cstImportInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImportCstClick = useCallback(() => {
+    cstImportInputRef.current?.click();
+  }, []);
+
+  const handleImportCstFile = useCallback(
+    async (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      event.target.value = '';
+      if (!file) {
+        return;
+      }
+      try {
+        const text = await file.text();
+        const parsed = JSON.parse(text) as { orgProfile?: unknown };
+        if (!parsed.orgProfile || typeof parsed.orgProfile !== 'object') {
+          window.alert('This file does not contain CST Personalisation data.');
+          return;
+        }
+        const nextProfile = normalizeOrgProfile(parsed.orgProfile as Partial<OrgProfile>);
+        const validation = validateOrgProfile(nextProfile);
+        if (
+          !window.confirm(
+            'Import this CST Personalisation file? This replaces your current organisation profile, pathway/timeline, toolkit links, further reading, core links and team members.' +
+              (validation.errors.length
+                ? `\n\nNote: the imported data has ${validation.errors.length} validation warning(s) you can fix after importing.`
+                : '')
+          )
+        ) {
+          return;
+        }
+        updateProfile(nextProfile);
+        setStepIndex(2);
+      } catch (_error) {
+        window.alert('Unable to read this file. Please choose a valid CST Personalisation export.');
+      }
+    },
+    [updateProfile]
+  );
+
   if (!open) {
     return null;
   }
@@ -113,6 +154,24 @@ export function CstSetupWizard({
         "Start with the basics: who this programme belongs to. This shows up on exports, highlight reports and the audit log, so people reviewing this CST later know whose it is.",
       body: (
         <div className="space-y-4">
+          <div
+            className={`flex flex-wrap items-center justify-between gap-3 rounded-md border p-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
+          >
+            <p className={`text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+              Already have a CST Personalisation export? Import it instead of filling this in by
+              hand.
+            </p>
+            <button type="button" onClick={handleImportCstClick} className={nhsButtonSecondary}>
+              Import CST JSON
+            </button>
+            <input
+              ref={cstImportInputRef}
+              type="file"
+              accept="application/json"
+              className="hidden"
+              onChange={handleImportCstFile}
+            />
+          </div>
           <div>
             <label className={labelClass} htmlFor="wizard-trust-name">
               Organisation Name

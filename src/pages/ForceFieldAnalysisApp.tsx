@@ -2,6 +2,8 @@ import { load, save } from '@lib/storage';
 import { downloadFile } from '@lib/utils';
 import { type ChangeEvent, JSX, useEffect, useRef, useState } from 'react';
 
+import { nhsButtonSecondary } from '../styles/nhsTheme';
+
 type ForceSide = 'driving' | 'restraining';
 type ForceActionStatus = 'Planned' | 'In Progress' | 'Blocked' | 'Completed';
 
@@ -743,14 +745,14 @@ export default function ForceFieldAnalysisApp({
         <button
           type="button"
           onClick={handleImportClick}
-          className="text-sm px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-md font-medium transition-colors"
+          className={nhsButtonSecondary}
         >
           Import JSON
         </button>
         <button
           type="button"
           onClick={handleExport}
-          className="text-sm px-4 py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-md font-medium transition-colors"
+          className={nhsButtonSecondary}
         >
           Export JSON
         </button>

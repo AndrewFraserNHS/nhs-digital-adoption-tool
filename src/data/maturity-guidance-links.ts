@@ -10,6 +10,8 @@ export interface GuidanceLink {
   url: string;
   type: GuidanceLinkType;
   description?: string;
+  /** Extra text (beyond the label) that also auto-links to this URL in action/summary bodies. Only meaningful on org-owned entries (e.g. Core Links) - shared default guidance links carry aliases via PerLinkOverride instead. */
+  matchAliases?: string[];
 }
 
 export const TOOLKIT_BASE_DEFAULTS = {
@@ -27,6 +29,8 @@ export interface PerLinkOverride {
   url?: string;
   /** what to fall back to when no override url is set */
   fallback: 'base' | 'default';
+  /** Extra text (beyond the link's default label) that also auto-links to this link in action/summary bodies. */
+  matchAliases?: string[];
 }
 
 export interface LinkOverrides {

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type JSX } from 'react';
 import { normalizeOrgProfile, OrgProfile, type TeamMember } from '@lib/adoptionState';
-import { nhsButtonSecondary } from '../../styles/nhsTheme';
+import { nhsButtonPrimary, nhsButtonSecondary } from '../../styles/nhsTheme';
+import { buildLabelVariants } from '@components/views/AssessmentPanel';
 import { validateOrgProfile, useFieldError } from '@lib/adoptionValidator';
 import { downloadFile } from '@lib/utils';
 import { PageHelpButton, PageIntroModal, usePageIntroSeen } from '@components/onboarding/PageIntroModal';
@@ -33,6 +34,295 @@ import { TOOLKIT_OPTIONS, type ToolkitOptionKey } from '@data/toolkits';
 
 function sanitizeFileNamePart(value: string): string {
   return value.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'export';
+}
+
+type LinkOverrideStatus = 'default' | 'custom' | 'base';
+
+function getLinkOverrideStatus(perLink: PerLinkOverride | undefined): LinkOverrideStatus {
+  if (perLink?.url?.trim()) {
+    return 'custom';
+  }
+  if ((perLink?.fallback ?? 'default') === 'base') {
+    return 'base';
+  }
+  return 'default';
+}
+
+function AliasEditor({
+  aliases,
+  onChange,
+  darkMode,
+}: {
+  aliases: string[];
+  onChange: (aliases: string[]) => void;
+  darkMode?: boolean;
+}): JSX.Element {
+  const [draft, setDraft] = useState('');
+
+  const addAlias = () => {
+    const trimmed = draft.trim();
+    if (!trimmed || aliases.some((alias) => alias.toLowerCase() === trimmed.toLowerCase())) {
+      setDraft('');
+      return;
+    }
+    onChange([...aliases, trimmed]);
+    setDraft('');
+  };
+
+  return (
+    <div>
+      <div className="flex flex-wrap gap-1.5">
+        {aliases.map((alias) => (
+          <span
+            key={alias}
+            className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-200' : 'border-slate-300 bg-slate-100 text-slate-700'}`}
+          >
+            {alias}
+            <button
+              type="button"
+              onClick={() => onChange(aliases.filter((a) => a !== alias))}
+              aria-label={`Remove "${alias}"`}
+              className={darkMode ? 'text-slate-400 hover:text-slate-100' : 'text-slate-500 hover:text-slate-800'}
+            >
+              ×
+            </button>
+          </span>
+        ))}
+        {!aliases.length && (
+          <span className={`text-xs ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>
+            No extra matching text added yet.
+          </span>
+        )}
+      </div>
+      <div className="mt-2 flex gap-2">
+        <input
+          type="text"
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              addAlias();
+            }
+          }}
+          placeholder="Add text this link should also match..."
+          className={`flex-1 min-w-0 rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
+        />
+        <button type="button" onClick={addAlias} className={nhsButtonSecondary}>
+          Add
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function LinkOverrideModal({
+  link,
+  perLink,
+  baseOverrideUrl,
+  onSave,
+  onClose,
+  darkMode,
+}: {
+  link: GuidanceLink;
+  perLink: PerLinkOverride | undefined;
+  baseOverrideUrl: string | undefined;
+  onSave: (next: PerLinkOverride | undefined) => void;
+  onClose: () => void;
+  darkMode?: boolean;
+}): JSX.Element {
+  const [source, setSource] = useState<LinkOverrideStatus>(getLinkOverrideStatus(perLink));
+  const [customUrl, setCustomUrl] = useState(perLink?.url ?? '');
+  const [aliases, setAliases] = useState<string[]>(perLink?.matchAliases ?? []);
+  const effectiveBaseUrl = baseOverrideUrl?.trim() || TOOLKIT_BASE_DEFAULTS.url;
+  const autoVariant = buildLabelVariants(link.label).find((variant) => variant !== link.label);
+
+  const sourceOptions: { value: LinkOverrideStatus; label: string; url: string }[] = [
+    { value: 'default', label: 'Use Default', url: link.url },
+    { value: 'base', label: 'Use Base', url: effectiveBaseUrl },
+    { value: 'custom', label: 'Custom URL', url: customUrl },
+  ];
+
+  const handleSave = () => {
+    if (source === 'custom' && !customUrl.trim()) {
+      window.alert('Enter a custom URL, or choose Default or Base instead.');
+      return;
+    }
+    const next: PerLinkOverride = {
+      fallback: source === 'base' ? 'base' : 'default',
+      url: source === 'custom' ? customUrl.trim() : undefined,
+      matchAliases: aliases.length ? aliases : undefined,
+    };
+    onSave(source === 'default' && !aliases.length ? undefined : next);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 p-4">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={`Edit ${link.label} link`}
+        className={`w-full max-w-lg max-h-[calc(100vh-2rem)] overflow-y-auto rounded-xl border p-6 shadow-2xl ${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'}`}
+      >
+        <div className="flex items-start justify-between gap-3">
+          <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>
+            {link.label}
+          </h3>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close"
+            className={`shrink-0 rounded-md border px-2 py-1 text-sm ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-50'}`}
+          >
+            ×
+          </button>
+        </div>
+
+        <div className="mt-4 space-y-2">
+          {sourceOptions.map((option) => (
+            <label
+              key={option.value}
+              className={`flex items-start gap-2 rounded-md border p-2.5 text-sm ${
+                source === option.value
+                  ? darkMode
+                    ? 'border-blue-400 bg-blue-500/10'
+                    : 'border-blue-400 bg-blue-50'
+                  : darkMode
+                    ? 'border-slate-700'
+                    : 'border-slate-200'
+              }`}
+            >
+              <input
+                type="radio"
+                name={`link-source-${link.key}`}
+                checked={source === option.value}
+                onChange={() => setSource(option.value)}
+                className="mt-1"
+              />
+              <span className="flex-1">
+                <span className={`block font-medium ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
+                  {option.label}
+                </span>
+                {option.value === 'custom' && source === 'custom' ? (
+                  <input
+                    type="url"
+                    value={customUrl}
+                    onChange={(e) => setCustomUrl(e.target.value)}
+                    placeholder="https://..."
+                    className={`mt-1 w-full rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
+                  />
+                ) : (
+                  <span
+                    className={`block truncate text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
+                  >
+                    {option.url || 'No URL set yet.'}
+                  </span>
+                )}
+              </span>
+            </label>
+          ))}
+        </div>
+
+        <div className="mt-4">
+          <p
+            className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
+          >
+            Match text
+          </p>
+          <p className={`mt-1 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
+            This link is automatically matched in action/summary text. Add extra text below if it
+            should match on other words too.
+          </p>
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            <span
+              className={`rounded-full border px-2 py-0.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-200' : 'border-slate-300 bg-slate-100 text-slate-700'}`}
+            >
+              {link.label} <span className="opacity-60">(label)</span>
+            </span>
+            {autoVariant && (
+              <span
+                className={`rounded-full border px-2 py-0.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-200' : 'border-slate-300 bg-slate-100 text-slate-700'}`}
+              >
+                {autoVariant} <span className="opacity-60">(auto-detected)</span>
+              </span>
+            )}
+          </div>
+          <div className="mt-2">
+            <AliasEditor aliases={aliases} onChange={setAliases} darkMode={darkMode} />
+          </div>
+        </div>
+
+        <div className="mt-6 flex justify-end gap-2">
+          <button type="button" onClick={onClose} className={nhsButtonSecondary}>
+            Cancel
+          </button>
+          <button type="button" onClick={handleSave} className={nhsButtonPrimary}>
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MatchAliasesModal({
+  title,
+  aliases,
+  onSave,
+  onClose,
+  darkMode,
+}: {
+  title: string;
+  aliases: string[];
+  onSave: (aliases: string[]) => void;
+  onClose: () => void;
+  darkMode?: boolean;
+}): JSX.Element {
+  const [draftAliases, setDraftAliases] = useState<string[]>(aliases);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 p-4">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={`Match text for ${title}`}
+        className={`w-full max-w-lg max-h-[calc(100vh-2rem)] overflow-y-auto rounded-xl border p-6 shadow-2xl ${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'}`}
+      >
+        <div className="flex items-start justify-between gap-3">
+          <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>
+            {title} - match text
+          </h3>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close"
+            className={`shrink-0 rounded-md border px-2 py-1 text-sm ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-50'}`}
+          >
+            ×
+          </button>
+        </div>
+        <p className={`mt-2 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
+          This link is automatically matched by its name. Add extra text below if it should match
+          on other words too.
+        </p>
+        <div className="mt-3">
+          <AliasEditor aliases={draftAliases} onChange={setDraftAliases} darkMode={darkMode} />
+        </div>
+        <div className="mt-6 flex justify-end gap-2">
+          <button type="button" onClick={onClose} className={nhsButtonSecondary}>
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={() => onSave(draftAliases)}
+            className={nhsButtonPrimary}
+          >
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 interface ComponentGuidanceLinks {
@@ -86,7 +376,8 @@ export function ProjectDetailsPage({
   showExternalLinksSection = false,
 }: ProjectDetailsPageProps): JSX.Element {
   const [profile, setProfile] = useState<OrgProfile>(orgProfile);
-  const [customisingLinks, setCustomisingLinks] = useState<Record<string, boolean>>({});
+  const [editingLink, setEditingLink] = useState<GuidanceLink | null>(null);
+  const [editingCoreLinkAliases, setEditingCoreLinkAliases] = useState<GuidanceLink | null>(null);
   const cstImportInputRef = useRef<HTMLInputElement>(null);
   const pageIntro = usePageIntroSeen('cst-personalisation');
   const profileValidation = validateOrgProfile(profile);
@@ -266,6 +557,22 @@ export function ProjectDetailsPage({
         ...profile,
         coreLinks: effectiveCoreLinks.map((link) =>
           link.key === key ? { ...link, [field]: value } : link
+        ),
+      };
+      setProfile(updated);
+      onProfileUpdate(updated);
+    },
+    [profile, effectiveCoreLinks, onProfileUpdate]
+  );
+
+  const handleUpdateCoreLinkAliases = useCallback(
+    (key: string, matchAliases: string[]) => {
+      const updated = {
+        ...profile,
+        coreLinks: effectiveCoreLinks.map((link) =>
+          link.key === key
+            ? { ...link, matchAliases: matchAliases.length ? matchAliases : undefined }
+            : link
         ),
       };
       setProfile(updated);
@@ -930,7 +1237,7 @@ export function ProjectDetailsPage({
               {effectiveCoreLinks.map((link) => (
                 <div
                   key={link.key}
-                  className="grid grid-cols-1 md:grid-cols-[1fr,2fr,auto] gap-2 items-center"
+                  className="grid grid-cols-1 md:grid-cols-[1fr,2fr,auto,auto] gap-2 items-center"
                 >
                   <input
                     type="text"
@@ -946,6 +1253,14 @@ export function ProjectDetailsPage({
                     onChange={(e) => handleUpdateCoreLink(link.key, 'url', e.target.value)}
                     className={`rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
                   />
+                  <button
+                    type="button"
+                    onClick={() => setEditingCoreLinkAliases(link)}
+                    aria-label={`Edit match text for ${link.label || 'this core link'}`}
+                    className={`shrink-0 rounded border px-1.5 py-1.5 text-xs ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-100'}`}
+                  >
+                    ✎
+                  </button>
                   <button
                     type="button"
                     onClick={() => handleRemoveCoreLink(link.key)}
@@ -1107,113 +1422,62 @@ export function ProjectDetailsPage({
                               {sect}
                             </p>
                             {links.map((link) => {
-                              const perLink: PerLinkOverride = profile.linkOverrides?.links?.[
-                                link.key
-                              ] ?? { fallback: 'default' };
+                              const perLink = profile.linkOverrides?.links?.[link.key];
                               const resolved = resolveEffectiveLink(link, profile.linkOverrides);
-                              const isCustomising = Boolean(customisingLinks[link.key]);
+                              const status = getLinkOverrideStatus(perLink);
+                              const statusStyles: Record<LinkOverrideStatus, string> = {
+                                default: darkMode
+                                  ? 'border-amber-500/40 bg-amber-500/15 text-amber-200'
+                                  : 'bg-amber-50 border-amber-200 text-amber-800',
+                                custom: darkMode
+                                  ? 'border-green-500/40 bg-green-500/15 text-green-200'
+                                  : 'bg-green-50 border-green-200 text-green-800',
+                                base: darkMode
+                                  ? 'border-red-500/30 bg-red-500/10 text-red-200'
+                                  : 'bg-red-50 border-red-100 text-red-700',
+                              };
+                              const statusLabel: Record<LinkOverrideStatus, string> = {
+                                default: 'Default',
+                                custom: 'Custom',
+                                base: 'Base',
+                              };
                               return (
-                                <div key={link.key} className="grid grid-cols-1 gap-1.5">
-                                  <span className="flex items-center gap-2">
-                                    <span
-                                      className={`text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}
-                                    >
-                                      {link.label}
-                                    </span>
-                                    <span
-                                      className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
-                                        link.type === 'core'
-                                          ? darkMode
-                                            ? 'bg-blue-500/20 text-blue-300'
-                                            : 'bg-blue-100 text-blue-700'
-                                          : darkMode
-                                            ? 'bg-slate-700 text-slate-300'
-                                            : 'bg-slate-200 text-slate-600'
-                                      }`}
-                                    >
-                                      {link.type === 'core' ? 'Core' : 'Additional'}
-                                    </span>
+                                <div key={link.key} className="flex items-center gap-2">
+                                  <span
+                                    className={`text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}
+                                  >
+                                    {link.label}
                                   </span>
-                                  <div className="flex items-center gap-2">
-                                    <a
-                                      href={resolved.url}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className={`text-xs truncate underline ${darkMode ? 'text-blue-300 hover:text-blue-200' : 'text-[#005eb8] hover:text-[#00417a]'}`}
-                                      title="Opens the link this will actually resolve to"
-                                    >
-                                      {resolved.url}
-                                    </a>
-                                    <button
-                                      type="button"
-                                      onClick={() =>
-                                        setCustomisingLinks((current) => ({
-                                          ...current,
-                                          [link.key]: !current[link.key],
-                                        }))
-                                      }
-                                      className={`shrink-0 text-xs font-medium underline ${darkMode ? 'text-slate-300 hover:text-slate-100' : 'text-slate-600 hover:text-slate-800'}`}
-                                    >
-                                      {isCustomising ? 'Hide' : 'Customise'}
-                                    </button>
-                                  </div>
-                                  {isCustomising && (
-                                    <div className="flex gap-2">
-                                      <input
-                                        type="url"
-                                        placeholder="Override URL (leave blank to use fallback)"
-                                        value={perLink.url ?? ''}
-                                        onChange={(e) => {
-                                          const val = e.target.value || undefined;
-                                          handleLinkOverridesChange({
-                                            ...profile.linkOverrides,
-                                            links: {
-                                              ...profile.linkOverrides?.links,
-                                              [link.key]: { ...perLink, url: val },
-                                            },
-                                          });
-                                        }}
-                                        className={`flex-1 min-w-0 rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
-                                      />
-                                      {!perLink.url && (
-                                        <select
-                                          value={perLink.fallback ?? 'default'}
-                                          onChange={(e) =>
-                                            handleLinkOverridesChange({
-                                              ...profile.linkOverrides,
-                                              links: {
-                                                ...profile.linkOverrides?.links,
-                                                [link.key]: {
-                                                  ...perLink,
-                                                  fallback: e.target.value as 'base' | 'default',
-                                                },
-                                              },
-                                            })
-                                          }
-                                          className={`rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
-                                        >
-                                          <option value="default">Fallback: Default</option>
-                                          <option value="base">Fallback: Base</option>
-                                        </select>
-                                      )}
-                                      {perLink.url && (
-                                        <button
-                                          type="button"
-                                          onClick={() => {
-                                            const next = { ...profile.linkOverrides?.links };
-                                            delete next[link.key];
-                                            handleLinkOverridesChange({
-                                              ...profile.linkOverrides,
-                                              links: next,
-                                            });
-                                          }}
-                                          className={`shrink-0 rounded border px-2 py-1.5 text-xs font-medium ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-50'}`}
-                                        >
-                                          Clear
-                                        </button>
-                                      )}
-                                    </div>
-                                  )}
+                                  <span
+                                    className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
+                                      link.type === 'core'
+                                        ? darkMode
+                                          ? 'bg-blue-500/20 text-blue-300'
+                                          : 'bg-blue-100 text-blue-700'
+                                        : darkMode
+                                          ? 'bg-slate-700 text-slate-300'
+                                          : 'bg-slate-200 text-slate-600'
+                                    }`}
+                                  >
+                                    {link.type === 'core' ? 'Core' : 'Additional'}
+                                  </span>
+                                  <a
+                                    href={resolved.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    title={resolved.url}
+                                    className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${statusStyles[status]}`}
+                                  >
+                                    {statusLabel[status]}
+                                  </a>
+                                  <button
+                                    type="button"
+                                    onClick={() => setEditingLink(link)}
+                                    aria-label={`Edit ${link.label} link`}
+                                    className={`shrink-0 rounded-md border px-1.5 py-0.5 text-xs ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-100'}`}
+                                  >
+                                    ✎
+                                  </button>
                                 </div>
                               );
                             })}
@@ -1234,6 +1498,39 @@ export function ProjectDetailsPage({
           )}
         </div>
       </div>
+
+      {editingLink && (
+        <LinkOverrideModal
+          link={editingLink}
+          perLink={profile.linkOverrides?.links?.[editingLink.key]}
+          baseOverrideUrl={profile.linkOverrides?.base?.url}
+          onSave={(next) => {
+            const links = { ...profile.linkOverrides?.links };
+            if (next) {
+              links[editingLink.key] = next;
+            } else {
+              delete links[editingLink.key];
+            }
+            handleLinkOverridesChange({ ...profile.linkOverrides, links });
+            setEditingLink(null);
+          }}
+          onClose={() => setEditingLink(null)}
+          darkMode={darkMode}
+        />
+      )}
+
+      {editingCoreLinkAliases && (
+        <MatchAliasesModal
+          title={editingCoreLinkAliases.label || 'Core link'}
+          aliases={editingCoreLinkAliases.matchAliases || []}
+          onSave={(aliases) => {
+            handleUpdateCoreLinkAliases(editingCoreLinkAliases.key, aliases);
+            setEditingCoreLinkAliases(null);
+          }}
+          onClose={() => setEditingCoreLinkAliases(null)}
+          darkMode={darkMode}
+        />
+      )}
 
       {pendingPathwayChange && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 p-4">

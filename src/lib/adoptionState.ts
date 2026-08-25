@@ -5,7 +5,7 @@
 
 import { type CstPathwayKey, type CstProfile, DEFAULT_CST_PROFILE } from '@data/cst';
 import type { GuidanceLink, LinkOverrides } from '@data/maturity-guidance-links';
-import type { ToolLinkEntry } from '@data/toolLinks';
+import { IN_APP_TOOLS, DEFAULT_TOOL_LINK_TEXT, type ToolLinkEntry } from '@data/toolLinks';
 
 import type { ActionType, UnifiedActionStatus } from './actionModel';
 import type { AuditEvent } from './auditLog';
@@ -212,7 +212,13 @@ export function normalizeOrgProfile(profile?: Partial<OrgProfile>): OrgProfile {
     linkOverrides: profile?.linkOverrides,
     componentFurtherReading: profile?.componentFurtherReading,
     coreLinks: profile?.coreLinks,
-    toolLinks: profile?.toolLinks,
+    toolLinks:
+      profile?.toolLinks ??
+      IN_APP_TOOLS.map((tool) => ({
+        key: `tool-default-${tool}`,
+        tool,
+        matchText: DEFAULT_TOOL_LINK_TEXT[tool].matchText,
+      })),
     externalLinksInitiated: profile?.externalLinksInitiated,
     teamMembers: profile?.teamMembers || [],
     cstId: profile?.cstId,

@@ -291,7 +291,7 @@ describe('ProjectDetailsPage', () => {
     expect(onProfileUpdate).toHaveBeenLastCalledWith(expect.objectContaining({ toolLinks: [] }));
   });
 
-  it('SHOULD show a "General Toolkit" badge for an unmodified component link, and no "Custom" badge yet', () => {
+  it('SHOULD show a "Default Toolkit Link" badge for an unmodified component link, and no "Custom" badge yet', () => {
     // act
     render(
       <ProjectDetailsPage
@@ -306,7 +306,7 @@ describe('ProjectDetailsPage', () => {
     );
 
     // assert
-    expect(screen.getAllByRole('link', { name: 'General Toolkit' }).length).toBeGreaterThan(0);
+    expect(screen.getAllByRole('link', { name: 'Default Toolkit Link' }).length).toBeGreaterThan(0);
     expect(screen.queryByRole('link', { name: 'Custom' })).not.toBeInTheDocument();
   });
 

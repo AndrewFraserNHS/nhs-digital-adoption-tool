@@ -138,7 +138,7 @@ function LinkOverrideModal({
   const autoVariant = buildLabelVariants(link.label).find((variant) => variant !== link.label);
 
   const sourceOptions: { value: LinkOverrideStatus; label: string; url: string }[] = [
-    { value: 'default', label: 'General Toolkit', url: link.url },
+    { value: 'default', label: 'Default Toolkit Link', url: link.url },
     { value: 'base', label: 'Project Specific Homepage', url: effectiveBaseUrl },
     { value: 'custom', label: 'Custom URL', url: customUrl },
   ];
@@ -1114,7 +1114,7 @@ export function ProjectDetailsPage({
               Project Specific Homepage: <span className="font-medium">{TOOLKIT_BASE_DEFAULTS.label}</span> ({TOOLKIT_BASE_DEFAULTS.url})
             </p>
             <p className="mt-1">
-              General Toolkit: the original NHS Future link defined per guidance item.
+              Default Toolkit Link: the original NHS Future link defined per guidance item.
             </p>
           </div>
 
@@ -1350,7 +1350,7 @@ export function ProjectDetailsPage({
             <p className={`text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
               Set the "Further Reading" link shown on each component's overview panel, and override
               any of its individual guidance links. Each link shows whether it currently points at
-              the <strong>General Toolkit</strong> (the original NHS Future link),{' '}
+              the <strong>Default Toolkit Link</strong> (the original NHS Future link),{' '}
               <strong>Project Specific Homepage</strong> (your organisation's override above), or a{' '}
               <strong>Custom</strong> URL you've set - click the pencil to change it. Additional
               links can be hidden from Settings if you only want the essentials.
@@ -1447,7 +1447,7 @@ export function ProjectDetailsPage({
                                   : 'bg-red-50 border-red-100 text-red-700',
                               };
                               const statusLabel: Record<LinkOverrideStatus, string> = {
-                                default: 'General Toolkit',
+                                default: 'Default Toolkit Link',
                                 custom: 'Custom',
                                 base: 'Project Specific Homepage',
                               };
@@ -1456,6 +1456,7 @@ export function ProjectDetailsPage({
                                   <span
                                     className={`text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}
                                   >
+                                    {link.type !== 'core' ? '(Optional) ' : ''}
                                     {link.label}
                                   </span>
                                   <div className="flex items-center gap-2">

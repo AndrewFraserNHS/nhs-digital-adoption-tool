@@ -278,7 +278,7 @@ describe('AdoptionDashboard', () => {
     expect(screen.queryByText('Phase Progress (RAG)')).not.toBeInTheDocument();
 
     // act 2
-    fireEvent.click(screen.getByRole('button', { name: 'Set up your Project Setup' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Set up your Project' }));
 
     // assert 2
     expect(onNavigate).toHaveBeenCalledWith('project-details');

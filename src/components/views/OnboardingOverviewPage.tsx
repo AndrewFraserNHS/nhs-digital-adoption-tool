@@ -67,7 +67,7 @@ export function OnboardingOverviewPage({
                       onClick={onNavigateToProjectDetails}
                       className="rounded-md border border-blue-300 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-800 hover:bg-blue-100"
                     >
-                      Set up your CST Personalisation
+                      Set up your Project Setup
                     </button>
                   ) : null}
                   {onNavigateToGuide ? (

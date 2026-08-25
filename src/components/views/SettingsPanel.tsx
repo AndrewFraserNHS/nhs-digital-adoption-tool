@@ -13,7 +13,7 @@ export interface AdoptionUserSettings {
   manualPhaseFocus?: number;
   hideGuidedWorkflow?: boolean;
   showAdditionalGuidanceLinks?: boolean;
-  /** Per-device override: force-show the CST Personalisation page's External Links section even after it's marked initiated. */
+  /** Per-device override: force-show the Project Setup page's External Links section even after it's marked initiated. */
   showExternalLinksSection?: boolean;
 }
 
@@ -22,7 +22,6 @@ export interface SettingsPanelProps {
   onUserSettingsUpdate: (settings: AdoptionUserSettings) => void;
   onLoadExampleData: (profile: 'red' | 'amber' | 'green') => void;
   onResetData: () => void;
-  canUseCustomTheme?: boolean;
   darkMode?: boolean;
 }
 
@@ -40,7 +39,6 @@ export function SettingsPanel({
   onUserSettingsUpdate,
   onLoadExampleData,
   onResetData,
-  canUseCustomTheme = true,
   darkMode = false,
 }: SettingsPanelProps): JSX.Element {
   const [settings, setSettings] = useState<AdoptionUserSettings>(userSettings);
@@ -143,7 +141,7 @@ export function SettingsPanel({
             className={`flex items-center justify-between rounded-md border px-3 py-2 text-sm ${darkMode ? 'border-slate-700 bg-slate-900 text-slate-100' : 'border-slate-200 bg-slate-50 text-slate-700'}`}
           >
             <span>
-              Show external links section (CST Personalisation, even after marked initiated)
+              Show external links section (Project Setup, even after marked initiated)
             </span>
             <input
               type="checkbox"
@@ -211,21 +209,15 @@ export function SettingsPanel({
               <input
                 id="user-theme-colour"
                 type="color"
-                className="h-10 w-14 rounded border border-slate-300 p-1 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                className="h-10 w-14 rounded border border-slate-300 p-1 cursor-pointer"
                 value={settings.themeColor}
                 onChange={(e) => updateUserSettings({ themeColor: e.target.value })}
-                disabled={!canUseCustomTheme}
               />
               <span
                 className={`text-sm font-mono ${darkMode ? 'text-slate-200' : 'text-slate-600'}`}
               >
                 {settings.themeColor}
               </span>
-              {!canUseCustomTheme ? (
-                <span className={`text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
-                  Unlocks at level 3
-                </span>
-              ) : null}
             </div>
           </div>
         </div>

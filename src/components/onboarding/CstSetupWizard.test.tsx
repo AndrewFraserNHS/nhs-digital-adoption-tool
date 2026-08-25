@@ -185,7 +185,7 @@ describe('CstSetupWizard', () => {
 
     // assert
     await waitFor(() =>
-      expect(alertSpy).toHaveBeenCalledWith('This file does not contain CST Personalisation data.')
+      expect(alertSpy).toHaveBeenCalledWith('This file does not contain Project Setup data.')
     );
     expect(onProfileUpdate).not.toHaveBeenCalled();
   });

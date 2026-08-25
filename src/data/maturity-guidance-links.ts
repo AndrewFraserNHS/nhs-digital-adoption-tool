@@ -129,7 +129,7 @@ export const futureNhsLinkTbc = (
 
 /**
  * Global reference links not tied to any single component - shown in their own "Core links"
- * section on CST Personalisation (org-wide, editable via OrgProfile.coreLinks) and merged into
+ * section on Project Setup (org-wide, editable via OrgProfile.coreLinks) and merged into
  * every component's guidance-link pool for auto-linking (see buildGuidanceLinksByComponent in
  * AssessmentPanel.tsx), unlike DEFAULT_GUIDANCE_LINK_MAP below which is looked up per component.
  */

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type JSX } from 'react';
 import { normalizeOrgProfile, type OrgProfile, type TeamMember } from '@lib/adoptionState';
 import { validateOrgProfile, useFieldError } from '@lib/adoptionValidator';
-import { CST_TYPE_OPTIONS, PATHWAY_OPTIONS, type CstPathwayKey, type CstType } from '@data/cst';
+import { PATHWAY_OPTIONS, type CstPathwayKey } from '@data/cst';
 import { PathwayContentNotice } from '@components/common/PathwayContentNotice';
 import { nhsButtonPrimary, nhsButtonSecondary } from '../../styles/nhsTheme';
 
@@ -25,7 +25,7 @@ function createTeamMemberId(): string {
 
 /**
  * First-time CST setup, walked through step by step with an explanation of why each section
- * matters. Writes through to onProfileUpdate immediately (same as the CST Personalisation page),
+ * matters. Writes through to onProfileUpdate immediately (same as the Project Setup page),
  * so closing early keeps whatever was filled in. The page remains available afterwards for edits.
  */
 export function CstSetupWizard({
@@ -61,7 +61,7 @@ export function CstSetupWizard({
   );
 
   const updateCst = useCallback(
-    (field: 'type' | 'pathway' | 'goLiveDate' | 'fullAdoptionDate' | 'benefitRealizationDate', value: string) => {
+    (field: 'pathway' | 'goLiveDate' | 'fullAdoptionDate' | 'benefitRealizationDate', value: string) => {
       updateProfile({ ...draft, cst: { ...draft.cst, [field]: value } });
     },
     [draft, updateProfile]
@@ -114,14 +114,14 @@ export function CstSetupWizard({
         const text = await file.text();
         const parsed = JSON.parse(text) as { orgProfile?: unknown };
         if (!parsed.orgProfile || typeof parsed.orgProfile !== 'object') {
-          window.alert('This file does not contain CST Personalisation data.');
+          window.alert('This file does not contain Project Setup data.');
           return;
         }
         const nextProfile = normalizeOrgProfile(parsed.orgProfile as Partial<OrgProfile>);
         const validation = validateOrgProfile(nextProfile);
         if (
           !window.confirm(
-            'Import this CST Personalisation file? This replaces your current organisation profile, pathway/timeline, toolkit links, further reading, core links and team members.' +
+            'Import this Project Setup file? This replaces your current organisation profile, pathway/timeline, toolkit links, further reading, core links and team members.' +
               (validation.errors.length
                 ? `\n\nNote: the imported data has ${validation.errors.length} validation warning(s) you can fix after importing.`
                 : '')
@@ -132,7 +132,7 @@ export function CstSetupWizard({
         updateProfile(nextProfile);
         setStepIndex(2);
       } catch (_error) {
-        window.alert('Unable to read this file. Please choose a valid CST Personalisation export.');
+        window.alert('Unable to read this file. Please choose a valid Project Setup export.');
       }
     },
     [updateProfile]
@@ -158,11 +158,11 @@ export function CstSetupWizard({
             className={`flex flex-wrap items-center justify-between gap-3 rounded-md border p-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
           >
             <p className={`text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-              Already have a CST Personalisation export? Import it instead of filling this in by
+              Already have a Project Setup export? Import it instead of filling this in by
               hand.
             </p>
             <button type="button" onClick={handleImportCstClick} className={nhsButtonSecondary}>
-              Import CST JSON
+              Import Saved Setup
             </button>
             <input
               ref={cstImportInputRef}
@@ -222,41 +222,22 @@ export function CstSetupWizard({
         'Your pathway shapes the guidance and checklists you see throughout the tool. Pick the one that matches where this programme actually is, then set the key delivery dates.',
       body: (
         <div className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className={labelClass} htmlFor="wizard-cst-type">
-                CST Type
-              </label>
-              <select
-                id="wizard-cst-type"
-                className={`${INPUT_CLASS} pr-10 ${inputTheme}`}
-                value={draft.cst.type}
-                onChange={(event) => updateCst('type', event.target.value as CstType)}
-              >
-                {CST_TYPE_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className={labelClass} htmlFor="wizard-cst-pathway">
-                Pathway
-              </label>
-              <select
-                id="wizard-cst-pathway"
-                className={`${INPUT_CLASS} pr-10 ${inputTheme}`}
-                value={draft.cst.pathway}
-                onChange={(event) => updateCst('pathway', event.target.value as CstPathwayKey)}
-              >
-                {PATHWAY_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+          <div>
+            <label className={labelClass} htmlFor="wizard-cst-pathway">
+              Pathway
+            </label>
+            <select
+              id="wizard-cst-pathway"
+              className={`${INPUT_CLASS} pr-10 ${inputTheme}`}
+              value={draft.cst.pathway}
+              onChange={(event) => updateCst('pathway', event.target.value as CstPathwayKey)}
+            >
+              {PATHWAY_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
           </div>
           <PathwayContentNotice pathway={draft.cst.pathway} darkMode={darkMode} />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -364,12 +345,12 @@ export function CstSetupWizard({
     {
       title: 'External links',
       blurb:
-        "This step is optional and can be configured any time from CST Personalisation - toolkit choice, core reference links, and further-reading per component. Skip it for now if you'd rather get straight to assessing.",
+        "This step is optional and can be configured any time from Project Setup - toolkit choice, core reference links, and further-reading per component. Skip it for now if you'd rather get straight to assessing.",
       body: (
         <div
           className={`rounded-md border p-4 text-sm ${darkMode ? 'border-slate-700 bg-slate-900 text-slate-300' : 'border-slate-200 bg-slate-50 text-slate-600'}`}
         >
-          Nothing needed here to get started. Head to CST Personalisation whenever you want to set
+          Nothing needed here to get started. Head to Project Setup whenever you want to set
           a toolkit preference, add core reference links, or point a component at further reading.
         </div>
       ),

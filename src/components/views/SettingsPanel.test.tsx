@@ -77,7 +77,7 @@ describe('SettingsPanel', () => {
 
     // act
     fireEvent.click(
-      screen.getByLabelText('Show external links section (CST Personalisation, even after marked initiated)')
+      screen.getByLabelText('Show external links section (Project Setup, even after marked initiated)')
     );
 
     // assert

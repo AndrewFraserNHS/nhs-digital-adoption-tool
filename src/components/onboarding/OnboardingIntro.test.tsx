@@ -78,7 +78,7 @@ describe('OnboardingIntro', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Set up your CST Personalisation' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Set up your Project Setup' }));
 
     // assert
     expect(onNavigateToProjectDetails).toHaveBeenCalled();

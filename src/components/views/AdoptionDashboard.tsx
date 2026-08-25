@@ -602,7 +602,7 @@ export function AdoptionDashboard({
         <div className="bg-white rounded-lg shadow-sm p-8 border border-slate-200 mb-8 text-center">
           <h3 className="text-lg font-semibold text-slate-800">Getting started</h3>
           <p className="text-sm text-slate-600 mt-2 max-w-xl mx-auto">
-            Nothing has been assessed yet, so there's nothing to chart. Set up your CST Personalisation
+            Nothing has been assessed yet, so there's nothing to chart. Set up your Project Setup
             first, then start scoring your first component to see your readiness build up here.
           </p>
           <div className="mt-4 flex items-center justify-center gap-3">
@@ -612,7 +612,7 @@ export function AdoptionDashboard({
                 onClick={() => onNavigate('project-details')}
                 className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
               >
-                Set up your CST Personalisation
+                Set up your Project Setup
               </button>
             ) : null}
             {components[0] ? (

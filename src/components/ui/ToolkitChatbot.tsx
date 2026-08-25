@@ -224,7 +224,7 @@ export function ToolkitChatbot({ toolkitChoice, darkMode = false }: ToolkitChatb
                 darkMode ? 'bg-slate-700 text-slate-100' : 'bg-white text-slate-700'
               }`}
             >
-              Showing your selected toolkit from CST Personalisation:
+              Showing your selected toolkit from Project Setup:
               <div className="mt-1 font-semibold">{toolkit.label}</div>
             </div>
 

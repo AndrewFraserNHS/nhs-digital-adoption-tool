@@ -46,6 +46,7 @@ import {
 import {
   buildComponentRadarChartData,
   buildRadarChartData,
+  computeEngagementObjectives,
   flattenActions,
   getMetrics as computeMetrics,
 } from '@lib/adoptionMetrics';
@@ -91,18 +92,6 @@ const EXAMPLE_DATA_FILES: Record<'red' | 'amber' | 'green', string> = {
   green: 'test-data/adoption-phase3-green.json',
 };
 
-const THEME_PRESET_COLORS = ['#005eb8', '#003366', '#009b8a', '#6c28d9', '#059669', '#dc2626'];
-
-interface EngagementState {
-  xp: number;
-  level: number;
-  checkIns: Record<string, boolean>;
-  emailDraftOpens: number;
-  highlightLayoutSaves: number;
-  onTimeFinalisations: number;
-  lateFinalisations: number;
-}
-
 const DEFAULT_USER_SETTINGS: AdoptionUserSettings = {
   name: '',
   preferences: '',
@@ -115,16 +104,6 @@ const DEFAULT_USER_SETTINGS: AdoptionUserSettings = {
   hideGuidedWorkflow: false,
   showAdditionalGuidanceLinks: true,
   showExternalLinksSection: false,
-};
-
-const DEFAULT_ENGAGEMENT_STATE: EngagementState = {
-  xp: 0,
-  level: 1,
-  checkIns: {},
-  emailDraftOpens: 0,
-  highlightLayoutSaves: 0,
-  onTimeFinalisations: 0,
-  lateFinalisations: 0,
 };
 
 function cloneAction(action: DraftAction): DraftAction {
@@ -236,10 +215,6 @@ function wrapBase64Lines(value: string, lineLength = 76): string {
   return chunks.join('\r\n');
 }
 
-function getTodayKey(date = new Date()): string {
-  return date.toISOString().slice(0, 10);
-}
-
 function isFinaliseWindowOpen(date = new Date()): boolean {
   const currentDay = date.getDate();
   const lastDayOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
@@ -250,52 +225,6 @@ function getCurrentMonthLabel(date = new Date()): string {
   return date.toLocaleString('en-GB', { month: 'short', year: 'numeric' });
 }
 
-function calculateLevelFromXp(xp: number): number {
-  return Math.max(1, Math.min(12, Math.floor(xp / 120) + 1));
-}
-
-function addEngagementXp(current: EngagementState, delta: number): EngagementState {
-  const nextXp = current.xp + delta;
-  return {
-    ...current,
-    xp: nextXp,
-    level: calculateLevelFromXp(nextXp),
-  };
-}
-
-function calculateEngagementGrade(onTimeFinalisations: number, emailDraftOpens: number): string {
-  const score = onTimeFinalisations * 30 + Math.min(emailDraftOpens, 20) * 4;
-  if (score >= 170) {
-    return 'S';
-  }
-  if (score >= 130) {
-    return 'A';
-  }
-  if (score >= 95) {
-    return 'B';
-  }
-  if (score >= 60) {
-    return 'C';
-  }
-  if (score >= 30) {
-    return 'D';
-  }
-  return 'E';
-}
-
-function calculateCheckInStreak(checkIns: Record<string, boolean>, anchor = new Date()): number {
-  let streak = 0;
-  const cursor = new Date(anchor);
-
-  let key = getTodayKey(cursor);
-  while (checkIns[key]) {
-    streak += 1;
-    cursor.setDate(cursor.getDate() - 1);
-    key = getTodayKey(cursor);
-  }
-
-  return streak;
-}
 
 function promptPhaseCapability(
   phase: OverarchingPhase
@@ -398,21 +327,11 @@ export function AdoptionApp() {
   useEffect(() => {
     userSettingsNameRef.current = userSettings.name;
   }, [userSettings.name]);
-  const [engagement, setEngagement] = useState<EngagementState>(() => {
-    const persisted = load<Partial<EngagementState>>(ADOPTION_ENGAGEMENT_KEY);
-    return {
-      ...DEFAULT_ENGAGEMENT_STATE,
-      ...persisted,
-      level: calculateLevelFromXp(persisted?.xp || 0),
-      checkIns: persisted?.checkIns || {},
-    };
-  });
   const dashboardRef = React.useRef<HTMLDivElement>(null);
   const mainContentRef = React.useRef<HTMLElement>(null);
   const [statusAnnouncement, setStatusAnnouncement] = useState('');
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const currentReminderMonthKey = useMemo(() => getMonthStorageKey(), []);
-  const todayKey = useMemo(() => getTodayKey(), []);
   const [dismissedReminderMonths, setDismissedReminderMonths] = useState<Record<string, boolean>>(
     () => {
       const persisted = load<Record<string, boolean>>(ADOPTION_REPORT_REMINDER_DISMISS_KEY);
@@ -429,6 +348,7 @@ export function AdoptionApp() {
   const [viewHistory, setViewHistory] = useState<View[]>([]);
   const [showFinaliseModal, setShowFinaliseModal] = useState(false);
   const [showCstSetupWizard, setShowCstSetupWizard] = useState(false);
+  const [showGuideSuggestion, setShowGuideSuggestion] = useState(false);
   const hasAutoOpenedCstWizardRef = React.useRef(false);
   const [showSignInModal, setShowSignInModal] = useState(false);
   const hasAutoOpenedSignInModalRef = React.useRef(false);
@@ -522,10 +442,6 @@ export function AdoptionApp() {
   useEffect(() => {
     save(ADOPTION_CURRENT_USER_KEY, currentUserId);
   }, [currentUserId]);
-
-  useEffect(() => {
-    save(ADOPTION_ENGAGEMENT_KEY, engagement);
-  }, [engagement]);
 
   useEffect(() => {
     save(ADOPTION_REPORT_REMINDER_DISMISS_KEY, dismissedReminderMonths);
@@ -1299,7 +1215,6 @@ export function AdoptionApp() {
           ]),
         };
       });
-      setEngagement((prev) => addEngagementXp(prev, 25));
       setView('dashboard');
     },
     [
@@ -1357,18 +1272,6 @@ export function AdoptionApp() {
         ]),
       };
     });
-
-    const submittedOnTime = new Date().getDate() === 1;
-    setEngagement((prev) =>
-      addEngagementXp(
-        {
-          ...prev,
-          onTimeFinalisations: prev.onTimeFinalisations + (submittedOnTime ? 1 : 0),
-          lateFinalisations: prev.lateFinalisations + (submittedOnTime ? 0 : 1),
-        },
-        submittedOnTime ? 45 : 20
-      )
-    );
   }, [
     appendAuditEvents,
     confirmIfCstWarnings,
@@ -1428,8 +1331,7 @@ export function AdoptionApp() {
     setUserSettings(DEFAULT_USER_SETTINGS);
     save(ADOPTION_USER_SETTINGS_KEY, DEFAULT_USER_SETTINGS);
 
-    setEngagement({ ...DEFAULT_ENGAGEMENT_STATE, level: calculateLevelFromXp(0), checkIns: {} });
-    save(ADOPTION_ENGAGEMENT_KEY, DEFAULT_ENGAGEMENT_STATE);
+    localStorage.removeItem(ADOPTION_ENGAGEMENT_KEY);
 
     setDismissedReminderMonths({});
     save(ADOPTION_REPORT_REMINDER_DISMISS_KEY, {});
@@ -1481,41 +1383,8 @@ export function AdoptionApp() {
     const attachmentName = buildPointInTimeFilename();
     const body = `${emailBody}\n\nAttachment: ${attachmentName}`;
     const mailto = `mailto:${recipient}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(body)}`;
-    setEngagement((prev) =>
-      addEngagementXp({ ...prev, emailDraftOpens: prev.emailDraftOpens + 1 }, 8)
-    );
     window.location.href = mailto;
   }, [buildPointInTimeFilename, emailBody, emailSubject, emailTo]);
-
-  const handleDailyCheckIn = useCallback(() => {
-    setEngagement((prev) => {
-      if (prev.checkIns[todayKey]) {
-        return prev;
-      }
-      return addEngagementXp(
-        {
-          ...prev,
-          checkIns: {
-            ...prev.checkIns,
-            [todayKey]: true,
-          },
-        },
-        10
-      );
-    });
-  }, [todayKey]);
-
-  const handleHighlightLayoutSaved = useCallback(() => {
-    setEngagement((prev) =>
-      addEngagementXp(
-        {
-          ...prev,
-          highlightLayoutSaves: prev.highlightLayoutSaves + 1,
-        },
-        15
-      )
-    );
-  }, []);
 
   const handleDownloadEmailDraft = useCallback(() => {
     const recipient = emailTo.trim() || 'test@test.com';
@@ -1604,56 +1473,18 @@ export function AdoptionApp() {
     metrics.totalActions,
     store.history,
   ]);
-  const themeUnlocked = engagement.level >= 3;
-  const engagementGrade = useMemo(
-    () => calculateEngagementGrade(engagement.onTimeFinalisations, engagement.emailDraftOpens),
-    [engagement.emailDraftOpens, engagement.onTimeFinalisations]
+  const engagementObjectives = useMemo(
+    () => computeEngagementObjectives(store, metrics, currentMonthLabel),
+    [store, metrics, currentMonthLabel]
   );
-  const hasCheckedInToday = Boolean(engagement.checkIns[todayKey]);
-  const checkInStreak = useMemo(
-    () => calculateCheckInStreak(engagement.checkIns),
-    [engagement.checkIns]
-  );
-  const achievements = useMemo(
-    () => [
-      {
-        id: 'streak-3',
-        name: 'Steady Cadence',
-        description: 'Check in for 3 consecutive days.',
-        unlocked: checkInStreak >= 3,
-        progress: `${Math.min(checkInStreak, 3)}/3`,
-      },
-      {
-        id: 'first-ontime',
-        name: 'On-Time Closer',
-        description: 'Finalise a prior month on time.',
-        unlocked: engagement.onTimeFinalisations >= 1,
-        progress: `${Math.min(engagement.onTimeFinalisations, 1)}/1`,
-      },
-      {
-        id: 'first-save',
-        name: 'Story Builder',
-        description: 'Save your first highlight layout.',
-        unlocked: engagement.highlightLayoutSaves >= 1,
-        progress: `${Math.min(engagement.highlightLayoutSaves, 1)}/1`,
-      },
-    ],
-    [checkInStreak, engagement.highlightLayoutSaves, engagement.onTimeFinalisations]
+  const completedObjectivesCount = useMemo(
+    () => engagementObjectives.filter((objective) => objective.completed).length,
+    [engagementObjectives]
   );
 
-  const handleUserSettingsUpdate = useCallback(
-    (nextSettings: AdoptionUserSettings) => {
-      if (!themeUnlocked && !THEME_PRESET_COLORS.includes(nextSettings.themeColor)) {
-        setUserSettings((prev) => ({
-          ...nextSettings,
-          themeColor: prev.themeColor,
-        }));
-        return;
-      }
-      setUserSettings(nextSettings);
-    },
-    [themeUnlocked]
-  );
+  const handleUserSettingsUpdate = useCallback((nextSettings: AdoptionUserSettings) => {
+    setUserSettings(nextSettings);
+  }, []);
 
   const handleProfileUpdate = useCallback((updatedProfile: OrgProfile) => {
     setStore((prev) => {
@@ -1790,10 +1621,7 @@ export function AdoptionApp() {
 
           <div className="mt-3 rounded-md bg-blue-700 p-2 text-xs">
             <div className="font-semibold text-blue-100">
-              Level {engagement.level} · Grade {engagementGrade}
-            </div>
-            <div className="text-blue-200">
-              XP {engagement.xp} · Layout saves {engagement.highlightLayoutSaves}
+              Objectives: {completedObjectivesCount}/{engagementObjectives.length}
             </div>
           </div>
         </div>
@@ -2032,9 +1860,8 @@ export function AdoptionApp() {
                         ? 'bg-slate-700 text-slate-100'
                         : 'bg-slate-100 text-slate-600'
                     }`}
-                    title={`${store.orgProfile.cst.type.toUpperCase()} · ${fullPathwayLabel}`}
+                    title={fullPathwayLabel}
                   >
-                    {store.orgProfile.cst.type.toUpperCase()} ·{' '}
                     <span className="sm:hidden">{compactPathwayLabel}</span>
                     <span className="hidden sm:inline">{fullPathwayLabel}</span>
                   </span>
@@ -2109,42 +1936,31 @@ export function AdoptionApp() {
                   <p
                     className={`text-xs font-semibold uppercase tracking-wider ${userSettings.darkMode ? 'text-slate-300' : 'text-slate-500'}`}
                   >
-                    Engagement
+                    Objectives
                   </p>
                   <p
                     className={`text-sm mt-1 ${userSettings.darkMode ? 'text-slate-100' : 'text-slate-700'}`}
                   >
-                    Level {engagement.level} · Grade {engagementGrade} · On-time finalisations{' '}
-                    {engagement.onTimeFinalisations} · Email opens {engagement.emailDraftOpens}
+                    {completedObjectivesCount}/{engagementObjectives.length} complete - based on
+                    phase readiness, ownership, cadence and team participation.
                   </p>
                 </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={handleDailyCheckIn}
-                    disabled={hasCheckedInToday}
-                    className="rounded-md px-3 py-2 text-sm font-semibold text-white disabled:opacity-60"
-                    style={{ backgroundColor: userSettings.themeColor }}
-                  >
-                    {hasCheckedInToday ? 'Checked In Today' : 'Daily Check-In (+10 XP)'}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowEngagementCard(false)}
-                    className={`${userSettings.darkMode ? 'border-slate-600 bg-slate-900 text-slate-100 hover:bg-slate-700' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'} rounded-md border px-3 py-2 text-sm font-medium`}
-                    aria-label="Dismiss engagement card"
-                  >
-                    Dismiss
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowEngagementCard(false)}
+                  className={`${userSettings.darkMode ? 'border-slate-600 bg-slate-900 text-slate-100 hover:bg-slate-700' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'} rounded-md border px-3 py-2 text-sm font-medium`}
+                  aria-label="Dismiss objectives card"
+                >
+                  Dismiss
+                </button>
               </div>
 
               <div className="mt-4 grid gap-3 md:grid-cols-3">
-                {achievements.map((achievement) => (
+                {engagementObjectives.map((objective) => (
                   <div
-                    key={achievement.id}
+                    key={objective.id}
                     className={`rounded-lg border p-3 ${
-                      achievement.unlocked
+                      objective.completed
                         ? 'border-green-200 bg-green-50'
                         : userSettings.darkMode
                           ? 'border-slate-700 bg-slate-900'
@@ -2155,16 +1971,16 @@ export function AdoptionApp() {
                       <p
                         className={`text-sm font-semibold ${userSettings.darkMode ? 'text-slate-100' : 'text-slate-800'}`}
                       >
-                        {achievement.name}
+                        {objective.label}
                       </p>
                       <span className="text-xs font-bold">
-                        {achievement.unlocked ? 'Unlocked' : achievement.progress}
+                        {objective.completed ? 'Done' : 'Not yet'}
                       </span>
                     </div>
                     <p
                       className={`mt-1 text-xs ${userSettings.darkMode ? 'text-slate-300' : 'text-slate-600'}`}
                     >
-                      {achievement.description}
+                      {objective.description}
                     </p>
                   </div>
                 ))}
@@ -2481,7 +2297,6 @@ export function AdoptionApp() {
               trustName={store.orgProfile.trustName}
               projectName={store.orgProfile.projectName}
               themeColor={userSettings.themeColor}
-              onLayoutSaved={handleHighlightLayoutSaved}
               currentUserId={currentUserId}
               darkMode={Boolean(userSettings.darkMode)}
             />
@@ -2501,7 +2316,6 @@ export function AdoptionApp() {
               onUserSettingsUpdate={handleUserSettingsUpdate}
               onLoadExampleData={handleLoadExampleData}
               onResetData={handleResetData}
-              canUseCustomTheme={themeUnlocked}
               darkMode={Boolean(userSettings.darkMode)}
             />
           )}
@@ -2511,9 +2325,8 @@ export function AdoptionApp() {
               onProfileUpdate={handleProfileUpdate}
               userSettings={userSettings}
               onUserSettingsUpdate={handleUserSettingsUpdate}
-              engagementGrade={engagementGrade}
-              engagementLevel={engagement.level}
-              engagementXp={engagement.xp}
+              objectivesCompleted={completedObjectivesCount}
+              objectivesTotal={engagementObjectives.length}
               darkMode={Boolean(userSettings.darkMode)}
             />
           )}
@@ -2666,11 +2479,53 @@ export function AdoptionApp() {
           orgProfile={store.orgProfile}
           onProfileUpdate={handleProfileUpdate}
           onClose={() => setShowCstSetupWizard(false)}
-          onComplete={() => setShowCstSetupWizard(false)}
+          onComplete={() => {
+            setShowCstSetupWizard(false);
+            setShowGuideSuggestion(true);
+          }}
           currentUserId={currentUserId}
           onCurrentUserChange={setCurrentUserId}
           darkMode={Boolean(userSettings.darkMode)}
         />
+
+        {showGuideSuggestion && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 p-4">
+            <div
+              className={`${userSettings.darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} w-full max-w-md rounded-xl border p-6 shadow-2xl`}
+            >
+              <h3
+                className={`text-lg font-semibold ${userSettings.darkMode ? 'text-slate-100' : 'text-slate-900'}`}
+              >
+                Setup complete
+              </h3>
+              <p
+                className={`mt-2 text-sm ${userSettings.darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+              >
+                Want a quick guide to how the tool works before you start? The Adoption Engine
+                Onboarding page walks through it step by step.
+              </p>
+              <div className="mt-5 flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowGuideSuggestion(false)}
+                  className={`${userSettings.darkMode ? 'border-slate-600 bg-slate-900 text-slate-100 hover:bg-slate-700' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'} rounded-md border px-4 py-2 text-sm font-semibold`}
+                >
+                  Maybe later
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setView('cm-guide');
+                    setShowGuideSuggestion(false);
+                  }}
+                  className="rounded-md bg-[#005eb8] px-4 py-2 text-sm font-semibold text-white shadow-[0_3px_0_#003087] hover:bg-[#00417a]"
+                >
+                  View the guide
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         <SignInRequiredModal
           open={showSignInModal}

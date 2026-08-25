@@ -9,6 +9,7 @@ import type { ChartData } from 'chart.js';
 import { isCompletedActionStatus } from './actionModel';
 import { AdoptionStore, deriveObjectiveStatus, DraftEntry } from './adoptionState';
 import { type BragStatus,getTimelineBragStatus } from './bragStatus';
+import { PHASE_NAMES } from '../types/constants';
 
 const COMPONENT_PHASE_EXEMPLARS: Record<number, Record<string, number>> = {
   1: {
@@ -603,4 +604,139 @@ export function getComponentObjectiveCounts(
   ).length;
 
   return { total: objectives.length, completed };
+}
+
+export interface EngagementObjective {
+  id: string;
+  category: 'Phase' | 'Ownership' | 'Cadence' | 'Team';
+  label: string;
+  description: string;
+  completed: boolean;
+}
+
+const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+
+/**
+ * Objectives derived entirely from the current state of the store - phase readiness, whether
+ * actions/outcomes have owners, recent activity cadence from the audit log, and breadth of team
+ * participation. Nothing here is a counter that can drift or an arbitrary point value; every
+ * objective is either true or false right now, computed fresh each time.
+ */
+export function computeEngagementObjectives(
+  store: AdoptionStore,
+  metrics: Metrics,
+  currentMonthLabel: string
+): EngagementObjective[] {
+  const objectives: EngagementObjective[] = [];
+
+  metrics.phaseSummaries.forEach((phase) => {
+    const phaseName = PHASE_NAMES[phase.phase] || `Phase ${phase.phase}`;
+    objectives.push({
+      id: `phase-${phase.phase}-assessed`,
+      category: 'Phase',
+      label: `Phase ${phase.phase}: ${phaseName} - fully assessed`,
+      description: 'Every lens across this phase\'s components has been scored.',
+      completed: phase.totalLenses > 0 && phase.assessedLenses === phase.totalLenses,
+    });
+    objectives.push({
+      id: `phase-${phase.phase}-on-track`,
+      category: 'Phase',
+      label: `Phase ${phase.phase}: ${phaseName} - on track`,
+      description: "Every component in this phase is scoring at or above its exemplar target for where the programme is now.",
+      completed: phase.componentCount > 0 && phase.onTrackComponents === phase.componentCount,
+    });
+  });
+
+  const allActions = Object.values(store.currentDraft).flatMap((lenses) =>
+    Object.values(lenses).flatMap((entry) => entry.actions || [])
+  );
+  objectives.push({
+    id: 'all-actions-owned',
+    category: 'Ownership',
+    label: 'Every action has an owner',
+    description: 'No actions are left unassigned.',
+    completed: allActions.length > 0 && allActions.every((action) => Boolean(action.owner?.trim())),
+  });
+
+  const allOutcomes = Object.values(store.objectives || {}).flat();
+  objectives.push({
+    id: 'all-outcomes-owned',
+    category: 'Ownership',
+    label: 'Every outcome has an owner',
+    description: 'No outcomes are left unassigned.',
+    completed: allOutcomes.length > 0 && allOutcomes.every((outcome) => Boolean(outcome.owner?.trim())),
+  });
+
+  const now = Date.now();
+  const auditLog = store.auditLog || [];
+  const recentWeekEvents = auditLog.filter(
+    (event) => now - new Date(event.timestamp).getTime() <= WEEK_MS
+  );
+  objectives.push({
+    id: 'active-this-week',
+    category: 'Cadence',
+    label: 'Active this week',
+    description: 'At least one update has been made in the last 7 days.',
+    completed: recentWeekEvents.length > 0,
+  });
+
+  const weeksWithActivity = new Set<number>();
+  auditLog.forEach((event) => {
+    const weeksAgo = Math.floor((now - new Date(event.timestamp).getTime()) / WEEK_MS);
+    if (weeksAgo >= 0 && weeksAgo < 4) {
+      weeksWithActivity.add(weeksAgo);
+    }
+  });
+  objectives.push({
+    id: 'four-week-cadence',
+    category: 'Cadence',
+    label: 'Steady progress: updated every week for a month',
+    description: `${weeksWithActivity.size}/4 of the last 4 weeks have at least one update.`,
+    completed: weeksWithActivity.size >= 4,
+  });
+
+  objectives.push({
+    id: 'month-finalised',
+    category: 'Cadence',
+    label: 'This month finalised',
+    description: 'The current month has a finalised snapshot, so progress this month is captured for the trend.',
+    completed: (store.history || []).some((snapshot) => snapshot.monthLabel === currentMonthLabel),
+  });
+
+  const teamMembers = store.orgProfile.teamMembers || [];
+  objectives.push({
+    id: 'team-roster-started',
+    category: 'Team',
+    label: 'Team roster started',
+    description: 'At least 2 team members have been added.',
+    completed: teamMembers.length >= 2,
+  });
+
+  const recentMonthEvents = auditLog.filter(
+    (event) => now - new Date(event.timestamp).getTime() <= THIRTY_DAYS_MS
+  );
+  const distinctActors = new Set(recentMonthEvents.map((event) => event.actor));
+  objectives.push({
+    id: 'multiple-contributors',
+    category: 'Team',
+    label: 'Multiple contributors this month',
+    description: 'More than one person has made updates in the last 30 days.',
+    completed: distinctActors.size >= 2,
+  });
+
+  const distinctOwners = new Set(
+    allActions
+      .map((action) => action.owner?.trim().toLowerCase())
+      .filter((owner): owner is string => Boolean(owner))
+  );
+  objectives.push({
+    id: 'ownership-spread',
+    category: 'Team',
+    label: 'Ownership spread across the team',
+    description: 'Actions are owned by more than one person, not concentrated on one.',
+    completed: distinctOwners.size >= 2,
+  });
+
+  return objectives;
 }

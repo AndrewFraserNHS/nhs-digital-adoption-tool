@@ -23,13 +23,7 @@ import {
   type InAppTool,
   type ToolLinkEntry,
 } from '@data/toolLinks';
-import {
-  CST_TYPE_OPTIONS,
-  PATHWAY_LABELS,
-  PATHWAY_OPTIONS,
-  type CstPathwayKey,
-  type CstType,
-} from '@data/cst';
+import { PATHWAY_LABELS, PATHWAY_OPTIONS, type CstPathwayKey } from '@data/cst';
 import { TOOLKIT_OPTIONS, type ToolkitOptionKey } from '@data/toolkits';
 
 function sanitizeFileNamePart(value: string): string {
@@ -432,15 +426,6 @@ export function ProjectDetailsPage({
     [profile, onProfileUpdate]
   );
 
-  const handleCstTypeChange = useCallback(
-    (value: CstType) => {
-      const updated = { ...profile, cst: { ...profile.cst, type: value } };
-      setProfile(updated);
-      onProfileUpdate(updated);
-    },
-    [profile, onProfileUpdate]
-  );
-
   const [pendingPathwayChange, setPendingPathwayChange] = useState<CstPathwayKey | null>(null);
 
   const handlePathwaySelectChange = useCallback(
@@ -753,14 +738,14 @@ export function ProjectDetailsPage({
         const text = await file.text();
         const parsed = JSON.parse(text) as { orgProfile?: unknown };
         if (!parsed.orgProfile || typeof parsed.orgProfile !== 'object') {
-          window.alert('This file does not contain CST Personalisation data.');
+          window.alert('This file does not contain Project Setup data.');
           return;
         }
         const nextProfile = normalizeOrgProfile(parsed.orgProfile as Partial<OrgProfile>);
         const validation = validateOrgProfile(nextProfile);
         if (
           !window.confirm(
-            'Import this CST Personalisation file? This replaces your current organisation profile, pathway/timeline, toolkit links, further reading, core links and team members.' +
+            'Import this Project Setup file? This replaces your current organisation profile, pathway/timeline, toolkit links, further reading, core links and team members.' +
               (validation.errors.length
                 ? `\n\nNote: the imported data has ${validation.errors.length} validation warning(s) you can fix after importing.`
                 : '')
@@ -771,7 +756,7 @@ export function ProjectDetailsPage({
         setProfile(nextProfile);
         onProfileUpdate(nextProfile);
       } catch (_error) {
-        window.alert('Unable to read this file. Please choose a valid CST Personalisation export.');
+        window.alert('Unable to read this file. Please choose a valid Project Setup export.');
       }
     },
     [onProfileUpdate]
@@ -782,13 +767,13 @@ export function ProjectDetailsPage({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <h2 className={`text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
-            CST Personalisation
+            Project Setup
           </h2>
           <PageHelpButton onClick={pageIntro.reopen} darkMode={darkMode} />
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <button type="button" onClick={handleImportCstClick} className={nhsButtonSecondary}>
-            Import CST
+            Import Setup
           </button>
           <input
             ref={cstImportInputRef}
@@ -798,7 +783,7 @@ export function ProjectDetailsPage({
             onChange={handleImportCstFile}
           />
           <button type="button" onClick={handleExportCst} className={nhsButtonSecondary}>
-            Export CST
+            Export Setup
           </button>
           <button
             type="button"
@@ -905,27 +890,7 @@ export function ProjectDetailsPage({
           </p>
           </div>
 
-          <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label
-                htmlFor="cst-type"
-                className={`block text-sm font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
-              >
-                CST Type
-              </label>
-              <select
-                id="cst-type"
-                className={`w-full rounded-md border shadow-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8] sm:text-sm p-2 pr-10 ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100' : 'border-[#768692] bg-white text-slate-900'}`}
-                value={profile.cst.type}
-                onChange={(event) => handleCstTypeChange(event.target.value as CstType)}
-              >
-                {CST_TYPE_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+          <div className="mt-3">
             <div>
               <label
                 htmlFor="cst-pathway"
@@ -1703,7 +1668,7 @@ export function ProjectDetailsPage({
       <PageIntroModal
         open={pageIntro.isOpen}
         onClose={pageIntro.close}
-        title="CST Personalisation"
+        title="Project Setup"
         darkMode={darkMode}
         body={
           <p>

@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   buildRadarChartData,
+  computeEngagementObjectives,
   computeRadarData,
   computeTargetRadarData,
   flattenActions,
@@ -382,5 +383,58 @@ describe('adoptionMetrics', () => {
     expect(chartData.datasets).toHaveLength(2);
     expect(chartData.datasets[0]).toMatchObject({ label: 'Current Score', data: [3, 0] });
     expect(chartData.datasets[1]).toMatchObject({ label: 'Target', data: [3, 4] });
+  });
+
+  it('SHOULD derive engagement objectives entirely from current store state', () => {
+    // arrange
+    const metrics = getMetrics(store, components);
+
+    // act
+    const objectives = computeEngagementObjectives(store, metrics, 'Not a real month');
+
+    // assert: nothing is "notional" - every objective is a plain true/false derived from data
+    expect(objectives.length).toBeGreaterThan(5);
+    objectives.forEach((objective) => {
+      expect(typeof objective.completed).toBe('boolean');
+    });
+
+    // both actions in the fixture have owners, so this should read complete
+    const ownershipObjective = objectives.find((o) => o.id === 'all-actions-owned');
+    expect(ownershipObjective?.completed).toBe(true);
+
+    // no team members in the fixture profile
+    const teamObjective = objectives.find((o) => o.id === 'team-roster-started');
+    expect(teamObjective?.completed).toBe(false);
+
+    // monthLabel passed in doesn't match any finalised history snapshot
+    const monthObjective = objectives.find((o) => o.id === 'month-finalised');
+    expect(monthObjective?.completed).toBe(false);
+  });
+
+  it('SHOULD mark ownership objectives incomplete WHERE any action or outcome has no owner', () => {
+    // arrange
+    const storeWithUnownedAction: AdoptionStore = {
+      ...store,
+      currentDraft: {
+        ...store.currentDraft,
+        vision: {
+          ...store.currentDraft.vision,
+          'Lens A': {
+            ...store.currentDraft.vision['Lens A'],
+            actions: [
+              ...store.currentDraft.vision['Lens A'].actions,
+              { id: '3', text: 'Unowned', owner: '', timescale: '', status: 'Planned' },
+            ],
+          },
+        },
+      },
+    };
+    const metrics = getMetrics(storeWithUnownedAction, components);
+
+    // act
+    const objectives = computeEngagementObjectives(storeWithUnownedAction, metrics, 'x');
+
+    // assert
+    expect(objectives.find((o) => o.id === 'all-actions-owned')?.completed).toBe(false);
   });
 });

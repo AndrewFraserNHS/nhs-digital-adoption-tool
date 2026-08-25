@@ -1,4 +1,5 @@
 import { CstSetupWizard } from '@components/onboarding/CstSetupWizard';
+import { SignInRequiredModal } from '@components/onboarding/SignInRequiredModal';
 import { OnboardingIntro } from '@components/onboarding/OnboardingIntro';
 import { ToolkitChatbot } from '@components/ui/ToolkitChatbot';
 import { ActionPlanTracker } from '@components/views/ActionPlanTracker';
@@ -159,6 +160,21 @@ function isCstUnconfigured(profile: OrgProfile): boolean {
 function getAuditActor(name: string): string {
   const normalized = name.trim();
   return normalized || DEFAULT_AUDIT_ACTOR;
+}
+
+/** True once currentUserId resolves to an actual entry in the team roster. */
+function isSignedIn(profile: OrgProfile, currentUserId: string): boolean {
+  return !!currentUserId && (profile.teamMembers || []).some((member) => member.id === currentUserId);
+}
+
+/** Audit actor prefers the signed-in team member so the log reflects who was actually signed in. */
+function resolveAuditActorName(
+  profile: OrgProfile,
+  currentUserId: string,
+  fallbackName: string
+): string {
+  const signedInMember = (profile.teamMembers || []).find((member) => member.id === currentUserId);
+  return getAuditActor(signedInMember?.name || fallbackName);
 }
 
 function getRubricText(componentId: string, lensName: string, score: number): string {
@@ -401,6 +417,8 @@ export function AdoptionApp() {
   const [showFinaliseModal, setShowFinaliseModal] = useState(false);
   const [showCstSetupWizard, setShowCstSetupWizard] = useState(false);
   const hasAutoOpenedCstWizardRef = React.useRef(false);
+  const [showSignInModal, setShowSignInModal] = useState(false);
+  const hasAutoOpenedSignInModalRef = React.useRef(false);
   const [componentRadarVisible, setComponentRadarVisible] = useState(true);
   const [componentRadarSize, setComponentRadarSize] = useState<ComponentRadarSize>('medium');
   const navItemRefs = React.useRef<Record<string, HTMLButtonElement | null>>({});
@@ -520,6 +538,17 @@ export function AdoptionApp() {
       setShowCstSetupWizard(true);
     }
   }, []);
+
+  useEffect(() => {
+    if (hasAutoOpenedSignInModalRef.current || showCstSetupWizard) {
+      return;
+    }
+    if (isCstUnconfigured(store.orgProfile) || isSignedIn(store.orgProfile, currentUserId)) {
+      return;
+    }
+    hasAutoOpenedSignInModalRef.current = true;
+    setShowSignInModal(true);
+  }, [store.orgProfile, currentUserId, showCstSetupWizard]);
 
   useEffect(() => {
     if (view === 'dashboard' && dashboardRef.current) {
@@ -694,7 +723,7 @@ export function AdoptionApp() {
       return prev.auditLog;
     }
 
-    const actor = getAuditActor(userSettings.name || '');
+    const actor = resolveAuditActorName(prev.orgProfile, currentUserId, userSettings.name || '');
     const events = draftEvents.map((event) =>
       createAuditEvent({
         actor,
@@ -2561,6 +2590,19 @@ export function AdoptionApp() {
           onComplete={() => setShowCstSetupWizard(false)}
           currentUserId={currentUserId}
           onCurrentUserChange={setCurrentUserId}
+          darkMode={Boolean(userSettings.darkMode)}
+        />
+
+        <SignInRequiredModal
+          open={showSignInModal}
+          teamMembers={store.orgProfile.teamMembers || []}
+          currentUserId={currentUserId}
+          onCurrentUserChange={setCurrentUserId}
+          onClose={() => setShowSignInModal(false)}
+          onNavigateToProjectDetails={() => {
+            setView('project-details');
+            setShowSignInModal(false);
+          }}
           darkMode={Boolean(userSettings.darkMode)}
         />
       </div>

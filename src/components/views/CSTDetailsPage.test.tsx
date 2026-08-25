@@ -290,4 +290,130 @@ describe('ProjectDetailsPage', () => {
     // assert
     expect(onProfileUpdate).toHaveBeenLastCalledWith(expect.objectContaining({ toolLinks: [] }));
   });
+
+  it('SHOULD show a "Default" badge for an unmodified component link, and no "Custom" badge yet', () => {
+    // act
+    render(
+      <ProjectDetailsPage
+        orgProfile={orgProfile}
+        onProfileUpdate={vi.fn()}
+        components={components}
+        lenses={['Strategic Direction and Leadership']}
+        onComponentClick={vi.fn()}
+        onOpenOnboarding={vi.fn()}
+        onCurrentUserChange={vi.fn()}
+      />
+    );
+
+    // assert
+    expect(screen.getAllByText('Default').length).toBeGreaterThan(0);
+    expect(screen.queryByText('Custom')).not.toBeInTheDocument();
+  });
+
+  it('SHOULD open the link edit modal via the pencil icon, save a custom URL, and show a "Custom" badge afterwards', () => {
+    // arrange
+    const onProfileUpdate = vi.fn();
+
+    const { rerender } = render(
+      <ProjectDetailsPage
+        orgProfile={orgProfile}
+        onProfileUpdate={onProfileUpdate}
+        components={components}
+        lenses={['Strategic Direction and Leadership']}
+        onComponentClick={vi.fn()}
+        onOpenOnboarding={vi.fn()}
+        onCurrentUserChange={vi.fn()}
+      />
+    );
+
+    // act
+    fireEvent.click(screen.getAllByRole('button', { name: /^Edit .* link$/ })[0]);
+    const dialog = screen.getByRole('dialog');
+    fireEvent.click(within(dialog).getByRole('radio', { name: /Custom URL/ }));
+    fireEvent.change(within(dialog).getByPlaceholderText('https://...'), {
+      target: { value: 'https://example.org/custom-link' },
+    });
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Save' }));
+
+    // assert
+    const updatedProfile = onProfileUpdate.mock.calls.at(-1)[0] as OrgProfile;
+    const updatedLinks = updatedProfile.linkOverrides?.links || {};
+    const savedOverride = Object.values(updatedLinks)[0] as { url?: string };
+    expect(savedOverride.url).toBe('https://example.org/custom-link');
+
+    // act 2 - re-render with the saved profile
+    rerender(
+      <ProjectDetailsPage
+        orgProfile={updatedProfile}
+        onProfileUpdate={onProfileUpdate}
+        components={components}
+        lenses={['Strategic Direction and Leadership']}
+        onComponentClick={vi.fn()}
+        onOpenOnboarding={vi.fn()}
+        onCurrentUserChange={vi.fn()}
+      />
+    );
+
+    // assert 2
+    expect(screen.getAllByText('Custom').length).toBeGreaterThan(0);
+  });
+
+  it('SHOULD add a match-text alias in the link edit modal', () => {
+    // arrange
+    const onProfileUpdate = vi.fn();
+
+    render(
+      <ProjectDetailsPage
+        orgProfile={orgProfile}
+        onProfileUpdate={onProfileUpdate}
+        components={components}
+        lenses={['Strategic Direction and Leadership']}
+        onComponentClick={vi.fn()}
+        onOpenOnboarding={vi.fn()}
+        onCurrentUserChange={vi.fn()}
+      />
+    );
+
+    // act
+    fireEvent.click(screen.getAllByRole('button', { name: /^Edit .* link$/ })[0]);
+    fireEvent.change(screen.getByPlaceholderText('Add text this link should also match...'), {
+      target: { value: 'strategic vision doc' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Add' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Save' }));
+
+    // assert
+    const updatedLinks = onProfileUpdate.mock.calls.at(-1)[0].linkOverrides.links;
+    const savedOverride = Object.values(updatedLinks)[0] as { matchAliases?: string[] };
+    expect(savedOverride.matchAliases).toEqual(['strategic vision doc']);
+  });
+
+  it('SHOULD add a match-text alias to a Core Link via its match-text modal', () => {
+    // arrange
+    const onProfileUpdate = vi.fn();
+
+    render(
+      <ProjectDetailsPage
+        orgProfile={orgProfile}
+        onProfileUpdate={onProfileUpdate}
+        components={components}
+        lenses={['Strategic Direction and Leadership']}
+        onComponentClick={vi.fn()}
+        onOpenOnboarding={vi.fn()}
+        onCurrentUserChange={vi.fn()}
+      />
+    );
+
+    // act
+    fireEvent.click(screen.getByRole('button', { name: /Edit match text for/ }));
+    fireEvent.change(screen.getByPlaceholderText('Add text this link should also match...'), {
+      target: { value: 'network link' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Add' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Save' }));
+
+    // assert
+    const updatedCoreLinks = onProfileUpdate.mock.calls.at(-1)[0].coreLinks;
+    expect(updatedCoreLinks[0].matchAliases).toEqual(['network link']);
+  });
 });

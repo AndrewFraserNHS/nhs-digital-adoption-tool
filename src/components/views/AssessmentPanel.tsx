@@ -163,7 +163,8 @@ function buildGuidanceLinksByComponent(
       [...inputs, ...deliverables].forEach((link) => {
         if (link.label && link.label.trim().length >= MIN_GUIDANCE_LINK_LABEL_LENGTH) {
           const resolvedUrl = overrides ? resolveEffectiveLink(link, overrides).url : link.url;
-          byLabel.set(link.label.toLowerCase(), { ...link, url: resolvedUrl });
+          const matchAliases = overrides?.links?.[link.key]?.matchAliases;
+          byLabel.set(link.label.toLowerCase(), { ...link, url: resolvedUrl, matchAliases });
         }
       });
       map[comp.id] = [...byLabel.values()];
@@ -183,7 +184,7 @@ function escapeRegExp(value: string): string {
  * left alone - naively stripping one "s" there produces a malformed word that could false-match
  * inside unrelated text (e.g. "Succes" inside "Successful").
  */
-function buildLabelVariants(label: string): string[] {
+export function buildLabelVariants(label: string): string[] {
   const variants = new Set([label]);
   if (/(?<!s)s$/i.test(label)) {
     variants.add(label.slice(0, -1));
@@ -212,9 +213,10 @@ function renderActionTextWithGuidanceLinks(
     return safeText;
   }
 
-  const variantEntries: GuidanceLinkVariant[] = links.flatMap((link) =>
-    buildLabelVariants(link.label).map((variant) => ({ variant, link }))
-  );
+  const variantEntries: GuidanceLinkVariant[] = links.flatMap((link) => {
+    const aliases = link.kind === 'url' ? link.matchAliases || [] : [];
+    return [...buildLabelVariants(link.label), ...aliases].map((variant) => ({ variant, link }));
+  });
   const sortedEntries = variantEntries.sort((a, b) => b.variant.length - a.variant.length);
   const pattern = sortedEntries.map((entry) => `\\b${escapeRegExp(entry.variant)}\\b`).join('|');
   const parts = safeText.split(new RegExp(`(${pattern})`, 'gi'));

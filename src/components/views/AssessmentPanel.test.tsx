@@ -602,9 +602,10 @@ describe('AssessmentPanel', () => {
       ],
     });
     const props = createProps({ entry });
-    props.store.orgProfile.toolLinks = [
-      { key: 'tool-1', tool: 'highlight-builder', matchText: 'workshop' },
-    ];
+    props.store.orgProfile = {
+      ...props.store.orgProfile,
+      toolLinks: [{ key: 'tool-1', tool: 'highlight-builder', matchText: 'workshop' }],
+    };
     const onNavigateToTool = vi.fn();
 
     // act

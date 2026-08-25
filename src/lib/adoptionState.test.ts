@@ -9,7 +9,9 @@ import {
   createReactiveAdoptionStore,
   deriveObjectiveStatus,
   initializeStore,
+  normalizeOrgProfile,
 } from './adoptionState';
+import { IN_APP_TOOLS } from '@data/toolLinks';
 
 describe('adoptionState', () => {
   it('SHOULD initialise default and persisted store values', () => {
@@ -231,5 +233,21 @@ describe('adoptionState', () => {
     // reset
     unsubscribe();
     expect(store.getSubscriberCount()).toBe(0);
+  });
+
+  it('SHOULD pre-populate toolLinks with all in-app tools WHERE the profile has none', () => {
+    // act
+    const profile = normalizeOrgProfile(undefined);
+
+    // assert
+    expect(profile.toolLinks?.map((link) => link.tool).sort()).toEqual([...IN_APP_TOOLS].sort());
+  });
+
+  it('SHOULD NOT re-populate toolLinks WHERE the profile deliberately has an empty list', () => {
+    // act
+    const profile = normalizeOrgProfile({ toolLinks: [] });
+
+    // assert
+    expect(profile.toolLinks).toEqual([]);
   });
 });

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type JSX } from 'react';
 import type { OrgProfile } from '@lib/adoptionState';
+import type { EngagementObjective } from '@lib/adoptionMetrics';
 import {
   COMPETENCE_OPTIONS,
   CONFIDENCE_OPTIONS,
@@ -85,24 +86,25 @@ export interface ProfilePageProps {
   onProfileUpdate: (profile: OrgProfile) => void;
   userSettings: AdoptionUserSettings;
   onUserSettingsUpdate: (settings: AdoptionUserSettings) => void;
-  objectivesCompleted?: number;
-  objectivesTotal?: number;
+  objectives?: EngagementObjective[];
   darkMode?: boolean;
 }
+
+const OBJECTIVES_PREVIEW_COUNT = 4;
 
 export function ProfilePage({
   orgProfile,
   onProfileUpdate,
   userSettings,
   onUserSettingsUpdate,
-  objectivesCompleted,
-  objectivesTotal,
+  objectives = [],
   darkMode = false,
 }: ProfilePageProps): JSX.Element {
   const [profile, setProfile] = useState<OrgProfile>(orgProfile);
   const [settings, setSettings] = useState<AdoptionUserSettings>(userSettings);
   const [fileInputKey, setFileInputKey] = useState(0);
   const [activePhaseHelp, setActivePhaseHelp] = useState<OverarchingPhase | null>(null);
+  const [showAllObjectives, setShowAllObjectives] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const pageIntro = usePageIntroSeen('profile');
 
@@ -198,17 +200,60 @@ export function ProfilePage({
         }
       />
 
-      {objectivesTotal !== undefined && (
+      {objectives.length > 0 && (
         <div
-          className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-2`}
+          className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-3`}
         >
-          <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
-            Objectives
-          </h3>
-          <p className={`text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-            {objectivesCompleted ?? 0}/{objectivesTotal} complete - see the full list on the Daily
-            Check-in page, based on phase readiness, ownership, cadence and team participation.
-          </p>
+          <div>
+            <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
+              Objectives
+            </h3>
+            <p className={`mt-1 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+              {objectives.filter((o) => o.completed).length}/{objectives.length} complete - based
+              on phase readiness, ownership, cadence and team participation.
+            </p>
+          </div>
+          <div className="space-y-2">
+            {(showAllObjectives ? objectives : objectives.slice(0, OBJECTIVES_PREVIEW_COUNT)).map(
+              (objective) => (
+                <div
+                  key={objective.id}
+                  className={`rounded-lg border p-3 ${
+                    objective.completed
+                      ? 'border-green-200 bg-green-50'
+                      : darkMode
+                        ? 'border-slate-700 bg-slate-900'
+                        : 'border-slate-200 bg-slate-50'
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <p
+                      className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+                    >
+                      {objective.label}
+                    </p>
+                    <span className="text-xs font-bold shrink-0">
+                      {objective.completed ? 'Done' : 'Not yet'}
+                    </span>
+                  </div>
+                  <p className={`mt-1 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                    {objective.description}
+                  </p>
+                </div>
+              )
+            )}
+          </div>
+          {objectives.length > OBJECTIVES_PREVIEW_COUNT && (
+            <button
+              type="button"
+              onClick={() => setShowAllObjectives((current) => !current)}
+              className={`text-sm font-semibold underline ${darkMode ? 'text-blue-300 hover:text-blue-200' : 'text-[#005eb8] hover:text-blue-800'}`}
+            >
+              {showAllObjectives
+                ? 'Show fewer'
+                : `Show ${objectives.length - OBJECTIVES_PREVIEW_COUNT} more`}
+            </button>
+          )}
         </div>
       )}
 

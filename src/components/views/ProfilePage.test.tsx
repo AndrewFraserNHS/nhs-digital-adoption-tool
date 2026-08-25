@@ -59,4 +59,39 @@ describe('ProfilePage', () => {
     // assert
     expect(screen.getByText('Confidence and Capability by Phase')).toBeTruthy();
   });
+
+  it('SHOULD show only the first few objectives, expanding to show the rest', () => {
+    // arrange
+    const orgProfile = initializeStore().orgProfile;
+    const objectives = Array.from({ length: 6 }, (_, i) => ({
+      id: `obj-${i}`,
+      category: 'Phase' as const,
+      label: `Objective ${i}`,
+      description: `Description ${i}`,
+      completed: false,
+    }));
+
+    render(
+      <ProfilePage
+        orgProfile={orgProfile}
+        onProfileUpdate={vi.fn()}
+        userSettings={baseUserSettings}
+        onUserSettingsUpdate={vi.fn()}
+        objectives={objectives}
+      />
+    );
+
+    // assert 1 - only the first 4 shown by default
+    expect(screen.getByText('Objective 0')).toBeInTheDocument();
+    expect(screen.getByText('Objective 3')).toBeInTheDocument();
+    expect(screen.queryByText('Objective 4')).not.toBeInTheDocument();
+
+    // act
+    fireEvent.click(screen.getByRole('button', { name: 'Show 2 more' }));
+
+    // assert 2 - the rest are now visible
+    expect(screen.getByText('Objective 4')).toBeInTheDocument();
+    expect(screen.getByText('Objective 5')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Show fewer' })).toBeInTheDocument();
+  });
 });

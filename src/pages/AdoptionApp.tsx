@@ -1619,11 +1619,15 @@ export function AdoptionApp() {
             ) : null}
           </div>
 
-          <div className="mt-3 rounded-md bg-blue-700 p-2 text-xs">
+          <button
+            type="button"
+            onClick={() => handleViewChange('profile')}
+            className="mt-3 w-full rounded-md bg-blue-700 p-2 text-left text-xs hover:bg-blue-600"
+          >
             <div className="font-semibold text-blue-100">
               Objectives: {completedObjectivesCount}/{engagementObjectives.length}
             </div>
-          </div>
+          </button>
         </div>
 
         <div className="flex-1 overflow-y-auto py-4">
@@ -2325,8 +2329,7 @@ export function AdoptionApp() {
               onProfileUpdate={handleProfileUpdate}
               userSettings={userSettings}
               onUserSettingsUpdate={handleUserSettingsUpdate}
-              objectivesCompleted={completedObjectivesCount}
-              objectivesTotal={engagementObjectives.length}
+              objectives={engagementObjectives}
               darkMode={Boolean(userSettings.darkMode)}
             />
           )}

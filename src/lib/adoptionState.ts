@@ -133,6 +133,8 @@ export interface OrgProfile {
    * links. Falls back to CORE_LINKS (maturity-guidance-links.ts) when unset.
    */
   coreLinks?: GuidanceLink[];
+  /** User-added guidance links per component id, on top of the shared defaults (which may have none for a given component). */
+  customComponentLinks?: Record<string, GuidanceLink[]>;
   /** Text-matched links to in-app tools (Highlight Builder, Force Field Analysis, Assess & Compare). */
   toolLinks?: ToolLinkEntry[];
   /**
@@ -212,6 +214,7 @@ export function normalizeOrgProfile(profile?: Partial<OrgProfile>): OrgProfile {
     linkOverrides: profile?.linkOverrides,
     componentFurtherReading: profile?.componentFurtherReading,
     coreLinks: profile?.coreLinks,
+    customComponentLinks: profile?.customComponentLinks,
     toolLinks:
       profile?.toolLinks ??
       IN_APP_TOOLS.map((tool) => ({

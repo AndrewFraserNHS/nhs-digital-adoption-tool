@@ -928,7 +928,8 @@ export function AssessmentPanel({
     const merged: Record<string, MatchableLink[]> = {};
     Object.keys(base).forEach((componentId) => {
       const byLabel = new Map<string, MatchableLink>();
-      [...base[componentId], ...coreForToggle].forEach((link) => {
+      const customLinks = store.orgProfile?.customComponentLinks?.[componentId] || [];
+      [...base[componentId], ...coreForToggle, ...customLinks].forEach((link) => {
         if (link.label && link.label.trim().length >= MIN_GUIDANCE_LINK_LABEL_LENGTH) {
           byLabel.set(link.label.toLowerCase(), { ...link, kind: 'url' });
         }
@@ -939,7 +940,13 @@ export function AssessmentPanel({
       merged[componentId] = [...byLabel.values()];
     });
     return merged;
-  }, [showAdditionalGuidanceLinks, effectiveCoreLinks, store.orgProfile?.linkOverrides, toolLinkMatches]);
+  }, [
+    showAdditionalGuidanceLinks,
+    effectiveCoreLinks,
+    store.orgProfile?.linkOverrides,
+    store.orgProfile?.customComponentLinks,
+    toolLinkMatches,
+  ]);
   const [actionEditor, setActionEditor] = useState<ActionEditorState | null>(null);
   const [objectiveViewer, setObjectiveViewer] = useState<ObjectiveViewerState | null>(null);
   const [objectiveEditor, setObjectiveEditor] = useState<ObjectiveEditorState | null>(null);

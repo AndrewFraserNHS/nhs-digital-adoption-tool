@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { AssessmentPanel } from './AssessmentPanel';
-import type { DraftEntry } from '@lib/adoptionState';
+import type { DraftEntry, OrgProfile } from '@lib/adoptionState';
 import type { AssessmentComponent } from '@data/components';
 
 const components: AssessmentComponent[] = [
@@ -67,7 +67,7 @@ function createProps(overrides?: {
           phaseCapability: {},
         },
         teamMembers: overrides?.teamMembers || [],
-      },
+      } as OrgProfile,
       currentDraft: {
         vision: {
           'Strategic Direction': defaultEntry,
@@ -586,6 +586,44 @@ describe('AssessmentPanel', () => {
 
     // assert 3
     expect(screen.queryByText('Guided workflow')).toBeNull();
+  });
+
+  it('SHOULD auto-link a custom component link added on the CST page', () => {
+    // arrange
+    const entry = createEntry({
+      actions: [
+        {
+          id: 'action-1',
+          text: 'Follow the Change Adoption Playbook',
+          owner: 'PMO',
+          timescale: 'Q3',
+          status: 'In Progress',
+        },
+      ],
+    });
+    const props = createProps({ entry });
+    props.store.orgProfile = {
+      ...props.store.orgProfile,
+      customComponentLinks: {
+        vision: [
+          {
+            key: 'custom-1',
+            label: 'Change Adoption Playbook',
+            url: 'https://example.org/playbook',
+            type: 'additional',
+          },
+        ],
+      },
+    };
+
+    // act
+    render(<AssessmentPanel {...props} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
+
+    // assert
+    expect(
+      screen.getByRole('link', { name: 'Change Adoption Playbook' })
+    ).toHaveAttribute('href', 'https://example.org/playbook');
   });
 
   it('SHOULD render a tool-link match as a button that calls onNavigateToTool', () => {

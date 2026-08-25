@@ -416,4 +416,77 @@ describe('ProjectDetailsPage', () => {
     const updatedCoreLinks = onProfileUpdate.mock.calls.at(-1)[0].coreLinks;
     expect(updatedCoreLinks[0].matchAliases).toEqual(['network link']);
   });
+
+  it('SHOULD add a custom link to a component', () => {
+    // arrange
+    const onProfileUpdate = vi.fn();
+
+    render(
+      <ProjectDetailsPage
+        orgProfile={orgProfile}
+        onProfileUpdate={onProfileUpdate}
+        components={components}
+        lenses={['Strategic Direction and Leadership']}
+        onComponentClick={vi.fn()}
+        onOpenOnboarding={vi.fn()}
+        onCurrentUserChange={vi.fn()}
+      />
+    );
+
+    // act
+    fireEvent.click(screen.getByRole('button', { name: '+ Add Link' }));
+
+    // assert
+    const updatedProfile = onProfileUpdate.mock.calls.at(-1)[0] as OrgProfile;
+    expect(updatedProfile.customComponentLinks?.vision).toEqual([
+      expect.objectContaining({ label: '', url: '', type: 'additional' }),
+    ]);
+  });
+
+  it('SHOULD edit and remove a custom component link', () => {
+    // arrange
+    const onProfileUpdate = vi.fn();
+    const profileWithCustomLink: OrgProfile = {
+      ...orgProfile,
+      customComponentLinks: {
+        vision: [{ key: 'custom-1', label: '', url: '', type: 'additional' }],
+      },
+    };
+
+    render(
+      <ProjectDetailsPage
+        orgProfile={profileWithCustomLink}
+        onProfileUpdate={onProfileUpdate}
+        components={components}
+        lenses={['Strategic Direction and Leadership']}
+        onComponentClick={vi.fn()}
+        onOpenOnboarding={vi.fn()}
+        onCurrentUserChange={vi.fn()}
+      />
+    );
+    const customLinkContainer = screen.getByRole('button', { name: '+ Add Link' })
+      .parentElement as HTMLElement;
+
+    // act 1 - edit label
+    fireEvent.change(within(customLinkContainer).getByPlaceholderText('Link name'), {
+      target: { value: 'Change Adoption Playbook' },
+    });
+
+    // assert 1
+    expect(onProfileUpdate).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        customComponentLinks: {
+          vision: [expect.objectContaining({ label: 'Change Adoption Playbook' })],
+        },
+      })
+    );
+
+    // act 2 - remove
+    fireEvent.click(within(customLinkContainer).getByRole('button', { name: 'Remove' }));
+
+    // assert 2
+    expect(onProfileUpdate).toHaveBeenLastCalledWith(
+      expect.objectContaining({ customComponentLinks: { vision: [] } })
+    );
+  });
 });

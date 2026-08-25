@@ -387,7 +387,9 @@ export function ProjectDetailsPage({
 }: ProjectDetailsPageProps): JSX.Element {
   const [profile, setProfile] = useState<OrgProfile>(orgProfile);
   const [editingLink, setEditingLink] = useState<GuidanceLink | null>(null);
-  const [editingCoreLinkAliases, setEditingCoreLinkAliases] = useState<GuidanceLink | null>(null);
+  const [editingAliasesFor, setEditingAliasesFor] = useState<
+    { link: GuidanceLink; componentId?: string } | null
+  >(null);
   const cstImportInputRef = useRef<HTMLInputElement>(null);
   const pageIntro = usePageIntroSeen('cst-personalisation');
   const profileValidation = validateOrgProfile(profile);
@@ -501,6 +503,71 @@ export function ProjectDetailsPage({
         delete next[componentId];
       }
       const updated = { ...profile, componentFurtherReading: next };
+      setProfile(updated);
+      onProfileUpdate(updated);
+    },
+    [profile, onProfileUpdate]
+  );
+
+  const handleAddComponentLink = useCallback(
+    (componentId: string) => {
+      const newLink: GuidanceLink = {
+        key: `custom-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        label: '',
+        url: '',
+        type: 'additional',
+      };
+      const next = {
+        ...profile.customComponentLinks,
+        [componentId]: [...(profile.customComponentLinks?.[componentId] || []), newLink],
+      };
+      const updated = { ...profile, customComponentLinks: next };
+      setProfile(updated);
+      onProfileUpdate(updated);
+    },
+    [profile, onProfileUpdate]
+  );
+
+  const handleUpdateComponentLink = useCallback(
+    (componentId: string, key: string, field: 'label' | 'url', value: string) => {
+      const links = profile.customComponentLinks?.[componentId] || [];
+      const next = {
+        ...profile.customComponentLinks,
+        [componentId]: links.map((link) => (link.key === key ? { ...link, [field]: value } : link)),
+      };
+      const updated = { ...profile, customComponentLinks: next };
+      setProfile(updated);
+      onProfileUpdate(updated);
+    },
+    [profile, onProfileUpdate]
+  );
+
+  const handleUpdateComponentLinkAliases = useCallback(
+    (componentId: string, key: string, matchAliases: string[]) => {
+      const links = profile.customComponentLinks?.[componentId] || [];
+      const next = {
+        ...profile.customComponentLinks,
+        [componentId]: links.map((link) =>
+          link.key === key
+            ? { ...link, matchAliases: matchAliases.length ? matchAliases : undefined }
+            : link
+        ),
+      };
+      const updated = { ...profile, customComponentLinks: next };
+      setProfile(updated);
+      onProfileUpdate(updated);
+    },
+    [profile, onProfileUpdate]
+  );
+
+  const handleRemoveComponentLink = useCallback(
+    (componentId: string, key: string) => {
+      const links = profile.customComponentLinks?.[componentId] || [];
+      const next = {
+        ...profile.customComponentLinks,
+        [componentId]: links.filter((link) => link.key !== key),
+      };
+      const updated = { ...profile, customComponentLinks: next };
       setProfile(updated);
       onProfileUpdate(updated);
     },
@@ -1265,7 +1332,7 @@ export function ProjectDetailsPage({
                   />
                   <button
                     type="button"
-                    onClick={() => setEditingCoreLinkAliases(link)}
+                    onClick={() => setEditingAliasesFor({ link })}
                     aria-label={`Edit match text for ${link.label || 'this core link'}`}
                     className={`shrink-0 rounded border px-1.5 py-1.5 text-xs ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-100'}`}
                   >
@@ -1418,7 +1485,7 @@ export function ProjectDetailsPage({
                     </div>
                     {!allLinks.length && (
                       <p className={`p-3 text-xs ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>
-                        No guidance links added for this component yet.
+                        No default guidance links for this component - add one below.
                       </p>
                     )}
                     {(['inputs', 'deliverables'] as const).map((sect) => {
@@ -1484,6 +1551,60 @@ export function ProjectDetailsPage({
                           </div>
                         );
                       })}
+                    <div className="p-3 space-y-2">
+                      <p
+                        className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
+                      >
+                        Custom links
+                      </p>
+                      {(profile.customComponentLinks?.[component.id] || []).map((link) => (
+                        <div
+                          key={link.key}
+                          className="grid grid-cols-1 md:grid-cols-[1fr,2fr,auto,auto] gap-2 items-center"
+                        >
+                          <input
+                            type="text"
+                            placeholder="Link name"
+                            value={link.label}
+                            onChange={(e) =>
+                              handleUpdateComponentLink(component.id, link.key, 'label', e.target.value)
+                            }
+                            className={`rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
+                          />
+                          <input
+                            type="url"
+                            placeholder="https://..."
+                            value={link.url}
+                            onChange={(e) =>
+                              handleUpdateComponentLink(component.id, link.key, 'url', e.target.value)
+                            }
+                            className={`rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setEditingAliasesFor({ link, componentId: component.id })}
+                            aria-label={`Edit match text for ${link.label || 'this link'}`}
+                            className={`shrink-0 rounded border px-1.5 py-1.5 text-xs ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-100'}`}
+                          >
+                            ✎
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveComponentLink(component.id, link.key)}
+                            className={`shrink-0 rounded border px-2 py-1.5 text-xs font-medium ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-50'}`}
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      ))}
+                      <button
+                        type="button"
+                        onClick={() => handleAddComponentLink(component.id)}
+                        className={nhsButtonSecondary}
+                      >
+                        + Add Link
+                      </button>
+                    </div>
                     </div>
                   </details>
                 );
@@ -1519,15 +1640,23 @@ export function ProjectDetailsPage({
         />
       )}
 
-      {editingCoreLinkAliases && (
+      {editingAliasesFor && (
         <MatchAliasesModal
-          title={editingCoreLinkAliases.label || 'Core link'}
-          aliases={editingCoreLinkAliases.matchAliases || []}
+          title={editingAliasesFor.link.label || 'Link'}
+          aliases={editingAliasesFor.link.matchAliases || []}
           onSave={(aliases) => {
-            handleUpdateCoreLinkAliases(editingCoreLinkAliases.key, aliases);
-            setEditingCoreLinkAliases(null);
+            if (editingAliasesFor.componentId) {
+              handleUpdateComponentLinkAliases(
+                editingAliasesFor.componentId,
+                editingAliasesFor.link.key,
+                aliases
+              );
+            } else {
+              handleUpdateCoreLinkAliases(editingAliasesFor.link.key, aliases);
+            }
+            setEditingAliasesFor(null);
           }}
-          onClose={() => setEditingCoreLinkAliases(null)}
+          onClose={() => setEditingAliasesFor(null)}
           darkMode={darkMode}
         />
       )}

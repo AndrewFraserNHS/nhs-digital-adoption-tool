@@ -1,4 +1,5 @@
 import { useEffect, useState, type JSX } from 'react';
+import { GENERIC_RUBRIC, STAGE_COLORS } from '@data/rubrics';
 
 export interface OnboardingIntroProps {
   open: boolean;
@@ -133,6 +134,35 @@ export function buildOnboardingSteps(): Step[] {
           <p>
             As you assess your readiness of each change component through the lenses, the engine recommends actions, resources and evidence to help improve adoption.
           </p>
+        </div>
+      ),
+    },
+    {
+      title: 'Readiness Guidance Levels',
+      body: (
+        <div className="text-sm text-slate-700 space-y-3">
+          <p>
+            Every lens is scored on the same 0-5 readiness scale. Here's what each level generally
+            means - each lens on a component page also shows guidance written specifically for
+            that lens at its current level.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {Object.entries(GENERIC_RUBRIC).map(([level, description]) => {
+              const [label, detail] = description.split(/:\s(.+)/);
+              return (
+                <div
+                  key={level}
+                  className="rounded-md border p-2.5"
+                  style={{ borderLeftWidth: '4px', borderLeftColor: STAGE_COLORS[Number(level)] }}
+                >
+                  <p className="text-xs font-bold text-slate-800">
+                    {level} - {label}
+                  </p>
+                  <p className="mt-0.5 text-xs text-slate-600">{detail}</p>
+                </div>
+              );
+            })}
+          </div>
         </div>
       ),
     },

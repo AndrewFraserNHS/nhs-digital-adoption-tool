@@ -355,7 +355,6 @@ export function AdoptionApp() {
     return syncDerivedContent(initialised);
   });
 
-  const [showMatrix, setShowMatrix] = useState<Record<string, boolean>>({});
   const [activeLensInfo, setActiveLensInfo] = useState('');
   const [currentUserId, setCurrentUserId] = useState<string>(() => load<string>(ADOPTION_CURRENT_USER_KEY) || '');
   const [importConflict, setImportConflict] = useState<{
@@ -1374,7 +1373,6 @@ export function AdoptionApp() {
 
     const resetStore = syncDerivedContent(initializeStore());
     setStore(resetStore);
-    setShowMatrix({});
     setView('dashboard');
     announceStatus('Assessment data has been reset.');
 
@@ -2241,7 +2239,7 @@ export function AdoptionApp() {
           )}
           {view === 'assessment' && (
             <AssessmentPanel
-              store={{ ...store, showMatrix }}
+              store={store}
               components={COMPONENTS}
               activeComponentId={activeComponentId}
               getRubricText={getRubricText}
@@ -2249,12 +2247,6 @@ export function AdoptionApp() {
               onComponentChange={openComponentAssessment}
               onEntryUpdate={updateEntry}
               onOpenLensInfo={setActiveLensInfo}
-              onMatrixToggle={(key) => {
-                setShowMatrix((prev) => ({
-                  ...prev,
-                  [key]: !prev[key],
-                }));
-              }}
               onActionRemove={(componentId, lens, actionId) => {
                 const entry = getEntry(componentId, lens);
                 const actionToRemove = entry.actions.find((action) => action.id === actionId);

@@ -40,7 +40,6 @@ function createEntry(overrides?: Partial<DraftEntry>): DraftEntry {
 }
 
 function createProps(overrides?: {
-  showMatrix?: boolean;
   entry?: DraftEntry;
   teamMembers?: { id: string; name: string; role: string }[];
 }) {
@@ -78,9 +77,6 @@ function createProps(overrides?: {
       history: [],
       phaseOverrides: {},
       pathwayChecks: {},
-      showMatrix: {
-        'vision:Strategic Direction': Boolean(overrides?.showMatrix),
-      },
     },
     components,
     activeComponentId: 'vision',
@@ -89,7 +85,6 @@ function createProps(overrides?: {
     onComponentChange: vi.fn(),
     onEntryUpdate: vi.fn(),
     onOpenLensInfo: vi.fn(),
-    onMatrixToggle: vi.fn(),
     onActionRemove: vi.fn(),
     onObjectivesUpdate: vi.fn(),
   };
@@ -133,30 +128,17 @@ describe('AssessmentPanel', () => {
     ).toBe(true);
   });
 
-  it('SHOULD toggle matrix and allows selecting score from matrix cards', () => {
+  it('SHOULD show the current-level guidance text for a lens without a toggle button', () => {
     // arrange
-    const props = createProps({ showMatrix: true });
+    const props = createProps();
 
-    // act 1
+    // act
     render(<AssessmentPanel {...props} />);
     fireEvent.click(screen.getByRole('button', { name: 'Show' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Hide Full Guidance' }));
 
-    // assert 1
-    expect(props.onMatrixToggle).toHaveBeenCalledWith('vision:Strategic Direction');
-
-    // act 2
-    const levelFiveLabel = screen.getAllByText('Level 5')[0];
-    const levelFiveButton = levelFiveLabel.closest('button');
-    if (!levelFiveButton) {
-      throw new Error('Expected Level 5 matrix button to be present');
-    }
-
-    fireEvent.click(levelFiveButton);
-    const updatedEntries = props.onEntryUpdate.mock.calls.map((call) => call[2]);
-
-    // assert 2
-    expect(updatedEntries.some((entry: DraftEntry) => entry.score === 5)).toBe(true);
+    // assert
+    expect(screen.getByText('Rubric for 2')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Full Guidance/ })).not.toBeInTheDocument();
   });
 
   it('SHOULD open lens info WHERE clicking the lens header button', () => {

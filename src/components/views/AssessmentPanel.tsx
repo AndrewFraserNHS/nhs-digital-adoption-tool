@@ -27,9 +27,7 @@ import { PHASE_NAMES } from '../../types/constants';
 import componentDetailsText from '@data/component-descriptors/component-details.json?raw';
 import { PageHelpButton, PageIntroModal, usePageIntroSeen } from '@components/onboarding/PageIntroModal';
 
-type AssessmentPanelStore = AdoptionStore & {
-  showMatrix?: Record<string, boolean>;
-};
+type AssessmentPanelStore = AdoptionStore;
 
 interface ActionEditorState {
   sourceComponentId: string;
@@ -63,7 +61,6 @@ export interface AssessmentPanelProps {
   onComponentChange: (componentId: string) => void;
   onEntryUpdate: (componentId: string, lens: string, entry: DraftEntry) => void;
   onOpenLensInfo: (lensName: string) => void;
-  onMatrixToggle: (key: string) => void;
   onActionRemove: (componentId: string, lens: string, actionId: string) => void;
   onObjectivesUpdate: (componentId: string, objectives: ComponentObjective[]) => void;
   hideGuidedWorkflow?: boolean;
@@ -743,50 +740,6 @@ function InfoIcon(): JSX.Element {
   );
 }
 
-function EyeIcon(): JSX.Element {
-  return (
-    <svg
-      className="w-4 h-4 mr-1.5"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-      />
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M2.458 12C3.732 7.943 7.523 5 12 5s8.268 2.943 9.542 7c-1.274 4.057-5.065 7-9.542 7S3.732 16.057 2.458 12z"
-      />
-    </svg>
-  );
-}
-
-function EyeOffIcon(): JSX.Element {
-  return (
-    <svg
-      className="w-4 h-4 mr-1.5"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.964 9.964 0 012.042-3.368m2.16-1.989A9.962 9.962 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.05 10.05 0 01-4.132 5.411M15 12a3 3 0 00-3-3m0 0a2.99 2.99 0 00-2.13.88M3 3l18 18"
-      />
-    </svg>
-  );
-}
-
 function HeaderInfoIcon(): JSX.Element {
   return (
     <svg
@@ -867,7 +820,6 @@ export function AssessmentPanel({
   onComponentChange,
   onEntryUpdate,
   onOpenLensInfo,
-  onMatrixToggle,
   onActionRemove,
   onObjectivesUpdate,
   hideGuidedWorkflow = false,
@@ -1745,7 +1697,6 @@ export function AssessmentPanel({
             );
             const effectiveCurrentScore =
               entry.score === 0 && !hasNotStartedActions ? 1 : entry.score;
-            const showMatrix = !!store.showMatrix?.[`${component.id}:${lens}`];
             const lensActionTypeFilter = lensActionTypeFilters[targetKey] || 'all';
             const lensActionOwnerFilter = lensActionOwnerFilters[targetKey] || 'all';
             const lensActionTypeOptions = Array.from(
@@ -1851,77 +1802,22 @@ export function AssessmentPanel({
                   </div>
                 </div>
 
-                {/* <div
-                  className={`${darkMode ? 'bg-slate-900 border-slate-700' : 'bg-blue-50/50 border-slate-100'} px-6 py-4 border-b text-sm`}
+                <div
+                  className={`${darkMode ? 'bg-slate-900' : 'bg-blue-50/50'} px-6 py-4 border-b text-sm`}
+                  style={{ borderLeftWidth: '4px', borderLeftColor: borderColor }}
                 >
-                  <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
-                    <div className="flex items-start flex-1">
-                      <InfoIcon />
-                      <p
-                        className={`whitespace-pre-line ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
-                      >
-                        <strong className={darkMode ? 'text-slate-100' : 'text-slate-700'}>
-                          {entry.score === 0 ? 'Not Started' : `Level ${entry.score}`}:
-                        </strong>
-                        {` ${getRubricText(component.id, lens, entry.score)}`}
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => onMatrixToggle(`${component.id}:${lens}`)}
-                      className={`${darkMode ? 'bg-slate-800 border-slate-600 text-[#63b3ff] hover:text-[#90cdf4]' : 'bg-white border-blue-200 text-[#005eb8] hover:text-blue-800'} shrink-0 text-xs font-semibold flex items-center px-3 py-1.5 border rounded shadow-sm transition-colors`}
+                  <div className="flex items-start flex-1">
+                    <InfoIcon />
+                    <p
+                      className={`whitespace-pre-line ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
                     >
-                      {showMatrix ? <EyeOffIcon /> : <EyeIcon />}
-                      {showMatrix ? 'Hide Full Guidance' : 'View Full Guidance'}
-                    </button>
+                      <strong className={darkMode ? 'text-slate-100' : 'text-slate-700'}>
+                        {entry.score === 0 ? 'Not Started' : `Level ${entry.score}`}:
+                      </strong>
+                      {` ${getRubricText(component.id, lens, entry.score)}`}
+                    </p>
                   </div>
-                </div> */}
-
-                {showMatrix && (
-                  <div
-                    className={`${darkMode ? 'bg-slate-900 border-slate-700' : 'bg-slate-50 border-slate-200'} px-6 py-5 border-b`}
-                  >
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-                      {SCORE_LEVELS.map((level) => {
-                        const bgColors: Record<number, string> = {
-                          0: 'bg-white',
-                          1: 'bg-rose-50',
-                          2: 'bg-orange-50',
-                          3: 'bg-yellow-50',
-                          4: 'bg-green-50',
-                          5: 'bg-blue-50',
-                        };
-                        const baseBg = bgColors[level] || 'bg-white';
-
-                        return (
-                          <button
-                            key={level}
-                            onClick={() => handleScoreChange(lens, level)}
-                            className={`p-4 rounded-lg border shadow-sm text-left transition-colors h-full flex flex-col items-start justify-start ${
-                              entry.score === level
-                                ? `${baseBg} border-[#005eb8] ring-1 ring-[#005eb8]`
-                                : `${baseBg} border-slate-200 hover:border-blue-300`
-                            }`}
-                          >
-                            <div
-                              className={`text-sm font-bold mb-2 pb-2 border-b w-full ${
-                                entry.score === level
-                                  ? 'text-[#005eb8] border-blue-200'
-                                  : 'text-slate-700 border-slate-100'
-                              }`}
-                            >
-                              {level === 0 ? 'Not Started' : `Level ${level}`}
-                            </div>
-                            <p
-                              className={`text-xs whitespace-pre-line leading-relaxed text-left w-full ${darkMode ? 'text-slate-200' : 'text-slate-600'}`}
-                            >
-                              {getRubricText(component.id, lens, level)}
-                            </p>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
+                </div>
 
                 <div
                   className={`${darkMode ? 'border-slate-700' : 'border-slate-100'} p-6 border-t`}

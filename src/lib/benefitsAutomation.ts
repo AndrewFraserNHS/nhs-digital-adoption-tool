@@ -1,9 +1,9 @@
 import benefitsActionsText from '../data/component-actions/benefits-actions.json?raw';
 import type { AdoptionStore } from './adoptionState';
 import {
+  clearDerivedComponentContent,
   type DerivedComponentConfig,
   parseDerivedComponentSource,
-  clearDerivedComponentContent,
   syncDerivedComponentContent,
 } from './componentDerivedAutomation';
 

@@ -358,7 +358,7 @@ function ActionRow({
   const isNew = !original;
   const isEdited =
     Boolean(original) &&
-    (original!.description !== action.description || original!.band !== action.band);
+    (original?.description !== action.description || original?.band !== action.band);
 
   return (
     <div
@@ -491,7 +491,7 @@ export default function ActionLibraryReviewApp(): JSX.Element {
     return counts;
   }, [state.components]);
 
-  const selectedComponent = ASSESSMENT_COMPONENTS.find((c) => c.id === selectedComponentId)!;
+  const selectedComponent = ASSESSMENT_COMPONENTS.find((c) => c.id === selectedComponentId);
   const selectedData = state.components[selectedComponentId];
   const originalData = DEFAULT_COMPONENTS[selectedComponentId];
 
@@ -523,6 +523,7 @@ export default function ActionLibraryReviewApp(): JSX.Element {
           return rebanded;
         }
         return rebanded.map((action) =>
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           action.id === actionId ? { ...action, description: updates.description! } : action
         );
       }
@@ -739,9 +740,9 @@ export default function ActionLibraryReviewApp(): JSX.Element {
           <div>
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white p-4">
               <div>
-                <h2 className="text-lg font-bold text-slate-800">{selectedComponent.label}</h2>
+                <h2 className="text-lg font-bold text-slate-800">{selectedComponent?.label}</h2>
                 <p className="text-xs text-slate-500">
-                  {selectedData.actions.length} actions across {selectedComponent.lenses.length} lens(es)
+                  {selectedData.actions.length} actions across {selectedComponent?.lenses.length} lens(es)
                 </p>
               </div>
               <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
@@ -777,7 +778,7 @@ export default function ActionLibraryReviewApp(): JSX.Element {
                   onToggle={() => setOpenBand((current) => (current === level.value ? null : level.value))}
                 >
                   <div className="space-y-5">
-                    {selectedComponent.lenses.map((lens) => {
+                    {selectedComponent?.lenses.map((lens) => {
                       const groupActions = actionsInBand.filter((action) => action.lens === lens);
                       return (
                         <div key={lens}>

@@ -1,9 +1,9 @@
 import processChangeActionsText from '../data/component-actions/process-change-actions.json?raw';
 import type { AdoptionStore } from './adoptionState';
 import {
+  clearDerivedComponentContent,
   type DerivedComponentConfig,
   parseDerivedComponentSource,
-  clearDerivedComponentContent,
   syncDerivedComponentContent,
 } from './componentDerivedAutomation';
 

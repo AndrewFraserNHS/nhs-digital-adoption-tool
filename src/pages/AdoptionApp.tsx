@@ -1,5 +1,5 @@
-import { OnboardingIntro } from '@components/onboarding/OnboardingIntro';
 import { CstSetupWizard } from '@components/onboarding/CstSetupWizard';
+import { OnboardingIntro } from '@components/onboarding/OnboardingIntro';
 import { ToolkitChatbot } from '@components/ui/ToolkitChatbot';
 import { ActionPlanTracker } from '@components/views/ActionPlanTracker';
 import { AdoptionDashboard, type ComponentRadarSize } from '@components/views/AdoptionDashboard';
@@ -64,7 +64,7 @@ import {
   type ConflictChoice,
   type ConflictReport,
 } from '@lib/cstConflict';
-import { syncDerivedContent, regenerateContentForPathway } from '@lib/derivedContentSync';
+import { regenerateContentForPathway,syncDerivedContent } from '@lib/derivedContentSync';
 import { load, save } from '@lib/storage';
 import { downloadFile, escapeHtml } from '@lib/utils';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -520,7 +520,6 @@ export function AdoptionApp() {
       hasAutoOpenedCstWizardRef.current = true;
       setShowCstSetupWizard(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -1746,7 +1745,7 @@ export function AdoptionApp() {
                 {v === 'introduction'
                   ? 'Introduction'
                   : v === 'project-details'
-                    ? 'CST Personalisation'
+                    ? 'Project Set-up'
                     : 'Adoption Engine Onboarding'}
               </button>
             ))}

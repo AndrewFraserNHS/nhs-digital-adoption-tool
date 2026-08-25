@@ -1,9 +1,9 @@
 import capabilityActionsText from '../data/component-actions/capability-and-confidence-actions.json?raw';
 import type { AdoptionStore } from './adoptionState';
 import {
+  clearDerivedComponentContent,
   type DerivedComponentConfig,
   parseDerivedComponentSource,
-  clearDerivedComponentContent,
   syncDerivedComponentContent,
 } from './componentDerivedAutomation';
 

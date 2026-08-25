@@ -1,9 +1,9 @@
 import transferToBauActionsText from '../data/component-actions/transfer-to-bau-actions.json?raw';
 import type { AdoptionStore } from './adoptionState';
 import {
+  clearDerivedComponentContent,
   type DerivedComponentConfig,
   parseDerivedComponentSource,
-  clearDerivedComponentContent,
   syncDerivedComponentContent,
 } from './componentDerivedAutomation';
 

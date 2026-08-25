@@ -1,9 +1,9 @@
 import cmReadinessActionsText from '../data/component-actions/cm-readiness-and-planning-actions.json?raw';
 import type { AdoptionStore } from './adoptionState';
 import {
+  clearDerivedComponentContent,
   type DerivedComponentConfig,
   parseDerivedComponentSource,
-  clearDerivedComponentContent,
   syncDerivedComponentContent,
 } from './componentDerivedAutomation';
 

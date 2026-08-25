@@ -312,9 +312,9 @@ function diffDraft(
           let core = mineEntry
             ? { score: mineEntry.score, justification: mineEntry.justification, evidence: mineEntry.evidence }
             : {
-                score: theirsEntry!.score,
-                justification: theirsEntry!.justification,
-                evidence: theirsEntry!.evidence,
+                score: theirsEntry.score,
+                justification: theirsEntry.justification,
+                evidence: theirsEntry.evidence,
               };
 
           if (mineEntry && theirsEntry && resolutions[`entry:${key}`] === 'theirs') {

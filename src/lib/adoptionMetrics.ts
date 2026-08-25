@@ -8,7 +8,7 @@ import type { ChartData } from 'chart.js';
 
 import { isCompletedActionStatus } from './actionModel';
 import { AdoptionStore, deriveObjectiveStatus, DraftEntry } from './adoptionState';
-import { getTimelineBragStatus, type BragStatus } from './bragStatus';
+import { type BragStatus,getTimelineBragStatus } from './bragStatus';
 
 const COMPONENT_PHASE_EXEMPLARS: Record<number, Record<string, number>> = {
   1: {

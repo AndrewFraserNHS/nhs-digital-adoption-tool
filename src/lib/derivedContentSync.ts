@@ -1,53 +1,54 @@
 import type { CstPathwayKey } from '@data/cst';
+
 import type { AdoptionStore } from './adoptionState';
-import { syncBenefitsDerivedContent, clearBenefitsDerivedContent } from './benefitsAutomation';
-import { syncCapabilityDerivedContent, clearCapabilityDerivedContent } from './capabilityAutomation';
+import { clearBenefitsDerivedContent,syncBenefitsDerivedContent } from './benefitsAutomation';
+import { clearCapabilityDerivedContent,syncCapabilityDerivedContent } from './capabilityAutomation';
 import {
-  syncCaseForChangeDerivedContent,
   clearCaseForChangeDerivedContent,
+  syncCaseForChangeDerivedContent,
 } from './caseForChangeAutomation';
 import {
-  syncChangeAdoptionDerivedContent,
   clearChangeAdoptionDerivedContent,
+  syncChangeAdoptionDerivedContent,
 } from './changeAdoptionAutomation';
 import {
-  syncChangeImpactDerivedContent,
   clearChangeImpactDerivedContent,
+  syncChangeImpactDerivedContent,
 } from './changeImpactAutomation';
 import {
-  syncChangeNetworkDerivedContent,
   clearChangeNetworkDerivedContent,
+  syncChangeNetworkDerivedContent,
 } from './changeNetworkAutomation';
-import { syncCmReadinessDerivedContent, clearCmReadinessDerivedContent } from './cmReadinessAutomation';
+import { clearCmReadinessDerivedContent,syncCmReadinessDerivedContent } from './cmReadinessAutomation';
 import {
-  syncOrgChangeReadinessDerivedContent,
   clearOrgChangeReadinessDerivedContent,
+  syncOrgChangeReadinessDerivedContent,
 } from './orgChangeReadinessAutomation';
 import { syncPathwayObjectives } from './pathwayObjectives';
 import {
-  syncProcessChangeDerivedContent,
   clearProcessChangeDerivedContent,
+  syncProcessChangeDerivedContent,
 } from './processChangeAutomation';
 import {
-  syncReinforcementDerivedContent,
   clearReinforcementDerivedContent,
+  syncReinforcementDerivedContent,
 } from './reinforcementAutomation';
-import { syncResistanceDerivedContent, clearResistanceDerivedContent } from './resistanceAutomation';
+import { clearResistanceDerivedContent,syncResistanceDerivedContent } from './resistanceAutomation';
 import {
-  syncRiskManagementDerivedContent,
   clearRiskManagementDerivedContent,
+  syncRiskManagementDerivedContent,
 } from './riskManagementAutomation';
 import {
-  syncSkillsLearningDerivedContent,
   clearSkillsLearningDerivedContent,
+  syncSkillsLearningDerivedContent,
 } from './skillsLearningAutomation';
-import { syncSponsorshipDerivedContent, clearSponsorshipDerivedContent } from './sponsorshipAutomation';
-import { syncStakeholderDerivedContent, clearStakeholderDerivedContent } from './stakeholderAutomation';
+import { clearSponsorshipDerivedContent,syncSponsorshipDerivedContent } from './sponsorshipAutomation';
+import { clearStakeholderDerivedContent,syncStakeholderDerivedContent } from './stakeholderAutomation';
 import {
-  syncTransferToBauDerivedContent,
   clearTransferToBauDerivedContent,
+  syncTransferToBauDerivedContent,
 } from './transferToBauAutomation';
-import { syncVisionDerivedContent, clearVisionDerivedContent } from './visionAutomation';
+import { clearVisionDerivedContent,syncVisionDerivedContent } from './visionAutomation';
 
 /** Seeds/refreshes every component's Pathway-1-style objectives and actions. */
 export function syncDerivedContent(store: AdoptionStore): AdoptionStore {

@@ -1,6 +1,6 @@
+import { ASSESSMENT_COMPONENTS } from '@data/components';
 import { describe, expect, it } from 'vitest';
 
-import { ASSESSMENT_COMPONENTS } from '@data/components';
 import type { AdoptionStore } from './adoptionState';
 import { initializeStore } from './adoptionState';
 import { regenerateContentForPathway, syncDerivedContent } from './derivedContentSync';

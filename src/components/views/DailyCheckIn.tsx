@@ -5,6 +5,8 @@ import { computeNextSteps, type Metrics } from '@lib/adoptionMetrics';
 import { PageHelpButton, PageIntroModal, usePageIntroSeen } from '@components/onboarding/PageIntroModal';
 import { NextStepsSection } from '@components/views/NextStepsSection';
 import { ProgrammeHierarchy } from '@components/views/ProgrammeHierarchy';
+import { DailyPhaseOverview } from '@components/views/DailyPhaseOverview';
+import type { LinkOverrides, MaturityGuidanceTarget } from '@data/maturity-guidance-links';
 
 export interface DailyCheckInProps {
   store: AdoptionStore;
@@ -13,6 +15,9 @@ export interface DailyCheckInProps {
   getEntry: (componentId: string, lens: string) => DraftEntry;
   onComponentClick: (componentId: string) => void;
   onActionView: (componentId: string, lens: string, actionId: string) => void;
+  guidanceTarget?: MaturityGuidanceTarget;
+  linkOverrides?: LinkOverrides;
+  showAdditionalGuidanceLinks?: boolean;
   phaseFocusMode?: 'auto' | 'manual';
   manualPhaseFocus?: number;
   colorAccessibilityMode?: 'standard' | 'color-blind-friendly';
@@ -30,6 +35,9 @@ export function DailyCheckIn({
   getEntry,
   onComponentClick,
   onActionView,
+  guidanceTarget = 'Default',
+  linkOverrides,
+  showAdditionalGuidanceLinks = true,
   phaseFocusMode = 'auto',
   manualPhaseFocus,
   colorAccessibilityMode = 'standard',
@@ -63,6 +71,15 @@ export function DailyCheckIn({
           onComponentClick={onComponentClick}
           onActionView={onActionView}
           colorAccessibilityMode={colorAccessibilityMode}
+          darkMode={darkMode}
+        />
+
+        <DailyPhaseOverview
+          currentPhase={effectivePhase}
+          onComponentClick={onComponentClick}
+          guidanceTarget={guidanceTarget}
+          linkOverrides={linkOverrides}
+          showAdditionalGuidanceLinks={showAdditionalGuidanceLinks}
           darkMode={darkMode}
         />
 

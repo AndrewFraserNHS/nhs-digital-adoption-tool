@@ -2238,8 +2238,6 @@ export function AdoptionApp() {
                 }
                 getEntry={getEntry}
                 onComponentClick={openComponentAssessment}
-                pathway={store.orgProfile.cst.pathway}
-                pathwayChecks={store.pathwayChecks}
                 onNavigate={handleViewChange}
                 onOpenLensInfo={setActiveLensInfo}
                 onOpenOnboarding={() => setShowOnboarding(true)}
@@ -2260,6 +2258,9 @@ export function AdoptionApp() {
               getEntry={getEntry}
               onComponentClick={openComponentAssessment}
               onActionView={openActionView}
+              guidanceTarget={DEFAULT_GUIDANCE_TARGET}
+              linkOverrides={store.orgProfile.linkOverrides}
+              showAdditionalGuidanceLinks={showAdditionalGuidanceLinks}
               phaseFocusMode={userSettings.phaseFocusMode || 'auto'}
               manualPhaseFocus={userSettings.manualPhaseFocus}
               colorAccessibilityMode={userSettings.colorAccessibilityMode || 'standard'}

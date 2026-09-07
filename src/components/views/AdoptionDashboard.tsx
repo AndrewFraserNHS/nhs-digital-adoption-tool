@@ -3,10 +3,6 @@ import { Metrics } from '@lib/adoptionMetrics';
 import { getComponentExemplarScore } from '@lib/adoptionMetrics';
 import { AssessmentComponent } from '@data/components';
 import { JSX, useMemo, useState } from 'react';
-import type { CstPathwayKey } from '@data/cst';
-import { PATHWAY_LABELS } from '@data/cst';
-import { getPathwayRulesForComponent } from '@data/pathway-rules';
-import { calculateChecklistCompletion } from '@lib/pathwayAnalysis';
 import { FilterSummaryBar } from '@components/ui/FilterSummaryBar';
 import { getComponentDescription, getLensDescription } from '@data/descriptions';
 import { PHASE_NAMES } from '../../types/constants';
@@ -20,8 +16,6 @@ export interface DashboardProps {
   metrics: Metrics;
   getEntry: (componentId: string, lens: string) => DraftEntry;
   onComponentClick: (componentId: string) => void;
-  pathway: CstPathwayKey;
-  pathwayChecks: AdoptionStore['pathwayChecks'];
   onNavigate?: (view: View) => void;
   onOpenLensInfo?: (lensName: string) => void;
   onOpenOnboarding?: () => void;
@@ -114,8 +108,6 @@ export function AdoptionDashboard({
   metrics,
   getEntry,
   onComponentClick,
-  pathway,
-  pathwayChecks,
   onNavigate,
   onOpenLensInfo,
   onOpenOnboarding,
@@ -294,24 +286,6 @@ export function AdoptionDashboard({
     statusFilter,
   ]);
 
-  const pathwaySummary = useMemo(() => {
-    let required = 0;
-    let checked = 0;
-
-    components.forEach((component) => {
-      const rule = getPathwayRulesForComponent(component.id, pathway);
-      const completion = calculateChecklistCompletion(
-        pathwayChecks[component.id]?.[pathway] || [],
-        rule
-      );
-      required += completion.totalCount;
-      checked += completion.checkedCount;
-    });
-
-    const pct = required > 0 ? Math.round((checked / required) * 100) : 100;
-    return { required, checked, pct };
-  }, [components, pathway, pathwayChecks]);
-
   const activeComponentFilters = useMemo(() => {
     const chips: string[] = [];
     if (searchTerm.trim()) {
@@ -461,9 +435,9 @@ export function AdoptionDashboard({
       </div> */}
 
       {/* Metrics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div
-          className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm p-6 border`}
+          className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm p-4 border`}
         >
           <h3
             className={`text-sm font-medium mb-1 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
@@ -471,7 +445,7 @@ export function AdoptionDashboard({
             Live Delivery Progress
           </h3>
           <div className="flex items-end gap-3">
-            <span className="text-4xl font-bold text-[#005eb8]">{metrics.overallPct}%</span>
+            <span className="text-3xl font-bold text-[#005eb8]">{metrics.overallPct}%</span>
             {scoreDelta !== null && (
               <span
                 className={`text-sm font-semibold mb-1 ${
@@ -501,7 +475,7 @@ export function AdoptionDashboard({
         </div>
 
         <div
-          className={`dashboard-metric-card dashboard-metric-card--phase dashboard-metric-card--${currentPhaseTone} rounded-lg shadow-sm p-6 border`}
+          className={`dashboard-metric-card dashboard-metric-card--phase dashboard-metric-card--${currentPhaseTone} rounded-lg shadow-sm p-4 border`}
         >
           <h3 className="dashboard-metric-card__label text-sm font-medium mb-1">
             Current Phase Focus
@@ -554,7 +528,7 @@ export function AdoptionDashboard({
             ) : null}
           </div>
           <div className="flex items-end space-x-2">
-            <span className="dashboard-metric-card__headline text-4xl font-bold">
+            <span className="dashboard-metric-card__headline text-3xl font-bold">
               {PHASE_NAMES[effectivePhase] || `Phase ${effectivePhase}`}
             </span>
           </div>
@@ -567,7 +541,7 @@ export function AdoptionDashboard({
         </div>
 
         <div
-          className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm p-6 border`}
+          className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm p-4 border`}
         >
           <h3
             className={`text-sm font-medium mb-1 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
@@ -576,7 +550,7 @@ export function AdoptionDashboard({
           </h3>
           <div className="flex items-end space-x-2">
             <span
-              className={`text-4xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}
+              className={`text-3xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}
             >
               {metrics.actionCompletionPct}%
             </span>
@@ -587,7 +561,24 @@ export function AdoptionDashboard({
         </div>
       </div>
 
-      {/* Snapshot reminder - only when work exists but this month isn't captured */}
+      <div
+        className={`mb-6 flex flex-wrap items-center justify-between gap-3 rounded-lg border px-4 py-3 ${darkMode ? 'border-blue-800 bg-blue-950/40 text-slate-200' : 'border-blue-200 bg-blue-50 text-slate-700'}`}
+      >
+        <p className="text-sm">
+          Need a focused view of what needs attention today?
+        </p>
+        {onNavigate ? (
+          <button
+            type="button"
+            onClick={() => onNavigate('daily-checkin')}
+            className="font-semibold text-[#005eb8] underline underline-offset-2 hover:text-[#003087]"
+          >
+            Open Daily Check-in
+          </button>
+        ) : null}
+      </div>
+
+      {/* Snapshot reminder - only when work exists but this month isn't captured
       {snapshotDue && (
         <div className="dashboard-callout dashboard-callout--snapshot rounded-lg border p-4 flex items-center gap-3 mb-8">
           <span className="dashboard-callout__icon text-xl shrink-0">📅</span>
@@ -597,7 +588,7 @@ export function AdoptionDashboard({
             today's progress and build your delivery trajectory.
           </p>
         </div>
-      )}
+      )} */}
 
       {metrics.assessedCount === 0 ? (
         <div className="bg-white rounded-lg shadow-sm p-8 border border-slate-200 mb-8 text-center">
@@ -694,12 +685,19 @@ export function AdoptionDashboard({
 
           <div className="flex flex-col">
             {/* Charts Section */}
-            <div className="order-2 grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            <div
-              className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm p-6 border flex flex-col`}
+            <details
+              className={`order-2 mb-8 overflow-hidden rounded-lg border shadow-sm group ${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'}`}
             >
+              <summary
+                className={`flex cursor-pointer list-none items-center justify-between px-5 py-4 text-lg font-semibold focus:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-[#ffeb3b] [&::-webkit-details-marker]:hidden ${darkMode ? 'text-slate-100 hover:bg-slate-700' : 'text-slate-800 hover:bg-slate-50'}`}
+              >
+                <span>Readiness analytics</span>
+                <span className="text-2xl font-normal transition-transform group-open:rotate-45">+</span>
+              </summary>
+              <div className="grid grid-cols-1 gap-6 border-t border-slate-200 p-5 lg:grid-cols-2 dark:border-slate-700">
+            <div className="flex flex-col">
               <h3
-                className={`text-lg font-semibold mb-4 ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+                className={`mb-3 text-base font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
               >
                 Readiness Trajectory
               </h3>
@@ -716,9 +714,7 @@ export function AdoptionDashboard({
               </div>
             </div>
 
-            <div
-              className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm p-6 border flex flex-col`}
-            >
+            <div className="flex flex-col">
               <div className="flex items-center justify-between mb-4">
                 <h3
                   className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
@@ -771,7 +767,8 @@ export function AdoptionDashboard({
                 against their specific target requirements.
               </p>
             </div>
-            </div>
+              </div>
+            </details>
 
             {/* Component Overview */}
             <div
@@ -1044,9 +1041,16 @@ export function AdoptionDashboard({
           </div>
 
           {/* Lens & Component Breakdown */}
-          <div
-            className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm p-6 border mb-8`}
+          <details
+            className={`mb-8 overflow-hidden rounded-lg border shadow-sm group ${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'}`}
           >
+            <summary
+              className={`flex cursor-pointer list-none items-center justify-between px-5 py-4 text-lg font-semibold focus:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-[#ffeb3b] [&::-webkit-details-marker]:hidden ${darkMode ? 'text-slate-100 hover:bg-slate-700' : 'text-slate-800 hover:bg-slate-50'}`}
+            >
+              <span>Lenses and which components they apply to</span>
+              <span className="text-2xl font-normal transition-transform group-open:rotate-45">+</span>
+            </summary>
+            <div className="border-t border-slate-200 p-5 dark:border-slate-700">
             <div className="flex flex-col gap-3 mb-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <div className="flex items-center gap-2">
@@ -1158,7 +1162,8 @@ export function AdoptionDashboard({
                 );
               })}
             </div>
-          </div>
+            </div>
+          </details>
         </>
       )}
       <PageIntroModal

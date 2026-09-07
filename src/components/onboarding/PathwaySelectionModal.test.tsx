@@ -14,9 +14,9 @@ describe('PathwaySelectionModal', () => {
 
     const labels = screen.getAllByRole('radio').map((radio) => radio.parentElement?.textContent);
     expect(labels).toEqual([
-      expect.stringContaining('Pathway 2'),
-      expect.stringContaining('Pathway 1'),
-      expect.stringContaining('Pathway 3'),
+      expect.stringContaining('Gone Live but Adoption is Patchy'),
+      expect.stringContaining('Starting for the First Time'),
+      expect.stringContaining('Piloted and Ready to Scale Up'),
     ]);
   });
 
@@ -30,7 +30,7 @@ describe('PathwaySelectionModal', () => {
       />
     );
 
-    fireEvent.click(screen.getByRole('radio', { name: /Pathway 3/ }));
+    fireEvent.click(screen.getByRole('radio', { name: /Gone Live but Adoption is Patchy/ }));
     fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
 
     expect(onContinue).toHaveBeenCalledWith('pathway-3');

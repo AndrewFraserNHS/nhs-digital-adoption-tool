@@ -15,105 +15,6 @@ export interface ChangeManagementGuideProps {
   darkMode?: boolean;
 }
 
-interface PhaseData {
-  phase: number;
-  label: string;
-  programmeStage: string;
-  tagline: string;
-  deliverables: string[];
-  color: string;
-  darkColor: string;
-  textColor: string;
-  darkTextColor: string;
-  borderColor: string;
-  darkBorderColor: string;
-}
-
-const PHASES: PhaseData[] = [
-  {
-    phase: 1,
-    label: 'Pre-Discovery',
-    programmeStage: 'Concept',
-    tagline: 'Define the change',
-    deliverables: [
-      'Change Vision defined and communicated',
-      'Compelling case for change developed',
-    ],
-    color: 'bg-blue-50',
-    darkColor: 'bg-blue-950/45',
-    textColor: 'text-blue-700',
-    darkTextColor: 'text-blue-100',
-    borderColor: 'border-blue-300',
-    darkBorderColor: 'border-blue-700',
-  },
-  {
-    phase: 2,
-    label: 'Solution Design',
-    programmeStage: 'Definition',
-    tagline: 'Prepare the change',
-    deliverables: [
-      'Change Impact analysed',
-      'Change Management inputted to Business Case',
-      'Engagement and Comms Strategy developed',
-    ],
-    color: 'bg-violet-50',
-    darkColor: 'bg-violet-950/45',
-    textColor: 'text-violet-700',
-    darkTextColor: 'text-violet-100',
-    borderColor: 'border-violet-300',
-    darkBorderColor: 'border-violet-700',
-  },
-  {
-    phase: 3,
-    label: 'Development',
-    programmeStage: 'Design & Develop',
-    tagline: 'Plan the change',
-    deliverables: ['Engagement and Comms Plan developed', 'Change Management Plan developed'],
-    color: 'bg-amber-50',
-    darkColor: 'bg-amber-950/45',
-    textColor: 'text-amber-700',
-    darkTextColor: 'text-amber-100',
-    borderColor: 'border-amber-300',
-    darkBorderColor: 'border-amber-700',
-  },
-  {
-    phase: 4,
-    label: 'Deployment / Go Live',
-    programmeStage: 'Implementation',
-    tagline: 'Manage implementation of the change',
-    deliverables: [
-      'Change Management Plan executed',
-      'Communications delivered and Stakeholders engaged',
-      'Future State Processes validated',
-      'Skills gaps addressed',
-      'Future State Processes trialled and in use',
-    ],
-    color: 'bg-orange-50',
-    darkColor: 'bg-orange-950/45',
-    textColor: 'text-orange-700',
-    darkTextColor: 'text-orange-100',
-    borderColor: 'border-orange-300',
-    darkBorderColor: 'border-orange-700',
-  },
-  {
-    phase: 5,
-    label: 'Post-Deployment',
-    programmeStage: 'Transition / Close',
-    tagline: 'Reinforce and sustain the change',
-    deliverables: [
-      'Change adoption evaluated',
-      'Business Change refinements actioned',
-      'Change sustained',
-    ],
-    color: 'bg-green-50',
-    darkColor: 'bg-green-950/45',
-    textColor: 'text-green-700',
-    darkTextColor: 'text-green-100',
-    borderColor: 'border-green-300',
-    darkBorderColor: 'border-green-700',
-  },
-];
-
 const CM_RESPONSIBILITIES = [
   {
     title: 'Handling Resistance',
@@ -145,7 +46,7 @@ const CM_RESPONSIBILITIES = [
   },
 ];
 
-type GuideSectionId = 'questions' | 'phases' | 'role';
+type GuideSectionId = 'questions' | 'role';
 
 export function AccordionSection({
   title,
@@ -207,14 +108,9 @@ export function ChangeManagementGuide({
   darkMode = false,
 }: ChangeManagementGuideProps): JSX.Element {
   const [expandedSection, setExpandedSection] = useState<GuideSectionId | null>('questions');
-  const [expandedPhase, setExpandedPhase] = useState<number | null>(null);
 
   const toggleSection = (id: GuideSectionId) => {
     setExpandedSection((prev) => (prev === id ? null : id));
-  };
-
-  const togglePhase = (phase: number) => {
-    setExpandedPhase((prev) => (prev === phase ? null : phase));
   };
 
   return (
@@ -244,115 +140,6 @@ export function ChangeManagementGuide({
         </div>
       </div>
 
-
-      {/* Phase timeline */}
-      <AccordionSection
-        title="The Five Change Phases"
-        description="Select a phase to see the key deliverables expected at that stage."
-        isOpen={expandedSection === 'phases'}
-        onToggle={() => toggleSection('phases')}
-        darkMode={darkMode}
-      >
-        {/* Lifecycle bar */}
-        <div
-          className={`mb-6 hidden grid-cols-5 gap-1 overflow-hidden rounded-lg border text-center text-xs font-semibold md:grid ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}
-        >
-          {PHASES.map((p) => (
-            <button
-              key={p.phase}
-              onClick={() => togglePhase(p.phase)}
-              className={`py-2 px-1 transition-colors ${
-                expandedPhase === p.phase
-                  ? `${p.color} ${p.textColor} ring-2 ring-inset ring-current`
-                  : darkMode
-                    ? 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                    : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
-              }`}
-            >
-              Phase {p.phase}
-            </button>
-          ))}
-        </div>
-
-        <div className="space-y-3">
-          {PHASES.map((p) => {
-            const isOpen = expandedPhase === p.phase;
-            return (
-              <div
-                key={p.phase}
-                className={`rounded-lg border overflow-hidden transition-shadow ${
-                  darkMode ? p.darkBorderColor : p.borderColor
-                } ${isOpen ? 'shadow-md' : ''}`}
-              >
-                <button
-                  onClick={() => togglePhase(p.phase)}
-                  className={`w-full flex items-center justify-between p-4 text-left transition-colors ${darkMode ? p.darkColor : p.color}`}
-                >
-                  <div className="flex items-center gap-3">
-                    <span
-                      className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0 border ${
-                        darkMode
-                          ? `${p.darkTextColor} bg-slate-900 ${p.darkBorderColor}`
-                          : `${p.textColor} bg-white ${p.borderColor}`
-                      }`}
-                    >
-                      {p.phase}
-                    </span>
-                    <div>
-                      <p
-                        className={`font-semibold text-sm ${darkMode ? p.darkTextColor : p.textColor}`}
-                      >
-                        {p.label}
-                      </p>
-                      <p className={`text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-                        <span className="italic">"{p.tagline}"</span>
-                        {' · '}
-                        {p.programmeStage}
-                      </p>
-                    </div>
-                  </div>
-                  <span
-                    className={`text-lg font-bold transition-transform ${darkMode ? p.darkTextColor : p.textColor} ${isOpen ? 'rotate-45' : ''}`}
-                  >
-                    +
-                  </span>
-                </button>
-
-                {isOpen && (
-                  <div
-                    className={`border-t px-5 pb-5 pt-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-100 bg-white'}`}
-                  >
-                    <p
-                      className={`mb-3 text-xs font-semibold uppercase tracking-wide ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
-                    >
-                      Key deliverables
-                    </p>
-                    <ul className="space-y-2">
-                      {p.deliverables.map((d, i) => (
-                        <li
-                          key={i}
-                          className={`flex items-start gap-2 text-sm ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
-                        >
-                          <span
-                            className={`mt-0.5 w-5 h-5 rounded-full text-xs font-bold flex items-center justify-center shrink-0 ${
-                              darkMode
-                                ? `${p.darkColor} ${p.darkTextColor}`
-                                : `${p.color} ${p.textColor}`
-                            }`}
-                          >
-                            {i + 1}
-                          </span>
-                          {d}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </AccordionSection>
 
       {/* The 6 Key Questions */}
       <AccordionSection

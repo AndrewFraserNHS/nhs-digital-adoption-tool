@@ -43,12 +43,16 @@ export function ProgrammeHierarchy({
   };
 
   return (
-    <div
-      className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm p-6 border`}
+    <details
+      className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} group overflow-hidden rounded-lg border shadow-sm`}
     >
-      <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
-        Programme Change Hierarchy
-      </h3>
+      <summary
+        className={`flex cursor-pointer list-none items-center justify-between gap-4 p-5 text-lg font-semibold focus:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-[#ffeb3b] [&::-webkit-details-marker]:hidden ${darkMode ? 'text-slate-100 hover:bg-slate-700' : 'text-slate-800 hover:bg-slate-50'}`}
+      >
+        <span>Programme Change Hierarchy</span>
+        <span className="text-2xl font-normal transition-transform group-open:rotate-45">+</span>
+      </summary>
+      <div className="border-t border-slate-200 p-6 dark:border-slate-700">
       <p className={`mt-1 mb-4 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
         Your programme has {components.length} components, each viewed through one or more lenses.
         A component is a change topic you assess and track. A lens is the perspective used to
@@ -209,6 +213,7 @@ export function ProgrammeHierarchy({
           </div>
         ))}
       </div>
-    </div>
+      </div>
+    </details>
   );
 }

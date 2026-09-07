@@ -391,7 +391,7 @@ textarea:focus,
 select:focus,
 button:focus {
   outline: none;
-  box-shadow: 0 0 0 4px rgba(0, 94, 184, 0.08);
+  /* box-shadow: 0 0 0 4px rgba(0, 94, 184, 0.08); */
 }
 
 /* Print colour adjustment for level badges */

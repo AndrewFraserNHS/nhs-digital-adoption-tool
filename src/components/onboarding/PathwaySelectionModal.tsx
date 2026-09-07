@@ -1,6 +1,66 @@
 import { useState, type JSX } from 'react';
 import { PATHWAY_OPTIONS, type CstPathwayKey } from '@data/cst';
-import { nhsButtonPrimary, nhsButtonSecondary } from '../../styles/nhsTheme';
+import { nhsButtonPrimary } from '../../styles/nhsTheme';
+
+type PathwayDirection = 'left' | 'straight' | 'right';
+
+function PathwayDirectionGraphic({
+  direction,
+  darkMode,
+}: {
+  direction: PathwayDirection;
+  darkMode: boolean;
+}): JSX.Element {
+  const stroke = darkMode ? '#90cdf4' : '#005eb8';
+  const accent = darkMode ? '#63b3ed' : '#003087';
+
+  if (direction === 'straight') {
+    return (
+      <svg
+        aria-hidden="true"
+        width="75"
+        height="200"
+        viewBox="0 0 75 200"
+        className="h-[200px] w-[75px]"
+      >
+        <path d="M37.5 182 V28" stroke={stroke} strokeWidth="5" strokeLinecap="round" />
+        <path
+          d="M22 45 L37.5 19 L53 45"
+          fill="none"
+          stroke={accent}
+          strokeWidth="5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <circle cx="37.5" cy="182" r="7" fill={accent} />
+      </svg>
+    );
+  }
+
+  const points = direction === 'left' ? '60 100 H15' : '15 100 H60';
+  const arrow = direction === 'left' ? 'M27 76 L12 100 L27 124' : 'M48 76 L63 100 L48 124';
+
+  return (
+    <svg
+      aria-hidden="true"
+      width="75"
+      height="200"
+      viewBox="0 0 75 200"
+      className="h-[200px] w-[75px]"
+    >
+      <path d={points} stroke={stroke} strokeWidth="5" strokeLinecap="round" />
+      <path
+        d={arrow}
+        fill="none"
+        stroke={accent}
+        strokeWidth="5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx={direction === 'left' ? '60' : '15'} cy="100" r="7" fill={accent} />
+    </svg>
+  );
+}
 
 export interface PathwaySelectionModalProps {
   open: boolean;
@@ -21,7 +81,7 @@ export function PathwaySelectionModal({
     return null;
   }
 
-  const orderedOptions = [PATHWAY_OPTIONS[1], PATHWAY_OPTIONS[0], PATHWAY_OPTIONS[2]];
+  const orderedOptions = [PATHWAY_OPTIONS[2], PATHWAY_OPTIONS[0], PATHWAY_OPTIONS[1]];
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/45 p-4">
@@ -46,7 +106,7 @@ export function PathwaySelectionModal({
         </p>
 
         <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-3">
-          {orderedOptions.map((option) => {
+          {orderedOptions.map((option, index) => {
             const isSelected = selectedPathway === option.value;
             return (
               <label
@@ -67,10 +127,16 @@ export function PathwaySelectionModal({
                   onChange={() => setSelectedPathway(option.value)}
                   className="sr-only"
                 />
+                <span className="flex justify-center" aria-hidden="true">
+                  <PathwayDirectionGraphic
+                    direction={index === 0 ? 'left' : index === 1 ? 'straight' : 'right'}
+                    darkMode={darkMode}
+                  />
+                </span>
                 <span
-                  className={`block text-sm font-semibold ${isSelected ? 'text-[#005eb8]' : darkMode ? 'text-slate-100' : 'text-slate-900'}`}
+                  className={`mt-3 block text-center text-sm font-semibold ${isSelected ? 'text-[#005eb8]' : darkMode ? 'text-slate-100' : 'text-slate-900'}`}
                 >
-                  {option.label}
+                  {option.simplifiedLabel}
                 </span>
               </label>
             );

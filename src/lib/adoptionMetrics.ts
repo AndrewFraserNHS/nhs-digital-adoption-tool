@@ -577,30 +577,16 @@ export function flattenActions(
 
 /**
  * Count total/completed objectives for a single component. An objective counts as
- * completed once its derived status (from its linked lens actions) is 'Completed'.
+ * completed once the user has manually set its status to 'Completed'.
  */
 export function getComponentObjectiveCounts(
   store: AdoptionStore,
-  componentId: string,
-  getEntry: (componentId: string, lens: string) => DraftEntry
+  componentId: string
 ): { total: number; completed: number } {
   const objectives = store.objectives?.[componentId] || [];
 
-  const actionsByLens = (
-    lenses: string[]
-  ): Record<string, ReturnType<typeof getEntry>['actions']> =>
-    lenses.reduce<Record<string, ReturnType<typeof getEntry>['actions']>>((byLens, lens) => {
-      byLens[lens] = getEntry(componentId, lens).actions;
-      return byLens;
-    }, {});
-
-  const lensesUsed = Array.from(
-    new Set(objectives.flatMap((objective) => objective.linkedActions.map((link) => link.lens)))
-  );
-  const byLens = actionsByLens(lensesUsed);
-
   const completed = objectives.filter(
-    (objective) => deriveObjectiveStatus(objective, byLens) === 'Completed'
+    (objective) => deriveObjectiveStatus(objective) === 'Completed'
   ).length;
 
   return { total: objectives.length, completed };

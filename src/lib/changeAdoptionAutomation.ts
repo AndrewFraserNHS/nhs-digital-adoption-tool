@@ -37,7 +37,7 @@ export const CHANGE_ADOPTION_CONFIG: DerivedComponentConfig = {
   },
 };
 
-const CHANGE_ADOPTION_SOURCE = parseDerivedComponentSource(
+export const CHANGE_ADOPTION_SOURCE = parseDerivedComponentSource(
   changeAdoptionActionsText,
   CHANGE_ADOPTION_CONFIG
 );

@@ -36,7 +36,7 @@ export const RISK_MANAGEMENT_CONFIG: DerivedComponentConfig = {
   },
 };
 
-const RISK_MANAGEMENT_SOURCE = parseDerivedComponentSource(
+export const RISK_MANAGEMENT_SOURCE = parseDerivedComponentSource(
   riskManagementActionsText,
   RISK_MANAGEMENT_CONFIG
 );

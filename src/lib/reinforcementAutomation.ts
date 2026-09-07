@@ -36,7 +36,7 @@ export const REINFORCEMENT_CONFIG: DerivedComponentConfig = {
   },
 };
 
-const REINFORCEMENT_SOURCE = parseDerivedComponentSource(
+export const REINFORCEMENT_SOURCE = parseDerivedComponentSource(
   reinforcementActionsText,
   REINFORCEMENT_CONFIG
 );

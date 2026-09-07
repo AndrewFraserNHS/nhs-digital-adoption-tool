@@ -38,7 +38,7 @@ export const RESISTANCE_CONFIG: DerivedComponentConfig = {
   },
 };
 
-const RESISTANCE_SOURCE = parseDerivedComponentSource(resistanceActionsText, RESISTANCE_CONFIG);
+export const RESISTANCE_SOURCE = parseDerivedComponentSource(resistanceActionsText, RESISTANCE_CONFIG);
 
 export function syncResistanceDerivedContent(store: AdoptionStore): AdoptionStore {
   return syncDerivedComponentContent(store, RESISTANCE_CONFIG, RESISTANCE_SOURCE);

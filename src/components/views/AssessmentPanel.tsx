@@ -26,9 +26,14 @@ import {
   normalizeActionStatus,
 } from '@lib/actionModel';
 import { detectScoreAdvancementOpportunities } from '@lib/componentDerivedAutomation';
+import { getSuggestionsForOutcome } from '@lib/outcomeSuggestions';
 import { PHASE_NAMES } from '../../types/constants';
 import componentDetailsText from '@data/component-descriptors/component-details.json?raw';
-import { PageHelpButton, PageIntroModal, usePageIntroSeen } from '@components/onboarding/PageIntroModal';
+import {
+  PageHelpButton,
+  PageIntroModal,
+  usePageIntroSeen,
+} from '@components/onboarding/PageIntroModal';
 
 type AssessmentPanelStore = AdoptionStore;
 
@@ -60,6 +65,10 @@ interface ObjectiveEditorState {
   objectiveId?: string;
   text: string;
   owner: string;
+  status: ObjectiveStatus;
+  timescale: string;
+  notes: string;
+  evidence: string;
 }
 
 /** Custom outcomes get this id prefix so they're never mistaken for auto-generated ones and are
@@ -194,8 +203,7 @@ export function buildLabelVariants(label: string): string[] {
 
 /** A guidance link (real URL) or a tool link (navigates in-app instead of opening a URL). */
 export type MatchableLink =
-  | (GuidanceLink & { kind: 'url' })
-  | { key: string; label: string; kind: 'tool'; tool: InAppTool };
+  (GuidanceLink & { kind: 'url' }) | { key: string; label: string; kind: 'tool'; tool: InAppTool };
 
 interface GuidanceLinkVariant {
   variant: string;
@@ -351,7 +359,12 @@ function ComponentOverviewPointList({
             {point.title}
           </p>
           <p className={`mt-0.5 text-sm ${styles.text}`}>
-            {renderActionTextWithGuidanceLinks(point.body, guidanceLinks, darkMode, onNavigateToTool)}
+            {renderActionTextWithGuidanceLinks(
+              point.body,
+              guidanceLinks,
+              darkMode,
+              onNavigateToTool
+            )}
           </p>
         </li>
       ))}
@@ -428,90 +441,118 @@ function ComponentOverviewContent({
           {detail.description}
         </p>
       )}
-      <div className={`mt-4 space-y-4 ${detail.description ? 'border-t pt-4' : ''} ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}>
-          {furtherReadingUrl && (
-            <a
-              href={furtherReadingUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`inline-flex items-center gap-1 rounded-md border px-3 py-1.5 text-xs font-semibold ${darkMode ? 'border-slate-600 bg-slate-800 text-blue-300 hover:bg-slate-700' : 'border-slate-300 bg-white text-[#005eb8] hover:bg-slate-50'}`}
+      <div
+        className={`mt-4 space-y-4 ${detail.description ? 'border-t pt-4' : ''} ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}
+      >
+        {furtherReadingUrl && (
+          <a
+            href={furtherReadingUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`inline-flex items-center gap-1 rounded-md border px-3 py-1.5 text-xs font-semibold ${darkMode ? 'border-slate-600 bg-slate-800 text-blue-300 hover:bg-slate-700' : 'border-slate-300 bg-white text-[#005eb8] hover:bg-slate-50'}`}
+          >
+            Further Reading ↗
+          </a>
+        )}
+        {detail.whatIsIt && (
+          <p className={`text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+            {renderActionTextWithGuidanceLinks(
+              detail.whatIsIt,
+              guidanceLinks,
+              darkMode,
+              onNavigateToTool
+            )}
+          </p>
+        )}
+        {detail.userInsight && (
+          <blockquote
+            className={`border-l-2 pl-3 text-sm italic ${darkMode ? 'border-slate-600 text-slate-300' : 'border-slate-300 text-slate-600'}`}
+          >
+            “
+            {renderActionTextWithGuidanceLinks(
+              detail.userInsight,
+              guidanceLinks,
+              darkMode,
+              onNavigateToTool
+            )}
+            ”
+          </blockquote>
+        )}
+        {detail.whyThisMatters && (
+          <div>
+            <p
+              className={`text-xs font-semibold uppercase tracking-wide ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
             >
-              Further Reading ↗
-            </a>
-          )}
-          {detail.whatIsIt && (
-            <p className={`text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-              {renderActionTextWithGuidanceLinks(detail.whatIsIt, guidanceLinks, darkMode, onNavigateToTool)}
+              Why this matters
             </p>
-          )}
-          {detail.userInsight && (
-            <blockquote
-              className={`border-l-2 pl-3 text-sm italic ${darkMode ? 'border-slate-600 text-slate-300' : 'border-slate-300 text-slate-600'}`}
+            <ul
+              className={`mt-1 list-disc space-y-1 pl-5 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
             >
-              “{renderActionTextWithGuidanceLinks(detail.userInsight, guidanceLinks, darkMode, onNavigateToTool)}”
-            </blockquote>
-          )}
-          {detail.whyThisMatters && (
-            <div>
-              <p
-                className={`text-xs font-semibold uppercase tracking-wide ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
-              >
-                Why this matters
-              </p>
-              <ul className={`mt-1 list-disc space-y-1 pl-5 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-                {splitSentences(detail.whyThisMatters).map((sentence) => (
-                  <li key={sentence}>
-                    {renderActionTextWithGuidanceLinks(sentence, guidanceLinks, darkMode, onNavigateToTool)}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-          {detail.quickRealityCheck && (
-            <div>
-              <p
-                className={`text-xs font-semibold uppercase tracking-wide ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
-              >
-                Quick reality check
-              </p>
-              <ul className={`mt-1 list-disc space-y-1 pl-5 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-                {splitSentences(detail.quickRealityCheck).map((question) => (
-                  <li key={question}>
-                    {renderActionTextWithGuidanceLinks(question, guidanceLinks, darkMode, onNavigateToTool)}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-          {(detail.whatGoodLooksLike.length > 0 || detail.risksIfYouDont.length > 0) && (
-            <div className="space-y-2">
-              {detail.whatGoodLooksLike.length > 0 && (
-                <ComponentOverviewSubsection
-                  title="What good looks like"
-                  points={detail.whatGoodLooksLike}
-                  tone="good"
-                  isOpen={showGoodPractice}
-                  onToggle={() => setShowGoodPractice((prev) => !prev)}
-                  guidanceLinks={guidanceLinks}
-                  darkMode={darkMode}
-                  onNavigateToTool={onNavigateToTool}
-                />
-              )}
-              {detail.risksIfYouDont.length > 0 && (
-                <ComponentOverviewSubsection
-                  title="Risks if you don't"
-                  points={detail.risksIfYouDont}
-                  tone="risk"
-                  isOpen={showRisks}
-                  onToggle={() => setShowRisks((prev) => !prev)}
-                  guidanceLinks={guidanceLinks}
-                  darkMode={darkMode}
-                  onNavigateToTool={onNavigateToTool}
-                />
-              )}
-            </div>
-          )}
-        </div>
+              {splitSentences(detail.whyThisMatters).map((sentence) => (
+                <li key={sentence}>
+                  {renderActionTextWithGuidanceLinks(
+                    sentence,
+                    guidanceLinks,
+                    darkMode,
+                    onNavigateToTool
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {detail.quickRealityCheck && (
+          <div>
+            <p
+              className={`text-xs font-semibold uppercase tracking-wide ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
+            >
+              Quick reality check
+            </p>
+            <ul
+              className={`mt-1 list-disc space-y-1 pl-5 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+            >
+              {splitSentences(detail.quickRealityCheck).map((question) => (
+                <li key={question}>
+                  {renderActionTextWithGuidanceLinks(
+                    question,
+                    guidanceLinks,
+                    darkMode,
+                    onNavigateToTool
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {(detail.whatGoodLooksLike.length > 0 || detail.risksIfYouDont.length > 0) && (
+          <div className="space-y-2">
+            {detail.whatGoodLooksLike.length > 0 && (
+              <ComponentOverviewSubsection
+                title="What good looks like"
+                points={detail.whatGoodLooksLike}
+                tone="good"
+                isOpen={showGoodPractice}
+                onToggle={() => setShowGoodPractice((prev) => !prev)}
+                guidanceLinks={guidanceLinks}
+                darkMode={darkMode}
+                onNavigateToTool={onNavigateToTool}
+              />
+            )}
+            {detail.risksIfYouDont.length > 0 && (
+              <ComponentOverviewSubsection
+                title="Risks if you don't"
+                points={detail.risksIfYouDont}
+                tone="risk"
+                isOpen={showRisks}
+                onToggle={() => setShowRisks((prev) => !prev)}
+                guidanceLinks={guidanceLinks}
+                darkMode={darkMode}
+                onNavigateToTool={onNavigateToTool}
+              />
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -691,7 +732,7 @@ function EvidenceLinksAndDocsSection({
           <p className={`mt-0.5 text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
             {rows.length
               ? `${rows.length} item${rows.length === 1 ? '' : 's'} attached across this component's actions.`
-              : 'Everything attached as evidence across this component\'s actions, in one place.'}
+              : "Everything attached as evidence across this component's actions, in one place."}
           </p>
         </div>
         <span
@@ -959,9 +1000,7 @@ export function AssessmentPanel({
   const pageIntro = usePageIntroSeen('assessment');
   const [expandedLensActions, setExpandedLensActions] = useState<Record<string, boolean>>({});
   const [lensActionTypeFilters, setLensActionTypeFilters] = useState<Record<string, string>>({});
-  const [lensActionOwnerFilters, setLensActionOwnerFilters] = useState<Record<string, string>>(
-    {}
-  );
+  const [lensActionOwnerFilters, setLensActionOwnerFilters] = useState<Record<string, string>>({});
   const objectives = store.objectives?.[component.id] || [];
   const teamMembers = store.orgProfile.teamMembers || [];
 
@@ -1099,30 +1138,15 @@ export function AssessmentPanel({
     if (!activeObjective) {
       return null;
     }
-    return deriveObjectiveStatus(activeObjective, componentActionsByLens);
-  }, [activeObjective, componentActionsByLens]);
+    return deriveObjectiveStatus(activeObjective);
+  }, [activeObjective]);
 
-  const activeObjectiveLinkedActions = useMemo(() => {
+  const activeObjectiveSuggestions = useMemo(() => {
     if (!activeObjective) {
       return [];
     }
-
-    return activeObjective.linkedActions.map((link) => {
-      const action = (componentActionsByLens[link.lens] || []).find(
-        (candidate) => candidate.id === link.actionId
-      );
-      const status = action ? normalizeActionStatus(action.status) : null;
-      const temporalStatus = action
-        ? deriveTemporalActionStatus(action.status, action.startDate, action.dueDate)
-        : null;
-      return {
-        lens: link.lens,
-        action,
-        status,
-        temporalStatus,
-      };
-    });
-  }, [activeObjective, componentActionsByLens]);
+    return getSuggestionsForOutcome(component.id, activeObjective.id);
+  }, [activeObjective, component.id]);
 
   const handleComponentSelect = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -1209,7 +1233,15 @@ export function AssessmentPanel({
   );
 
   const openCreateObjectiveModal = useCallback(() => {
-    setObjectiveEditor({ mode: 'create', text: '', owner: '' });
+    setObjectiveEditor({
+      mode: 'create',
+      text: '',
+      owner: '',
+      status: 'Not Started',
+      timescale: '',
+      notes: '',
+      evidence: '',
+    });
   }, []);
 
   const openEditObjectiveModal = useCallback((objective: ComponentObjective) => {
@@ -1218,8 +1250,24 @@ export function AssessmentPanel({
       objectiveId: objective.id,
       text: objective.text,
       owner: objective.owner,
+      status: objective.status || 'Not Started',
+      timescale: objective.timescale || '',
+      notes: objective.notes || '',
+      evidence: objective.evidence || '',
     });
   }, []);
+
+  const updateObjectiveStatus = useCallback(
+    (objectiveId: string, status: ObjectiveStatus) => {
+      onObjectivesUpdate(
+        component.id,
+        objectives.map((objective) =>
+          objective.id === objectiveId ? { ...objective, status } : objective
+        )
+      );
+    },
+    [component.id, objectives, onObjectivesUpdate]
+  );
 
   const closeObjectiveModal = () => {
     setObjectiveEditor(null);
@@ -1240,7 +1288,10 @@ export function AssessmentPanel({
         id: `${CUSTOM_OUTCOME_PREFIX}${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
         text: objectiveEditor.text.trim(),
         owner: objectiveEditor.owner.trim(),
-        timescale: '',
+        timescale: objectiveEditor.timescale.trim(),
+        status: objectiveEditor.status,
+        notes: objectiveEditor.notes.trim(),
+        evidence: objectiveEditor.evidence.trim(),
         linkedActions: [],
       };
       onObjectivesUpdate(component.id, [...objectives, newObjective]);
@@ -1253,6 +1304,10 @@ export function AssessmentPanel({
                 ...objective,
                 text: objectiveEditor.text.trim(),
                 owner: objectiveEditor.owner.trim(),
+                status: objectiveEditor.status,
+                timescale: objectiveEditor.timescale.trim(),
+                notes: objectiveEditor.notes.trim(),
+                evidence: objectiveEditor.evidence.trim(),
               }
             : objective
         )
@@ -1453,26 +1508,6 @@ export function AssessmentPanel({
     });
   };
 
-  const toggleObjectiveLinkInActionEditor = (objectiveId: string) => {
-    setActionEditor((current) => {
-      if (!current) {
-        return current;
-      }
-
-      const selected = new Set(current.linkedObjectiveIds);
-      if (selected.has(objectiveId)) {
-        selected.delete(objectiveId);
-      } else {
-        selected.add(objectiveId);
-      }
-
-      return {
-        ...current,
-        linkedObjectiveIds: Array.from(selected),
-      };
-    });
-  };
-
   const updateEvidenceItemsInActionEditor = (nextItems: EvidenceItem[]) => {
     setActionEditor((current) => {
       if (!current) {
@@ -1553,14 +1588,6 @@ export function AssessmentPanel({
     event.target.value = '';
   };
 
-  const openObjectiveActionInEditor = (lens: string, action?: DraftAction) => {
-    if (!action) {
-      return;
-    }
-    setObjectiveViewer(null);
-    openEditActionModal(component.id, lens, action);
-  };
-
   const scrollToSection = (
     sectionId: 'assessment-scoring' | 'assessment-objectives' | 'assessment-actions'
   ) => {
@@ -1584,8 +1611,8 @@ export function AssessmentPanel({
             </span>
           </h2>
           <p className={`mt-2 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-            Assess readiness at lens level. Change Component justification, outcomes, and actions are
-            tracked below.
+            Assess readiness at lens level. Change Component justification, outcomes, and actions
+            are tracked below.
           </p>
           {componentDetail && (
             <button
@@ -1664,7 +1691,7 @@ export function AssessmentPanel({
           )}
         </div>
       )}
-{/* 
+      {/* 
       <div
         className={`mb-6 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium ${darkMode ? 'border-emerald-500/40 bg-emerald-500/15 text-emerald-200' : 'border-emerald-200 bg-emerald-50 text-emerald-800'}`}
       >
@@ -1738,8 +1765,9 @@ export function AssessmentPanel({
           </div>
         </div>
         <p className={`text-xs mb-3 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-          Owned by this component as a whole. Status is derived automatically from the lens actions
-          assigned to each outcome below and cannot be set manually.
+          Owned by this component as a whole. Set the status yourself - the actions listed under
+          each outcome are suggestions to help you get there, not requirements, since some are
+          ongoing and have no completion date.
         </p>
 
         {showObjectivesSection ? (
@@ -1757,14 +1785,18 @@ export function AssessmentPanel({
                       Status
                     </th>
                     <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
-                      Linked Actions
+                      Suggestions
                     </th>
                   </tr>
                 </thead>
                 <tbody className={`${darkMode ? 'divide-slate-700' : 'divide-slate-100'} divide-y`}>
                   {objectives.map((objective) => {
-                    const status = deriveObjectiveStatus(objective, componentActionsByLens);
+                    const status = deriveObjectiveStatus(objective);
                     const badgeStyle = OBJECTIVE_STATUS_BADGE_STYLES[status];
+                    const suggestionCount = getSuggestionsForOutcome(
+                      component.id,
+                      objective.id
+                    ).length;
                     const openViewer = () => setObjectiveViewer({ objectiveId: objective.id });
                     return (
                       <tr
@@ -1794,9 +1826,7 @@ export function AssessmentPanel({
                         <td
                           className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
                         >
-                          {objective.linkedActions.length
-                            ? `${objective.linkedActions.length} action(s)`
-                            : 'None assigned'}
+                          {suggestionCount ? `${suggestionCount} suggestion(s)` : 'None available'}
                         </td>
                       </tr>
                     );
@@ -1805,7 +1835,9 @@ export function AssessmentPanel({
               </table>
             </div>
           ) : (
-            <p className="text-sm text-slate-500">{noOutcomesOrActionsMessage('No outcomes yet.')}</p>
+            <p className="text-sm text-slate-500">
+              {noOutcomesOrActionsMessage('No outcomes yet.')}
+            </p>
           )
         ) : null}
       </div>
@@ -1875,30 +1907,28 @@ export function AssessmentPanel({
               ])
             ).sort((left, right) => left.localeCompare(right));
             const lensActions = [...actionsForLens]
-              .filter(
-                (resolvedAction) => {
-                  const actionReadinessScore =
-                    resolvedAction.action.readinessScore !== undefined
-                      ? resolvedAction.action.readinessScore
-                      : effectiveCurrentScore;
+              .filter((resolvedAction) => {
+                const actionReadinessScore =
+                  resolvedAction.action.readinessScore !== undefined
+                    ? resolvedAction.action.readinessScore
+                    : effectiveCurrentScore;
 
-                  if (actionReadinessScore !== effectiveCurrentScore) {
-                    return false;
-                  }
-
-                  if (
-                    lensActionTypeFilter !== 'all' &&
-                    (resolvedAction.action.actionType || '') !== lensActionTypeFilter
-                  ) {
-                    return false;
-                  }
-
-                  return (
-                    lensActionOwnerFilter === 'all' ||
-                    (resolvedAction.action.owner || '') === lensActionOwnerFilter
-                  );
+                if (actionReadinessScore !== effectiveCurrentScore) {
+                  return false;
                 }
-              )
+
+                if (
+                  lensActionTypeFilter !== 'all' &&
+                  (resolvedAction.action.actionType || '') !== lensActionTypeFilter
+                ) {
+                  return false;
+                }
+
+                return (
+                  lensActionOwnerFilter === 'all' ||
+                  (resolvedAction.action.owner || '') === lensActionOwnerFilter
+                );
+              })
               .sort((left, right) => {
                 const leftCompleted = normalizeActionStatus(left.action.status) === 'Completed';
                 const rightCompleted = normalizeActionStatus(right.action.status) === 'Completed';
@@ -2126,7 +2156,8 @@ export function AssessmentPanel({
                                   <div>
                                     {renderActionTextWithGuidanceLinks(
                                       action.text,
-                                      guidanceLinksByComponent[resolvedAction.sourceComponentId] || [],
+                                      guidanceLinksByComponent[resolvedAction.sourceComponentId] ||
+                                        [],
                                       darkMode,
                                       onNavigateToTool
                                     )}
@@ -2509,53 +2540,6 @@ export function AssessmentPanel({
               <div
                 className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} rounded-lg border p-3`}
               >
-                <p
-                  className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
-                >
-                  Affected Outcomes
-                </p>
-                <p className={`mt-1 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-                  Tick 1-3 outcomes directly impacted by this action. Outcome status is auto-derived
-                  from these linked actions.
-                </p>
-                <div
-                  className={`${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'} mt-2 space-y-2 rounded border p-2`}
-                >
-                  {(store.objectives?.[actionEditor.sourceComponentId] || []).length ? (
-                    (store.objectives?.[actionEditor.sourceComponentId] || []).map((objective) => {
-                      const checked = actionEditor.linkedObjectiveIds.includes(objective.id);
-                      return (
-                        <label
-                          key={objective.id}
-                          className={`${darkMode ? 'hover:bg-slate-700' : 'hover:bg-slate-50'} flex items-start gap-2 rounded px-2 py-1.5`}
-                        >
-                          <input
-                            type="checkbox"
-                            checked={checked}
-                            onChange={() => toggleObjectiveLinkInActionEditor(objective.id)}
-                            className="mt-0.5"
-                          />
-                          <span
-                            className={`text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}
-                          >
-                            {objective.text || 'Untitled outcome'}
-                          </span>
-                        </label>
-                      );
-                    })
-                  ) : (
-                    <p
-                      className={`px-2 py-1 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
-                    >
-                      {noOutcomesOrActionsMessage('No outcomes are defined for this component yet.')}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              <div
-                className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} rounded-lg border p-3`}
-              >
                 <div className="flex items-center gap-2">
                   <p
                     className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
@@ -2804,108 +2788,88 @@ export function AssessmentPanel({
                 <p
                   className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
                 >
-                  Status
+                  Timescale
                 </p>
-                <span
-                  className={`mt-1 inline-flex min-w-[7.5rem] items-center justify-center whitespace-nowrap rounded-full border px-3 py-1 text-center text-xs font-semibold ${OBJECTIVE_STATUS_BADGE_STYLES[activeObjectiveStatus]}`}
-                >
-                  {activeObjectiveStatus}
-                </span>
+                <p className={`mt-1 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>
+                  {activeObjective.timescale || 'Not set'}
+                </p>
               </div>
 
               <div>
                 <p
                   className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
                 >
-                  Linked Actions
+                  Notes
                 </p>
-                {activeObjectiveLinkedActions.length ? (
-                  <div
-                    className={`mt-2 overflow-x-auto rounded-md border ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}
-                  >
-                    <table
-                      className={`min-w-full divide-y ${darkMode ? 'divide-slate-700 bg-slate-800' : 'divide-slate-200 bg-white'}`}
-                    >
-                      <thead className={darkMode ? 'bg-slate-900' : 'bg-slate-50'}>
-                        <tr>
-                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
-                            Lens
-                          </th>
-                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
-                            Action
-                          </th>
-                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
-                            Current State
-                          </th>
-                          <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
-                            Navigate
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody
-                        className={`divide-y ${darkMode ? 'divide-slate-700' : 'divide-slate-100'}`}
+                <p
+                  className={`mt-1 whitespace-pre-wrap text-sm ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
+                >
+                  {activeObjective.notes || 'None recorded.'}
+                </p>
+              </div>
+
+              <div>
+                <p
+                  className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
+                >
+                  Evidence
+                </p>
+                <p
+                  className={`mt-1 whitespace-pre-wrap text-sm ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
+                >
+                  {activeObjective.evidence || 'None recorded.'}
+                </p>
+              </div>
+
+              <div>
+                <p
+                  className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
+                >
+                  Status
+                </p>
+                <select
+                  value={activeObjectiveStatus}
+                  onChange={(event) =>
+                    updateObjectiveStatus(activeObjective.id, event.target.value as ObjectiveStatus)
+                  }
+                  className={`mt-1 rounded-md border px-2 py-1.5 text-sm ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
+                >
+                  {(
+                    ['Not Started', 'In Progress', 'Blocked', 'Completed'] as ObjectiveStatus[]
+                  ).map((status) => (
+                    <option key={status} value={status}>
+                      {status}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <p
+                  className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
+                >
+                  Suggestions
+                </p>
+
+                {activeObjectiveSuggestions.length ? (
+                  <div className="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    {activeObjectiveSuggestions.map((suggestion, index) => (
+                      <div
+                        key={index}
+                        className={`flex items-start gap-2.5 rounded-lg border p-3 text-sm ${darkMode ? 'border-slate-700 bg-slate-900 text-slate-100' : 'border-slate-200 bg-slate-50 text-slate-700'}`}
                       >
-                        {activeObjectiveLinkedActions.map((item) => {
-                          const badgeStyle = item.status
-                            ? ACTION_STATUS_BADGE_STYLES[item.status] ||
-                              ACTION_STATUS_BADGE_STYLES.Planned
-                            : ACTION_STATUS_BADGE_STYLES.Planned;
-                          return (
-                            <tr key={`${item.lens}:${item.action?.id || 'missing'}`}>
-                              <td
-                                className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}
-                              >
-                                {item.lens}
-                              </td>
-                              <td
-                                className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}
-                              >
-                                {item.action?.text || 'Linked action not found'}
-                              </td>
-                              <td className="px-3 py-2">
-                                <span
-                                  className={`inline-flex min-w-[7.5rem] items-center justify-center whitespace-nowrap rounded-full border px-3 py-1 text-center text-xs font-semibold ${badgeStyle}`}
-                                >
-                                  {item.status || 'Not Started'}
-                                </span>
-                                {item.temporalStatus === 'Overdue start' ||
-                                item.temporalStatus === 'Overdue completion' ? (
-                                  <div className="mt-1 text-xs text-rose-700">
-                                    {item.temporalStatus}
-                                  </div>
-                                ) : null}
-                              </td>
-                              <td className="px-3 py-2">
-                                {item.action ? (
-                                  <button
-                                    type="button"
-                                    onClick={() =>
-                                      openObjectiveActionInEditor(
-                                        item.lens,
-                                        item.action || undefined
-                                      )
-                                    }
-                                    className={`${darkMode ? 'border-blue-500/40 bg-blue-500/15 text-blue-200 hover:bg-blue-500/25' : 'border-blue-200 bg-blue-50 text-blue-800 hover:bg-blue-100'} rounded-md border px-2.5 py-1.5 text-xs font-semibold`}
-                                  >
-                                    Open Action
-                                  </button>
-                                ) : (
-                                  <span
-                                    className={`text-xs ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}
-                                  >
-                                    Unavailable
-                                  </span>
-                                )}
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
+                        <span
+                          className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${darkMode ? 'bg-blue-500/20 text-blue-200' : 'bg-blue-100 text-[#005eb8]'}`}
+                        >
+                          {index + 1}
+                        </span>
+                        <span>{suggestion}</span>
+                      </div>
+                    ))}
                   </div>
                 ) : (
                   <p className={`mt-1 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-                    No linked actions assigned.
+                    No suggestions available for this outcome yet.
                   </p>
                 )}
               </div>
@@ -2922,7 +2886,9 @@ export function AssessmentPanel({
             aria-label={objectiveEditor.mode === 'create' ? 'Add Outcome' : 'Edit Outcome'}
             className={`w-full max-w-lg max-h-[calc(100vh-2rem)] overflow-y-auto rounded-xl border p-6 shadow-2xl ${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'}`}
           >
-            <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>
+            <h3
+              className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
+            >
               {objectiveEditor.mode === 'create' ? 'Add Outcome' : 'Edit Outcome'}
             </h3>
 
@@ -2972,6 +2938,87 @@ export function AssessmentPanel({
                     </option>
                   ) : null}
                 </select>
+              </div>
+              <div>
+                <label
+                  htmlFor="objective-editor-status"
+                  className={`block text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}
+                >
+                  Status
+                </label>
+                <select
+                  id="objective-editor-status"
+                  value={objectiveEditor.status}
+                  onChange={(event) =>
+                    setObjectiveEditor({
+                      ...objectiveEditor,
+                      status: event.target.value as ObjectiveStatus,
+                    })
+                  }
+                  className={`mt-1 w-full rounded-md border p-2 text-sm ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
+                >
+                  {(
+                    ['Not Started', 'In Progress', 'Blocked', 'Completed'] as ObjectiveStatus[]
+                  ).map((status) => (
+                    <option key={status} value={status}>
+                      {status}
+                    </option>
+                  ))}
+                </select>
+                <p className={`mt-1 text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                  Set this yourself - suggestions linked to this outcome are ideas, not
+                  requirements.
+                </p>
+              </div>
+              <div>
+                <label
+                  htmlFor="objective-editor-timescale"
+                  className={`block text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}
+                >
+                  Timescale
+                </label>
+                <input
+                  id="objective-editor-timescale"
+                  type="text"
+                  value={objectiveEditor.timescale}
+                  onChange={(event) =>
+                    setObjectiveEditor({ ...objectiveEditor, timescale: event.target.value })
+                  }
+                  placeholder="e.g. Q3"
+                  className={`mt-1 w-full rounded-md border p-2 text-sm ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="objective-editor-notes"
+                  className={`block text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}
+                >
+                  Notes
+                </label>
+                <textarea
+                  id="objective-editor-notes"
+                  value={objectiveEditor.notes}
+                  onChange={(event) =>
+                    setObjectiveEditor({ ...objectiveEditor, notes: event.target.value })
+                  }
+                  className={`mt-1 w-full rounded-md border p-2 text-sm h-16 ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="objective-editor-evidence"
+                  className={`block text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}
+                >
+                  Evidence
+                </label>
+                <textarea
+                  id="objective-editor-evidence"
+                  value={objectiveEditor.evidence}
+                  onChange={(event) =>
+                    setObjectiveEditor({ ...objectiveEditor, evidence: event.target.value })
+                  }
+                  className={`mt-1 w-full rounded-md border p-2 text-sm h-16 ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
+                />
               </div>
             </div>
 

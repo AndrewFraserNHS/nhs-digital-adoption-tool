@@ -27,7 +27,7 @@ export const CHANGE_IMPACT_CONFIG: DerivedComponentConfig = {
   ],
 };
 
-const CHANGE_IMPACT_SOURCE = parseDerivedComponentSource(
+export const CHANGE_IMPACT_SOURCE = parseDerivedComponentSource(
   changeImpactActionsText,
   CHANGE_IMPACT_CONFIG
 );

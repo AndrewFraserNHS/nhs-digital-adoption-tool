@@ -36,7 +36,7 @@ export const ORG_CHANGE_READINESS_CONFIG: DerivedComponentConfig = {
   },
 };
 
-const ORG_CHANGE_READINESS_SOURCE = parseDerivedComponentSource(
+export const ORG_CHANGE_READINESS_SOURCE = parseDerivedComponentSource(
   orgChangeReadinessActionsText,
   ORG_CHANGE_READINESS_CONFIG
 );

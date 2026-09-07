@@ -50,15 +50,17 @@ export function ProgrammeHierarchy({
         Programme Change Hierarchy
       </h3>
       <p className={`mt-1 mb-4 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-        Your programme has {components.length} components, each viewed through one or more lenses.
-        A component is a change topic you assess and track. A lens is the perspective used to
-        assess it (e.g. leadership, risk, capability). Click a lens to see its actions, or open the
-        full assessment.
+        Your programme has {components.length} components, each viewed through one or more lenses. A
+        component is a change topic you assess and track. A lens is the perspective used to assess
+        it (e.g. leadership, risk, capability). Click a lens to see its actions, or open the full
+        assessment.
       </p>
       <div className="space-y-5">
         {OVERARCHING_PHASES.filter((phase) => componentsByPhase[phase]?.length).map((phase) => (
           <div key={`phase-group-${phase}`} className="space-y-3">
-            <h4 className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
+            <h4
+              className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}
+            >
               Phase {phase}: {PHASE_NAMES[phase]}
             </h4>
             <div className="space-y-2">
@@ -75,7 +77,7 @@ export function ProgrammeHierarchy({
                   },
                   { total: 0, completed: 0 }
                 );
-                const objectiveCounts = getComponentObjectiveCounts(store, component.id, getEntry);
+                const objectiveCounts = getComponentObjectiveCounts(store, component.id);
 
                 return (
                   <div
@@ -84,11 +86,15 @@ export function ProgrammeHierarchy({
                     className={`w-full rounded-md border p-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200'}`}
                   >
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <span className={`font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
+                      <span
+                        className={`font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+                      >
                         {component.label}
                       </span>
                       <div className="flex items-center gap-3">
-                        <span className={`text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
+                        <span
+                          className={`text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
+                        >
                           Target readiness: {getStageLabel(component.target)}
                         </span>
                         <button
@@ -134,8 +140,8 @@ export function ProgrammeHierarchy({
                       })}
                     </div>
                     <p className={`mt-2 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-                      Lens actions: {lensActionCounts.completed}/{lensActionCounts.total} complete
-                      · Outcomes: {objectiveCounts.completed}/{objectiveCounts.total} complete
+                      Lens actions: {lensActionCounts.completed}/{lensActionCounts.total} complete ·
+                      Outcomes: {objectiveCounts.completed}/{objectiveCounts.total} complete
                     </p>
 
                     {component.lenses.map((lens) => {

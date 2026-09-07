@@ -37,7 +37,7 @@ export const CAPABILITY_CONFIG: DerivedComponentConfig = {
   },
 };
 
-const CAPABILITY_SOURCE = parseDerivedComponentSource(capabilityActionsText, CAPABILITY_CONFIG);
+export const CAPABILITY_SOURCE = parseDerivedComponentSource(capabilityActionsText, CAPABILITY_CONFIG);
 
 export function syncCapabilityDerivedContent(store: AdoptionStore): AdoptionStore {
   return syncDerivedComponentContent(store, CAPABILITY_CONFIG, CAPABILITY_SOURCE);

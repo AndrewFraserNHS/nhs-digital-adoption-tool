@@ -124,7 +124,14 @@ describe('adoptionMetrics', () => {
           summary: '1 action pending completion.',
           message: 'Vision: 1 action pending completion.',
           outstandingActions: [
-            { id: '1', text: 'Action A', lens: 'Lens A', owner: 'Alex', status: 'In Progress', dueDate: '' },
+            {
+              id: '1',
+              text: 'Action A',
+              lens: 'Lens A',
+              owner: 'Alex',
+              status: 'In Progress',
+              dueDate: '',
+            },
           ],
         },
       ],
@@ -173,7 +180,7 @@ describe('adoptionMetrics', () => {
     // act
     const metrics = getMetrics(belowTargetStore, components);
 
-// assert
+    // assert
     expect(metrics.currentPhase).toBe(1);
     expect(metrics.nextSteps.length).toBeGreaterThan(0);
     expect(metrics.nextSteps[0]).toMatchObject({
@@ -265,7 +272,9 @@ describe('adoptionMetrics', () => {
 
     // assert 2
     expect(metricsAtLatestPhase.currentPhase).toBe(2);
-    expect(metricsAtLatestPhase.phaseSummaries.find((p) => p.phase === 2)?.onTrackComponents).toBe(1);
+    expect(metricsAtLatestPhase.phaseSummaries.find((p) => p.phase === 2)?.onTrackComponents).toBe(
+      1
+    );
   });
 
   it('SHOULD compute current and target radar series', () => {
@@ -284,7 +293,7 @@ describe('adoptionMetrics', () => {
     expect(rows[1]).toMatchObject({ compId: 'benefits', component: 'Benefits', lens: 'Lens A' });
   });
 
-  it('SHOULD count objectives as completed WHERE once every linked action is completed', () => {
+  it('SHOULD count objectives as completed WHERE the user has manually set status to Completed', () => {
     // arrange
     const storeWithObjectives: AdoptionStore = {
       ...store,
@@ -295,6 +304,7 @@ describe('adoptionMetrics', () => {
             text: 'Fully done',
             owner: 'PMO',
             timescale: 'Q3',
+            status: 'Completed',
             linkedActions: [{ lens: 'Lens A', actionId: '1' }],
           },
           { id: 'o2', text: 'Not linked yet', owner: 'PMO', timescale: 'Q3', linkedActions: [] },
@@ -302,17 +312,15 @@ describe('adoptionMetrics', () => {
       },
     };
 
-    // NB: action '1' in Lens A has status 'In Progress' per the base store fixture
-
     // act 1
-    const counts = getComponentObjectiveCounts(storeWithObjectives, 'vision', getEntry);
+    const counts = getComponentObjectiveCounts(storeWithObjectives, 'vision');
 
     // assert 1
-    expect(counts).toEqual({ total: 2, completed: 0 });
+    expect(counts).toEqual({ total: 2, completed: 1 });
 
     // NB: metrics/flattenActions must not double-count objective-linked actions - they're already counted once via the lens loop
 
-    // act 2 
+    // act 2
     const metrics = getMetrics(storeWithObjectives, components);
 
     // assert 2

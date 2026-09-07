@@ -32,7 +32,7 @@ export const STAKEHOLDER_CONFIG: DerivedComponentConfig = {
   },
 };
 
-const STAKEHOLDER_SOURCE = parseDerivedComponentSource(stakeholderActionsText, STAKEHOLDER_CONFIG);
+export const STAKEHOLDER_SOURCE = parseDerivedComponentSource(stakeholderActionsText, STAKEHOLDER_CONFIG);
 
 export function syncStakeholderDerivedContent(store: AdoptionStore): AdoptionStore {
   return syncDerivedComponentContent(store, STAKEHOLDER_CONFIG, STAKEHOLDER_SOURCE);

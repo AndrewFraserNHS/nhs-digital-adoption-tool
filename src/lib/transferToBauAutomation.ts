@@ -41,7 +41,7 @@ export const TRANSFER_TO_BAU_CONFIG: DerivedComponentConfig = {
   },
 };
 
-const TRANSFER_TO_BAU_SOURCE = parseDerivedComponentSource(
+export const TRANSFER_TO_BAU_SOURCE = parseDerivedComponentSource(
   transferToBauActionsText,
   TRANSFER_TO_BAU_CONFIG
 );

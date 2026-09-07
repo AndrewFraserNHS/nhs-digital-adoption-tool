@@ -165,7 +165,7 @@ describe('adoptionState', () => {
     expect(map.vision[0].linkedActions[0].lens).toBe('Lens A');
   });
 
-  it('SHOULD derive objective status from linked lens action statuses', () => {
+  it('SHOULD default objective status to Not Started and reflect the manually set status', () => {
     // arrange + act 1
     const objective = {
       id: 'o1',
@@ -179,37 +179,16 @@ describe('adoptionState', () => {
     };
 
     // assert 1
-    expect(deriveObjectiveStatus({ ...objective, linkedActions: [] }, {})).toBe('Not Started');
+    expect(deriveObjectiveStatus(objective)).toBe('Not Started');
 
-    // act 2
-    const actionsByLens = {
-      'Lens A': [
-        { id: 'a1', text: '', owner: '', timescale: '', status: 'Planned' as const },
-        { id: 'a2', text: '', owner: '', timescale: '', status: 'Planned' as const },
-      ],
-    };
-
-    // assert 2 
-    expect(deriveObjectiveStatus(objective, actionsByLens)).toBe('Not Started');
-
-    // act 3
-    actionsByLens['Lens A'][0].status = 'In Progress';
+    // assert 2
+    expect(deriveObjectiveStatus({ ...objective, status: 'In Progress' })).toBe('In Progress');
 
     // assert 3
-    expect(deriveObjectiveStatus(objective, actionsByLens)).toBe('In Progress');
-
-    // act 4
-    actionsByLens['Lens A'][0].status = 'Blocked';
+    expect(deriveObjectiveStatus({ ...objective, status: 'Blocked' })).toBe('Blocked');
 
     // assert 4
-    expect(deriveObjectiveStatus(objective, actionsByLens)).toBe('Blocked');
-
-    // act 5
-    actionsByLens['Lens A'][0].status = 'Completed';
-    actionsByLens['Lens A'][1].status = 'Completed';
-
-    // assert 5
-    expect(deriveObjectiveStatus(objective, actionsByLens)).toBe('Completed');
+    expect(deriveObjectiveStatus({ ...objective, status: 'Completed' })).toBe('Completed');
   });
 
   it('SHOULD support reactive store updates and subscriptions', () => {

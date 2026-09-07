@@ -27,7 +27,7 @@ export const SPONSORSHIP_CONFIG: DerivedComponentConfig = {
   ],
 };
 
-const SPONSORSHIP_SOURCE = parseDerivedComponentSource(sponsorshipActionsText, SPONSORSHIP_CONFIG);
+export const SPONSORSHIP_SOURCE = parseDerivedComponentSource(sponsorshipActionsText, SPONSORSHIP_CONFIG);
 
 export function syncSponsorshipDerivedContent(store: AdoptionStore): AdoptionStore {
   return syncDerivedComponentContent(store, SPONSORSHIP_CONFIG, SPONSORSHIP_SOURCE);

@@ -27,7 +27,7 @@ export const CASE_FOR_CHANGE_CONFIG: DerivedComponentConfig = {
   ],
 };
 
-const CASE_FOR_CHANGE_SOURCE = parseDerivedComponentSource(
+export const CASE_FOR_CHANGE_SOURCE = parseDerivedComponentSource(
   caseForChangeActionsText,
   CASE_FOR_CHANGE_CONFIG
 );

@@ -57,8 +57,9 @@ export interface ObjectiveActionLink {
 
 /**
  * An objective owned by a component as a whole, not scoped to any single lens.
- * Its status is always derived from the statuses of its linked lens actions -
- * it is never set directly by the user.
+ * Its status is set directly by the user - linked actions are suggested ways to help
+ * meet the outcome, not requirements, since some suggested actions are ongoing and
+ * have no completion date.
  */
 export interface ComponentObjective {
   id: string;
@@ -67,40 +68,13 @@ export interface ComponentObjective {
   timescale: string;
   notes?: string;
   evidence?: string;
+  status?: ObjectiveStatus;
   linkedActions: ObjectiveActionLink[];
 }
 
-/**
- * Derive an objective's status from the current statuses of its linked lens actions.
- * Blocked takes priority (something needs attention), then Completed only once every
- * linked action is done, then In Progress once anything has moved past Planned,
- * otherwise Not Started (including when nothing is linked yet).
- */
-export function deriveObjectiveStatus(
-  objective: ComponentObjective,
-  actionsByLens: Record<string, DraftAction[]>
-): ObjectiveStatus {
-  if (!objective.linkedActions.length) {
-    return 'Not Started';
-  }
-
-  const statuses = objective.linkedActions.map((link) => {
-    const action = (actionsByLens[link.lens] || []).find(
-      (candidate) => candidate.id === link.actionId
-    );
-    return action?.status || 'Planned';
-  });
-
-  if (statuses.some((status) => status === 'Blocked')) {
-    return 'Blocked';
-  }
-  if (statuses.every((status) => status === 'Completed')) {
-    return 'Completed';
-  }
-  if (statuses.some((status) => status !== 'Planned')) {
-    return 'In Progress';
-  }
-  return 'Not Started';
+/** An objective's status is set manually by the user; defaults to 'Not Started' if unset. */
+export function deriveObjectiveStatus(objective: ComponentObjective): ObjectiveStatus {
+  return objective.status || 'Not Started';
 }
 
 export interface DraftEntry {

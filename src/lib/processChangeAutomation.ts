@@ -38,7 +38,7 @@ export const PROCESS_CHANGE_CONFIG: DerivedComponentConfig = {
   },
 };
 
-const PROCESS_CHANGE_SOURCE = parseDerivedComponentSource(
+export const PROCESS_CHANGE_SOURCE = parseDerivedComponentSource(
   processChangeActionsText,
   PROCESS_CHANGE_CONFIG
 );

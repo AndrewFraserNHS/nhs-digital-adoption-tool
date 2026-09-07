@@ -410,7 +410,7 @@ describe('AssessmentPanel', () => {
     const dialog = screen.getByRole('dialog', { name: 'Outcome Details' });
     expect(within(dialog).getByText('Run workshop')).toBeTruthy();
     expect(within(dialog).getAllByText('In Progress').length).toBeGreaterThan(0);
-    fireEvent.click(within(dialog).getByRole('button', { name: 'Open Action' }));
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Open Suggestion' }));
 
     // assert 2
     expect(screen.getByText(/Edit Action · Vision \/ Strategic Direction/)).toBeTruthy();

@@ -18,7 +18,7 @@ export const VISION_CONFIG: DerivedComponentConfig = {
   ],
 };
 
-const VISION_SOURCE = parseDerivedComponentSource(visionActionsText, VISION_CONFIG);
+export const VISION_SOURCE = parseDerivedComponentSource(visionActionsText, VISION_CONFIG);
 
 export function syncVisionDerivedContent(store: AdoptionStore): AdoptionStore {
   return syncDerivedComponentContent(store, VISION_CONFIG, VISION_SOURCE);

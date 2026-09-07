@@ -33,7 +33,7 @@ export const CHANGE_NETWORK_CONFIG: DerivedComponentConfig = {
   },
 };
 
-const CHANGE_NETWORK_SOURCE = parseDerivedComponentSource(
+export const CHANGE_NETWORK_SOURCE = parseDerivedComponentSource(
   changeNetworkActionsText,
   CHANGE_NETWORK_CONFIG
 );

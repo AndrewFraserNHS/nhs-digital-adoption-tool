@@ -123,6 +123,10 @@ function validateObjectivesMap(value: unknown, path: string): void {
         objective.evidence,
         `${path}.${componentId}[${objectiveIndex}].evidence`
       );
+      assertOptionalString(
+        objective.status,
+        `${path}.${componentId}[${objectiveIndex}].status`
+      );
       assertOptionalArray(
         objective.linkedActions,
         `${path}.${componentId}[${objectiveIndex}].linkedActions`

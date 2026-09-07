@@ -98,12 +98,13 @@ function objectivesEqual(a: ComponentObjective, b: ComponentObjective): boolean 
     a.timescale === b.timescale &&
     (a.notes || '') === (b.notes || '') &&
     (a.evidence || '') === (b.evidence || '') &&
+    (a.status || 'Not Started') === (b.status || 'Not Started') &&
     objectiveLinksEqual(a.linkedActions, b.linkedActions)
   );
 }
 
 function summarizeObjective(objective: ComponentObjective): string {
-  return `${objective.text || 'Untitled objective'} - owner: ${objective.owner || 'Unassigned'}`;
+  return `${objective.text || 'Untitled objective'} - status: ${objective.status || 'Not Started'}, owner: ${objective.owner || 'Unassigned'}`;
 }
 
 function teamMembersEqual(a: TeamMember, b: TeamMember): boolean {

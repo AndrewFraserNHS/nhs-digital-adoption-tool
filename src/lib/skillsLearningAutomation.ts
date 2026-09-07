@@ -41,7 +41,7 @@ export const SKILLS_LEARNING_CONFIG: DerivedComponentConfig = {
   },
 };
 
-const SKILLS_LEARNING_SOURCE = parseDerivedComponentSource(
+export const SKILLS_LEARNING_SOURCE = parseDerivedComponentSource(
   skillsLearningActionsText,
   SKILLS_LEARNING_CONFIG
 );

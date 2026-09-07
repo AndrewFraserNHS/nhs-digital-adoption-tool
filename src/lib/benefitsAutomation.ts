@@ -28,7 +28,7 @@ export const BENEFITS_CONFIG: DerivedComponentConfig = {
   },
 };
 
-const BENEFITS_SOURCE = parseDerivedComponentSource(benefitsActionsText, BENEFITS_CONFIG);
+export const BENEFITS_SOURCE = parseDerivedComponentSource(benefitsActionsText, BENEFITS_CONFIG);
 
 export function syncBenefitsDerivedContent(store: AdoptionStore): AdoptionStore {
   return syncDerivedComponentContent(store, BENEFITS_CONFIG, BENEFITS_SOURCE);

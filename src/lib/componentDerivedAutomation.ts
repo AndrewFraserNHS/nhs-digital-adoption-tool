@@ -44,6 +44,28 @@ export interface DerivedComponentConfig {
   lensAliases?: Record<string, string>;
 }
 
+/**
+ * Read-only suggestions for how a new team member might work towards an outcome, sourced from
+ * the same action-library templates as before but never tracked (no owner/status/dates) - they
+ * are ideas, not requirements, since outcome status is now set manually by the outcome owner.
+ */
+export function getOutcomeSuggestions(source: DerivedComponentSource, outcomeId: string): string[] {
+  const templates = source.templates
+    .filter((template) => template.outcomeIds.includes(outcomeId))
+    .sort((a, b) => a.fromScore - b.fromScore || a.actionIndex - b.actionIndex);
+
+  const seen = new Set<string>();
+  const suggestions: string[] = [];
+  templates.forEach((template) => {
+    const key = normalizeGeneratedText(template.actionText);
+    if (!seen.has(key)) {
+      seen.add(key);
+      suggestions.push(template.actionText);
+    }
+  });
+  return suggestions;
+}
+
 const STATUS_TO_SCORE: Record<string, number> = {
   'not started': 0,
   emerging: 1,
@@ -359,6 +381,7 @@ function createOutcome(
     timescale: existing?.timescale || '',
     notes: existing?.notes || '',
     evidence: existing?.evidence || '',
+    status: existing?.status,
     linkedActions: [],
   };
 }

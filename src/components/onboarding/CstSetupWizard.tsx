@@ -223,21 +223,14 @@ export function CstSetupWizard({
       body: (
         <div className="space-y-4">
           <div>
-            <label className={labelClass} htmlFor="wizard-cst-pathway">
+            <p className={labelClass}>
               Pathway
-            </label>
-            <select
-              id="wizard-cst-pathway"
-              className={`${INPUT_CLASS} pr-10 ${inputTheme}`}
-              value={draft.cst.pathway}
-              onChange={(event) => updateCst('pathway', event.target.value as CstPathwayKey)}
+            </p>
+            <div
+              className={`rounded-md border px-3 py-2 text-sm ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-[#768692] bg-slate-50 text-slate-900'}`}
             >
-              {PATHWAY_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+              {PATHWAY_OPTIONS.find((option) => option.value === draft.cst.pathway)?.label || draft.cst.pathway}
+            </div>
           </div>
           <PathwayContentNotice pathway={draft.cst.pathway} darkMode={darkMode} />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

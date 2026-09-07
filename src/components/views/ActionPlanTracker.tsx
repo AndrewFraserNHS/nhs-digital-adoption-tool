@@ -1,6 +1,12 @@
 import { JSX, useCallback, useMemo, useState } from 'react';
 import { ActionRow } from '@lib/adoptionMetrics';
-import { ACTION_STATUS_BADGE_STYLES, ACTION_TYPES, normalizeActionStatus } from '@lib/actionModel';
+import {
+  ACTION_STATUS_BADGE_STYLES,
+  ACTION_TYPES,
+  normalizeActionStatus,
+  UNIFIED_ACTION_STATUSES,
+  type UnifiedActionStatus,
+} from '@lib/actionModel';
 import type { TeamMember } from '@lib/adoptionState';
 import { FilterSummaryBar } from '@components/ui/FilterSummaryBar';
 import { PageHelpButton, PageIntroModal, usePageIntroSeen } from '@components/onboarding/PageIntroModal';
@@ -8,6 +14,12 @@ import { PageHelpButton, PageIntroModal, usePageIntroSeen } from '@components/on
 export interface ActionPlanTrackerProps {
   actions: ActionRow[];
   onComponentClick: (componentId: string) => void;
+  onStatusChange?: (
+    componentId: string,
+    lens: string,
+    actionId: string,
+    status: UnifiedActionStatus
+  ) => void;
   teamMembers?: TeamMember[];
   darkMode?: boolean;
 }
@@ -15,6 +27,7 @@ export interface ActionPlanTrackerProps {
 export function ActionPlanTracker({
   actions,
   onComponentClick,
+  onStatusChange,
   teamMembers = [],
   darkMode = false,
 }: ActionPlanTrackerProps): JSX.Element {
@@ -452,11 +465,25 @@ export function ActionPlanTracker({
                       {action.timescale}
                     </td>
                     <td className="w-[14%] px-4 py-3 text-sm">
-                      <span
-                        className={`inline-flex rounded-full border px-2 py-1 text-xs font-semibold ${ACTION_STATUS_BADGE_STYLES[normalizeActionStatus(action.status)]}`}
+                      <select
+                        aria-label={`Status for ${action.text}`}
+                        value={normalizeActionStatus(action.status)}
+                        onChange={(event) =>
+                          onStatusChange?.(
+                            compId,
+                            lens,
+                            action.id,
+                            event.target.value as UnifiedActionStatus
+                          )
+                        }
+                        className={`w-full rounded-md border px-2 py-1 text-xs font-semibold focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] ${ACTION_STATUS_BADGE_STYLES[normalizeActionStatus(action.status)]} ${darkMode ? 'bg-slate-900' : 'bg-white'}`}
                       >
-                        {normalizeActionStatus(action.status)}
-                      </span>
+                        {UNIFIED_ACTION_STATUSES.map((status) => (
+                          <option key={status} value={status}>
+                            {status}
+                          </option>
+                        ))}
+                      </select>
                     </td>
                   </tr>
                 ))}

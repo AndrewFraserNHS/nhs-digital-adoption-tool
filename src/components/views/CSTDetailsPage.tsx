@@ -1397,12 +1397,20 @@ export function ProjectDetailsPage({
               return (
                 <details
                   key={component.id}
-                  className={`rounded-md border ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}
+                  className={`group overflow-hidden rounded-md border ${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'}`}
                 >
                   <summary
-                    className={`flex cursor-pointer items-center justify-between gap-2 p-3 text-sm font-medium ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
+                    className={`flex cursor-pointer list-none items-center justify-between gap-3 p-3 text-sm font-medium transition-colors focus:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-[#ffeb3b] ${darkMode ? 'bg-slate-800 text-slate-200 hover:bg-slate-700' : 'bg-slate-50 text-slate-700 hover:bg-blue-50'} [&::-webkit-details-marker]:hidden`}
                   >
-                    <span>{component.label}</span>
+                    <span className="flex min-w-0 items-center gap-2">
+                      <span
+                        aria-hidden="true"
+                        className={`shrink-0 text-lg font-bold leading-none transition-transform group-open:rotate-45 ${darkMode ? 'text-blue-300' : 'text-[#005eb8]'}`}
+                      >
+                        +
+                      </span>
+                      <span className="truncate">{component.label}</span>
+                    </span>
                     <span className="flex items-center gap-2">
                       {hasFurtherReading && (
                         <span
@@ -1420,7 +1428,7 @@ export function ProjectDetailsPage({
                       )}
                     </span>
                   </summary>
-                  <div className={`divide-y ${darkMode ? 'divide-slate-700' : 'divide-slate-100'}`}>
+                  <div className={`border-t divide-y ${darkMode ? 'border-slate-700 divide-slate-700' : 'border-slate-200 divide-slate-100'}`}>
                     <div className="p-3 space-y-1.5">
                       <p
                         className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}

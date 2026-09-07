@@ -1,6 +1,11 @@
 import { CstSetupWizard } from '@components/onboarding/CstSetupWizard';
+import { PathwaySelectionModal } from '@components/onboarding/PathwaySelectionModal';
 import { SignInRequiredModal } from '@components/onboarding/SignInRequiredModal';
 import { OnboardingIntro } from '@components/onboarding/OnboardingIntro';
+import {
+  EVIDENCE_WARNING_DISMISSED_KEY,
+  EvidenceWarningModal,
+} from '@components/common/EvidenceWarningModal';
 import { ToolkitChatbot } from '@components/ui/ToolkitChatbot';
 import { ActionPlanTracker } from '@components/views/ActionPlanTracker';
 import { AdoptionDashboard, type ComponentRadarSize } from '@components/views/AdoptionDashboard';
@@ -25,7 +30,6 @@ import {
   CONFIDENCE_OPTIONS,
   type ConfidenceScore,
   type OverarchingPhase,
-  PATHWAY_LABELS,
 } from '@data/cst';
 import { ASSESSMENT_LENSES as LENSES } from '@data/lenses';
 import {
@@ -33,7 +37,11 @@ import {
   resolveGuidanceLinksForAdoptionComponent,
 } from '@data/maturity-guidance-links';
 import { GENERIC_RUBRIC } from '@data/rubrics';
-import { isCompletedActionStatus } from '@lib/actionModel';
+import {
+  isCompletedActionStatus,
+  normalizeActionStatus,
+  type UnifiedActionStatus,
+} from '@lib/actionModel';
 import {
   ADOPTION_STORAGE_KEY,
   buildAdoptionExportPayload,
@@ -80,6 +88,7 @@ const ADOPTION_USER_SETTINGS_KEY = 'nhs-digital-adoption-user-settings';
 const ADOPTION_REPORT_REMINDER_DISMISS_KEY = 'nhs-digital-adoption-report-reminder-dismissed';
 const ADOPTION_ENGAGEMENT_KEY = 'nhs-digital-adoption-engagement';
 const ADOPTION_ONBOARDING_SEEN_KEY = 'nhs-digital-adoption-onboarding-seen';
+const ADOPTION_PATHWAY_SELECTION_SEEN_KEY = 'nhs-digital-adoption-pathway-selection-seen';
 const ADOPTION_CURRENT_USER_KEY = 'nhs-digital-adoption-current-user-id';
 const DEFAULT_GUIDANCE_TARGET: MaturityGuidanceTarget = 'Default';
 const MAX_IMPORT_FILE_BYTES = 5 * 1024 * 1024;
@@ -137,6 +146,19 @@ function isCstEmpty(store: AdoptionStore): boolean {
 /** Gates the guided CST setup wizard's one-time auto-open - filling in a trust name is itself the "seen" signal. */
 function isCstUnconfigured(profile: OrgProfile): boolean {
   return !profile.trustName.trim();
+}
+
+function actionHasEvidence(action: DraftAction): boolean {
+  if (!action.evidence?.trim()) {
+    return false;
+  }
+
+  try {
+    const parsed = JSON.parse(action.evidence) as unknown;
+    return Array.isArray(parsed) ? parsed.length > 0 : Boolean(action.evidence.trim());
+  } catch (_error) {
+    return Boolean(action.evidence.trim());
+  }
 }
 
 function getAuditActor(name: string): string {
@@ -304,6 +326,12 @@ export function AdoptionApp() {
   });
 
   const [activeLensInfo, setActiveLensInfo] = useState('');
+  const [hasSeenPathwaySelection, setHasSeenPathwaySelection] = useState<boolean>(() =>
+    Boolean(load<boolean>(ADOPTION_PATHWAY_SELECTION_SEEN_KEY))
+  );
+  const [showPathwaySelection, setShowPathwaySelection] = useState<boolean>(
+    () => !load<boolean>(ADOPTION_PATHWAY_SELECTION_SEEN_KEY) && isCstUnconfigured(store.orgProfile)
+  );
   const [currentUserId, setCurrentUserId] = useState<string>(() => load<string>(ADOPTION_CURRENT_USER_KEY) || '');
   /* Several audit-logging callbacks are memoized with empty dep arrays, so they close over stale
    * state on first render - refs keep the actor resolution reading live values instead. */
@@ -352,6 +380,18 @@ export function AdoptionApp() {
   const hasAutoOpenedCstWizardRef = React.useRef(false);
   const [showSignInModal, setShowSignInModal] = useState(false);
   const hasAutoOpenedSignInModalRef = React.useRef(false);
+  const [expandedNavPhases, setExpandedNavPhases] = useState<Record<number, boolean>>({ 1: true });
+  const [expandedNavSections, setExpandedNavSections] = useState<Record<string, boolean>>({
+    intro: true,
+    overview: true,
+    tools: true,
+  });
+  const [pendingStatusChange, setPendingStatusChange] = useState<{
+    componentId: string;
+    lens: string;
+    actionId: string;
+    status: UnifiedActionStatus;
+  } | null>(null);
   const [componentRadarVisible, setComponentRadarVisible] = useState(true);
   const [componentRadarSize, setComponentRadarSize] = useState<ComponentRadarSize>('medium');
   const navItemRefs = React.useRef<Record<string, HTMLButtonElement | null>>({});
@@ -419,6 +459,30 @@ export function AdoptionApp() {
     userSettings.phaseFocusMode === 'manual' && userSettings.manualPhaseFocus
       ? userSettings.manualPhaseFocus
       : metrics.currentPhase;
+
+  useEffect(() => {
+    setExpandedNavPhases((current) => ({ ...current, [effectivePhaseFocus]: true }));
+  }, [effectivePhaseFocus]);
+
+  useEffect(() => {
+    const sectionByView: Partial<Record<View, string>> = {
+      introduction: 'intro',
+      'cm-guide': 'intro',
+      'project-details': 'intro',
+      dashboard: 'overview',
+      'daily-checkin': 'overview',
+      'action-plan': 'overview',
+      'roadmap-view': 'overview',
+      'highlight-builder': 'tools',
+      'force-field-analysis': 'tools',
+      compare: 'tools',
+      'audit-log': 'tools',
+    };
+    const section = sectionByView[view];
+    if (section) {
+      setExpandedNavSections((current) => ({ ...current, [section]: true }));
+    }
+  }, [view]);
   const actionRows = flattenActions(
     store,
     (componentId) => getComponentById(componentId) || COMPONENTS[0],
@@ -815,6 +879,38 @@ export function AdoptionApp() {
       };
     });
   }, [appendAuditEvents]);
+
+  const applyActionStatusChange = useCallback(
+    (componentId: string, lens: string, actionId: string, status: UnifiedActionStatus) => {
+      const entry = getEntry(componentId, lens);
+      updateEntry(componentId, lens, {
+        ...entry,
+        actions: entry.actions.map((action) =>
+          action.id === actionId ? { ...action, status: normalizeActionStatus(status) } : action
+        ),
+      });
+    },
+    [getEntry, updateEntry]
+  );
+
+  const requestActionStatusChange = useCallback(
+    (componentId: string, lens: string, actionId: string, status: UnifiedActionStatus) => {
+      const action = getEntry(componentId, lens).actions.find((item) => item.id === actionId);
+      const shouldWarn =
+        normalizeActionStatus(status) === 'Completed' &&
+        action !== undefined &&
+        !actionHasEvidence(action) &&
+        !load<boolean>(EVIDENCE_WARNING_DISMISSED_KEY);
+
+      if (shouldWarn) {
+        setPendingStatusChange({ componentId, lens, actionId, status });
+        return;
+      }
+
+      applyActionStatusChange(componentId, lens, actionId, status);
+    },
+    [applyActionStatusChange, getEntry]
+  );
 
   const updateComponentObjectives = useCallback(
     (componentId: string, objectivesForComponent: ComponentObjective[]) => {
@@ -1571,8 +1667,6 @@ export function AdoptionApp() {
 
   const trustLabel = store.orgProfile.trustName || 'Unconfigured Trust';
   const projectLabel = store.orgProfile.projectName || 'Unnamed Project';
-  const fullPathwayLabel = PATHWAY_LABELS[store.orgProfile.cst.pathway];
-  const compactPathwayLabel = fullPathwayLabel.split(' - ')[0] || fullPathwayLabel;
 
   return (
     <div
@@ -1631,137 +1725,178 @@ export function AdoptionApp() {
         </div>
 
         <div className="flex-1 overflow-y-auto py-4">
-          <div className="px-4 mb-2 text-xs font-semibold text-blue-300 uppercase tracking-wider">
-            Intro
-          </div>
-          <nav className="space-y-1 mb-4">
-            {(['introduction', 'cm-guide', 'project-details'] as View[]).map((v) => (
-              <button
-                key={v}
-                ref={(el) => {
-                  navItemRefs.current[`view:${v}`] = el;
-                }}
-                onClick={() => handleViewChange(v)}
-                className={`w-full flex items-center px-4 py-2.5 text-sm transition-colors ${
-                  view === v
-                    ? 'bg-blue-800 text-white font-medium border-l-4 border-white'
-                    : 'text-blue-100 hover:bg-blue-800 border-l-4 border-transparent'
-                }`}
-              >
-                {v === 'introduction'
-                  ? 'Introduction'
-                  : v === 'project-details'
-                    ? 'Project Set-up'
-                    : 'Adoption Engine Onboarding'}
-              </button>
-            ))}
-          </nav>
+          <button
+            type="button"
+            aria-expanded={expandedNavSections.intro}
+            onClick={() =>
+              setExpandedNavSections((current) => ({ ...current, intro: !current.intro }))
+            }
+            className="mb-2 flex w-full items-center justify-between px-4 text-left text-xs font-semibold uppercase tracking-wider text-blue-300 hover:text-white"
+          >
+            <span>Intro</span>
+            <span aria-hidden="true">{expandedNavSections.intro ? '−' : '+'}</span>
+          </button>
+          {expandedNavSections.intro ? (
+            <nav className="space-y-1 mb-4">
+              {(['introduction', 'cm-guide', 'project-details'] as View[]).map((v) => (
+                <button
+                  key={v}
+                  ref={(el) => {
+                    navItemRefs.current[`view:${v}`] = el;
+                  }}
+                  onClick={() => handleViewChange(v)}
+                  className={`w-full flex items-center px-4 py-2.5 text-sm transition-colors ${
+                    view === v
+                      ? 'bg-blue-800 text-white font-medium border-l-4 border-white'
+                      : 'text-blue-100 hover:bg-blue-800 border-l-4 border-transparent'
+                  }`}
+                >
+                  {v === 'introduction'
+                    ? 'Introduction'
+                    : v === 'project-details'
+                      ? 'Project Set-up'
+                      : 'Adoption Engine Onboarding'}
+                </button>
+              ))}
+            </nav>
+          ) : null}
 
-          <div className="px-4 mb-2 text-xs font-semibold text-blue-300 uppercase tracking-wider">
-            Overview
-          </div>
-          <nav className="space-y-1 mb-4">
-            {(['dashboard', 'daily-checkin', 'action-plan', 'roadmap-view'] as View[]).map((v) => (
-              <button
-                key={v}
-                ref={(el) => {
-                  navItemRefs.current[`view:${v}`] = el;
-                }}
-                onClick={() => handleViewChange(v)}
-                className={`w-full flex items-center px-4 py-2.5 text-sm transition-colors ${
-                  view === v
-                    ? 'bg-blue-800 text-white font-medium border-l-4 border-white'
-                    : 'text-blue-100 hover:bg-blue-800 border-l-4 border-transparent'
-                }`}
-              >
-                {v === 'dashboard'
-                  ? 'Metrics Dashboard'
-                  : v === 'daily-checkin'
-                    ? 'Daily Check-in'
-                    : v === 'action-plan'
-                      ? 'Action Tracker'
-                      : 'Component Delivery Timeline'}
-              </button>
-            ))}
-          </nav>
+          <button
+            type="button"
+            aria-expanded={expandedNavSections.overview}
+            onClick={() =>
+              setExpandedNavSections((current) => ({ ...current, overview: !current.overview }))
+            }
+            className="mb-2 flex w-full items-center justify-between px-4 text-left text-xs font-semibold uppercase tracking-wider text-blue-300 hover:text-white"
+          >
+            <span>Overview</span>
+            <span aria-hidden="true">{expandedNavSections.overview ? '−' : '+'}</span>
+          </button>
+          {expandedNavSections.overview ? (
+            <nav className="space-y-1 mb-4">
+              {(['dashboard', 'daily-checkin', 'action-plan', 'roadmap-view'] as View[]).map((v) => (
+                <button
+                  key={v}
+                  ref={(el) => {
+                    navItemRefs.current[`view:${v}`] = el;
+                  }}
+                  onClick={() => handleViewChange(v)}
+                  className={`w-full flex items-center px-4 py-2.5 text-sm transition-colors ${
+                    view === v
+                      ? 'bg-blue-800 text-white font-medium border-l-4 border-white'
+                      : 'text-blue-100 hover:bg-blue-800 border-l-4 border-transparent'
+                  }`}
+                >
+                  {v === 'dashboard'
+                    ? 'Metrics Dashboard'
+                    : v === 'daily-checkin'
+                      ? 'Daily Check-in'
+                      : v === 'action-plan'
+                        ? 'Action Tracker'
+                        : 'Component Delivery Timeline'}
+                </button>
+              ))}
+            </nav>
+          ) : null}
 
           <div className="px-4 mb-2 text-xs font-semibold text-blue-300 uppercase tracking-wider">
             Change Components
           </div>
           <nav className="space-y-1 mb-8">
-            {COMPONENTS.map((comp, index) => {
-              const isActive = view === 'assessment' && activeComponentId === comp.id;
-              const status = getComponentStatus(comp);
-              const previousPhase = index > 0 ? COMPONENTS[index - 1].phase : null;
-              const showPhaseHeader = comp.phase !== previousPhase;
+            {Array.from(new Set(COMPONENTS.map((comp) => comp.phase))).map((phase) => {
+              const phaseComponents = COMPONENTS.filter((comp) => comp.phase === phase);
+              const isExpanded = expandedNavPhases[phase] ?? false;
               return (
-                <React.Fragment key={comp.id}>
-                  {showPhaseHeader && (
-                    <div
-                      className={`px-4 text-[10px] font-semibold uppercase tracking-wider text-blue-300 ${
-                        index === 0 ? 'pb-1' : 'pt-3 pb-1'
-                      }`}
-                    >
-                      {PHASE_NAMES[comp.phase] || `Phase ${comp.phase}`}
-                    </div>
-                  )}
+                <div key={phase}>
                   <button
-                    ref={(el) => {
-                      navItemRefs.current[`component:${comp.id}`] = el;
-                    }}
-                    onClick={() => {
-                      openComponentAssessment(comp.id);
-                    }}
-                    className={`w-full text-left px-4 py-2 text-sm flex items-center justify-between transition-colors ${
-                      isActive
-                        ? 'bg-white font-medium text-[#005eb8]'
-                        : `hover:bg-blue-800 ${status.color}`
-                    }`}
+                    type="button"
+                    aria-expanded={isExpanded}
+                    onClick={() =>
+                      setExpandedNavPhases((current) => ({
+                        ...current,
+                        [phase]: !isExpanded,
+                      }))
+                    }
+                    className="flex w-full items-center justify-between px-4 pb-1 pt-3 text-left text-[10px] font-semibold uppercase tracking-wider text-blue-300 hover:text-white"
                   >
-                    <span className="truncate pr-2">{escapeHtml(comp.label)}</span>
-                    <span
-                      className="text-xs flex-shrink-0"
-                      title={status.label}
-                      aria-label={status.label}
-                    >
-                      {status.icon}
-                    </span>
+                    <span>{PHASE_NAMES[phase] || `Phase ${phase}`}</span>
+                    <span aria-hidden="true">{isExpanded ? '−' : '+'}</span>
                   </button>
-                </React.Fragment>
+                  {isExpanded
+                    ? phaseComponents.map((comp) => {
+                        const isActive = view === 'assessment' && activeComponentId === comp.id;
+                        const status = getComponentStatus(comp);
+                        return (
+                          <button
+                            key={comp.id}
+                            ref={(el) => {
+                              navItemRefs.current[`component:${comp.id}`] = el;
+                            }}
+                            onClick={() => {
+                              openComponentAssessment(comp.id);
+                            }}
+                            className={`w-full text-left px-4 py-2 text-sm flex items-center justify-between transition-colors ${
+                              isActive
+                                ? 'bg-white font-medium text-[#005eb8]'
+                                : `hover:bg-blue-800 ${status.color}`
+                            }`}
+                          >
+                            <span className="truncate pr-2">{escapeHtml(comp.label)}</span>
+                            <span
+                              className="text-xs flex-shrink-0"
+                              title={status.label}
+                              aria-label={status.label}
+                            >
+                              {status.icon}
+                            </span>
+                          </button>
+                        );
+                      })
+                    : null}
+                </div>
               );
             })}
           </nav>
 
-          
-          <div className="px-4 mb-2 text-xs font-semibold text-blue-300 uppercase tracking-wider">
-            Tools
-          </div>
-          <nav className="space-y-1 mb-8">
-            {(
-              ['highlight-builder', 'force-field-analysis', 'compare', 'audit-log'] as View[]
-            ).map((v) => (
-              <button
-                key={v}
-                ref={(el) => {
-                  navItemRefs.current[`view:${v}`] = el;
-                }}
-                onClick={() => handleViewChange(v)}
-                className={`w-full flex items-center px-4 py-1 text-sm transition-colors ${
-                  view === v
-                    ? 'bg-blue-800 text-white font-medium border-l-4 border-white'
-                    : 'text-blue-100 hover:bg-blue-800 border-l-4 border-transparent'
-                }`}
-              >
-                {v === 'highlight-builder'
-                  ? 'Highlight Builder'
-                  : v === 'force-field-analysis'
-                    ? 'Force Field Analysis'
-                    : v === 'compare'
-                      ? 'Assess & Compare'
-                      : 'Audit Log'}
-              </button>
-            ))}
-          </nav>
+          <button
+            type="button"
+            aria-expanded={expandedNavSections.tools}
+            onClick={() =>
+              setExpandedNavSections((current) => ({ ...current, tools: !current.tools }))
+            }
+            className="mb-2 flex w-full items-center justify-between px-4 text-left text-xs font-semibold uppercase tracking-wider text-blue-300 hover:text-white"
+          >
+            <span>Tools</span>
+            <span aria-hidden="true">{expandedNavSections.tools ? '−' : '+'}</span>
+          </button>
+          {expandedNavSections.tools ? (
+            <nav className="space-y-1 mb-8">
+              {(
+                ['highlight-builder', 'force-field-analysis', 'compare', 'audit-log'] as View[]
+              ).map((v) => (
+                <button
+                  key={v}
+                  ref={(el) => {
+                    navItemRefs.current[`view:${v}`] = el;
+                  }}
+                  onClick={() => handleViewChange(v)}
+                  className={`w-full flex items-center px-4 py-1 text-sm transition-colors ${
+                    view === v
+                      ? 'bg-blue-800 text-white font-medium border-l-4 border-white'
+                      : 'text-blue-100 hover:bg-blue-800 border-l-4 border-transparent'
+                  }`}
+                >
+                  {v === 'highlight-builder'
+                    ? 'Highlight Builder'
+                    : v === 'force-field-analysis'
+                      ? 'Force Field Analysis'
+                      : v === 'compare'
+                        ? 'Assess & Compare'
+                        : 'Audit Log'}
+                </button>
+              ))}
+            </nav>
+          ) : null}
 
           <div className="px-4 mb-2 text-xs font-semibold text-blue-300 uppercase tracking-wider border-t border-blue-800 pt-6">
             Account
@@ -1807,7 +1942,7 @@ export function AdoptionApp() {
           style={{ borderTop: `3px solid ${userSettings.themeColor}` }}
         >
           <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
-            <div className="min-w-0 flex items-start gap-2 sm:gap-3">
+            <div className="min-w-0 flex items-center gap-2 sm:gap-3">
               <button
                 onClick={() => setIsSidebarOpen((current) => !current)}
                 className="inline-flex h-9 items-center justify-center px-3 text-white rounded-md font-semibold transition-colors shadow-sm"
@@ -1857,35 +1992,23 @@ export function AdoptionApp() {
                     {projectLabel}
                   </span>
                 </div>
-                <div className="mt-1 flex min-w-0 items-center gap-1.5">
-                  <span
-                    className={`truncate rounded-full px-2 py-1 text-[11px] font-semibold ${
-                      userSettings.darkMode
-                        ? 'bg-slate-700 text-slate-100'
-                        : 'bg-slate-100 text-slate-600'
-                    }`}
-                    title={fullPathwayLabel}
-                  >
-                    <span className="sm:hidden">{compactPathwayLabel}</span>
-                    <span className="hidden sm:inline">{fullPathwayLabel}</span>
-                  </span>
-                  <span
-                    className="inline-flex items-center justify-center rounded-full border border-emerald-200 bg-emerald-50 px-2 py-1 text-[11px] font-semibold text-emerald-800"
-                    title="Auto-save on"
-                  >
-                    <span
-                      className="inline-flex h-3 w-3 items-center justify-center rounded-full bg-emerald-500 text-[9px] text-white"
-                      aria-hidden="true"
-                    >
-                      ✓
-                    </span>
-                    <span className="sr-only sm:not-sr-only sm:ml-1">Auto-save on</span>
-                  </span>
-                </div>
               </div>
             </div>
 
             <div className="flex flex-wrap items-center gap-2 lg:justify-end">
+              <span
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-emerald-200 bg-emerald-50 px-2 py-1 text-[11px] font-semibold text-emerald-800 sm:h-9 sm:w-auto sm:rounded-full"
+                title="Auto-save on"
+                aria-label="Auto-save on"
+              >
+                <span
+                  className="inline-flex h-3 w-3 items-center justify-center rounded-full bg-emerald-500 text-[9px] text-white"
+                  aria-hidden="true"
+                >
+                  ✓
+                </span>
+                <span className="sr-only sm:not-sr-only sm:ml-1">Auto-save on</span>
+              </span>
               <button
                 onClick={() => setShowOnboarding(true)}
                 aria-label="Show introduction"
@@ -2259,6 +2382,7 @@ export function AdoptionApp() {
             <ActionPlanTracker
               actions={actionRows}
               onComponentClick={openComponentAssessment}
+              onStatusChange={requestActionStatusChange}
               teamMembers={store.orgProfile.teamMembers || []}
               darkMode={Boolean(userSettings.darkMode)}
             />
@@ -2465,7 +2589,7 @@ export function AdoptionApp() {
         />
 
         <OnboardingIntro
-          open={showOnboarding}
+          open={showOnboarding && !showPathwaySelection}
           onClose={dismissOnboarding}
           onNavigateToProjectDetails={() => {
             setView('project-details');
@@ -2475,6 +2599,44 @@ export function AdoptionApp() {
             setView('cm-guide');
             dismissOnboarding();
           }}
+        />
+
+        <PathwaySelectionModal
+          open={showPathwaySelection}
+          initialPathway={store.orgProfile.cst.pathway}
+          onContinue={(pathway) => {
+            handleProfileUpdate({
+              ...store.orgProfile,
+              cst: { ...store.orgProfile.cst, pathway },
+            });
+            setShowPathwaySelection(false);
+            if (!hasSeenPathwaySelection) {
+              setHasSeenPathwaySelection(true);
+              save(ADOPTION_PATHWAY_SELECTION_SEEN_KEY, true);
+            }
+          }}
+          darkMode={Boolean(userSettings.darkMode)}
+        />
+
+        <EvidenceWarningModal
+          open={pendingStatusChange !== null}
+          onCancel={() => setPendingStatusChange(null)}
+          onContinue={(doNotShowAgain) => {
+            if (!pendingStatusChange) {
+              return;
+            }
+            if (doNotShowAgain) {
+              save(EVIDENCE_WARNING_DISMISSED_KEY, true);
+            }
+            applyActionStatusChange(
+              pendingStatusChange.componentId,
+              pendingStatusChange.lens,
+              pendingStatusChange.actionId,
+              pendingStatusChange.status
+            );
+            setPendingStatusChange(null);
+          }}
+          darkMode={Boolean(userSettings.darkMode)}
         />
 
         <CstSetupWizard

@@ -244,92 +244,6 @@ export function ChangeManagementGuide({
         </div>
       </div>
 
-      {/* The 6 Key Questions */}
-      <AccordionSection
-        title="The 6 Key Questions"
-        description="Six questions worth returning to throughout the life of the programme, each backed by a change model and linked to where you can act on it."
-        isOpen={expandedSection === 'questions'}
-        onToggle={() => toggleSection('questions')}
-        darkMode={darkMode}
-      >
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {KEY_QUESTIONS.map((keyQuestion, index) => {
-            const toolkitLinks = resolveGuidanceLinksForAdoptionComponent(
-              guidanceTarget,
-              keyQuestion.componentIds[0],
-              'inputs',
-              linkOverrides,
-              showAdditionalGuidanceLinks
-            ).slice(0, 2);
-
-            return (
-              <div
-                key={keyQuestion.id}
-                className={`rounded-md border p-4 ${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'}`}
-              >
-                <div className="flex items-start gap-3">
-                  <span className="shrink-0 w-7 h-7 rounded-full bg-blue-100 text-[#005eb8] text-xs font-bold flex items-center justify-center">
-                    Q{index + 1}
-                  </span>
-                  <div>
-                    <p
-                      className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
-                    >
-                      {keyQuestion.question}
-                    </p>
-                    <span
-                      className={`mt-1 inline-block rounded border px-2 py-0.5 text-xs font-medium ${darkMode ? 'border-indigo-500/40 bg-indigo-500/15 text-indigo-200' : 'border-indigo-200 bg-indigo-50 text-indigo-700'}`}
-                    >
-                      {keyQuestion.framework}
-                    </span>
-                  </div>
-                </div>
-
-                <p
-                  className={`mt-3 text-xs leading-relaxed ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
-                >
-                  {keyQuestion.description}
-                </p>
-
-                {toolkitLinks.length ? (
-                  <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1">
-                    {toolkitLinks.map((link) => (
-                      <a
-                        key={`${keyQuestion.id}-${link.url}`}
-                        href={link.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs font-medium text-[#005eb8] underline"
-                      >
-                        {link.label}
-                      </a>
-                    ))}
-                  </div>
-                ) : null}
-
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {keyQuestion.componentIds.map((componentId) => {
-                    const component = getComponentById(componentId);
-                    if (!component) {
-                      return null;
-                    }
-                    return (
-                      <button
-                        key={componentId}
-                        type="button"
-                        onClick={() => onComponentClick(componentId)}
-                        className={`rounded-md border px-2.5 py-1.5 text-xs font-semibold transition-colors ${darkMode ? 'border-blue-500/40 bg-blue-500/15 text-blue-200 hover:bg-blue-500/25' : 'border-blue-200 bg-blue-50 text-[#005eb8] hover:bg-blue-100'}`}
-                      >
-                        Go to {component.label}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </AccordionSection>
 
       {/* Phase timeline */}
       <AccordionSection
@@ -434,6 +348,93 @@ export function ChangeManagementGuide({
                     </ul>
                   </div>
                 )}
+              </div>
+            );
+          })}
+        </div>
+      </AccordionSection>
+
+      {/* The 6 Key Questions */}
+      <AccordionSection
+        title="The 6 Key Questions"
+        description="Six questions worth returning to throughout the life of the programme, each backed by a change model and linked to where you can act on it."
+        isOpen={expandedSection === 'questions'}
+        onToggle={() => toggleSection('questions')}
+        darkMode={darkMode}
+      >
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {KEY_QUESTIONS.map((keyQuestion, index) => {
+            const toolkitLinks = resolveGuidanceLinksForAdoptionComponent(
+              guidanceTarget,
+              keyQuestion.componentIds[0],
+              'inputs',
+              linkOverrides,
+              showAdditionalGuidanceLinks
+            ).slice(0, 2);
+
+            return (
+              <div
+                key={keyQuestion.id}
+                className={`rounded-md border p-4 ${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'}`}
+              >
+                <div className="flex items-start gap-3">
+                  <span className="shrink-0 w-7 h-7 rounded-full bg-blue-100 text-[#005eb8] text-xs font-bold flex items-center justify-center">
+                    Q{index + 1}
+                  </span>
+                  <div>
+                    <p
+                      className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+                    >
+                      {keyQuestion.question}
+                    </p>
+                    <span
+                      className={`mt-1 inline-block rounded border px-2 py-0.5 text-xs font-medium ${darkMode ? 'border-indigo-500/40 bg-indigo-500/15 text-indigo-200' : 'border-indigo-200 bg-indigo-50 text-indigo-700'}`}
+                    >
+                      {keyQuestion.framework}
+                    </span>
+                  </div>
+                </div>
+
+                <p
+                  className={`mt-3 text-xs leading-relaxed ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+                >
+                  {keyQuestion.description}
+                </p>
+
+                {toolkitLinks.length ? (
+                  <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1">
+                    {toolkitLinks.map((link) => (
+                      <a
+                        key={`${keyQuestion.id}-${link.url}`}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs font-medium text-[#005eb8] underline"
+                      >
+                        {link.label}
+                      </a>
+                    ))}
+                  </div>
+                ) : null}
+
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {keyQuestion.componentIds.map((componentId) => {
+                    const component = getComponentById(componentId);
+                    if (!component) {
+                      return null;
+                    }
+                    return (
+                      <button
+                        key={componentId}
+                        type="button"
+                        onClick={() => onComponentClick(componentId)}
+                        className={`rounded-md border px-2.5 py-1.5 text-xs font-semibold transition-colors ${darkMode ? 'border-blue-500/40 bg-blue-500/15 text-blue-200 hover:bg-blue-500/25' : 'border-blue-200 bg-blue-50 text-[#005eb8] hover:bg-blue-100'}`}
+                      >
+                        Go to {component.label}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             );
           })}

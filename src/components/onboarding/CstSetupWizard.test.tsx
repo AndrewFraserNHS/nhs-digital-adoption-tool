@@ -77,15 +77,19 @@ describe('CstSetupWizard', () => {
     expect(screen.getByRole('button', { name: 'Done' })).toBeInTheDocument();
   });
 
-  it('SHOULD show the pathway content notice WHERE Pathway 2 or 3 is selected', () => {
+  it('SHOULD show the pathway content notice WHERE Pathway 2 is selected before setup opens', () => {
     // arrange
     const onProfileUpdate = vi.fn();
+    const pathwayTwoProfile = {
+      ...orgProfile,
+      cst: { ...orgProfile.cst, pathway: 'pathway-2' as const },
+    };
 
     // act
     render(
       <CstSetupWizard
         open
-        orgProfile={orgProfile}
+        orgProfile={pathwayTwoProfile}
         onProfileUpdate={onProfileUpdate}
         onClose={vi.fn()}
         onComplete={vi.fn()}
@@ -93,7 +97,6 @@ describe('CstSetupWizard', () => {
       />
     );
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
-    fireEvent.change(screen.getByLabelText('Pathway'), { target: { value: 'pathway-2' } });
 
     // assert
     expect(

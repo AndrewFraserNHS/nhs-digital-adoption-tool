@@ -1,4 +1,4 @@
-import React, { JSX, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { JSX, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   AdoptionStore,
   ComponentObjective,
@@ -29,6 +29,11 @@ import { detectScoreAdvancementOpportunities } from '@lib/componentDerivedAutoma
 import { PHASE_NAMES } from '../../types/constants';
 import componentDetailsText from '@data/component-descriptors/component-details.json?raw';
 import { PageHelpButton, PageIntroModal, usePageIntroSeen } from '@components/onboarding/PageIntroModal';
+import {
+  EVIDENCE_WARNING_DISMISSED_KEY,
+  EvidenceWarningModal,
+} from '@components/common/EvidenceWarningModal';
+import { load, save } from '@lib/storage';
 
 type AssessmentPanelStore = AdoptionStore;
 
@@ -948,6 +953,8 @@ export function AssessmentPanel({
     toolLinkMatches,
   ]);
   const [actionEditor, setActionEditor] = useState<ActionEditorState | null>(null);
+  const [showEvidenceWarning, setShowEvidenceWarning] = useState(false);
+  const pendingActionSaveRef = useRef<(() => void) | null>(null);
   const [objectiveViewer, setObjectiveViewer] = useState<ObjectiveViewerState | null>(null);
   const [objectiveEditor, setObjectiveEditor] = useState<ObjectiveEditorState | null>(null);
   const [guidedWorkflowDismissed, setGuidedWorkflowDismissed] = useState(false);
@@ -1289,7 +1296,7 @@ export function AssessmentPanel({
     setActionEditor(null);
   };
 
-  const saveActionModal = () => {
+  const persistActionModal = () => {
     if (!actionEditor) {
       return;
     }
@@ -1354,6 +1361,57 @@ export function AssessmentPanel({
     onObjectivesUpdate(actionEditor.sourceComponentId, nextObjectives);
 
     closeActionModal();
+  };
+
+  const saveActionModal = () => {
+    if (!actionEditor) {
+      return;
+    }
+
+    const isCompletingWithoutEvidence =
+      normalizeActionStatus(actionEditor.action.status) === 'Completed' &&
+      actionEditor.evidenceItems.length === 0 &&
+      !load<boolean>(EVIDENCE_WARNING_DISMISSED_KEY);
+
+    if (isCompletingWithoutEvidence) {
+      pendingActionSaveRef.current = persistActionModal;
+      setShowEvidenceWarning(true);
+      return;
+    }
+
+    persistActionModal();
+  };
+
+  const applyLinkedActionStatusChange = (lens: string, actionId: string, status: string) => {
+    const entry = getEntry(component.id, lens);
+    onEntryUpdate(component.id, lens, {
+      ...entry,
+      actions: entry.actions.map((action) =>
+        action.id === actionId ? { ...action, status: normalizeActionStatus(status) } : action
+      ),
+    });
+  };
+
+  const requestLinkedActionStatusChange = (
+    lens: string,
+    action: DraftAction,
+    status: string
+  ) => {
+    const normalizedStatus = normalizeActionStatus(status);
+    const hasEvidence = parseEvidenceItems(action.evidence || '').length > 0;
+    const shouldWarn =
+      normalizedStatus === 'Completed' &&
+      !hasEvidence &&
+      !load<boolean>(EVIDENCE_WARNING_DISMISSED_KEY);
+
+    if (shouldWarn) {
+      pendingActionSaveRef.current = () =>
+        applyLinkedActionStatusChange(lens, action.id, normalizedStatus);
+      setShowEvidenceWarning(true);
+      return;
+    }
+
+    applyLinkedActionStatusChange(lens, action.id, normalizedStatus);
   };
 
   const updateActionEditor = (updates: Partial<DraftAction>) => {
@@ -2141,11 +2199,24 @@ export function AssessmentPanel({
                                   ) : null}
                                 </td>
                                 <td className="px-3 py-2">
-                                  <span
-                                    className={`inline-flex min-w-[7.5rem] items-center justify-center whitespace-nowrap rounded-full border px-3 py-1 text-center text-xs font-semibold ${badgeStyle}`}
+                                  <select
+                                    aria-label={`Current state for ${action.text}`}
+                                    value={displayStatus}
+                                    onChange={(event) =>
+                                      requestLinkedActionStatusChange(
+                                        resolvedAction.sourceLens,
+                                        action,
+                                        event.target.value
+                                      )
+                                    }
+                                    className={`min-w-[7.5rem] rounded-md border px-2 py-1 text-xs font-semibold ${badgeStyle} focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b]`}
                                   >
-                                    {displayStatus}
-                                  </span>
+                                    {STATUS_OPTIONS.map((status) => (
+                                      <option key={status} value={status}>
+                                        {status}
+                                      </option>
+                                    ))}
+                                  </select>
                                   {temporalHint ? (
                                     <div className="mt-1 text-xs text-rose-700">{temporalHint}</div>
                                   ) : null}
@@ -2863,11 +2934,28 @@ export function AssessmentPanel({
                                 {item.action?.text || 'Linked action not found'}
                               </td>
                               <td className="px-3 py-2">
-                                <span
-                                  className={`inline-flex min-w-[7.5rem] items-center justify-center whitespace-nowrap rounded-full border px-3 py-1 text-center text-xs font-semibold ${badgeStyle}`}
-                                >
-                                  {item.status || 'Not Started'}
-                                </span>
+                                {item.action ? (
+                                  <select
+                                    aria-label={`Current state for ${item.action.text}`}
+                                    value={item.status || 'Planned'}
+                                    onChange={(event) =>
+                                      requestLinkedActionStatusChange(
+                                        item.lens,
+                                        item.action as DraftAction,
+                                        event.target.value
+                                      )
+                                    }
+                                    className={`min-w-[7.5rem] rounded-md border px-2 py-1 text-xs font-semibold ${badgeStyle} focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b]`}
+                                  >
+                                    {STATUS_OPTIONS.map((status) => (
+                                      <option key={status} value={status}>
+                                        {status}
+                                      </option>
+                                    ))}
+                                  </select>
+                                ) : (
+                                  <span className="text-xs text-slate-500">Not linked</span>
+                                )}
                                 {item.temporalStatus === 'Overdue start' ||
                                 item.temporalStatus === 'Overdue completion' ? (
                                   <div className="mt-1 text-xs text-rose-700">
@@ -2994,6 +3082,24 @@ export function AssessmentPanel({
           </div>
         </div>
       ) : null}
+
+      <EvidenceWarningModal
+        open={showEvidenceWarning}
+        onCancel={() => {
+          pendingActionSaveRef.current = null;
+          setShowEvidenceWarning(false);
+        }}
+        onContinue={(doNotShowAgain) => {
+          if (doNotShowAgain) {
+            save(EVIDENCE_WARNING_DISMISSED_KEY, true);
+          }
+          const pendingSave = pendingActionSaveRef.current;
+          pendingActionSaveRef.current = null;
+          setShowEvidenceWarning(false);
+          pendingSave?.();
+        }}
+        darkMode={darkMode}
+      />
 
       <PageIntroModal
         open={pageIntro.isOpen}

@@ -86,4 +86,29 @@ describe('ActionPlanTracker', () => {
     // assert
     expect(onComponentClick).toHaveBeenCalledWith('vision');
   });
+
+  it('SHOULD notify parent when an inline status is changed', () => {
+    // arrange
+    const onStatusChange = vi.fn();
+
+    // act
+    render(
+      <ActionPlanTracker
+        actions={actions}
+        onComponentClick={vi.fn()}
+        onStatusChange={onStatusChange}
+      />
+    );
+    fireEvent.change(screen.getByRole('combobox', { name: 'Status for Run clinical workshop' }), {
+      target: { value: 'Completed' },
+    });
+
+    // assert
+    expect(onStatusChange).toHaveBeenCalledWith(
+      'vision',
+      'Strategic Direction',
+      'a1',
+      'Completed'
+    );
+  });
 });

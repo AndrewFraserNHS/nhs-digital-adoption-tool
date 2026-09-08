@@ -45,6 +45,7 @@ describe('ProjectDetailsPage', () => {
         onComponentClick={vi.fn()}
         onGoToIntroduction={vi.fn()}
         onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -73,6 +74,7 @@ describe('ProjectDetailsPage', () => {
         onComponentClick={vi.fn()}
         onGoToIntroduction={onGoToIntroduction}
         onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -82,6 +84,31 @@ describe('ProjectDetailsPage', () => {
 
     // assert
     expect(onGoToIntroduction).toHaveBeenCalled();
+  });
+
+  it('SHOULD navigate to the Where am I now page from below the team members step', () => {
+    // arrange
+    const onGoToWhereAmINow = vi.fn();
+
+    render(
+      <ProjectDetailsPage
+        orgProfile={orgProfile}
+        onProfileUpdate={vi.fn()}
+        components={components}
+        lenses={['Strategic Direction and Leadership']}
+        onComponentClick={vi.fn()}
+        onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={onGoToWhereAmINow}
+        onCurrentUserChange={vi.fn()}
+      />
+    );
+
+    // act
+    fireEvent.click(screen.getByRole('button', { name: 'Where am I now?' }));
+
+    // assert
+    expect(onGoToWhereAmINow).toHaveBeenCalled();
   });
 
   it('updates toolkit choice from CST Details', () => {
@@ -97,6 +124,7 @@ describe('ProjectDetailsPage', () => {
         onComponentClick={vi.fn()}
         onGoToIntroduction={vi.fn()}
         onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -127,6 +155,7 @@ describe('ProjectDetailsPage', () => {
         onComponentClick={vi.fn()}
         onGoToIntroduction={vi.fn()}
         onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -161,6 +190,7 @@ describe('ProjectDetailsPage', () => {
         onComponentClick={vi.fn()}
         onGoToIntroduction={vi.fn()}
         onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -188,6 +218,7 @@ describe('ProjectDetailsPage', () => {
         onComponentClick={vi.fn()}
         onGoToIntroduction={vi.fn()}
         onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -206,6 +237,7 @@ describe('ProjectDetailsPage', () => {
         onComponentClick={vi.fn()}
         onGoToIntroduction={vi.fn()}
         onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
         onCurrentUserChange={vi.fn()}
         showExternalLinksSection
       />
@@ -228,6 +260,7 @@ describe('ProjectDetailsPage', () => {
         onComponentClick={vi.fn()}
         onGoToIntroduction={vi.fn()}
         onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -254,6 +287,7 @@ describe('ProjectDetailsPage', () => {
         onComponentClick={vi.fn()}
         onGoToIntroduction={vi.fn()}
         onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -288,6 +322,7 @@ describe('ProjectDetailsPage', () => {
         onComponentClick={vi.fn()}
         onGoToIntroduction={vi.fn()}
         onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -312,6 +347,7 @@ describe('ProjectDetailsPage', () => {
         onComponentClick={vi.fn()}
         onGoToIntroduction={vi.fn()}
         onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -334,6 +370,7 @@ describe('ProjectDetailsPage', () => {
         onComponentClick={vi.fn()}
         onGoToIntroduction={vi.fn()}
         onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -363,6 +400,7 @@ describe('ProjectDetailsPage', () => {
         onComponentClick={vi.fn()}
         onGoToIntroduction={vi.fn()}
         onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -384,6 +422,7 @@ describe('ProjectDetailsPage', () => {
         onComponentClick={vi.fn()}
         onGoToIntroduction={vi.fn()}
         onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -415,6 +454,7 @@ describe('ProjectDetailsPage', () => {
         onComponentClick={vi.fn()}
         onGoToIntroduction={vi.fn()}
         onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -445,6 +485,7 @@ describe('ProjectDetailsPage', () => {
         onComponentClick={vi.fn()}
         onGoToIntroduction={vi.fn()}
         onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -478,6 +519,7 @@ describe('ProjectDetailsPage', () => {
         onComponentClick={vi.fn()}
         onGoToIntroduction={vi.fn()}
         onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );

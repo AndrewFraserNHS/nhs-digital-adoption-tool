@@ -497,27 +497,27 @@ return '#330072';
 }
     return '#00A499';
   };
-  const averageScores = components.map((component) => {
-    const total = component.lenses.reduce(
-      (sum, lens) => sum + Number(getEntry(component.id, lens).score || 0),
-      0
-    );
-    return Number((total / component.lenses.length).toFixed(1));
+  // The weakest lens gates the component's overall readiness - a component isn't "ready" just
+  // because most of its lenses score well while one lags badly, so we surface the minimum rather
+  // than smoothing it away with an average.
+  const weakestLensScores = components.map((component) => {
+    const scores = component.lenses.map((lens) => Number(getEntry(component.id, lens).score || 0));
+    return scores.length ? Math.min(...scores) : 0;
   });
 
   return {
     labels: components.map((component) => component.label),
     datasets: [
       {
-        label: 'Current Average Readiness',
-        data: averageScores,
+        label: 'Current Readiness (weakest lens)',
+        data: weakestLensScores,
         borderColor: '#005EB8',
         backgroundColor: 'rgba(0, 94, 184, 0.12)',
         borderWidth: 2,
         pointRadius: 4,
         pointHoverRadius: 6,
-        pointBackgroundColor: averageScores.map(colorForScore),
-        pointBorderColor: averageScores.map(colorForScore),
+        pointBackgroundColor: weakestLensScores.map(colorForScore),
+        pointBorderColor: weakestLensScores.map(colorForScore),
       },
       {
         label: exemplarPhase ? `Exemplar (Phase ${exemplarPhase})` : 'Target Average',

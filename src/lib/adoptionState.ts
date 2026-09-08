@@ -171,6 +171,7 @@ export type View =
   | 'introduction'
   | 'engine-explained'
   | 'dashboard'
+  | 'where-am-i-now'
   | 'daily-checkin'
   | 'assessment'
   | 'action-plan'

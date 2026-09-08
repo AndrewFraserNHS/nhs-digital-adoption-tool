@@ -2,6 +2,7 @@ import type { AssessmentComponent } from '@data/components';
 import { describe, expect, it } from 'vitest';
 
 import {
+  buildComponentRadarChartData,
   buildRadarChartData,
   computeEngagementObjectives,
   computeRadarData,
@@ -436,5 +437,16 @@ describe('adoptionMetrics', () => {
 
     // assert
     expect(objectives.find((o) => o.id === 'all-actions-owned')?.completed).toBe(false);
+  });
+
+  it('SHOULD score each component on the radar by its weakest lens, not the average', () => {
+    // arrange - vision has Lens A=4, Lens B=0 (min 0, average would be 2)
+
+    // act
+    const chartData = buildComponentRadarChartData(components, getEntry);
+
+    // assert
+    expect(chartData.labels).toEqual(['Vision', 'Benefits']);
+    expect(chartData.datasets[0].data).toEqual([0, 2]);
   });
 });

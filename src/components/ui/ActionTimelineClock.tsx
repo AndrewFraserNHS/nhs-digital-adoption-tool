@@ -21,10 +21,29 @@ const HEALTH_LABEL: Record<string, string> = {
   red: 'Overdue',
 };
 
+const GMT_DATE_FORMATTER = new Intl.DateTimeFormat('en-GB', {
+  day: '2-digit',
+  month: 'short',
+  year: '2-digit',
+  timeZone: 'GMT',
+});
+
+/** "GMT - DD MMM YY", e.g. "GMT - 15 Jun 26"; falls back to "not set" for an empty/unparseable date. */
+function formatGmtDate(value: string | undefined): string {
+  if (!value) {
+    return 'not set';
+  }
+  const parsed = new Date(value);
+  if (isNaN(parsed.getTime())) {
+    return 'not set';
+  }
+  return `GMT - ${GMT_DATE_FORMATTER.format(parsed)}`;
+}
+
 /** Single clock icon summarising an action's timeline health (grey/green/amber/red); hover/title carries the actual dates. */
 export function ActionTimelineClock({ status, startDate, dueDate }: ActionTimelineClockProps): JSX.Element {
   const health = getActionTimelineHealth(status, startDate, dueDate);
-  const title = `${HEALTH_LABEL[health]} · Start: ${startDate || 'not set'} · End: ${dueDate || 'not set'}`;
+  const title = `${HEALTH_LABEL[health]} · Start: ${formatGmtDate(startDate)} · End: ${formatGmtDate(dueDate)}`;
 
   return (
     <span title={title} aria-label={title} className={`inline-flex items-center ${HEALTH_CLASSES[health]}`}>

@@ -360,6 +360,7 @@ export interface ProjectDetailsPageProps {
   onComponentClick: (componentId: string) => void;
   onGoToIntroduction: () => void;
   onContinueToVision: () => void;
+  onGoToWhereAmINow: () => void;
   darkMode?: boolean;
   currentUserId?: string;
   onCurrentUserChange: (id: string) => void;
@@ -374,6 +375,7 @@ export function ProjectDetailsPage({
   onComponentClick,
   onGoToIntroduction,
   onContinueToVision,
+  onGoToWhereAmINow,
   darkMode = false,
   currentUserId,
   onCurrentUserChange,
@@ -1110,6 +1112,23 @@ export function ProjectDetailsPage({
 
         <button type="button" onClick={handleAddTeamMember} className={nhsButtonSecondary}>
           + Add Team Member
+        </button>
+      </div>
+
+      <div
+        className={`flex flex-wrap items-center justify-between gap-3 rounded-lg border p-5 ${darkMode ? 'border-blue-500/30 bg-blue-500/10' : 'border-blue-200 bg-blue-50'}`}
+      >
+        <div>
+          <p className={`text-sm font-semibold ${darkMode ? 'text-blue-100' : 'text-blue-900'}`}>
+            What phase are you currently in?
+          </p>
+          <p className={`mt-1 text-xs ${darkMode ? 'text-blue-200' : 'text-blue-800'}`}>
+            Answer a few quick questions and see your readiness by component to figure out where
+            you really are in the change journey.
+          </p>
+        </div>
+        <button type="button" onClick={onGoToWhereAmINow} className={nhsButtonPrimary}>
+          Where am I now?
         </button>
       </div>
 

@@ -22,6 +22,7 @@ import {
 } from '@components/views/OnboardingOverviewPage';
 import { ProfilePage } from '@components/views/ProfilePage';
 import { type AdoptionUserSettings, SettingsPanel } from '@components/views/SettingsPanel';
+import { WhereAmINowPage } from '@components/views/WhereAmINowPage';
 import { ASSESSMENT_COMPONENTS, getComponentById } from '@data/components';
 import { ASSESSMENT_LENSES as LENSES } from '@data/lenses';
 import {
@@ -93,6 +94,15 @@ const ALLOWED_VIEWS_WHEN_UNCONFIGURED: View[] = [
   'project-details',
   'profile',
 ];
+
+/** Matches the phase colours used in "The Five Change Phases" (DailyPhaseOverview) so the sidebar groups read consistently with the rest of the app. */
+const PHASE_SIDEBAR_COLORS: Record<number, string> = {
+  1: '#3b82f6',
+  2: '#8b5cf6',
+  3: '#f59e0b',
+  4: '#f97316',
+  5: '#22c55e',
+};
 
 const EXAMPLE_DATA_FILES: Record<'red' | 'amber' | 'green', string> = {
   red: 'test-data/adoption-phase1-red.json',
@@ -363,6 +373,7 @@ export function AdoptionApp() {
       'engine-explained': 'intro',
       'project-details': 'intro',
       dashboard: 'overview',
+      'where-am-i-now': 'overview',
       'daily-checkin': 'overview',
       'action-plan': 'overview',
       'roadmap-view': 'overview',
@@ -432,16 +443,26 @@ export function AdoptionApp() {
             getEntry,
             effectivePhaseFocus
           );
-          createRadarChart(componentRadarCanvas, componentRadarData, {
-            maintainAspectRatio: false,
-            scales: {
-              r: {
-                min: 0,
-                max: 5,
-                ticks: { display: true, stepSize: 1, backdropColor: 'transparent' },
+          createRadarChart(
+            componentRadarCanvas,
+            componentRadarData,
+            {
+              maintainAspectRatio: false,
+              scales: {
+                r: {
+                  min: 0,
+                  max: 5,
+                  ticks: { display: true, stepSize: 1, backdropColor: 'transparent' },
+                },
               },
             },
-          });
+            (index) => {
+              const targetComponent = COMPONENTS[index];
+              if (targetComponent) {
+                openComponentAssessment(targetComponent.id);
+              }
+            }
+          );
         }
 
         if (store.history.length > 0) {
@@ -1353,7 +1374,9 @@ export function AdoptionApp() {
           </button>
           {expandedNavSections.overview ? (
             <nav className="space-y-1 mb-4">
-              {(['dashboard', 'daily-checkin', 'action-plan', 'roadmap-view'] as View[]).map((v) => (
+              {(
+                ['dashboard', 'where-am-i-now', 'daily-checkin', 'action-plan', 'roadmap-view'] as View[]
+              ).map((v) => (
                 <button
                   key={v}
                   ref={(el) => {
@@ -1368,11 +1391,13 @@ export function AdoptionApp() {
                 >
                   {v === 'dashboard'
                     ? 'Metrics Dashboard'
-                    : v === 'daily-checkin'
-                      ? 'Daily Check-in'
-                      : v === 'action-plan'
-                        ? 'Action Tracker'
-                        : 'Component Delivery Timeline'}
+                    : v === 'where-am-i-now'
+                      ? 'Where Am I Now?'
+                      : v === 'daily-checkin'
+                        ? 'Daily Check-in'
+                        : v === 'action-plan'
+                          ? 'Action Tracker'
+                          : 'Component Delivery Timeline'}
                 </button>
               ))}
             </nav>
@@ -1381,12 +1406,16 @@ export function AdoptionApp() {
           <div className="px-4 mb-2 text-xs font-semibold text-blue-300 uppercase tracking-wider">
             Change Components
           </div>
-          <nav className="space-y-1 mb-8">
+          <nav className="space-y-2 mb-8">
             {Array.from(new Set(COMPONENTS.map((comp) => comp.phase))).map((phase) => {
               const phaseComponents = COMPONENTS.filter((comp) => comp.phase === phase);
               const isExpanded = expandedNavPhases[phase] ?? false;
               return (
-                <div key={phase}>
+                <div
+                  key={phase}
+                  className="mx-2 overflow-hidden rounded-md"
+                  style={{ backgroundColor: `${PHASE_SIDEBAR_COLORS[phase] || '#3b82f6'}33` }}
+                >
                   <button
                     type="button"
                     aria-expanded={isExpanded}
@@ -1396,7 +1425,7 @@ export function AdoptionApp() {
                         [phase]: !isExpanded,
                       }))
                     }
-                    className="flex w-full items-center justify-between px-4 pb-1 pt-3 text-left text-[10px] font-semibold uppercase tracking-wider text-blue-300 hover:text-white"
+                    className="flex w-full items-center justify-between px-3 pb-1.5 pt-2.5 text-left text-sm font-semibold uppercase tracking-wider text-white"
                   >
                     <span>{PHASE_NAMES[phase] || `Phase ${phase}`}</span>
                     <span aria-hidden="true">{isExpanded ? '−' : '+'}</span>
@@ -1730,6 +1759,30 @@ export function AdoptionApp() {
               />
             </div>
           )}
+          {view === 'where-am-i-now' && (
+            <WhereAmINowPage
+              components={COMPONENTS}
+              getEntry={getEntry}
+              effectivePhaseFocus={effectivePhaseFocus}
+              phaseFocusMode={userSettings.phaseFocusMode || 'auto'}
+              onComponentClick={openComponentAssessment}
+              onSetManualPhase={(phase) =>
+                setUserSettings((prev) => ({
+                  ...prev,
+                  phaseFocusMode: 'manual',
+                  manualPhaseFocus: phase,
+                }))
+              }
+              onResetToAuto={() =>
+                setUserSettings((prev) => ({
+                  ...prev,
+                  phaseFocusMode: 'auto',
+                  manualPhaseFocus: metrics.currentPhase,
+                }))
+              }
+              darkMode={Boolean(userSettings.darkMode)}
+            />
+          )}
           {view === 'daily-checkin' && (
             <DailyCheckIn
               store={store}
@@ -1756,6 +1809,7 @@ export function AdoptionApp() {
               onComponentClick={openComponentAssessment}
               onGoToIntroduction={() => handleViewChange('introduction')}
               onContinueToVision={() => openComponentAssessment('vision')}
+              onGoToWhereAmINow={() => handleViewChange('where-am-i-now')}
               currentUserId={currentUserId}
               onCurrentUserChange={setCurrentUserId}
               showExternalLinksSection={Boolean(userSettings.showExternalLinksSection)}

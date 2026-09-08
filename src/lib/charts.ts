@@ -74,10 +74,71 @@ export function createChart(
   return new Chart(canvas, cfg);
 }
 
+interface PointLabelHitbox {
+  index: number;
+  x: number;
+  y: number;
+  halfWidth: number;
+  halfHeight: number;
+}
+
+interface ChartWithPointLabelHitboxes extends Chart {
+  $pointLabelHitboxes?: PointLabelHitbox[];
+}
+
+const radarCanvasClickHandlers = new WeakMap<HTMLCanvasElement, (event: MouseEvent) => void>();
+const radarCanvasMoveHandlers = new WeakMap<HTMLCanvasElement, (event: MouseEvent) => void>();
+
+function findPointLabelAt(
+  chart: ChartWithPointLabelHitboxes,
+  offsetX: number,
+  offsetY: number
+): PointLabelHitbox | undefined {
+  return (chart.$pointLabelHitboxes || []).find(
+    (box) =>
+      Math.abs(offsetX - box.x) <= box.halfWidth && Math.abs(offsetY - box.y) <= box.halfHeight
+  );
+}
+
+/** Wires a radar chart's drawn point labels (component/lens names) up as clickable targets - Chart.js has no built-in click support for pointLabels since this app draws them with a custom plugin. */
+function attachPointLabelClickHandler(
+  canvas: HTMLCanvasElement,
+  chart: Chart,
+  onLabelClick: (index: number) => void
+) {
+  const existingClick = radarCanvasClickHandlers.get(canvas);
+  if (existingClick) {
+    canvas.removeEventListener('click', existingClick);
+  }
+  const existingMove = radarCanvasMoveHandlers.get(canvas);
+  if (existingMove) {
+    canvas.removeEventListener('mousemove', existingMove);
+  }
+
+  const handleClick = (event: MouseEvent) => {
+    const rect = canvas.getBoundingClientRect();
+    const box = findPointLabelAt(chart, event.clientX - rect.left, event.clientY - rect.top);
+    if (box) {
+      onLabelClick(box.index);
+    }
+  };
+  const handleMove = (event: MouseEvent) => {
+    const rect = canvas.getBoundingClientRect();
+    const box = findPointLabelAt(chart, event.clientX - rect.left, event.clientY - rect.top);
+    canvas.style.cursor = box ? 'pointer' : '';
+  };
+
+  canvas.addEventListener('click', handleClick);
+  canvas.addEventListener('mousemove', handleMove);
+  radarCanvasClickHandlers.set(canvas, handleClick);
+  radarCanvasMoveHandlers.set(canvas, handleMove);
+}
+
 export function createRadarChart(
   ctx: CanvasRenderingContext2D | HTMLCanvasElement,
   data: ChartConfiguration<'radar'>['data'],
-  options: ChartConfiguration<'radar'>['options'] = {}
+  options: ChartConfiguration<'radar'>['options'] = {},
+  onPointLabelClick?: (index: number) => void
 ) {
   // sensible defaults to better match legacy rendering
   Chart.defaults.font.family =
@@ -150,7 +211,14 @@ export function createRadarChart(
     },
   };
 
-  return createChart('radar', ctx, data, mergedOptions);
+  const chart = createChart('radar', ctx, data, mergedOptions);
+
+  if (onPointLabelClick) {
+    const canvas = resolveCanvas(ctx);
+    attachPointLabelClickHandler(canvas, chart, onPointLabelClick);
+  }
+
+  return chart;
 }
 
 export function createLineChart(
@@ -263,6 +331,7 @@ const radarPointLabelPlugin: Plugin = {
       const color = pointLabels.color || (isDarkThemeEnabled() ? '#e2e8f0' : '#0b1220');
       const padding = Number(pointLabels.padding ?? 14);
       const labels = Array.isArray(scale._pointLabels) ? scale._pointLabels : [];
+      const hitboxes: PointLabelHitbox[] = [];
 
       ctx.save();
       ctx.textAlign = 'center';
@@ -293,7 +362,17 @@ const radarPointLabelPlugin: Plugin = {
           const y = clampedY + offset + lineIndex * lineHeight;
           ctx.fillText(line, clampedX, y);
         });
+
+        hitboxes.push({
+          index,
+          x: clampedX,
+          y: clampedY,
+          halfWidth: labelWidth / 2,
+          halfHeight: labelHeight / 2,
+        });
       });
+
+      (chart as ChartWithPointLabelHitboxes).$pointLabelHitboxes = hitboxes;
 
       ctx.restore();
     } catch (_error) {

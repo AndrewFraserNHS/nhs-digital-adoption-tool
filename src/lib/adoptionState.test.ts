@@ -1,3 +1,4 @@
+import { IN_APP_TOOLS } from '@data/toolLinks';
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -11,7 +12,6 @@ import {
   initializeStore,
   normalizeOrgProfile,
 } from './adoptionState';
-import { IN_APP_TOOLS } from '@data/toolLinks';
 
 describe('adoptionState', () => {
   it('SHOULD initialise default and persisted store values', () => {

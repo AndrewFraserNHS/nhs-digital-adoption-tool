@@ -42,25 +42,6 @@ export const COMPONENT_RADAR_SIZE_PX: Record<ComponentRadarSize, number> = {
 
 type DeliveryStatus = BragStatus | 'N/A';
 
-function InfoIcon(): JSX.Element {
-  return (
-    <svg
-      className="h-4 w-4"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z"
-      />
-    </svg>
-  );
-}
-
 function getDeliveryStatusFromAverage(
   avgScore: number,
   targetScore: number,
@@ -135,7 +116,6 @@ export function AdoptionDashboard({
   const [sortBy, setSortBy] = useState<'name' | 'score' | 'target'>('score');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [showAdvancedComponentControls, setShowAdvancedComponentControls] = useState(false);
-  const [showLensBreakdownHelp, setShowLensBreakdownHelp] = useState(false);
 
   const phases = useMemo(
     () => [...new Set(components.map((c) => c.phase))].sort((a, b) => a - b),
@@ -156,12 +136,6 @@ export function AdoptionDashboard({
 
   const scoreDelta =
     lastSnapshot !== null ? metrics.overallPct - lastSnapshot.overallPercentage : null;
-
-  const snapshotDue = useMemo(() => {
-    if (metrics.assessedCount === 0) return false;
-    const currentLabel = new Date().toLocaleString('en-GB', { month: 'short', year: 'numeric' });
-    return !store.history.some((h) => h.monthLabel === currentLabel);
-  }, [store.history, metrics.assessedCount]);
 
   const urgentActions = useMemo(() => {
     const today = new Date();
@@ -627,7 +601,7 @@ export function AdoptionDashboard({
             <h3
               className={`text-lg font-semibold mb-1 ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
             >
-              Phase Progress (RAG)
+              Phase Progress
             </h3>
             <p className={`text-sm mb-4 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
               Phases run 1 to 5, from early readiness at go-live through to fully embedding the
@@ -1053,7 +1027,7 @@ export function AdoptionDashboard({
             <div className="border-t border-slate-200 p-5 dark:border-slate-700">
             <div className="flex flex-col gap-3 mb-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <div className="flex items-center gap-2">
+                {/* <div className="flex items-center gap-2">
                   <h3
                     className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
                   >
@@ -1069,7 +1043,7 @@ export function AdoptionDashboard({
                     <InfoIcon />
                   </button>
                 </div>
-                {showLensBreakdownHelp ? (
+                {showLensBreakdownHelp ? ( */}
                   <p className="mt-2 text-xs text-slate-600 max-w-3xl">
                     A component is the change topic you are delivering (for example, Vision). A lens
                     is the angle used to assess that component. For example, Vision is reviewed
@@ -1077,7 +1051,7 @@ export function AdoptionDashboard({
                     check both leadership alignment and whether people understand and believe in the
                     vision.
                   </p>
-                ) : null}
+                {/* // ) : null} */}
               </div>
               <select
                 value={lensPhaseFilter}

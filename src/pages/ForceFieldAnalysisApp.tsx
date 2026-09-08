@@ -747,14 +747,14 @@ export default function ForceFieldAnalysisApp({
           onClick={handleImportClick}
           className={nhsButtonSecondary}
         >
-          Import JSON
+          Import
         </button>
         <button
           type="button"
           onClick={handleExport}
           className={nhsButtonSecondary}
         >
-          Export JSON
+          Export
         </button>
         <div
           className="flex items-center rounded-md border border-slate-300 overflow-hidden text-sm font-semibold"

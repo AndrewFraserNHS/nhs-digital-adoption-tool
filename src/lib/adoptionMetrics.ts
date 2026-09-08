@@ -6,10 +6,10 @@
 import { AssessmentComponent } from '@data/components';
 import type { ChartData } from 'chart.js';
 
+import { PHASE_NAMES } from '../types/constants';
 import { isCompletedActionStatus } from './actionModel';
 import { AdoptionStore, deriveObjectiveStatus, DraftEntry } from './adoptionState';
 import { type BragStatus,getTimelineBragStatus } from './bragStatus';
-import { PHASE_NAMES } from '../types/constants';
 
 const COMPONENT_PHASE_EXEMPLARS: Record<number, Record<string, number>> = {
   1: {

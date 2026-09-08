@@ -68,7 +68,7 @@ export function buildOnboardingSteps(): Step[] {
       ),
     },
     {
-      title: 'What is a CST?',
+      title: 'Context Specific Template (CST)',
       body: (
         <div className="text-sm text-slate-700 space-y-2">
           <p>
@@ -122,7 +122,7 @@ export function buildOnboardingSteps(): Step[] {
             Capability and Benefits.
           </p>
           <p>
-            Each component is viewed through five <strong>lenses</strong>:
+            Each component can be viewed through up to five <strong>lenses</strong>:
           </p>
           <ul className="list-decimal pl-5 space-y-1">
             <li>Strategic Direction and Leadership</li>
@@ -250,7 +250,7 @@ export function OnboardingIntro({
                   Set up your Project
                 </button>
               ) : null}
-              {onNavigateToGuide ? (
+              {/* {onNavigateToGuide ? (
                 <button
                   type="button"
                   onClick={onNavigateToGuide}
@@ -265,7 +265,7 @@ export function OnboardingIntro({
                 className="flex h-[42px] min-h-[42px] items-center justify-center rounded-md bg-[#005eb8] px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
               >
                 Go to dashboard
-              </button>
+              </button> */}
             </div>
           ) : (
             <button

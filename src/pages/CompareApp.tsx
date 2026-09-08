@@ -256,14 +256,6 @@ function analyseFile(payload: SavedAdoptionAssessment): AnalysisResult {
     });
   }
 
-  if (historyCount === 0) {
-    insights.push({
-      kind: 'info',
-      title: 'No historical snapshots',
-      detail: `No monthly snapshots have been finalised. Using "Finalise Month" regularly builds a trajectory record and demonstrates progress over time to stakeholders.`,
-    });
-  }
-
   // Phase skipping: check if lower-phase components are mostly unscored while higher-phase ones are
   const phase1Coverage =
     components.filter((c) => c.phase === 1 && c.scoredLenses > 0).length /

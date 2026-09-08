@@ -88,7 +88,7 @@ export const ASSESSMENT_COMPONENTS: AssessmentComponent[] = [
   },
   {
     id: 'skills_learning',
-    label: 'Skills/ Learning',
+    label: 'Skills/Learning',
     lenses: ['People Experience and Culture', 'Skills and Behaviour'],
     phase: 3,
     target: 4,

@@ -1,0 +1,138 @@
+{
+  "component": {
+    "id": "PROCESS_CHANGE",
+    "name": "process change"
+  },
+  "outcomes": [
+    {
+      "id": "PC_P3_O1",
+      "name": "Understanding of the process changes has been assessed across all live sites/teams"
+    },
+    {
+      "id": "PC_P3_O2",
+      "name": "The process changes is consistently applied everywhere the change has gone live"
+    }
+  ],
+  "actions": [
+    {
+      "id": "PC_P3_001",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Process & Sustainment",
+      "category": "Analysis & Insight",
+      "action": "Recognise that Process & Sustainment is inconsistent across teams/sites since go-live and gather evidence of where the gaps are in the process changes.",
+      "outcomeIds": [
+        "PC_P3_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "PC_P3_002",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Process & Sustainment",
+      "category": "Analysis & Insight",
+      "action": "Identify why the process changes hasn't landed consistently for Process & Sustainment in specific teams/sites and agree a plan to address it.",
+      "outcomeIds": [
+        "PC_P3_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "PC_P3_003",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Process & Sustainment",
+      "category": "Engagement",
+      "action": "Re-engage leaders in lagging teams/sites to re-establish the process changes for Process & Sustainment.",
+      "outcomeIds": [
+        "PC_P3_O1"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "PC_P3_004",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Process & Sustainment",
+      "category": "Measurement & Evaluation",
+      "action": "Confirm the process changes for Process & Sustainment is being applied consistently across previously inconsistent areas.",
+      "outcomeIds": [
+        "PC_P3_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "PC_P3_005",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Process & Sustainment",
+      "category": "Reinforcement",
+      "action": "Monitor Process & Sustainment regularly to ensure the process changes stays consistently reinforced everywhere.",
+      "outcomeIds": [
+        "PC_P3_O2"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "PC_P3_006",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Skills & Behaviour",
+      "category": "Analysis & Insight",
+      "action": "Survey teams/sites to understand how Skills & Behaviour has been affected by inconsistent process changes since go-live.",
+      "outcomeIds": [
+        "PC_P3_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "PC_P3_007",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Skills & Behaviour",
+      "category": "Design",
+      "action": "Develop a targeted plan to address the specific Skills & Behaviour-related gaps identified in lagging areas.",
+      "outcomeIds": [
+        "PC_P3_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "PC_P3_008",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Skills & Behaviour",
+      "category": "Communication",
+      "action": "Deliver targeted support to strengthen Skills & Behaviour in teams/sites where the process changes is weakest.",
+      "outcomeIds": [
+        "PC_P3_O1"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "PC_P3_009",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Skills & Behaviour",
+      "category": "Measurement & Evaluation",
+      "action": "Confirm Skills & Behaviour has improved in previously lagging teams/sites.",
+      "outcomeIds": [
+        "PC_P3_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "PC_P3_010",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Skills & Behaviour",
+      "category": "Reinforcement",
+      "action": "Embed regular pulse-checks on Skills & Behaviour so gaps in the process changes are caught early in future.",
+      "outcomeIds": [
+        "PC_P3_O2"
+      ],
+      "readinessScore": 4
+    }
+  ]
+}

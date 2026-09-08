@@ -1,0 +1,138 @@
+{
+  "component": {
+    "id": "CHANGE_IMPACT",
+    "name": "change impact"
+  },
+  "outcomes": [
+    {
+      "id": "CI_P3_O1",
+      "name": "Understanding of the change impact assessment has been assessed across all live sites/teams"
+    },
+    {
+      "id": "CI_P3_O2",
+      "name": "The change impact assessment is consistently applied everywhere the change has gone live"
+    }
+  ],
+  "actions": [
+    {
+      "id": "CI_P3_001",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "Recognise that Planning & Risk is inconsistent across teams/sites since go-live and gather evidence of where the gaps are in the change impact assessment.",
+      "outcomeIds": [
+        "CI_P3_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "CI_P3_002",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "Identify why the change impact assessment hasn't landed consistently for Planning & Risk in specific teams/sites and agree a plan to address it.",
+      "outcomeIds": [
+        "CI_P3_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "CI_P3_003",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Risk",
+      "category": "Engagement",
+      "action": "Re-engage leaders in lagging teams/sites to re-establish the change impact assessment for Planning & Risk.",
+      "outcomeIds": [
+        "CI_P3_O1"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "CI_P3_004",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "Measurement & Evaluation",
+      "action": "Confirm the change impact assessment for Planning & Risk is being applied consistently across previously inconsistent areas.",
+      "outcomeIds": [
+        "CI_P3_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "CI_P3_005",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Planning & Risk",
+      "category": "Reinforcement",
+      "action": "Monitor Planning & Risk regularly to ensure the change impact assessment stays consistently reinforced everywhere.",
+      "outcomeIds": [
+        "CI_P3_O2"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "CI_P3_006",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "Survey teams/sites to understand how People Experience & Culture has been affected by inconsistent change impact assessment since go-live.",
+      "outcomeIds": [
+        "CI_P3_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "CI_P3_007",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Design",
+      "action": "Develop a targeted plan to address the specific People Experience & Culture-related gaps identified in lagging areas.",
+      "outcomeIds": [
+        "CI_P3_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "CI_P3_008",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "Deliver targeted support to strengthen People Experience & Culture in teams/sites where the change impact assessment is weakest.",
+      "outcomeIds": [
+        "CI_P3_O1"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "CI_P3_009",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "Confirm People Experience & Culture has improved in previously lagging teams/sites.",
+      "outcomeIds": [
+        "CI_P3_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "CI_P3_010",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "Embed regular pulse-checks on People Experience & Culture so gaps in the change impact assessment are caught early in future.",
+      "outcomeIds": [
+        "CI_P3_O2"
+      ],
+      "readinessScore": 4
+    }
+  ]
+}

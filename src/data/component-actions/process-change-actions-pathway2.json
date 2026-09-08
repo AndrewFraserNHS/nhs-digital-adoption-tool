@@ -1,0 +1,138 @@
+{
+  "component": {
+    "id": "PROCESS_CHANGE",
+    "name": "process change"
+  },
+  "outcomes": [
+    {
+      "id": "PC_P2_O1",
+      "name": "The process changes has been refined based on pilot learnings"
+    },
+    {
+      "id": "PC_P2_O2",
+      "name": "The process changes is understood across every site/team joining the scaled rollout"
+    }
+  ],
+  "actions": [
+    {
+      "id": "PC_P2_001",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Process & Sustainment",
+      "category": "Analysis & Insight",
+      "action": "Review pilot feedback on Process & Sustainment to identify what needs to change in the process changes before scaling.",
+      "outcomeIds": [
+        "PC_P2_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "PC_P2_002",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Process & Sustainment",
+      "category": "Design",
+      "action": "Refine the process changes to Process & Sustainment based on lessons learned from the pilot.",
+      "outcomeIds": [
+        "PC_P2_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "PC_P2_003",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Process & Sustainment",
+      "category": "Governance",
+      "action": "Secure sign-off for the refined process changes covering Process & Sustainment ahead of wider rollout.",
+      "outcomeIds": [
+        "PC_P2_O1"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "PC_P2_004",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Process & Sustainment",
+      "category": "Communication",
+      "action": "Ensure the refined process changes for Process & Sustainment is consistently communicated to new sites/teams joining the rollout.",
+      "outcomeIds": [
+        "PC_P2_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "PC_P2_005",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Process & Sustainment",
+      "category": "Measurement & Evaluation",
+      "action": "Continuously validate that the process changes for Process & Sustainment remains effective as the change scales further.",
+      "outcomeIds": [
+        "PC_P2_O2"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "PC_P2_006",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Skills & Behaviour",
+      "category": "Analysis & Insight",
+      "action": "Gather feedback from pilot participants on how the process changes affected Skills & Behaviour.",
+      "outcomeIds": [
+        "PC_P2_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "PC_P2_007",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Skills & Behaviour",
+      "category": "Design",
+      "action": "Adapt the process changes relating to Skills & Behaviour for a wider, more diverse audience.",
+      "outcomeIds": [
+        "PC_P2_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "PC_P2_008",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Skills & Behaviour",
+      "category": "Communication",
+      "action": "Roll out the process changes covering Skills & Behaviour to stakeholders in newly onboarding sites/teams.",
+      "outcomeIds": [
+        "PC_P2_O1"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "PC_P2_009",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Skills & Behaviour",
+      "category": "Measurement & Evaluation",
+      "action": "Monitor Skills & Behaviour among stakeholders in the wider rollout and address any gaps.",
+      "outcomeIds": [
+        "PC_P2_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "PC_P2_010",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Skills & Behaviour",
+      "category": "Reinforcement",
+      "action": "Use champions from the pilot to help new sites/teams connect with the process changes for Skills & Behaviour.",
+      "outcomeIds": [
+        "PC_P2_O2"
+      ],
+      "readinessScore": 4
+    }
+  ]
+}

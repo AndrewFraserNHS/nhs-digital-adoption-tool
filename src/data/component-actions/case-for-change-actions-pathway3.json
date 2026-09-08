@@ -1,0 +1,19 @@
+{
+  "component": { "id": "CASE_FOR_CHANGE", "name": "Case for Change" },
+  "outcomes": [
+    { "id": "CFC_P3_O1", "name": "Understanding of the case for change has been assessed across all live sites/teams" },
+    { "id": "CFC_P3_O2", "name": "The case for change is consistently understood everywhere the change has gone live" }
+  ],
+  "actions": [
+    { "id": "CFC_P3_001", "fromStatus": "Not Started", "toStatus": "Emerging", "lens": "Strategic Direction & Leadership", "category": "Analysis & Insight", "action": "Recognise that understanding of the case for change varies across teams/sites since go-live and gather evidence of where the gaps are.", "outcomeIds": ["CFC_P3_O1"], "readinessScore": 0 },
+    { "id": "CFC_P3_002", "fromStatus": "Emerging", "toStatus": "Developing", "lens": "Strategic Direction & Leadership", "category": "Analysis & Insight", "action": "Identify why the case for change hasn't landed consistently in specific teams/sites and agree a plan to address it.", "outcomeIds": ["CFC_P3_O1"], "readinessScore": 1 },
+    { "id": "CFC_P3_003", "fromStatus": "Developing", "toStatus": "Embedding", "lens": "Strategic Direction & Leadership", "category": "Engagement", "action": "Re-engage leaders in lagging teams/sites to re-establish the case for change.", "outcomeIds": ["CFC_P3_O2"], "readinessScore": 2 },
+    { "id": "CFC_P3_004", "fromStatus": "Embedding", "toStatus": "Adopted", "lens": "Strategic Direction & Leadership", "category": "Measurement & Evaluation", "action": "Confirm the case for change is being consistently referenced by leaders across previously inconsistent areas.", "outcomeIds": ["CFC_P3_O2"], "readinessScore": 3 },
+    { "id": "CFC_P3_005", "fromStatus": "Adopted", "toStatus": "Thriving", "lens": "Strategic Direction & Leadership", "category": "Reinforcement", "action": "Monitor leadership messaging to ensure the case for change stays consistently reinforced everywhere.", "outcomeIds": ["CFC_P3_O2"], "readinessScore": 4 },
+    { "id": "CFC_P3_006", "fromStatus": "Not Started", "toStatus": "Emerging", "lens": "People Experience & Culture", "category": "Analysis & Insight", "action": "Survey staff in underperforming teams/sites to understand why the case for change hasn't taken hold.", "outcomeIds": ["CFC_P3_O1"], "readinessScore": 0 },
+    { "id": "CFC_P3_007", "fromStatus": "Emerging", "toStatus": "Developing", "lens": "People Experience & Culture", "category": "Design", "action": "Develop targeted messaging to address the specific gaps in understanding identified in lagging areas.", "outcomeIds": ["CFC_P3_O1"], "readinessScore": 1 },
+    { "id": "CFC_P3_008", "fromStatus": "Developing", "toStatus": "Embedding", "lens": "People Experience & Culture", "category": "Communication", "action": "Deliver targeted case-for-change reinforcement sessions in teams/sites where understanding is weakest.", "outcomeIds": ["CFC_P3_O2"], "readinessScore": 2 },
+    { "id": "CFC_P3_009", "fromStatus": "Embedding", "toStatus": "Adopted", "lens": "People Experience & Culture", "category": "Measurement & Evaluation", "action": "Confirm understanding of the case for change has improved in previously lagging teams/sites.", "outcomeIds": ["CFC_P3_O2"], "readinessScore": 3 },
+    { "id": "CFC_P3_010", "fromStatus": "Adopted", "toStatus": "Thriving", "lens": "People Experience & Culture", "category": "Reinforcement", "action": "Embed regular pulse-checks so gaps in understanding of the case for change are caught early in future.", "outcomeIds": ["CFC_P3_O2"], "readinessScore": 4 }
+  ]
+}

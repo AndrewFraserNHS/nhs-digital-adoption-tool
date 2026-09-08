@@ -1,0 +1,138 @@
+{
+  "component": {
+    "id": "RISK_MANAGEMENT",
+    "name": "risk management"
+  },
+  "outcomes": [
+    {
+      "id": "RM_P3_O1",
+      "name": "Understanding of the risk management approach has been assessed across all live sites/teams"
+    },
+    {
+      "id": "RM_P3_O2",
+      "name": "The risk management approach is consistently applied everywhere the change has gone live"
+    }
+  ],
+  "actions": [
+    {
+      "id": "RM_P3_001",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "Recognise that Planning & Risk is inconsistent across teams/sites since go-live and gather evidence of where the gaps are in the risk management approach.",
+      "outcomeIds": [
+        "RM_P3_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "RM_P3_002",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "Identify why the risk management approach hasn't landed consistently for Planning & Risk in specific teams/sites and agree a plan to address it.",
+      "outcomeIds": [
+        "RM_P3_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "RM_P3_003",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Risk",
+      "category": "Engagement",
+      "action": "Re-engage leaders in lagging teams/sites to re-establish the risk management approach for Planning & Risk.",
+      "outcomeIds": [
+        "RM_P3_O1"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "RM_P3_004",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "Measurement & Evaluation",
+      "action": "Confirm the risk management approach for Planning & Risk is being applied consistently across previously inconsistent areas.",
+      "outcomeIds": [
+        "RM_P3_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "RM_P3_005",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Planning & Risk",
+      "category": "Reinforcement",
+      "action": "Monitor Planning & Risk regularly to ensure the risk management approach stays consistently reinforced everywhere.",
+      "outcomeIds": [
+        "RM_P3_O2"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "RM_P3_006",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Process & Sustainment",
+      "category": "Analysis & Insight",
+      "action": "Survey teams/sites to understand how Process & Sustainment has been affected by inconsistent risk management approach since go-live.",
+      "outcomeIds": [
+        "RM_P3_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "RM_P3_007",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Process & Sustainment",
+      "category": "Design",
+      "action": "Develop a targeted plan to address the specific Process & Sustainment-related gaps identified in lagging areas.",
+      "outcomeIds": [
+        "RM_P3_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "RM_P3_008",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Process & Sustainment",
+      "category": "Communication",
+      "action": "Deliver targeted support to strengthen Process & Sustainment in teams/sites where the risk management approach is weakest.",
+      "outcomeIds": [
+        "RM_P3_O1"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "RM_P3_009",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Process & Sustainment",
+      "category": "Measurement & Evaluation",
+      "action": "Confirm Process & Sustainment has improved in previously lagging teams/sites.",
+      "outcomeIds": [
+        "RM_P3_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "RM_P3_010",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Process & Sustainment",
+      "category": "Reinforcement",
+      "action": "Embed regular pulse-checks on Process & Sustainment so gaps in the risk management approach are caught early in future.",
+      "outcomeIds": [
+        "RM_P3_O2"
+      ],
+      "readinessScore": 4
+    }
+  ]
+}

@@ -1,0 +1,138 @@
+{
+  "component": {
+    "id": "READINESS_PLANNING",
+    "name": "cm readiness and planning"
+  },
+  "outcomes": [
+    {
+      "id": "RP_P3_O1",
+      "name": "Understanding of the readiness and planning approach has been assessed across all live sites/teams"
+    },
+    {
+      "id": "RP_P3_O2",
+      "name": "The readiness and planning approach is consistently applied everywhere the change has gone live"
+    }
+  ],
+  "actions": [
+    {
+      "id": "RP_P3_001",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "Recognise that Planning & Risk is inconsistent across teams/sites since go-live and gather evidence of where the gaps are in the readiness and planning approach.",
+      "outcomeIds": [
+        "RP_P3_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "RP_P3_002",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "Identify why the readiness and planning approach hasn't landed consistently for Planning & Risk in specific teams/sites and agree a plan to address it.",
+      "outcomeIds": [
+        "RP_P3_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "RP_P3_003",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Risk",
+      "category": "Engagement",
+      "action": "Re-engage leaders in lagging teams/sites to re-establish the readiness and planning approach for Planning & Risk.",
+      "outcomeIds": [
+        "RP_P3_O1"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "RP_P3_004",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "Measurement & Evaluation",
+      "action": "Confirm the readiness and planning approach for Planning & Risk is being applied consistently across previously inconsistent areas.",
+      "outcomeIds": [
+        "RP_P3_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "RP_P3_005",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Planning & Risk",
+      "category": "Reinforcement",
+      "action": "Monitor Planning & Risk regularly to ensure the readiness and planning approach stays consistently reinforced everywhere.",
+      "outcomeIds": [
+        "RP_P3_O2"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "RP_P3_006",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Analysis & Insight",
+      "action": "Survey teams/sites to understand how Strategic Direction & Leadership has been affected by inconsistent readiness and planning approach since go-live.",
+      "outcomeIds": [
+        "RP_P3_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "RP_P3_007",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "Develop a targeted plan to address the specific Strategic Direction & Leadership-related gaps identified in lagging areas.",
+      "outcomeIds": [
+        "RP_P3_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "RP_P3_008",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Communication",
+      "action": "Deliver targeted support to strengthen Strategic Direction & Leadership in teams/sites where the readiness and planning approach is weakest.",
+      "outcomeIds": [
+        "RP_P3_O1"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "RP_P3_009",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "Confirm Strategic Direction & Leadership has improved in previously lagging teams/sites.",
+      "outcomeIds": [
+        "RP_P3_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "RP_P3_010",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Reinforcement",
+      "action": "Embed regular pulse-checks on Strategic Direction & Leadership so gaps in the readiness and planning approach are caught early in future.",
+      "outcomeIds": [
+        "RP_P3_O2"
+      ],
+      "readinessScore": 4
+    }
+  ]
+}

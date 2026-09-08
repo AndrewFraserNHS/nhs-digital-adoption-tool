@@ -24,7 +24,7 @@ describe('ActionLibraryReviewApp', () => {
     expect(screen.getByText('New')).toBeInTheDocument();
   });
 
-  it('SHOULD keep each pathway\'s outcomes/actions separate, with Pathway 2/3 starting empty', () => {
+  it('SHOULD keep each pathway\'s outcomes/actions separate, each with its own default content', () => {
     // arrange
     render(<ActionLibraryReviewApp />);
     expect(
@@ -34,11 +34,13 @@ describe('ActionLibraryReviewApp', () => {
     // act - switch to Pathway 2
     fireEvent.click(screen.getByRole('button', { name: 'Piloted and Ready to Scale Up' }));
 
-    // assert 1 - Pathway 2 starts with no default content
+    // assert 1 - Pathway 2 has its own distinct default content, not Pathway 1's
     expect(
       screen.queryByDisplayValue('A compelling future state has been defined')
     ).not.toBeInTheDocument();
-    expect(screen.getByText('No outcomes here yet.')).toBeInTheDocument();
+    expect(
+      screen.getByDisplayValue('The vision has been refined based on pilot learnings')
+    ).toBeInTheDocument();
 
     // act - add an outcome under Pathway 2
     fireEvent.click(screen.getByRole('button', { name: '+ Add outcome' }));

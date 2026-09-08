@@ -1,0 +1,138 @@
+{
+  "component": {
+    "id": "ORG_CHANGE_READINESS",
+    "name": "org change readiness"
+  },
+  "outcomes": [
+    {
+      "id": "OCR_P2_O1",
+      "name": "The organisational change readiness has been refined based on pilot learnings"
+    },
+    {
+      "id": "OCR_P2_O2",
+      "name": "The organisational change readiness is understood across every site/team joining the scaled rollout"
+    }
+  ],
+  "actions": [
+    {
+      "id": "OCR_P2_001",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Analysis & Insight",
+      "action": "Review pilot feedback on Strategic Direction & Leadership to identify what needs to change in the organisational change readiness before scaling.",
+      "outcomeIds": [
+        "OCR_P2_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "OCR_P2_002",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "Refine the organisational change readiness to Strategic Direction & Leadership based on lessons learned from the pilot.",
+      "outcomeIds": [
+        "OCR_P2_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "OCR_P2_003",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "Secure sign-off for the refined organisational change readiness covering Strategic Direction & Leadership ahead of wider rollout.",
+      "outcomeIds": [
+        "OCR_P2_O1"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "OCR_P2_004",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Communication",
+      "action": "Ensure the refined organisational change readiness for Strategic Direction & Leadership is consistently communicated to new sites/teams joining the rollout.",
+      "outcomeIds": [
+        "OCR_P2_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "OCR_P2_005",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "Continuously validate that the organisational change readiness for Strategic Direction & Leadership remains effective as the change scales further.",
+      "outcomeIds": [
+        "OCR_P2_O2"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "OCR_P2_006",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Skills & Behaviour",
+      "category": "Analysis & Insight",
+      "action": "Gather feedback from pilot participants on how the organisational change readiness affected Skills & Behaviour.",
+      "outcomeIds": [
+        "OCR_P2_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "OCR_P2_007",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Skills & Behaviour",
+      "category": "Design",
+      "action": "Adapt the organisational change readiness relating to Skills & Behaviour for a wider, more diverse audience.",
+      "outcomeIds": [
+        "OCR_P2_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "OCR_P2_008",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Skills & Behaviour",
+      "category": "Communication",
+      "action": "Roll out the organisational change readiness covering Skills & Behaviour to stakeholders in newly onboarding sites/teams.",
+      "outcomeIds": [
+        "OCR_P2_O1"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "OCR_P2_009",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Skills & Behaviour",
+      "category": "Measurement & Evaluation",
+      "action": "Monitor Skills & Behaviour among stakeholders in the wider rollout and address any gaps.",
+      "outcomeIds": [
+        "OCR_P2_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "OCR_P2_010",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Skills & Behaviour",
+      "category": "Reinforcement",
+      "action": "Use champions from the pilot to help new sites/teams connect with the organisational change readiness for Skills & Behaviour.",
+      "outcomeIds": [
+        "OCR_P2_O2"
+      ],
+      "readinessScore": 4
+    }
+  ]
+}

@@ -1,0 +1,138 @@
+{
+  "component": {
+    "id": "READINESS_PLANNING",
+    "name": "cm readiness and planning"
+  },
+  "outcomes": [
+    {
+      "id": "RP_P2_O1",
+      "name": "The readiness and planning approach has been refined based on pilot learnings"
+    },
+    {
+      "id": "RP_P2_O2",
+      "name": "The readiness and planning approach is understood across every site/team joining the scaled rollout"
+    }
+  ],
+  "actions": [
+    {
+      "id": "RP_P2_001",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "Review pilot feedback on Planning & Risk to identify what needs to change in the readiness and planning approach before scaling.",
+      "outcomeIds": [
+        "RP_P2_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "RP_P2_002",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Risk",
+      "category": "Design",
+      "action": "Refine the readiness and planning approach to Planning & Risk based on lessons learned from the pilot.",
+      "outcomeIds": [
+        "RP_P2_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "RP_P2_003",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Risk",
+      "category": "Governance",
+      "action": "Secure sign-off for the refined readiness and planning approach covering Planning & Risk ahead of wider rollout.",
+      "outcomeIds": [
+        "RP_P2_O1"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "RP_P2_004",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "Communication",
+      "action": "Ensure the refined readiness and planning approach for Planning & Risk is consistently communicated to new sites/teams joining the rollout.",
+      "outcomeIds": [
+        "RP_P2_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "RP_P2_005",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Planning & Risk",
+      "category": "Measurement & Evaluation",
+      "action": "Continuously validate that the readiness and planning approach for Planning & Risk remains effective as the change scales further.",
+      "outcomeIds": [
+        "RP_P2_O2"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "RP_P2_006",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Analysis & Insight",
+      "action": "Gather feedback from pilot participants on how the readiness and planning approach affected Strategic Direction & Leadership.",
+      "outcomeIds": [
+        "RP_P2_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "RP_P2_007",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "Adapt the readiness and planning approach relating to Strategic Direction & Leadership for a wider, more diverse audience.",
+      "outcomeIds": [
+        "RP_P2_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "RP_P2_008",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Communication",
+      "action": "Roll out the readiness and planning approach covering Strategic Direction & Leadership to stakeholders in newly onboarding sites/teams.",
+      "outcomeIds": [
+        "RP_P2_O1"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "RP_P2_009",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "Monitor Strategic Direction & Leadership among stakeholders in the wider rollout and address any gaps.",
+      "outcomeIds": [
+        "RP_P2_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "RP_P2_010",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Reinforcement",
+      "action": "Use champions from the pilot to help new sites/teams connect with the readiness and planning approach for Strategic Direction & Leadership.",
+      "outcomeIds": [
+        "RP_P2_O2"
+      ],
+      "readinessScore": 4
+    }
+  ]
+}

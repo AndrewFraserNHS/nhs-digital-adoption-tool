@@ -1,0 +1,138 @@
+{
+  "component": {
+    "id": "BENEFITS",
+    "name": "benefits"
+  },
+  "outcomes": [
+    {
+      "id": "BEN_P2_O1",
+      "name": "The benefits approach has been refined based on pilot learnings"
+    },
+    {
+      "id": "BEN_P2_O2",
+      "name": "The benefits approach is understood across every site/team joining the scaled rollout"
+    }
+  ],
+  "actions": [
+    {
+      "id": "BEN_P2_001",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "Review pilot feedback on Planning & Risk to identify what needs to change in the benefits approach before scaling.",
+      "outcomeIds": [
+        "BEN_P2_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "BEN_P2_002",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Risk",
+      "category": "Design",
+      "action": "Refine the benefits approach to Planning & Risk based on lessons learned from the pilot.",
+      "outcomeIds": [
+        "BEN_P2_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "BEN_P2_003",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Risk",
+      "category": "Governance",
+      "action": "Secure sign-off for the refined benefits approach covering Planning & Risk ahead of wider rollout.",
+      "outcomeIds": [
+        "BEN_P2_O1"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "BEN_P2_004",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "Communication",
+      "action": "Ensure the refined benefits approach for Planning & Risk is consistently communicated to new sites/teams joining the rollout.",
+      "outcomeIds": [
+        "BEN_P2_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "BEN_P2_005",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Planning & Risk",
+      "category": "Measurement & Evaluation",
+      "action": "Continuously validate that the benefits approach for Planning & Risk remains effective as the change scales further.",
+      "outcomeIds": [
+        "BEN_P2_O2"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "BEN_P2_006",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Process & Sustainment",
+      "category": "Analysis & Insight",
+      "action": "Gather feedback from pilot participants on how the benefits approach affected Process & Sustainment.",
+      "outcomeIds": [
+        "BEN_P2_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "BEN_P2_007",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Process & Sustainment",
+      "category": "Design",
+      "action": "Adapt the benefits approach relating to Process & Sustainment for a wider, more diverse audience.",
+      "outcomeIds": [
+        "BEN_P2_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "BEN_P2_008",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Process & Sustainment",
+      "category": "Communication",
+      "action": "Roll out the benefits approach covering Process & Sustainment to stakeholders in newly onboarding sites/teams.",
+      "outcomeIds": [
+        "BEN_P2_O1"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "BEN_P2_009",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Process & Sustainment",
+      "category": "Measurement & Evaluation",
+      "action": "Monitor Process & Sustainment among stakeholders in the wider rollout and address any gaps.",
+      "outcomeIds": [
+        "BEN_P2_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "BEN_P2_010",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Process & Sustainment",
+      "category": "Reinforcement",
+      "action": "Use champions from the pilot to help new sites/teams connect with the benefits approach for Process & Sustainment.",
+      "outcomeIds": [
+        "BEN_P2_O2"
+      ],
+      "readinessScore": 4
+    }
+  ]
+}

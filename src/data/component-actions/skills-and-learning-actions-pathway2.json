@@ -1,0 +1,138 @@
+{
+  "component": {
+    "id": "SKILLS_LEARNING",
+    "name": "skills and learning"
+  },
+  "outcomes": [
+    {
+      "id": "SL_P2_O1",
+      "name": "The skills and learning approach has been refined based on pilot learnings"
+    },
+    {
+      "id": "SL_P2_O2",
+      "name": "The skills and learning approach is understood across every site/team joining the scaled rollout"
+    }
+  ],
+  "actions": [
+    {
+      "id": "SL_P2_001",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Skills & Behaviour",
+      "category": "Analysis & Insight",
+      "action": "Review pilot feedback on Skills & Behaviour to identify what needs to change in the skills and learning approach before scaling.",
+      "outcomeIds": [
+        "SL_P2_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "SL_P2_002",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Skills & Behaviour",
+      "category": "Design",
+      "action": "Refine the skills and learning approach to Skills & Behaviour based on lessons learned from the pilot.",
+      "outcomeIds": [
+        "SL_P2_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "SL_P2_003",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Skills & Behaviour",
+      "category": "Governance",
+      "action": "Secure sign-off for the refined skills and learning approach covering Skills & Behaviour ahead of wider rollout.",
+      "outcomeIds": [
+        "SL_P2_O1"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "SL_P2_004",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Skills & Behaviour",
+      "category": "Communication",
+      "action": "Ensure the refined skills and learning approach for Skills & Behaviour is consistently communicated to new sites/teams joining the rollout.",
+      "outcomeIds": [
+        "SL_P2_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "SL_P2_005",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Skills & Behaviour",
+      "category": "Measurement & Evaluation",
+      "action": "Continuously validate that the skills and learning approach for Skills & Behaviour remains effective as the change scales further.",
+      "outcomeIds": [
+        "SL_P2_O2"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "SL_P2_006",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "Gather feedback from pilot participants on how the skills and learning approach affected People Experience & Culture.",
+      "outcomeIds": [
+        "SL_P2_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "SL_P2_007",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Design",
+      "action": "Adapt the skills and learning approach relating to People Experience & Culture for a wider, more diverse audience.",
+      "outcomeIds": [
+        "SL_P2_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "SL_P2_008",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "Roll out the skills and learning approach covering People Experience & Culture to stakeholders in newly onboarding sites/teams.",
+      "outcomeIds": [
+        "SL_P2_O1"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "SL_P2_009",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "Monitor People Experience & Culture among stakeholders in the wider rollout and address any gaps.",
+      "outcomeIds": [
+        "SL_P2_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "SL_P2_010",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "Use champions from the pilot to help new sites/teams connect with the skills and learning approach for People Experience & Culture.",
+      "outcomeIds": [
+        "SL_P2_O2"
+      ],
+      "readinessScore": 4
+    }
+  ]
+}

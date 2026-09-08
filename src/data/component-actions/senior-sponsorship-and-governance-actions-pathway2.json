@@ -1,0 +1,198 @@
+{
+  "component": {
+    "id": "SENIOR_SPONSORSHIP_GOVERNANCE",
+    "name": "senior sponsorship and governance"
+  },
+  "outcomes": [
+    {
+      "id": "SSG_P2_O1",
+      "name": "The sponsorship and governance approach has been refined based on pilot learnings"
+    },
+    {
+      "id": "SSG_P2_O2",
+      "name": "The sponsorship and governance approach is understood across every site/team joining the scaled rollout"
+    }
+  ],
+  "actions": [
+    {
+      "id": "SSG_P2_001",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Analysis & Insight",
+      "action": "Review pilot feedback on Strategic Direction & Leadership to identify what needs to change in the sponsorship and governance approach before scaling.",
+      "outcomeIds": [
+        "SSG_P2_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "SSG_P2_002",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "Refine the sponsorship and governance approach to Strategic Direction & Leadership based on lessons learned from the pilot.",
+      "outcomeIds": [
+        "SSG_P2_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "SSG_P2_003",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "Secure sign-off for the refined sponsorship and governance approach covering Strategic Direction & Leadership ahead of wider rollout.",
+      "outcomeIds": [
+        "SSG_P2_O1"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "SSG_P2_004",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Communication",
+      "action": "Ensure the refined sponsorship and governance approach for Strategic Direction & Leadership is consistently communicated to new sites/teams joining the rollout.",
+      "outcomeIds": [
+        "SSG_P2_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "SSG_P2_005",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "Continuously validate that the sponsorship and governance approach for Strategic Direction & Leadership remains effective as the change scales further.",
+      "outcomeIds": [
+        "SSG_P2_O2"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "SSG_P2_006",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "Gather feedback from pilot participants on how the sponsorship and governance approach affected People Experience & Culture.",
+      "outcomeIds": [
+        "SSG_P2_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "SSG_P2_007",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Design",
+      "action": "Adapt the sponsorship and governance approach relating to People Experience & Culture for a wider, more diverse audience.",
+      "outcomeIds": [
+        "SSG_P2_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "SSG_P2_008",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "Roll out the sponsorship and governance approach covering People Experience & Culture to stakeholders in newly onboarding sites/teams.",
+      "outcomeIds": [
+        "SSG_P2_O1"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "SSG_P2_009",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "Monitor People Experience & Culture among stakeholders in the wider rollout and address any gaps.",
+      "outcomeIds": [
+        "SSG_P2_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "SSG_P2_010",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "Use champions from the pilot to help new sites/teams connect with the sponsorship and governance approach for People Experience & Culture.",
+      "outcomeIds": [
+        "SSG_P2_O2"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "SSG_P2_011",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "Gather feedback from pilot participants on how the sponsorship and governance approach affected Planning & Risk.",
+      "outcomeIds": [
+        "SSG_P2_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "SSG_P2_012",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Risk",
+      "category": "Design",
+      "action": "Adapt the sponsorship and governance approach relating to Planning & Risk for a wider, more diverse audience.",
+      "outcomeIds": [
+        "SSG_P2_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "SSG_P2_013",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Risk",
+      "category": "Communication",
+      "action": "Roll out the sponsorship and governance approach covering Planning & Risk to stakeholders in newly onboarding sites/teams.",
+      "outcomeIds": [
+        "SSG_P2_O1"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "SSG_P2_014",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "Measurement & Evaluation",
+      "action": "Monitor Planning & Risk among stakeholders in the wider rollout and address any gaps.",
+      "outcomeIds": [
+        "SSG_P2_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "SSG_P2_015",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Planning & Risk",
+      "category": "Reinforcement",
+      "action": "Use champions from the pilot to help new sites/teams connect with the sponsorship and governance approach for Planning & Risk.",
+      "outcomeIds": [
+        "SSG_P2_O2"
+      ],
+      "readinessScore": 4
+    }
+  ]
+}

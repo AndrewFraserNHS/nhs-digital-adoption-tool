@@ -1,0 +1,138 @@
+{
+  "component": {
+    "id": "CHANGE_NETWORK",
+    "name": "change network"
+  },
+  "outcomes": [
+    {
+      "id": "CN_P2_O1",
+      "name": "The change network has been refined based on pilot learnings"
+    },
+    {
+      "id": "CN_P2_O2",
+      "name": "The change network is understood across every site/team joining the scaled rollout"
+    }
+  ],
+  "actions": [
+    {
+      "id": "CN_P2_001",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Analysis & Insight",
+      "action": "Review pilot feedback on Strategic Direction & Leadership to identify what needs to change in the change network before scaling.",
+      "outcomeIds": [
+        "CN_P2_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "CN_P2_002",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "Refine the change network to Strategic Direction & Leadership based on lessons learned from the pilot.",
+      "outcomeIds": [
+        "CN_P2_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "CN_P2_003",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "Secure sign-off for the refined change network covering Strategic Direction & Leadership ahead of wider rollout.",
+      "outcomeIds": [
+        "CN_P2_O1"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "CN_P2_004",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Communication",
+      "action": "Ensure the refined change network for Strategic Direction & Leadership is consistently communicated to new sites/teams joining the rollout.",
+      "outcomeIds": [
+        "CN_P2_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "CN_P2_005",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "Continuously validate that the change network for Strategic Direction & Leadership remains effective as the change scales further.",
+      "outcomeIds": [
+        "CN_P2_O2"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "CN_P2_006",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "Gather feedback from pilot participants on how the change network affected People Experience & Culture.",
+      "outcomeIds": [
+        "CN_P2_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "CN_P2_007",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Design",
+      "action": "Adapt the change network relating to People Experience & Culture for a wider, more diverse audience.",
+      "outcomeIds": [
+        "CN_P2_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "CN_P2_008",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "Roll out the change network covering People Experience & Culture to stakeholders in newly onboarding sites/teams.",
+      "outcomeIds": [
+        "CN_P2_O1"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "CN_P2_009",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "Monitor People Experience & Culture among stakeholders in the wider rollout and address any gaps.",
+      "outcomeIds": [
+        "CN_P2_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "CN_P2_010",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "Use champions from the pilot to help new sites/teams connect with the change network for People Experience & Culture.",
+      "outcomeIds": [
+        "CN_P2_O2"
+      ],
+      "readinessScore": 4
+    }
+  ]
+}

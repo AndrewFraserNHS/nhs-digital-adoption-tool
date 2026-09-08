@@ -1,0 +1,138 @@
+{
+  "component": {
+    "id": "CAPABILITY_CONFIDENCE",
+    "name": "capability and confidence"
+  },
+  "outcomes": [
+    {
+      "id": "CC_P2_O1",
+      "name": "The capability and confidence has been refined based on pilot learnings"
+    },
+    {
+      "id": "CC_P2_O2",
+      "name": "The capability and confidence is understood across every site/team joining the scaled rollout"
+    }
+  ],
+  "actions": [
+    {
+      "id": "CC_P2_001",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Skills & Behaviour",
+      "category": "Analysis & Insight",
+      "action": "Review pilot feedback on Skills & Behaviour to identify what needs to change in the capability and confidence before scaling.",
+      "outcomeIds": [
+        "CC_P2_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "CC_P2_002",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Skills & Behaviour",
+      "category": "Design",
+      "action": "Refine the capability and confidence to Skills & Behaviour based on lessons learned from the pilot.",
+      "outcomeIds": [
+        "CC_P2_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "CC_P2_003",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Skills & Behaviour",
+      "category": "Governance",
+      "action": "Secure sign-off for the refined capability and confidence covering Skills & Behaviour ahead of wider rollout.",
+      "outcomeIds": [
+        "CC_P2_O1"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "CC_P2_004",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Skills & Behaviour",
+      "category": "Communication",
+      "action": "Ensure the refined capability and confidence for Skills & Behaviour is consistently communicated to new sites/teams joining the rollout.",
+      "outcomeIds": [
+        "CC_P2_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "CC_P2_005",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Skills & Behaviour",
+      "category": "Measurement & Evaluation",
+      "action": "Continuously validate that the capability and confidence for Skills & Behaviour remains effective as the change scales further.",
+      "outcomeIds": [
+        "CC_P2_O2"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "CC_P2_006",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "Gather feedback from pilot participants on how the capability and confidence affected People Experience & Culture.",
+      "outcomeIds": [
+        "CC_P2_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "CC_P2_007",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Design",
+      "action": "Adapt the capability and confidence relating to People Experience & Culture for a wider, more diverse audience.",
+      "outcomeIds": [
+        "CC_P2_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "CC_P2_008",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "Roll out the capability and confidence covering People Experience & Culture to stakeholders in newly onboarding sites/teams.",
+      "outcomeIds": [
+        "CC_P2_O1"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "CC_P2_009",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "Monitor People Experience & Culture among stakeholders in the wider rollout and address any gaps.",
+      "outcomeIds": [
+        "CC_P2_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "CC_P2_010",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "Use champions from the pilot to help new sites/teams connect with the capability and confidence for People Experience & Culture.",
+      "outcomeIds": [
+        "CC_P2_O2"
+      ],
+      "readinessScore": 4
+    }
+  ]
+}

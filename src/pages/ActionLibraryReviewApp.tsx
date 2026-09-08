@@ -1,20 +1,54 @@
 import benefitsRaw from '@data/component-actions/benefits-actions.json';
+import benefitsRawP2 from '@data/component-actions/benefits-actions-pathway2.json';
+import benefitsRawP3 from '@data/component-actions/benefits-actions-pathway3.json';
 import capabilityRaw from '@data/component-actions/capability-and-confidence-actions.json';
+import capabilityRawP2 from '@data/component-actions/capability-and-confidence-actions-pathway2.json';
+import capabilityRawP3 from '@data/component-actions/capability-and-confidence-actions-pathway3.json';
 import caseForChangeRaw from '@data/component-actions/case-for-change-actions.json';
+import caseForChangeRawP2 from '@data/component-actions/case-for-change-actions-pathway2.json';
+import caseForChangeRawP3 from '@data/component-actions/case-for-change-actions-pathway3.json';
 import changeAdoptionRaw from '@data/component-actions/change-adoption-actions.json';
+import changeAdoptionRawP2 from '@data/component-actions/change-adoption-actions-pathway2.json';
+import changeAdoptionRawP3 from '@data/component-actions/change-adoption-actions-pathway3.json';
 import changeImpactRaw from '@data/component-actions/change-impact-actions.json';
+import changeImpactRawP2 from '@data/component-actions/change-impact-actions-pathway2.json';
+import changeImpactRawP3 from '@data/component-actions/change-impact-actions-pathway3.json';
 import changeNetworkRaw from '@data/component-actions/change-network-actions.json';
+import changeNetworkRawP2 from '@data/component-actions/change-network-actions-pathway2.json';
+import changeNetworkRawP3 from '@data/component-actions/change-network-actions-pathway3.json';
 import cmReadinessRaw from '@data/component-actions/cm-readiness-and-planning-actions.json';
+import cmReadinessRawP2 from '@data/component-actions/cm-readiness-and-planning-actions-pathway2.json';
+import cmReadinessRawP3 from '@data/component-actions/cm-readiness-and-planning-actions-pathway3.json';
 import orgMaturityRaw from '@data/component-actions/org-change-readiness-actions.json';
+import orgMaturityRawP2 from '@data/component-actions/org-change-readiness-actions-pathway2.json';
+import orgMaturityRawP3 from '@data/component-actions/org-change-readiness-actions-pathway3.json';
 import processChangeRaw from '@data/component-actions/process-change-actions.json';
+import processChangeRawP2 from '@data/component-actions/process-change-actions-pathway2.json';
+import processChangeRawP3 from '@data/component-actions/process-change-actions-pathway3.json';
 import reinforcementRaw from '@data/component-actions/reinforcement-actions.json';
+import reinforcementRawP2 from '@data/component-actions/reinforcement-actions-pathway2.json';
+import reinforcementRawP3 from '@data/component-actions/reinforcement-actions-pathway3.json';
 import resistanceRaw from '@data/component-actions/resistance-management-actions.json';
+import resistanceRawP2 from '@data/component-actions/resistance-management-actions-pathway2.json';
+import resistanceRawP3 from '@data/component-actions/resistance-management-actions-pathway3.json';
 import riskManagementRaw from '@data/component-actions/risk-management-actions.json';
+import riskManagementRawP2 from '@data/component-actions/risk-management-actions-pathway2.json';
+import riskManagementRawP3 from '@data/component-actions/risk-management-actions-pathway3.json';
 import sponsorshipRaw from '@data/component-actions/senior-sponsorship-and-governance-actions.json';
+import sponsorshipRawP2 from '@data/component-actions/senior-sponsorship-and-governance-actions-pathway2.json';
+import sponsorshipRawP3 from '@data/component-actions/senior-sponsorship-and-governance-actions-pathway3.json';
 import skillsLearningRaw from '@data/component-actions/skills-and-learning-actions.json';
+import skillsLearningRawP2 from '@data/component-actions/skills-and-learning-actions-pathway2.json';
+import skillsLearningRawP3 from '@data/component-actions/skills-and-learning-actions-pathway3.json';
 import stakeholderRaw from '@data/component-actions/stakeholder-engagement-and-outcomes-actions.json';
+import stakeholderRawP2 from '@data/component-actions/stakeholder-engagement-and-outcomes-actions-pathway2.json';
+import stakeholderRawP3 from '@data/component-actions/stakeholder-engagement-and-outcomes-actions-pathway3.json';
 import transferBauRaw from '@data/component-actions/transfer-to-bau-actions.json';
+import transferBauRawP2 from '@data/component-actions/transfer-to-bau-actions-pathway2.json';
+import transferBauRawP3 from '@data/component-actions/transfer-to-bau-actions-pathway3.json';
 import visionRaw from '@data/component-actions/vision-actions.json';
+import visionRawP2 from '@data/component-actions/vision-actions-pathway2.json';
+import visionRawP3 from '@data/component-actions/vision-actions-pathway3.json';
 import { ASSESSMENT_COMPONENTS } from '@data/components';
 import { OVERARCHING_PHASES, PATHWAY_OPTIONS, type CstPathwayKey } from '@data/cst';
 import { load, save } from '@lib/storage';
@@ -49,24 +83,64 @@ const LEVEL_OPTIONS = [0, 1, 2, 3, 4].map((band) => ({
   label: `Level ${band} · ${BAND_LABELS[band]} → ${BAND_LABELS[band + 1]}`,
 }));
 
-const RAW_SOURCES: Record<string, unknown> = {
-  vision: visionRaw,
-  case_for_change: caseForChangeRaw,
-  sponsorship: sponsorshipRaw,
-  change_network: changeNetworkRaw,
-  benefits: benefitsRaw,
-  change_impact: changeImpactRaw,
-  risk_management: riskManagementRaw,
-  cm_readiness: cmReadinessRaw,
-  stakeholder: stakeholderRaw,
-  resistance: resistanceRaw,
-  skills_learning: skillsLearningRaw,
-  capability: capabilityRaw,
-  change_adoption: changeAdoptionRaw,
-  process_change: processChangeRaw,
-  reinforcement: reinforcementRaw,
-  org_maturity: orgMaturityRaw,
-  transfer_bau: transferBauRaw,
+const RAW_SOURCES_BY_PATHWAY: Record<CstPathwayKey, Record<string, unknown>> = {
+  'pathway-1': {
+    vision: visionRaw,
+    case_for_change: caseForChangeRaw,
+    sponsorship: sponsorshipRaw,
+    change_network: changeNetworkRaw,
+    benefits: benefitsRaw,
+    change_impact: changeImpactRaw,
+    risk_management: riskManagementRaw,
+    cm_readiness: cmReadinessRaw,
+    stakeholder: stakeholderRaw,
+    resistance: resistanceRaw,
+    skills_learning: skillsLearningRaw,
+    capability: capabilityRaw,
+    change_adoption: changeAdoptionRaw,
+    process_change: processChangeRaw,
+    reinforcement: reinforcementRaw,
+    org_maturity: orgMaturityRaw,
+    transfer_bau: transferBauRaw,
+  },
+  'pathway-2': {
+    vision: visionRawP2,
+    case_for_change: caseForChangeRawP2,
+    sponsorship: sponsorshipRawP2,
+    change_network: changeNetworkRawP2,
+    benefits: benefitsRawP2,
+    change_impact: changeImpactRawP2,
+    risk_management: riskManagementRawP2,
+    cm_readiness: cmReadinessRawP2,
+    stakeholder: stakeholderRawP2,
+    resistance: resistanceRawP2,
+    skills_learning: skillsLearningRawP2,
+    capability: capabilityRawP2,
+    change_adoption: changeAdoptionRawP2,
+    process_change: processChangeRawP2,
+    reinforcement: reinforcementRawP2,
+    org_maturity: orgMaturityRawP2,
+    transfer_bau: transferBauRawP2,
+  },
+  'pathway-3': {
+    vision: visionRawP3,
+    case_for_change: caseForChangeRawP3,
+    sponsorship: sponsorshipRawP3,
+    change_network: changeNetworkRawP3,
+    benefits: benefitsRawP3,
+    change_impact: changeImpactRawP3,
+    risk_management: riskManagementRawP3,
+    cm_readiness: cmReadinessRawP3,
+    stakeholder: stakeholderRawP3,
+    resistance: resistanceRawP3,
+    skills_learning: skillsLearningRawP3,
+    capability: capabilityRawP3,
+    change_adoption: changeAdoptionRawP3,
+    process_change: processChangeRawP3,
+    reinforcement: reinforcementRawP3,
+    org_maturity: orgMaturityRawP3,
+    transfer_bau: transferBauRawP3,
+  },
 };
 
 interface LibraryAction {
@@ -160,40 +234,32 @@ function parseActionsFromRaw(rawActions: unknown, componentId: string): LibraryA
     }));
 }
 
-function buildDefaultComponentData(componentId: string): ComponentActionsData {
-  const raw = (RAW_SOURCES[componentId] || {}) as RawComponentFile;
+function buildDefaultComponentData(
+  componentId: string,
+  rawSources: Record<string, unknown>
+): ComponentActionsData {
+  const raw = (rawSources[componentId] || {}) as RawComponentFile;
   const outcomes = (raw.outcomes || [])
     .filter((outcome): outcome is Required<RawOutcome> => Boolean(outcome?.id && outcome?.name))
     .map((outcome) => ({ id: outcome.id, name: outcome.name }));
 
+  const component = ASSESSMENT_COMPONENTS.find((candidate) => candidate.id === componentId);
+
   return {
     componentMetaId: raw.component?.id || componentId.toUpperCase(),
-    componentName: raw.component?.name || componentId,
+    componentName: raw.component?.name || component?.label || componentId,
     outcomes,
     actions: parseActionsFromRaw(raw.actions, componentId),
-  };
-}
-
-/** Pathway 2/3 have no bundled content yet - reviewers build their own from scratch. */
-function buildEmptyComponentData(componentId: string): ComponentActionsData {
-  const component = ASSESSMENT_COMPONENTS.find((candidate) => candidate.id === componentId);
-  return {
-    componentMetaId: componentId.toUpperCase(),
-    componentName: component?.label || componentId,
-    outcomes: [],
-    actions: [],
   };
 }
 
 const DEFAULT_COMPONENTS_BY_PATHWAY: Record<CstPathwayKey, Record<string, ComponentActionsData>> =
   PATHWAY_KEYS.reduce(
     (byPathway, pathway) => {
+      const rawSources = RAW_SOURCES_BY_PATHWAY[pathway];
       byPathway[pathway] = ASSESSMENT_COMPONENTS.reduce(
         (map, component) => {
-          map[component.id] =
-            pathway === 'pathway-1'
-              ? buildDefaultComponentData(component.id)
-              : buildEmptyComponentData(component.id);
+          map[component.id] = buildDefaultComponentData(component.id, rawSources);
           return map;
         },
         {} as Record<string, ComponentActionsData>
@@ -925,7 +991,8 @@ export default function ActionLibraryReviewApp(): JSX.Element {
           </div>
           {selectedPathway !== 'pathway-1' ? (
             <p className="mt-1.5 text-xs text-slate-500">
-              This pathway has no default content yet - anything you add here starts from scratch.
+              This pathway's default content is an early first pass - please review it carefully and edit
+              as needed.
             </p>
           ) : null}
         </div>

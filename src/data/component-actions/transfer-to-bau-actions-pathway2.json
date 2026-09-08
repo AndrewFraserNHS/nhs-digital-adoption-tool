@@ -1,0 +1,138 @@
+{
+  "component": {
+    "id": "TRANSFER_TO_BAU",
+    "name": "transfer to bau"
+  },
+  "outcomes": [
+    {
+      "id": "BAU_P2_O1",
+      "name": "The transition to business as usual has been refined based on pilot learnings"
+    },
+    {
+      "id": "BAU_P2_O2",
+      "name": "The transition to business as usual is understood across every site/team joining the scaled rollout"
+    }
+  ],
+  "actions": [
+    {
+      "id": "BAU_P2_001",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Analysis & Insight",
+      "action": "Review pilot feedback on Strategic Direction & Leadership to identify what needs to change in the transition to business as usual before scaling.",
+      "outcomeIds": [
+        "BAU_P2_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "BAU_P2_002",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "Refine the transition to business as usual to Strategic Direction & Leadership based on lessons learned from the pilot.",
+      "outcomeIds": [
+        "BAU_P2_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "BAU_P2_003",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "Secure sign-off for the refined transition to business as usual covering Strategic Direction & Leadership ahead of wider rollout.",
+      "outcomeIds": [
+        "BAU_P2_O1"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "BAU_P2_004",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Communication",
+      "action": "Ensure the refined transition to business as usual for Strategic Direction & Leadership is consistently communicated to new sites/teams joining the rollout.",
+      "outcomeIds": [
+        "BAU_P2_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "BAU_P2_005",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "Continuously validate that the transition to business as usual for Strategic Direction & Leadership remains effective as the change scales further.",
+      "outcomeIds": [
+        "BAU_P2_O2"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "BAU_P2_006",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Process & Sustainment",
+      "category": "Analysis & Insight",
+      "action": "Gather feedback from pilot participants on how the transition to business as usual affected Process & Sustainment.",
+      "outcomeIds": [
+        "BAU_P2_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "BAU_P2_007",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Process & Sustainment",
+      "category": "Design",
+      "action": "Adapt the transition to business as usual relating to Process & Sustainment for a wider, more diverse audience.",
+      "outcomeIds": [
+        "BAU_P2_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "BAU_P2_008",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Process & Sustainment",
+      "category": "Communication",
+      "action": "Roll out the transition to business as usual covering Process & Sustainment to stakeholders in newly onboarding sites/teams.",
+      "outcomeIds": [
+        "BAU_P2_O1"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "BAU_P2_009",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Process & Sustainment",
+      "category": "Measurement & Evaluation",
+      "action": "Monitor Process & Sustainment among stakeholders in the wider rollout and address any gaps.",
+      "outcomeIds": [
+        "BAU_P2_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "BAU_P2_010",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Process & Sustainment",
+      "category": "Reinforcement",
+      "action": "Use champions from the pilot to help new sites/teams connect with the transition to business as usual for Process & Sustainment.",
+      "outcomeIds": [
+        "BAU_P2_O2"
+      ],
+      "readinessScore": 4
+    }
+  ]
+}

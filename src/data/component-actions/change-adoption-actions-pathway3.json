@@ -1,0 +1,198 @@
+{
+  "component": {
+    "id": "CHANGE_ADOPTION",
+    "name": "change adoption"
+  },
+  "outcomes": [
+    {
+      "id": "CA_P3_O1",
+      "name": "Understanding of the approach to change adoption has been assessed across all live sites/teams"
+    },
+    {
+      "id": "CA_P3_O2",
+      "name": "The approach to change adoption is consistently applied everywhere the change has gone live"
+    }
+  ],
+  "actions": [
+    {
+      "id": "CA_P3_001",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "Recognise that Planning & Risk is inconsistent across teams/sites since go-live and gather evidence of where the gaps are in the approach to change adoption.",
+      "outcomeIds": [
+        "CA_P3_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "CA_P3_002",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "Identify why the approach to change adoption hasn't landed consistently for Planning & Risk in specific teams/sites and agree a plan to address it.",
+      "outcomeIds": [
+        "CA_P3_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "CA_P3_003",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Risk",
+      "category": "Engagement",
+      "action": "Re-engage leaders in lagging teams/sites to re-establish the approach to change adoption for Planning & Risk.",
+      "outcomeIds": [
+        "CA_P3_O1"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "CA_P3_004",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "Measurement & Evaluation",
+      "action": "Confirm the approach to change adoption for Planning & Risk is being applied consistently across previously inconsistent areas.",
+      "outcomeIds": [
+        "CA_P3_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "CA_P3_005",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Planning & Risk",
+      "category": "Reinforcement",
+      "action": "Monitor Planning & Risk regularly to ensure the approach to change adoption stays consistently reinforced everywhere.",
+      "outcomeIds": [
+        "CA_P3_O2"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "CA_P3_006",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Skills & Behaviour",
+      "category": "Analysis & Insight",
+      "action": "Survey teams/sites to understand how Skills & Behaviour has been affected by inconsistent approach to change adoption since go-live.",
+      "outcomeIds": [
+        "CA_P3_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "CA_P3_007",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Skills & Behaviour",
+      "category": "Design",
+      "action": "Develop a targeted plan to address the specific Skills & Behaviour-related gaps identified in lagging areas.",
+      "outcomeIds": [
+        "CA_P3_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "CA_P3_008",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Skills & Behaviour",
+      "category": "Communication",
+      "action": "Deliver targeted support to strengthen Skills & Behaviour in teams/sites where the approach to change adoption is weakest.",
+      "outcomeIds": [
+        "CA_P3_O1"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "CA_P3_009",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Skills & Behaviour",
+      "category": "Measurement & Evaluation",
+      "action": "Confirm Skills & Behaviour has improved in previously lagging teams/sites.",
+      "outcomeIds": [
+        "CA_P3_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "CA_P3_010",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Skills & Behaviour",
+      "category": "Reinforcement",
+      "action": "Embed regular pulse-checks on Skills & Behaviour so gaps in the approach to change adoption are caught early in future.",
+      "outcomeIds": [
+        "CA_P3_O2"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "CA_P3_011",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Process & Sustainment",
+      "category": "Analysis & Insight",
+      "action": "Survey teams/sites to understand how Process & Sustainment has been affected by inconsistent approach to change adoption since go-live.",
+      "outcomeIds": [
+        "CA_P3_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "CA_P3_012",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Process & Sustainment",
+      "category": "Design",
+      "action": "Develop a targeted plan to address the specific Process & Sustainment-related gaps identified in lagging areas.",
+      "outcomeIds": [
+        "CA_P3_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "CA_P3_013",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Process & Sustainment",
+      "category": "Communication",
+      "action": "Deliver targeted support to strengthen Process & Sustainment in teams/sites where the approach to change adoption is weakest.",
+      "outcomeIds": [
+        "CA_P3_O1"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "CA_P3_014",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Process & Sustainment",
+      "category": "Measurement & Evaluation",
+      "action": "Confirm Process & Sustainment has improved in previously lagging teams/sites.",
+      "outcomeIds": [
+        "CA_P3_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "CA_P3_015",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Process & Sustainment",
+      "category": "Reinforcement",
+      "action": "Embed regular pulse-checks on Process & Sustainment so gaps in the approach to change adoption are caught early in future.",
+      "outcomeIds": [
+        "CA_P3_O2"
+      ],
+      "readinessScore": 4
+    }
+  ]
+}

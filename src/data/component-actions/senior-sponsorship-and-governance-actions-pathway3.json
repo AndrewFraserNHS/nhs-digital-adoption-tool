@@ -1,0 +1,198 @@
+{
+  "component": {
+    "id": "SENIOR_SPONSORSHIP_GOVERNANCE",
+    "name": "senior sponsorship and governance"
+  },
+  "outcomes": [
+    {
+      "id": "SSG_P3_O1",
+      "name": "Understanding of the sponsorship and governance approach has been assessed across all live sites/teams"
+    },
+    {
+      "id": "SSG_P3_O2",
+      "name": "The sponsorship and governance approach is consistently applied everywhere the change has gone live"
+    }
+  ],
+  "actions": [
+    {
+      "id": "SSG_P3_001",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Analysis & Insight",
+      "action": "Recognise that Strategic Direction & Leadership is inconsistent across teams/sites since go-live and gather evidence of where the gaps are in the sponsorship and governance approach.",
+      "outcomeIds": [
+        "SSG_P3_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "SSG_P3_002",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Analysis & Insight",
+      "action": "Identify why the sponsorship and governance approach hasn't landed consistently for Strategic Direction & Leadership in specific teams/sites and agree a plan to address it.",
+      "outcomeIds": [
+        "SSG_P3_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "SSG_P3_003",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Engagement",
+      "action": "Re-engage leaders in lagging teams/sites to re-establish the sponsorship and governance approach for Strategic Direction & Leadership.",
+      "outcomeIds": [
+        "SSG_P3_O1"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "SSG_P3_004",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "Confirm the sponsorship and governance approach for Strategic Direction & Leadership is being applied consistently across previously inconsistent areas.",
+      "outcomeIds": [
+        "SSG_P3_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "SSG_P3_005",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Reinforcement",
+      "action": "Monitor Strategic Direction & Leadership regularly to ensure the sponsorship and governance approach stays consistently reinforced everywhere.",
+      "outcomeIds": [
+        "SSG_P3_O2"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "SSG_P3_006",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "Survey teams/sites to understand how People Experience & Culture has been affected by inconsistent sponsorship and governance approach since go-live.",
+      "outcomeIds": [
+        "SSG_P3_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "SSG_P3_007",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Design",
+      "action": "Develop a targeted plan to address the specific People Experience & Culture-related gaps identified in lagging areas.",
+      "outcomeIds": [
+        "SSG_P3_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "SSG_P3_008",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "Deliver targeted support to strengthen People Experience & Culture in teams/sites where the sponsorship and governance approach is weakest.",
+      "outcomeIds": [
+        "SSG_P3_O1"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "SSG_P3_009",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "Confirm People Experience & Culture has improved in previously lagging teams/sites.",
+      "outcomeIds": [
+        "SSG_P3_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "SSG_P3_010",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "Embed regular pulse-checks on People Experience & Culture so gaps in the sponsorship and governance approach are caught early in future.",
+      "outcomeIds": [
+        "SSG_P3_O2"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "SSG_P3_011",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "Survey teams/sites to understand how Planning & Risk has been affected by inconsistent sponsorship and governance approach since go-live.",
+      "outcomeIds": [
+        "SSG_P3_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "SSG_P3_012",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Risk",
+      "category": "Design",
+      "action": "Develop a targeted plan to address the specific Planning & Risk-related gaps identified in lagging areas.",
+      "outcomeIds": [
+        "SSG_P3_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "SSG_P3_013",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Risk",
+      "category": "Communication",
+      "action": "Deliver targeted support to strengthen Planning & Risk in teams/sites where the sponsorship and governance approach is weakest.",
+      "outcomeIds": [
+        "SSG_P3_O1"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "SSG_P3_014",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "Measurement & Evaluation",
+      "action": "Confirm Planning & Risk has improved in previously lagging teams/sites.",
+      "outcomeIds": [
+        "SSG_P3_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "SSG_P3_015",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Planning & Risk",
+      "category": "Reinforcement",
+      "action": "Embed regular pulse-checks on Planning & Risk so gaps in the sponsorship and governance approach are caught early in future.",
+      "outcomeIds": [
+        "SSG_P3_O2"
+      ],
+      "readinessScore": 4
+    }
+  ]
+}

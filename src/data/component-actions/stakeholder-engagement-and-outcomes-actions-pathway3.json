@@ -1,0 +1,138 @@
+{
+  "component": {
+    "id": "STAKEHOLDER_ENGAGEMENT_COMMS",
+    "name": "stakeholder engagement and outcomes"
+  },
+  "outcomes": [
+    {
+      "id": "SEC_P3_O1",
+      "name": "Understanding of the stakeholder engagement approach has been assessed across all live sites/teams"
+    },
+    {
+      "id": "SEC_P3_O2",
+      "name": "The stakeholder engagement approach is consistently applied everywhere the change has gone live"
+    }
+  ],
+  "actions": [
+    {
+      "id": "SEC_P3_001",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "Recognise that People Experience & Culture is inconsistent across teams/sites since go-live and gather evidence of where the gaps are in the stakeholder engagement approach.",
+      "outcomeIds": [
+        "SEC_P3_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "SEC_P3_002",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "Identify why the stakeholder engagement approach hasn't landed consistently for People Experience & Culture in specific teams/sites and agree a plan to address it.",
+      "outcomeIds": [
+        "SEC_P3_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "SEC_P3_003",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "Re-engage leaders in lagging teams/sites to re-establish the stakeholder engagement approach for People Experience & Culture.",
+      "outcomeIds": [
+        "SEC_P3_O1"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "SEC_P3_004",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "Confirm the stakeholder engagement approach for People Experience & Culture is being applied consistently across previously inconsistent areas.",
+      "outcomeIds": [
+        "SEC_P3_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "SEC_P3_005",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "Monitor People Experience & Culture regularly to ensure the stakeholder engagement approach stays consistently reinforced everywhere.",
+      "outcomeIds": [
+        "SEC_P3_O2"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "SEC_P3_006",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Analysis & Insight",
+      "action": "Survey teams/sites to understand how Strategic Direction & Leadership has been affected by inconsistent stakeholder engagement approach since go-live.",
+      "outcomeIds": [
+        "SEC_P3_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "SEC_P3_007",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "Develop a targeted plan to address the specific Strategic Direction & Leadership-related gaps identified in lagging areas.",
+      "outcomeIds": [
+        "SEC_P3_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "SEC_P3_008",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Communication",
+      "action": "Deliver targeted support to strengthen Strategic Direction & Leadership in teams/sites where the stakeholder engagement approach is weakest.",
+      "outcomeIds": [
+        "SEC_P3_O1"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "SEC_P3_009",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "Confirm Strategic Direction & Leadership has improved in previously lagging teams/sites.",
+      "outcomeIds": [
+        "SEC_P3_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "SEC_P3_010",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Reinforcement",
+      "action": "Embed regular pulse-checks on Strategic Direction & Leadership so gaps in the stakeholder engagement approach are caught early in future.",
+      "outcomeIds": [
+        "SEC_P3_O2"
+      ],
+      "readinessScore": 4
+    }
+  ]
+}

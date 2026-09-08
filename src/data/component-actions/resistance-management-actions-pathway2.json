@@ -1,0 +1,138 @@
+{
+  "component": {
+    "id": "RESISTANCE_MANAGEMENT",
+    "name": "resistance management"
+  },
+  "outcomes": [
+    {
+      "id": "RES_P2_O1",
+      "name": "The approach to managing resistance has been refined based on pilot learnings"
+    },
+    {
+      "id": "RES_P2_O2",
+      "name": "The approach to managing resistance is understood across every site/team joining the scaled rollout"
+    }
+  ],
+  "actions": [
+    {
+      "id": "RES_P2_001",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "Review pilot feedback on People Experience & Culture to identify what needs to change in the approach to managing resistance before scaling.",
+      "outcomeIds": [
+        "RES_P2_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "RES_P2_002",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Design",
+      "action": "Refine the approach to managing resistance to People Experience & Culture based on lessons learned from the pilot.",
+      "outcomeIds": [
+        "RES_P2_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "RES_P2_003",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Governance",
+      "action": "Secure sign-off for the refined approach to managing resistance covering People Experience & Culture ahead of wider rollout.",
+      "outcomeIds": [
+        "RES_P2_O1"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "RES_P2_004",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "Ensure the refined approach to managing resistance for People Experience & Culture is consistently communicated to new sites/teams joining the rollout.",
+      "outcomeIds": [
+        "RES_P2_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "RES_P2_005",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "Continuously validate that the approach to managing resistance for People Experience & Culture remains effective as the change scales further.",
+      "outcomeIds": [
+        "RES_P2_O2"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "RES_P2_006",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Skills & Behaviour",
+      "category": "Analysis & Insight",
+      "action": "Gather feedback from pilot participants on how the approach to managing resistance affected Skills & Behaviour.",
+      "outcomeIds": [
+        "RES_P2_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "RES_P2_007",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Skills & Behaviour",
+      "category": "Design",
+      "action": "Adapt the approach to managing resistance relating to Skills & Behaviour for a wider, more diverse audience.",
+      "outcomeIds": [
+        "RES_P2_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "RES_P2_008",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Skills & Behaviour",
+      "category": "Communication",
+      "action": "Roll out the approach to managing resistance covering Skills & Behaviour to stakeholders in newly onboarding sites/teams.",
+      "outcomeIds": [
+        "RES_P2_O1"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "RES_P2_009",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Skills & Behaviour",
+      "category": "Measurement & Evaluation",
+      "action": "Monitor Skills & Behaviour among stakeholders in the wider rollout and address any gaps.",
+      "outcomeIds": [
+        "RES_P2_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "RES_P2_010",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Skills & Behaviour",
+      "category": "Reinforcement",
+      "action": "Use champions from the pilot to help new sites/teams connect with the approach to managing resistance for Skills & Behaviour.",
+      "outcomeIds": [
+        "RES_P2_O2"
+      ],
+      "readinessScore": 4
+    }
+  ]
+}

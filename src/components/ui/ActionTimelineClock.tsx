@@ -8,18 +8,20 @@ export interface ActionTimelineClockProps {
 }
 
 const HEALTH_CLASSES: Record<string, string> = {
+  grey: 'text-slate-300',
   green: 'text-green-600',
   amber: 'text-amber-500',
   red: 'text-red-600',
 };
 
 const HEALTH_LABEL: Record<string, string> = {
+  grey: 'No dates set',
   green: 'On track',
   amber: 'Due soon',
   red: 'Overdue',
 };
 
-/** Single clock icon summarising an action's timeline health (green/amber/red); hover/title carries the actual dates. */
+/** Single clock icon summarising an action's timeline health (grey/green/amber/red); hover/title carries the actual dates. */
 export function ActionTimelineClock({ status, startDate, dueDate }: ActionTimelineClockProps): JSX.Element {
   const health = getActionTimelineHealth(status, startDate, dueDate);
   const title = `${HEALTH_LABEL[health]} · Start: ${startDate || 'not set'} · End: ${dueDate || 'not set'}`;

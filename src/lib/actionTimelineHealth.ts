@@ -1,13 +1,14 @@
 import { deriveTemporalActionStatus, normalizeActionStatus } from './actionModel';
 
-export type TimelineHealth = 'green' | 'amber' | 'red';
+export type TimelineHealth = 'grey' | 'green' | 'amber' | 'red';
 
 const DUE_SOON_DAYS = 7;
 
 /**
- * Traffic-light health for an action's timeline: green once resolved (Completed/Cancelled) or
- * comfortably on track, amber once it's overdue to start or its due date is within a week, red
- * once its due date has passed and it's still unresolved.
+ * Traffic-light health for an action's timeline: grey WHILE neither a start nor an end date has
+ * been filled in (nothing to gauge yet), green once resolved (Completed/Cancelled) or comfortably
+ * on track, amber once it's overdue to start or its due date is within a week, red once its due
+ * date has passed and it's still unresolved.
  */
 export function getActionTimelineHealth(
   status: string | undefined,
@@ -15,6 +16,10 @@ export function getActionTimelineHealth(
   dueDate: string | undefined,
   now = new Date()
 ): TimelineHealth {
+  if (!startDate && !dueDate) {
+    return 'grey';
+  }
+
   const normalized = normalizeActionStatus(status);
   if (normalized === 'Completed' || normalized === 'Cancelled') {
     return 'green';

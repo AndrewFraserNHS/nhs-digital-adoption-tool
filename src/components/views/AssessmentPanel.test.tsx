@@ -801,4 +801,49 @@ describe('AssessmentPanel', () => {
     expect(lastUpdateEntry.score).toBe(3);
     expect(screen.getByText(/moved to Embedding!/)).toBeInTheDocument();
   });
+
+  it('SHOULD turn the owner avatar into a select on click and update the owner on change', () => {
+    // arrange
+    const entry = createEntry();
+    const props = createProps({
+      entry,
+      teamMembers: [{ id: 'member-1', name: 'Alex', role: 'PM' }],
+    });
+    localStorage.setItem(ASSESSMENT_PAGE_INTRO_SEEN_KEY, 'true');
+    render(<AssessmentPanel {...props} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
+
+    // act 1 - click the avatar to reveal the select
+    fireEvent.click(screen.getByRole('button', { name: 'Change owner for Run workshop' }));
+
+    // assert 1
+    const ownerSelect = screen.getByRole('combobox', { name: 'Owner for Run workshop' });
+    expect(ownerSelect).toBeInTheDocument();
+
+    // act 2 - pick a different owner
+    fireEvent.change(ownerSelect, { target: { value: 'Alex' } });
+
+    // assert 2
+    const lastUpdateEntry = props.onEntryUpdate.mock.calls.at(-1)[2] as DraftEntry;
+    expect(lastUpdateEntry.actions[0].owner).toBe('Alex');
+  });
+
+  it('SHOULD show a grey timeline clock in the Actions column WHEN no dates are set', () => {
+    // arrange
+    const entry = createEntry({
+      actions: [
+        { id: 'action-1', text: 'Run workshop', owner: 'PMO', timescale: '', status: 'Planned' },
+      ],
+    });
+    const props = createProps({ entry });
+    localStorage.setItem(ASSESSMENT_PAGE_INTRO_SEEN_KEY, 'true');
+
+    // act
+    render(<AssessmentPanel {...props} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
+
+    // assert
+    expect(screen.getByLabelText(/No dates set/)).toBeInTheDocument();
+    expect(screen.queryByRole('columnheader', { name: 'Timeline' })).not.toBeInTheDocument();
+  });
 });

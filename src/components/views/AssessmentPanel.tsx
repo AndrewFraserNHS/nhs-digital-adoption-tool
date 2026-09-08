@@ -1004,6 +1004,7 @@ export function AssessmentPanel({
   const [showComponentOverviewModal, setShowComponentOverviewModal] = useState(false);
   const pageIntro = usePageIntroSeen('assessment');
   const [expandedLensActions, setExpandedLensActions] = useState<Record<string, boolean>>({});
+  const [editingOwnerRowKey, setEditingOwnerRowKey] = useState<string | null>(null);
   const [lensActionTypeFilters, setLensActionTypeFilters] = useState<Record<string, string>>({});
   const [lensActionOwnerFilters, setLensActionOwnerFilters] = useState<Record<string, string>>(
     {}
@@ -1430,6 +1431,17 @@ export function AssessmentPanel({
       ...entry,
       actions: nextActions,
       score: applyScoreAdvance(lens, entry.score, nextActions),
+    });
+  };
+
+  const updateLinkedActionOwner = (lens: string, actionId: string, owner: string) => {
+    const entry = getEntry(component.id, lens);
+    const nextActions = entry.actions.map((action) =>
+      action.id === actionId ? { ...action, owner } : action
+    );
+    onEntryUpdate(component.id, lens, {
+      ...entry,
+      actions: nextActions,
     });
   };
 
@@ -2166,9 +2178,6 @@ export function AssessmentPanel({
                             <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
                               Owner
                             </th>
-                            <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
-                              Timeline
-                            </th>
                             {/* <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Notes</th> */}
                             {/* <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Evidence</th> */}
                             {/* <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
@@ -2219,11 +2228,10 @@ export function AssessmentPanel({
                             const badgeStyle =
                               ACTION_STATUS_BADGE_STYLES[displayStatus] ||
                               ACTION_STATUS_BADGE_STYLES.Planned;
+                            const rowKey = `${resolvedAction.sourceComponentId}:${resolvedAction.sourceLens}:${action.id}`;
 
                             return (
-                              <tr
-                                key={`${resolvedAction.sourceComponentId}:${resolvedAction.sourceLens}:${action.id}`}
-                              >
+                              <tr key={rowKey}>
                                 <td
                                   className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
                                 >
@@ -2275,14 +2283,43 @@ export function AssessmentPanel({
                                   )}
                                 </td>
                                 <td className="px-3 py-2">
-                                  <OwnerAvatar name={action.owner || ''} darkMode={darkMode} />
-                                </td>
-                                <td className="px-3 py-2">
-                                  <ActionTimelineClock
-                                    status={action.status}
-                                    startDate={action.startDate}
-                                    dueDate={action.dueDate}
-                                  />
+                                  {editingOwnerRowKey === rowKey ? (
+                                    <select
+                                      autoFocus
+                                      aria-label={`Owner for ${action.text}`}
+                                      value={action.owner || ''}
+                                      onChange={(event) => {
+                                        updateLinkedActionOwner(
+                                          resolvedAction.sourceLens,
+                                          action.id,
+                                          event.target.value
+                                        );
+                                        setEditingOwnerRowKey(null);
+                                      }}
+                                      onBlur={() => setEditingOwnerRowKey(null)}
+                                      className={`min-w-[9rem] rounded-md border px-2 py-1 text-xs font-semibold focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
+                                    >
+                                      <option value="">Unassigned</option>
+                                      {teamMembers.map((member) => (
+                                        <option key={member.id} value={member.name}>
+                                          {member.name}
+                                        </option>
+                                      ))}
+                                      {action.owner &&
+                                      !teamMembers.some((member) => member.name === action.owner) ? (
+                                        <option value={action.owner}>{action.owner} (not on roster)</option>
+                                      ) : null}
+                                    </select>
+                                  ) : (
+                                    <button
+                                      type="button"
+                                      onClick={() => setEditingOwnerRowKey(rowKey)}
+                                      aria-label={`Change owner for ${action.text}`}
+                                      className="rounded-full focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b]"
+                                    >
+                                      <OwnerAvatar name={action.owner || ''} darkMode={darkMode} />
+                                    </button>
+                                  )}
                                 </td>
                                 {/* <td className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>{action.notes || '-'}</td>
                               <td className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
@@ -2317,7 +2354,12 @@ export function AssessmentPanel({
                                   {linkedTargets}
                                 </td> */}
                                 <td className="px-3 py-2">
-                                  <div className="flex gap-2">
+                                  <div className="flex items-center gap-2">
+                                    <ActionTimelineClock
+                                      status={action.status}
+                                      startDate={action.startDate}
+                                      dueDate={action.dueDate}
+                                    />
                                     <button
                                       type="button"
                                       onClick={() =>

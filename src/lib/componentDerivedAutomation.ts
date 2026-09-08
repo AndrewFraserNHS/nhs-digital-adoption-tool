@@ -1,4 +1,4 @@
-import { ACTION_TYPES, isResolvedActionStatus, type ActionType } from './actionModel';
+import { ACTION_TYPES, type ActionType,isResolvedActionStatus } from './actionModel';
 import type { AdoptionStore, ComponentObjective, DraftAction, DraftEntry } from './adoptionState';
 
 interface RawOutcome {

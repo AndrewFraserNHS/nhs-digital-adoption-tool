@@ -2,13 +2,9 @@ import {
   EVIDENCE_WARNING_DISMISSED_KEY,
   EvidenceWarningModal,
 } from '@components/common/EvidenceWarningModal';
-import { CstSetupWizard } from '@components/onboarding/CstSetupWizard';
-import { OnboardingIntro } from '@components/onboarding/OnboardingIntro';
-import { PathwaySelectionModal } from '@components/onboarding/PathwaySelectionModal';
-import { SignInRequiredModal } from '@components/onboarding/SignInRequiredModal';
-import { ToolkitChatbot } from '@components/ui/ToolkitChatbot';
 import { usePageIntroSeen } from '@components/onboarding/PageIntroModal';
 import { VisionGetStartedModal } from '@components/onboarding/VisionGetStartedModal';
+import { ToolkitChatbot } from '@components/ui/ToolkitChatbot';
 import { ActionPlanTracker } from '@components/views/ActionPlanTracker';
 import { AdoptionDashboard, type ComponentRadarSize } from '@components/views/AdoptionDashboard';
 import { AssessmentPanel } from '@components/views/AssessmentPanel';
@@ -27,13 +23,6 @@ import {
 import { ProfilePage } from '@components/views/ProfilePage';
 import { type AdoptionUserSettings, SettingsPanel } from '@components/views/SettingsPanel';
 import { ASSESSMENT_COMPONENTS, getComponentById } from '@data/components';
-import {
-  COMPETENCE_OPTIONS,
-  type CompetenceGrade,
-  CONFIDENCE_OPTIONS,
-  type ConfidenceScore,
-  type OverarchingPhase,
-} from '@data/cst';
 import { ASSESSMENT_LENSES as LENSES } from '@data/lenses';
 import {
   type MaturityGuidanceTarget,
@@ -203,28 +192,6 @@ function getPreviousMonthLabel(date = new Date()): string {
   return previousMonth.toLocaleString('en-GB', { month: 'short', year: 'numeric' });
 }
 
-function buildReminderBody(
-  previousMonthLabel: string,
-  trustName: string,
-  projectName: string
-): string {
-  return [
-    'Monthly Adoption Reporting Reminder',
-    '',
-    'Organisation',
-    `${trustName || 'Unconfigured Trust'}${projectName ? ` / ${projectName}` : ''}`,
-    '',
-    'Action Required',
-    `Please finalise the ${previousMonthLabel} adoption month if it has not already been captured.`,
-    '',
-    'Attached',
-    'Point-in-time JSON report export generated from the latest working draft.',
-    '',
-    'Next Step',
-    'Review, confirm finalisation status, and circulate to the team.',
-  ].join('\n');
-}
-
 function toBase64Utf8(value: string): string {
   const bytes = new TextEncoder().encode(value);
   let binary = '';
@@ -242,52 +209,8 @@ function wrapBase64Lines(value: string, lineLength = 76): string {
   return chunks.join('\r\n');
 }
 
-function isFinaliseWindowOpen(date = new Date()): boolean {
-  const currentDay = date.getDate();
-  const lastDayOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-  return currentDay >= lastDayOfMonth - 6;
-}
-
 function getCurrentMonthLabel(date = new Date()): string {
   return date.toLocaleString('en-GB', { month: 'short', year: 'numeric' });
-}
-
-
-function promptPhaseCapability(
-  phase: OverarchingPhase
-): { competence: CompetenceGrade; confidence: ConfidenceScore } | null {
-  const competenceInput = window.prompt(
-    `Phase ${phase} has changed. Enter delivery readiness grade (${COMPETENCE_OPTIONS.join('/')}).`,
-    'C'
-  );
-  if (!competenceInput) {
-    return null;
-  }
-
-  const normalizedCompetence = competenceInput.trim().toUpperCase() as CompetenceGrade;
-  if (!COMPETENCE_OPTIONS.includes(normalizedCompetence)) {
-    window.alert(`Invalid competence grade. Use one of ${COMPETENCE_OPTIONS.join(', ')}.`);
-    return null;
-  }
-
-  const confidenceInput = window.prompt(
-    `Enter confidence score for Phase ${phase} (${CONFIDENCE_OPTIONS.join('-')}, where 1 is low and 5 is very high).`,
-    '3'
-  );
-  if (!confidenceInput) {
-    return null;
-  }
-
-  const normalizedConfidence = Number(confidenceInput.trim()) as ConfidenceScore;
-  if (!CONFIDENCE_OPTIONS.includes(normalizedConfidence)) {
-    window.alert(`Invalid confidence score. Use a number from ${CONFIDENCE_OPTIONS.join(' to ')}.`);
-    return null;
-  }
-
-  return {
-    competence: normalizedCompetence,
-    confidence: normalizedConfidence,
-  };
 }
 
 export function AdoptionApp() {
@@ -363,7 +286,6 @@ export function AdoptionApp() {
   );
   const [showEngagementCard, setShowEngagementCard] = useState<boolean>(true);
   const [viewHistory, setViewHistory] = useState<View[]>([]);
-  const [showFinaliseModal, setShowFinaliseModal] = useState(false);
   const [expandedNavPhases, setExpandedNavPhases] = useState<Record<number, boolean>>({ 1: true });
   const [expandedNavSections, setExpandedNavSections] = useState<Record<string, boolean>>({
     intro: true,
@@ -384,22 +306,17 @@ export function AdoptionApp() {
     const today = new Date();
     const previousMonthLabel = getPreviousMonthLabel(today);
     const isFirstDayOfMonth = today.getDate() === 1;
-    const hasFinalisedPreviousMonth = store.history.some(
-      (snapshot) => snapshot.monthLabel === previousMonthLabel
-    );
 
     return {
       previousMonthLabel,
       isFirstDayOfMonth,
-      hasFinalisedPreviousMonth,
-      shouldNotify: isFirstDayOfMonth && !hasFinalisedPreviousMonth,
+      shouldNotify: isFirstDayOfMonth,
     };
   }, [store.history]);
   const [emailTo, setEmailTo] = useState('test@test.com');
   const [emailSubject, setEmailSubject] = useState('');
   const [emailBody, setEmailBody] = useState('');
   const currentMonthLabel = getCurrentMonthLabel();
-  const finaliseWindowOpen = isFinaliseWindowOpen();
 
   const getEntry = useCallback(
     (componentId: string, lens: string): DraftEntry => {
@@ -486,19 +403,6 @@ export function AdoptionApp() {
   useEffect(() => {
     save(ADOPTION_REPORT_REMINDER_DISMISS_KEY, dismissedReminderMonths);
   }, [dismissedReminderMonths]);
-
-  useEffect(() => {
-    setEmailSubject(
-      `Action required: finalise ${reportReminder.previousMonthLabel} adoption report`
-    );
-    setEmailBody(
-      buildReminderBody(
-        reportReminder.previousMonthLabel,
-        store.orgProfile.trustName,
-        store.orgProfile.projectName || ''
-      )
-    );
-  }, [reportReminder.previousMonthLabel, store.orgProfile.projectName, store.orgProfile.trustName]);
 
   // Redirect away from views that aren't meaningful until the project has been set up.
   useEffect(() => {
@@ -1170,10 +1074,9 @@ export function AdoptionApp() {
     return {
       generatedAt: new Date().toISOString(),
       targetMonth: reportReminder.previousMonthLabel,
-      finalisedPriorMonth: reportReminder.hasFinalisedPreviousMonth,
       report: buildAdoptionExportPayload(store),
     };
-  }, [reportReminder.hasFinalisedPreviousMonth, reportReminder.previousMonthLabel, store]);
+  }, [reportReminder.previousMonthLabel, store]);
 
   const buildPointInTimeFilename = useCallback(() => {
     const monthSlug = reportReminder.previousMonthLabel.toLowerCase().replace(/\s+/g, '-');
@@ -1241,39 +1144,7 @@ export function AdoptionApp() {
 
   const shouldShowReportReminder =
     reportReminder.shouldNotify && !dismissedReminderMonths[currentReminderMonthKey];
-  const currentMonthSnapshot = useMemo(
-    () => store.history.find((snapshot) => snapshot.monthLabel === currentMonthLabel) || null,
-    [currentMonthLabel, store.history]
-  );
-  const canCreateNewFinalisation = finaliseWindowOpen;
-  const canOpenFinaliseModal = canCreateNewFinalisation;
-  const finaliseButtonStyle = canOpenFinaliseModal
-    ? { backgroundColor: userSettings.themeColor }
-    : undefined;
-  const finaliseSummary = useMemo(() => {
-    const baselineSnapshot =
-      currentMonthSnapshot ||
-      (store.history.length > 0 ? store.history[store.history.length - 1] : null);
-    const baselineOverall = baselineSnapshot?.overallPercentage || 0;
-    const deltaOverall = metrics.overallPct - baselineOverall;
-    return {
-      currentMonthLabel,
-      baselineLabel: baselineSnapshot?.monthLabel || 'No previous snapshot',
-      baselineOverall,
-      deltaOverall,
-      assessedCount: metrics.assessedCount,
-      totalActions: metrics.totalActions,
-      completedActions: metrics.completedActions,
-    };
-  }, [
-    currentMonthLabel,
-    currentMonthSnapshot,
-    metrics.assessedCount,
-    metrics.completedActions,
-    metrics.overallPct,
-    metrics.totalActions,
-    store.history,
-  ]);
+
   const engagementObjectives = useMemo(
     () => computeEngagementObjectives(store, metrics, currentMonthLabel),
     [store, metrics, currentMonthLabel]
@@ -1814,97 +1685,6 @@ export function AdoptionApp() {
               </div>
             </section>
           ) : null}
-
-          {shouldShowReportReminder && (
-            <section
-              className={`${userSettings.darkMode ? 'border-amber-700 bg-slate-800' : 'border-amber-300 bg-amber-50'} mb-8 rounded-xl border p-5 shadow-sm`}
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-amber-700">
-                    First Day Reminder
-                  </p>
-                  <h3 className="text-lg font-bold text-amber-900 mt-1">
-                    Submit prior month report for {reportReminder.previousMonthLabel}
-                  </h3>
-                  <p className="text-sm text-amber-800 mt-2">
-                    Please prompt the team to finalise {reportReminder.previousMonthLabel} if it has
-                    not already been recorded.
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={dismissReportReminder}
-                  className="text-sm px-3 py-1.5 rounded-md border border-amber-300 text-amber-700 hover:bg-amber-100"
-                >
-                  Dismiss
-                </button>
-              </div>
-
-              <div className="mt-4 grid gap-3 md:grid-cols-2">
-                <label className="text-sm text-slate-700">
-                  <span className="font-semibold">To</span>
-                  <input
-                    type="email"
-                    value={emailTo}
-                    onChange={(event) => setEmailTo(event.target.value)}
-                    className={`${userSettings.darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-900'} mt-1 w-full rounded-md border px-3 py-2`}
-                  />
-                </label>
-                <label className="text-sm text-slate-700">
-                  <span className="font-semibold">Subject</span>
-                  <input
-                    type="text"
-                    value={emailSubject}
-                    onChange={(event) => setEmailSubject(event.target.value)}
-                    className={`${userSettings.darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-900'} mt-1 w-full rounded-md border px-3 py-2`}
-                  />
-                </label>
-              </div>
-
-              <label className="mt-3 block text-sm text-slate-700">
-                <span className="font-semibold">Body</span>
-                <textarea
-                  value={emailBody}
-                  onChange={(event) => setEmailBody(event.target.value)}
-                  rows={9}
-                  className={`${userSettings.darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-900'} mt-1 w-full rounded-md border px-3 py-2 font-mono text-xs`}
-                />
-              </label>
-
-              <div className="mt-4 flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  onClick={handleDownloadPointInTimeJson}
-                  className="rounded-md bg-white px-3 py-2 text-sm font-medium text-slate-700 border border-slate-300 hover:bg-slate-50"
-                >
-                  Download Point-in-Time JSON
-                </button>
-                <button
-                  type="button"
-                  onClick={handleDownloadEmailDraft}
-                  className="rounded-md bg-white px-3 py-2 text-sm font-medium text-slate-700 border border-slate-300 hover:bg-slate-50"
-                >
-                  Download Email Draft with Attachment (.eml)
-                </button>
-                <button
-                  type="button"
-                  onClick={handleOpenMailDraft}
-                  className="rounded-md px-3 py-2 text-sm font-semibold text-white"
-                  style={{ backgroundColor: userSettings.themeColor }}
-                >
-                  Open Mail Draft
-                </button>
-                <button
-                  type="button"
-                  onClick={handleFinalisePriorMonth}
-                  className="rounded-md border border-amber-300 bg-white px-3 py-2 text-sm font-semibold text-amber-800 hover:bg-amber-100"
-                >
-                  Finalise Prior Month Now
-                </button>
-              </div>
-            </section>
-          )}
 
           {view === 'dashboard' && (
             <div ref={dashboardRef}>

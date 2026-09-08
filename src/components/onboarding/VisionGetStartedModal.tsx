@@ -20,10 +20,6 @@ const STEPS: Step[] = [
           Start by scoring where Vision stands today for each lens - be honest about the current
           state, not where you'd like it to be.
         </p>
-        <p>
-          Add a short justification for the score so anyone reviewing later understands the
-          evidence behind it.
-        </p>
       </div>
     ),
   },

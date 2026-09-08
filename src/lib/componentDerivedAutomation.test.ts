@@ -4,8 +4,8 @@ import type { AdoptionStore, DraftAction } from './adoptionState';
 import { initializeStore } from './adoptionState';
 import {
   clearDerivedComponentContent,
-  detectScoreAdvancementOpportunities,
   type DerivedComponentConfig,
+  detectScoreAdvancementOpportunities,
 } from './componentDerivedAutomation';
 
 const CONFIG: DerivedComponentConfig = {

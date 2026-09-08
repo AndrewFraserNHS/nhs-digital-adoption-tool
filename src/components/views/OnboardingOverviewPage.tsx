@@ -123,13 +123,13 @@ function buildSteps(darkMode: boolean): Step[] {
             Six questions worth returning to throughout the life of the programme, each backed by a
             change model.
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-1 gap-2">
             {KEY_QUESTIONS.map((keyQuestion, index) => (
               <div
                 key={keyQuestion.id}
                 className={`rounded-md border p-4 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-white'}`}
               >
-                <div className="flex items-start gap-3">
+                <div className="flex items-center gap-3">
                   <span className="shrink-0 w-7 h-7 rounded-full bg-blue-100 text-[#005eb8] text-xs font-bold flex items-center justify-center">
                     Q{index + 1}
                   </span>
@@ -267,7 +267,7 @@ export function OnboardingOverviewPage({
           <h3 className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>
             {steps[activeStep].title}
           </h3>
-          <div className="mt-5 max-w-4xl">{steps[activeStep].body}</div>
+          <div className="mt-5 max-w-full">{steps[activeStep].body}</div>
 
           <div className="mt-8 flex items-center justify-between gap-2">
             <button

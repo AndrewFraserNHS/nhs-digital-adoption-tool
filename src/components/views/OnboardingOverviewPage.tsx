@@ -97,7 +97,7 @@ function buildSteps(darkMode: boolean): Step[] {
       ),
     },
     {
-      title: 'What is a CST?',
+      title: 'Context Specific Templates (CSTs)',
       body: (
         <div className={`text-sm space-y-2 ${textClass}`}>
           <p>

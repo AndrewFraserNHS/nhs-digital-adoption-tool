@@ -118,3 +118,9 @@ export function deriveTemporalActionStatus(
 export function isCompletedActionStatus(status: string | undefined): boolean {
   return normalizeActionStatus(status) === 'Completed';
 }
+
+/** True for a Completed or Cancelled action - both mean the action no longer blocks progression. */
+export function isResolvedActionStatus(status: string | undefined): boolean {
+  const normalized = normalizeActionStatus(status);
+  return normalized === 'Completed' || normalized === 'Cancelled';
+}

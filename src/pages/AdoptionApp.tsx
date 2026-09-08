@@ -1,26 +1,27 @@
-import { CstSetupWizard } from '@components/onboarding/CstSetupWizard';
-import { PathwaySelectionModal } from '@components/onboarding/PathwaySelectionModal';
-import { SignInRequiredModal } from '@components/onboarding/SignInRequiredModal';
-import { OnboardingIntro } from '@components/onboarding/OnboardingIntro';
 import {
   EVIDENCE_WARNING_DISMISSED_KEY,
   EvidenceWarningModal,
 } from '@components/common/EvidenceWarningModal';
 import { ToolkitChatbot } from '@components/ui/ToolkitChatbot';
+import { usePageIntroSeen } from '@components/onboarding/PageIntroModal';
+import { VisionGetStartedModal } from '@components/onboarding/VisionGetStartedModal';
 import { ActionPlanTracker } from '@components/views/ActionPlanTracker';
 import { AdoptionDashboard, type ComponentRadarSize } from '@components/views/AdoptionDashboard';
 import { AssessmentPanel } from '@components/views/AssessmentPanel';
 import { AuditLogPage } from '@components/views/AuditLogPage';
-import { ChangeManagementGuide } from '@components/views/ChangeManagementGuide';
 import { ProjectDetailsPage } from '@components/views/CSTDetailsPage';
 import { DailyCheckIn } from '@components/views/DailyCheckIn';
+import { EngineExplainedPage } from '@components/views/EngineExplainedPage';
 import { GuidanceRoadmapView } from '@components/views/GuidanceRoadmapView';
 import { HighlightBuilderTool } from '@components/views/HighlightBuilderTool';
 import ForceFieldAnalysisApp from '@pages/ForceFieldAnalysisApp';
 import CompareApp from '@pages/CompareApp';
 import { ImportConflictModal } from '@components/views/ImportConflictModal';
 import { LensInfoModal } from '@components/views/LensInfoModal';
-import { OnboardingOverviewPage } from '@components/views/OnboardingOverviewPage';
+import {
+  ADOPTION_INTRODUCTION_COMPLETE_KEY,
+  OnboardingOverviewPage,
+} from '@components/views/OnboardingOverviewPage';
 import { ProfilePage } from '@components/views/ProfilePage';
 import { type AdoptionUserSettings, SettingsPanel } from '@components/views/SettingsPanel';
 import { ASSESSMENT_COMPONENTS, getComponentById } from '@data/components';
@@ -87,13 +88,19 @@ import { PHASE_NAMES, SPECIFIC_RUBRICS } from '../types/constants';
 const ADOPTION_USER_SETTINGS_KEY = 'nhs-digital-adoption-user-settings';
 const ADOPTION_REPORT_REMINDER_DISMISS_KEY = 'nhs-digital-adoption-report-reminder-dismissed';
 const ADOPTION_ENGAGEMENT_KEY = 'nhs-digital-adoption-engagement';
-const ADOPTION_ONBOARDING_SEEN_KEY = 'nhs-digital-adoption-onboarding-seen';
-const ADOPTION_PATHWAY_SELECTION_SEEN_KEY = 'nhs-digital-adoption-pathway-selection-seen';
 const ADOPTION_CURRENT_USER_KEY = 'nhs-digital-adoption-current-user-id';
 const DEFAULT_GUIDANCE_TARGET: MaturityGuidanceTarget = 'Default';
 const MAX_IMPORT_FILE_BYTES = 5 * 1024 * 1024;
 const ACCEPTED_IMPORT_MIME_TYPES = new Set(['application/json', 'text/json']);
 const DEFAULT_AUDIT_ACTOR = 'Unknown user';
+
+/** Views that stay reachable before the project has been set up - everything else routes back to Introduction. */
+const ALLOWED_VIEWS_WHEN_UNCONFIGURED: View[] = [
+  'introduction',
+  'engine-explained',
+  'project-details',
+  'profile',
+];
 
 const EXAMPLE_DATA_FILES: Record<'red' | 'amber' | 'green', string> = {
   red: 'test-data/adoption-phase1-red.json',
@@ -164,11 +171,6 @@ function actionHasEvidence(action: DraftAction): boolean {
 function getAuditActor(name: string): string {
   const normalized = name.trim();
   return normalized || DEFAULT_AUDIT_ACTOR;
-}
-
-/** True once currentUserId resolves to an actual entry in the team roster. */
-function isSignedIn(profile: OrgProfile, currentUserId: string): boolean {
-  return !!currentUserId && (profile.teamMembers || []).some((member) => member.id === currentUserId);
 }
 
 /** Audit actor prefers the signed-in team member so the log reflects who was actually signed in. */
@@ -288,14 +290,9 @@ function promptPhaseCapability(
 export function AdoptionApp() {
   const COMPONENTS = ASSESSMENT_COMPONENTS;
   const MUTABLE_LENSES = useMemo<string[]>(() => [...LENSES], []);
-  const [view, setView] = useState<View>('dashboard');
+  const [view, setView] = useState<View>('introduction');
   const [activeComponentId, setActiveComponentId] = useState<string>(COMPONENTS[0].id);
-  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(() => {
-    if (typeof window === 'undefined') {
-      return true;
-    }
-    return window.innerWidth >= 1024;
-  });
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const [store, setStore] = useState<AdoptionStore>(() => {
     let persisted: Partial<SavedAdoptionAssessment> = {};
     try {
@@ -326,12 +323,7 @@ export function AdoptionApp() {
   });
 
   const [activeLensInfo, setActiveLensInfo] = useState('');
-  const [hasSeenPathwaySelection, setHasSeenPathwaySelection] = useState<boolean>(() =>
-    Boolean(load<boolean>(ADOPTION_PATHWAY_SELECTION_SEEN_KEY))
-  );
-  const [showPathwaySelection, setShowPathwaySelection] = useState<boolean>(
-    () => !load<boolean>(ADOPTION_PATHWAY_SELECTION_SEEN_KEY) && isCstUnconfigured(store.orgProfile)
-  );
+  const visionGetStarted = usePageIntroSeen('vision-get-started');
   const [currentUserId, setCurrentUserId] = useState<string>(() => load<string>(ADOPTION_CURRENT_USER_KEY) || '');
   /* Several audit-logging callbacks are memoized with empty dep arrays, so they close over stale
    * state on first render - refs keep the actor resolution reading live values instead. */
@@ -366,20 +358,9 @@ export function AdoptionApp() {
       return persisted || {};
     }
   );
-  const [hasSeenOnboarding, setHasSeenOnboarding] = useState<boolean>(() =>
-    Boolean(load<boolean>(ADOPTION_ONBOARDING_SEEN_KEY))
-  );
-  const [showOnboarding, setShowOnboarding] = useState<boolean>(
-    () => !load<boolean>(ADOPTION_ONBOARDING_SEEN_KEY)
-  );
   const [showEngagementCard, setShowEngagementCard] = useState<boolean>(true);
   const [viewHistory, setViewHistory] = useState<View[]>([]);
   const [showFinaliseModal, setShowFinaliseModal] = useState(false);
-  const [showCstSetupWizard, setShowCstSetupWizard] = useState(false);
-  const [showGuideSuggestion, setShowGuideSuggestion] = useState(false);
-  const hasAutoOpenedCstWizardRef = React.useRef(false);
-  const [showSignInModal, setShowSignInModal] = useState(false);
-  const hasAutoOpenedSignInModalRef = React.useRef(false);
   const [expandedNavPhases, setExpandedNavPhases] = useState<Record<number, boolean>>({ 1: true });
   const [expandedNavSections, setExpandedNavSections] = useState<Record<string, boolean>>({
     intro: true,
@@ -395,14 +376,6 @@ export function AdoptionApp() {
   const [componentRadarVisible, setComponentRadarVisible] = useState(true);
   const [componentRadarSize, setComponentRadarSize] = useState<ComponentRadarSize>('medium');
   const navItemRefs = React.useRef<Record<string, HTMLButtonElement | null>>({});
-
-  const dismissOnboarding = useCallback(() => {
-    setShowOnboarding(false);
-    if (!hasSeenOnboarding) {
-      setHasSeenOnboarding(true);
-      save(ADOPTION_ONBOARDING_SEEN_KEY, true);
-    }
-  }, [hasSeenOnboarding]);
 
   const reportReminder = useMemo(() => {
     const today = new Date();
@@ -467,7 +440,7 @@ export function AdoptionApp() {
   useEffect(() => {
     const sectionByView: Partial<Record<View, string>> = {
       introduction: 'intro',
-      'cm-guide': 'intro',
+      'engine-explained': 'intro',
       'project-details': 'intro',
       dashboard: 'overview',
       'daily-checkin': 'overview',
@@ -524,29 +497,14 @@ export function AdoptionApp() {
     );
   }, [reportReminder.previousMonthLabel, store.orgProfile.projectName, store.orgProfile.trustName]);
 
+  // Redirect away from views that aren't meaningful until the project has been set up.
+  useEffect(() => {
+    if (isCstUnconfigured(store.orgProfile) && !ALLOWED_VIEWS_WHEN_UNCONFIGURED.includes(view)) {
+      setView('introduction');
+    }
+  }, [store.orgProfile, view]);
+
   // Render charts after dashboard mounts
-  useEffect(() => {
-    if (
-      !hasAutoOpenedCstWizardRef.current &&
-      !showOnboarding &&
-      isCstUnconfigured(store.orgProfile)
-    ) {
-      hasAutoOpenedCstWizardRef.current = true;
-      setShowCstSetupWizard(true);
-    }
-  }, [showOnboarding, store.orgProfile]);
-
-  useEffect(() => {
-    if (hasAutoOpenedSignInModalRef.current || showCstSetupWizard) {
-      return;
-    }
-    if (isCstUnconfigured(store.orgProfile) || isSignedIn(store.orgProfile, currentUserId)) {
-      return;
-    }
-    hasAutoOpenedSignInModalRef.current = true;
-    setShowSignInModal(true);
-  }, [store.orgProfile, currentUserId, showCstSetupWizard]);
-
   useEffect(() => {
     if (view === 'dashboard' && dashboardRef.current) {
       setTimeout(() => {
@@ -612,19 +570,6 @@ export function AdoptionApp() {
     componentRadarVisible,
     componentRadarSize,
   ]);
-
-  useEffect(() => {
-    const syncSidebarWithViewport = () => {
-      setIsSidebarOpen(window.innerWidth >= 1024);
-    };
-
-    syncSidebarWithViewport();
-    window.addEventListener('resize', syncSidebarWithViewport);
-
-    return () => {
-      window.removeEventListener('resize', syncSidebarWithViewport);
-    };
-  }, []);
 
   useEffect(() => {
     if (typeof document !== 'undefined') {
@@ -1422,7 +1367,7 @@ export function AdoptionApp() {
 
     const resetStore = syncDerivedContent(initializeStore());
     setStore(resetStore);
-    setView('dashboard');
+    setView('introduction');
 
     setUserSettings(DEFAULT_USER_SETTINGS);
     save(ADOPTION_USER_SETTINGS_KEY, DEFAULT_USER_SETTINGS);
@@ -1432,17 +1377,10 @@ export function AdoptionApp() {
     setDismissedReminderMonths({});
     save(ADOPTION_REPORT_REMINDER_DISMISS_KEY, {});
 
-    setHasSeenOnboarding(false);
-    setShowOnboarding(true);
-    save(ADOPTION_ONBOARDING_SEEN_KEY, false);
+    save(ADOPTION_INTRODUCTION_COMPLETE_KEY, false);
 
     setCurrentUserId('');
     save(ADOPTION_CURRENT_USER_KEY, '');
-
-    hasAutoOpenedCstWizardRef.current = false;
-    setShowCstSetupWizard(false);
-    hasAutoOpenedSignInModalRef.current = false;
-    setShowSignInModal(false);
 
     Object.keys(localStorage)
       .filter((key) => key.startsWith('nhs-digital-adoption-page-intro-seen:'))
@@ -1667,6 +1605,7 @@ export function AdoptionApp() {
 
   const trustLabel = store.orgProfile.trustName || 'Unconfigured Trust';
   const projectLabel = store.orgProfile.projectName || 'Unnamed Project';
+  const projectConfigured = !isCstUnconfigured(store.orgProfile);
 
   return (
     <div
@@ -1738,7 +1677,7 @@ export function AdoptionApp() {
           </button>
           {expandedNavSections.intro ? (
             <nav className="space-y-1 mb-4">
-              {(['introduction', 'cm-guide', 'project-details'] as View[]).map((v) => (
+              {(['introduction', 'engine-explained', 'project-details'] as View[]).map((v) => (
                 <button
                   key={v}
                   ref={(el) => {
@@ -1753,14 +1692,16 @@ export function AdoptionApp() {
                 >
                   {v === 'introduction'
                     ? 'Introduction'
-                    : v === 'project-details'
-                      ? 'Project Set-up'
-                      : 'Adoption Engine Onboarding'}
+                    : v === 'engine-explained'
+                      ? 'Engine Explained'
+                      : 'Project Profile'}
                 </button>
               ))}
             </nav>
           ) : null}
 
+          {projectConfigured ? (
+            <>
           <button
             type="button"
             aria-expanded={expandedNavSections.overview}
@@ -1897,27 +1838,31 @@ export function AdoptionApp() {
               ))}
             </nav>
           ) : null}
+            </>
+          ) : null}
 
           <div className="px-4 mb-2 text-xs font-semibold text-blue-300 uppercase tracking-wider border-t border-blue-800 pt-6">
             Account
           </div>
           <nav className="space-y-1 mb-8">
-            {(['settings', 'profile'] as View[]).map((v) => (
-              <button
-                key={v}
-                ref={(el) => {
-                  navItemRefs.current[`view:${v}`] = el;
-                }}
-                onClick={() => handleViewChange(v)}
-                className={`w-full flex items-center px-4 py-1 text-sm transition-colors ${
-                  view === v
-                    ? 'bg-blue-800 text-white font-medium border-l-4 border-white'
-                    : 'text-blue-100 hover:bg-blue-800 border-l-4 border-transparent'
-                }`}
-              >
-                {v === 'settings' ? 'Settings' : 'Profile'}
-              </button>
-            ))}
+            {(projectConfigured ? (['settings', 'profile'] as View[]) : (['profile'] as View[])).map(
+              (v) => (
+                <button
+                  key={v}
+                  ref={(el) => {
+                    navItemRefs.current[`view:${v}`] = el;
+                  }}
+                  onClick={() => handleViewChange(v)}
+                  className={`w-full flex items-center px-4 py-1 text-sm transition-colors ${
+                    view === v
+                      ? 'bg-blue-800 text-white font-medium border-l-4 border-white'
+                      : 'text-blue-100 hover:bg-blue-800 border-l-4 border-transparent'
+                  }`}
+                >
+                  {v === 'settings' ? 'Settings' : 'Profile'}
+                </button>
+              )
+            )}
           </nav>
 
           <div className="mt-8 px-4 pb-4 border-t border-blue-800 pt-6">
@@ -2010,7 +1955,7 @@ export function AdoptionApp() {
                 <span className="sr-only sm:not-sr-only sm:ml-1">Auto-save on</span>
               </span>
               <button
-                onClick={() => setShowOnboarding(true)}
+                onClick={() => handleViewChange('introduction')}
                 aria-label="Show introduction"
                 title="Show introduction"
                 className={`text-sm w-9 h-9 flex items-center justify-center bg-white text-[#425563] border border-[#768692] hover:bg-[#f0f4f5] rounded-full font-semibold transition-colors ${nhsFocusRing}`}
@@ -2240,7 +2185,7 @@ export function AdoptionApp() {
                 onComponentClick={openComponentAssessment}
                 onNavigate={handleViewChange}
                 onOpenLensInfo={setActiveLensInfo}
-                onOpenOnboarding={() => setShowOnboarding(true)}
+                onOpenOnboarding={() => handleViewChange('introduction')}
                 colorAccessibilityMode={userSettings.colorAccessibilityMode || 'standard'}
                 darkMode={Boolean(userSettings.darkMode)}
                 componentRadarVisible={componentRadarVisible}
@@ -2274,8 +2219,7 @@ export function AdoptionApp() {
               components={COMPONENTS}
               lenses={MUTABLE_LENSES}
               onComponentClick={openComponentAssessment}
-              onOpenOnboarding={() => setShowOnboarding(true)}
-              onOpenGuidedSetup={() => setShowCstSetupWizard(true)}
+              onGoToIntroduction={() => handleViewChange('introduction')}
               currentUserId={currentUserId}
               onCurrentUserChange={setCurrentUserId}
               showExternalLinksSection={Boolean(userSettings.showExternalLinksSection)}
@@ -2388,21 +2332,18 @@ export function AdoptionApp() {
               darkMode={Boolean(userSettings.darkMode)}
             />
           )}
-          {view === 'cm-guide' && (
-            <ChangeManagementGuide
-              onComponentClick={openComponentAssessment}
-              guidanceTarget={DEFAULT_GUIDANCE_TARGET}
-              linkOverrides={store.orgProfile.linkOverrides}
-              showAdditionalGuidanceLinks={showAdditionalGuidanceLinks}
-              darkMode={Boolean(userSettings.darkMode)}
-            />
-          )}
           {view === 'introduction' && (
             <OnboardingOverviewPage
               darkMode={Boolean(userSettings.darkMode)}
-              onNavigateToProjectDetails={() => handleViewChange('project-details')}
-              onNavigateToGuide={() => handleViewChange('cm-guide')}
-              onNavigateToDashboard={() => handleViewChange('dashboard')}
+              onGetStarted={() => handleViewChange('engine-explained')}
+            />
+          )}
+          {view === 'engine-explained' && (
+            <EngineExplainedPage
+              darkMode={Boolean(userSettings.darkMode)}
+              onGetStarted={() => {
+                openComponentAssessment('vision');
+              }}
             />
           )}
           {view === 'roadmap-view' && (
@@ -2589,33 +2530,9 @@ export function AdoptionApp() {
           darkMode={Boolean(userSettings.darkMode)}
         />
 
-        <OnboardingIntro
-          open={showOnboarding && !showPathwaySelection}
-          onClose={dismissOnboarding}
-          onNavigateToProjectDetails={() => {
-            setView('project-details');
-            dismissOnboarding();
-          }}
-          onNavigateToGuide={() => {
-            setView('cm-guide');
-            dismissOnboarding();
-          }}
-        />
-
-        <PathwaySelectionModal
-          open={showPathwaySelection}
-          initialPathway={store.orgProfile.cst.pathway}
-          onContinue={(pathway) => {
-            handleProfileUpdate({
-              ...store.orgProfile,
-              cst: { ...store.orgProfile.cst, pathway },
-            });
-            setShowPathwaySelection(false);
-            if (!hasSeenPathwaySelection) {
-              setHasSeenPathwaySelection(true);
-              save(ADOPTION_PATHWAY_SELECTION_SEEN_KEY, true);
-            }
-          }}
+        <VisionGetStartedModal
+          open={view === 'assessment' && activeComponentId === 'vision' && visionGetStarted.isOpen}
+          onClose={visionGetStarted.close}
           darkMode={Boolean(userSettings.darkMode)}
         />
 
@@ -2640,71 +2557,6 @@ export function AdoptionApp() {
           darkMode={Boolean(userSettings.darkMode)}
         />
 
-        <CstSetupWizard
-          open={showCstSetupWizard}
-          orgProfile={store.orgProfile}
-          onProfileUpdate={handleProfileUpdate}
-          onClose={() => setShowCstSetupWizard(false)}
-          onComplete={() => {
-            setShowCstSetupWizard(false);
-            setShowGuideSuggestion(true);
-          }}
-          currentUserId={currentUserId}
-          onCurrentUserChange={setCurrentUserId}
-          darkMode={Boolean(userSettings.darkMode)}
-        />
-
-        {showGuideSuggestion && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 p-4">
-            <div
-              className={`${userSettings.darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} w-full max-w-md rounded-xl border p-6 shadow-2xl`}
-            >
-              <h3
-                className={`text-lg font-semibold ${userSettings.darkMode ? 'text-slate-100' : 'text-slate-900'}`}
-              >
-                Setup complete
-              </h3>
-              <p
-                className={`mt-2 text-sm ${userSettings.darkMode ? 'text-slate-300' : 'text-slate-600'}`}
-              >
-                Want a quick guide to how the tool works before you start? The Adoption Engine
-                Onboarding page walks through it step by step.
-              </p>
-              <div className="mt-5 flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setShowGuideSuggestion(false)}
-                  className={`${userSettings.darkMode ? 'border-slate-600 bg-slate-900 text-slate-100 hover:bg-slate-700' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'} rounded-md border px-4 py-2 text-sm font-semibold`}
-                >
-                  Maybe later
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setView('cm-guide');
-                    setShowGuideSuggestion(false);
-                  }}
-                  className="rounded-md bg-[#005eb8] px-4 py-2 text-sm font-semibold text-white shadow-[0_3px_0_#003087] hover:bg-[#00417a]"
-                >
-                  View the guide
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        <SignInRequiredModal
-          open={showSignInModal}
-          teamMembers={store.orgProfile.teamMembers || []}
-          currentUserId={currentUserId}
-          onCurrentUserChange={setCurrentUserId}
-          onClose={() => setShowSignInModal(false)}
-          onNavigateToProjectDetails={() => {
-            setView('project-details');
-            setShowSignInModal(false);
-          }}
-          darkMode={Boolean(userSettings.darkMode)}
-        />
       </div>
     </div>
   );

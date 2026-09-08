@@ -8,6 +8,7 @@ import { getComponentDescription, getLensDescription } from '@data/descriptions'
 import { PHASE_NAMES } from '../../types/constants';
 import { PageHelpButton, PageIntroModal, usePageIntroSeen } from '@components/onboarding/PageIntroModal';
 import { getBragStatusFromAverage, type BragStatus } from '@lib/bragStatus';
+import { READINESS_BANDS } from '@lib/readinessBands';
 
 export interface DashboardProps {
   store: AdoptionStore;
@@ -92,14 +93,7 @@ const DELIVERY_BADGE_STYLES: Record<DeliveryStatus, string> = {
 };
 
 const LENS_KEY_COLORS = ['#0f766e', '#0369a1', '#7c3aed', '#b45309', '#be123c'];
-const SCORE_LEGEND_ITEMS = [
-  { score: 0, label: 'Pre-Emergent', color: '#768692' },
-  { score: 1, label: 'Emerging', color: '#AE2521' },
-  { score: 2, label: 'Developing', color: '#FFB81C' },
-  { score: 3, label: 'Maturing', color: '#005EB8' },
-  { score: 4, label: 'Embedding', color: '#330072' },
-  { score: 5, label: 'Thriving', color: '#00A499' },
-] as const;
+const SCORE_LEGEND_ITEMS = READINESS_BANDS;
 
 export function AdoptionDashboard({
   store,
@@ -635,10 +629,10 @@ export function AdoptionDashboard({
               {onNavigate ? (
                 <button
                   type="button"
-                  onClick={() => onNavigate('cm-guide')}
+                  onClick={() => onNavigate('engine-explained')}
                   className="font-medium text-[#005eb8] hover:underline"
                 >
-                  See Adoption Engine Onboarding
+                  See how the Adoption Engine works
                 </button>
               ) : null}
             </p>

@@ -13,7 +13,7 @@ export interface AdoptionUserSettings {
   manualPhaseFocus?: number;
   hideGuidedWorkflow?: boolean;
   showAdditionalGuidanceLinks?: boolean;
-  /** Per-device override: force-show the Project Setup page's External Links section even after it's marked initiated. */
+  /** Per-device override: force-show the Project Profile page's External Links section even after it's marked initiated. */
   showExternalLinksSection?: boolean;
 }
 
@@ -141,7 +141,7 @@ export function SettingsPanel({
             className={`flex items-center justify-between rounded-md border px-3 py-2 text-sm ${darkMode ? 'border-slate-700 bg-slate-900 text-slate-100' : 'border-slate-200 bg-slate-50 text-slate-700'}`}
           >
             <span>
-              Show external links section (Project Setup, even after marked initiated)
+              Show external links section (Project Profile, even after marked initiated)
             </span>
             <input
               type="checkbox"

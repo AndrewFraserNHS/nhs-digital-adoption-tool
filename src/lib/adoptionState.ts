@@ -128,7 +128,7 @@ export interface OrgProfile {
   componentFurtherReading?: Record<string, string>;
   /**
    * Global reference links not tied to any one component (e.g. the FuturesNHS Change Management
-   * Network). Shown in their own "Core links" section on Project Setup, and matched into
+   * Network). Shown in their own "Core links" section on Project Profile, and matched into
    * every component's auto-linked action/summary text alongside that component's own guidance
    * links. Falls back to CORE_LINKS (maturity-guidance-links.ts) when unset.
    */
@@ -138,7 +138,7 @@ export interface OrgProfile {
   /** Text-matched links to in-app tools (Highlight Builder, Force Field Analysis, Assess & Compare). */
   toolLinks?: ToolLinkEntry[];
   /**
-   * Once set, the Project Setup page's External Links section collapses by default -
+   * Once set, the Project Profile page's External Links section collapses by default -
    * links are a one-time project-setup concern. Travels with export/import. Overridden locally
    * (per device, not exported) by AdoptionUserSettings.showExternalLinksSection.
    */
@@ -169,11 +169,11 @@ export interface HistorySnapshot {
 
 export type View =
   | 'introduction'
+  | 'engine-explained'
   | 'dashboard'
   | 'daily-checkin'
   | 'assessment'
   | 'action-plan'
-  | 'cm-guide'
   | 'guidance-builder'
   | 'roadmap-view'
   | 'highlight-builder'

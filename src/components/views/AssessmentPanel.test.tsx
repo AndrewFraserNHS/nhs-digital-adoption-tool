@@ -1,6 +1,9 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { AssessmentPanel } from './AssessmentPanel';
+import { EVIDENCE_WARNING_DISMISSED_KEY } from '@components/common/EvidenceWarningModal';
+
+const ASSESSMENT_PAGE_INTRO_SEEN_KEY = 'nhs-digital-adoption-page-intro-seen:assessment';
 import type { DraftEntry, OrgProfile } from '@lib/adoptionState';
 import type { AssessmentComponent } from '@data/components';
 
@@ -758,5 +761,44 @@ describe('AssessmentPanel', () => {
       'vision',
       expect.not.arrayContaining([expect.objectContaining({ id: 'custom-outcome:1' })])
     );
+  });
+
+  it('SHOULD open the readiness score explanation WHEN the info icon is clicked', () => {
+    // arrange
+    localStorage.setItem(ASSESSMENT_PAGE_INTRO_SEEN_KEY, 'true');
+    const props = createProps();
+    render(<AssessmentPanel {...props} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
+
+    // act
+    fireEvent.click(screen.getByRole('button', { name: 'What do the readiness score levels mean?' }));
+
+    // assert
+    expect(screen.getByRole('heading', { name: 'Readiness score levels' })).toBeInTheDocument();
+  });
+
+  it('SHOULD advance the score and show a toast WHEN the last action at the current level is marked Completed', () => {
+    // arrange
+    const entry = createEntry({
+      score: 2,
+      actions: [
+        { id: 'action-1', text: 'Run workshop', owner: 'PMO', timescale: 'Q3', status: 'Planned', readinessScore: 2 },
+      ],
+    });
+    const props = createProps({ entry });
+    localStorage.setItem(EVIDENCE_WARNING_DISMISSED_KEY, 'true');
+    localStorage.setItem(ASSESSMENT_PAGE_INTRO_SEEN_KEY, 'true');
+
+    // act
+    render(
+      <AssessmentPanel {...props} focusAction={{ lens: 'Strategic Direction', actionId: 'action-1' }} />
+    );
+    fireEvent.change(screen.getByLabelText('Status'), { target: { value: 'Completed' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save Action' }));
+
+    // assert
+    const lastUpdateEntry = props.onEntryUpdate.mock.calls.at(-1)[2] as DraftEntry;
+    expect(lastUpdateEntry.score).toBe(3);
+    expect(screen.getByText(/moved to Embedding!/)).toBeInTheDocument();
   });
 });

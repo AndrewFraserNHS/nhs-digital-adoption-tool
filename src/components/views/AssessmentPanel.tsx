@@ -26,6 +26,9 @@ import {
   normalizeActionStatus,
 } from '@lib/actionModel';
 import { detectScoreAdvancementOpportunities } from '@lib/componentDerivedAutomation';
+import { READINESS_BANDS, getReadinessBand } from '@lib/readinessBands';
+import { ReadinessScoreInfoModal } from './ReadinessScoreInfoModal';
+import { Toast } from '@components/ui/Toast';
 import { PHASE_NAMES } from '../../types/constants';
 import componentDetailsText from '@data/component-descriptors/component-details.json?raw';
 import { PageHelpButton, PageIntroModal, usePageIntroSeen } from '@components/onboarding/PageIntroModal';
@@ -102,15 +105,10 @@ export interface AssessmentPanelProps {
 const STATUS_OPTIONS = UNIFIED_ACTION_STATUSES.filter(
   (status) => status !== 'Overdue start' && status !== 'Overdue completion'
 );
-const SCORE_LEVELS = [0, 1, 2, 3, 4, 5];
-const SCORE_LABELS: Record<number, string> = {
-  0: 'Not Started',
-  1: 'Emerging',
-  2: 'Developing',
-  3: 'Embedding',
-  4: 'Adopted',
-  5: 'Thriving',
-};
+const SCORE_LEVELS = READINESS_BANDS.map((band) => band.score);
+const SCORE_LABELS: Record<number, string> = Object.fromEntries(
+  READINESS_BANDS.map((band) => [band.score, band.label])
+);
 
 const OBJECTIVE_STATUS_BADGE_STYLES: Record<ObjectiveStatus, string> = {
   'Not Started': 'bg-slate-100 text-slate-700 border-slate-200',
@@ -953,6 +951,19 @@ export function AssessmentPanel({
     toolLinkMatches,
   ]);
   const [actionEditor, setActionEditor] = useState<ActionEditorState | null>(null);
+  const [showReadinessScoreInfo, setShowReadinessScoreInfo] = useState(false);
+  const [scoreAdvanceToast, setScoreAdvanceToast] = useState<string | null>(null);
+
+  const applyScoreAdvance = useCallback(
+    (lens: string, previousScore: number, actions: DraftAction[]): number => {
+      const nextScore = advanceScoreWhileActionsComplete(previousScore, actions);
+      if (nextScore > previousScore) {
+        setScoreAdvanceToast(`${component.label} · ${lens} moved to ${getReadinessBand(nextScore).label}!`);
+      }
+      return nextScore;
+    },
+    [component.label]
+  );
   const [showEvidenceWarning, setShowEvidenceWarning] = useState(false);
   const pendingActionSaveRef = useRef<(() => void) | null>(null);
   const [objectiveViewer, setObjectiveViewer] = useState<ObjectiveViewerState | null>(null);
@@ -1332,7 +1343,7 @@ export function AssessmentPanel({
     onEntryUpdate(actionEditor.sourceComponentId, actionEditor.sourceLens, {
       ...entry,
       actions: nextActions,
-      score: advanceScoreWhileActionsComplete(entry.score, nextActions),
+      score: applyScoreAdvance(actionEditor.sourceLens, entry.score, nextActions),
     });
 
     const selectedObjectiveIds = new Set(actionEditor.linkedObjectiveIds);
@@ -1384,11 +1395,13 @@ export function AssessmentPanel({
 
   const applyLinkedActionStatusChange = (lens: string, actionId: string, status: string) => {
     const entry = getEntry(component.id, lens);
+    const nextActions = entry.actions.map((action) =>
+      action.id === actionId ? { ...action, status: normalizeActionStatus(status) } : action
+    );
     onEntryUpdate(component.id, lens, {
       ...entry,
-      actions: entry.actions.map((action) =>
-        action.id === actionId ? { ...action, status: normalizeActionStatus(status) } : action
-      ),
+      actions: nextActions,
+      score: applyScoreAdvance(lens, entry.score, nextActions),
     });
   };
 
@@ -1997,11 +2010,22 @@ export function AssessmentPanel({
                     </button>
                   </div>
                   <div className="shrink-0 w-full md:w-64">
-                    <label
-                      className={`block text-xs font-semibold mb-1 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
-                    >
-                      Readiness Score
-                    </label>
+                    <div className="flex items-center gap-1 mb-1">
+                      <label
+                        className={`block text-xs font-semibold ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
+                      >
+                        Readiness Score
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => setShowReadinessScoreInfo(true)}
+                        className="group"
+                        title="What do the readiness score levels mean?"
+                        aria-label="What do the readiness score levels mean?"
+                      >
+                        <HeaderInfoIcon />
+                      </button>
+                    </div>
                     <select
                       value={entry.score}
                       onChange={(e) => handleScoreChange(lens, Number(e.target.value))}
@@ -2358,14 +2382,28 @@ export function AssessmentPanel({
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 p-4">
           <div
             className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} w-full max-w-3xl max-h-[calc(100vh-2rem)] overflow-hidden rounded-xl border p-6 shadow-2xl`}
+            style={{
+              borderTopWidth: '4px',
+              borderTopColor: getReadinessBand(actionEditor.action.readinessScore ?? 0).color,
+            }}
           >
             <div className="flex items-center justify-between gap-3">
-              <h3
-                className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
-              >
-                {actionEditor.mode === 'create' ? 'Create Action' : 'Edit Action'} ·{' '}
-                {actionEditorSourceLabel} / {actionEditor.sourceLens} · {actionEditorTitleSummary}
-              </h3>
+              <div>
+                <h3
+                  className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
+                >
+                  {actionEditor.mode === 'create' ? 'Create Action' : 'Edit Action'} ·{' '}
+                  {actionEditorSourceLabel} / {actionEditor.sourceLens} · {actionEditorTitleSummary}
+                </h3>
+                <span
+                  className="mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-semibold text-white"
+                  style={{
+                    backgroundColor: getReadinessBand(actionEditor.action.readinessScore ?? 0).color,
+                  }}
+                >
+                  {getReadinessBand(actionEditor.action.readinessScore ?? 0).label}
+                </span>
+              </div>
               <button
                 type="button"
                 onClick={closeActionModal}
@@ -2797,6 +2835,14 @@ export function AssessmentPanel({
             </div>
           </div>
         </div>
+      ) : null}
+
+      {showReadinessScoreInfo ? (
+        <ReadinessScoreInfoModal onClose={() => setShowReadinessScoreInfo(false)} darkMode={darkMode} />
+      ) : null}
+
+      {scoreAdvanceToast ? (
+        <Toast message={scoreAdvanceToast} onDismiss={() => setScoreAdvanceToast(null)} />
       ) : null}
 
       {objectiveViewer && activeObjective && activeObjectiveStatus ? (

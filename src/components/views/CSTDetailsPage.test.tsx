@@ -43,7 +43,7 @@ describe('ProjectDetailsPage', () => {
         components={components}
         lenses={['Strategic Direction and Leadership']}
         onComponentClick={vi.fn()}
-        onOpenOnboarding={vi.fn()}
+        onGoToIntroduction={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -61,7 +61,7 @@ describe('ProjectDetailsPage', () => {
 
   it('SHOULD reopen the onboarding intro', () => {
     // arrange
-    const onOpenOnboarding = vi.fn();
+    const onGoToIntroduction = vi.fn();
 
     render(
       <ProjectDetailsPage
@@ -70,7 +70,7 @@ describe('ProjectDetailsPage', () => {
         components={components}
         lenses={['Strategic Direction and Leadership']}
         onComponentClick={vi.fn()}
-        onOpenOnboarding={onOpenOnboarding}
+        onGoToIntroduction={onGoToIntroduction}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -79,7 +79,7 @@ describe('ProjectDetailsPage', () => {
     fireEvent.click(screen.getByTestId('cst-show-intro-button'));
 
     // assert
-    expect(onOpenOnboarding).toHaveBeenCalled();
+    expect(onGoToIntroduction).toHaveBeenCalled();
   });
 
   it('updates toolkit choice from CST Details', () => {
@@ -93,7 +93,7 @@ describe('ProjectDetailsPage', () => {
         components={components}
         lenses={['Strategic Direction and Leadership']}
         onComponentClick={vi.fn()}
-        onOpenOnboarding={vi.fn()}
+        onGoToIntroduction={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -122,7 +122,7 @@ describe('ProjectDetailsPage', () => {
         components={components}
         lenses={['Strategic Direction and Leadership']}
         onComponentClick={vi.fn()}
-        onOpenOnboarding={vi.fn()}
+        onGoToIntroduction={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -155,7 +155,7 @@ describe('ProjectDetailsPage', () => {
         components={components}
         lenses={['Strategic Direction and Leadership']}
         onComponentClick={vi.fn()}
-        onOpenOnboarding={vi.fn()}
+        onGoToIntroduction={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -181,7 +181,7 @@ describe('ProjectDetailsPage', () => {
         components={components}
         lenses={['Strategic Direction and Leadership']}
         onComponentClick={vi.fn()}
-        onOpenOnboarding={vi.fn()}
+        onGoToIntroduction={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -198,7 +198,7 @@ describe('ProjectDetailsPage', () => {
         components={components}
         lenses={['Strategic Direction and Leadership']}
         onComponentClick={vi.fn()}
-        onOpenOnboarding={vi.fn()}
+        onGoToIntroduction={vi.fn()}
         onCurrentUserChange={vi.fn()}
         showExternalLinksSection
       />
@@ -219,7 +219,7 @@ describe('ProjectDetailsPage', () => {
         components={components}
         lenses={['Strategic Direction and Leadership']}
         onComponentClick={vi.fn()}
-        onOpenOnboarding={vi.fn()}
+        onGoToIntroduction={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -244,7 +244,7 @@ describe('ProjectDetailsPage', () => {
         components={components}
         lenses={['Strategic Direction and Leadership']}
         onComponentClick={vi.fn()}
-        onOpenOnboarding={vi.fn()}
+        onGoToIntroduction={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -277,7 +277,7 @@ describe('ProjectDetailsPage', () => {
         components={components}
         lenses={['Strategic Direction and Leadership']}
         onComponentClick={vi.fn()}
-        onOpenOnboarding={vi.fn()}
+        onGoToIntroduction={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -300,7 +300,7 @@ describe('ProjectDetailsPage', () => {
         components={components}
         lenses={['Strategic Direction and Leadership']}
         onComponentClick={vi.fn()}
-        onOpenOnboarding={vi.fn()}
+        onGoToIntroduction={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -321,7 +321,7 @@ describe('ProjectDetailsPage', () => {
         components={components}
         lenses={['Strategic Direction and Leadership']}
         onComponentClick={vi.fn()}
-        onOpenOnboarding={vi.fn()}
+        onGoToIntroduction={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -349,7 +349,7 @@ describe('ProjectDetailsPage', () => {
         components={components}
         lenses={['Strategic Direction and Leadership']}
         onComponentClick={vi.fn()}
-        onOpenOnboarding={vi.fn()}
+        onGoToIntroduction={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -369,7 +369,7 @@ describe('ProjectDetailsPage', () => {
         components={components}
         lenses={['Strategic Direction and Leadership']}
         onComponentClick={vi.fn()}
-        onOpenOnboarding={vi.fn()}
+        onGoToIntroduction={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -399,7 +399,7 @@ describe('ProjectDetailsPage', () => {
         components={components}
         lenses={['Strategic Direction and Leadership']}
         onComponentClick={vi.fn()}
-        onOpenOnboarding={vi.fn()}
+        onGoToIntroduction={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -428,7 +428,7 @@ describe('ProjectDetailsPage', () => {
         components={components}
         lenses={['Strategic Direction and Leadership']}
         onComponentClick={vi.fn()}
-        onOpenOnboarding={vi.fn()}
+        onGoToIntroduction={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -460,7 +460,7 @@ describe('ProjectDetailsPage', () => {
         components={components}
         lenses={['Strategic Direction and Leadership']}
         onComponentClick={vi.fn()}
-        onOpenOnboarding={vi.fn()}
+        onGoToIntroduction={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );

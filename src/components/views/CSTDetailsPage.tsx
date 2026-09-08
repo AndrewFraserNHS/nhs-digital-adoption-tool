@@ -358,8 +358,7 @@ export interface ProjectDetailsPageProps {
   components: AssessmentComponent[];
   lenses: string[];
   onComponentClick: (componentId: string) => void;
-  onOpenOnboarding: () => void;
-  onOpenGuidedSetup?: () => void;
+  onGoToIntroduction: () => void;
   darkMode?: boolean;
   currentUserId?: string;
   onCurrentUserChange: (id: string) => void;
@@ -372,8 +371,7 @@ export function ProjectDetailsPage({
   onProfileUpdate,
   components,
   onComponentClick,
-  onOpenOnboarding,
-  onOpenGuidedSetup,
+  onGoToIntroduction,
   darkMode = false,
   currentUserId,
   onCurrentUserChange,
@@ -738,14 +736,14 @@ export function ProjectDetailsPage({
         const text = await file.text();
         const parsed = JSON.parse(text) as { orgProfile?: unknown };
         if (!parsed.orgProfile || typeof parsed.orgProfile !== 'object') {
-          window.alert('This file does not contain Project Setup data.');
+          window.alert('This file does not contain Project Profile data.');
           return;
         }
         const nextProfile = normalizeOrgProfile(parsed.orgProfile as Partial<OrgProfile>);
         const validation = validateOrgProfile(nextProfile);
         if (
           !window.confirm(
-            'Import this Project Setup file? This replaces your current organisation profile, pathway/timeline, toolkit links, further reading, core links and team members.' +
+            'Import this Project Profile file? This replaces your current organisation profile, pathway/timeline, toolkit links, further reading, core links and team members.' +
               (validation.errors.length
                 ? `\n\nNote: the imported data has ${validation.errors.length} validation warning(s) you can fix after importing.`
                 : '')
@@ -756,7 +754,7 @@ export function ProjectDetailsPage({
         setProfile(nextProfile);
         onProfileUpdate(nextProfile);
       } catch (_error) {
-        window.alert('Unable to read this file. Please choose a valid Project Setup export.');
+        window.alert('Unable to read this file. Please choose a valid Project Profile export.');
       }
     },
     [onProfileUpdate]
@@ -767,7 +765,7 @@ export function ProjectDetailsPage({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <h2 className={`text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
-            Project Setup
+            Project Profile
           </h2>
           <PageHelpButton onClick={pageIntro.reopen} darkMode={darkMode} />
         </div>
@@ -787,17 +785,12 @@ export function ProjectDetailsPage({
           </button>
           <button
             type="button"
-            onClick={onOpenOnboarding}
+            onClick={onGoToIntroduction}
             className={nhsButtonSecondary}
             data-testid="cst-show-intro-button"
           >
-            Show introduction again
+            Go to Introduction
           </button>
-          {onOpenGuidedSetup ? (
-            <button type="button" onClick={onOpenGuidedSetup} className={nhsButtonSecondary}>
-              Guided Setup
-            </button>
-          ) : null}
         </div>
       </div>
       <p className={`text-sm -mt-4 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
@@ -1676,7 +1669,7 @@ export function ProjectDetailsPage({
       <PageIntroModal
         open={pageIntro.isOpen}
         onClose={pageIntro.close}
-        title="Project Setup"
+        title="Project Profile"
         darkMode={darkMode}
         body={
           <p>

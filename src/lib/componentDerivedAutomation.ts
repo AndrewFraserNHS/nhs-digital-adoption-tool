@@ -1,4 +1,4 @@
-import { ACTION_TYPES, type ActionType } from './actionModel';
+import { ACTION_TYPES, isResolvedActionStatus, type ActionType } from './actionModel';
 import type { AdoptionStore, ComponentObjective, DraftAction, DraftEntry } from './adoptionState';
 
 interface RawOutcome {
@@ -597,7 +597,7 @@ export function clearDerivedComponentContent(
  * Returns the current score and next score if advancement is possible, or null if not ready.
  * 
  * An advancement opportunity exists when:
- * 1. All actions for the current readiness score are marked "Completed"
+ * 1. All actions for the current readiness score are resolved (Completed or Cancelled)
  * 2. There is a next score to advance to (current < 5)
  * 
  * @param component - The component to check
@@ -623,11 +623,11 @@ export function detectScoreAdvancementOpportunities(
     return null;
   }
 
-  // Check if ALL actions for current score are completed
-  const allCompleted = actionsForCurrentScore.every((action) => action.status === 'Completed');
+  // Check if ALL actions for current score are resolved (Completed or Cancelled)
+  const allResolved = actionsForCurrentScore.every((action) => isResolvedActionStatus(action.status));
 
-  // Return advancement opportunity if all are completed
-  if (allCompleted) {
+  // Return advancement opportunity if all are resolved
+  if (allResolved) {
     return {
       currentScore,
       nextScore: currentScore + 1,

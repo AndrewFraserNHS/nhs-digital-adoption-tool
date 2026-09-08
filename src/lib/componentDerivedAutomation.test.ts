@@ -1,8 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
-import type { AdoptionStore } from './adoptionState';
+import type { AdoptionStore, DraftAction } from './adoptionState';
 import { initializeStore } from './adoptionState';
-import { clearDerivedComponentContent, type DerivedComponentConfig } from './componentDerivedAutomation';
+import {
+  clearDerivedComponentContent,
+  detectScoreAdvancementOpportunities,
+  type DerivedComponentConfig,
+} from './componentDerivedAutomation';
 
 const CONFIG: DerivedComponentConfig = {
   componentId: 'vision',
@@ -71,5 +75,52 @@ describe('clearDerivedComponentContent', () => {
 
     // assert
     expect(next.currentDraft.benefits['Planning and Risk'].actions).toHaveLength(1);
+  });
+});
+
+function makeAction(overrides: Partial<DraftAction>): DraftAction {
+  return {
+    id: 'action-1',
+    text: 'Some action',
+    owner: '',
+    timescale: '',
+    status: 'Planned',
+    readinessScore: 0,
+    ...overrides,
+  };
+}
+
+describe('detectScoreAdvancementOpportunities', () => {
+  it('SHOULD advance WHEN every action for the current score is Completed', () => {
+    // arrange
+    const component = { actions: [makeAction({ status: 'Completed' }), makeAction({ id: 'action-2', status: 'Completed' })] };
+
+    // act
+    const result = detectScoreAdvancementOpportunities(component, 0);
+
+    // assert
+    expect(result).toEqual({ currentScore: 0, nextScore: 1 });
+  });
+
+  it('SHOULD advance WHEN the last unresolved action for the current score is Cancelled, not just Completed', () => {
+    // arrange
+    const component = { actions: [makeAction({ status: 'Completed' }), makeAction({ id: 'action-2', status: 'Cancelled' })] };
+
+    // act
+    const result = detectScoreAdvancementOpportunities(component, 0);
+
+    // assert
+    expect(result).toEqual({ currentScore: 0, nextScore: 1 });
+  });
+
+  it('SHOULD NOT advance WHILE any action for the current score is still Planned or In Progress', () => {
+    // arrange
+    const component = { actions: [makeAction({ status: 'Completed' }), makeAction({ id: 'action-2', status: 'In Progress' })] };
+
+    // act
+    const result = detectScoreAdvancementOpportunities(component, 0);
+
+    // assert
+    expect(result).toBeNull();
   });
 });

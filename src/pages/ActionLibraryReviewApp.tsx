@@ -16,7 +16,7 @@ import stakeholderRaw from '@data/component-actions/stakeholder-engagement-and-o
 import transferBauRaw from '@data/component-actions/transfer-to-bau-actions.json';
 import visionRaw from '@data/component-actions/vision-actions.json';
 import { ASSESSMENT_COMPONENTS } from '@data/components';
-import { OVERARCHING_PHASES } from '@data/cst';
+import { OVERARCHING_PHASES, PATHWAY_OPTIONS, type CstPathwayKey } from '@data/cst';
 import { load, save } from '@lib/storage';
 import { downloadFile } from '@lib/utils';
 import { type ChangeEvent, type JSX, type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
@@ -85,11 +85,17 @@ interface ComponentActionsData {
   actions: LibraryAction[];
 }
 
-interface ReviewState {
-  reviewerName: string;
+interface PathwayReviewState {
   reviewedComponentIds: string[];
   components: Record<string, ComponentActionsData>;
 }
+
+interface ReviewState {
+  reviewerName: string;
+  pathways: Record<CstPathwayKey, PathwayReviewState>;
+}
+
+const PATHWAY_KEYS: CstPathwayKey[] = PATHWAY_OPTIONS.map((option) => option.value);
 
 interface RawOutcome {
   id?: string;
@@ -168,16 +174,40 @@ function buildDefaultComponentData(componentId: string): ComponentActionsData {
   };
 }
 
-const DEFAULT_COMPONENTS: Record<string, ComponentActionsData> = ASSESSMENT_COMPONENTS.reduce(
-  (map, component) => {
-    map[component.id] = buildDefaultComponentData(component.id);
-    return map;
-  },
-  {} as Record<string, ComponentActionsData>
-);
+/** Pathway 2/3 have no bundled content yet - reviewers build their own from scratch. */
+function buildEmptyComponentData(componentId: string): ComponentActionsData {
+  const component = ASSESSMENT_COMPONENTS.find((candidate) => candidate.id === componentId);
+  return {
+    componentMetaId: componentId.toUpperCase(),
+    componentName: component?.label || componentId,
+    outcomes: [],
+    actions: [],
+  };
+}
 
-function normaliseComponentData(raw: unknown, componentId: string): ComponentActionsData {
-  const fallback = DEFAULT_COMPONENTS[componentId];
+const DEFAULT_COMPONENTS_BY_PATHWAY: Record<CstPathwayKey, Record<string, ComponentActionsData>> =
+  PATHWAY_KEYS.reduce(
+    (byPathway, pathway) => {
+      byPathway[pathway] = ASSESSMENT_COMPONENTS.reduce(
+        (map, component) => {
+          map[component.id] =
+            pathway === 'pathway-1'
+              ? buildDefaultComponentData(component.id)
+              : buildEmptyComponentData(component.id);
+          return map;
+        },
+        {} as Record<string, ComponentActionsData>
+      );
+      return byPathway;
+    },
+    {} as Record<CstPathwayKey, Record<string, ComponentActionsData>>
+  );
+
+function normaliseComponentData(
+  raw: unknown,
+  componentId: string,
+  fallback: ComponentActionsData
+): ComponentActionsData {
   if (!raw || typeof raw !== 'object') {
     return fallback;
   }
@@ -197,23 +227,54 @@ function normaliseComponentData(raw: unknown, componentId: string): ComponentAct
   };
 }
 
-function normaliseState(parsed: unknown): ReviewState {
-  const value = (parsed && typeof parsed === 'object' ? parsed : {}) as Partial<ReviewState>;
+function normalisePathwayState(raw: unknown, pathway: CstPathwayKey): PathwayReviewState {
+  const value = (raw && typeof raw === 'object' ? raw : {}) as Partial<PathwayReviewState>;
   const rawComponents = (
     value.components && typeof value.components === 'object' ? value.components : {}
   ) as Record<string, unknown>;
 
   const components: Record<string, ComponentActionsData> = {};
   ASSESSMENT_COMPONENTS.forEach((component) => {
-    components[component.id] = normaliseComponentData(rawComponents[component.id], component.id);
+    components[component.id] = normaliseComponentData(
+      rawComponents[component.id],
+      component.id,
+      DEFAULT_COMPONENTS_BY_PATHWAY[pathway][component.id]
+    );
   });
 
   return {
-    reviewerName: typeof value.reviewerName === 'string' ? value.reviewerName : '',
     reviewedComponentIds: Array.isArray(value.reviewedComponentIds)
       ? value.reviewedComponentIds.filter((id): id is string => typeof id === 'string')
       : [],
     components,
+  };
+}
+
+function normaliseState(parsed: unknown): ReviewState {
+  const value = (parsed && typeof parsed === 'object' ? parsed : {}) as Partial<ReviewState> & {
+    components?: unknown;
+    reviewedComponentIds?: unknown;
+  };
+
+  // Backward compat: exports from before the pathway dimension existed had `components`/
+  // `reviewedComponentIds` at the top level, representing what is now Pathway 1's data.
+  const rawPathways = (
+    value.pathways && typeof value.pathways === 'object'
+      ? value.pathways
+      : { 'pathway-1': { components: value.components, reviewedComponentIds: value.reviewedComponentIds } }
+  ) as Record<string, unknown>;
+
+  const pathways = PATHWAY_KEYS.reduce(
+    (map, pathway) => {
+      map[pathway] = normalisePathwayState(rawPathways[pathway], pathway);
+      return map;
+    },
+    {} as Record<CstPathwayKey, PathwayReviewState>
+  );
+
+  return {
+    reviewerName: typeof value.reviewerName === 'string' ? value.reviewerName : '',
+    pathways,
   };
 }
 
@@ -286,20 +347,27 @@ function toExportAction(action: LibraryAction): RawAction & { readinessScore: nu
  * there is only ever one shape to parse back in via normaliseComponentData/parseActionsFromRaw.
  */
 function buildExportPayload(state: ReviewState) {
-  const components: Record<string, unknown> = {};
-  ASSESSMENT_COMPONENTS.forEach((component) => {
-    const data = state.components[component.id];
-    components[component.id] = {
-      component: { id: data.componentMetaId, name: data.componentName },
-      outcomes: data.outcomes,
-      actions: data.actions.map(toExportAction),
+  const pathways: Record<string, unknown> = {};
+  PATHWAY_KEYS.forEach((pathway) => {
+    const pathwayState = state.pathways[pathway];
+    const components: Record<string, unknown> = {};
+    ASSESSMENT_COMPONENTS.forEach((component) => {
+      const data = pathwayState.components[component.id];
+      components[component.id] = {
+        component: { id: data.componentMetaId, name: data.componentName },
+        outcomes: data.outcomes,
+        actions: data.actions.map(toExportAction),
+      };
+    });
+    pathways[pathway] = {
+      reviewedComponentIds: pathwayState.reviewedComponentIds,
+      components,
     };
   });
   return {
     exportedAt: new Date().toISOString(),
     reviewerName: state.reviewerName,
-    reviewedComponentIds: state.reviewedComponentIds,
-    components,
+    pathways,
   };
 }
 
@@ -452,8 +520,70 @@ function ActionRow({
   );
 }
 
+function OutcomeRow({
+  outcome,
+  original,
+  onUpdate,
+  onReset,
+  onRemove,
+}: {
+  outcome: { id: string; name: string };
+  original: { id: string; name: string } | undefined;
+  onUpdate: (name: string) => void;
+  onReset: () => void;
+  onRemove: () => void;
+}): JSX.Element {
+  const isNew = !original;
+  const isEdited = Boolean(original) && original?.name !== outcome.name;
+
+  return (
+    <div
+      className={`flex items-center gap-2 rounded-md border p-2.5 ${
+        isNew
+          ? 'border-blue-300 bg-blue-50/60'
+          : isEdited
+            ? 'border-amber-300 bg-amber-50/60'
+            : 'border-slate-200 bg-white'
+      }`}
+    >
+      <input
+        value={outcome.name}
+        onChange={(event) => onUpdate(event.target.value)}
+        placeholder={isNew ? 'Describe the new outcome...' : undefined}
+        className="flex-1 rounded-md border border-slate-300 px-2.5 py-1.5 text-sm"
+      />
+      {isNew ? (
+        <span className="shrink-0 rounded-full bg-blue-200 px-2 py-0.5 text-xs font-semibold text-blue-900">
+          New
+        </span>
+      ) : isEdited ? (
+        <span className="shrink-0 rounded-full bg-amber-200 px-2 py-0.5 text-xs font-semibold text-amber-900">
+          Edited
+        </span>
+      ) : null}
+      {isEdited ? (
+        <button
+          type="button"
+          onClick={onReset}
+          className="shrink-0 text-xs font-semibold text-slate-500 underline hover:text-slate-700"
+        >
+          Reset
+        </button>
+      ) : null}
+      <button
+        type="button"
+        onClick={onRemove}
+        className="shrink-0 text-xs font-semibold text-red-600 underline hover:text-red-800"
+      >
+        Remove
+      </button>
+    </div>
+  );
+}
+
 export default function ActionLibraryReviewApp(): JSX.Element {
   const [state, setState] = useState<ReviewState>(() => readStoredState());
+  const [selectedPathway, setSelectedPathway] = useState<CstPathwayKey>('pathway-1');
   const [selectedComponentId, setSelectedComponentId] = useState<string>(ASSESSMENT_COMPONENTS[0].id);
   const [openBand, setOpenBand] = useState<number | null>(0);
   const [filterText, setFilterText] = useState('');
@@ -473,12 +603,15 @@ export default function ActionLibraryReviewApp(): JSX.Element {
     return map;
   }, []);
 
+  const pathwayState = state.pathways[selectedPathway];
+  const defaultComponents = DEFAULT_COMPONENTS_BY_PATHWAY[selectedPathway];
+
   const editedCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     ASSESSMENT_COMPONENTS.forEach((component) => {
-      const current = state.components[component.id];
-      const original = DEFAULT_COMPONENTS[component.id];
-      counts[component.id] = current.actions.filter((action) => {
+      const current = pathwayState.components[component.id];
+      const original = defaultComponents[component.id];
+      const editedActions = current.actions.filter((action) => {
         const originalAction = original.actions.find((candidate) => candidate.id === action.id);
         if (!originalAction) {
           return true; // newly added
@@ -487,28 +620,53 @@ export default function ActionLibraryReviewApp(): JSX.Element {
           originalAction.description !== action.description || originalAction.band !== action.band
         );
       }).length;
+      const editedOutcomes = current.outcomes.filter((outcome) => {
+        const originalOutcome = original.outcomes.find((candidate) => candidate.id === outcome.id);
+        if (!originalOutcome) {
+          return true; // newly added
+        }
+        return originalOutcome.name !== outcome.name;
+      }).length;
+      counts[component.id] = editedActions + editedOutcomes;
     });
     return counts;
-  }, [state.components]);
+  }, [pathwayState.components, defaultComponents]);
 
   const selectedComponent = ASSESSMENT_COMPONENTS.find((c) => c.id === selectedComponentId);
-  const selectedData = state.components[selectedComponentId];
-  const originalData = DEFAULT_COMPONENTS[selectedComponentId];
+  const selectedData = pathwayState.components[selectedComponentId];
+  const originalData = defaultComponents[selectedComponentId];
+
+  const updateComponentData = (
+    componentId: string,
+    updater: (data: ComponentActionsData) => ComponentActionsData
+  ) => {
+    setState((current) => ({
+      ...current,
+      pathways: {
+        ...current.pathways,
+        [selectedPathway]: {
+          ...current.pathways[selectedPathway],
+          components: {
+            ...current.pathways[selectedPathway].components,
+            [componentId]: updater(current.pathways[selectedPathway].components[componentId]),
+          },
+        },
+      },
+    }));
+  };
 
   const updateComponentActions = (
     componentId: string,
     updater: (actions: LibraryAction[]) => LibraryAction[]
   ) => {
-    setState((current) => ({
-      ...current,
-      components: {
-        ...current.components,
-        [componentId]: {
-          ...current.components[componentId],
-          actions: updater(current.components[componentId].actions),
-        },
-      },
-    }));
+    updateComponentData(componentId, (data) => ({ ...data, actions: updater(data.actions) }));
+  };
+
+  const updateComponentOutcomes = (
+    componentId: string,
+    updater: (outcomes: { id: string; name: string }[]) => { id: string; name: string }[]
+  ) => {
+    updateComponentData(componentId, (data) => ({ ...data, outcomes: updater(data.outcomes) }));
   };
 
   const updateAction = (
@@ -538,7 +696,7 @@ export default function ActionLibraryReviewApp(): JSX.Element {
   };
 
   const resetAction = (componentId: string, actionId: string) => {
-    const original = DEFAULT_COMPONENTS[componentId].actions.find((a) => a.id === actionId);
+    const original = defaultComponents[componentId].actions.find((a) => a.id === actionId);
     if (!original) {
       return;
     }
@@ -572,19 +730,64 @@ export default function ActionLibraryReviewApp(): JSX.Element {
   };
 
   const restoreAction = (componentId: string, actionId: string) => {
-    const original = DEFAULT_COMPONENTS[componentId].actions.find((a) => a.id === actionId);
+    const original = defaultComponents[componentId].actions.find((a) => a.id === actionId);
     if (!original) {
       return;
     }
     updateComponentActions(componentId, (actions) => [...actions, { ...original }]);
   };
 
+  const updateOutcome = (componentId: string, outcomeId: string, name: string) => {
+    updateComponentOutcomes(componentId, (outcomes) =>
+      outcomes.map((outcome) => (outcome.id === outcomeId ? { ...outcome, name } : outcome))
+    );
+  };
+
+  const resetOutcome = (componentId: string, outcomeId: string) => {
+    const original = defaultComponents[componentId].outcomes.find((o) => o.id === outcomeId);
+    if (!original) {
+      return;
+    }
+    updateComponentOutcomes(componentId, (outcomes) =>
+      outcomes.map((outcome) => (outcome.id === outcomeId ? { ...outcome, name: original.name } : outcome))
+    );
+  };
+
+  const addOutcome = (componentId: string) => {
+    updateComponentOutcomes(componentId, (outcomes) => [
+      ...outcomes,
+      { id: `${componentId}-outcome-${createId()}`, name: '' },
+    ]);
+  };
+
+  const removeOutcome = (componentId: string, outcomeId: string) => {
+    updateComponentOutcomes(componentId, (outcomes) =>
+      outcomes.filter((outcome) => outcome.id !== outcomeId)
+    );
+  };
+
+  const restoreOutcome = (componentId: string, outcomeId: string) => {
+    const original = defaultComponents[componentId].outcomes.find((o) => o.id === outcomeId);
+    if (!original) {
+      return;
+    }
+    updateComponentOutcomes(componentId, (outcomes) => [...outcomes, { ...original }]);
+  };
+
   const toggleReviewed = (componentId: string) => {
     setState((current) => ({
       ...current,
-      reviewedComponentIds: current.reviewedComponentIds.includes(componentId)
-        ? current.reviewedComponentIds.filter((id) => id !== componentId)
-        : [...current.reviewedComponentIds, componentId],
+      pathways: {
+        ...current.pathways,
+        [selectedPathway]: {
+          ...current.pathways[selectedPathway],
+          reviewedComponentIds: current.pathways[selectedPathway].reviewedComponentIds.includes(
+            componentId
+          )
+            ? current.pathways[selectedPathway].reviewedComponentIds.filter((id) => id !== componentId)
+            : [...current.pathways[selectedPathway].reviewedComponentIds, componentId],
+        },
+      },
     }));
   };
 
@@ -684,14 +887,47 @@ export default function ActionLibraryReviewApp(): JSX.Element {
         <div className="mb-6 rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-blue-900">
           <p className="font-semibold">How to use this</p>
           <p className="mt-1">
-            Pick a component on the left. Each action can have its wording edited, be moved to a
+            Pick a pathway and a component. Each action can have its wording edited, be moved to a
             different level using the dropdown, or reordered with the ▲▼ buttons within its group.
             Use <strong>+ Add action</strong> at the bottom of a group to add a new one, or
             <strong> Remove</strong> on a row to take it out (removed actions can be restored further
-            down if you change your mind). Your changes save automatically in this browser. Tick
-            "Reviewed" once you're happy with a component, then use{' '}
-            <strong>Export my review</strong> when you're done and send the downloaded file back.
+            down if you change your mind). Outcomes work the same way, in the section above the
+            actions. Your changes save automatically in this browser. Tick "Reviewed" once you're
+            happy with a component, then use <strong>Export my review</strong> when you're done and
+            send the downloaded file back.
           </p>
+        </div>
+
+        <div className="mb-6">
+          <h3 className="mb-1.5 text-xs font-bold uppercase tracking-wide text-slate-500">
+            Pathway
+          </h3>
+          <div
+            className="inline-flex rounded-md border border-slate-300 bg-white p-1"
+            role="group"
+            aria-label="Select pathway to edit"
+          >
+            {PATHWAY_OPTIONS.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => setSelectedPathway(option.value)}
+                aria-pressed={selectedPathway === option.value}
+                className={`rounded px-3 py-1.5 text-sm font-medium transition-colors ${
+                  selectedPathway === option.value
+                    ? 'bg-[#005eb8] text-white'
+                    : 'text-slate-600 hover:bg-slate-100'
+                }`}
+              >
+                {option.simplifiedLabel}
+              </button>
+            ))}
+          </div>
+          {selectedPathway !== 'pathway-1' ? (
+            <p className="mt-1.5 text-xs text-slate-500">
+              This pathway has no default content yet - anything you add here starts from scratch.
+            </p>
+          ) : null}
         </div>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[280px_1fr]">
@@ -704,7 +940,7 @@ export default function ActionLibraryReviewApp(): JSX.Element {
                 <div className="space-y-1">
                   {componentsByPhase[phase].map((component) => {
                     const isSelected = component.id === selectedComponentId;
-                    const isReviewed = state.reviewedComponentIds.includes(component.id);
+                    const isReviewed = pathwayState.reviewedComponentIds.includes(component.id);
                     const editedCount = editedCounts[component.id] || 0;
                     return (
                       <button
@@ -748,12 +984,75 @@ export default function ActionLibraryReviewApp(): JSX.Element {
               <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
                 <input
                   type="checkbox"
-                  checked={state.reviewedComponentIds.includes(selectedComponentId)}
+                  checked={pathwayState.reviewedComponentIds.includes(selectedComponentId)}
                   onChange={() => toggleReviewed(selectedComponentId)}
                   className="h-4 w-4"
                 />
                 Reviewed
               </label>
+            </div>
+
+            <div className="mb-6 rounded-lg border border-slate-200 bg-white p-4">
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <h3 className="text-sm font-semibold text-slate-800">
+                  Outcomes ({selectedData.outcomes.length})
+                </h3>
+              </div>
+              <div className="space-y-2">
+                {selectedData.outcomes.map((outcome) => (
+                  <OutcomeRow
+                    key={outcome.id}
+                    outcome={outcome}
+                    original={originalData.outcomes.find((o) => o.id === outcome.id)}
+                    onUpdate={(name) => updateOutcome(selectedComponentId, outcome.id, name)}
+                    onReset={() => resetOutcome(selectedComponentId, outcome.id)}
+                    onRemove={() => removeOutcome(selectedComponentId, outcome.id)}
+                  />
+                ))}
+                {!selectedData.outcomes.length ? (
+                  <p className="text-sm text-slate-400">No outcomes here yet.</p>
+                ) : null}
+              </div>
+              <button
+                type="button"
+                onClick={() => addOutcome(selectedComponentId)}
+                className="mt-3 text-xs font-semibold text-[#005eb8] hover:underline"
+              >
+                + Add outcome
+              </button>
+
+              {(() => {
+                const removedOutcomes = originalData.outcomes.filter(
+                  (original) => !selectedData.outcomes.some((outcome) => outcome.id === original.id)
+                );
+                if (!removedOutcomes.length) {
+                  return null;
+                }
+                return (
+                  <div className="mt-3 rounded-md border border-slate-200 bg-slate-50 p-3">
+                    <p className="text-xs font-semibold text-slate-700">
+                      Removed outcomes ({removedOutcomes.length})
+                    </p>
+                    <div className="mt-2 space-y-1.5">
+                      {removedOutcomes.map((original) => (
+                        <div
+                          key={original.id}
+                          className="flex items-center justify-between gap-3 rounded-md border border-slate-200 bg-white px-3 py-2"
+                        >
+                          <span className="text-sm text-slate-600">{original.name}</span>
+                          <button
+                            type="button"
+                            onClick={() => restoreOutcome(selectedComponentId, original.id)}
+                            className="shrink-0 text-xs font-semibold text-[#005eb8] hover:underline"
+                          >
+                            Restore
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
 
             <input

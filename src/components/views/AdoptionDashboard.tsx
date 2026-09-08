@@ -552,18 +552,6 @@ export function AdoptionDashboard({
         ) : null}
       </div>
 
-      {/* Snapshot reminder - only when work exists but this month isn't captured
-      {snapshotDue && (
-        <div className="dashboard-callout dashboard-callout--snapshot rounded-lg border p-4 flex items-center gap-3 mb-8">
-          <span className="dashboard-callout__icon text-xl shrink-0">📅</span>
-          <p className="dashboard-callout__body text-sm">
-            <strong>This month hasn't been recorded yet.</strong> Use{' '}
-            <span className="font-semibold">'Finalise Month'</span> in the header to snapshot
-            today's progress and build your delivery trajectory.
-          </p>
-        </div>
-      )} */}
-
       {metrics.assessedCount === 0 ? (
         <div className="bg-white rounded-lg shadow-sm p-8 border border-slate-200 mb-8 text-center">
           <h3 className="text-lg font-semibold text-slate-800">Getting started</h3>

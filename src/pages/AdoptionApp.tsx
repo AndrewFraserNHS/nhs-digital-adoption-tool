@@ -1755,6 +1755,7 @@ export function AdoptionApp() {
               lenses={MUTABLE_LENSES}
               onComponentClick={openComponentAssessment}
               onGoToIntroduction={() => handleViewChange('introduction')}
+              onContinueToVision={() => openComponentAssessment('vision')}
               currentUserId={currentUserId}
               onCurrentUserChange={setCurrentUserId}
               showExternalLinksSection={Boolean(userSettings.showExternalLinksSection)}
@@ -1876,9 +1877,7 @@ export function AdoptionApp() {
           {view === 'engine-explained' && (
             <EngineExplainedPage
               darkMode={Boolean(userSettings.darkMode)}
-              onGetStarted={() => {
-                openComponentAssessment('vision');
-              }}
+              onGetStarted={() => handleViewChange('project-details')}
             />
           )}
           {view === 'roadmap-view' && (

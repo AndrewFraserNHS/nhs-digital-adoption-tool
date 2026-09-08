@@ -359,6 +359,7 @@ export interface ProjectDetailsPageProps {
   lenses: string[];
   onComponentClick: (componentId: string) => void;
   onGoToIntroduction: () => void;
+  onContinueToVision: () => void;
   darkMode?: boolean;
   currentUserId?: string;
   onCurrentUserChange: (id: string) => void;
@@ -372,6 +373,7 @@ export function ProjectDetailsPage({
   components,
   onComponentClick,
   onGoToIntroduction,
+  onContinueToVision,
   darkMode = false,
   currentUserId,
   onCurrentUserChange,
@@ -790,6 +792,20 @@ export function ProjectDetailsPage({
             data-testid="cst-show-intro-button"
           >
             Go to Introduction
+          </button>
+          <button
+            type="button"
+            onClick={onContinueToVision}
+            disabled={!profile.trustName.trim()}
+            title={
+              profile.trustName.trim()
+                ? undefined
+                : 'Add a trust name below first so the rest of the tool unlocks'
+            }
+            className={`${nhsButtonPrimary} disabled:cursor-not-allowed disabled:opacity-50`}
+            data-testid="cst-continue-to-vision-button"
+          >
+            Continue to Vision →
           </button>
         </div>
       </div>

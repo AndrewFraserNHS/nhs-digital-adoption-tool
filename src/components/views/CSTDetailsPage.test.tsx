@@ -44,6 +44,7 @@ describe('ProjectDetailsPage', () => {
         lenses={['Strategic Direction and Leadership']}
         onComponentClick={vi.fn()}
         onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -71,6 +72,7 @@ describe('ProjectDetailsPage', () => {
         lenses={['Strategic Direction and Leadership']}
         onComponentClick={vi.fn()}
         onGoToIntroduction={onGoToIntroduction}
+        onContinueToVision={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -94,6 +96,7 @@ describe('ProjectDetailsPage', () => {
         lenses={['Strategic Direction and Leadership']}
         onComponentClick={vi.fn()}
         onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -123,6 +126,7 @@ describe('ProjectDetailsPage', () => {
         lenses={['Strategic Direction and Leadership']}
         onComponentClick={vi.fn()}
         onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -156,6 +160,7 @@ describe('ProjectDetailsPage', () => {
         lenses={['Strategic Direction and Leadership']}
         onComponentClick={vi.fn()}
         onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -182,6 +187,7 @@ describe('ProjectDetailsPage', () => {
         lenses={['Strategic Direction and Leadership']}
         onComponentClick={vi.fn()}
         onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -199,6 +205,7 @@ describe('ProjectDetailsPage', () => {
         lenses={['Strategic Direction and Leadership']}
         onComponentClick={vi.fn()}
         onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
         onCurrentUserChange={vi.fn()}
         showExternalLinksSection
       />
@@ -220,6 +227,7 @@ describe('ProjectDetailsPage', () => {
         lenses={['Strategic Direction and Leadership']}
         onComponentClick={vi.fn()}
         onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -245,6 +253,7 @@ describe('ProjectDetailsPage', () => {
         lenses={['Strategic Direction and Leadership']}
         onComponentClick={vi.fn()}
         onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -278,6 +287,7 @@ describe('ProjectDetailsPage', () => {
         lenses={['Strategic Direction and Leadership']}
         onComponentClick={vi.fn()}
         onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -301,6 +311,7 @@ describe('ProjectDetailsPage', () => {
         lenses={['Strategic Direction and Leadership']}
         onComponentClick={vi.fn()}
         onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -322,6 +333,7 @@ describe('ProjectDetailsPage', () => {
         lenses={['Strategic Direction and Leadership']}
         onComponentClick={vi.fn()}
         onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -350,6 +362,7 @@ describe('ProjectDetailsPage', () => {
         lenses={['Strategic Direction and Leadership']}
         onComponentClick={vi.fn()}
         onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -370,6 +383,7 @@ describe('ProjectDetailsPage', () => {
         lenses={['Strategic Direction and Leadership']}
         onComponentClick={vi.fn()}
         onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -400,6 +414,7 @@ describe('ProjectDetailsPage', () => {
         lenses={['Strategic Direction and Leadership']}
         onComponentClick={vi.fn()}
         onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -429,6 +444,7 @@ describe('ProjectDetailsPage', () => {
         lenses={['Strategic Direction and Leadership']}
         onComponentClick={vi.fn()}
         onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );
@@ -461,6 +477,7 @@ describe('ProjectDetailsPage', () => {
         lenses={['Strategic Direction and Leadership']}
         onComponentClick={vi.fn()}
         onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
         onCurrentUserChange={vi.fn()}
       />
     );

@@ -201,7 +201,7 @@ describe('AssessmentPanel', () => {
     expect(lastUpdateEntry.actions.length).toBe(2);
 
     // act 4
-    fireEvent.click(screen.getByRole('button', { name: 'Remove' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Remove Run workshop' }));
 
     // assert 4
     expect(props.onActionRemove).toHaveBeenCalledWith('vision', 'Strategic Direction', 'action-1');
@@ -374,8 +374,8 @@ describe('AssessmentPanel', () => {
     expect(screen.getByText('Shared action')).toBeTruthy();
     expect(screen.getByText('Linked from Vision / Strategic Direction')).toBeTruthy();
 
-    // act 2 
-    fireEvent.click(screen.getByRole('button', { name: 'Remove' }));
+    // act 2
+    fireEvent.click(screen.getByRole('button', { name: 'Remove Shared action' }));
 
     // assert 2
     expect(props.onActionRemove).toHaveBeenCalledWith(

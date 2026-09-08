@@ -29,6 +29,8 @@ import { detectScoreAdvancementOpportunities } from '@lib/componentDerivedAutoma
 import { READINESS_BANDS, getReadinessBand } from '@lib/readinessBands';
 import { ReadinessScoreInfoModal } from './ReadinessScoreInfoModal';
 import { Toast } from '@components/ui/Toast';
+import { OwnerAvatar } from '@components/ui/OwnerAvatar';
+import { ActionTimelineClock } from '@components/ui/ActionTimelineClock';
 import { PHASE_NAMES } from '../../types/constants';
 import componentDetailsText from '@data/component-descriptors/component-details.json?raw';
 import { PageHelpButton, PageIntroModal, usePageIntroSeen } from '@components/onboarding/PageIntroModal';
@@ -820,6 +822,32 @@ function HeaderInfoIcon(): JSX.Element {
         strokeLinejoin="round"
         strokeWidth={2}
         d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z"
+      />
+    </svg>
+  );
+}
+
+function PencilIcon(): JSX.Element {
+  return (
+    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M11 5h2m6.5-.5a2.121 2.121 0 013 3L8 21l-4 1 1-4L17.5 4.5z"
+      />
+    </svg>
+  );
+}
+
+function BinIcon(): JSX.Element {
+  return (
+    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M6 7h12M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2m3 0-.867 12.142A2 2 0 0115.138 21H8.862a2 2 0 01-1.995-1.858L6 7h12z"
       />
     </svg>
   );
@@ -2136,16 +2164,10 @@ export function AssessmentPanel({
                               Current State
                             </th>
                             <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
-                              Action Type
-                            </th>
-                            <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
                               Owner
                             </th>
                             <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
-                              Start
-                            </th>
-                            <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
-                              End
+                              Timeline
                             </th>
                             {/* <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Notes</th> */}
                             {/* <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Evidence</th> */}
@@ -2252,25 +2274,15 @@ export function AssessmentPanel({
                                     </div>
                                   )}
                                 </td>
-                                <td
-                                  className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}
-                                >
-                                  {action.actionType || 'Unassigned'}
+                                <td className="px-3 py-2">
+                                  <OwnerAvatar name={action.owner || ''} darkMode={darkMode} />
                                 </td>
-                                <td
-                                  className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}
-                                >
-                                  {action.owner || 'Unassigned'}
-                                </td>
-                                <td
-                                  className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
-                                >
-                                  {action.startDate || '-'}
-                                </td>
-                                <td
-                                  className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
-                                >
-                                  {action.dueDate || '-'}
+                                <td className="px-3 py-2">
+                                  <ActionTimelineClock
+                                    status={action.status}
+                                    startDate={action.startDate}
+                                    dueDate={action.dueDate}
+                                  />
                                 </td>
                                 {/* <td className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>{action.notes || '-'}</td>
                               <td className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
@@ -2315,9 +2327,11 @@ export function AssessmentPanel({
                                           action
                                         )
                                       }
-                                      className={`${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 hover:bg-slate-700' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'} rounded-md border px-2.5 py-1.5 text-xs font-semibold`}
+                                      title="Edit action"
+                                      aria-label={`Edit ${action.text}`}
+                                      className={`${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 hover:bg-slate-700' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'} inline-flex h-8 w-8 items-center justify-center rounded-md border`}
                                     >
-                                      Edit
+                                      <PencilIcon />
                                     </button>
                                     <button
                                       type="button"
@@ -2328,9 +2342,11 @@ export function AssessmentPanel({
                                           action.id
                                         )
                                       }
-                                      className={`${darkMode ? 'border-red-500/40 bg-red-500/15 text-red-200 hover:bg-red-500/25' : 'border-red-200 bg-red-50 text-red-700 hover:bg-red-100'} rounded-md border px-2.5 py-1.5 text-xs font-semibold`}
+                                      title="Remove action"
+                                      aria-label={`Remove ${action.text}`}
+                                      className={`${darkMode ? 'border-red-500/40 bg-red-500/15 text-red-200 hover:bg-red-500/25' : 'border-red-200 bg-red-50 text-red-700 hover:bg-red-100'} inline-flex h-8 w-8 items-center justify-center rounded-md border`}
                                     >
-                                      Remove
+                                      <BinIcon />
                                     </button>
                                   </div>
                                 </td>

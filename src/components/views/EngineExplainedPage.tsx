@@ -1,14 +1,16 @@
 import { JSX, useState, type ReactNode } from 'react';
 import { ASSESSMENT_COMPONENTS, getComponentsByPhase } from '@data/components';
-import { PATHWAY_OPTIONS, OVERARCHING_PHASES, type CstPathwayKey } from '@data/cst';
+import { PATHWAY_OPTIONS, type CstPathwayKey } from '@data/cst';
 import { getComponentDescription, getLensDescription } from '@data/descriptions';
 import { PHASE_NAMES } from '../../types/constants';
 import { READINESS_BANDS } from '@lib/readinessBands';
 import { GENERIC_RUBRIC } from '@data/rubrics';
+import { DailyPhaseOverview } from '@components/views/DailyPhaseOverview';
 
 export interface EngineExplainedPageProps {
   darkMode?: boolean;
   onGetStarted: () => void;
+  onComponentClick: (componentId: string) => void;
 }
 
 const STEP_TITLES = ['Pathway', 'Phases', 'Component', 'Lens', 'Readiness', 'Actions'];
@@ -84,6 +86,7 @@ function Card({ children, darkMode }: { children: ReactNode; darkMode: boolean }
 export function EngineExplainedPage({
   darkMode = false,
   onGetStarted,
+  onComponentClick,
 }: EngineExplainedPageProps): JSX.Element {
   const [selectedPathway, setSelectedPathway] = useState<CstPathwayKey>('pathway-1');
   const [activeStep, setActiveStep] = useState(0);
@@ -158,34 +161,16 @@ export function EngineExplainedPage({
         {activeStep === 1 ? (
           <>
             <h3 className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>
-              Your pathway is broken into phases
+              Your pathway is broken into the 5 change phases
             </h3>
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
               Every pathway runs through the same 5 phases, from the earliest thinking about a
-              change through to it being fully embedded as business as usual. Phases give you a
-              sense of when in the change journey you are, and what kind of activity should be
-              happening.
+              change through to it being fully embedded as business as usual. This is the same
+              phase breakdown you'll see on your Daily Check-in once your project is set up - expand
+              a phase below to see what it covers.
             </p>
-            <div className="mt-6 grid grid-cols-1 gap-3">
-              {OVERARCHING_PHASES.map((phase) => (
-                <div
-                  key={phase}
-                  className={`rounded-md border p-3 ${
-                    phase === EXAMPLE_COMPONENT.phase
-                      ? 'border-[#005eb8] bg-blue-50'
-                      : darkMode
-                        ? 'border-slate-700 bg-slate-900'
-                        : 'border-slate-200 bg-white'
-                  }`}
-                >
-                  <p
-                    className={`text-sm font-semibold ${phase === EXAMPLE_COMPONENT.phase ? 'text-[#005eb8]' : darkMode ? 'text-slate-100' : 'text-slate-900'}`}
-                  >
-                    Phase {phase}: {PHASE_NAMES[phase]}
-                    {phase === EXAMPLE_COMPONENT.phase ? ' - we\'ll follow this one' : ''}
-                  </p>
-                </div>
-              ))}
+            <div className="mt-6">
+              <DailyPhaseOverview currentPhase={EXAMPLE_COMPONENT.phase} onComponentClick={onComponentClick} darkMode={darkMode} />
             </div>
             <p className={`mt-4 text-sm ${textClass}`}>
               Each phase covers a set of change components that matter most at that stage - for
@@ -228,16 +213,35 @@ export function EngineExplainedPage({
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
               Every component is assessed through a handful of lenses - perspectives like
               leadership, culture, planning, skills or process. Each lens gets its own readiness
-              score, because a component can be strong in one lens and weak in another. Here's one
+              score, because a component can be strong in one lens and weak in another. Here are all
               of {EXAMPLE_COMPONENT.label}'s lenses:
             </p>
-            <div
-              className={`mt-6 rounded-lg border p-5 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-white'}`}
-            >
-              <p className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>
-                {EXAMPLE_LENS}
-              </p>
-              <p className={`mt-2 text-sm ${textClass}`}>{getLensDescription(EXAMPLE_LENS)}</p>
+            <div className="mt-6 grid grid-cols-1 gap-3">
+              {EXAMPLE_COMPONENT.lenses.map((lens) => {
+                const isExample = lens === EXAMPLE_LENS;
+                return (
+                  <div
+                    key={lens}
+                    className={`rounded-lg border p-5 ${
+                      isExample
+                        ? 'border-[#005eb8] bg-blue-50'
+                        : darkMode
+                          ? 'border-slate-700 bg-slate-900'
+                          : 'border-slate-200 bg-white'
+                    }`}
+                  >
+                    <p
+                      className={`text-lg font-semibold ${isExample ? 'text-[#005eb8]' : darkMode ? 'text-slate-100' : 'text-slate-900'}`}
+                    >
+                      {lens}
+                      {isExample ? " - we'll follow this one" : ''}
+                    </p>
+                    <p className={`mt-2 text-sm ${isExample && !darkMode ? 'text-blue-900' : textClass}`}>
+                      {getLensDescription(lens)}
+                    </p>
+                  </div>
+                );
+              })}
             </div>
             <p className={`mt-4 text-sm ${textClass}`}>
               So now we have a specific thing to score: {EXAMPLE_COMPONENT.label}, seen through the{' '}

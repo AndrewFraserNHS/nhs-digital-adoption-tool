@@ -5,7 +5,7 @@ import { EngineExplainedPage } from './EngineExplainedPage';
 describe('EngineExplainedPage', () => {
   it('SHOULD start on the pathway-picker step with all 3 pathways as cards', () => {
     // arrange
-    render(<EngineExplainedPage onGetStarted={vi.fn()} />);
+    render(<EngineExplainedPage onGetStarted={vi.fn()} onComponentClick={vi.fn()} />);
 
     // assert
     expect(screen.getByRole('heading', { name: 'Every programme starts with a pathway' })).toBeInTheDocument();
@@ -16,13 +16,15 @@ describe('EngineExplainedPage', () => {
 
   it('SHOULD step through Phases, Component, Lens, Readiness and Actions in order', () => {
     // arrange
-    render(<EngineExplainedPage onGetStarted={vi.fn()} />);
+    render(<EngineExplainedPage onGetStarted={vi.fn()} onComponentClick={vi.fn()} />);
 
     // act 1 - move to Phases
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
 
     // assert 1
-    expect(screen.getByRole('heading', { name: 'Your pathway is broken into phases' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Your pathway is broken into the 5 change phases' })
+    ).toBeInTheDocument();
     expect(screen.getAllByText(/Phase 1: Pre-Discovery/).length).toBeGreaterThan(0);
 
     // act 2 - move to Component
@@ -36,10 +38,12 @@ describe('EngineExplainedPage', () => {
     // act 3 - move to Lens
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
 
-    // assert 3
+    // assert 3 - every lens of the example component is listed, not just one
     expect(
       screen.getByRole('heading', { name: 'A lens is a different angle on the same component' })
     ).toBeInTheDocument();
+    expect(screen.getAllByText(/Strategic Direction and Leadership/).length).toBeGreaterThan(0);
+    expect(screen.getByText('People Experience and Culture')).toBeInTheDocument();
 
     // act 4 - move to Readiness
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
@@ -62,7 +66,7 @@ describe('EngineExplainedPage', () => {
   it('SHOULD call onGetStarted from the final step', () => {
     // arrange
     const onGetStarted = vi.fn();
-    render(<EngineExplainedPage onGetStarted={onGetStarted} />);
+    render(<EngineExplainedPage onGetStarted={onGetStarted} onComponentClick={vi.fn()} />);
 
     // act - step through to the end
     for (let i = 0; i < 5; i++) {
@@ -76,7 +80,7 @@ describe('EngineExplainedPage', () => {
 
   it('SHOULD let the user pick a different pathway before stepping through', () => {
     // arrange
-    render(<EngineExplainedPage onGetStarted={vi.fn()} />);
+    render(<EngineExplainedPage onGetStarted={vi.fn()} onComponentClick={vi.fn()} />);
 
     // act
     fireEvent.click(screen.getByRole('button', { name: 'Piloted and Ready to Scale Up' }));

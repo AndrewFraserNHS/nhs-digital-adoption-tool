@@ -1878,6 +1878,7 @@ export function AdoptionApp() {
             <EngineExplainedPage
               darkMode={Boolean(userSettings.darkMode)}
               onGetStarted={() => handleViewChange('project-details')}
+              onComponentClick={openComponentAssessment}
             />
           )}
           {view === 'roadmap-view' && (

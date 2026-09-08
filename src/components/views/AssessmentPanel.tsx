@@ -1707,7 +1707,7 @@ export function AssessmentPanel({
               onClick={() => scrollToSection('assessment-scoring')}
               className={`${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 hover:bg-slate-700' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'} rounded-md border px-3 py-1.5 text-xs font-semibold`}
             >
-              1. Justify
+              1. Where are you now?
             </button>
             <button
               type="button"
@@ -1750,8 +1750,8 @@ export function AssessmentPanel({
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <h3 className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
             {hasAnyScoreForComponent
-              ? 'Step 1: Justify'
-              : 'Step 1: Justification of what is currently known'}
+              ? 'Step 1: Where are you now?'
+              : 'Step 1: Where are you now and what is currently known?'}
           </h3>
           <button
             type="button"

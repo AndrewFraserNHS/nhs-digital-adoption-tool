@@ -67,7 +67,7 @@ export const componentMatrix: Record<string, string[]> = {
     'Actions to manage resistance are being put into place in accordance with the Change Management Plan and areas of possible resistance are being regularly reviewed.(intel used from feedback surveys, senior sponsors and Change Network)\n\n',
     'Resistance management plan is continually reviewed and refined to target areas where there are still pockets of resistance.',
   ],
-  'Skills/ Learning': [
+  'Skills/Learning': [
     'Requirements for future skills has not started.',
     'Workshops started to identify future capabilities and skills and the skill gaps with current state.  Training impact assessed to understand cost and resources of a training programme.',
     'Future capabilities and skills identified.   A plan to address the gaps being developed including a training strategy.  Needs to include how and when training will be delivered.  Should also factor in support post go live e.g. refresher training.',

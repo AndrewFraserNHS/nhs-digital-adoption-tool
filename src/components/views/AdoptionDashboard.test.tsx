@@ -261,7 +261,7 @@ describe('AdoptionDashboard', () => {
 
     // assert 1
     expect(screen.getByText('Getting started')).toBeInTheDocument();
-    expect(screen.queryByText('Phase Progress (RAG)')).not.toBeInTheDocument();
+    expect(screen.queryByText('Phase Progress')).not.toBeInTheDocument();
 
     // act 2
     fireEvent.click(screen.getByRole('button', { name: 'Set up your Project' }));

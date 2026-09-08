@@ -5,7 +5,7 @@
 
 import { type CstPathwayKey, type CstProfile, DEFAULT_CST_PROFILE } from '@data/cst';
 import type { GuidanceLink, LinkOverrides } from '@data/maturity-guidance-links';
-import { IN_APP_TOOLS, DEFAULT_TOOL_LINK_TEXT, type ToolLinkEntry } from '@data/toolLinks';
+import { DEFAULT_TOOL_LINK_TEXT, IN_APP_TOOLS, type ToolLinkEntry } from '@data/toolLinks';
 
 import type { ActionType, UnifiedActionStatus } from './actionModel';
 import type { AuditEvent } from './auditLog';

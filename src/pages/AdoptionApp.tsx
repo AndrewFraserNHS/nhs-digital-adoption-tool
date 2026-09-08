@@ -2,6 +2,10 @@ import {
   EVIDENCE_WARNING_DISMISSED_KEY,
   EvidenceWarningModal,
 } from '@components/common/EvidenceWarningModal';
+import { CstSetupWizard } from '@components/onboarding/CstSetupWizard';
+import { OnboardingIntro } from '@components/onboarding/OnboardingIntro';
+import { PathwaySelectionModal } from '@components/onboarding/PathwaySelectionModal';
+import { SignInRequiredModal } from '@components/onboarding/SignInRequiredModal';
 import { ToolkitChatbot } from '@components/ui/ToolkitChatbot';
 import { usePageIntroSeen } from '@components/onboarding/PageIntroModal';
 import { VisionGetStartedModal } from '@components/onboarding/VisionGetStartedModal';
@@ -14,8 +18,6 @@ import { DailyCheckIn } from '@components/views/DailyCheckIn';
 import { EngineExplainedPage } from '@components/views/EngineExplainedPage';
 import { GuidanceRoadmapView } from '@components/views/GuidanceRoadmapView';
 import { HighlightBuilderTool } from '@components/views/HighlightBuilderTool';
-import ForceFieldAnalysisApp from '@pages/ForceFieldAnalysisApp';
-import CompareApp from '@pages/CompareApp';
 import { ImportConflictModal } from '@components/views/ImportConflictModal';
 import { LensInfoModal } from '@components/views/LensInfoModal';
 import {
@@ -46,7 +48,6 @@ import {
 import {
   ADOPTION_STORAGE_KEY,
   buildAdoptionExportPayload,
-  buildHistorySnapshot,
   mergeImportedAdoptionState,
   migrateSavedAdoptionAssessment,
   parseImportedAdoptionAssessment,
@@ -80,9 +81,11 @@ import {
 import { regenerateContentForPathway,syncDerivedContent } from '@lib/derivedContentSync';
 import { load, save } from '@lib/storage';
 import { downloadFile, escapeHtml } from '@lib/utils';
+import CompareApp from '@pages/CompareApp';
+import ForceFieldAnalysisApp from '@pages/ForceFieldAnalysisApp';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { nhsButtonPrimary, nhsButtonSecondary, nhsFocusRing } from '../styles/nhsTheme';
+import { nhsButtonSecondary, nhsFocusRing } from '../styles/nhsTheme';
 import { PHASE_NAMES, SPECIFIC_RUBRICS } from '../types/constants';
 
 const ADOPTION_USER_SETTINGS_KEY = 'nhs-digital-adoption-user-settings';
@@ -912,7 +915,7 @@ export function AdoptionApp() {
   }, []);
 
   const handleExport = useCallback(() => {
-    const proceed = confirmIfCstWarnings('Export JSON');
+    const proceed = confirmIfCstWarnings('Export');
     if (!proceed) {
       return;
     }
@@ -1092,236 +1095,6 @@ export function AdoptionApp() {
     announceStatus('Import cancelled.');
   }, [announceStatus]);
 
-  const handleFinaliseMonth = useCallback(
-    (options?: { replaceExisting?: boolean }) => {
-      const replaceExisting = Boolean(options?.replaceExisting);
-      if (!finaliseWindowOpen) {
-        window.alert('Finalise Month is available during the final week of each month.');
-        return;
-      }
-
-      const proceedWithWarnings = confirmIfCstWarnings('Finalise Month');
-      if (!proceedWithWarnings) {
-        return;
-      }
-
-      const previousPhase =
-        store.history.length > 0
-          ? computeMetrics(
-              {
-                ...store,
-                currentDraft: store.history[store.history.length - 1].data,
-              },
-              COMPONENTS
-            ).currentPhase
-          : 1;
-
-      if (metrics.currentPhase > previousPhase) {
-        const assessment = promptPhaseCapability(metrics.currentPhase as OverarchingPhase);
-        if (!assessment) {
-          window.alert(
-            'Phase progression cancelled. Confidence and competence self-assessment is required when readiness phase changes.'
-          );
-          return;
-        }
-
-        const gaps: string[] = [];
-        COMPONENTS.filter((component) => component.phase < metrics.currentPhase).forEach(
-          (component) => {
-            component.lenses.forEach((lens) => {
-              const entry = store.currentDraft[component.id]?.[lens];
-              if (!entry || entry.score <= 0 || !entry.justification?.trim()) {
-                gaps.push(`${component.label} / ${lens}`);
-              }
-            });
-          }
-        );
-
-        if (gaps.length > 0) {
-          const rationale = window.prompt(
-            `You're progressing from Phase ${previousPhase} to Phase ${metrics.currentPhase}, but ${gaps.length} item(s) are incomplete. Please provide a justification.`
-          );
-          if (!rationale || !rationale.trim()) {
-            window.alert(
-              'Phase progression cancelled. A justification is required when prior phase items are missing.'
-            );
-            return;
-          }
-
-          setStore((prev) => {
-            const nextStore = {
-              ...prev,
-              phaseOverrides: {
-                ...prev.phaseOverrides,
-                [`phase-progression-${Date.now()}`]: rationale.trim(),
-              },
-              orgProfile: {
-                ...prev.orgProfile,
-                cst: {
-                  ...prev.orgProfile.cst,
-                  phaseCapability: {
-                    ...prev.orgProfile.cst.phaseCapability,
-                    [metrics.currentPhase as OverarchingPhase]: {
-                      ...assessment,
-                      assessedAt: new Date().toISOString(),
-                      reason: 'phase-change',
-                    },
-                  },
-                },
-              },
-            };
-            return {
-              ...nextStore,
-              auditLog: appendAuditEvents(prev, [
-                {
-                  eventType: 'profile-updated',
-                  entityType: 'profile',
-                  summary: `Updated phase capability for phase ${metrics.currentPhase}`,
-                  after: {
-                    phase: metrics.currentPhase,
-                    competence: assessment.competence,
-                    confidence: assessment.confidence,
-                    rationale: rationale.trim(),
-                  },
-                  source: 'local',
-                },
-              ]),
-            };
-          });
-        } else {
-          setStore((prev) => {
-            const nextStore = {
-              ...prev,
-              orgProfile: {
-                ...prev.orgProfile,
-                cst: {
-                  ...prev.orgProfile.cst,
-                  phaseCapability: {
-                    ...prev.orgProfile.cst.phaseCapability,
-                    [metrics.currentPhase as OverarchingPhase]: {
-                      ...assessment,
-                      assessedAt: new Date().toISOString(),
-                      reason: 'phase-change',
-                    },
-                  },
-                },
-              },
-            };
-            return {
-              ...nextStore,
-              auditLog: appendAuditEvents(prev, [
-                {
-                  eventType: 'profile-updated',
-                  entityType: 'profile',
-                  summary: `Updated phase capability for phase ${metrics.currentPhase}`,
-                  after: {
-                    phase: metrics.currentPhase,
-                    competence: assessment.competence,
-                    confidence: assessment.confidence,
-                  },
-                  source: 'local',
-                },
-              ]),
-            };
-          });
-        }
-      }
-
-      const snapshot = buildHistorySnapshot(store.currentDraft, metrics.overallPct);
-
-      setStore((prev) => {
-        const nextHistory = replaceExisting
-          ? prev.history.map((item) => (item.monthLabel === snapshot.monthLabel ? snapshot : item))
-          : [...prev.history, snapshot];
-
-        const nextStore = {
-          ...prev,
-          history: nextHistory,
-        };
-
-        return {
-          ...nextStore,
-          auditLog: appendAuditEvents(prev, [
-            {
-              eventType: 'month-finalized',
-              entityType: 'history',
-              entityId: snapshot.monthLabel,
-              summary: `${replaceExisting ? 'Re-finalized' : 'Finalized'} monthly snapshot for ${snapshot.monthLabel}`,
-              after: {
-                monthLabel: snapshot.monthLabel,
-                overallPercentage: snapshot.overallPercentage,
-              },
-              source: 'local',
-            },
-          ]),
-        };
-      });
-      setView('dashboard');
-    },
-    [
-      appendAuditEvents,
-      COMPONENTS,
-      confirmIfCstWarnings,
-      finaliseWindowOpen,
-      metrics.currentPhase,
-      metrics.overallPct,
-      store,
-      store.currentDraft,
-      store.history,
-    ]
-  );
-
-  const handleFinalisePriorMonth = useCallback(() => {
-    const proceedWithWarnings = confirmIfCstWarnings('Finalise Prior Month');
-    if (!proceedWithWarnings) {
-      return;
-    }
-
-    const previousMonthLabel = reportReminder.previousMonthLabel;
-    const alreadyFinalised = store.history.some(
-      (snapshot) => snapshot.monthLabel === previousMonthLabel
-    );
-
-    if (alreadyFinalised) {
-      window.alert(`${previousMonthLabel} has already been finalised.`);
-      return;
-    }
-
-    const previousDate = new Date();
-    previousDate.setMonth(previousDate.getMonth() - 1);
-
-    const snapshot = buildHistorySnapshot(store.currentDraft, metrics.overallPct, previousDate);
-    setStore((prev) => {
-      const nextStore = {
-        ...prev,
-        history: [...prev.history, snapshot],
-      };
-      return {
-        ...nextStore,
-        auditLog: appendAuditEvents(prev, [
-          {
-            eventType: 'prior-month-finalized',
-            entityType: 'history',
-            entityId: snapshot.monthLabel,
-            summary: `Finalized prior month snapshot for ${snapshot.monthLabel}`,
-            after: {
-              monthLabel: snapshot.monthLabel,
-              overallPercentage: snapshot.overallPercentage,
-            },
-            source: 'local',
-          },
-        ]),
-      };
-    });
-  }, [
-    appendAuditEvents,
-    confirmIfCstWarnings,
-    metrics.overallPct,
-    reportReminder.previousMonthLabel,
-    store.currentDraft,
-    store.history,
-  ]);
-
   const handleLoadExampleData = useCallback(async (profile: 'red' | 'amber' | 'green') => {
     try {
       const response = await fetch(EXAMPLE_DATA_FILES[profile]);
@@ -1474,12 +1247,6 @@ export function AdoptionApp() {
   );
   const canCreateNewFinalisation = finaliseWindowOpen;
   const canOpenFinaliseModal = canCreateNewFinalisation;
-  const finaliseButtonTitle = canOpenFinaliseModal
-    ? 'Review and finalise monthly snapshot'
-    : 'Finalise Month unlocks from the final week of each month.';
-  const finaliseButtonClassName = canOpenFinaliseModal
-    ? `${nhsButtonPrimary} h-9 px-3 py-0 shadow-[0_3px_0_rgba(0,0,0,0.2)]`
-    : 'h-9 px-3 py-0 rounded-md border border-slate-300 bg-slate-200 text-slate-500 cursor-not-allowed';
   const finaliseButtonStyle = canOpenFinaliseModal
     ? { backgroundColor: userSettings.themeColor }
     : undefined;
@@ -1979,20 +1746,8 @@ export function AdoptionApp() {
               </button>
               <button onClick={handleExport} className={`${nhsButtonSecondary} h-9 px-3 py-0`}>
                 <span className="sm:hidden">Export</span>
-                <span className="hidden sm:inline">Export JSON</span>
+                <span className="hidden sm:inline">Export</span>
               </button>
-              <span className="inline-flex" title={finaliseButtonTitle}>
-                <button
-                  onClick={() => setShowFinaliseModal(true)}
-                  disabled={!canOpenFinaliseModal}
-                  aria-label="Finalise Month"
-                  className={finaliseButtonClassName}
-                  style={finaliseButtonStyle}
-                >
-                  <span className="sm:hidden">Finalise</span>
-                  <span className="hidden sm:inline">Finalise Month</span>
-                </button>
-              </span>
             </div>
           </div>
         </header>
@@ -2424,107 +2179,6 @@ export function AdoptionApp() {
           />
         ) : null}
 
-        {showFinaliseModal ? (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 p-4">
-            <div
-              className={`${userSettings.darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'} w-full max-w-2xl rounded-xl border p-6 shadow-2xl`}
-            >
-              <div className="flex items-center justify-between gap-3">
-                <h3
-                  className={`text-lg font-semibold ${userSettings.darkMode ? 'text-slate-100' : 'text-slate-900'}`}
-                >
-                  Finalise Month
-                </h3>
-                <button
-                  type="button"
-                  onClick={() => setShowFinaliseModal(false)}
-                  className={`${userSettings.darkMode ? 'border-slate-600 bg-slate-900 text-slate-100 hover:bg-slate-700' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'} rounded-md border px-3 py-1.5 text-sm`}
-                >
-                  Close
-                </button>
-              </div>
-
-              <div
-                className={`mt-4 space-y-3 text-sm ${userSettings.darkMode ? 'text-slate-200' : 'text-slate-700'}`}
-              >
-                <p>
-                  Finalising creates a point-in-time snapshot for{' '}
-                  <strong>{finaliseSummary.currentMonthLabel}</strong>. A new reporting month starts
-                  on the 1st day of each month.
-                </p>
-                <p>
-                  {finaliseWindowOpen
-                    ? 'Finalise window is open (last week of the month).'
-                    : 'Finalise window is currently closed. You can finalise from the final week of each month.'}
-                </p>
-                {currentMonthSnapshot ? (
-                  <p className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-amber-900">
-                    A snapshot already exists for {finaliseSummary.currentMonthLabel}. Re-finalise
-                    will replace this month only.
-                  </p>
-                ) : null}
-              </div>
-
-              <div
-                className={`${userSettings.darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} mt-4 rounded-md border p-3 text-sm`}
-              >
-                <p
-                  className={`font-semibold ${userSettings.darkMode ? 'text-slate-100' : 'text-slate-800'}`}
-                >
-                  Current summary
-                </p>
-                <ul
-                  className={`mt-2 space-y-1 ${userSettings.darkMode ? 'text-slate-200' : 'text-slate-700'}`}
-                >
-                  <li>Baseline snapshot: {finaliseSummary.baselineLabel}</li>
-                  <li>
-                    Overall readiness: {metrics.overallPct}% (
-                    {finaliseSummary.deltaOverall >= 0 ? '+' : ''}
-                    {finaliseSummary.deltaOverall}% vs baseline)
-                  </li>
-                  <li>Components assessed: {finaliseSummary.assessedCount}</li>
-                  <li>
-                    Actions complete: {finaliseSummary.completedActions}/
-                    {finaliseSummary.totalActions}
-                  </li>
-                </ul>
-              </div>
-
-              <div className="mt-5 flex flex-wrap justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setShowFinaliseModal(false)}
-                  className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
-                >
-                  Cancel
-                </button>
-                {currentMonthSnapshot && finaliseWindowOpen ? (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setShowFinaliseModal(false);
-                      handleFinaliseMonth({ replaceExisting: true });
-                    }}
-                    className="rounded-md border border-amber-300 bg-amber-50 px-4 py-2 text-sm font-semibold text-amber-900 hover:bg-amber-100"
-                  >
-                    Re-finalise This Month
-                  </button>
-                ) : null}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowFinaliseModal(false);
-                    handleFinaliseMonth();
-                  }}
-                  disabled={!finaliseWindowOpen}
-                  className="rounded-md bg-[#005eb8] px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  Finalise Snapshot
-                </button>
-              </div>
-            </div>
-          </div>
-        ) : null}
         <ToolkitChatbot
           toolkitChoice={store.orgProfile.cst.toolkitChoice}
           darkMode={Boolean(userSettings.darkMode)}

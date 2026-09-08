@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type JSX } from 'react';
 import { normalizeOrgProfile, type OrgProfile, type TeamMember } from '@lib/adoptionState';
 import { validateOrgProfile, useFieldError } from '@lib/adoptionValidator';
-import { PATHWAY_OPTIONS, type CstPathwayKey } from '@data/cst';
-import { PathwayContentNotice } from '@components/common/PathwayContentNotice';
 import { nhsButtonPrimary, nhsButtonSecondary } from '../../styles/nhsTheme';
 
 export interface CstSetupWizardProps {
@@ -58,13 +56,6 @@ export function CstSetupWizard({
       onProfileUpdate(updated);
     },
     [onProfileUpdate]
-  );
-
-  const updateCst = useCallback(
-    (field: 'pathway' | 'goLiveDate' | 'fullAdoptionDate' | 'benefitRealizationDate', value: string) => {
-      updateProfile({ ...draft, cst: { ...draft.cst, [field]: value } });
-    },
-    [draft, updateProfile]
   );
 
   const addTeamMember = useCallback(() => {
@@ -130,7 +121,7 @@ export function CstSetupWizard({
           return;
         }
         updateProfile(nextProfile);
-        setStepIndex(2);
+        setStepIndex(1);
       } catch (_error) {
         window.alert('Unable to read this file. Please choose a valid Project Setup export.');
       }
@@ -212,69 +203,6 @@ export function CstSetupWizard({
               value={draft.leadName || ''}
               onChange={(event) => updateProfile({ ...draft, leadName: event.target.value })}
             />
-          </div>
-        </div>
-      ),
-    },
-    {
-      title: 'Pathway & timeline',
-      blurb:
-        'Your pathway shapes the guidance and checklists you see throughout the tool. Pick the one that matches where this programme actually is, then set the key delivery dates.',
-      body: (
-        <div className="space-y-4">
-          <div>
-            <p className={labelClass}>
-              Pathway
-            </p>
-            <div
-              className={`rounded-md border px-3 py-2 text-sm ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-[#768692] bg-slate-50 text-slate-900'}`}
-            >
-              {PATHWAY_OPTIONS.find((option) => option.value === draft.cst.pathway)?.label || draft.cst.pathway}
-            </div>
-          </div>
-          <PathwayContentNotice pathway={draft.cst.pathway} darkMode={darkMode} />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className={labelClass} htmlFor="wizard-go-live">
-                Go Live Date
-              </label>
-              <input
-                id="wizard-go-live"
-                type="date"
-                className={`${INPUT_CLASS} ${inputTheme}`}
-                value={draft.cst.goLiveDate}
-                onChange={(event) => updateCst('goLiveDate', event.target.value)}
-              />
-              {fieldError('cst.goLiveDate') ? (
-                <p className={`mt-1 text-xs ${darkMode ? 'text-amber-300' : 'text-red-700'}`}>
-                  {fieldError('cst.goLiveDate')}
-                </p>
-              ) : null}
-            </div>
-            <div>
-              <label className={labelClass} htmlFor="wizard-full-adoption">
-                Full Adoption (optional)
-              </label>
-              <input
-                id="wizard-full-adoption"
-                type="date"
-                className={`${INPUT_CLASS} ${inputTheme}`}
-                value={draft.cst.fullAdoptionDate}
-                onChange={(event) => updateCst('fullAdoptionDate', event.target.value)}
-              />
-            </div>
-            <div>
-              <label className={labelClass} htmlFor="wizard-benefit">
-                Benefit Realisation (optional)
-              </label>
-              <input
-                id="wizard-benefit"
-                type="date"
-                className={`${INPUT_CLASS} ${inputTheme}`}
-                value={draft.cst.benefitRealizationDate}
-                onChange={(event) => updateCst('benefitRealizationDate', event.target.value)}
-              />
-            </div>
           </div>
         </div>
       ),

@@ -66,10 +66,9 @@ describe('CstSetupWizard', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
 
     // assert 2
-    expect(screen.getByText('Pathway & timeline')).toBeInTheDocument();
+    expect(screen.getByText('Team members')).toBeInTheDocument();
 
     // act 3
-    fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
 
     // assert 3
@@ -77,7 +76,7 @@ describe('CstSetupWizard', () => {
     expect(screen.getByRole('button', { name: 'Done' })).toBeInTheDocument();
   });
 
-  it('SHOULD show the pathway content notice WHERE Pathway 2 is selected before setup opens', () => {
+  it('SHOULD not show a pathway step WHERE the pathway was selected before setup opens', () => {
     // arrange
     const onProfileUpdate = vi.fn();
     const pathwayTwoProfile = {
@@ -99,9 +98,8 @@ describe('CstSetupWizard', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
 
     // assert
-    expect(
-      screen.getByText('Objectives and actions are currently Pathway 1 only')
-    ).toBeInTheDocument();
+    expect(screen.getByText('Team members')).toBeInTheDocument();
+    expect(screen.queryByText('Pathway & timeline')).not.toBeInTheDocument();
   });
 
   it('SHOULD add and remove team members on the team step', () => {
@@ -119,7 +117,6 @@ describe('CstSetupWizard', () => {
         onCurrentUserChange={vi.fn()}
       />
     );
-    fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     fireEvent.click(screen.getByRole('button', { name: '+ Add team member' }));
 

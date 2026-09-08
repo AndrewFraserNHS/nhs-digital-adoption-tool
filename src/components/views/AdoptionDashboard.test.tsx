@@ -120,8 +120,6 @@ describe('AdoptionDashboard', () => {
         metrics={metrics}
         getEntry={getEntry}
         onComponentClick={vi.fn()}
-        pathway="pathway-1"
-        pathwayChecks={{}}
       />
     );
 
@@ -144,8 +142,6 @@ describe('AdoptionDashboard', () => {
         metrics={metrics}
         getEntry={getEntry}
         onComponentClick={vi.fn()}
-        pathway="pathway-1"
-        pathwayChecks={{}}
         componentRadarVisible
         onComponentRadarVisibleChange={onComponentRadarVisibleChange}
       />
@@ -170,8 +166,6 @@ describe('AdoptionDashboard', () => {
         metrics={metrics}
         getEntry={getEntry}
         onComponentClick={vi.fn()}
-        pathway="pathway-1"
-        pathwayChecks={{}}
         componentRadarVisible
         componentRadarSize="medium"
         onComponentRadarSizeChange={onComponentRadarSizeChange}
@@ -195,8 +189,6 @@ describe('AdoptionDashboard', () => {
         metrics={metrics}
         getEntry={getEntry}
         onComponentClick={vi.fn()}
-        pathway="pathway-1"
-        pathwayChecks={{}}
         componentRadarVisible={false}
       />
     );
@@ -216,8 +208,6 @@ describe('AdoptionDashboard', () => {
         metrics={metrics}
         getEntry={getEntry}
         onComponentClick={vi.fn()}
-        pathway="pathway-1"
-        pathwayChecks={{}}
       />
     );
 
@@ -241,8 +231,6 @@ describe('AdoptionDashboard', () => {
         metrics={metrics}
         getEntry={getEntry}
         onComponentClick={onComponentClick}
-        pathway="pathway-1"
-        pathwayChecks={{}}
       />
     );
 
@@ -267,8 +255,6 @@ describe('AdoptionDashboard', () => {
         metrics={emptyMetrics}
         getEntry={getEntry}
         onComponentClick={onComponentClick}
-        pathway="pathway-1"
-        pathwayChecks={{}}
         onNavigate={onNavigate}
       />
     );
@@ -303,8 +289,6 @@ describe('AdoptionDashboard', () => {
         metrics={metrics}
         getEntry={getEntry}
         onComponentClick={vi.fn()}
-        pathway="pathway-1"
-        pathwayChecks={{}}
         onOpenLensInfo={onOpenLensInfo}
       />
     );

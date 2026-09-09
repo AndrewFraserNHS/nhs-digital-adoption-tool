@@ -114,7 +114,6 @@ describe('AssessmentPanel', () => {
 
     // act
     render(<AssessmentPanel {...props} />);
-    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
 
     const controls = screen.getAllByRole('combobox');
     fireEvent.change(controls[1], { target: { value: '4' } });
@@ -137,7 +136,6 @@ describe('AssessmentPanel', () => {
 
     // act
     render(<AssessmentPanel {...props} />);
-    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
 
     // assert
     expect(screen.getByText('Rubric for 2')).toBeInTheDocument();
@@ -150,7 +148,6 @@ describe('AssessmentPanel', () => {
     
     // act
     render(<AssessmentPanel {...props} />);
-    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
     fireEvent.click(screen.getByRole('button', { name: 'Strategic Direction' }));
 
     // assert
@@ -184,7 +181,6 @@ describe('AssessmentPanel', () => {
 
     // act 1
     render(<AssessmentPanel {...props} />);
-    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
     fireEvent.click(screen.getByRole('button', { name: 'Add Action' }));
     fireEvent.change(screen.getByLabelText('Description'), {
       target: { value: 'Created from modal' },
@@ -233,7 +229,6 @@ describe('AssessmentPanel', () => {
 
     // act
     render(<AssessmentPanel {...props} />);
-    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
 
     fireEvent.change(
       screen.getByRole('combobox', { name: 'Filter Strategic Direction actions by type' }),
@@ -275,7 +270,6 @@ describe('AssessmentPanel', () => {
 
     // act
     render(<AssessmentPanel {...props} />);
-    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
 
     fireEvent.change(
       screen.getByRole('combobox', { name: 'Filter Strategic Direction actions by owner' }),
@@ -295,7 +289,6 @@ describe('AssessmentPanel', () => {
 
     // act 1
     render(<AssessmentPanel {...props} />);
-    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
 
     fireEvent.click(screen.getByRole('button', { name: 'Add Action' }));
     fireEvent.change(screen.getByLabelText('Description'), {
@@ -323,7 +316,6 @@ describe('AssessmentPanel', () => {
 
     // act
     render(<AssessmentPanel {...props} />);
-    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
 
     fireEvent.click(screen.getByRole('button', { name: 'Add Action' }));
     fireEvent.click(screen.getByRole('button', { name: 'Add web link' }));
@@ -367,7 +359,6 @@ describe('AssessmentPanel', () => {
 
     // act 1
     render(<AssessmentPanel {...props} />);
-    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
 
 
     // assert 1
@@ -443,7 +434,6 @@ describe('AssessmentPanel', () => {
 
     // act
     render(<AssessmentPanel {...props} />);
-    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
 
     fireEvent.click(screen.getByRole('button', { name: 'Add Action' }));
     fireEvent.change(screen.getByLabelText('Description'), {
@@ -516,7 +506,6 @@ describe('AssessmentPanel', () => {
 
     // act
     render(<AssessmentPanel {...props} />);
-    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
 
     // assert
     const link = screen.getByRole('link', { name: 'RACI/RASCI Matrix' });
@@ -549,7 +538,6 @@ describe('AssessmentPanel', () => {
 
     // act 1: additional links shown by default
     const { unmount } = render(<AssessmentPanel {...props} />);
-    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
 
     // assert 1
     expect(screen.getByRole('link', { name: 'Stakeholder Analysis Tool' })).toBeTruthy();
@@ -558,7 +546,6 @@ describe('AssessmentPanel', () => {
 
     // act 2: additional links hidden
     render(<AssessmentPanel {...props} showAdditionalGuidanceLinks={false} />);
-    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
 
     // assert 2
     expect(screen.queryByRole('link', { name: 'Stakeholder Analysis Tool' })).toBeNull();
@@ -621,7 +608,6 @@ describe('AssessmentPanel', () => {
 
     // act
     render(<AssessmentPanel {...props} />);
-    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
 
     // assert
     expect(
@@ -651,7 +637,6 @@ describe('AssessmentPanel', () => {
 
     // act
     render(<AssessmentPanel {...props} onNavigateToTool={onNavigateToTool} />);
-    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
     fireEvent.click(screen.getByRole('button', { name: 'workshop' }));
 
     // assert
@@ -676,7 +661,6 @@ describe('AssessmentPanel', () => {
 
     // act 1: create mode has no Delete button
     render(<AssessmentPanel {...props} />);
-    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
     fireEvent.click(screen.getByRole('button', { name: /Add Action/ }));
 
     // assert 1
@@ -768,7 +752,6 @@ describe('AssessmentPanel', () => {
     localStorage.setItem(ASSESSMENT_PAGE_INTRO_SEEN_KEY, 'true');
     const props = createProps();
     render(<AssessmentPanel {...props} />);
-    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
 
     // act
     fireEvent.click(screen.getByRole('button', { name: 'What do the readiness score levels mean?' }));
@@ -811,7 +794,6 @@ describe('AssessmentPanel', () => {
     });
     localStorage.setItem(ASSESSMENT_PAGE_INTRO_SEEN_KEY, 'true');
     render(<AssessmentPanel {...props} />);
-    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
 
     // act 1 - click the avatar to reveal the select
     fireEvent.click(screen.getByRole('button', { name: 'Change owner for Run workshop' }));
@@ -840,7 +822,6 @@ describe('AssessmentPanel', () => {
 
     // act
     render(<AssessmentPanel {...props} />);
-    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
 
     // assert
     expect(screen.getByLabelText(/No dates set/)).toBeInTheDocument();
@@ -859,7 +840,6 @@ describe('AssessmentPanel', () => {
 
     // act
     render(<AssessmentPanel {...props} showActionPriorityColours />);
-    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
 
     // assert
     const row = screen.getByText('Must-do action').closest('tr') as HTMLElement;
@@ -878,10 +858,117 @@ describe('AssessmentPanel', () => {
 
     // act
     render(<AssessmentPanel {...props} />);
-    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
 
     // assert
     const row = screen.getByText('Must-do action').closest('tr') as HTMLElement;
     expect(row.className).not.toContain('bg-red-50');
+  });
+
+  it('SHOULD block deleting a Must action from the table and warn instead', () => {
+    // arrange
+    const entry = createEntry({
+      actions: [
+        { id: 'action-1', text: 'Must-do action', owner: 'PMO', timescale: '', status: 'Planned', priority: 'must' },
+      ],
+    });
+    const props = createProps({ entry });
+    localStorage.setItem(ASSESSMENT_PAGE_INTRO_SEEN_KEY, 'true');
+    const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {});
+    render(<AssessmentPanel {...props} />);
+
+    // act
+    fireEvent.click(screen.getByRole('button', { name: 'Remove Must-do action' }));
+
+    // assert
+    expect(alertSpy).toHaveBeenCalledWith(expect.stringContaining('MUST action'));
+    expect(props.onActionRemove).not.toHaveBeenCalled();
+    alertSpy.mockRestore();
+  });
+
+  it('SHOULD block marking a Must action as Cancelled from the table and warn instead', () => {
+    // arrange
+    const entry = createEntry({
+      actions: [
+        { id: 'action-1', text: 'Must-do action', owner: 'PMO', timescale: '', status: 'Planned', priority: 'must' },
+      ],
+    });
+    const props = createProps({ entry });
+    localStorage.setItem(ASSESSMENT_PAGE_INTRO_SEEN_KEY, 'true');
+    const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {});
+    render(<AssessmentPanel {...props} />);
+
+    // act
+    fireEvent.change(screen.getByLabelText('Current state for Must-do action'), {
+      target: { value: 'Cancelled' },
+    });
+
+    // assert
+    expect(alertSpy).toHaveBeenCalledWith(expect.stringContaining('MUST action'));
+    expect(props.onEntryUpdate).not.toHaveBeenCalled();
+    alertSpy.mockRestore();
+  });
+
+  it('SHOULD allow deleting and cancelling a non-Must action from the table', () => {
+    // arrange
+    const entry = createEntry({
+      actions: [
+        { id: 'action-1', text: 'Should-do action', owner: 'PMO', timescale: '', status: 'Planned', priority: 'should' },
+      ],
+    });
+    const props = createProps({ entry });
+    localStorage.setItem(ASSESSMENT_PAGE_INTRO_SEEN_KEY, 'true');
+    render(<AssessmentPanel {...props} />);
+
+    // act
+    fireEvent.click(screen.getByRole('button', { name: 'Remove Should-do action' }));
+
+    // assert
+    expect(props.onActionRemove).toHaveBeenCalledWith('vision', 'Strategic Direction', 'action-1');
+  });
+
+  it('SHOULD block deleting a Must action from the action editor modal and warn instead', () => {
+    // arrange
+    const entry = createEntry({
+      actions: [
+        { id: 'action-1', text: 'Must-do action', owner: 'PMO', timescale: '', status: 'Planned', priority: 'must' },
+      ],
+    });
+    const props = createProps({ entry });
+    localStorage.setItem(ASSESSMENT_PAGE_INTRO_SEEN_KEY, 'true');
+    const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {});
+
+    // act
+    render(
+      <AssessmentPanel {...props} focusAction={{ lens: 'Strategic Direction', actionId: 'action-1' }} />
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Delete Action' }));
+
+    // assert
+    expect(alertSpy).toHaveBeenCalledWith(expect.stringContaining('MUST action'));
+    expect(props.onActionRemove).not.toHaveBeenCalled();
+    alertSpy.mockRestore();
+  });
+
+  it('SHOULD block marking a Must action as Cancelled from the action editor modal', () => {
+    // arrange
+    const entry = createEntry({
+      actions: [
+        { id: 'action-1', text: 'Must-do action', owner: 'PMO', timescale: '', status: 'Planned', priority: 'must' },
+      ],
+    });
+    const props = createProps({ entry });
+    localStorage.setItem(ASSESSMENT_PAGE_INTRO_SEEN_KEY, 'true');
+    const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {});
+
+    // act
+    render(
+      <AssessmentPanel {...props} focusAction={{ lens: 'Strategic Direction', actionId: 'action-1' }} />
+    );
+    fireEvent.change(screen.getByLabelText('Status'), { target: { value: 'Cancelled' } });
+
+    // assert
+    expect(alertSpy).toHaveBeenCalledWith(expect.stringContaining('MUST action'));
+    expect(screen.getByLabelText('Status')).toHaveValue('Planned');
+    alertSpy.mockRestore();
   });
 });

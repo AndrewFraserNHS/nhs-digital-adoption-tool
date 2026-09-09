@@ -1002,7 +1002,7 @@ export function AssessmentPanel({
   const [guidedWorkflowDismissed, setGuidedWorkflowDismissed] = useState(false);
   const [showScoringSection, setShowScoringSection] = useState(true);
   const [showObjectivesSection, setShowObjectivesSection] = useState(true);
-  const [showActionsSection, setShowActionsSection] = useState(false);
+  const [showActionsSection, setShowActionsSection] = useState(true);
   const [showEvidenceSection, setShowEvidenceSection] = useState(false);
   const [showComponentOverviewModal, setShowComponentOverviewModal] = useState(false);
   const pageIntro = usePageIntroSeen('assessment');
@@ -1454,6 +1454,14 @@ export function AssessmentPanel({
     status: string
   ) => {
     const normalizedStatus = normalizeActionStatus(status);
+
+    if (action.priority === 'must' && normalizedStatus === 'Cancelled') {
+      window.alert(
+        "You are trying to mark what we have classified as a MUST action as Cancelled, and it shouldn't be cancelled. Please re-review."
+      );
+      return;
+    }
+
     const hasEvidence = parseEvidenceItems(action.evidence || '').length > 0;
     const shouldWarn =
       normalizedStatus === 'Completed' &&
@@ -1468,6 +1476,16 @@ export function AssessmentPanel({
     }
 
     applyLinkedActionStatusChange(lens, action.id, normalizedStatus);
+  };
+
+  const requestActionDelete = (componentId: string, lens: string, action: DraftAction) => {
+    if (action.priority === 'must') {
+      window.alert(
+        "You are trying to delete what we have classified as a MUST action, and it shouldn't be deleted. Please re-review."
+      );
+      return;
+    }
+    onActionRemove(componentId, lens, action.id);
   };
 
   const updateActionEditor = (updates: Partial<DraftAction>) => {
@@ -2392,10 +2410,10 @@ export function AssessmentPanel({
                                     <button
                                       type="button"
                                       onClick={() =>
-                                        onActionRemove(
+                                        requestActionDelete(
                                           resolvedAction.sourceComponentId,
                                           resolvedAction.sourceLens,
-                                          action.id
+                                          action
                                         )
                                       }
                                       title="Remove action"
@@ -2552,9 +2570,16 @@ export function AssessmentPanel({
                   <span className="mb-1 block font-semibold">Status</span>
                   <select
                     value={actionEditor.action.status}
-                    onChange={(event) =>
-                      updateActionEditor({ status: event.target.value as DraftAction['status'] })
-                    }
+                    onChange={(event) => {
+                      const nextStatus = event.target.value as DraftAction['status'];
+                      if (actionEditor.action.priority === 'must' && normalizeActionStatus(nextStatus) === 'Cancelled') {
+                        window.alert(
+                          "You are trying to mark what we have classified as a MUST action as Cancelled, and it shouldn't be cancelled. Please re-review."
+                        );
+                        return;
+                      }
+                      updateActionEditor({ status: nextStatus });
+                    }}
                     className={`w-full rounded-md border px-3 py-2 text-sm ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
                   >
                     {STATUS_OPTIONS.map((status) => (
@@ -2878,6 +2903,12 @@ export function AssessmentPanel({
                 <button
                   type="button"
                   onClick={() => {
+                    if (actionEditor.action.priority === 'must') {
+                      window.alert(
+                        "You are trying to delete what we have classified as a MUST action, and it shouldn't be deleted. Please re-review."
+                      );
+                      return;
+                    }
                     onActionRemove(
                       actionEditor.sourceComponentId,
                       actionEditor.sourceLens,

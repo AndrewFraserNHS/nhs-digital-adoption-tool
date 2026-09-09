@@ -284,7 +284,7 @@
       "readinessScore": 2
     },
     {
-      "id": "sponsorship-24",
+      "id": "sponsorship-23",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
@@ -296,7 +296,7 @@
       "readinessScore": 2
     },
     {
-      "id": "sponsorship-23",
+      "id": "sponsorship-24",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
@@ -321,24 +321,24 @@
       "readinessScore": 2
     },
     {
-      "id": "sponsorship-27",
+      "id": "sponsorship-26",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
-      "action": "M Use sponsors to reinforce desired behaviours and messages.",
+      "action": "M Reinforce desired behaviours and messages via sponsors.",
       "outcomeIds": [
         "SSG_O2"
       ],
       "readinessScore": 2
     },
     {
-      "id": "sponsorship-26",
+      "id": "sponsorship-27",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Engagement",
-      "action": "S Use sponsors to address stakeholder concerns and demonstrate leadership commitment.",
+      "action": "S Address stakeholder concerns and demonstrate leadership commitment via sponsors.",
       "outcomeIds": [
         "SSG_O2"
       ],
@@ -425,7 +425,7 @@
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
       "category": "Communication",
-      "action": "S Use sponsor-led communications to reinforce progress, successes and key messages.",
+      "action": "S Reinforce progress, successes and key messages through operational learning.",
       "outcomeIds": [
         "SSG_O2"
       ],
@@ -457,19 +457,7 @@
       "readinessScore": 3
     },
     {
-      "id": "sponsorship-37",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
-      "lens": "People Experience & Culture",
-      "category": "Reinforcement",
-      "action": "S Use sponsors to recognise progress and celebrate achievements.",
-      "outcomeIds": [
-        "SSG_O2"
-      ],
-      "readinessScore": 3
-    },
-    {
-      "id": "sponsorship-41",
+      "id": "sponsorship-38",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
@@ -482,7 +470,7 @@
       "readinessScore": 4
     },
     {
-      "id": "sponsorship-38",
+      "id": "sponsorship-39",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
@@ -494,7 +482,7 @@
       "readinessScore": 4
     },
     {
-      "id": "sponsorship-39",
+      "id": "sponsorship-40",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
@@ -506,7 +494,7 @@
       "readinessScore": 4
     },
     {
-      "id": "sponsorship-40",
+      "id": "sponsorship-41",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
@@ -519,7 +507,7 @@
       "readinessScore": 4
     },
     {
-      "id": "sponsorship-46",
+      "id": "sponsorship-42",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
@@ -532,7 +520,7 @@
       "readinessScore": 4
     },
     {
-      "id": "sponsorship-42",
+      "id": "sponsorship-43",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
@@ -544,7 +532,7 @@
       "readinessScore": 4
     },
     {
-      "id": "sponsorship-43",
+      "id": "sponsorship-44",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
@@ -556,7 +544,7 @@
       "readinessScore": 4
     },
     {
-      "id": "sponsorship-44",
+      "id": "sponsorship-45",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
@@ -568,12 +556,12 @@
       "readinessScore": 4
     },
     {
-      "id": "sponsorship-45",
+      "id": "sponsorship-46",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
-      "action": "S Use sponsor-led recognition to reinforce desired organisational behaviours.",
+      "action": "S Reinforce desired organisational behaviours using sponsor-led recognition.",
       "outcomeIds": [
         "SSG_O2"
       ],
@@ -625,7 +613,7 @@
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
       "category": "Risk Management",
-      "action": "M Implement actions to address sponsorship, governance and decision-making risks",
+      "action": "M Implement actions to address sponsorship, governance and decision-making risks.",
       "outcomeIds": [],
       "readinessScore": 2
     },
@@ -645,12 +633,12 @@
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
       "category": "Dependency Management",
-      "action": "S Align governance activities with implementation milestones, programme plans and change management priorities",
+      "action": "S Align governance activities with implementation milestones, programme plans and change management priorities.",
       "outcomeIds": [],
       "readinessScore": 2
     },
     {
-      "id": "sponsorship-55",
+      "id": "sponsorship-54",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Planning & Risk",
@@ -660,7 +648,7 @@
       "readinessScore": 3
     },
     {
-      "id": "sponsorship-54",
+      "id": "sponsorship-55",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Planning & Risk",

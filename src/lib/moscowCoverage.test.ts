@@ -49,13 +49,13 @@ describe('MoSCoW priority coverage (Pathway 1 bundled defaults)', () => {
     expect(templates.every((template) => template.priority === undefined)).toBe(true);
   });
 
-  it('SHOULD flag exactly the 3 actions authored with a rework asterisk', () => {
+  it('SHOULD flag no actions as needing rework now every asterisk-marked action has been resolved', () => {
     // act
     const allTemplates = Object.values(PRIORITY_REVIEWED_SOURCES).flatMap(
       (rawText) => parseDerivedComponentSource(rawText, CONFIG).templates
     );
 
     // assert
-    expect(allTemplates.filter((template) => template.needsRework).length).toBe(3);
+    expect(allTemplates.filter((template) => template.needsRework).length).toBe(0);
   });
 });

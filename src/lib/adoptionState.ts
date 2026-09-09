@@ -29,8 +29,8 @@ export interface BaseAction {
   dueDate?: string;
   notes?: string;
   evidence?: string;
-  /** MoSCoW priority parsed from the bundled default content (Pathway 1 only today) - never shown unless a user opts in via Settings. */
-  priority?: 'must' | 'should';
+  /** MoSCoW priority parsed from the bundled default content (Pathway 1 only today) - never shown unless a user opts in via Settings. Could is stored distinctly from Should even though it displays/behaves the same. */
+  priority?: 'must' | 'should' | 'could';
   /** True when the source content was flagged (via an authored "*" marker) as still needing rework. */
   needsRework?: boolean;
 }

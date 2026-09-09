@@ -302,7 +302,7 @@
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Engagement",
-      "action": "M Use network members to gather insight, questions, concerns and feedback from stakeholders.",
+      "action": "M Gather insights, questions, concerns, and feedback from stakeholders through network members.",
       "outcomeIds": [
         "CN_O2"
       ],
@@ -314,7 +314,7 @@
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Communication",
-      "action": "M Use network members to reinforce key messages and support local engagement activity.",
+      "action": "M Reinforce key messages and support local engagement activities through network members.",
       "outcomeIds": [
         "CN_O2"
       ],
@@ -358,7 +358,7 @@
       "readinessScore": 2
     },
     {
-      "id": "change_network-31",
+      "id": "change_network-28",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
@@ -370,7 +370,7 @@
       "readinessScore": 3
     },
     {
-      "id": "change_network-28",
+      "id": "change_network-29",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
@@ -382,7 +382,7 @@
       "readinessScore": 3
     },
     {
-      "id": "change_network-29",
+      "id": "change_network-30",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
@@ -394,7 +394,7 @@
       "readinessScore": 3
     },
     {
-      "id": "change_network-30",
+      "id": "change_network-31",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
@@ -468,24 +468,12 @@
       "readinessScore": 3
     },
     {
-      "id": "change_network-41",
-      "fromStatus": "Adopted",
-      "toStatus": "Thriving",
-      "lens": "Strategic Direction & Leadership",
-      "category": "Reinforcement",
-      "action": "M * Develop a structured approach to sustaining a change network capable of supporting future change initiatives, with appropriate ownership.",
-      "outcomeIds": [
-        "CN_O3"
-      ],
-      "readinessScore": 4
-    },
-    {
       "id": "change_network-37",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
-      "category": "Governance",
-      "action": "M *Embed the change network into future organisational change and improvement approaches.",
+      "category": "Reinforcement",
+      "action": "M Develop a structured approach to sustaining a change network capable of supporting future change initiatives, with appropriate ownership.",
       "outcomeIds": [
         "CN_O3"
       ],
@@ -493,6 +481,18 @@
     },
     {
       "id": "change_network-38",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "M Embed the change network into future organisational change and improvement approaches.",
+      "outcomeIds": [
+        "CN_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "change_network-39",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
@@ -504,7 +504,7 @@
       "readinessScore": 4
     },
     {
-      "id": "change_network-39",
+      "id": "change_network-40",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
@@ -516,7 +516,7 @@
       "readinessScore": 4
     },
     {
-      "id": "change_network-40",
+      "id": "change_network-41",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",

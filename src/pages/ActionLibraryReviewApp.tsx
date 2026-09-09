@@ -52,7 +52,7 @@ import visionRawP3 from '@data/component-actions/vision-actions-pathway3.json';
 import { ASSESSMENT_COMPONENTS } from '@data/components';
 import { type CstPathwayKey,OVERARCHING_PHASES, PATHWAY_OPTIONS } from '@data/cst';
 import { load, save } from '@lib/storage';
-import { parseMoscowPrefix, type ActionPriority } from '@lib/moscow';
+import { moscowLetterForPriority, parseMoscowPrefix, type ActionPriority } from '@lib/moscow';
 import { downloadFile } from '@lib/utils';
 import { type ChangeEvent, type JSX, type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -402,12 +402,12 @@ function updateActionBand(actions: LibraryAction[], actionId: string, newBand: n
   return [...without.slice(0, insertAt), updated, ...without.slice(insertAt)];
 }
 
-/** Re-embeds the "M "/"S " marker ahead of the description on export, so re-importing the file round-trips through parseMoscowPrefix cleanly. The "*" rework marker is intentionally dropped here - editing an action via the priority dropdown is how a reviewer resolves/confirms a flagged one. */
+/** Re-embeds the "M "/"S "/"C " marker ahead of the description on export, so re-importing the file round-trips through parseMoscowPrefix cleanly (Could must round-trip back to "C ", not drift into "S "). The "*" rework marker is intentionally dropped here - editing an action via the priority dropdown is how a reviewer resolves/confirms a flagged one. */
 function toExportActionText(action: LibraryAction): string {
   if (!action.priority) {
     return action.description;
   }
-  return `${action.priority === 'must' ? 'M' : 'S'} ${action.description}`;
+  return `${moscowLetterForPriority(action.priority)} ${action.description}`;
 }
 
 function toExportAction(action: LibraryAction): RawAction & { readinessScore: number } {
@@ -556,6 +556,7 @@ function ActionRow({
             <option value="">-</option>
             <option value="must">Must</option>
             <option value="should">Should</option>
+            <option value="could">Could</option>
           </select>
           {action.needsRework ? (
             <span
@@ -700,6 +701,12 @@ export default function ActionLibraryReviewApp(): JSX.Element {
   useEffect(() => {
     save(STORAGE_KEY, buildExportPayload(state));
   }, [state]);
+
+  // Always land on Level 0 when switching to a different component (or pathway) - the accordion
+  // shouldn't stay stuck on whichever level was last open for the previous component.
+  useEffect(() => {
+    setOpenBand(0);
+  }, [selectedComponentId, selectedPathway]);
 
   const componentsByPhase = useMemo(() => {
     const map: Record<number, typeof ASSESSMENT_COMPONENTS> = {};

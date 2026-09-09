@@ -139,7 +139,7 @@
       "readinessScore": 1
     },
     {
-      "id": "change_impact-11",
+      "id": "change_impact-10",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Planning & Risk",
@@ -152,7 +152,7 @@
       "readinessScore": 1
     },
     {
-      "id": "change_impact-13",
+      "id": "change_impact-11",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
@@ -164,7 +164,7 @@
       "readinessScore": 1
     },
     {
-      "id": "change_impact-14",
+      "id": "change_impact-12",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
@@ -177,7 +177,7 @@
       "readinessScore": 1
     },
     {
-      "id": "change_impact-16",
+      "id": "change_impact-13",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Planning & Risk",
@@ -190,7 +190,7 @@
       "readinessScore": 1
     },
     {
-      "id": "change_impact-17",
+      "id": "change_impact-14",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Planning & Risk",
@@ -203,7 +203,7 @@
       "readinessScore": 1
     },
     {
-      "id": "change_impact-18",
+      "id": "change_impact-15",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
@@ -216,7 +216,7 @@
       "readinessScore": 2
     },
     {
-      "id": "change_impact-19",
+      "id": "change_impact-16",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
@@ -228,7 +228,7 @@
       "readinessScore": 2
     },
     {
-      "id": "change_impact-20",
+      "id": "change_impact-17",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
@@ -241,7 +241,7 @@
       "readinessScore": 2
     },
     {
-      "id": "change_impact-21",
+      "id": "change_impact-18",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
@@ -253,7 +253,7 @@
       "readinessScore": 2
     },
     {
-      "id": "change_impact-22",
+      "id": "change_impact-19",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
@@ -266,7 +266,7 @@
       "readinessScore": 2
     },
     {
-      "id": "change_impact-23",
+      "id": "change_impact-20",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
@@ -278,17 +278,17 @@
       "readinessScore": 2
     },
     {
-      "id": "change_impact-24",
+      "id": "change_impact-21",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Planning & Risk",
       "category": "Measurement & Evaluation",
-      "action": "M * review measures throughout the tool\nMeasure the effectiveness of change impact management activities across impacted stakeholder groups, services and business areas",
+      "action": "M Measure the effectiveness of change impact management activities across impacted stakeholder groups, services and business areas",
       "outcomeIds": [],
       "readinessScore": 3
     },
     {
-      "id": "change_impact-25",
+      "id": "change_impact-22",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Planning & Risk",
@@ -298,7 +298,7 @@
       "readinessScore": 3
     },
     {
-      "id": "change_impact-27",
+      "id": "change_impact-23",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
@@ -308,7 +308,7 @@
       "readinessScore": 3
     },
     {
-      "id": "change_impact-28",
+      "id": "change_impact-24",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
@@ -318,7 +318,7 @@
       "readinessScore": 3
     },
     {
-      "id": "change_impact-29",
+      "id": "change_impact-25",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Planning & Risk",
@@ -328,7 +328,7 @@
       "readinessScore": 3
     },
     {
-      "id": "change_impact-30",
+      "id": "change_impact-26",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Planning & Risk",
@@ -338,7 +338,7 @@
       "readinessScore": 3
     },
     {
-      "id": "change_impact-36",
+      "id": "change_impact-27",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Planning & Risk",
@@ -348,7 +348,7 @@
       "readinessScore": 4
     },
     {
-      "id": "change_impact-31",
+      "id": "change_impact-28",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Planning & Risk",
@@ -358,7 +358,7 @@
       "readinessScore": 4
     },
     {
-      "id": "change_impact-37",
+      "id": "change_impact-29",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
@@ -368,7 +368,7 @@
       "readinessScore": 4
     },
     {
-      "id": "change_impact-33",
+      "id": "change_impact-30",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
@@ -378,7 +378,7 @@
       "readinessScore": 4
     },
     {
-      "id": "change_impact-32",
+      "id": "change_impact-31",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Planning & Risk",
@@ -388,7 +388,7 @@
       "readinessScore": 4
     },
     {
-      "id": "change_impact-35",
+      "id": "change_impact-32",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Planning & Risk",
@@ -398,7 +398,7 @@
       "readinessScore": 4
     },
     {
-      "id": "change_impact-34",
+      "id": "change_impact-33",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",

@@ -130,13 +130,43 @@ describe('ActionLibraryReviewApp', () => {
     expect(within(row).getByText('Edited')).toBeInTheDocument();
   });
 
-  it('SHOULD flag a rework-marked action', () => {
+  it('SHOULD parse a "C " prefix as Could, distinct from Should', () => {
+    // arrange
+    render(<ActionLibraryReviewApp />);
+    const description = screen.getByDisplayValue(
+      'Create simple awareness messages explaining that a vision is being developed.'
+    );
+    const row = description.closest('div')?.parentElement?.parentElement as HTMLElement;
+
+    // assert
+    const prioritySelect = within(row).getByRole('combobox', { name: 'Priority' }) as HTMLSelectElement;
+    expect(prioritySelect.value).toBe('could');
+  });
+
+  it('SHOULD reset the open readiness-level accordion back to Level 0 WHEN switching components', () => {
+    // arrange
+    render(<ActionLibraryReviewApp />);
+
+    // act - open Level 4 for Vision
+    fireEvent.click(screen.getByRole('button', { name: /Level 4/ }));
+    expect(screen.getByRole('button', { name: /Level 4/ })).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByRole('button', { name: /Level 0/ })).toHaveAttribute('aria-expanded', 'false');
+
+    // act - switch to a different component
+    fireEvent.click(screen.getByRole('button', { name: 'Case for Change' }));
+
+    // assert - Level 0 is open again for the new component, not still stuck on Level 4
+    expect(screen.getByRole('button', { name: /Level 0/ })).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByRole('button', { name: /Level 4/ })).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('SHOULD show no rework badges now every previously-flagged action has been resolved', () => {
     // arrange
     render(<ActionLibraryReviewApp />);
     fireEvent.click(screen.getByRole('button', { name: 'Change Network' }));
     fireEvent.click(screen.getByRole('button', { name: /Adopted → Thriving/ }));
 
-    // assert - both flagged actions in this band show the badge
-    expect(screen.getAllByText('⚠ rework')).toHaveLength(2);
+    // assert
+    expect(screen.queryByText('⚠ rework')).not.toBeInTheDocument();
   });
 });

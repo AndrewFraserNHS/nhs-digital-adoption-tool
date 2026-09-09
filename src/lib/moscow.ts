@@ -1,4 +1,7 @@
-export type ActionPriority = 'must' | 'should';
+export type ActionPriority = 'must' | 'should' | 'could';
+
+const PRIORITY_BY_LETTER: Record<string, ActionPriority> = { M: 'must', S: 'should', C: 'could' };
+const LETTER_BY_PRIORITY: Record<ActionPriority, string> = { must: 'M', should: 'S', could: 'C' };
 
 export interface ParsedMoscowPrefix {
   priority?: ActionPriority;
@@ -15,9 +18,11 @@ export interface ParsedMoscowPrefix {
 const PREFIX_RE = /^([MSC])\s+(\*\s*)?/;
 
 /**
- * Splits an authored action description into its MoSCoW priority (Could folds into Should - it's
- * rare enough that we don't track it separately) and the clean text with the prefix removed. Text
- * with no recognised prefix passes through unchanged.
+ * Splits an authored action description into its MoSCoW priority and the clean text with the
+ * prefix removed. Must/Should/Could are kept as distinct values so re-exporting never silently
+ * rewrites a "C" to an "S" - Could is only treated the same as Should for display purposes
+ * (colouring, blocking rules), never in the stored data. Text with no recognised prefix passes
+ * through unchanged.
  */
 export function parseMoscowPrefix(rawText: string): ParsedMoscowPrefix {
   const trimmed = (rawText || '').trim();
@@ -27,8 +32,18 @@ export function parseMoscowPrefix(rawText: string): ParsedMoscowPrefix {
   }
 
   return {
-    priority: match[1] === 'M' ? 'must' : 'should',
+    priority: PRIORITY_BY_LETTER[match[1]],
     needsRework: Boolean(match[2]),
     text: trimmed.slice(match[0].length).trim(),
   };
+}
+
+/** The reverse of parseMoscowPrefix's letter mapping - used when re-embedding a priority into exported action text. */
+export function moscowLetterForPriority(priority: ActionPriority): string {
+  return LETTER_BY_PRIORITY[priority];
+}
+
+/** Could is visually/functionally treated the same as Should everywhere except the stored letter itself. */
+export function isShouldLikePriority(priority: ActionPriority | undefined): boolean {
+  return priority === 'should' || priority === 'could';
 }

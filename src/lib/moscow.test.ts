@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parseMoscowPrefix } from './moscow';
+import { isShouldLikePriority, moscowLetterForPriority, parseMoscowPrefix } from './moscow';
 
 describe('parseMoscowPrefix', () => {
   it('SHOULD extract Must from an "M " prefix', () => {
@@ -17,9 +17,23 @@ describe('parseMoscowPrefix', () => {
     expect(result.text).toBe('Identify key leaders who need to endorse the vision.');
   });
 
-  it('SHOULD fold Could ("C ") into Should', () => {
+  it('SHOULD extract Could from a "C " prefix WITHOUT folding it into Should', () => {
     const result = parseMoscowPrefix('C Explore an additional stakeholder channel.');
-    expect(result.priority).toBe('should');
+    expect(result.priority).toBe('could');
+    expect(result.text).toBe('Explore an additional stakeholder channel.');
+  });
+
+  it('SHOULD treat Could the same as Should for display purposes only', () => {
+    expect(isShouldLikePriority('could')).toBe(true);
+    expect(isShouldLikePriority('should')).toBe(true);
+    expect(isShouldLikePriority('must')).toBe(false);
+    expect(isShouldLikePriority(undefined)).toBe(false);
+  });
+
+  it('SHOULD round-trip each priority back to its original letter', () => {
+    expect(moscowLetterForPriority('must')).toBe('M');
+    expect(moscowLetterForPriority('should')).toBe('S');
+    expect(moscowLetterForPriority('could')).toBe('C');
   });
 
   it('SHOULD flag needsRework and strip the marker WHEN the prefix has "* " (asterisk with a space)', () => {

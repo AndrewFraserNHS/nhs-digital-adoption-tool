@@ -55,7 +55,7 @@
       "readinessScore": 0
     },
     {
-      "id": "case_for_change-6",
+      "id": "case_for_change-3",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
@@ -91,7 +91,7 @@
       "readinessScore": 0
     },
     {
-      "id": "case_for_change-3",
+      "id": "case_for_change-6",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
@@ -144,7 +144,7 @@
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
-      "action": "M Assess alignment between the proposed change and organisational objectives, strategies and priorities. ",
+      "action": "M Assess alignment between the proposed change and organisational objectives, strategies and priorities.",
       "outcomeIds": [
         "CFC_O1"
       ],
@@ -228,7 +228,7 @@
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
       "category": "Design",
-      "action": "S Refine the draft case for change using evidence, stakeholder insight and feedback ",
+      "action": "S Refine the draft case for change using evidence, stakeholder insight and feedback",
       "outcomeIds": [
         "CFC_O1",
         "CFC_O2"
@@ -261,7 +261,7 @@
       "readinessScore": 2
     },
     {
-      "id": "case_for_change-21",
+      "id": "case_for_change-20",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
@@ -273,7 +273,7 @@
       "readinessScore": 2
     },
     {
-      "id": "case_for_change-22",
+      "id": "case_for_change-21",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
@@ -285,7 +285,7 @@
       "readinessScore": 2
     },
     {
-      "id": "case_for_change-23",
+      "id": "case_for_change-22",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
@@ -297,7 +297,7 @@
       "readinessScore": 2
     },
     {
-      "id": "case_for_change-24",
+      "id": "case_for_change-23",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
@@ -309,12 +309,12 @@
       "readinessScore": 2
     },
     {
-      "id": "case_for_change-25",
+      "id": "case_for_change-24",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Communication",
-      "action": "S Use local examples and evidence to illustrate the importance of the change.",
+      "action": "S Illustrate the importance of the change using local examples and evidence.",
       "outcomeIds": [
         "CFC_O1",
         "CFC_O2"
@@ -322,7 +322,7 @@
       "readinessScore": 2
     },
     {
-      "id": "case_for_change-26",
+      "id": "case_for_change-25",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
@@ -335,11 +335,11 @@
       "readinessScore": 2
     },
     {
-      "id": "case_for_change-new-1788871234715-guhws1",
+      "id": "case_for_change-26",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
-      "category": "",
+      "category": "Governance",
       "action": "M Approve case for change via governance routes",
       "outcomeIds": [],
       "readinessScore": 3
@@ -559,7 +559,7 @@
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
       "category": "Communication",
-      "action": "S Refresh messaging to reflect emerging evidence, learning and organisational priorities.",
+      "action": "S Reflect emerging evidence, learning and organisational priorities by refreshing messaging.",
       "outcomeIds": [
         "CFC_O3"
       ],
@@ -615,7 +615,7 @@
       "readinessScore": 1
     },
     {
-      "id": "case_for_change-20",
+      "id": "case_for_change-49",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",

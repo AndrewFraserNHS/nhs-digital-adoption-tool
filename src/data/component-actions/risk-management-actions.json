@@ -164,7 +164,7 @@
       "readinessScore": 1
     },
     {
-      "id": "risk_management-15",
+      "id": "risk_management-12",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Process & Sustainment",
@@ -176,7 +176,7 @@
       "readinessScore": 1
     },
     {
-      "id": "risk_management-12",
+      "id": "risk_management-13",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Process & Sustainment",
@@ -188,7 +188,7 @@
       "readinessScore": 1
     },
     {
-      "id": "risk_management-13",
+      "id": "risk_management-14",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Process & Sustainment",
@@ -200,7 +200,7 @@
       "readinessScore": 1
     },
     {
-      "id": "risk_management-14",
+      "id": "risk_management-15",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Process & Sustainment",
@@ -359,7 +359,7 @@
       "readinessScore": 2
     },
     {
-      "id": "risk_management-29",
+      "id": "risk_management-28",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Planning & Risk",
@@ -371,7 +371,7 @@
       "readinessScore": 3
     },
     {
-      "id": "risk_management-28",
+      "id": "risk_management-29",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Planning & Risk",
@@ -420,7 +420,7 @@
       "readinessScore": 3
     },
     {
-      "id": "risk_management-36",
+      "id": "risk_management-33",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Process & Sustainment",
@@ -432,7 +432,7 @@
       "readinessScore": 3
     },
     {
-      "id": "risk_management-33",
+      "id": "risk_management-34",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Process & Sustainment",
@@ -444,7 +444,7 @@
       "readinessScore": 3
     },
     {
-      "id": "risk_management-34",
+      "id": "risk_management-35",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Process & Sustainment",
@@ -456,7 +456,7 @@
       "readinessScore": 3
     },
     {
-      "id": "risk_management-35",
+      "id": "risk_management-36",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Process & Sustainment",
@@ -474,14 +474,14 @@
       "toStatus": "Adopted",
       "lens": "Process & Sustainment",
       "category": "Risk Management",
-      "action": "S Use lessons learned to improve current mitigation and control activities.",
+      "action": "S Improve current mitigation and control activities using lessons learned.",
       "outcomeIds": [
         "RM_O3"
       ],
       "readinessScore": 3
     },
     {
-      "id": "risk_management-40",
+      "id": "risk_management-38",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Planning & Risk",
@@ -493,7 +493,7 @@
       "readinessScore": 4
     },
     {
-      "id": "risk_management-38",
+      "id": "risk_management-39",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Planning & Risk",
@@ -505,7 +505,7 @@
       "readinessScore": 4
     },
     {
-      "id": "risk_management-39",
+      "id": "risk_management-40",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Planning & Risk",
@@ -517,7 +517,7 @@
       "readinessScore": 4
     },
     {
-      "id": "risk_management-42",
+      "id": "risk_management-41",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Planning & Risk",
@@ -529,7 +529,7 @@
       "readinessScore": 4
     },
     {
-      "id": "risk_management-47",
+      "id": "risk_management-42",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Process & Sustainment",

@@ -687,6 +687,16 @@ export default function ForceFieldAnalysisApp({
     downloadFile(filename, JSON.stringify(state, null, 2), 'application/json');
   };
 
+  const handleReset = () => {
+    if (!window.confirm('Reset this Force Field Analysis? All forces and actions will be removed.')) {
+      return;
+    }
+
+    setState({ ...DEFAULT_STATE, forces: [], actions: [] });
+    setScreen('forces');
+    setImportError(null);
+  };
+
   const handleImportClick = () => {
     setImportError(null);
     fileInputRef.current?.click();
@@ -755,6 +765,13 @@ export default function ForceFieldAnalysisApp({
           className={nhsButtonSecondary}
         >
           Export
+        </button>
+        <button
+          type="button"
+          onClick={handleReset}
+          className="rounded-md border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-100"
+        >
+          Reset
         </button>
         <div
           className="flex items-center rounded-md border border-slate-300 overflow-hidden text-sm font-semibold"

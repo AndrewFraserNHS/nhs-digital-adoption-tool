@@ -33,24 +33,24 @@
   ],
   "actions": [
     {
-      "id": "VISION_001",
+      "id": "vision-0",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
-      "action": "Gather information on organisational priorities, programme objectives and expected outcomes to inform vision development.",
+      "action": "M Gather information on organisational priorities, programme objectives and expected outcomes to inform vision development.",
       "outcomeIds": [
         "VISION_O1"
       ],
       "readinessScore": 0
     },
     {
-      "id": "VISION_002",
+      "id": "vision-1",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
-      "action": "Identify key leaders who need to contribute to and endorse the vision.",
+      "action": "S Identify key leaders who need to contribute to and endorse the vision.",
       "outcomeIds": [
         "VISION_O1",
         "VISION_O3"
@@ -58,24 +58,24 @@
       "readinessScore": 0
     },
     {
-      "id": "VISION_003",
+      "id": "vision-2",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "Strategic Direction & Leadership",
       "category": "Engagement",
-      "action": "Facilitate an initial vision workshop with the SRO, sponsors and key programme stakeholders to explore the future state.",
+      "action": "S Facilitate an initial vision workshop with the SRO, sponsors and key programme stakeholders to explore the future state.",
       "outcomeIds": [
         "VISION_O1"
       ],
       "readinessScore": 0
     },
     {
-      "id": "VISION_004",
+      "id": "vision-3",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "Strategic Direction & Leadership",
       "category": "Design",
-      "action": "Document initial themes describing why the change is needed and what success may look like.",
+      "action": "S Document initial themes describing why the change is needed and what success may look like.",
       "outcomeIds": [
         "VISION_O1",
         "VISION_O2"
@@ -83,36 +83,36 @@
       "readinessScore": 0
     },
     {
-      "id": "VISION_005",
+      "id": "vision-4",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "Strategic Direction & Leadership",
       "category": "Design",
-      "action": "Establish a process and timeline for drafting the vision statement.",
+      "action": "S Establish a process and timeline for drafting the vision statement.",
       "outcomeIds": [
         "VISION_O1"
       ],
       "readinessScore": 0
     },
     {
-      "id": "VISION_006",
+      "id": "vision-5",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
       "category": "Communication",
-      "action": "Create simple awareness messages explaining that a vision is being developed.",
+      "action": "C Create simple awareness messages explaining that a vision is being developed.",
       "outcomeIds": [
         "VISION_O2"
       ],
       "readinessScore": 0
     },
     {
-      "id": "VISION_007",
+      "id": "vision-6",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
       "category": "Engagement",
-      "action": "Identify key stakeholder groups that need to be involved in early vision discussions.",
+      "action": "M Identify key stakeholder groups that need to be involved in early vision discussions.",
       "outcomeIds": [
         "VISION_O1",
         "VISION_O2"
@@ -120,12 +120,12 @@
       "readinessScore": 0
     },
     {
-      "id": "VISION_008",
+      "id": "vision-7",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
       "category": "Engagement",
-      "action": "Conduct stakeholder listening sessions to understand current challenges and expectations.",
+      "action": "M Conduct stakeholder listening sessions to understand current challenges and expectations.",
       "outcomeIds": [
         "VISION_O1",
         "VISION_O2"
@@ -133,12 +133,12 @@
       "readinessScore": 0
     },
     {
-      "id": "VISION_009",
+      "id": "vision-8",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
-      "action": "Gather feedback on stakeholders' perceptions of the proposed change.",
+      "action": "S Gather feedback on stakeholders' perceptions of the proposed change.",
       "outcomeIds": [
         "VISION_O1",
         "VISION_O2"
@@ -146,36 +146,36 @@
       "readinessScore": 0
     },
     {
-      "id": "VISION_010",
+      "id": "vision-9",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
-      "action": "Identify common concerns, aspirations and opportunities that should influence the vision.",
+      "action": "S Identify common concerns, aspirations and opportunities that should influence the vision.",
       "outcomeIds": [
         "VISION_O1"
       ],
       "readinessScore": 0
     },
     {
-      "id": "VISION_011",
+      "id": "vision-10",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
       "category": "Design",
-      "action": "Draft a formal vision statement describing the future state and intended outcomes.",
+      "action": "M Draft a formal vision statement describing the future state and intended outcomes.",
       "outcomeIds": [
         "VISION_O1"
       ],
       "readinessScore": 1
     },
     {
-      "id": "VISION_012",
+      "id": "vision-11",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
       "category": "Testing & Validation",
-      "action": "Test the draft vision with senior leaders to ensure strategic alignment.",
+      "action": "M Test the draft vision with senior leaders to ensure strategic alignment.",
       "outcomeIds": [
         "VISION_O1",
         "VISION_O3"
@@ -183,12 +183,12 @@
       "readinessScore": 1
     },
     {
-      "id": "VISION_013",
+      "id": "vision-12",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
       "category": "Design",
-      "action": "Refine the vision using feedback from sponsors and governance groups.",
+      "action": "M Refine the vision using feedback from sponsors and governance groups.",
       "outcomeIds": [
         "VISION_O1",
         "VISION_O3"
@@ -196,24 +196,24 @@
       "readinessScore": 1
     },
     {
-      "id": "VISION_014",
+      "id": "vision-13",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
       "category": "Testing & Validation",
-      "action": "Validate how the vision aligns with organisational objectives and programme benefits.",
+      "action": "S Validate how the vision aligns with organisational objectives and programme benefits.",
       "outcomeIds": [
         "VISION_O1"
       ],
       "readinessScore": 1
     },
     {
-      "id": "VISION_015",
+      "id": "vision-14",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
       "category": "Design",
-      "action": "Develop a high-level vision narrative that can be used consistently across the programme.",
+      "action": "M Develop a high-level vision narrative that can be used consistently across the programme.",
       "outcomeIds": [
         "VISION_O2",
         "VISION_O3"
@@ -221,24 +221,24 @@
       "readinessScore": 1
     },
     {
-      "id": "VISION_016",
+      "id": "vision-15",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
       "category": "Engagement",
-      "action": "Run workshops with stakeholder groups to test understanding of the draft vision.",
+      "action": "S Run workshops with stakeholder groups to test understanding of the draft vision.",
       "outcomeIds": [
         "VISION_O2"
       ],
       "readinessScore": 1
     },
     {
-      "id": "VISION_017",
+      "id": "vision-16",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
-      "action": "Collect structured feedback on whether the vision feels relevant and meaningful.",
+      "action": "S Collect structured feedback on whether the vision feels relevant and meaningful.",
       "outcomeIds": [
         "VISION_O1",
         "VISION_O2"
@@ -246,12 +246,12 @@
       "readinessScore": 1
     },
     {
-      "id": "VISION_018",
+      "id": "vision-17",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
-      "action": "Identify gaps or ambiguities in the vision from a stakeholder perspective.",
+      "action": "S Identify gaps or ambiguities in the vision from a stakeholder perspective.",
       "outcomeIds": [
         "VISION_O1",
         "VISION_O2"
@@ -259,12 +259,12 @@
       "readinessScore": 1
     },
     {
-      "id": "VISION_019",
+      "id": "vision-18",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
       "category": "Design",
-      "action": "Update the vision to reflect stakeholder insights and concerns.",
+      "action": "S Update the vision to reflect stakeholder insights and concerns.",
       "outcomeIds": [
         "VISION_O1",
         "VISION_O2"
@@ -272,24 +272,24 @@
       "readinessScore": 1
     },
     {
-      "id": "VISION_020",
+      "id": "vision-19",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
       "category": "Communication",
-      "action": "Begin developing people-centred messaging explaining why the vision matters to different stakeholder groups.",
+      "action": "M Begin developing people-centred messaging explaining why the vision matters to different stakeholder groups.",
       "outcomeIds": [
         "VISION_O2"
       ],
       "readinessScore": 1
     },
     {
-      "id": "VISION_021",
+      "id": "vision-20",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
-      "action": "Secure formal approval of the vision through programme governance.",
+      "action": "M Secure formal approval of the vision through programme governance.",
       "outcomeIds": [
         "VISION_O1",
         "VISION_O3"
@@ -297,12 +297,12 @@
       "readinessScore": 2
     },
     {
-      "id": "VISION_022",
+      "id": "vision-21",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
       "category": "Design",
-      "action": "Develop a leadership communication plan to support vision rollout.",
+      "action": "M Develop a leadership communication plan to support vision rollout.",
       "outcomeIds": [
         "VISION_O2",
         "VISION_O3"
@@ -310,12 +310,12 @@
       "readinessScore": 2
     },
     {
-      "id": "VISION_023",
+      "id": "vision-22",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
       "category": "Communication",
-      "action": "Equip sponsors with key messages, presentations and briefing materials.",
+      "action": "M Equip sponsors with key messages, presentations and briefing materials.",
       "outcomeIds": [
         "VISION_O2",
         "VISION_O3"
@@ -323,24 +323,24 @@
       "readinessScore": 2
     },
     {
-      "id": "VISION_024",
+      "id": "vision-23",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
-      "action": "Integrate the vision into programme governance documentation and reporting.",
+      "action": "M Integrate the vision into programme governance documentation and reporting.",
       "outcomeIds": [
         "VISION_O3"
       ],
       "readinessScore": 2
     },
     {
-      "id": "VISION_025",
+      "id": "vision-24",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
       "category": "Communication",
-      "action": "Ensure leadership communications consistently reference the agreed vision.",
+      "action": "M Ensure leadership communications consistently reference the agreed vision.",
       "outcomeIds": [
         "VISION_O2",
         "VISION_O3"
@@ -348,48 +348,48 @@
       "readinessScore": 2
     },
     {
-      "id": "VISION_026",
+      "id": "vision-25",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Communication",
-      "action": "Develop audience-specific communications describing the purpose, value and future-state ambition of the vision.",
+      "action": "M Develop audience-specific communications describing the purpose, value and future-state ambition of the vision.",
       "outcomeIds": [
         "VISION_O2"
       ],
       "readinessScore": 2
     },
     {
-      "id": "VISION_027",
+      "id": "vision-26",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Engagement",
-      "action": "Deliver engagement sessions to build understanding and awareness of the vision.",
+      "action": "M Deliver engagement sessions to build understanding and awareness of the vision.",
       "outcomeIds": [
         "VISION_O2"
       ],
       "readinessScore": 2
     },
     {
-      "id": "VISION_028",
+      "id": "vision-27",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Measurement & Evaluation",
-      "action": "Establish feedback channels to assess comprehension and acceptance of the vision.",
+      "action": "M Establish feedback channels to assess comprehension and acceptance of the vision.",
       "outcomeIds": [
         "VISION_O2"
       ],
       "readinessScore": 2
     },
     {
-      "id": "VISION_029",
+      "id": "vision-28",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
-      "action": "Use change agents and sponsors to reinforce the vision locally.",
+      "action": "M Use change agents and sponsors to reinforce the vision locally.",
       "outcomeIds": [
         "VISION_O2",
         "VISION_O3"
@@ -397,24 +397,24 @@
       "readinessScore": 2
     },
     {
-      "id": "VISION_030",
+      "id": "vision-29",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Measurement & Evaluation",
-      "action": "Monitor stakeholder understanding through surveys, workshops or feedback sessions.",
+      "action": "M Monitor stakeholder understanding through surveys, workshops or feedback sessions.",
       "outcomeIds": [
         "VISION_O2"
       ],
       "readinessScore": 2
     },
     {
-      "id": "VISION_031",
+      "id": "vision-30",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
       "category": "Reinforcement",
-      "action": "Ensure sponsors consistently communicate the vision during governance and operational meetings.",
+      "action": "S Ensure sponsors consistently communicate the vision during governance and operational meetings.",
       "outcomeIds": [
         "VISION_O2",
         "VISION_O3"
@@ -422,24 +422,24 @@
       "readinessScore": 3
     },
     {
-      "id": "VISION_032",
+      "id": "vision-31",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
-      "action": "Embed the vision into organisational planning, governance and decision-making processes.",
+      "action": "S Embed the vision into organisational planning, governance and decision-making processes.",
       "outcomeIds": [
         "VISION_O3"
       ],
       "readinessScore": 3
     },
     {
-      "id": "VISION_033",
+      "id": "vision-32",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
       "category": "Measurement & Evaluation",
-      "action": "Review leadership communications regularly for alignment and consistency.",
+      "action": "S Review leadership communications regularly for alignment and consistency.",
       "outcomeIds": [
         "VISION_O2",
         "VISION_O3"
@@ -447,24 +447,24 @@
       "readinessScore": 3
     },
     {
-      "id": "VISION_034",
+      "id": "vision-33",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
       "category": "Measurement & Evaluation",
-      "action": "Monitor leadership engagement in promoting the vision.",
+      "action": "S Monitor leadership engagement in promoting the vision.",
       "outcomeIds": [
         "VISION_O3"
       ],
       "readinessScore": 3
     },
     {
-      "id": "VISION_035",
+      "id": "vision-34",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
       "category": "Communication",
-      "action": "Deploy a formal vision communication campaign across all stakeholder groups.",
+      "action": "M Deploy a formal vision communication campaign across all stakeholder groups.",
       "outcomeIds": [
         "VISION_O2",
         "VISION_O3"
@@ -472,36 +472,36 @@
       "readinessScore": 3
     },
     {
-      "id": "VISION_036",
+      "id": "vision-35",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
       "category": "Measurement & Evaluation",
-      "action": "Establish regular feedback loops to assess understanding and engagement with the vision.",
+      "action": "S Establish regular feedback loops to assess understanding and engagement with the vision.",
       "outcomeIds": [
         "VISION_O2"
       ],
       "readinessScore": 3
     },
     {
-      "id": "VISION_037",
+      "id": "vision-36",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
       "category": "Measurement & Evaluation",
-      "action": "Monitor stakeholder awareness and adjust communications where necessary.",
+      "action": "S Monitor stakeholder awareness and adjust communications where necessary.",
       "outcomeIds": [
         "VISION_O2"
       ],
       "readinessScore": 3
     },
     {
-      "id": "VISION_038",
+      "id": "vision-37",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
       "category": "Communication",
-      "action": "Use case studies and practical examples to demonstrate the vision in action.",
+      "action": "S Use case studies and practical examples to demonstrate the vision in action.",
       "outcomeIds": [
         "VISION_O2",
         "VISION_O3"
@@ -509,12 +509,12 @@
       "readinessScore": 3
     },
     {
-      "id": "VISION_039",
+      "id": "vision-38",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
-      "action": "Reinforce the vision through team meetings, departmental briefings and change network activities.",
+      "action": "S Reinforce the vision through team meetings, departmental briefings and change network activities.",
       "outcomeIds": [
         "VISION_O2",
         "VISION_O3"
@@ -522,24 +522,24 @@
       "readinessScore": 3
     },
     {
-      "id": "VISION_040",
+      "id": "vision-39",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
       "category": "Reinforcement",
-      "action": "Ensure leaders consistently reference the vision during planning, governance and decision-making processes",
+      "action": "S Ensure leaders consistently reference the vision during planning, governance and decision-making processes",
       "outcomeIds": [
         "VISION_O3"
       ],
       "readinessScore": 4
     },
     {
-      "id": "VISION_041",
+      "id": "vision-40",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
       "category": "Measurement & Evaluation",
-      "action": "Review organisational priorities regularly to ensure continued alignment with the vision.",
+      "action": "M Review organisational priorities regularly to ensure continued alignment with the vision.",
       "outcomeIds": [
         "VISION_O1",
         "VISION_O3"
@@ -547,12 +547,12 @@
       "readinessScore": 4
     },
     {
-      "id": "VISION_042",
+      "id": "vision-41",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
       "category": "Measurement & Evaluation",
-      "action": "Use adoption and performance data to refine and strengthen how the vision is communicated.",
+      "action": "S Use adoption and performance data to refine and strengthen how the vision is communicated.",
       "outcomeIds": [
         "VISION_O2",
         "VISION_O3"
@@ -560,36 +560,36 @@
       "readinessScore": 4
     },
     {
-      "id": "VISION_043",
+      "id": "vision-42",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
       "category": "Measurement & Evaluation",
-      "action": "Establish mechanisms to continuously evaluate whether organisational behaviours remain aligned to the vision.",
+      "action": "S Establish mechanisms to continuously evaluate whether organisational behaviours remain aligned to the vision.",
       "outcomeIds": [
         "VISION_O3"
       ],
       "readinessScore": 4
     },
     {
-      "id": "VISION_044",
+      "id": "vision-43",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
       "category": "Measurement & Evaluation",
-      "action": "Measure how well staff understand and can articulate the vision.",
+      "action": "S Measure how well staff understand and can articulate the vision.",
       "outcomeIds": [
         "VISION_O2"
       ],
       "readinessScore": 4
     },
     {
-      "id": "VISION_045",
+      "id": "vision-44",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
-      "action": "Capture and share success stories demonstrating delivery of the vision.",
+      "action": "S Capture and share success stories demonstrating delivery of the vision.",
       "outcomeIds": [
         "VISION_O2",
         "VISION_O3"
@@ -597,24 +597,24 @@
       "readinessScore": 4
     },
     {
-      "id": "VISION_046",
+      "id": "vision-45",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
-      "action": "Encourage teams to identify local improvements that support achievement of the vision.",
+      "action": "S Encourage teams to identify local improvements that support achievement of the vision.",
       "outcomeIds": [
         "VISION_O3"
       ],
       "readinessScore": 4
     },
     {
-      "id": "VISION_047",
+      "id": "vision-46",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
       "category": "Engagement",
-      "action": "Maintain continuous engagement and listening activities to keep the vision relevant.",
+      "action": "S Maintain continuous engagement and listening activities to keep the vision relevant.",
       "outcomeIds": [
         "VISION_O1",
         "VISION_O2"
@@ -622,12 +622,12 @@
       "readinessScore": 4
     },
     {
-      "id": "VISION_048",
+      "id": "vision-47",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
-      "action": "Reinforce the vision through recognition programmes and celebration of achievements.",
+      "action": "S Reinforce the vision through recognition programmes and celebration of achievements.",
       "outcomeIds": [
         "VISION_O2",
         "VISION_O3"
@@ -635,12 +635,12 @@
       "readinessScore": 4
     },
     {
-      "id": "VISION_049",
+      "id": "vision-48",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
-      "action": "Ensure the vision becomes part of everyday conversations, team objectives and organisational culture.",
+      "action": "S Ensure the vision becomes part of everyday conversations, team objectives and organisational culture.",
       "outcomeIds": [
         "VISION_O2",
         "VISION_O3"

@@ -14,6 +14,20 @@ describe('EngineExplainedPage', () => {
     expect(screen.getByRole('button', { name: 'Gone Live but Adoption is Patchy' })).toBeInTheDocument();
   });
 
+  it('SHOULD show more detail about the selected pathway', () => {
+    // arrange
+    render(<EngineExplainedPage onGetStarted={vi.fn()} onComponentClick={vi.fn()} />);
+
+    // assert 1 - default (Pathway 1) detail shown
+    expect(screen.getByText(/For teams starting from scratch/)).toBeInTheDocument();
+
+    // act - switch pathway
+    fireEvent.click(screen.getByRole('button', { name: 'Gone Live but Adoption is Patchy' }));
+
+    // assert 2 - detail updates
+    expect(screen.getByText(/adoption is patchy or inconsistent/)).toBeInTheDocument();
+  });
+
   it('SHOULD step through Phases, Component, Lens, Readiness and Actions in order', () => {
     // arrange
     render(<EngineExplainedPage onGetStarted={vi.fn()} onComponentClick={vi.fn()} />);

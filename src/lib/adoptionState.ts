@@ -29,6 +29,10 @@ export interface BaseAction {
   dueDate?: string;
   notes?: string;
   evidence?: string;
+  /** MoSCoW priority parsed from the bundled default content (Pathway 1 only today) - never shown unless a user opts in via Settings. */
+  priority?: 'must' | 'should';
+  /** True when the source content was flagged (via an authored "*" marker) as still needing rework. */
+  needsRework?: boolean;
 }
 
 export interface DraftAction extends BaseAction {

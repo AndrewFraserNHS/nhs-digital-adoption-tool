@@ -1,5 +1,6 @@
 import { ACTION_TYPES, type ActionType,isResolvedActionStatus } from './actionModel';
 import type { AdoptionStore, ComponentObjective, DraftAction, DraftEntry } from './adoptionState';
+import { parseMoscowPrefix, type ActionPriority } from './moscow';
 
 interface RawOutcome {
   id?: string;
@@ -24,6 +25,8 @@ export interface DerivedActionTemplate {
   actionText: string;
   actionType?: ActionType;
   outcomeIds: string[];
+  priority?: ActionPriority;
+  needsRework?: boolean;
 }
 
 export interface DerivedOutcomeDefinition {
@@ -345,6 +348,8 @@ function createAction(
     evidence: '',
     readinessScore: template.fromScore,
     linkedTargets: [{ componentId, lens: template.lens }],
+    priority: template.priority,
+    needsRework: template.needsRework,
   };
 }
 
@@ -403,7 +408,7 @@ export function parseDerivedComponentSource(
 
     const sourceLens = normalizeLensName(String(action.lens || ''));
     const mappedLens = config.lensAliases?.[sourceLens] || sourceLens;
-    const actionText = String(action.action || '').trim();
+    const { text: actionText, priority, needsRework } = parseMoscowPrefix(String(action.action || ''));
 
     if (!mappedLens || !actionText) {
       return next;
@@ -423,6 +428,8 @@ export function parseDerivedComponentSource(
       outcomeIds: (action.outcomeIds || []).map((outcomeId) =>
         toOutcomeObjectiveId(String(outcomeId), config.outcomePrefix)
       ),
+      priority,
+      needsRework,
     });
 
     return next;

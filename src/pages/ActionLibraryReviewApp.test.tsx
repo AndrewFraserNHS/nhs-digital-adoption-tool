@@ -108,4 +108,35 @@ describe('ActionLibraryReviewApp', () => {
       screen.getByDisplayValue('A compelling future state has been defined')
     ).toBeInTheDocument();
   });
+
+  it('SHOULD show the parsed priority for a reviewed action and allow changing it', () => {
+    // arrange
+    render(<ActionLibraryReviewApp />);
+    const description = screen.getByDisplayValue(
+      'Gather information on organisational priorities, programme objectives and expected outcomes to inform vision development.'
+    );
+    const row = description.closest('div')?.parentElement?.parentElement as HTMLElement;
+
+    // assert 1 - parsed as Must (the "M " prefix is stripped from the visible description)
+    const prioritySelect = within(row).getByRole('combobox', { name: 'Priority' }) as HTMLSelectElement;
+    expect(prioritySelect.value).toBe('must');
+    expect(screen.queryByDisplayValue(/^M /)).not.toBeInTheDocument();
+
+    // act - change it
+    fireEvent.change(prioritySelect, { target: { value: 'should' } });
+
+    // assert 2
+    expect(prioritySelect.value).toBe('should');
+    expect(within(row).getByText('Edited')).toBeInTheDocument();
+  });
+
+  it('SHOULD flag a rework-marked action', () => {
+    // arrange
+    render(<ActionLibraryReviewApp />);
+    fireEvent.click(screen.getByRole('button', { name: 'Change Network' }));
+    fireEvent.click(screen.getByRole('button', { name: /Adopted → Thriving/ }));
+
+    // assert - both flagged actions in this band show the badge
+    expect(screen.getAllByText('⚠ rework')).toHaveLength(2);
+  });
 });

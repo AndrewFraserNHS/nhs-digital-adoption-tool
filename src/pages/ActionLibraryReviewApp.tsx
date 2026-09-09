@@ -52,6 +52,7 @@ import visionRawP3 from '@data/component-actions/vision-actions-pathway3.json';
 import { ASSESSMENT_COMPONENTS } from '@data/components';
 import { type CstPathwayKey,OVERARCHING_PHASES, PATHWAY_OPTIONS } from '@data/cst';
 import { load, save } from '@lib/storage';
+import { parseMoscowPrefix, type ActionPriority } from '@lib/moscow';
 import { downloadFile } from '@lib/utils';
 import { type ChangeEvent, type JSX, type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -150,6 +151,8 @@ interface LibraryAction {
   lens: string;
   category: string;
   outcomeIds: string[];
+  priority?: ActionPriority;
+  needsRework?: boolean;
 }
 
 interface ComponentActionsData {
@@ -216,22 +219,27 @@ function parseActionsFromRaw(rawActions: unknown, componentId: string): LibraryA
     .filter((action): action is RawAction =>
       Boolean(action && typeof action === 'object' && (action as RawAction).action)
     )
-    .map((action, index) => ({
-      // Deliberately not action.id: skills-and-learning-actions.json has 8 duplicate ids
-      // (SL_011-SL_018 each appear twice) - a dormant source-data bug the live app never hits
-      // because it generates its own runtime ids from lens+band+position, but which would break
-      // this tool's id-based "is this edited" / reorder tracking if trusted. A positional id
-      // built from the original bundled order is always unique and stays stable across edits.
-      id: `${componentId}-${index}`,
-      description: action.action || '',
-      band:
-        typeof action.readinessScore === 'number' && Number.isFinite(action.readinessScore)
-          ? Math.max(0, Math.min(4, Math.round(action.readinessScore)))
-          : bandFromStatus(action.fromStatus),
-      lens: normalizeLensName(action.lens || ''),
-      category: action.category || '',
-      outcomeIds: Array.isArray(action.outcomeIds) ? action.outcomeIds : [],
-    }));
+    .map((action, index) => {
+      const { text, priority, needsRework } = parseMoscowPrefix(action.action || '');
+      return {
+        // Deliberately not action.id: skills-and-learning-actions.json has 8 duplicate ids
+        // (SL_011-SL_018 each appear twice) - a dormant source-data bug the live app never hits
+        // because it generates its own runtime ids from lens+band+position, but which would break
+        // this tool's id-based "is this edited" / reorder tracking if trusted. A positional id
+        // built from the original bundled order is always unique and stays stable across edits.
+        id: `${componentId}-${index}`,
+        description: text,
+        band:
+          typeof action.readinessScore === 'number' && Number.isFinite(action.readinessScore)
+            ? Math.max(0, Math.min(4, Math.round(action.readinessScore)))
+            : bandFromStatus(action.fromStatus),
+        lens: normalizeLensName(action.lens || ''),
+        category: action.category || '',
+        outcomeIds: Array.isArray(action.outcomeIds) ? action.outcomeIds : [],
+        priority,
+        needsRework,
+      };
+    });
 }
 
 function buildDefaultComponentData(
@@ -394,6 +402,14 @@ function updateActionBand(actions: LibraryAction[], actionId: string, newBand: n
   return [...without.slice(0, insertAt), updated, ...without.slice(insertAt)];
 }
 
+/** Re-embeds the "M "/"S " marker ahead of the description on export, so re-importing the file round-trips through parseMoscowPrefix cleanly. The "*" rework marker is intentionally dropped here - editing an action via the priority dropdown is how a reviewer resolves/confirms a flagged one. */
+function toExportActionText(action: LibraryAction): string {
+  if (!action.priority) {
+    return action.description;
+  }
+  return `${action.priority === 'must' ? 'M' : 'S'} ${action.description}`;
+}
+
 function toExportAction(action: LibraryAction): RawAction & { readinessScore: number } {
   return {
     id: action.id,
@@ -401,7 +417,7 @@ function toExportAction(action: LibraryAction): RawAction & { readinessScore: nu
     toStatus: BAND_LABELS[action.band + 1],
     lens: LENS_EXPORT_FORM[action.lens] || action.lens,
     category: action.category,
-    action: action.description,
+    action: toExportActionText(action),
     outcomeIds: action.outcomeIds,
     readinessScore: action.band,
   };
@@ -482,7 +498,7 @@ function ActionRow({
 }: {
   action: LibraryAction;
   original: LibraryAction | undefined;
-  onUpdate: (updates: Partial<Pick<LibraryAction, 'description' | 'band'>>) => void;
+  onUpdate: (updates: Partial<Pick<LibraryAction, 'description' | 'band' | 'priority'>>) => void;
   onMove: (direction: -1 | 1) => void;
   onReset: () => void;
   onRemove: () => void;
@@ -492,7 +508,9 @@ function ActionRow({
   const isNew = !original;
   const isEdited =
     Boolean(original) &&
-    (original?.description !== action.description || original?.band !== action.band);
+    (original?.description !== action.description ||
+      original?.band !== action.band ||
+      original?.priority !== action.priority);
 
   return (
     <div
@@ -524,6 +542,29 @@ function ActionRow({
           >
             ▼
           </button>
+        </div>
+
+        <div className="flex shrink-0 flex-col items-center gap-1">
+          <select
+            value={action.priority || ''}
+            onChange={(event) =>
+              onUpdate({ priority: (event.target.value || undefined) as ActionPriority | undefined })
+            }
+            aria-label="Priority"
+            className="rounded-md border border-slate-300 px-2 py-1 text-xs font-semibold text-slate-700"
+          >
+            <option value="">-</option>
+            <option value="must">Must</option>
+            <option value="should">Should</option>
+          </select>
+          {action.needsRework ? (
+            <span
+              title="Flagged in source content as needing rework"
+              className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-800"
+            >
+              ⚠ rework
+            </span>
+          ) : null}
         </div>
 
         <div className="flex-1 space-y-2">

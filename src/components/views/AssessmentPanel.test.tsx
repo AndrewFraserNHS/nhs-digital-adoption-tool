@@ -846,4 +846,42 @@ describe('AssessmentPanel', () => {
     expect(screen.getByLabelText(/No dates set/)).toBeInTheDocument();
     expect(screen.queryByRole('columnheader', { name: 'Timeline' })).not.toBeInTheDocument();
   });
+
+  it('SHOULD tint the action row by priority WHEN the setting is on and pathway is pathway-1', () => {
+    // arrange
+    const entry = createEntry({
+      actions: [
+        { id: 'action-1', text: 'Must-do action', owner: 'PMO', timescale: '', status: 'Planned', priority: 'must' },
+      ],
+    });
+    const props = createProps({ entry });
+    localStorage.setItem(ASSESSMENT_PAGE_INTRO_SEEN_KEY, 'true');
+
+    // act
+    render(<AssessmentPanel {...props} showActionPriorityColours />);
+    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
+
+    // assert
+    const row = screen.getByText('Must-do action').closest('tr') as HTMLElement;
+    expect(row.className).toContain('bg-red-50');
+  });
+
+  it('SHOULD NOT tint the action row WHEN the setting is off', () => {
+    // arrange
+    const entry = createEntry({
+      actions: [
+        { id: 'action-1', text: 'Must-do action', owner: 'PMO', timescale: '', status: 'Planned', priority: 'must' },
+      ],
+    });
+    const props = createProps({ entry });
+    localStorage.setItem(ASSESSMENT_PAGE_INTRO_SEEN_KEY, 'true');
+
+    // act
+    render(<AssessmentPanel {...props} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
+
+    // assert
+    const row = screen.getByText('Must-do action').closest('tr') as HTMLElement;
+    expect(row.className).not.toContain('bg-red-50');
+  });
 });

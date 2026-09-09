@@ -15,6 +15,8 @@ export interface AdoptionUserSettings {
   showAdditionalGuidanceLinks?: boolean;
   /** Per-device override: force-show the Project Profile page's External Links section even after it's marked initiated. */
   showExternalLinksSection?: boolean;
+  /** Faint red/yellow background on Must/Should actions on component pages - Pathway 1 only. */
+  showActionPriorityColours?: boolean;
 }
 
 export interface SettingsPanelProps {
@@ -148,6 +150,23 @@ export function SettingsPanel({
               checked={settings.showExternalLinksSection === true}
               onChange={(e) =>
                 updateUserSettings({ showExternalLinksSection: e.target.checked })
+              }
+              className="h-4 w-4"
+            />
+          </label>
+
+          <label
+            className={`flex items-center justify-between rounded-md border px-3 py-2 text-sm ${darkMode ? 'border-slate-700 bg-slate-900 text-slate-100' : 'border-slate-200 bg-slate-50 text-slate-700'}`}
+          >
+            <span>
+              Highlight Must/Should actions on component pages (red/yellow background - Pathway 1
+              only)
+            </span>
+            <input
+              type="checkbox"
+              checked={settings.showActionPriorityColours === true}
+              onChange={(e) =>
+                updateUserSettings({ showActionPriorityColours: e.target.checked })
               }
               className="h-4 w-4"
             />

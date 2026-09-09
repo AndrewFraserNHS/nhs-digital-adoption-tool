@@ -19,144 +19,144 @@
   ],
   "actions": [
     {
-      "id": "RM_001",
+      "id": "risk_management-0",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
-      "action": "Recognise that change-related risks may affect successful delivery, adoption, benefits realisation and sustainment.",
+      "action": "M Recognise that change-related risks may affect successful delivery, adoption, benefits realisation and sustainment.",
       "outcomeIds": [
         "RM_O1"
       ],
       "readinessScore": 0
     },
     {
-      "id": "RM_002",
+      "id": "risk_management-1",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "Planning & Risk",
       "category": "Engagement",
-      "action": "Begin discussions with sponsors, leaders and stakeholders about potential risks associated with the change.",
+      "action": "S Begin discussions with sponsors, leaders and stakeholders about potential risks associated with the change.",
       "outcomeIds": [
         "RM_O1"
       ],
       "readinessScore": 0
     },
     {
-      "id": "RM_003",
+      "id": "risk_management-2",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
-      "action": "Identify high-level areas of uncertainty, vulnerability and potential risk exposure.",
+      "action": "S Identify high-level areas of uncertainty, vulnerability and potential risk exposure.",
       "outcomeIds": [
         "RM_O1"
       ],
       "readinessScore": 0
     },
     {
-      "id": "RM_004",
+      "id": "risk_management-3",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
-      "action": "Identify factors that could increase the likelihood of implementation, adoption or sustainment risks.",
+      "action": "M Identify factors that could increase the likelihood of implementation, adoption or sustainment risks.",
       "outcomeIds": [
         "RM_O1"
       ],
       "readinessScore": 0
     },
     {
-      "id": "RM_005",
+      "id": "risk_management-4",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "Planning & Risk",
       "category": "Governance",
-      "action": "Gain initial agreement with sponsors that change risks will need to be identified, assessed and actively managed.",
+      "action": "S Gain initial agreement with sponsors that change risks will need to be identified, assessed and actively managed.",
       "outcomeIds": [
         "RM_O1"
       ],
       "readinessScore": 0
     },
     {
-      "id": "RM_006",
+      "id": "risk_management-5",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "Process & Sustainment",
       "category": "Communication",
-      "action": "Begin raising awareness at governance level of the importance of proactive, change related risk management.",
+      "action": "M Begin raising awareness at governance level of the importance of proactive, change related risk management.",
       "outcomeIds": [
         "RM_O1"
       ],
       "readinessScore": 0
     },
     {
-      "id": "RM_007",
+      "id": "risk_management-6",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
-      "action": "Review lessons learned from previous changes to identify recurring risk themes and vulnerabilities.",
+      "action": "S Review lessons learned from previous changes to identify recurring risk themes and vulnerabilities.",
       "outcomeIds": [
         "RM_O1"
       ],
       "readinessScore": 0
     },
     {
-      "id": "RM_008",
+      "id": "risk_management-7",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
-      "action": "Conduct structured change risk assessment activities involving stakeholders and subject matter experts.",
+      "action": "S Conduct structured change risk assessment activities involving stakeholders and subject matter experts.",
       "outcomeIds": [
         "RM_O1"
       ],
       "readinessScore": 1
     },
     {
-      "id": "RM_009",
+      "id": "risk_management-8",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
-      "action": "Identify and document risks that could affect successful delivery, adoption, benefit realisation or sustainment of the change.",
+      "action": "M Identify and document risks that could affect successful delivery, adoption, benefit realisation or sustainment of the change (RAID log).",
       "outcomeIds": [
         "RM_O1"
       ],
       "readinessScore": 1
     },
     {
-      "id": "RM_010",
+      "id": "risk_management-9",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Planning & Risk",
       "category": "Risk Management",
-      "action": "Assess and categorise identified risks according to likelihood, impact, urgency and priority.",
+      "action": "M Assess and categorise identified risks according to likelihood, impact, urgency and priority.",
       "outcomeIds": [
         "RM_O1"
       ],
       "readinessScore": 1
     },
     {
-      "id": "RM_011",
+      "id": "risk_management-10",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Planning & Risk",
       "category": "Risk Management",
-      "action": "Apply structured risk assessment techniques to analyse consequences and exposure levels.",
+      "action": "S Apply structured risk assessment techniques to analyse consequences and exposure levels.",
       "outcomeIds": [
         "RM_O1"
       ],
       "readinessScore": 1
     },
     {
-      "id": "RM_012",
+      "id": "risk_management-11",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Planning & Risk",
       "category": "Risk Management",
-      "action": "Establish and maintain an initial change risk register.",
+      "action": "M Establish and maintain an initial change risk register.",
       "outcomeIds": [
         "RM_O1",
         "RM_O2"
@@ -164,108 +164,108 @@
       "readinessScore": 1
     },
     {
-      "id": "RM_013",
-      "fromStatus": "Emerging",
-      "toStatus": "Developing",
-      "lens": "Process & Sustainment",
-      "category": "Engagement",
-      "action": "Engage stakeholders to identify risks from operational, behavioural, cultural and organisational perspectives.",
-      "outcomeIds": [
-        "RM_O1"
-      ],
-      "readinessScore": 1
-    },
-    {
-      "id": "RM_014",
+      "id": "risk_management-15",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Process & Sustainment",
       "category": "Analysis & Insight",
-      "action": "Assess known concerns, previous change experiences and organisational vulnerabilities that may increase risk exposure.",
+      "action": "M Assess processes, operating arrangements and dependencies to identify areas of elevated risk (RAID log).",
       "outcomeIds": [
         "RM_O1"
       ],
       "readinessScore": 1
     },
     {
-      "id": "RM_015",
+      "id": "risk_management-12",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Process & Sustainment",
       "category": "Engagement",
-      "action": "Use the completed change impact assessment to explore stakeholder perceptions of key concerns, risks and organisational vulnerabilities.",
+      "action": "S Engage stakeholders to identify risks from operational, behavioural, cultural and organisational perspectives.",
       "outcomeIds": [
         "RM_O1"
       ],
       "readinessScore": 1
     },
     {
-      "id": "RM_016",
+      "id": "risk_management-13",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Process & Sustainment",
       "category": "Analysis & Insight",
-      "action": "Assess processes, operating arrangements and dependencies to identify areas of elevated risk.",
+      "action": "S Assess known concerns, previous change experiences and organisational vulnerabilities that may increase risk exposure.",
       "outcomeIds": [
         "RM_O1"
       ],
       "readinessScore": 1
     },
     {
-      "id": "RM_017",
+      "id": "risk_management-14",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Process & Sustainment",
+      "category": "Engagement",
+      "action": "S Use the completed change impact assessment to explore stakeholder perceptions of key concerns, risks and organisational vulnerabilities.",
+      "outcomeIds": [
+        "RM_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "risk_management-16",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Process & Sustainment",
       "category": "Dependency Management",
-      "action": "Identify and assess critical dependencies that may increase the overall risk profile of the change.",
+      "action": "S Identify and assess critical dependencies that may increase the overall risk profile of the change.",
       "outcomeIds": [
         "RM_O1"
       ],
       "readinessScore": 1
     },
     {
-      "id": "RM_018",
+      "id": "risk_management-17",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Process & Sustainment",
       "category": "Analysis & Insight",
-      "action": "Assess stakeholder confidence in the organisation's ability to manage risks associated with the change.",
+      "action": "S Assess stakeholder confidence in the organisation's ability to manage risks associated with the change.",
       "outcomeIds": [
         "RM_O1"
       ],
       "readinessScore": 1
     },
     {
-      "id": "RM_019",
+      "id": "risk_management-18",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
       "category": "Risk Management",
-      "action": "Assign ownership and accountability for identified risks.",
+      "action": "M Assign ownership and accountability for identified risks.",
       "outcomeIds": [
         "RM_O2"
       ],
       "readinessScore": 2
     },
     {
-      "id": "RM_020",
+      "id": "risk_management-19",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
       "category": "Risk Management",
-      "action": "Develop mitigation strategies and action plans for high-priority risks.",
+      "action": "M Develop mitigation strategies and action plans for high-priority risks.",
       "outcomeIds": [
         "RM_O2"
       ],
       "readinessScore": 2
     },
     {
-      "id": "RM_021",
+      "id": "risk_management-20",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
       "category": "Governance",
-      "action": "Integrate change risks into programme and organisational governance arrangements.",
+      "action": "S Integrate change risks into programme and organisational governance arrangements.",
       "outcomeIds": [
         "RM_O2",
         "RM_O3"
@@ -273,60 +273,60 @@
       "readinessScore": 2
     },
     {
-      "id": "RM_022",
+      "id": "risk_management-21",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
       "category": "Measurement & Evaluation",
-      "action": "Define risk monitoring indicators, thresholds and reporting arrangements.",
+      "action": "S Define risk monitoring indicators, thresholds and reporting arrangements.",
       "outcomeIds": [
         "RM_O2"
       ],
       "readinessScore": 2
     },
     {
-      "id": "RM_023",
+      "id": "risk_management-22",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
       "category": "Risk Management",
-      "action": "Validate risk ratings and mitigation plans with relevant stakeholders and sponsors.",
+      "action": "S Validate risk ratings and mitigation plans with relevant stakeholders and sponsors.",
       "outcomeIds": [
         "RM_O2"
       ],
       "readinessScore": 2
     },
     {
-      "id": "RM_024",
+      "id": "risk_management-23",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Process & Sustainment",
       "category": "Communication",
-      "action": "Communicate significant risks and agreed mitigations to appropriate stakeholder groups.",
+      "action": "S Communicate significant risks and agreed mitigations to appropriate stakeholder groups.",
       "outcomeIds": [
         "RM_O2"
       ],
       "readinessScore": 2
     },
     {
-      "id": "RM_025",
+      "id": "risk_management-24",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Process & Sustainment",
       "category": "Engagement",
-      "action": "Use stakeholder insight and feedback to refine risk understanding and mitigation activities.",
+      "action": "S Refine risk understanding and mitigation activities using stakeholder insight and feedback.",
       "outcomeIds": [
         "RM_O2"
       ],
       "readinessScore": 2
     },
     {
-      "id": "RM_026",
+      "id": "risk_management-25",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Process & Sustainment",
       "category": "Design",
-      "action": "Incorporate risk mitigation activities into implementation, communications, learning and readiness plans.",
+      "action": "M Incorporate risk mitigation activities into implementation, communications, learning and readiness plans.",
       "outcomeIds": [
         "RM_O2",
         "RM_O3"
@@ -334,12 +334,12 @@
       "readinessScore": 2
     },
     {
-      "id": "RM_027",
+      "id": "risk_management-26",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Process & Sustainment",
       "category": "Dependency Management",
-      "action": "Manage identified dependencies that increase overall change risk.",
+      "action": "S Manage identified dependencies that increase overall change risk.",
       "outcomeIds": [
         "RM_O2",
         "RM_O3"
@@ -347,72 +347,72 @@
       "readinessScore": 2
     },
     {
-      "id": "RM_028",
+      "id": "risk_management-27",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Process & Sustainment",
       "category": "Testing & Validation",
-      "action": "Test proposed controls and mitigations before implementation where practical.",
+      "action": "S Test proposed controls and mitigations before implementation where practical.",
       "outcomeIds": [
         "RM_O2"
       ],
       "readinessScore": 2
     },
     {
-      "id": "RM_029",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
-      "lens": "Planning & Risk",
-      "category": "Measurement & Evaluation",
-      "action": "Monitor change risks regularly using agreed review cycles, thresholds and governance forums.",
-      "outcomeIds": [
-        "RM_O3"
-      ],
-      "readinessScore": 3
-    },
-    {
-      "id": "RM_030",
+      "id": "risk_management-29",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Planning & Risk",
       "category": "Risk Management",
-      "action": "Review and update risk ratings based on emerging evidence and implementation experience.",
+      "action": "M Review and update risk ratings based on emerging evidence and implementation experience.",
       "outcomeIds": [
         "RM_O3"
       ],
       "readinessScore": 3
     },
     {
-      "id": "RM_031",
+      "id": "risk_management-28",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "Measurement & Evaluation",
+      "action": "S Monitor change risks regularly using agreed review cycles, thresholds and governance forums.",
+      "outcomeIds": [
+        "RM_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "risk_management-30",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Planning & Risk",
       "category": "Governance",
-      "action": "Escalate significant risks through agreed governance routes and obtain timely decisions where required.",
+      "action": "M Escalate significant risks through agreed governance routes and obtain timely decisions where required.",
       "outcomeIds": [
         "RM_O3"
       ],
       "readinessScore": 3
     },
     {
-      "id": "RM_032",
+      "id": "risk_management-31",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Planning & Risk",
       "category": "Risk Management",
-      "action": "Implement additional mitigation actions where existing controls are not sufficiently reducing risk exposure.",
+      "action": "S Implement additional mitigation actions where existing controls are not sufficiently reducing risk exposure.",
       "outcomeIds": [
         "RM_O3"
       ],
       "readinessScore": 3
     },
     {
-      "id": "RM_033",
+      "id": "risk_management-32",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Planning & Risk",
       "category": "Measurement & Evaluation",
-      "action": "Assess the effectiveness of mitigation activities and controls.",
+      "action": "S Assess the effectiveness of mitigation activities and controls.",
       "outcomeIds": [
         "RM_O2",
         "RM_O3"
@@ -420,36 +420,48 @@
       "readinessScore": 3
     },
     {
-      "id": "RM_034",
+      "id": "risk_management-36",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Process & Sustainment",
-      "category": "Engagement",
-      "action": "Gather stakeholder feedback on emerging risks, concerns and unintended consequences.",
+      "category": "Dependency Management",
+      "action": "M Review evolving dependencies and their impact on the risk profile.",
       "outcomeIds": [
         "RM_O3"
       ],
       "readinessScore": 3
     },
     {
-      "id": "RM_035",
+      "id": "risk_management-33",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Process & Sustainment",
+      "category": "Engagement",
+      "action": "S Gather stakeholder feedback on emerging risks, concerns and unintended consequences.",
+      "outcomeIds": [
+        "RM_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "risk_management-34",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Process & Sustainment",
       "category": "Communication",
-      "action": "Provide regular risk updates to stakeholders and leadership teams.",
+      "action": "S Provide regular risk updates to stakeholders and leadership teams.",
       "outcomeIds": [
         "RM_O3"
       ],
       "readinessScore": 3
     },
     {
-      "id": "RM_036",
+      "id": "risk_management-35",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Process & Sustainment",
       "category": "Testing & Validation",
-      "action": "Validate whether risk controls are operating as intended in practice.",
+      "action": "S Validate whether risk controls are operating as intended in practice.",
       "outcomeIds": [
         "RM_O2",
         "RM_O3"
@@ -457,144 +469,120 @@
       "readinessScore": 3
     },
     {
-      "id": "RM_037",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
-      "lens": "Process & Sustainment",
-      "category": "Dependency Management",
-      "action": "Review evolving dependencies and their impact on the risk profile.",
-      "outcomeIds": [
-        "RM_O3"
-      ],
-      "readinessScore": 3
-    },
-    {
-      "id": "RM_038",
+      "id": "risk_management-37",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Process & Sustainment",
       "category": "Risk Management",
-      "action": "Use lessons learned to improve current mitigation and control activities.",
+      "action": "S Use lessons learned to improve current mitigation and control activities.",
       "outcomeIds": [
         "RM_O3"
       ],
       "readinessScore": 3
     },
     {
-      "id": "RM_039",
+      "id": "risk_management-40",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Planning & Risk",
+      "category": "Risk Management",
+      "action": "M Continuously monitor current risks and proactively scan for emerging risks associated with ongoing change and continuous improvement.",
+      "outcomeIds": [
+        "RM_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "risk_management-38",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Planning & Risk",
       "category": "Governance",
-      "action": "Embed change risk management into routine governance, planning and operational management processes.",
+      "action": "S Embed change risk management into routine governance, planning and operational management processes.",
       "outcomeIds": [
         "RM_O3"
       ],
       "readinessScore": 4
     },
     {
-      "id": "RM_040",
+      "id": "risk_management-39",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Planning & Risk",
       "category": "Measurement & Evaluation",
-      "action": "Review long-term trends and recurring patterns in change-related risks.",
+      "action": "S Review long-term trends and recurring patterns in change-related risks.",
       "outcomeIds": [
         "RM_O3"
       ],
       "readinessScore": 4
     },
     {
-      "id": "RM_041",
-      "fromStatus": "Adopted",
-      "toStatus": "Thriving",
-      "lens": "Planning & Risk",
-      "category": "Risk Management",
-      "action": "Maintain proactive scanning for emerging risks associated with ongoing change and continuous improvement.",
-      "outcomeIds": [
-        "RM_O3"
-      ],
-      "readinessScore": 4
-    },
-    {
-      "id": "RM_042",
-      "fromStatus": "Adopted",
-      "toStatus": "Thriving",
-      "lens": "Planning & Risk",
-      "category": "Dependency Management",
-      "action": "Continuously monitor strategic, operational and external dependencies that may create future risk exposure.",
-      "outcomeIds": [
-        "RM_O3"
-      ],
-      "readinessScore": 4
-    },
-    {
-      "id": "RM_043",
+      "id": "risk_management-42",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Planning & Risk",
       "category": "Design",
-      "action": "Use organisational learning to improve risk identification, assessment and mitigation approaches.",
+      "action": "S Use organisational learning to improve risk identification, assessment and mitigation approaches.",
       "outcomeIds": [
         "RM_O3"
       ],
       "readinessScore": 4
     },
     {
-      "id": "RM_044",
+      "id": "risk_management-47",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Process & Sustainment",
+      "category": "Reinforcement",
+      "action": "M Embed a culture of proactive risk management and continuous vigilance across the organisation.",
+      "outcomeIds": [
+        "RM_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "risk_management-43",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Process & Sustainment",
       "category": "Engagement",
-      "action": "Encourage proactive risk identification and escalation throughout the organisation.",
+      "action": "S Encourage proactive risk identification and escalation throughout the organisation.",
       "outcomeIds": [
         "RM_O3"
       ],
       "readinessScore": 4
     },
     {
-      "id": "RM_045",
+      "id": "risk_management-44",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Process & Sustainment",
       "category": "Reinforcement",
-      "action": "Recognise and reinforce behaviours that contribute to effective risk management.",
+      "action": "S Recognise and reinforce behaviours that contribute to effective risk management.",
       "outcomeIds": [
         "RM_O3"
       ],
       "readinessScore": 4
     },
     {
-      "id": "RM_046",
+      "id": "risk_management-45",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Process & Sustainment",
       "category": "Measurement & Evaluation",
-      "action": "Evaluate the maturity and effectiveness of the risk management approach on a regular basis.",
+      "action": "S Evaluate the maturity and effectiveness of the risk management approach on a regular basis.",
       "outcomeIds": [
         "RM_O3"
       ],
       "readinessScore": 4
     },
     {
-      "id": "RM_047",
+      "id": "risk_management-46",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Process & Sustainment",
       "category": "Design",
-      "action": "Continuously improve risk management processes using lessons learned and organisational insight.",
-      "outcomeIds": [
-        "RM_O3"
-      ],
-      "readinessScore": 4
-    },
-    {
-      "id": "RM_048",
-      "fromStatus": "Adopted",
-      "toStatus": "Thriving",
-      "lens": "Process & Sustainment",
-      "category": "Reinforcement",
-      "action": "Embed a culture of proactive risk management and continuous vigilance across the organisation.",
+      "action": "S Continuously improve risk management processes using lessons learned and organisational insight.",
       "outcomeIds": [
         "RM_O3"
       ],

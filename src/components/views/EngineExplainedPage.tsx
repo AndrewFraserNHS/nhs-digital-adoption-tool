@@ -15,6 +15,15 @@ export interface EngineExplainedPageProps {
 
 const STEP_TITLES = ['Pathway', 'Phases', 'Component', 'Lens', 'Readiness', 'Actions'];
 
+const PATHWAY_DETAILS: Record<CstPathwayKey, string> = {
+  'pathway-1':
+    "For teams starting from scratch. Nothing has been built yet, so every component starts at Not Started and the guidance walks you through building the foundations - defining a vision, securing sponsorship, and putting the basics of a change plan in place - one readiness level at a time.",
+  'pathway-2':
+    "For teams who've already run a successful pilot and now need to scale it up. The guidance and actions are framed around taking what worked in the pilot - the vision, the sponsorship, the early lessons - and rolling it out consistently to new sites and teams, rather than starting from nothing.",
+  'pathway-3':
+    "For teams who've already gone live but adoption is patchy or inconsistent across the organisation. The guidance and actions focus on diagnosing where and why adoption is lagging, then delivering targeted fixes to bring lagging areas up to the same standard as the rest.",
+};
+
 const EXAMPLE_COMPONENT = getComponentsByPhase(1)[0] || ASSESSMENT_COMPONENTS[0];
 const EXAMPLE_LENS = EXAMPLE_COMPONENT.lenses[0];
 const EXAMPLE_BAND_SCORE = 2;
@@ -154,6 +163,14 @@ export function EngineExplainedPage({
                   </button>
                 );
               })}
+            </div>
+            <div
+              className={`mt-4 rounded-md border p-4 text-sm ${darkMode ? 'border-blue-500/30 bg-blue-500/10 text-blue-100' : 'border-blue-200 bg-blue-50 text-blue-900'}`}
+            >
+              <p className="font-semibold">
+                {PATHWAY_OPTIONS.find((option) => option.value === selectedPathway)?.simplifiedLabel}
+              </p>
+              <p className="mt-1">{PATHWAY_DETAILS[selectedPathway]}</p>
             </div>
           </>
         ) : null}

@@ -5,168 +5,168 @@
   },
   "actions": [
     {
-      "id": "SSG_0001",
+      "id": "sponsorship-0",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
-      "action": "Recognise the need for visible senior sponsorship and governance to support successful change delivery.",
+      "action": "S Recognise the need for visible senior sponsorship and governance to support successful change delivery.",
       "outcomeIds": [
         "SSG_O1"
       ],
       "readinessScore": 0
     },
     {
-      "id": "SSG_0002",
+      "id": "sponsorship-1",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "Strategic Direction & Leadership",
       "category": "Engagement",
-      "action": "Begin discussions with senior leaders about their role in supporting and sponsoring the change.",
+      "action": "M Begin discussions with senior leaders about their role in supporting and sponsoring the change.",
       "outcomeIds": [
         "SSG_O1"
       ],
       "readinessScore": 0
     },
     {
-      "id": "SSG_0003",
+      "id": "sponsorship-2",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
-      "action": "Identify areas where leadership support and governance oversight may be required.",
+      "action": "M Identify areas where leadership support and governance oversight may be required.",
       "outcomeIds": [
         "SSG_O1"
       ],
       "readinessScore": 0
     },
     {
-      "id": "SSG_0004",
+      "id": "sponsorship-3",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
-      "action": "Explore stakeholder perceptions of current leadership support for change.",
+      "action": "S Explore stakeholder perceptions of current leadership support for change.",
       "outcomeIds": [
         "SSG_O1"
       ],
       "readinessScore": 0
     },
     {
-      "id": "SSG_0005",
+      "id": "sponsorship-4",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
-      "action": "Secure initial leadership commitment to establish sponsorship and governance arrangements.",
+      "action": "M Secure initial leadership commitment to establish sponsorship and governance arrangements.",
       "outcomeIds": [
         "SSG_O1"
       ],
       "readinessScore": 0
     },
     {
-      "id": "SSG_0006",
+      "id": "sponsorship-5",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
       "category": "Communication",
-      "action": "Begin communicating the importance of leadership visibility and sponsorship during change.",
+      "action": "S Begin communicating the importance of leadership visibility and sponsorship during change.",
       "outcomeIds": [
         "SSG_O1"
       ],
       "readinessScore": 0
     },
     {
-      "id": "SSG_0007",
+      "id": "sponsorship-6",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
-      "action": "Review lessons learned from previous changes relating to governance and sponsorship effectiveness.",
+      "action": "S Review lessons learned from previous changes relating to governance and sponsorship effectiveness.",
       "outcomeIds": [
         "SSG_O1"
       ],
       "readinessScore": 0
     },
     {
-      "id": "SSG_0008",
+      "id": "sponsorship-7",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
       "category": "Engagement",
-      "action": "Identify potential senior leaders and sponsors who could support the change.",
+      "action": "M Identify potential senior leaders and sponsors who will support the change.",
       "outcomeIds": [
         "SSG_O1"
       ],
       "readinessScore": 0
     },
     {
-      "id": "SSG_0009",
+      "id": "sponsorship-8",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
-      "action": "Confirm the Senior Responsible Owner and executive sponsors required to lead the change.",
+      "action": "M Confirm the Senior Responsible Owner and executive sponsors required to lead the change.",
       "outcomeIds": [
         "SSG_O1"
       ],
       "readinessScore": 1
     },
     {
-      "id": "SSG_0010",
+      "id": "sponsorship-9",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
-      "action": "Assess sponsorship coverage requirements across impacted business areas and stakeholder groups.",
+      "action": "M Assess sponsorship coverage requirements across impacted business areas and stakeholder groups.",
       "outcomeIds": [
         "SSG_O1"
       ],
       "readinessScore": 1
     },
     {
-      "id": "SSG_0011",
+      "id": "sponsorship-10",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
-      "action": "Define and document sponsor roles, responsibilities and expected sponsorship behaviours.",
+      "action": "M Define and document sponsor roles, responsibilities and expected sponsorship behaviours (RACI)",
       "outcomeIds": [
         "SSG_O1"
       ],
       "readinessScore": 1
     },
     {
-      "id": "SSG_0012",
+      "id": "sponsorship-11",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
-      "action": "Develop and document governance structures, decision-making routes and escalation arrangements.",
+      "action": "M Develop and document governance structures, decision-making routes and escalation arrangements (RACI).",
       "outcomeIds": [
         "SSG_O1"
       ],
       "readinessScore": 1
     },
     {
-      "id": "SSG_0013",
+      "id": "sponsorship-12",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
       "category": "Design",
-      "action": "Develop a sponsor coalition model with representation from impacted organisational areas.",
+      "action": "S Develop a sponsor coalition map with representation from impacted organisational areas.",
       "outcomeIds": [
         "SSG_O1"
       ],
       "readinessScore": 1
     },
     {
-      "id": "SSG_0014",
+      "id": "sponsorship-13",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
       "category": "Engagement",
-      "action": "Secure commitment from identified sponsors and confirm their capacity to support the change.",
+      "action": "M Secure commitment from identified sponsors and confirm their capacity to support the change.",
       "outcomeIds": [
         "SSG_O1",
         "SSG_O2"
@@ -174,24 +174,24 @@
       "readinessScore": 1
     },
     {
-      "id": "SSG_0015",
+      "id": "sponsorship-14",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
-      "action": "Assess stakeholder confidence in leadership and sponsorship support for the change.",
+      "action": "S Assess stakeholder confidence in leadership and sponsorship support for the change.",
       "outcomeIds": [
         "SSG_O2"
       ],
       "readinessScore": 1
     },
     {
-      "id": "SSG_0016",
+      "id": "sponsorship-15",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
-      "action": "Identify gaps in sponsor visibility, influence, commitment and representation.",
+      "action": "S Identify gaps in sponsor visibility, influence, commitment and representation.",
       "outcomeIds": [
         "SSG_O1",
         "SSG_O2"
@@ -199,48 +199,48 @@
       "readinessScore": 1
     },
     {
-      "id": "SSG_0017",
+      "id": "sponsorship-16",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
       "category": "Communication",
-      "action": "Communicate confirmed sponsorship arrangements and the role sponsors will play in the change.",
+      "action": "S Communicate confirmed sponsorship arrangements and the role sponsors will play in the change.",
       "outcomeIds": [
         "SSG_O2"
       ],
       "readinessScore": 1
     },
     {
-      "id": "SSG_0018",
+      "id": "sponsorship-17",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
       "category": "Engagement",
-      "action": "Establish initial sponsor engagement activities with impacted stakeholder groups.",
+      "action": "M Plan sponsor engagement activities with impacted stakeholder groups.",
       "outcomeIds": [
         "SSG_O2"
       ],
       "readinessScore": 1
     },
     {
-      "id": "SSG_0019",
+      "id": "sponsorship-18",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
-      "action": "Obtain formal approval of governance arrangements, accountability structures and sponsor responsibilities.",
+      "action": "M Obtain formal approval of governance arrangements, accountability structures and sponsor responsibilities.",
       "outcomeIds": [
         "SSG_O1"
       ],
       "readinessScore": 2
     },
     {
-      "id": "SSG_0020",
+      "id": "sponsorship-19",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
-      "action": "Establish governance forums with defined terms of reference and decision-making authority.",
+      "action": "M Establish governance forums with defined terms of reference and decision-making authority.",
       "outcomeIds": [
         "SSG_O1",
         "SSG_O3"
@@ -248,72 +248,72 @@
       "readinessScore": 2
     },
     {
-      "id": "SSG_0021",
+      "id": "sponsorship-20",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
-      "action": "Define and socialise escalation routes for risks, issues and decisions.",
+      "action": "M Define and socialise escalation routes for risks, issues and decisions (RAID log).",
       "outcomeIds": [
         "SSG_O3"
       ],
       "readinessScore": 2
     },
     {
-      "id": "SSG_0022",
+      "id": "sponsorship-21",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
       "category": "Training & Learning",
-      "action": "Provide sponsor coaching on sponsorship responsibilities, leadership behaviours and resistance management.",
+      "action": "S Provide sponsor coaching on sponsorship responsibilities, leadership behaviours and resistance management.",
       "outcomeIds": [
         "SSG_O2"
       ],
       "readinessScore": 2
     },
     {
-      "id": "SSG_0023",
+      "id": "sponsorship-22",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
       "category": "Communication",
-      "action": "Develop a sponsor engagement and communication approach.",
+      "action": "S Develop a sponsor engagement and communication approach.",
       "outcomeIds": [
         "SSG_O2"
       ],
       "readinessScore": 2
     },
     {
-      "id": "SSG_0024",
-      "fromStatus": "Developing",
-      "toStatus": "Embedding",
-      "lens": "People Experience & Culture",
-      "category": "Communication",
-      "action": "Ensure sponsors regularly communicate the purpose and importance of the change.",
-      "outcomeIds": [
-        "SSG_O2"
-      ],
-      "readinessScore": 2
-    },
-    {
-      "id": "SSG_0025",
+      "id": "sponsorship-24",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Engagement",
-      "action": "Create opportunities for sponsors to engage directly with stakeholders.",
+      "action": "M Create opportunities for sponsors to engage directly with stakeholders.",
       "outcomeIds": [
         "SSG_O2"
       ],
       "readinessScore": 2
     },
     {
-      "id": "SSG_0026",
+      "id": "sponsorship-23",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "S Ensure sponsors regularly communicate the purpose and importance of the change.",
+      "outcomeIds": [
+        "SSG_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "sponsorship-25",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Measurement & Evaluation",
-      "action": "Establish mechanisms to gather feedback on sponsor visibility and effectiveness.",
+      "action": "S Establish mechanisms to gather feedback on sponsor visibility and effectiveness.",
       "outcomeIds": [
         "SSG_O2",
         "SSG_O3"
@@ -321,48 +321,48 @@
       "readinessScore": 2
     },
     {
-      "id": "SSG_0027",
-      "fromStatus": "Developing",
-      "toStatus": "Embedding",
-      "lens": "People Experience & Culture",
-      "category": "Engagement",
-      "action": "Use sponsors to address stakeholder concerns and demonstrate leadership commitment.",
-      "outcomeIds": [
-        "SSG_O2"
-      ],
-      "readinessScore": 2
-    },
-    {
-      "id": "SSG_0028",
+      "id": "sponsorship-27",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
-      "action": "Begin using sponsors to reinforce desired behaviours and messages.",
+      "action": "M Use sponsors to reinforce desired behaviours and messages.",
       "outcomeIds": [
         "SSG_O2"
       ],
       "readinessScore": 2
     },
     {
-      "id": "SSG_0029",
+      "id": "sponsorship-26",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "S Use sponsors to address stakeholder concerns and demonstrate leadership commitment.",
+      "outcomeIds": [
+        "SSG_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "sponsorship-28",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
-      "action": "Use governance forums routinely to review progress, risks, decisions and benefits.",
+      "action": "M Use governance forums routinely to review progress, risks, decisions and benefits.",
       "outcomeIds": [
         "SSG_O3"
       ],
       "readinessScore": 3
     },
     {
-      "id": "SSG_0030",
+      "id": "sponsorship-29",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
       "category": "Measurement & Evaluation",
-      "action": "Monitor sponsorship effectiveness using agreed indicators and feedback.",
+      "action": "S Monitor sponsorship effectiveness using agreed indicators and feedback.",
       "outcomeIds": [
         "SSG_O2",
         "SSG_O3"
@@ -370,12 +370,12 @@
       "readinessScore": 3
     },
     {
-      "id": "SSG_0031",
+      "id": "sponsorship-30",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
-      "action": "Review accountability and ownership to ensure responsibilities remain clear and effective.",
+      "action": "M Review accountability and ownership to ensure responsibilities remain clear and effective (RACI).",
       "outcomeIds": [
         "SSG_O1",
         "SSG_O3"
@@ -383,24 +383,24 @@
       "readinessScore": 3
     },
     {
-      "id": "SSG_0032",
+      "id": "sponsorship-31",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
       "category": "Risk Management",
-      "action": "Use governance to actively manage strategic risks, barriers and dependencies.",
+      "action": "S Use governance to actively manage strategic risks, barriers and dependencies (RAID log).",
       "outcomeIds": [
         "SSG_O3"
       ],
       "readinessScore": 3
     },
     {
-      "id": "SSG_0033",
+      "id": "sponsorship-32",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
-      "action": "Ensure sponsor coalition members actively support decisions and prioritisation activities.",
+      "action": "S Ensure sponsor coalition members actively support decisions and prioritisation activities.",
       "outcomeIds": [
         "SSG_O2",
         "SSG_O3"
@@ -408,36 +408,36 @@
       "readinessScore": 3
     },
     {
-      "id": "SSG_0034",
+      "id": "sponsorship-33",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
-      "action": "Maintain visible sponsor involvement throughout implementation and adoption.",
+      "action": "M Maintain visible sponsor involvement throughout implementation and adoption.",
       "outcomeIds": [
         "SSG_O2"
       ],
       "readinessScore": 3
     },
     {
-      "id": "SSG_0035",
+      "id": "sponsorship-34",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
       "category": "Communication",
-      "action": "Use sponsor-led communications to reinforce progress, successes and key messages.",
+      "action": "S Use sponsor-led communications to reinforce progress, successes and key messages.",
       "outcomeIds": [
         "SSG_O2"
       ],
       "readinessScore": 3
     },
     {
-      "id": "SSG_0036",
+      "id": "sponsorship-35",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
       "category": "Engagement",
-      "action": "Ensure sponsors respond visibly to stakeholder feedback and emerging concerns.",
+      "action": "S Ensure sponsors respond visibly to stakeholder feedback and emerging concerns.",
       "outcomeIds": [
         "SSG_O2",
         "SSG_O3"
@@ -445,60 +445,36 @@
       "readinessScore": 3
     },
     {
-      "id": "SSG_0037",
+      "id": "sponsorship-36",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
       "category": "Measurement & Evaluation",
-      "action": "Assess stakeholder confidence in leadership support for the change.",
+      "action": "S Assess stakeholder confidence in leadership support for the change.",
       "outcomeIds": [
         "SSG_O2"
       ],
       "readinessScore": 3
     },
     {
-      "id": "SSG_0038",
+      "id": "sponsorship-37",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
-      "action": "Use sponsors to recognise progress and celebrate achievements.",
+      "action": "S Use sponsors to recognise progress and celebrate achievements.",
       "outcomeIds": [
         "SSG_O2"
       ],
       "readinessScore": 3
     },
     {
-      "id": "SSG_0039",
+      "id": "sponsorship-41",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
-      "category": "Governance",
-      "action": "Embed sponsorship and governance practices into normal organisational management arrangements.",
-      "outcomeIds": [
-        "SSG_O3"
-      ],
-      "readinessScore": 4
-    },
-    {
-      "id": "SSG_0040",
-      "fromStatus": "Adopted",
-      "toStatus": "Thriving",
-      "lens": "Strategic Direction & Leadership",
-      "category": "Measurement & Evaluation",
-      "action": "Regularly review governance effectiveness and improve decision-making processes.",
-      "outcomeIds": [
-        "SSG_O3"
-      ],
-      "readinessScore": 4
-    },
-    {
-      "id": "SSG_0041",
-      "fromStatus": "Adopted",
-      "toStatus": "Thriving",
-      "lens": "Strategic Direction & Leadership",
-      "category": "Governance",
-      "action": "Maintain an active sponsor coalition that supports organisational priorities and future change.",
+      "category": "Reinforcement",
+      "action": "M Ensure senior leaders continue to visibly champion change as part of routine leadership practice.",
       "outcomeIds": [
         "SSG_O2",
         "SSG_O3"
@@ -506,12 +482,36 @@
       "readinessScore": 4
     },
     {
-      "id": "SSG_0042",
+      "id": "sponsorship-38",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
-      "category": "Reinforcement",
-      "action": "Ensure senior leaders continue to visibly champion change as part of routine leadership practice.",
+      "category": "Governance",
+      "action": "S Embed sponsorship and governance practices into normal organisational management arrangements.",
+      "outcomeIds": [
+        "SSG_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "sponsorship-39",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "S Regularly review governance effectiveness and improve decision-making processes.",
+      "outcomeIds": [
+        "SSG_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "sponsorship-40",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "S Maintain an active sponsor coalition that supports organisational priorities and future change.",
       "outcomeIds": [
         "SSG_O2",
         "SSG_O3"
@@ -519,173 +519,173 @@
       "readinessScore": 4
     },
     {
-      "id": "SSG_0043",
+      "id": "sponsorship-46",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
-      "action": "Embed sponsor visibility into organisational culture and leadership behaviours",
+      "action": "M Demonstrate visible leadership commitment to continuous improvement and ongoing change adoption.",
+      "outcomeIds": [
+        "SSG_O2",
+        "SSG_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "sponsorship-42",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "S Embed sponsor visibility into organisational culture and leadership behaviours",
       "outcomeIds": [
         "SSG_O2"
       ],
       "readinessScore": 4
     },
     {
-      "id": "SSG_0044",
+      "id": "sponsorship-43",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
       "category": "Measurement & Evaluation",
-      "action": "Measure long-term stakeholder confidence in leadership support for change.",
+      "action": "S Measure long-term stakeholder confidence in leadership support for change.",
       "outcomeIds": [
         "SSG_O2"
       ],
       "readinessScore": 4
     },
     {
-      "id": "SSG_0045",
+      "id": "sponsorship-44",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
       "category": "Engagement",
-      "action": "Maintain regular dialogue between sponsors, leaders and stakeholder groups.",
+      "action": "S Maintain regular dialogue between sponsors, leaders and stakeholder groups.",
       "outcomeIds": [
         "SSG_O2"
       ],
       "readinessScore": 4
     },
     {
-      "id": "SSG_0046",
+      "id": "sponsorship-45",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
-      "action": "Use sponsor-led recognition to reinforce desired organisational behaviours.",
+      "action": "S Use sponsor-led recognition to reinforce desired organisational behaviours.",
       "outcomeIds": [
         "SSG_O2"
       ],
       "readinessScore": 4
     },
     {
-      "id": "SSG_0047",
-      "fromStatus": "Adopted",
-      "toStatus": "Thriving",
-      "lens": "People Experience & Culture",
-      "category": "Reinforcement",
-      "action": "Demonstrate visible leadership commitment to continuous improvement and ongoing change adoption.",
-      "outcomeIds": [
-        "SSG_O2",
-        "SSG_O3"
-      ],
-      "readinessScore": 4
-    },
-    {
-      "id": "SSG_0048",
+      "id": "sponsorship-47",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "Planning & Risk",
       "category": "Risk Management",
-      "action": "Identify high-level governance, decision-making and sponsorship risks that may affect delivery",
+      "action": "M Identify high-level governance, decision-making and sponsorship risks that may affect delivery",
       "outcomeIds": [],
       "readinessScore": 0
     },
     {
-      "id": "SSG_0049",
+      "id": "sponsorship-48",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Planning & Risk",
       "category": "Risk Management",
-      "action": "Identify sponsorship and governance risks that could affect delivery, adoption or benefits realisation",
+      "action": "M Identify sponsorship and governance risks that could affect delivery, adoption or benefits realisation (RAID log).",
       "outcomeIds": [],
       "readinessScore": 1
     },
     {
-      "id": "SSG_0050",
+      "id": "sponsorship-49",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Planning & Risk",
       "category": "Dependency Management",
-      "action": "Assess dependencies between governance effectiveness and other change management initiatives",
+      "action": "S Assess dependencies between governance effectiveness and other change management initiatives (RAID log).",
       "outcomeIds": [],
       "readinessScore": 1
     },
     {
-      "id": "SSG_0051",
+      "id": "sponsorship-50",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Planning & Risk",
       "category": "Measurement & Evaluation",
-      "action": "Define measures and indicators to monitor sponsorship and governance effectiveness.",
+      "action": "S Define measures and indicators to monitor sponsorship and governance effectiveness.",
       "outcomeIds": [],
       "readinessScore": 1
     },
     {
-      "id": "SSG_0052",
+      "id": "sponsorship-51",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
       "category": "Risk Management",
-      "action": "Implement actions to address sponsorship, governance and decision-making risks",
+      "action": "M Implement actions to address sponsorship, governance and decision-making risks",
       "outcomeIds": [],
       "readinessScore": 2
     },
     {
-      "id": "SSG_0053",
+      "id": "sponsorship-52",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
       "category": "Measurement & Evaluation",
-      "action": "Monitor governance effectiveness and sponsor engagement against agreed measures.",
+      "action": "S Monitor governance effectiveness and sponsor engagement against agreed measures.",
       "outcomeIds": [],
       "readinessScore": 2
     },
     {
-      "id": "SSG_0054",
+      "id": "sponsorship-53",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
       "category": "Dependency Management",
-      "action": "Align governance activities with implementation milestones, programme plans and change management priorities",
+      "action": "S Align governance activities with implementation milestones, programme plans and change management priorities",
       "outcomeIds": [],
       "readinessScore": 2
     },
     {
-      "id": "SSG_0055",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
-      "lens": "Planning & Risk",
-      "category": "Measurement & Evaluation",
-      "action": "Measure and address address readiness gaps and residual organisational barriers affecting successful implementation.",
-      "outcomeIds": [],
-      "readinessScore": 3
-    },
-    {
-      "id": "SSG_0056",
+      "id": "sponsorship-55",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Planning & Risk",
       "category": "Risk Management",
-      "action": "Monitor readiness-related risks and implement additional mitigations where readiness concerns emerge.",
+      "action": "M Monitor readiness-related risks and implement additional mitigations where readiness concerns emerge.",
       "outcomeIds": [],
       "readinessScore": 3
     },
     {
-      "id": "SSG_0057",
+      "id": "sponsorship-54",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "Measurement & Evaluation",
+      "action": "S Measure and address readiness gaps and residual organisational barriers affecting successful implementation.",
+      "outcomeIds": [],
+      "readinessScore": 3
+    },
+    {
+      "id": "sponsorship-56",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Planning & Risk",
       "category": "Measurement & Evaluation",
-      "action": "Monitor long-term organisational change capacity, resilience and preparedness for future transformation activity",
+      "action": "M Monitor long-term organisational change capacity, resilience and preparedness for future transformation activity",
       "outcomeIds": [],
       "readinessScore": 4
     },
     {
-      "id": "SSG_0058",
+      "id": "sponsorship-57",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Planning & Risk",
       "category": "Reinforcement",
-      "action": "Embed organisational readiness assessment into standard organisational change and transformation methodologies",
+      "action": "S Embed organisational readiness assessment into standard organisational change and transformation methodologies",
       "outcomeIds": [],
       "readinessScore": 4
     }

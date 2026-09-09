@@ -122,6 +122,7 @@ const DEFAULT_USER_SETTINGS: AdoptionUserSettings = {
   hideGuidedWorkflow: false,
   showAdditionalGuidanceLinks: true,
   showExternalLinksSection: false,
+  showActionPriorityColours: false,
 };
 
 function cloneAction(action: DraftAction): DraftAction {
@@ -1908,6 +1909,7 @@ export function AdoptionApp() {
                 setUserSettings((prev) => ({ ...prev, hideGuidedWorkflow: true }))
               }
               showAdditionalGuidanceLinks={showAdditionalGuidanceLinks}
+              showActionPriorityColours={Boolean(userSettings.showActionPriorityColours)}
               darkMode={Boolean(userSettings.darkMode)}
               focusAction={focusAction}
               onFocusActionHandled={() => setFocusAction(null)}

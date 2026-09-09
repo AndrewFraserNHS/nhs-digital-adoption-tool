@@ -96,6 +96,8 @@ export interface AssessmentPanelProps {
   onNavigateToTool?: (tool: InAppTool) => void;
   hideGuidedWorkflow?: boolean;
   showAdditionalGuidanceLinks?: boolean;
+  /** Faint red/yellow row background on Must/Should actions - only takes effect on Pathway 1. */
+  showActionPriorityColours?: boolean;
   onHideGuidedWorkflow?: () => void;
   darkMode?: boolean;
   /** Deep-link into a specific action's edit modal, e.g. from the Daily Check-in "View" link. */
@@ -919,6 +921,7 @@ export function AssessmentPanel({
   onNavigateToTool,
   hideGuidedWorkflow = false,
   showAdditionalGuidanceLinks = true,
+  showActionPriorityColours = false,
   onHideGuidedWorkflow,
   darkMode = false,
   focusAction,
@@ -2229,9 +2232,20 @@ export function AssessmentPanel({
                               ACTION_STATUS_BADGE_STYLES[displayStatus] ||
                               ACTION_STATUS_BADGE_STYLES.Planned;
                             const rowKey = `${resolvedAction.sourceComponentId}:${resolvedAction.sourceLens}:${action.id}`;
+                            const showPriorityColour =
+                              showActionPriorityColours && pathway === 'pathway-1' && action.priority;
+                            const priorityRowClass = !showPriorityColour
+                              ? ''
+                              : action.priority === 'must'
+                                ? darkMode
+                                  ? 'bg-red-950/30'
+                                  : 'bg-red-50'
+                                : darkMode
+                                  ? 'bg-amber-950/30'
+                                  : 'bg-amber-50';
 
                             return (
-                              <tr key={rowKey}>
+                              <tr key={rowKey} className={priorityRowClass}>
                                 <td
                                   className={`px-3 py-2 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
                                 >

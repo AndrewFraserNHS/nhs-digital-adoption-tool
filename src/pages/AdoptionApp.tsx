@@ -227,7 +227,6 @@ function getCurrentMonthLabel(date = new Date()): string {
 export function AdoptionApp() {
   const COMPONENTS = ASSESSMENT_COMPONENTS;
   const MUTABLE_LENSES = useMemo<string[]>(() => [...LENSES], []);
-  const [view, setView] = useState<View>('introduction');
   const [activeComponentId, setActiveComponentId] = useState<string>(COMPONENTS[0].id);
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const [store, setStore] = useState<AdoptionStore>(() => {
@@ -258,6 +257,10 @@ export function AdoptionApp() {
 
     return syncDerivedContent(initialised);
   });
+
+  // Only default to the Introduction page for a genuinely fresh user - anyone who already has
+  // data lands on the Dashboard instead, so they aren't sent back through onboarding on every load.
+  const [view, setView] = useState<View>(() => (isCstEmpty(store) ? 'introduction' : 'dashboard'));
 
   const [activeLensInfo, setActiveLensInfo] = useState('');
   const visionGetStarted = usePageIntroSeen('vision-get-started');
@@ -364,9 +367,25 @@ export function AdoptionApp() {
       ? userSettings.manualPhaseFocus
       : metrics.currentPhase;
 
+  // Auto-expand the phase group containing whichever component is actively being viewed, so the
+  // sidebar always reveals the right one rather than being stuck on Pre-Discovery.
   useEffect(() => {
-    setExpandedNavPhases((current) => ({ ...current, [effectivePhaseFocus]: true }));
-  }, [effectivePhaseFocus]);
+    if (view !== 'assessment') {
+      return;
+    }
+    const activePhase = COMPONENTS.find((component) => component.id === activeComponentId)?.phase;
+    if (activePhase) {
+      setExpandedNavPhases((current) => ({ ...current, [activePhase]: true }));
+    }
+  }, [activeComponentId, view]);
+
+  // Where Am I Now relies on the sidebar to navigate onward (e.g. clicking a radar label), so
+  // reveal it automatically rather than leaving a first-time visitor to find the toggle themselves.
+  useEffect(() => {
+    if (view === 'where-am-i-now') {
+      setIsSidebarOpen(true);
+    }
+  }, [view]);
 
   useEffect(() => {
     const sectionByView: Partial<Record<View, string>> = {

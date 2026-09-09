@@ -98,6 +98,9 @@ export interface AssessmentPanelProps {
   showAdditionalGuidanceLinks?: boolean;
   /** Faint red/yellow row background on Must/Should actions - only takes effect on Pathway 1. */
   showActionPriorityColours?: boolean;
+  currentUserId?: string;
+  /** Device-local uploaded photo for the signed-in user - shown instead of initials on their own assigned actions. */
+  currentUserProfileImageDataUrl?: string;
   onHideGuidedWorkflow?: () => void;
   darkMode?: boolean;
   /** Deep-link into a specific action's edit modal, e.g. from the Daily Check-in "View" link. */
@@ -922,6 +925,8 @@ export function AssessmentPanel({
   hideGuidedWorkflow = false,
   showAdditionalGuidanceLinks = true,
   showActionPriorityColours = false,
+  currentUserId,
+  currentUserProfileImageDataUrl,
   onHideGuidedWorkflow,
   darkMode = false,
   focusAction,
@@ -1014,6 +1019,7 @@ export function AssessmentPanel({
   );
   const objectives = store.objectives?.[component.id] || [];
   const teamMembers = store.orgProfile.teamMembers || [];
+  const signedInMemberName = teamMembers.find((member) => member.id === currentUserId)?.name || '';
 
   const componentActionsByLens = useMemo(() => {
     const map: Record<string, DraftAction[]> = {};
@@ -2349,7 +2355,15 @@ export function AssessmentPanel({
                                       aria-label={`Change owner for ${action.text}`}
                                       className="rounded-full focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b]"
                                     >
-                                      <OwnerAvatar name={action.owner || ''} darkMode={darkMode} />
+                                      <OwnerAvatar
+                                        name={action.owner || ''}
+                                        darkMode={darkMode}
+                                        imageDataUrl={
+                                          signedInMemberName && action.owner === signedInMemberName
+                                            ? currentUserProfileImageDataUrl
+                                            : undefined
+                                        }
+                                      />
                                     </button>
                                   )}
                                 </td>

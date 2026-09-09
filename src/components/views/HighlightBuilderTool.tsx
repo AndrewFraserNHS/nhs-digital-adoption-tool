@@ -7,6 +7,7 @@ import { type Metrics } from '@lib/adoptionMetrics';
 import { getBragStatusFromAverage, BRAG_BADGE_STYLES } from '@lib/bragStatus';
 import { RichTextEditor } from '@components/common/RichTextEditor';
 import { PageHelpButton, PageIntroModal, usePageIntroSeen } from '@components/onboarding/PageIntroModal';
+import { nhsColors } from '../../styles/nhsTheme';
 
 export interface BragActionRow {
   id: string;
@@ -343,6 +344,43 @@ export function HighlightBuilderTool({
       return next;
     }, {});
   }, [layout.sections]);
+
+  const isSlideMode = layout.orientation === 'landscape';
+
+  /**
+   * Portrait ("report") sections are dense, thin-bordered document blocks that flow together on a
+   * page. Landscape ("PowerPoint NHS") sections are bold, full-header slide blocks that each break
+   * onto their own printed page, evoking a single NHS-branded PPT slide.
+   */
+  const reportArticleClassName = isSlideMode
+    ? 'overflow-hidden rounded-lg border border-[#003087] bg-white shadow-md'
+    : 'rounded-md border border-slate-200 bg-white p-4';
+
+  const reportArticleStyle: React.CSSProperties = isSlideMode
+    ? {}
+    : { borderLeft: `3px solid ${layout.themeColor}` };
+
+  function ReportSectionHeading({ children }: { children: React.ReactNode }): JSX.Element {
+    if (isSlideMode) {
+      return (
+        <div
+          className="-mx-0 -mt-0 mb-4 px-5 py-3 text-base font-bold uppercase tracking-wide text-white"
+          style={{ backgroundColor: layout.themeColor || nhsColors.blue }}
+        >
+          {children}
+        </div>
+      );
+    }
+    return (
+      <div className="mb-2 border-b border-slate-200 pb-1 text-xs font-bold uppercase tracking-wider text-slate-500">
+        {children}
+      </div>
+    );
+  }
+
+  function ReportSectionBody({ children }: { children: React.ReactNode }): JSX.Element {
+    return isSlideMode ? <div className="px-5 pb-5 text-[15px]">{children}</div> : <>{children}</>;
+  }
 
   const componentScores = useMemo(() => {
     return components.map((component) => {
@@ -1524,7 +1562,7 @@ export function HighlightBuilderTool({
             </div>
           </div>
 
-          <div className="grid gap-3">
+          <div className={isSlideMode ? 'grid gap-6' : 'grid gap-2'} data-orientation={layout.orientation}>
             {layout.bragSlides.map((slide) => {
               const componentInfo = componentScores.find((item) => item.component.id === slide.componentId);
               const bragStatus = componentInfo
@@ -1535,15 +1573,34 @@ export function HighlightBuilderTool({
                 <article
                   key={slide.id}
                   data-brag-slide="true"
-                  className="rounded-xl border border-slate-200 p-4"
-                  style={{ borderLeft: `4px solid ${layout.themeColor}` }}
+                  className={reportArticleClassName}
+                  style={reportArticleStyle}
                 >
-                  <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div
+                    className={
+                      isSlideMode
+                        ? 'flex flex-wrap items-center justify-between gap-3 px-5 py-3 text-white'
+                        : 'flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-2'
+                    }
+                    style={isSlideMode ? { backgroundColor: layout.themeColor || nhsColors.blue } : undefined}
+                  >
                     <div>
-                      <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                      <p
+                        className={
+                          isSlideMode
+                            ? 'text-xs font-semibold uppercase tracking-wider text-white/80'
+                            : 'text-xs font-semibold uppercase tracking-wider text-slate-500'
+                        }
+                      >
                         Programme/Project Readiness
                       </p>
-                      <h3 className="text-lg font-bold text-slate-900">
+                      <h3
+                        className={
+                          isSlideMode
+                            ? 'text-xl font-bold text-white'
+                            : 'text-base font-bold text-slate-900'
+                        }
+                      >
                         {componentInfo?.component.label || 'Select a component'}
                       </h3>
                     </div>
@@ -1554,14 +1611,22 @@ export function HighlightBuilderTool({
                         >
                           {bragStatus}
                         </span>
-                        <p className="mt-1 text-xs text-slate-500">
+                        <p
+                          className={`mt-1 text-xs ${isSlideMode ? 'text-white/80' : 'text-slate-500'}`}
+                        >
                           {componentInfo.average.toFixed(1)} of {componentInfo.target} target
                         </p>
                       </div>
                     ) : null}
                   </div>
 
-                  <div className="mt-3 overflow-x-auto rounded-md border border-slate-200">
+                  <div
+                    className={
+                      isSlideMode
+                        ? 'mx-5 mb-5 mt-3 overflow-x-auto rounded-md border border-slate-200'
+                        : 'mt-3 overflow-x-auto rounded-md border border-slate-200'
+                    }
+                  >
                     <table className="min-w-full divide-y divide-slate-200 bg-white">
                       <thead className="bg-slate-50">
                         <tr>
@@ -1649,7 +1714,11 @@ export function HighlightBuilderTool({
                     type="button"
                     data-print-hide="true"
                     onClick={() => addBragRow(slide.id)}
-                    className="mt-3 rounded-md bg-slate-100 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-200"
+                    className={
+                      isSlideMode
+                        ? 'mx-5 mb-5 rounded-md bg-slate-100 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-200'
+                        : 'mt-3 rounded-md bg-slate-100 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-200'
+                    }
                   >
                     + Add Row
                   </button>
@@ -1660,16 +1729,17 @@ export function HighlightBuilderTool({
             {layout.sections.map((sectionId) => (
               <article
                 key={sectionId}
-                className="rounded-xl border border-slate-200 p-4"
-                style={{ borderLeft: `4px solid ${layout.themeColor}` }}
+                data-brag-slide={isSlideMode ? 'true' : undefined}
+                className={reportArticleClassName}
+                style={reportArticleStyle}
               >
-                <div className="text-sm font-semibold text-slate-700">
+                <ReportSectionHeading>
                   {withSectionNumber(
                     sectionIndexMap[sectionId] || 0,
                     SECTION_OPTIONS.find((item) => item.id === sectionId)?.label || sectionId
                   )}
-                </div>
-                {renderSectionBody(sectionId as SectionId)}
+                </ReportSectionHeading>
+                <ReportSectionBody>{renderSectionBody(sectionId as SectionId)}</ReportSectionBody>
               </article>
             ))}
           </div>

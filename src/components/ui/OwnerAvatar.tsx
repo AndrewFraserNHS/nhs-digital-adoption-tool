@@ -3,6 +3,7 @@ import { JSX } from 'react';
 export interface OwnerAvatarProps {
   name: string;
   darkMode?: boolean;
+  imageDataUrl?: string;
 }
 
 const AVATAR_COLORS = [
@@ -36,8 +37,8 @@ function getInitials(name: string): string {
   return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
 }
 
-/** Small circular initials avatar for an owner name - a consistent color per name, with the full name as a tooltip. */
-export function OwnerAvatar({ name, darkMode = false }: OwnerAvatarProps): JSX.Element {
+/** Small circular avatar for an owner name - shows their uploaded photo if provided, otherwise consistent-color initials, with the full name as a tooltip. */
+export function OwnerAvatar({ name, darkMode = false, imageDataUrl }: OwnerAvatarProps): JSX.Element {
   const trimmed = name.trim();
   if (!trimmed) {
     return (
@@ -48,6 +49,17 @@ export function OwnerAvatar({ name, darkMode = false }: OwnerAvatarProps): JSX.E
       >
         ?
       </span>
+    );
+  }
+
+  if (imageDataUrl) {
+    return (
+      <img
+        src={imageDataUrl}
+        alt={trimmed}
+        title={trimmed}
+        className="h-7 w-7 shrink-0 rounded-full border border-slate-300 object-cover"
+      />
     );
   }
 

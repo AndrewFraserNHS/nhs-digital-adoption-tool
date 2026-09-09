@@ -5,16 +5,22 @@ import { initializeStore } from '@lib/adoptionState';
 
 const baseUserSettings = {
   name: 'Jordan',
-  preferences: 'Email summaries',
   themeColor: '#005eb8',
 };
 
 describe('ProfilePage', () => {
-  it('SHOULD update your name and preferences', () => {
+  it('SHOULD let you pick which team member you are signed in as', () => {
     // arrange
     const onUserSettingsUpdate = vi.fn();
     const onProfileUpdate = vi.fn();
-    const orgProfile = initializeStore().orgProfile;
+    const onCurrentUserChange = vi.fn();
+    const orgProfile = {
+      ...initializeStore().orgProfile,
+      teamMembers: [
+        { id: 'member-1', name: 'Taylor', role: 'Change Lead' },
+        { id: 'member-2', name: 'Jordan', role: 'SRO' },
+      ],
+    };
 
     render(
       <ProfilePage
@@ -22,19 +28,38 @@ describe('ProfilePage', () => {
         onProfileUpdate={onProfileUpdate}
         userSettings={baseUserSettings}
         onUserSettingsUpdate={onUserSettingsUpdate}
+        currentUserId="member-1"
+        onCurrentUserChange={onCurrentUserChange}
       />
     );
 
     // act
-    fireEvent.change(screen.getByLabelText('Your Name'), { target: { value: 'Taylor' } });
-    fireEvent.change(screen.getByLabelText('Preferences'), {
-      target: { value: 'Dark charts only' },
+    fireEvent.change(screen.getByLabelText('You are signed in as'), {
+      target: { value: 'member-2' },
     });
 
     // assert
-    expect(onUserSettingsUpdate).toHaveBeenLastCalledWith(
-      expect.objectContaining({ name: 'Taylor', preferences: 'Dark charts only' })
+    expect(onCurrentUserChange).toHaveBeenLastCalledWith('member-2');
+  });
+
+  it('SHOULD prompt to add a team member when the roster is empty', () => {
+    // arrange
+    const orgProfile = { ...initializeStore().orgProfile, teamMembers: [] };
+
+    render(
+      <ProfilePage
+        orgProfile={orgProfile}
+        onProfileUpdate={vi.fn()}
+        userSettings={baseUserSettings}
+        onUserSettingsUpdate={vi.fn()}
+        currentUserId=""
+        onCurrentUserChange={vi.fn()}
+      />
     );
+
+    // assert
+    expect(screen.queryByLabelText('You are signed in as')).not.toBeInTheDocument();
+    expect(screen.getByText(/No team members have been added yet/)).toBeInTheDocument();
   });
 
   it('SHOULD update phase capability and confidence', () => {
@@ -49,6 +74,8 @@ describe('ProfilePage', () => {
         onProfileUpdate={onProfileUpdate}
         userSettings={baseUserSettings}
         onUserSettingsUpdate={onUserSettingsUpdate}
+        currentUserId=""
+        onCurrentUserChange={vi.fn()}
       />
     );
 
@@ -77,6 +104,8 @@ describe('ProfilePage', () => {
         onProfileUpdate={vi.fn()}
         userSettings={baseUserSettings}
         onUserSettingsUpdate={vi.fn()}
+        currentUserId=""
+        onCurrentUserChange={vi.fn()}
         objectives={objectives}
       />
     );

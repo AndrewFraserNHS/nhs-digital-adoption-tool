@@ -86,6 +86,8 @@ export interface ProfilePageProps {
   onProfileUpdate: (profile: OrgProfile) => void;
   userSettings: AdoptionUserSettings;
   onUserSettingsUpdate: (settings: AdoptionUserSettings) => void;
+  currentUserId?: string;
+  onCurrentUserChange: (id: string) => void;
   objectives?: EngagementObjective[];
   darkMode?: boolean;
 }
@@ -97,6 +99,8 @@ export function ProfilePage({
   onProfileUpdate,
   userSettings,
   onUserSettingsUpdate,
+  currentUserId,
+  onCurrentUserChange,
   objectives = [],
   darkMode = false,
 }: ProfilePageProps): JSX.Element {
@@ -271,33 +275,32 @@ export function ProfilePage({
 
         <div>
           <label
-            htmlFor="user-name"
+            htmlFor="user-current-member"
             className={`block text-sm font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
           >
-            Your Name
+            You are signed in as
           </label>
-          <input
-            id="user-name"
-            type="text"
-            className={`w-full rounded-md border shadow-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8] sm:text-sm p-2 ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-[#768692] bg-white text-slate-900'}`}
-            value={settings.name}
-            onChange={(e) => updateUserSettings({ name: e.target.value })}
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="user-preferences"
-            className={`block text-sm font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
-          >
-            Preferences
-          </label>
-          <textarea
-            id="user-preferences"
-            className={`w-full rounded-md border shadow-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8] sm:text-sm p-2 h-24 ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-[#768692] bg-white text-slate-900'}`}
-            value={settings.preferences}
-            onChange={(e) => updateUserSettings({ preferences: e.target.value })}
-          />
+          {(orgProfile.teamMembers || []).length > 0 ? (
+            <select
+              id="user-current-member"
+              value={currentUserId || ''}
+              onChange={(e) => onCurrentUserChange(e.target.value)}
+              className={`w-full rounded-md border shadow-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8] sm:text-sm p-2 ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-[#768692] bg-white text-slate-900'}`}
+            >
+              <option value="">Not selected</option>
+              {(orgProfile.teamMembers || []).map((member) => (
+                <option key={member.id} value={member.id}>
+                  {member.name || 'Unnamed'}
+                  {member.role ? ` - ${member.role}` : ''}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <p className={`text-sm ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+              No team members have been added yet. Add yourself under CST Details → Team Members to
+              link your profile.
+            </p>
+          )}
         </div>
 
         <div>

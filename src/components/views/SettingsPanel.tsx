@@ -4,7 +4,6 @@ import { PageHelpButton, PageIntroModal, usePageIntroSeen } from '@components/on
 
 export interface AdoptionUserSettings {
   name: string;
-  preferences: string;
   themeColor: string;
   profileImageDataUrl?: string;
   darkMode?: boolean;

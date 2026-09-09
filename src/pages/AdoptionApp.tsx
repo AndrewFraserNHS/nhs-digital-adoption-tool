@@ -112,7 +112,6 @@ const EXAMPLE_DATA_FILES: Record<'red' | 'amber' | 'green', string> = {
 
 const DEFAULT_USER_SETTINGS: AdoptionUserSettings = {
   name: '',
-  preferences: '',
   themeColor: '#005eb8',
   profileImageDataUrl: '',
   darkMode: false,
@@ -1931,6 +1930,8 @@ export function AdoptionApp() {
               }
               showAdditionalGuidanceLinks={showAdditionalGuidanceLinks}
               showActionPriorityColours={Boolean(userSettings.showActionPriorityColours)}
+              currentUserId={currentUserId}
+              currentUserProfileImageDataUrl={userSettings.profileImageDataUrl}
               darkMode={Boolean(userSettings.darkMode)}
               focusAction={focusAction}
               onFocusActionHandled={() => setFocusAction(null)}
@@ -2007,6 +2008,8 @@ export function AdoptionApp() {
               onProfileUpdate={handleProfileUpdate}
               userSettings={userSettings}
               onUserSettingsUpdate={handleUserSettingsUpdate}
+              currentUserId={currentUserId}
+              onCurrentUserChange={setCurrentUserId}
               objectives={engagementObjectives}
               darkMode={Boolean(userSettings.darkMode)}
             />

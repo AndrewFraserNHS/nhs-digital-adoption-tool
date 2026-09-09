@@ -59,6 +59,12 @@ export interface AssessmentRow {
   confidence: 'High' | 'Medium' | 'Low';
 }
 
+interface DashboardChartRow {
+  label: string;
+  current: number;
+  target: number;
+}
+
 function createId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
@@ -102,6 +108,21 @@ const SECTION_OPTIONS = [
 ] as const;
 
 type SectionId = (typeof SECTION_OPTIONS)[number]['id'];
+
+const SECTION_VISUALS: Record<SectionId, { label: string; kind: 'bars' | 'trend' | 'donut' | 'steps' | 'risk' }> = {
+  'executive-summary': { label: 'Headline scorecard', kind: 'donut' },
+  'change-dashboard': { label: 'RAG trend chart', kind: 'trend' },
+  'adoption-metrics': { label: 'KPI scorecard', kind: 'bars' },
+  'what-went-well': { label: 'Achievement tiles', kind: 'steps' },
+  'risks-issues': { label: 'Risk heat map', kind: 'risk' },
+  'stakeholder-insights': { label: 'Sentiment split', kind: 'donut' },
+  'interventions-delivered': { label: 'Intervention timeline', kind: 'steps' },
+  'upcoming-priorities': { label: '30-day roadmap', kind: 'steps' },
+  'decisions-required': { label: 'Decision funnel', kind: 'trend' },
+  'change-lead-assessment': { label: 'Confidence profile', kind: 'bars' },
+};
+
+const PHASE_ACCENTS = ['#005eb8', '#41a6c8', '#78be20', '#ffb81c', '#da291c'];
 
 const DEFAULT_LAYOUT: HighlightBuilderLayout = {
   title: 'Executive Highlight Report',
@@ -157,6 +178,36 @@ function StatusBadge({ status }: { status: HighlightBuilderLayout['overallStatus
       <span className={`h-2 w-2 rounded-full ${STATUS_DOT_CLASSES[status]}`} />
       {status}
     </span>
+  );
+}
+
+function DashboardChart({ rows }: { rows: DashboardChartRow[] }): JSX.Element {
+  const maxScore = Math.max(5, ...rows.flatMap((row) => [row.current, row.target]));
+
+  return (
+    <div className="space-y-5" aria-label="Current component scores compared with targets">
+      {rows.map((row) => (
+        <div key={row.label} className="grid grid-cols-[minmax(130px,1fr),minmax(220px,2fr),48px] items-center gap-3">
+          <span className="text-sm font-semibold text-[#425563]">{row.label}</span>
+          <div className="relative h-8 rounded bg-[#e8edee]">
+            <div
+              className="absolute inset-y-0 left-0 rounded bg-[#005eb8]"
+              style={{ width: `${Math.min(100, (row.current / maxScore) * 100)}%` }}
+            />
+            <div
+              className="absolute inset-y-[-4px] w-0.5 bg-[#da291c]"
+              style={{ left: `${Math.min(100, (row.target / maxScore) * 100)}%` }}
+              title={`Target ${row.target}`}
+            />
+          </div>
+          <span className="text-right text-sm font-bold text-[#005eb8]">{row.current.toFixed(1)}</span>
+        </div>
+      ))}
+      <div className="flex flex-wrap gap-5 border-t border-[#d8dde0] pt-4 text-xs text-[#425563]">
+        <span className="flex items-center gap-2"><span className="h-3 w-3 rounded-sm bg-[#005eb8]" /> Current average</span>
+        <span className="flex items-center gap-2"><span className="h-4 w-0.5 bg-[#da291c]" /> Target marker</span>
+      </div>
+    </div>
   );
 }
 
@@ -628,6 +679,8 @@ export function HighlightBuilderTool({
 
       return {
         area: item.component.label,
+        current: item.average,
+        target: item.target,
         status,
         trend,
         commentary,
@@ -635,9 +688,208 @@ export function HighlightBuilderTool({
     });
   }, [componentScores, previousSnapshot]);
 
+  const dashboardChartRows = useMemo<DashboardChartRow[]>(
+    () => dashboardRows.map((row) => ({ label: row.area, current: row.current, target: row.target })),
+    [dashboardRows]
+  );
+
   const upcomingPriorities = useMemo(() => {
     return metrics.nextSteps.slice(0, 7).map((step) => step.message);
   }, [metrics.nextSteps]);
+
+  const hasSectionContent = (sectionId: SectionId): boolean => {
+    if (sectionId === 'decisions-required') {
+      return layout.decisionRows.some((row) => row.decision.trim() || row.owner.trim() || row.requiredBy.trim());
+    }
+
+    if ((layout.sectionNarratives[sectionId] || '').trim()) {
+      return true;
+    }
+
+    switch (sectionId) {
+      case 'executive-summary':
+        return true;
+      case 'change-dashboard':
+        return dashboardRows.length > 0;
+      case 'adoption-metrics':
+        return layout.metricRows.length > 0;
+      case 'what-went-well':
+        return componentPreview.length > 0;
+      case 'risks-issues':
+        return layout.riskRows.length > 0;
+      case 'stakeholder-insights':
+        return layout.stakeholderPositivePct + layout.stakeholderNeutralPct + layout.stakeholderNegativePct > 0;
+      case 'interventions-delivered':
+        return layout.interventionRows.length > 0;
+      case 'upcoming-priorities':
+        return upcomingPriorities.length > 0;
+      case 'decisions-required':
+        return layout.decisionRows.length > 0;
+      case 'change-lead-assessment':
+        return layout.assessmentRows.length > 0;
+      default:
+        return false;
+    }
+  };
+
+  const visibleSections = layout.sections.filter((sectionId) => hasSectionContent(sectionId as SectionId));
+
+  const buildReportNumberMap = (sectionIds: string[]) => {
+    let number = 0;
+    return sectionIds.reduce<Record<string, number>>((next, id) => {
+      next[id] = number;
+      number += id === 'change-dashboard' ? 2 : 1;
+      return next;
+    }, {});
+  };
+
+  const reportNumberMap = buildReportNumberMap(layout.sections);
+  const printReportNumberMap = buildReportNumberMap(visibleSections);
+
+  function DataVisual({ sectionId }: { sectionId: SectionId }): JSX.Element | null {
+    if (!isSlideMode) {
+      return null;
+    }
+
+    const visual = SECTION_VISUALS[sectionId];
+    const parseValue = (value: string): number => {
+      const parsed = Number.parseFloat(value.replace('%', '').trim());
+      return Number.isFinite(parsed) ? Math.max(0, parsed) : 0;
+    };
+
+    if (visual.kind === 'donut') {
+      const values = sectionId === 'stakeholder-insights'
+        ? [layout.stakeholderPositivePct, layout.stakeholderNeutralPct, layout.stakeholderNegativePct]
+        : [Number(metrics.overallPct), Math.max(0, 100 - Number(metrics.overallPct))];
+      const total = values.reduce((sum, value) => sum + value, 0);
+      if (!total) {
+        return null;
+      }
+      const first = (values[0] / total) * 100;
+      const second = (values[1] / total) * 100;
+      const firstLabel = sectionId === 'stakeholder-insights' ? 'Positive' : 'Overall progress';
+      const secondLabel = sectionId === 'stakeholder-insights' ? 'Neutral' : 'Remaining';
+      const third = sectionId === 'stakeholder-insights' ? (values[2] / total) * 100 : 0;
+      return (
+        <aside className="rounded-lg border border-[#c9e0f2] bg-[#f0f7fc] p-4 text-[#003087]">
+          <p className="text-xs font-bold uppercase tracking-[0.14em]">{visual.label}</p>
+          <div
+            className="mx-auto mt-4 h-32 w-32 rounded-full"
+            style={{
+              background: sectionId === 'stakeholder-insights'
+                ? `conic-gradient(#78be20 0 ${first}%, #ffb81c ${first}% ${first + second}%, #da291c ${first + second}% ${first + second + third}%, #d8eaf6 ${first + second + third}% 100%)`
+                : `conic-gradient(#005eb8 0 ${first}%, #41a6c8 ${first}% ${first + second}%, #d8eaf6 ${first + second}% 100%)`,
+              mask: 'radial-gradient(circle, transparent 55%, #000 56%)',
+              WebkitMask: 'radial-gradient(circle, transparent 55%, #000 56%)',
+            }}
+          />
+          <div className="mt-4 grid gap-2 text-xs text-[#425563]">
+            <span className="flex items-center justify-between gap-2"><span><i className={`mr-2 inline-block h-2.5 w-2.5 rounded-full ${sectionId === 'stakeholder-insights' ? 'bg-[#78be20]' : 'bg-[#005eb8]'}`} />{firstLabel}</span><strong>{values[0]}%</strong></span>
+            <span className="flex items-center justify-between gap-2"><span><i className={`mr-2 inline-block h-2.5 w-2.5 rounded-full ${sectionId === 'stakeholder-insights' ? 'bg-[#ffb81c]' : 'bg-[#41a6c8]'}`} />{secondLabel}</span><strong>{values[1]}%</strong></span>
+            {sectionId === 'stakeholder-insights' ? <span className="flex items-center justify-between gap-2"><span><i className="mr-2 inline-block h-2.5 w-2.5 rounded-full bg-[#da291c]" />Negative</span><strong>{values[2]}%</strong></span> : null}
+          </div>
+        </aside>
+      );
+    }
+
+    if (visual.kind === 'risk') {
+      const riskCounts = layout.riskRows.reduce<Record<string, number>>((counts, row) => {
+        const status = row.status.trim() || 'Open';
+        counts[status] = (counts[status] || 0) + 1;
+        return counts;
+      }, {});
+      const entries = Object.entries(riskCounts);
+      if (!entries.length) {
+        return null;
+      }
+      const maxCount = Math.max(...entries.map(([, count]) => count));
+      return (
+        <aside className="rounded-lg border border-[#c9e0f2] bg-[#f0f7fc] p-4 text-[#003087]">
+          <p className="text-xs font-bold uppercase tracking-[0.14em]">{visual.label}</p>
+          <div className="mt-5 space-y-3">
+            {entries.map(([status, count]) => (
+              <div key={status}>
+                <div className="mb-1 flex justify-between text-xs font-semibold text-[#425563]"><span>{status}</span><span>{count}</span></div>
+                <div className="h-4 rounded bg-white"><div className="h-4 rounded" style={{ width: `${(count / maxCount) * 100}%`, backgroundColor: status.toLowerCase().includes('closed') ? '#78be20' : status.toLowerCase().includes('at risk') ? '#da291c' : '#ffb81c' }} /></div>
+              </div>
+            ))}
+          </div>
+        </aside>
+      );
+    }
+
+    if (visual.kind === 'steps') {
+      const labels = sectionId === 'interventions-delivered'
+        ? layout.interventionRows.map((row) => row.text.trim()).filter(Boolean)
+        : sectionId === 'upcoming-priorities'
+          ? upcomingPriorities
+          : componentPreview.map((item) => item.component.label);
+      if (!labels.length) {
+        return null;
+      }
+      return (
+        <aside className="rounded-lg border border-[#c9e0f2] bg-[#f0f7fc] p-4 text-[#003087]">
+          <p className="text-xs font-bold uppercase tracking-[0.14em]">{visual.label}</p>
+          <div className="mt-5 space-y-3">
+            {labels.slice(0, 5).map((label, index) => (
+              <div key={`${label}-${index}`} className="flex items-start gap-3 text-xs text-[#425563]">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full font-bold text-white" style={{ backgroundColor: PHASE_ACCENTS[index % PHASE_ACCENTS.length] }}>{index + 1}</span>
+                <span className="pt-0.5">{label}</span>
+              </div>
+            ))}
+          </div>
+        </aside>
+      );
+    }
+
+    if (visual.kind === 'trend' && sectionId === 'decisions-required') {
+      const decisions = layout.decisionRows.map((row) => row.decision.trim()).filter(Boolean);
+      if (!decisions.length) {
+        return null;
+      }
+      return (
+        <aside className="rounded-lg border border-[#c9e0f2] bg-[#f0f7fc] p-4 text-[#003087]">
+          <p className="text-xs font-bold uppercase tracking-[0.14em]">{visual.label}</p>
+          <div className="mt-5 space-y-3">
+            {decisions.slice(0, 5).map((decision, index) => (
+              <div key={`${decision}-${index}`} className="flex items-center gap-2">
+                <div className="h-5 flex-1 rounded bg-white"><div className="h-5 rounded" style={{ width: `${100 - index * 15}%`, backgroundColor: PHASE_ACCENTS[index % PHASE_ACCENTS.length] }} /></div>
+                <span className="max-w-[45%] text-right text-xs text-[#425563]">{decision}</span>
+              </div>
+            ))}
+          </div>
+        </aside>
+      );
+    }
+
+    const barRows = sectionId === 'adoption-metrics'
+      ? layout.metricRows.map((row) => ({ label: row.measure, value: parseValue(row.current), max: Math.max(100, parseValue(row.target)) }))
+      : sectionId === 'change-lead-assessment'
+        ? (['High', 'Medium', 'Low'] as const).map((confidence) => ({
+            label: confidence,
+            value: layout.assessmentRows.filter((row) => row.confidence === confidence).length,
+            max: Math.max(1, layout.assessmentRows.length),
+          }))
+        : componentPreview.map((item) => ({ label: item.component.label, value: item.average, max: 5 }));
+    const chartRows = barRows.filter((row) => row.label.trim() && row.value > 0);
+    if (!chartRows.length) {
+      return null;
+    }
+
+    return (
+      <aside className="rounded-lg border border-[#c9e0f2] bg-[#f0f7fc] p-4 text-[#003087]">
+        <p className="text-xs font-bold uppercase tracking-[0.14em]">{visual.label}</p>
+        <div className="mt-5 space-y-3">
+          {chartRows.slice(0, 6).map((row) => (
+            <div key={row.label}>
+              <div className="mb-1 flex justify-between gap-2 text-xs font-semibold text-[#425563]"><span>{row.label}</span><span>{row.value}</span></div>
+              <div className="h-4 rounded bg-white"><div className="h-4 rounded" style={{ width: `${Math.min(100, (row.value / row.max) * 100)}%`, backgroundColor: PHASE_ACCENTS[chartRows.indexOf(row) % PHASE_ACCENTS.length] }} /></div>
+            </div>
+          ))}
+        </div>
+      </aside>
+    );
+  }
 
   const buildSectionNarrative = (sectionId: SectionId): string => {
     if ((layout.sectionNarratives[sectionId] || '').trim()) {
@@ -1229,7 +1481,10 @@ export function HighlightBuilderTool({
         box-shadow: none !important;
       }
       .printable-report [data-print-hide="true"] { display: none !important; }
+      .printable-report [data-print-only="true"] { display: inline !important; }
       .printable-report article { break-inside: avoid; page-break-inside: avoid; }
+      .printable-report .report-slide { min-height: 180mm; break-after: page; page-break-after: always; }
+      .printable-report .report-intro-slide { min-height: 180mm; }
       .printable-report [data-brag-slide="true"] { break-after: page; page-break-after: always; }
       .printable-report table { width: 100%; }
     `;
@@ -1533,31 +1788,40 @@ export function HighlightBuilderTool({
           ref={previewContainerRef}
           className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
         >
-          <div className="mb-4 flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
-            {layout.logoDataUrl ? (
-              <img alt="Logo preview" src={layout.logoDataUrl} className="max-h-12 w-auto" />
-            ) : (
-              <div className="flex h-12 w-12 items-center justify-center rounded-md bg-slate-200 text-sm font-bold text-slate-700">
-                NHS
-              </div>
-            )}
-            <div>
-              <div
-                data-print-hide="true"
-                className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500"
-              >
-                Builder Preview
-              </div>
-              <div className="text-lg font-bold text-slate-900">{layout.title}</div>
-              <div className="text-sm text-slate-600 mt-1">
-                {layout.programmeName || projectName || 'Unnamed Programme'} ·{' '}
-                {layout.reportingPeriod || 'Reporting period not set'}
-              </div>
-              <div className="mt-1 flex items-center gap-2 text-sm text-slate-600">
-                Overall Status: <StatusBadge status={layout.overallStatus} />
-              </div>
-              <div className="text-sm text-slate-600 mt-0.5">
-                {trustName || 'Unconfigured Trust'}
+          <div
+            className={`report-intro-slide ${isSlideMode ? 'report-slide' : ''} mb-6 overflow-hidden rounded-lg border border-[#003087] bg-white shadow-md ${
+              isSlideMode ? 'grid gap-8 p-8 lg:grid-cols-[1.2fr,0.8fr] lg:items-center' : 'flex items-center gap-3 p-3'
+            }`}
+            style={isSlideMode ? { borderTop: `14px solid ${layout.themeColor || nhsColors.blue}` } : undefined}
+          >
+            <div className={isSlideMode ? 'space-y-6' : 'flex items-center gap-3'}>
+              {layout.logoDataUrl ? (
+                <img alt="Logo preview" src={layout.logoDataUrl} className={isSlideMode ? 'max-h-20 w-auto' : 'max-h-12 w-auto'} />
+              ) : (
+                <div className={`flex items-center justify-center rounded-md bg-[#005eb8] font-bold text-white ${isSlideMode ? 'h-20 w-20 text-xl' : 'h-12 w-12 text-sm'}`}>
+                  NHS
+                </div>
+              )}
+              <div>
+                <div data-print-hide="true" className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                  Builder Preview · Intro Slide
+                </div>
+                <div className={isSlideMode ? 'mt-3 text-4xl font-bold leading-tight text-[#003087]' : 'text-lg font-bold text-slate-900'}>
+                  {layout.title}
+                </div>
+                <div className="mt-2 text-sm text-slate-600">
+                  {layout.programmeName || projectName || 'Unnamed Programme'} ·{' '}
+                  {layout.reportingPeriod || 'Reporting period not set'}
+                </div>
+                <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-slate-600">
+                  <span>{trustName || 'Unconfigured Trust'}</span>
+                  <StatusBadge status={layout.overallStatus} />
+                </div>
+                {isSlideMode ? (
+                  <p className="mt-8 max-w-xl border-l-4 border-[#41a6c8] pl-4 text-lg leading-7 text-[#425563]">
+                    Change adoption highlight report covering current progress, risks and priorities.
+                  </p>
+                ) : null}
               </div>
             </div>
           </div>
@@ -1573,7 +1837,7 @@ export function HighlightBuilderTool({
                 <article
                   key={slide.id}
                   data-brag-slide="true"
-                  className={reportArticleClassName}
+                  className={`${reportArticleClassName} ${isSlideMode ? 'report-slide' : ''}`}
                   style={reportArticleStyle}
                 >
                   <div
@@ -1727,20 +1991,56 @@ export function HighlightBuilderTool({
             })}
 
             {layout.sections.map((sectionId) => (
-              <article
-                key={sectionId}
-                data-brag-slide={isSlideMode ? 'true' : undefined}
-                className={reportArticleClassName}
-                style={reportArticleStyle}
-              >
-                <ReportSectionHeading>
-                  {withSectionNumber(
-                    sectionIndexMap[sectionId] || 0,
-                    SECTION_OPTIONS.find((item) => item.id === sectionId)?.label || sectionId
-                  )}
-                </ReportSectionHeading>
-                <ReportSectionBody>{renderSectionBody(sectionId as SectionId)}</ReportSectionBody>
-              </article>
+              <React.Fragment key={sectionId}>
+                <article
+                  data-brag-slide={isSlideMode ? 'true' : undefined}
+                  data-print-exclude={hasSectionContent(sectionId as SectionId) ? undefined : 'true'}
+                  className={`${reportArticleClassName} ${isSlideMode ? 'report-slide' : ''}`}
+                  style={reportArticleStyle}
+                >
+                  <ReportSectionHeading>
+                    <span data-print-hide="true">
+                      {withSectionNumber(
+                        reportNumberMap[sectionId] || 0,
+                        SECTION_OPTIONS.find((item) => item.id === sectionId)?.label || sectionId
+                      )}
+                    </span>
+                    <span className="hidden" data-print-only="true">
+                      {withSectionNumber(
+                        printReportNumberMap[sectionId] || 0,
+                        SECTION_OPTIONS.find((item) => item.id === sectionId)?.label || sectionId
+                      )}
+                    </span>
+                  </ReportSectionHeading>
+                  <div className={isSlideMode && sectionId !== 'change-dashboard' ? 'grid gap-5 px-5 pb-5 lg:grid-cols-[1fr,220px] lg:items-start' : undefined}>
+                    <ReportSectionBody>{renderSectionBody(sectionId as SectionId)}</ReportSectionBody>
+                    {sectionId !== 'change-dashboard' ? <DataVisual sectionId={sectionId as SectionId} /> : null}
+                  </div>
+                </article>
+                {isSlideMode && sectionId === 'change-dashboard' ? (
+                  <article
+                    data-brag-slide="true"
+                    data-print-exclude={hasSectionContent(sectionId as SectionId) ? undefined : 'true'}
+                    className={`${reportArticleClassName} report-slide`}
+                    style={reportArticleStyle}
+                  >
+                    <ReportSectionHeading>
+                      <span data-print-hide="true">{withSectionNumber((reportNumberMap[sectionId] || 0) + 1, 'Change Dashboard Chart')}</span>
+                      <span className="hidden" data-print-only="true">
+                        {withSectionNumber((printReportNumberMap[sectionId] || 0) + 1, 'Change Dashboard Chart')}
+                      </span>
+                    </ReportSectionHeading>
+                    <div className="px-8 pb-8">
+                      <div>
+                        <p className="mb-6 max-w-2xl text-base leading-6 text-[#425563]">
+                          Current component averages compared with the target score. The red marker shows the target for each area.
+                        </p>
+                        <DashboardChart rows={dashboardChartRows} />
+                      </div>
+                    </div>
+                  </article>
+                ) : null}
+              </React.Fragment>
             ))}
           </div>
         </div>

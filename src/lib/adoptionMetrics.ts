@@ -15,21 +15,21 @@ const COMPONENT_PHASE_EXEMPLARS: Record<number, Record<string, number>> = {
   1: {
     vision: 5,
     case_for_change: 5,
-    sponsorship: 1,
-    change_network: 1,
-    benefits: 1,
-    change_impact: 1,
-    risk_management: 1,
-    cm_readiness: 1,
-    stakeholder: 1,
-    resistance: 1,
-    skills_learning: 1,
-    capability: 1,
-    change_adoption: 1,
-    process_change: 1,
-    reinforcement: 1,
-    org_maturity: 1,
-    transfer_bau: 1,
+    sponsorship: 0,
+    change_network: 0,
+    benefits: 0,
+    change_impact: 0,
+    risk_management: 0,
+    cm_readiness: 0,
+    stakeholder: 0,
+    resistance: 0,
+    skills_learning: 0,
+    capability: 0,
+    change_adoption: 0,
+    process_change: 0,
+    reinforcement: 0,
+    org_maturity: 0,
+    transfer_bau: 0,
   },
   2: {
     vision: 5,
@@ -476,7 +476,7 @@ export function buildComponentRadarChartData(
   components: AssessmentComponent[],
   getEntry: (componentId: string, lens: string) => DraftEntry,
   currentPhase?: number
-): ChartData<'radar', number[], string> {
+): ChartData<'radar', (number | null)[], string> {
   const exemplarPhase =
     currentPhase && COMPONENT_PHASE_EXEMPLARS[currentPhase] ? currentPhase : null;
   const colorForScore = (score: number): string => {
@@ -501,8 +501,15 @@ return '#330072';
   // because most of its lenses score well while one lags badly, so we surface the minimum rather
   // than smoothing it away with an average.
   const weakestLensScores = components.map((component) => {
-    const scores = component.lenses.map((lens) => Number(getEntry(component.id, lens).score || 0));
-    return scores.length ? Math.min(...scores) : 0;
+    const entries = component.lenses.map((lens) => getEntry(component.id, lens));
+    const hasAssessment = entries.some(
+      (entry) => entry.score > 0 || Boolean(entry.justification.trim()) || Boolean(entry.evidence.trim()) || entry.actions.length > 0
+    );
+    if (!hasAssessment) {
+      return null;
+    }
+    const scores = entries.map((entry) => Number(entry.score || 0));
+    return scores.length ? Math.min(...scores) : null;
   });
 
   return {
@@ -514,10 +521,10 @@ return '#330072';
         borderColor: '#005EB8',
         backgroundColor: 'rgba(0, 94, 184, 0.12)',
         borderWidth: 2,
-        pointRadius: 4,
-        pointHoverRadius: 6,
-        pointBackgroundColor: weakestLensScores.map(colorForScore),
-        pointBorderColor: weakestLensScores.map(colorForScore),
+        pointRadius: weakestLensScores.map((score) => (score === null ? 0 : 4)),
+        pointHoverRadius: weakestLensScores.map((score) => (score === null ? 0 : 6)),
+        pointBackgroundColor: weakestLensScores.map((score) => colorForScore(score ?? 0)),
+        pointBorderColor: weakestLensScores.map((score) => colorForScore(score ?? 0)),
       },
       {
         label: exemplarPhase ? `Exemplar (Phase ${exemplarPhase})` : 'Target Average',

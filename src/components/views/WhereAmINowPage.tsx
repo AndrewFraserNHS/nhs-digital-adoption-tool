@@ -72,9 +72,14 @@ export function WhereAmINowPage({
         maintainAspectRatio: false,
         scales: {
           r: {
-            min: 0,
+            min: -1,
             max: 5,
-            ticks: { display: true, stepSize: 1, backdropColor: 'transparent' },
+            ticks: {
+              display: true,
+              stepSize: 1,
+              backdropColor: 'transparent',
+              callback: (value: string | number) => (Number(value) < 0 ? '' : value),
+            },
           },
         },
       },

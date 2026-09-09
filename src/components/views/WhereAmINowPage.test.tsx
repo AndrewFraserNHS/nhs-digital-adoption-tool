@@ -13,7 +13,7 @@ function getEntry(): DraftEntry {
 }
 
 describe('WhereAmINowPage', () => {
-  it('SHOULD suggest the furthest checked phase and apply it on click', () => {
+  it('SHOULD suggest the furthest checked phase and auto-apply it as soon as something is checked', () => {
     // arrange
     const onSetManualPhase = vi.fn();
     render(
@@ -33,14 +33,35 @@ describe('WhereAmINowPage', () => {
     fireEvent.click(checkboxes[0]);
     fireEvent.click(checkboxes[2]);
 
-    // assert
+    // assert - applied automatically, no button needed
     expect(screen.getAllByText(/Phase 3: Development/).length).toBeGreaterThan(0);
+    expect(screen.queryByRole('button', { name: 'Set this as our current phase' })).not.toBeInTheDocument();
+    expect(onSetManualPhase).toHaveBeenLastCalledWith(3);
+  });
+
+  it('SHOULD show the Vision CTA and hint text', () => {
+    // arrange
+    const onComponentClick = vi.fn();
+    render(
+      <WhereAmINowPage
+        components={components}
+        getEntry={getEntry}
+        effectivePhaseFocus={1}
+        phaseFocusMode="auto"
+        onComponentClick={onComponentClick}
+        onSetManualPhase={vi.fn()}
+        onResetToAuto={vi.fn()}
+      />
+    );
+
+    // assert
+    expect(screen.getByText(/starting from Vision and moving clockwise/)).toBeInTheDocument();
 
     // act
-    fireEvent.click(screen.getByRole('button', { name: 'Set this as our current phase' }));
+    fireEvent.click(screen.getByRole('button', { name: "Let's check out our Vision component" }));
 
     // assert
-    expect(onSetManualPhase).toHaveBeenCalledWith(3);
+    expect(onComponentClick).toHaveBeenCalledWith('vision');
   });
 
   it('SHOULD offer a reset-to-auto control only WHILE the phase is manually set', () => {

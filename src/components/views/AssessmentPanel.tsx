@@ -2914,7 +2914,7 @@ export function AssessmentPanel({
       ) : null}
 
       {scoreAdvanceToast ? (
-        <Toast message={scoreAdvanceToast} onDismiss={() => setScoreAdvanceToast(null)} />
+        <Toast message={scoreAdvanceToast} onDismiss={() => setScoreAdvanceToast(null)} celebrate />
       ) : null}
 
       {objectiveViewer && activeObjective && activeObjectiveStatus ? (

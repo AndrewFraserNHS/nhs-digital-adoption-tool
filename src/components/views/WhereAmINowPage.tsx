@@ -97,8 +97,15 @@ export function WhereAmINowPage({
   const hasAnsweredAnything = Object.values(checkedPhases).some(Boolean);
   const textClass = darkMode ? 'text-slate-300' : 'text-slate-600';
 
+  useEffect(() => {
+    if (hasAnsweredAnything) {
+      onSetManualPhase(suggestedPhase);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasAnsweredAnything, suggestedPhase]);
+
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
+    <div className="max-w-6xl mx-auto space-y-6">
       <div>
         <h2 className={`text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
           Where am I now?
@@ -146,22 +153,15 @@ export function WhereAmINowPage({
 
           {hasAnsweredAnything ? (
             <div
-              className={`mt-5 flex flex-wrap items-center justify-between gap-3 rounded-md border p-4 ${darkMode ? 'border-blue-500/30 bg-blue-500/10' : 'border-blue-200 bg-blue-50'}`}
+              className={`mt-5 rounded-md border p-4 ${darkMode ? 'border-blue-500/30 bg-blue-500/10' : 'border-blue-200 bg-blue-50'}`}
             >
               <p className={`text-sm ${darkMode ? 'text-blue-100' : 'text-blue-900'}`}>
-                Based on your answers, you're likely in{' '}
+                Based on your answers, we've set your phase as{' '}
                 <strong>
                   Phase {suggestedPhase}: {PHASE_NAMES[suggestedPhase]}
                 </strong>
-                .
+                . Please look below for where we expect each component at this phase level.
               </p>
-              <button
-                type="button"
-                onClick={() => onSetManualPhase(suggestedPhase)}
-                className="rounded-md bg-[#005eb8] px-4 py-2 text-sm font-semibold text-white shadow-[0_3px_0_#003087] hover:bg-[#00417a]"
-              >
-                Set this as our current phase
-              </button>
             </div>
           ) : null}
 
@@ -193,9 +193,23 @@ export function WhereAmINowPage({
           </p>
           <div
             className={`mx-auto mt-4 flex items-center justify-center rounded border p-2 ${darkMode ? 'border-slate-700 bg-slate-950' : 'border-slate-100 bg-slate-50'}`}
-            style={{ height: 420 }}
+            style={{ height: 720 }}
           >
             <canvas ref={canvasRef} className="block h-full w-full" />
+          </div>
+
+          <p className={`mt-4 text-center text-sm italic ${textClass}`}>
+            We suggest if you haven't already starting from Vision and moving clockwise.
+          </p>
+
+          <div className="mt-4 flex justify-center">
+            <button
+              type="button"
+              onClick={() => onComponentClick('vision')}
+              className="rounded-md bg-[#005eb8] px-5 py-2 text-sm font-semibold text-white shadow-[0_3px_0_#003087] hover:bg-[#00417a]"
+            >
+              Let's check out our Vision component
+            </button>
           </div>
         </div>
       </div>

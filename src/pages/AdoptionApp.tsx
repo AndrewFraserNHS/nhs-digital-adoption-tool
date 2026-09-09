@@ -373,8 +373,8 @@ export function AdoptionApp() {
       introduction: 'intro',
       'engine-explained': 'intro',
       'project-details': 'intro',
+      'where-am-i-now': 'intro',
       dashboard: 'overview',
-      'where-am-i-now': 'overview',
       'daily-checkin': 'overview',
       'action-plan': 'overview',
       'roadmap-view': 'overview',
@@ -1337,26 +1337,30 @@ export function AdoptionApp() {
           </button>
           {expandedNavSections.intro ? (
             <nav className="space-y-1 mb-4">
-              {(['introduction', 'engine-explained', 'project-details'] as View[]).map((v) => (
-                <button
-                  key={v}
-                  ref={(el) => {
-                    navItemRefs.current[`view:${v}`] = el;
-                  }}
-                  onClick={() => handleViewChange(v)}
-                  className={`w-full flex items-center px-4 py-2.5 text-sm transition-colors ${
-                    view === v
-                      ? 'bg-blue-800 text-white font-medium border-l-4 border-white'
-                      : 'text-blue-100 hover:bg-blue-800 border-l-4 border-transparent'
-                  }`}
-                >
-                  {v === 'introduction'
-                    ? 'Introduction'
-                    : v === 'engine-explained'
-                      ? 'Engine Explained'
-                      : 'Project Profile'}
-                </button>
-              ))}
+              {(['introduction', 'engine-explained', 'project-details', 'where-am-i-now'] as View[]).map(
+                (v) => (
+                  <button
+                    key={v}
+                    ref={(el) => {
+                      navItemRefs.current[`view:${v}`] = el;
+                    }}
+                    onClick={() => handleViewChange(v)}
+                    className={`w-full flex items-center px-4 py-2.5 text-sm transition-colors ${
+                      view === v
+                        ? 'bg-blue-800 text-white font-medium border-l-4 border-white'
+                        : 'text-blue-100 hover:bg-blue-800 border-l-4 border-transparent'
+                    }`}
+                  >
+                    {v === 'introduction'
+                      ? 'Introduction'
+                      : v === 'engine-explained'
+                        ? 'Engine Explained'
+                        : v === 'project-details'
+                          ? 'Project Profile'
+                          : 'Where Am I Now?'}
+                  </button>
+                )
+              )}
             </nav>
           ) : null}
 
@@ -1376,7 +1380,7 @@ export function AdoptionApp() {
           {expandedNavSections.overview ? (
             <nav className="space-y-1 mb-4">
               {(
-                ['dashboard', 'where-am-i-now', 'daily-checkin', 'action-plan', 'roadmap-view'] as View[]
+                ['dashboard', 'daily-checkin', 'action-plan', 'roadmap-view'] as View[]
               ).map((v) => (
                 <button
                   key={v}
@@ -1392,13 +1396,11 @@ export function AdoptionApp() {
                 >
                   {v === 'dashboard'
                     ? 'Metrics Dashboard'
-                    : v === 'where-am-i-now'
-                      ? 'Where Am I Now?'
-                      : v === 'daily-checkin'
-                        ? 'Daily Check-in'
-                        : v === 'action-plan'
-                          ? 'Action Tracker'
-                          : 'Component Delivery Timeline'}
+                    : v === 'daily-checkin'
+                      ? 'Daily Check-in'
+                      : v === 'action-plan'
+                        ? 'Action Tracker'
+                        : 'Component Delivery Timeline'}
                 </button>
               ))}
             </nav>

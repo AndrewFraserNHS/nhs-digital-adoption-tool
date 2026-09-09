@@ -116,6 +116,49 @@ function buildSteps(darkMode: boolean): Step[] {
       ),
     },
     {
+      title: 'What is Change Management?',
+      body: (
+        <div className={`text-sm space-y-2 ${textClass}`}>
+          <p>
+            Change management is the structured discipline of helping people move from how things
+            work today to how they'll work in future - deliberately, not by accident.
+          </p>
+          <p>
+            A new system, process or way of working only delivers its benefits once people actually
+            adopt it. Change management is the set of activities - building the case, engaging
+            stakeholders, communicating, training, reinforcing - that make that adoption happen,
+            rather than leaving it to chance.
+          </p>
+          <p>
+            It sits alongside project management: project management delivers the change itself
+            (the system, the process); change management makes sure the people affected by it are
+            ready, willing and able to use it.
+          </p>
+        </div>
+      ),
+    },
+    {
+      title: 'What is a Change Manager?',
+      body: (
+        <div className={`text-sm space-y-4 ${textClass}`}>
+          <p>Change management (and change managers) provide essential assistance to project managers through:</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {CM_RESPONSIBILITIES.map((r) => (
+              <div
+                key={r.title}
+                className={`rounded-md border p-4 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-100 bg-slate-50'}`}
+              >
+                <p className="text-sm font-semibold text-[#005eb8] mb-1">{r.title}</p>
+                <p className={`text-xs leading-relaxed ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                  {r.body}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      ),
+    },
+    {
       title: 'The 6 Key Questions',
       body: (
         <div className={`text-sm space-y-4 ${textClass}`}>
@@ -146,27 +189,6 @@ function buildSteps(darkMode: boolean): Step[] {
                 </div>
                 <p className={`mt-3 text-xs leading-relaxed ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
                   {keyQuestion.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      ),
-    },
-    {
-      title: 'What is a Change Manager?',
-      body: (
-        <div className={`text-sm space-y-4 ${textClass}`}>
-          <p>Change management (and change managers) provide essential assistance to project managers through:</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {CM_RESPONSIBILITIES.map((r) => (
-              <div
-                key={r.title}
-                className={`rounded-md border p-4 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-100 bg-slate-50'}`}
-              >
-                <p className="text-sm font-semibold text-[#005eb8] mb-1">{r.title}</p>
-                <p className={`text-xs leading-relaxed ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-                  {r.body}
                 </p>
               </div>
             ))}

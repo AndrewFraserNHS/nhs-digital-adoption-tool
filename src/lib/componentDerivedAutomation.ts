@@ -489,18 +489,31 @@ export function syncDerivedComponentContent(
     const actionTextKey = normalizeGeneratedText(template.actionText);
     const isSuppressed = suppressedActionIds.has(actionId);
 
-    // Backfill readinessScore on previously generated actions from older saved drafts.
+    // Backfill readinessScore/priority/needsRework on previously generated actions from older
+    // saved drafts - these are derived purely from the bundled source, so a draft created before
+    // a field existed (or before content was re-reviewed) should pick up the current value rather
+    // than staying stuck with whatever was true when the action was first generated.
     lensEntry.actions = (lensEntry.actions || []).map((action) => {
       const matchesTemplate =
         action.id === actionId || normalizeGeneratedText(action.text || '') === actionTextKey;
 
-      if (!matchesTemplate || action.readinessScore === template.fromScore) {
+      if (!matchesTemplate) {
+        return action;
+      }
+
+      if (
+        action.readinessScore === template.fromScore &&
+        action.priority === template.priority &&
+        action.needsRework === template.needsRework
+      ) {
         return action;
       }
 
       return {
         ...action,
         readinessScore: template.fromScore,
+        priority: template.priority,
+        needsRework: template.needsRework,
       };
     });
 

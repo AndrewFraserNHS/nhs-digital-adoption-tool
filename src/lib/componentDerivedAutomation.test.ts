@@ -6,7 +6,10 @@ import {
   clearDerivedComponentContent,
   type DerivedComponentConfig,
   detectScoreAdvancementOpportunities,
+  parseDerivedComponentSource,
+  syncDerivedComponentContent,
 } from './componentDerivedAutomation';
+import visionActionsText from '../data/component-actions/vision-actions.json?raw';
 
 const CONFIG: DerivedComponentConfig = {
   componentId: 'vision',
@@ -89,6 +92,49 @@ function makeAction(overrides: Partial<DraftAction>): DraftAction {
     ...overrides,
   };
 }
+
+describe('syncDerivedComponentContent - priority backfill', () => {
+  it('SHOULD backfill priority onto an action generated before the priority field existed', () => {
+    // arrange - a persisted draft with the auto action already present but no priority (as it
+    // would look for anyone who used the app before MoSCoW priority parsing was added)
+    const source = parseDerivedComponentSource(visionActionsText, CONFIG);
+    const firstTemplate = source.templates[0];
+    expect(firstTemplate.priority).toBe('must');
+
+    const store = initializeStore({
+      view: 'assessment',
+      currentDraft: {
+        vision: {
+          [firstTemplate.lens]: {
+            score: 0,
+            justification: '',
+            evidence: '',
+            actions: [
+              {
+                id: 'some-legacy-id',
+                text: firstTemplate.actionText,
+                owner: '',
+                timescale: '',
+                status: 'Planned',
+                readinessScore: firstTemplate.fromScore,
+                // no priority/needsRework - simulates a pre-existing persisted action
+              },
+            ],
+          },
+        },
+      },
+    }) as AdoptionStore;
+
+    // act
+    const next = syncDerivedComponentContent(store, CONFIG, source);
+
+    // assert
+    const action = next.currentDraft.vision[firstTemplate.lens].actions.find(
+      (candidate) => candidate.id === 'some-legacy-id'
+    );
+    expect(action?.priority).toBe('must');
+  });
+});
 
 describe('detectScoreAdvancementOpportunities', () => {
   it('SHOULD advance WHEN every action for the current score is Completed', () => {

@@ -418,7 +418,7 @@ describe('AssessmentPanel', () => {
     expect(screen.queryByRole('button', { name: 'Add Objective' })).toBeNull();
   });
 
-  it('links actions to objectives from the action editor hierarchy section', () => {
+  it('SHOULD link action to objectives from the action editor hierarchy section', () => {
     // arrange
     const props = createProps();
     props.store.objectives = {

@@ -78,7 +78,7 @@ describe('ImportConflictModal', () => {
     });
   });
 
-  it('lets a single row be switched to theirs', () => {
+  it('SHOULD allow a single row be switched to theirs', () => {
     // arrange
     const onResolve = vi.fn();
     render(

@@ -111,7 +111,7 @@ describe('ProjectDetailsPage', () => {
     expect(onGoToWhereAmINow).toHaveBeenCalled();
   });
 
-  it('updates toolkit choice from CST Details', () => {
+  it('SHOULD update toolkit choice from CST Details', () => {
     // arrange
     const onProfileUpdate = vi.fn();
 

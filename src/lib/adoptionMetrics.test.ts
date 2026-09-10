@@ -125,7 +125,14 @@ describe('adoptionMetrics', () => {
           summary: '1 action pending completion.',
           message: 'Vision: 1 action pending completion.',
           outstandingActions: [
-            { id: '1', text: 'Action A', lens: 'Lens A', owner: 'Alex', status: 'In Progress', dueDate: '' },
+            {
+              id: '1',
+              text: 'Action A',
+              lens: 'Lens A',
+              owner: 'Alex',
+              status: 'In Progress',
+              dueDate: '',
+            },
           ],
         },
       ],
@@ -174,7 +181,7 @@ describe('adoptionMetrics', () => {
     // act
     const metrics = getMetrics(belowTargetStore, components);
 
-// assert
+    // assert
     expect(metrics.currentPhase).toBe(1);
     expect(metrics.nextSteps.length).toBeGreaterThan(0);
     expect(metrics.nextSteps[0]).toMatchObject({
@@ -266,7 +273,9 @@ describe('adoptionMetrics', () => {
 
     // assert 2
     expect(metricsAtLatestPhase.currentPhase).toBe(2);
-    expect(metricsAtLatestPhase.phaseSummaries.find((p) => p.phase === 2)?.onTrackComponents).toBe(1);
+    expect(metricsAtLatestPhase.phaseSummaries.find((p) => p.phase === 2)?.onTrackComponents).toBe(
+      1
+    );
   });
 
   it('SHOULD compute current and target radar series', () => {
@@ -313,7 +322,7 @@ describe('adoptionMetrics', () => {
 
     // NB: metrics/flattenActions must not double-count objective-linked actions - they're already counted once via the lens loop
 
-    // act 2 
+    // act 2
     const metrics = getMetrics(storeWithObjectives, components);
 
     // assert 2

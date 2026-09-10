@@ -38,7 +38,11 @@ function getInitials(name: string): string {
 }
 
 /** Small circular avatar for an owner name - shows their uploaded photo if provided, otherwise consistent-color initials, with the full name as a tooltip. */
-export function OwnerAvatar({ name, darkMode = false, imageDataUrl }: OwnerAvatarProps): JSX.Element {
+export function OwnerAvatar({
+  name,
+  darkMode = false,
+  imageDataUrl,
+}: OwnerAvatarProps): JSX.Element {
   const trimmed = name.trim();
   if (!trimmed) {
     return (

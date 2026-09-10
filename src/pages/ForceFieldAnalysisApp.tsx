@@ -688,7 +688,9 @@ export default function ForceFieldAnalysisApp({
   };
 
   const handleReset = () => {
-    if (!window.confirm('Reset this Force Field Analysis? All forces and actions will be removed.')) {
+    if (
+      !window.confirm('Reset this Force Field Analysis? All forces and actions will be removed.')
+    ) {
       return;
     }
 
@@ -752,18 +754,10 @@ export default function ForceFieldAnalysisApp({
         </div>
       </div>
       <div className="flex flex-wrap items-center gap-3">
-        <button
-          type="button"
-          onClick={handleImportClick}
-          className={nhsButtonSecondary}
-        >
+        <button type="button" onClick={handleImportClick} className={nhsButtonSecondary}>
           Import
         </button>
-        <button
-          type="button"
-          onClick={handleExport}
-          className={nhsButtonSecondary}
-        >
+        <button type="button" onClick={handleExport} className={nhsButtonSecondary}>
           Export
         </button>
         <button

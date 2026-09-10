@@ -10,7 +10,11 @@ import {
   type OverarchingPhase,
 } from '@data/cst';
 import type { AdoptionUserSettings } from './SettingsPanel';
-import { PageHelpButton, PageIntroModal, usePageIntroSeen } from '@components/onboarding/PageIntroModal';
+import {
+  PageHelpButton,
+  PageIntroModal,
+  usePageIntroSeen,
+} from '@components/onboarding/PageIntroModal';
 
 const PHASE_SUMMARY: Record<OverarchingPhase, string> = {
   1: 'Pre go-live planning and early mobilisation.',
@@ -188,8 +192,7 @@ export function ProfilePage({
         <PageHelpButton onClick={pageIntro.reopen} darkMode={darkMode} />
       </div>
       <p className={`text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-        Your identity, progress towards your objectives, and confidence/capability
-        self-assessment.
+        Your identity, progress towards your objectives, and confidence/capability self-assessment.
       </p>
       <PageIntroModal
         open={pageIntro.isOpen}
@@ -198,8 +201,8 @@ export function ProfilePage({
         darkMode={darkMode}
         body={
           <p>
-            Set your name, preferences and picture, see how many objectives are complete, and
-            record your team's confidence and delivery-readiness capability at each phase.
+            Set your name, preferences and picture, see how many objectives are complete, and record
+            your team's confidence and delivery-readiness capability at each phase.
           </p>
         }
       />
@@ -209,12 +212,14 @@ export function ProfilePage({
           className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-3`}
         >
           <div>
-            <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
+            <h3
+              className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+            >
               Objectives
             </h3>
             <p className={`mt-1 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-              {objectives.filter((o) => o.completed).length}/{objectives.length} complete - based
-              on phase readiness, ownership, cadence and team participation.
+              {objectives.filter((o) => o.completed).length}/{objectives.length} complete - based on
+              phase readiness, ownership, cadence and team participation.
             </p>
           </div>
           <div className="space-y-2">
@@ -359,8 +364,8 @@ export function ProfilePage({
             Confidence and Capability by Phase
           </h3>
           <p className={`mt-1 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-            Capture your starting position, then refresh when readiness phase changes or after
-            major milestones.
+            Capture your starting position, then refresh when readiness phase changes or after major
+            milestones.
           </p>
         </div>
 
@@ -407,7 +412,9 @@ export function ProfilePage({
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="relative flex items-center gap-2">
-                    <span className={`font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
+                    <span
+                      className={`font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}
+                    >
                       Phase {phase}
                     </span>
                     <button
@@ -451,7 +458,9 @@ export function ProfilePage({
                 </p>
                 <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
                   <label className="space-y-1">
-                    <span className={`text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                    <span
+                      className={`text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+                    >
                       Delivery readiness
                     </span>
                     <select
@@ -473,7 +482,9 @@ export function ProfilePage({
                     </select>
                   </label>
                   <label className="space-y-1">
-                    <span className={`text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                    <span
+                      className={`text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+                    >
                       Confidence
                     </span>
                     <select

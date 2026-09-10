@@ -1,6 +1,6 @@
-import { ACTION_TYPES, type ActionType,isResolvedActionStatus } from './actionModel';
+import { ACTION_TYPES, type ActionType, isResolvedActionStatus } from './actionModel';
 import type { AdoptionStore, ComponentObjective, DraftAction, DraftEntry } from './adoptionState';
-import { parseMoscowPrefix, type ActionPriority } from './moscow';
+import { type ActionPriority, parseMoscowPrefix } from './moscow';
 
 interface RawOutcome {
   id?: string;
@@ -72,10 +72,7 @@ function normalizeStatusKey(value: string): string {
 }
 
 function normalizeLensName(value: string): string {
-  return value
-    .replace(/&/g, 'and')
-    .replace(/\s+/g, ' ')
-    .trim();
+  return value.replace(/&/g, 'and').replace(/\s+/g, ' ').trim();
 }
 
 function isActionType(value: string | undefined): value is ActionType {
@@ -246,7 +243,9 @@ function extractRawData(sourceText: string): { outcomes: RawOutcome[]; actions: 
   }
 
   if (!outcomes.length) {
-    outcomes = normalizeRawOutcomes(safeJsonParse(extractJsonArrayAfterKeyword(sourceText, 'outcomes')));
+    outcomes = normalizeRawOutcomes(
+      safeJsonParse(extractJsonArrayAfterKeyword(sourceText, 'outcomes'))
+    );
   }
 
   if (!outcomes.length) {
@@ -254,7 +253,9 @@ function extractRawData(sourceText: string): { outcomes: RawOutcome[]; actions: 
   }
 
   if (!actions.length) {
-    actions = normalizeRawActions(safeJsonParse(extractJsonArrayAfterKeyword(sourceText, 'actions')));
+    actions = normalizeRawActions(
+      safeJsonParse(extractJsonArrayAfterKeyword(sourceText, 'actions'))
+    );
   }
 
   if (!actions.length) {
@@ -301,8 +302,7 @@ function buildSuppressedAutoActionKey(componentId: string, lens: string): string
 
 function isLegacyAutoObjectiveId(objectiveId: string): boolean {
   return (
-    objectiveId.includes(':auto-objective:') ||
-    objectiveId.startsWith('pathway:auto-objective:')
+    objectiveId.includes(':auto-objective:') || objectiveId.startsWith('pathway:auto-objective:')
   );
 }
 
@@ -408,7 +408,11 @@ export function parseDerivedComponentSource(
 
     const sourceLens = normalizeLensName(String(action.lens || ''));
     const mappedLens = config.lensAliases?.[sourceLens] || sourceLens;
-    const { text: actionText, priority, needsRework } = parseMoscowPrefix(String(action.action || ''));
+    const {
+      text: actionText,
+      priority,
+      needsRework,
+    } = parseMoscowPrefix(String(action.action || ''));
 
     if (!mappedLens || !actionText) {
       return next;
@@ -456,8 +460,7 @@ export function syncDerivedComponentContent(
   );
   const existingOtherObjectives = (nextObjectives[config.componentId] || []).filter(
     (objective) =>
-      !objective.id.startsWith(outcomePrefixWithColon) &&
-      !isLegacyAutoObjectiveId(objective.id)
+      !objective.id.startsWith(outcomePrefixWithColon) && !isLegacyAutoObjectiveId(objective.id)
   );
   const existingById = existingOutcomeObjectives.reduce<Record<string, ComponentObjective>>(
     (accumulator, objective) => {
@@ -615,11 +618,11 @@ export function clearDerivedComponentContent(
 /**
  * Detects if a component is ready to advance to the next readiness score.
  * Returns the current score and next score if advancement is possible, or null if not ready.
- * 
+ *
  * An advancement opportunity exists when:
  * 1. All actions for the current readiness score are resolved (Completed or Cancelled)
  * 2. There is a next score to advance to (current < 5)
- * 
+ *
  * @param component - The component to check
  * @param currentScore - The current readiness score (0-5)
  * @returns Object with {currentScore, nextScore} if advancement is ready, null otherwise
@@ -644,7 +647,9 @@ export function detectScoreAdvancementOpportunities(
   }
 
   // Check if ALL actions for current score are resolved (Completed or Cancelled)
-  const allResolved = actionsForCurrentScore.every((action) => isResolvedActionStatus(action.status));
+  const allResolved = actionsForCurrentScore.every((action) =>
+    isResolvedActionStatus(action.status)
+  );
 
   // Return advancement opportunity if all are resolved
   if (allResolved) {

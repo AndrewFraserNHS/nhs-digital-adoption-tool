@@ -24,7 +24,10 @@ interface ToolkitChatbotProps {
   darkMode?: boolean;
 }
 
-export function ToolkitChatbot({ toolkitChoice, darkMode = false }: ToolkitChatbotProps): JSX.Element {
+export function ToolkitChatbot({
+  toolkitChoice,
+  darkMode = false,
+}: ToolkitChatbotProps): JSX.Element {
   const [open, setOpen] = useState(false);
   const [maximized, setMaximized] = useState(false);
   const [query, setQuery] = useState('');
@@ -142,7 +145,7 @@ export function ToolkitChatbot({ toolkitChoice, darkMode = false }: ToolkitChatb
   const fuzzyResults = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
     if (!normalizedQuery) {
-      return searchableEntries.slice(0, 5).map((entry) => ({ entry, score: 0 } as FuzzyResult));
+      return searchableEntries.slice(0, 5).map((entry) => ({ entry, score: 0 }) as FuzzyResult);
     }
 
     const queryTokens = normalizedQuery.split(/\s+/).filter(Boolean);
@@ -191,7 +194,10 @@ export function ToolkitChatbot({ toolkitChoice, darkMode = false }: ToolkitChatb
   }, [bestMatch, query]);
 
   return (
-    <div className="fixed bottom-5 right-5 z-40 flex flex-col items-end gap-2" data-testid="global-toolkit-chatbot">
+    <div
+      className="fixed bottom-5 right-5 z-40 flex flex-col items-end gap-2"
+      data-testid="global-toolkit-chatbot"
+    >
       {open ? (
         <div
           className={`w-[380px] max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border shadow-2xl ${
@@ -228,8 +234,14 @@ export function ToolkitChatbot({ toolkitChoice, darkMode = false }: ToolkitChatb
               <div className="mt-1 font-semibold">{toolkit.label}</div>
             </div>
 
-            <div className={`overflow-hidden rounded-lg border ${darkMode ? 'border-slate-600 bg-slate-900' : 'border-slate-200 bg-white'}`}>
-              <iframe title="Selected Toolkit Preview" src={iframeSrc} className="h-[260px] w-full" />
+            <div
+              className={`overflow-hidden rounded-lg border ${darkMode ? 'border-slate-600 bg-slate-900' : 'border-slate-200 bg-white'}`}
+            >
+              <iframe
+                title="Selected Toolkit Preview"
+                src={iframeSrc}
+                className="h-[260px] w-full"
+              />
             </div>
 
             <div className="grid grid-cols-[1fr_auto] items-end gap-2">
@@ -257,7 +269,9 @@ export function ToolkitChatbot({ toolkitChoice, darkMode = false }: ToolkitChatb
               </div>
             </div>
 
-            <div className={`rounded-lg border p-2 ${darkMode ? 'border-slate-600 bg-slate-900' : 'border-slate-200 bg-white'}`}>
+            <div
+              className={`rounded-lg border p-2 ${darkMode ? 'border-slate-600 bg-slate-900' : 'border-slate-200 bg-white'}`}
+            >
               <label
                 htmlFor="toolkit-fuzzy-search"
                 className={`mb-1 block text-[11px] font-semibold uppercase tracking-wider ${
@@ -342,7 +356,9 @@ export function ToolkitChatbot({ toolkitChoice, darkMode = false }: ToolkitChatb
             }`}
           >
             <div className="flex items-center justify-between bg-[#005eb8] px-4 py-2">
-              <p className="text-sm font-semibold text-white">Toolkit Assistant · Expanded Viewer</p>
+              <p className="text-sm font-semibold text-white">
+                Toolkit Assistant · Expanded Viewer
+              </p>
               <button
                 type="button"
                 onClick={() => setMaximized(false)}
@@ -351,7 +367,11 @@ export function ToolkitChatbot({ toolkitChoice, darkMode = false }: ToolkitChatb
                 Close
               </button>
             </div>
-            <iframe title="Selected Toolkit Full View" src={iframeSrc} className="h-[calc(90vh-42px)] w-full" />
+            <iframe
+              title="Selected Toolkit Full View"
+              src={iframeSrc}
+              className="h-[calc(90vh-42px)] w-full"
+            />
           </div>
         </div>
       ) : null}

@@ -16,7 +16,8 @@ describe('AuditLogPage', () => {
             eventType: 'entry-score-updated',
             entityType: 'entry',
             entityId: 'vision:Strategic Direction and Leadership',
-            summary: 'Updated readiness score for vision / Strategic Direction and Leadership: 2 -> 3',
+            summary:
+              'Updated readiness score for vision / Strategic Direction and Leadership: 2 -> 3',
             componentId: 'vision',
             lens: 'Strategic Direction and Leadership',
             source: 'local',

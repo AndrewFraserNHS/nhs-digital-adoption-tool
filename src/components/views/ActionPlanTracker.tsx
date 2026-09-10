@@ -9,7 +9,11 @@ import {
 } from '@lib/actionModel';
 import type { TeamMember } from '@lib/adoptionState';
 import { FilterSummaryBar } from '@components/ui/FilterSummaryBar';
-import { PageHelpButton, PageIntroModal, usePageIntroSeen } from '@components/onboarding/PageIntroModal';
+import {
+  PageHelpButton,
+  PageIntroModal,
+  usePageIntroSeen,
+} from '@components/onboarding/PageIntroModal';
 
 export interface ActionPlanTrackerProps {
   actions: ActionRow[];
@@ -332,7 +336,7 @@ export function ActionPlanTracker({
             </select>
             <select
               value={readinessScoreFilter === 'all' ? 'all' : String(readinessScoreFilter)}
-              onChange={(e) => 
+              onChange={(e) =>
                 setReadinessScoreFilter(e.target.value === 'all' ? 'all' : Number(e.target.value))
               }
               className={`rounded-md border border-[#768692] px-3 py-2 text-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8] ${

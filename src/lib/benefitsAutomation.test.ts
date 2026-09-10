@@ -40,7 +40,9 @@ describe('syncBenefitsDerivedContent', () => {
       )
     ).toBe(true);
     expect(
-      processEntry.actions.some((action) => action.text.includes('Engage stakeholders to understand'))
+      processEntry.actions.some((action) =>
+        action.text.includes('Engage stakeholders to understand')
+      )
     ).toBe(true);
     expect(nextStore.objectives.benefits).toHaveLength(3);
   });

@@ -1,14 +1,17 @@
 import { describe, expect, it } from 'vitest';
-import { parseDerivedComponentSource, type DerivedComponentConfig } from './componentDerivedAutomation';
 
-import visionActionsText from '../data/component-actions/vision-actions.json?raw';
-import caseForChangeActionsText from '../data/component-actions/case-for-change-actions.json?raw';
-import sponsorshipActionsText from '../data/component-actions/senior-sponsorship-and-governance-actions.json?raw';
-import changeNetworkActionsText from '../data/component-actions/change-network-actions.json?raw';
 import benefitsActionsText from '../data/component-actions/benefits-actions.json?raw';
+import caseForChangeActionsText from '../data/component-actions/case-for-change-actions.json?raw';
 import changeImpactActionsText from '../data/component-actions/change-impact-actions.json?raw';
-import riskManagementActionsText from '../data/component-actions/risk-management-actions.json?raw';
+import changeNetworkActionsText from '../data/component-actions/change-network-actions.json?raw';
 import cmReadinessActionsText from '../data/component-actions/cm-readiness-and-planning-actions.json?raw';
+import riskManagementActionsText from '../data/component-actions/risk-management-actions.json?raw';
+import sponsorshipActionsText from '../data/component-actions/senior-sponsorship-and-governance-actions.json?raw';
+import visionActionsText from '../data/component-actions/vision-actions.json?raw';
+import {
+  type DerivedComponentConfig,
+  parseDerivedComponentSource,
+} from './componentDerivedAutomation';
 
 const CONFIG: DerivedComponentConfig = {
   componentId: 'x',

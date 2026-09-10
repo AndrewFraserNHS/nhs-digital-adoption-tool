@@ -62,7 +62,9 @@ describe('adoptionState', () => {
     });
 
     // assert
-    expect(withTeam.orgProfile.teamMembers).toEqual([{ id: 'm1', name: 'Alex', role: 'Change Lead' }]);
+    expect(withTeam.orgProfile.teamMembers).toEqual([
+      { id: 'm1', name: 'Alex', role: 'Change Lead' },
+    ]);
   });
 
   it('SHOULD never invent a cstId, only passes through what is given', () => {
@@ -189,7 +191,7 @@ describe('adoptionState', () => {
       ],
     };
 
-    // assert 2 
+    // assert 2
     expect(deriveObjectiveStatus(objective, actionsByLens)).toBe('Not Started');
 
     // act 3

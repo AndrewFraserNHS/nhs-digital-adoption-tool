@@ -36,7 +36,10 @@ export const CM_READINESS_CONFIG: DerivedComponentConfig = {
   },
 };
 
-const CM_READINESS_SOURCE = parseDerivedComponentSource(cmReadinessActionsText, CM_READINESS_CONFIG);
+const CM_READINESS_SOURCE = parseDerivedComponentSource(
+  cmReadinessActionsText,
+  CM_READINESS_CONFIG
+);
 
 export function syncCmReadinessDerivedContent(store: AdoptionStore): AdoptionStore {
   return syncDerivedComponentContent(store, CM_READINESS_CONFIG, CM_READINESS_SOURCE);

@@ -1,8 +1,11 @@
 import type { CstPathwayKey } from '@data/cst';
 
 import type { AdoptionStore } from './adoptionState';
-import { clearBenefitsDerivedContent,syncBenefitsDerivedContent } from './benefitsAutomation';
-import { clearCapabilityDerivedContent,syncCapabilityDerivedContent } from './capabilityAutomation';
+import { clearBenefitsDerivedContent, syncBenefitsDerivedContent } from './benefitsAutomation';
+import {
+  clearCapabilityDerivedContent,
+  syncCapabilityDerivedContent,
+} from './capabilityAutomation';
 import {
   clearCaseForChangeDerivedContent,
   syncCaseForChangeDerivedContent,
@@ -19,7 +22,10 @@ import {
   clearChangeNetworkDerivedContent,
   syncChangeNetworkDerivedContent,
 } from './changeNetworkAutomation';
-import { clearCmReadinessDerivedContent,syncCmReadinessDerivedContent } from './cmReadinessAutomation';
+import {
+  clearCmReadinessDerivedContent,
+  syncCmReadinessDerivedContent,
+} from './cmReadinessAutomation';
 import {
   clearOrgChangeReadinessDerivedContent,
   syncOrgChangeReadinessDerivedContent,
@@ -33,7 +39,10 @@ import {
   clearReinforcementDerivedContent,
   syncReinforcementDerivedContent,
 } from './reinforcementAutomation';
-import { clearResistanceDerivedContent,syncResistanceDerivedContent } from './resistanceAutomation';
+import {
+  clearResistanceDerivedContent,
+  syncResistanceDerivedContent,
+} from './resistanceAutomation';
 import {
   clearRiskManagementDerivedContent,
   syncRiskManagementDerivedContent,
@@ -42,13 +51,19 @@ import {
   clearSkillsLearningDerivedContent,
   syncSkillsLearningDerivedContent,
 } from './skillsLearningAutomation';
-import { clearSponsorshipDerivedContent,syncSponsorshipDerivedContent } from './sponsorshipAutomation';
-import { clearStakeholderDerivedContent,syncStakeholderDerivedContent } from './stakeholderAutomation';
+import {
+  clearSponsorshipDerivedContent,
+  syncSponsorshipDerivedContent,
+} from './sponsorshipAutomation';
+import {
+  clearStakeholderDerivedContent,
+  syncStakeholderDerivedContent,
+} from './stakeholderAutomation';
 import {
   clearTransferToBauDerivedContent,
   syncTransferToBauDerivedContent,
 } from './transferToBauAutomation';
-import { clearVisionDerivedContent,syncVisionDerivedContent } from './visionAutomation';
+import { clearVisionDerivedContent, syncVisionDerivedContent } from './visionAutomation';
 
 /** Seeds/refreshes every component's Pathway-1-style objectives and actions. */
 export function syncDerivedContent(store: AdoptionStore): AdoptionStore {

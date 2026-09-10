@@ -9,18 +9,18 @@ export const UNIFIED_ACTION_STATUSES = [
 ] as const;
 
 export const ACTION_TYPES = [
-'Analysis & Insight',
-'Design',
-'Governance',
-'Engagement',
-'Communication',
-'Training & Learning',
-'Implementation',
-'Testing & Validation',
-'Measurement & Evaluation',
-'Risk Management',
-'Dependency Management',
-'Reinforcement',
+  'Analysis & Insight',
+  'Design',
+  'Governance',
+  'Engagement',
+  'Communication',
+  'Training & Learning',
+  'Implementation',
+  'Testing & Validation',
+  'Measurement & Evaluation',
+  'Risk Management',
+  'Dependency Management',
+  'Reinforcement',
 ] as const;
 
 export type UnifiedActionStatus = (typeof UNIFIED_ACTION_STATUSES)[number];

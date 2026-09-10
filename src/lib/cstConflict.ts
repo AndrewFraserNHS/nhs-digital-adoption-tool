@@ -244,7 +244,9 @@ interface DraftDiffResult {
   entryConflicts: ConflictItem[];
   actionConflicts: ConflictItem[];
   autoMergedActionCount: number;
-  merge: (resolutions: Record<string, ConflictChoice>) => Record<string, Record<string, DraftEntry>>;
+  merge: (
+    resolutions: Record<string, ConflictChoice>
+  ) => Record<string, Record<string, DraftEntry>>;
 }
 
 function diffDraft(
@@ -310,7 +312,11 @@ function diffDraft(
           const key = `${componentId}:${lens}`;
 
           let core = mineEntry
-            ? { score: mineEntry.score, justification: mineEntry.justification, evidence: mineEntry.evidence }
+            ? {
+                score: mineEntry.score,
+                justification: mineEntry.justification,
+                evidence: mineEntry.evidence,
+              }
             : {
                 score: theirsEntry.score,
                 justification: theirsEntry.justification,

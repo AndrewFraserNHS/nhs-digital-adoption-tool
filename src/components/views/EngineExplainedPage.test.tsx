@@ -8,10 +8,16 @@ describe('EngineExplainedPage', () => {
     render(<EngineExplainedPage onGetStarted={vi.fn()} onComponentClick={vi.fn()} />);
 
     // assert
-    expect(screen.getByRole('heading', { name: 'Every programme starts with a pathway' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Every programme starts with a pathway' })
+    ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Starting for the First Time' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Piloted and Ready to Scale Up' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Gone Live but Adoption is Patchy' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Piloted and Ready to Scale Up' })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Gone Live but Adoption is Patchy' })
+    ).toBeInTheDocument();
   });
 
   it('SHOULD show more detail about the selected pathway', () => {
@@ -63,7 +69,9 @@ describe('EngineExplainedPage', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
 
     // assert 4
-    expect(screen.getByRole('heading', { name: 'Readiness is scored 0-5 for every lens' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Readiness is scored 0-5 for every lens' })
+    ).toBeInTheDocument();
     expect(screen.getByText('0 - Not Started')).toBeInTheDocument();
     expect(screen.getByText('5 - Thriving')).toBeInTheDocument();
 

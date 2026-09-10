@@ -83,14 +83,19 @@ function buildSteps(darkMode: boolean): Step[] {
             Without it, adoption progress lives in scattered spreadsheets, memories and gut feel -
             hard to prove, hard to hand over, and easy to lose momentum on.
           </p>
-          <p>With it, you get a single, evidenced picture of where your change effort actually stands:</p>
+          <p>
+            With it, you get a single, evidenced picture of where your change effort actually
+            stands:
+          </p>
           <ul className="list-disc pl-5 space-y-1">
             <li>See at a glance what's on track, what's at risk, and what to do next.</li>
             <li>
-              Turn vague "how's it going?" conversations into a clear, evidence-backed status you can
-              show your sponsor or board.
+              Turn vague "how's it going?" conversations into a clear, evidence-backed status you
+              can show your sponsor or board.
             </li>
-            <li>Get a ready-made action plan for each area, so you're not starting from a blank page.</li>
+            <li>
+              Get a ready-made action plan for each area, so you're not starting from a blank page.
+            </li>
             <li>Build a highlight report in minutes instead of an afternoon of copy-pasting.</li>
           </ul>
         </div>
@@ -110,7 +115,10 @@ function buildSteps(darkMode: boolean): Step[] {
           </p>
           <p>
             You can update your project setup at any time from{' '}
-            <strong className={darkMode ? 'text-slate-100' : 'text-slate-900'}>Project Profile</strong>.
+            <strong className={darkMode ? 'text-slate-100' : 'text-slate-900'}>
+              Project Profile
+            </strong>
+            .
           </p>
         </div>
       ),
@@ -130,9 +138,9 @@ function buildSteps(darkMode: boolean): Step[] {
             rather than leaving it to chance.
           </p>
           <p>
-            It sits alongside project management: project management delivers the change itself
-            (the system, the process); change management makes sure the people affected by it are
-            ready, willing and able to use it.
+            It sits alongside project management: project management delivers the change itself (the
+            system, the process); change management makes sure the people affected by it are ready,
+            willing and able to use it.
           </p>
         </div>
       ),
@@ -141,7 +149,10 @@ function buildSteps(darkMode: boolean): Step[] {
       title: 'What is a Change Manager?',
       body: (
         <div className={`text-sm space-y-4 ${textClass}`}>
-          <p>Change management (and change managers) provide essential assistance to project managers through:</p>
+          <p>
+            Change management (and change managers) provide essential assistance to project managers
+            through:
+          </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {CM_RESPONSIBILITIES.map((r) => (
               <div
@@ -149,7 +160,9 @@ function buildSteps(darkMode: boolean): Step[] {
                 className={`rounded-md border p-4 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-100 bg-slate-50'}`}
               >
                 <p className="text-sm font-semibold text-[#005eb8] mb-1">{r.title}</p>
-                <p className={`text-xs leading-relaxed ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                <p
+                  className={`text-xs leading-relaxed ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+                >
                   {r.body}
                 </p>
               </div>
@@ -177,7 +190,9 @@ function buildSteps(darkMode: boolean): Step[] {
                     Q{index + 1}
                   </span>
                   <div>
-                    <p className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
+                    <p
+                      className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+                    >
                       {keyQuestion.question}
                     </p>
                     <span
@@ -187,7 +202,9 @@ function buildSteps(darkMode: boolean): Step[] {
                     </span>
                   </div>
                 </div>
-                <p className={`mt-3 text-xs leading-relaxed ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                <p
+                  className={`mt-3 text-xs leading-relaxed ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+                >
                   {keyQuestion.description}
                 </p>
               </div>
@@ -268,7 +285,11 @@ export function OnboardingOverviewPage({
             >
               <span
                 className={`flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold ${
-                  isActive ? 'bg-white text-[#005eb8]' : unlocked ? 'bg-[#005eb8]/10 text-[#005eb8]' : ''
+                  isActive
+                    ? 'bg-white text-[#005eb8]'
+                    : unlocked
+                      ? 'bg-[#005eb8]/10 text-[#005eb8]'
+                      : ''
                 }`}
               >
                 {index + 1}
@@ -283,10 +304,14 @@ export function OnboardingOverviewPage({
         className={`w-full overflow-hidden rounded-xl border shadow-sm ${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'}`}
       >
         <div className="p-6 sm:p-10">
-          <p className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-blue-300' : 'text-blue-700'}`}>
+          <p
+            className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-blue-300' : 'text-blue-700'}`}
+          >
             Step {activeStep + 1} of {steps.length}
           </p>
-          <h3 className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>
+          <h3
+            className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
+          >
             {steps[activeStep].title}
           </h3>
           <div className="mt-5 max-w-full">{steps[activeStep].body}</div>

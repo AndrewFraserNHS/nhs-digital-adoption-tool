@@ -6,7 +6,11 @@ import type { CstPathwayKey } from '@data/cst';
 import { getPathwayRulesForComponent } from '@data/pathway-rules';
 import { evaluatePathwayTrackStatus } from '@lib/pathwayAnalysis';
 import { getStageLabel } from '@data/rubrics';
-import { PageHelpButton, PageIntroModal, usePageIntroSeen } from '@components/onboarding/PageIntroModal';
+import {
+  PageHelpButton,
+  PageIntroModal,
+  usePageIntroSeen,
+} from '@components/onboarding/PageIntroModal';
 
 interface GuidanceRoadmapViewProps {
   components: AssessmentComponent[];
@@ -197,9 +201,7 @@ export function GuidanceRoadmapView({
                   {component.phase}
                 </div>
               </div>
-              <span
-                className={`rounded-full px-4 py-1 text-xs font-semibold ${status.chipClass}`}
-              >
+              <span className={`rounded-full px-4 py-1 text-xs font-semibold ${status.chipClass}`}>
                 {status.label}
               </span>
             </div>

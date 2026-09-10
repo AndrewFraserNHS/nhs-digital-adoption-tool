@@ -1,19 +1,115 @@
 {
   "component": { "id": "CASE_FOR_CHANGE", "name": "Case for Change" },
   "outcomes": [
-    { "id": "CFC_P2_O1", "name": "Pilot evidence has been used to strengthen the case for scaling up" },
-    { "id": "CFC_P2_O2", "name": "The case for change is understood and accepted in every site/team joining the rollout" }
+    {
+      "id": "CFC_P2_O1",
+      "name": "Pilot evidence has been used to strengthen the case for scaling up"
+    },
+    {
+      "id": "CFC_P2_O2",
+      "name": "The case for change is understood and accepted in every site/team joining the rollout"
+    }
   ],
   "actions": [
-    { "id": "CFC_P2_001", "fromStatus": "Not Started", "toStatus": "Emerging", "lens": "Strategic Direction & Leadership", "category": "Analysis & Insight", "action": "Gather outcome and benefits evidence from the pilot to strengthen the rationale for scaling.", "outcomeIds": ["CFC_P2_O1"], "readinessScore": 0 },
-    { "id": "CFC_P2_002", "fromStatus": "Emerging", "toStatus": "Developing", "lens": "Strategic Direction & Leadership", "category": "Design", "action": "Refresh the case for change document with pilot evidence and a rationale specific to scaling.", "outcomeIds": ["CFC_P2_O1"], "readinessScore": 1 },
-    { "id": "CFC_P2_003", "fromStatus": "Developing", "toStatus": "Embedding", "lens": "Strategic Direction & Leadership", "category": "Governance", "action": "Present the refreshed case for change to governance for sign-off ahead of wider rollout.", "outcomeIds": ["CFC_P2_O1"], "readinessScore": 2 },
-    { "id": "CFC_P2_004", "fromStatus": "Embedding", "toStatus": "Adopted", "lens": "Strategic Direction & Leadership", "category": "Communication", "action": "Ensure leaders in each new site/team can articulate the case for change using pilot evidence.", "outcomeIds": ["CFC_P2_O2"], "readinessScore": 3 },
-    { "id": "CFC_P2_005", "fromStatus": "Adopted", "toStatus": "Thriving", "lens": "Strategic Direction & Leadership", "category": "Measurement & Evaluation", "action": "Keep the case for change current by folding in results from each newly scaled site/team.", "outcomeIds": ["CFC_P2_O2"], "readinessScore": 4 },
-    { "id": "CFC_P2_006", "fromStatus": "Not Started", "toStatus": "Emerging", "lens": "People Experience & Culture", "category": "Analysis & Insight", "action": "Collect testimonials from pilot participants describing why the change mattered to them.", "outcomeIds": ["CFC_P2_O1"], "readinessScore": 0 },
-    { "id": "CFC_P2_007", "fromStatus": "Emerging", "toStatus": "Developing", "lens": "People Experience & Culture", "category": "Design", "action": "Turn pilot testimonials into relatable stories that explain the case for change to new audiences.", "outcomeIds": ["CFC_P2_O2"], "readinessScore": 1 },
-    { "id": "CFC_P2_008", "fromStatus": "Developing", "toStatus": "Embedding", "lens": "People Experience & Culture", "category": "Communication", "action": "Share pilot stories with stakeholders in newly onboarding sites/teams to build buy-in.", "outcomeIds": ["CFC_P2_O2"], "readinessScore": 2 },
-    { "id": "CFC_P2_009", "fromStatus": "Embedding", "toStatus": "Adopted", "lens": "People Experience & Culture", "category": "Measurement & Evaluation", "action": "Check whether stakeholders in the wider rollout find the case for change credible and relevant.", "outcomeIds": ["CFC_P2_O2"], "readinessScore": 3 },
-    { "id": "CFC_P2_010", "fromStatus": "Adopted", "toStatus": "Thriving", "lens": "People Experience & Culture", "category": "Reinforcement", "action": "Use champions from the pilot to reinforce the case for change as it scales further.", "outcomeIds": ["CFC_P2_O2"], "readinessScore": 4 }
+    {
+      "id": "CFC_P2_001",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Analysis & Insight",
+      "action": "Gather outcome and benefits evidence from the pilot to strengthen the rationale for scaling.",
+      "outcomeIds": ["CFC_P2_O1"],
+      "readinessScore": 0
+    },
+    {
+      "id": "CFC_P2_002",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "Refresh the case for change document with pilot evidence and a rationale specific to scaling.",
+      "outcomeIds": ["CFC_P2_O1"],
+      "readinessScore": 1
+    },
+    {
+      "id": "CFC_P2_003",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "Present the refreshed case for change to governance for sign-off ahead of wider rollout.",
+      "outcomeIds": ["CFC_P2_O1"],
+      "readinessScore": 2
+    },
+    {
+      "id": "CFC_P2_004",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Communication",
+      "action": "Ensure leaders in each new site/team can articulate the case for change using pilot evidence.",
+      "outcomeIds": ["CFC_P2_O2"],
+      "readinessScore": 3
+    },
+    {
+      "id": "CFC_P2_005",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "Keep the case for change current by folding in results from each newly scaled site/team.",
+      "outcomeIds": ["CFC_P2_O2"],
+      "readinessScore": 4
+    },
+    {
+      "id": "CFC_P2_006",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "Collect testimonials from pilot participants describing why the change mattered to them.",
+      "outcomeIds": ["CFC_P2_O1"],
+      "readinessScore": 0
+    },
+    {
+      "id": "CFC_P2_007",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Design",
+      "action": "Turn pilot testimonials into relatable stories that explain the case for change to new audiences.",
+      "outcomeIds": ["CFC_P2_O2"],
+      "readinessScore": 1
+    },
+    {
+      "id": "CFC_P2_008",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "Share pilot stories with stakeholders in newly onboarding sites/teams to build buy-in.",
+      "outcomeIds": ["CFC_P2_O2"],
+      "readinessScore": 2
+    },
+    {
+      "id": "CFC_P2_009",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "Check whether stakeholders in the wider rollout find the case for change credible and relevant.",
+      "outcomeIds": ["CFC_P2_O2"],
+      "readinessScore": 3
+    },
+    {
+      "id": "CFC_P2_010",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "Use champions from the pilot to reinforce the case for change as it scales further.",
+      "outcomeIds": ["CFC_P2_O2"],
+      "readinessScore": 4
+    }
   ]
 }

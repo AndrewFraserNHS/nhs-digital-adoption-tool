@@ -25,10 +25,10 @@ export function PathwayContentNotice({
     >
       <p className="font-semibold">Objectives and actions are currently Pathway 1 only</p>
       <p className="mt-1">
-        Every outcome and action in this tool right now is written for Pathway 1 (starting
-        from scratch). Pathway 2 and Pathway 3 will need their own objectives and
-        actions - those haven't been written yet, so components on this pathway show no
-        outcomes or actions until pathway-specific content is added.
+        Every outcome and action in this tool right now is written for Pathway 1 (starting from
+        scratch). Pathway 2 and Pathway 3 will need their own objectives and actions - those haven't
+        been written yet, so components on this pathway show no outcomes or actions until
+        pathway-specific content is added.
       </p>
     </div>
   );

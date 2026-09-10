@@ -6,7 +6,11 @@ import { JSX, useMemo, useState } from 'react';
 import { FilterSummaryBar } from '@components/ui/FilterSummaryBar';
 import { getComponentDescription, getLensDescription } from '@data/descriptions';
 import { PHASE_NAMES } from '../../types/constants';
-import { PageHelpButton, PageIntroModal, usePageIntroSeen } from '@components/onboarding/PageIntroModal';
+import {
+  PageHelpButton,
+  PageIntroModal,
+  usePageIntroSeen,
+} from '@components/onboarding/PageIntroModal';
 import { getBragStatusFromAverage, type BragStatus } from '@lib/bragStatus';
 import { READINESS_BANDS } from '@lib/readinessBands';
 
@@ -388,7 +392,7 @@ export function AdoptionDashboard({
         {lenses.length} lenses.
       </p>
 
-{/* todo: Have removed for noise reasons */}
+      {/* todo: Have removed for noise reasons */}
       {/* <div className="dashboard-callout dashboard-callout--pathway mb-6 rounded-lg border p-4">
         <p className="dashboard-callout__eyebrow text-xs font-semibold uppercase tracking-wider">
           Current CST pathway
@@ -532,9 +536,7 @@ export function AdoptionDashboard({
       <div
         className={`mb-6 flex flex-wrap items-center justify-between gap-3 rounded-lg border px-4 py-3 ${darkMode ? 'border-blue-800 bg-blue-950/40 text-slate-200' : 'border-blue-200 bg-blue-50 text-slate-700'}`}
       >
-        <p className="text-sm">
-          Need a focused view of what needs attention today?
-        </p>
+        <p className="text-sm">Need a focused view of what needs attention today?</p>
         {onNavigate ? (
           <button
             type="button"
@@ -550,8 +552,8 @@ export function AdoptionDashboard({
         <div className="bg-white rounded-lg shadow-sm p-8 border border-slate-200 mb-8 text-center">
           <h3 className="text-lg font-semibold text-slate-800">Getting started</h3>
           <p className="text-sm text-slate-600 mt-2 max-w-xl mx-auto">
-            Nothing has been assessed yet, so there's nothing to chart. Set up your Project
-            first, then start scoring your first component to see your readiness build up here.
+            Nothing has been assessed yet, so there's nothing to chart. Set up your Project first,
+            then start scoring your first component to see your readiness build up here.
           </p>
           <div className="mt-4 flex items-center justify-center gap-3">
             {onNavigate ? (
@@ -648,81 +650,85 @@ export function AdoptionDashboard({
                 className={`flex cursor-pointer list-none items-center justify-between px-5 py-4 text-lg font-semibold focus:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-[#ffeb3b] [&::-webkit-details-marker]:hidden ${darkMode ? 'text-slate-100 hover:bg-slate-700' : 'text-slate-800 hover:bg-slate-50'}`}
               >
                 <span>Readiness analytics</span>
-                <span className="text-2xl font-normal transition-transform group-open:rotate-45">+</span>
+                <span className="text-2xl font-normal transition-transform group-open:rotate-45">
+                  +
+                </span>
               </summary>
               <div className="grid grid-cols-1 gap-6 border-t border-slate-200 p-5 lg:grid-cols-2 dark:border-slate-700">
-            <div className="flex flex-col">
-              <h3
-                className={`mb-3 text-base font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
-              >
-                Readiness Trajectory
-              </h3>
-              <div
-                className={`flex-1 min-h-[400px] flex items-center justify-center rounded border p-2 ${darkMode ? 'bg-slate-900 border-slate-700' : 'bg-slate-50 border-slate-100'}`}
-              >
-                {store.history.length > 0 ? (
-                  <canvas id="adoption-line-chart" />
-                ) : (
-                  <div className="text-center text-slate-400">
-                    <p>No historical data yet. Finalise your first month to generate trends.</p>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="flex flex-col">
-              <div className="flex items-center justify-between mb-4">
-                <h3
-                  className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
-                >
-                  Strategic Lenses Spread
-                </h3>
-                {onOpenLensInfo && lenses[0] ? (
-                  <button
-                    type="button"
-                    onClick={() => onOpenLensInfo(lenses[0])}
-                    className="text-xs font-medium text-[#005eb8] hover:underline"
+                <div className="flex flex-col">
+                  <h3
+                    className={`mb-3 text-base font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
                   >
-                    What's a lens?
-                  </button>
-                ) : null}
-              </div>
-              <div
-                className={`flex-1 min-h-[400px] flex items-center justify-center rounded border p-2 ${darkMode ? 'bg-slate-900 border-slate-700' : 'bg-slate-50 border-slate-100'}`}
-              >
-                <canvas id="adoption-radar-chart" />
-              </div>
-              <div
-                className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} mt-4 rounded-md border p-3`}
-              >
-                <p
-                  className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
-                >
-                  Lens key
-                </p>
-                <div className="mt-2 grid grid-cols-1 gap-1 sm:grid-cols-2">
-                  {lenses.map((lens, index) => (
-                    <div
-                      key={`lens-key-${lens}`}
-                      className={`flex items-center gap-2 text-xs ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
-                    >
-                      <span
-                        className="inline-block h-2.5 w-2.5 rounded-full"
-                        style={{ backgroundColor: LENS_KEY_COLORS[index % LENS_KEY_COLORS.length] }}
-                        aria-hidden="true"
-                      />
-                      <span>{lens}</span>
-                    </div>
-                  ))}
+                    Readiness Trajectory
+                  </h3>
+                  <div
+                    className={`flex-1 min-h-[400px] flex items-center justify-center rounded border p-2 ${darkMode ? 'bg-slate-900 border-slate-700' : 'bg-slate-50 border-slate-100'}`}
+                  >
+                    {store.history.length > 0 ? (
+                      <canvas id="adoption-line-chart" />
+                    ) : (
+                      <div className="text-center text-slate-400">
+                        <p>No historical data yet. Finalise your first month to generate trends.</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-              <p
-                className={`text-xs text-center mt-4 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
-              >
-                Visualises your current draft readiness score averaged across the 5 strategic lenses
-                against their specific target requirements.
-              </p>
-            </div>
+
+                <div className="flex flex-col">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3
+                      className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+                    >
+                      Strategic Lenses Spread
+                    </h3>
+                    {onOpenLensInfo && lenses[0] ? (
+                      <button
+                        type="button"
+                        onClick={() => onOpenLensInfo(lenses[0])}
+                        className="text-xs font-medium text-[#005eb8] hover:underline"
+                      >
+                        What's a lens?
+                      </button>
+                    ) : null}
+                  </div>
+                  <div
+                    className={`flex-1 min-h-[400px] flex items-center justify-center rounded border p-2 ${darkMode ? 'bg-slate-900 border-slate-700' : 'bg-slate-50 border-slate-100'}`}
+                  >
+                    <canvas id="adoption-radar-chart" />
+                  </div>
+                  <div
+                    className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} mt-4 rounded-md border p-3`}
+                  >
+                    <p
+                      className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+                    >
+                      Lens key
+                    </p>
+                    <div className="mt-2 grid grid-cols-1 gap-1 sm:grid-cols-2">
+                      {lenses.map((lens, index) => (
+                        <div
+                          key={`lens-key-${lens}`}
+                          className={`flex items-center gap-2 text-xs ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
+                        >
+                          <span
+                            className="inline-block h-2.5 w-2.5 rounded-full"
+                            style={{
+                              backgroundColor: LENS_KEY_COLORS[index % LENS_KEY_COLORS.length],
+                            }}
+                            aria-hidden="true"
+                          />
+                          <span>{lens}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <p
+                    className={`text-xs text-center mt-4 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
+                  >
+                    Visualises your current draft readiness score averaged across the 5 strategic
+                    lenses against their specific target requirements.
+                  </p>
+                </div>
               </div>
             </details>
 
@@ -730,270 +736,280 @@ export function AdoptionDashboard({
             <div
               className={`order-1 ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm p-6 border mb-8`}
             >
-            <div className="mb-4 flex w-full flex-col gap-4">
-              <div className="w-full">
-                <h3
-                  className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
-                >
-                  Change Component Radar
-                </h3>
-                <p className={`text-xs mt-1 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-                  Show or hide the change-component readiness radar, then use the overview list below
-                  to drill into delivery status.
-                </p>
-              </div>
-              <div className="flex w-full flex-wrap items-center justify-end gap-2">
-                {componentRadarVisible ? (
-                  <div
-                    role="group"
-                    aria-label="Change component radar size"
-                    className="flex items-center rounded-md border border-slate-300 overflow-hidden text-sm font-medium"
+              <div className="mb-4 flex w-full flex-col gap-4">
+                <div className="w-full">
+                  <h3
+                    className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
                   >
-                    {(['small', 'medium', 'large'] as ComponentRadarSize[]).map((size) => (
-                      <button
-                        key={size}
-                        type="button"
-                        onClick={() => onComponentRadarSizeChange?.(size)}
-                        aria-pressed={componentRadarSize === size}
-                        className={`px-3 py-2 capitalize transition-colors ${
-                          componentRadarSize === size
-                            ? 'bg-slate-800 text-white'
-                            : 'bg-white text-slate-600 hover:bg-slate-100'
-                        }`}
-                      >
-                        {size}
-                      </button>
-                    ))}
-                  </div>
-                ) : null}
-                <button
-                  type="button"
-                  onClick={() => onComponentRadarVisibleChange?.(!componentRadarVisible)}
-                  className="rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-white"
-                >
-                  {componentRadarVisible ? 'Hide change component radar' : 'Show change component radar'}
-                </button>
-              </div>
-            </div>
-
-            {componentRadarVisible ? (
-              <div
-                className={`w-full ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} rounded-md border p-4`}
-              >
-                <div
-                  className={`mx-auto flex items-center justify-center rounded border p-2 ${darkMode ? 'border-slate-700 bg-slate-950' : 'border-slate-100 bg-white'}`}
-                  style={{
-                    height: COMPONENT_RADAR_SIZE_PX[componentRadarSize],
-                    maxWidth: COMPONENT_RADAR_SIZE_PX[componentRadarSize] + 120,
-                  }}
-                >
-                  <canvas id="adoption-component-radar-chart" className="block h-full w-full" />
+                    Change Component Radar
+                  </h3>
+                  <p className={`text-xs mt-1 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
+                    Show or hide the change-component readiness radar, then use the overview list
+                    below to drill into delivery status.
+                  </p>
                 </div>
-                <div
-                  id="radar-legend"
-                  className={`mt-4 flex flex-wrap justify-center gap-x-4 gap-y-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
-                >
-                  {SCORE_LEGEND_ITEMS.map((item) => (
-                    <div key={item.score} className="flex items-center">
-                      <span
-                        className="mr-2 h-3 w-3 rounded-full"
-                        style={{ backgroundColor: item.color }}
-                      />
-                      <span>
-                        {item.score} = {item.label}
-                      </span>
+                <div className="flex w-full flex-wrap items-center justify-end gap-2">
+                  {componentRadarVisible ? (
+                    <div
+                      role="group"
+                      aria-label="Change component radar size"
+                      className="flex items-center rounded-md border border-slate-300 overflow-hidden text-sm font-medium"
+                    >
+                      {(['small', 'medium', 'large'] as ComponentRadarSize[]).map((size) => (
+                        <button
+                          key={size}
+                          type="button"
+                          onClick={() => onComponentRadarSizeChange?.(size)}
+                          aria-pressed={componentRadarSize === size}
+                          className={`px-3 py-2 capitalize transition-colors ${
+                            componentRadarSize === size
+                              ? 'bg-slate-800 text-white'
+                              : 'bg-white text-slate-600 hover:bg-slate-100'
+                          }`}
+                        >
+                          {size}
+                        </button>
+                      ))}
                     </div>
-                  ))}
-                </div>
-                <p
-                  className={`mt-4 text-center text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
-                >
-                  Visualises the weakest lens score for each component (a component is only as
-                  ready as its weakest lens) against the phase exemplar profile. Click a component
-                  label to jump to its assessment.
-                </p>
-              </div>
-            ) : null}
-
-            <div className="mt-4 w-full space-y-3">
-              <p className={`text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-                BRAG scoring is used for the change component overview:
-                <span className="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800">Blue</span> =
-                every lens is level 5,{' '}
-                <span className="px-1.5 py-0.5 rounded bg-green-100 text-green-800">Green</span> =
-                on target,{' '}
-                <span className="px-1.5 py-0.5 rounded bg-red-100 text-red-800">Red</span> = behind
-                target dates,{' '}
-                <span className="px-1.5 py-0.5 rounded bg-amber-100 text-amber-800">Amber</span> =
-                at risk / nearing deadline.
-              </p>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                <input
-                  type="search"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search components..."
-                  className="rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:ring-blue-500"
-                />
-                <select
-                  value={statusFilter}
-                  onChange={(e) =>
-                    setStatusFilter(
-                      e.target.value as 'all' | 'not-started' | 'below-target' | 'on-track'
-                    )
-                  }
-                  className="rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:ring-blue-500"
-                >
-                  <option value="all">All statuses</option>
-                  <option value="not-started">Not started</option>
-                  <option value="below-target">Below target</option>
-                  <option value="on-track">On track</option>
-                </select>
-                <select
-                  value={componentPhaseFilter}
-                  onChange={(e) =>
-                    setComponentPhaseFilter(
-                      e.target.value === 'all' ? 'all' : Number(e.target.value)
-                    )
-                  }
-                  className="rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:ring-blue-500"
-                >
-                  <option value="all">All phases</option>
-                  {phases.map((phase) => (
-                    <option key={phase} value={phase}>
-                      {PHASE_NAMES[phase] || `Phase ${phase}`}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <FilterSummaryBar
-                showAdvancedControls={showAdvancedComponentControls}
-                onToggleAdvanced={() => setShowAdvancedComponentControls((current) => !current)}
-                onReset={clearComponentFilters}
-                resultText={`Showing ${componentRows.length} components`}
-                activeFilters={activeComponentFilters}
-                activeFiltersAriaLabel="Active component filters"
-                darkMode={darkMode}
-              />
-
-              {showAdvancedComponentControls ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 rounded-md border border-slate-200 bg-slate-50 p-3">
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as 'name' | 'score' | 'target')}
-                    className="rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:ring-blue-500"
-                  >
-                    <option value="score">Sort by score</option>
-                    <option value="name">Sort by name</option>
-                    <option value="target">Sort by target</option>
-                  </select>
+                  ) : null}
                   <button
                     type="button"
-                    onClick={() =>
-                      setSortDirection((current) => (current === 'asc' ? 'desc' : 'asc'))
-                    }
-                    className="rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-white transition-colors"
+                    onClick={() => onComponentRadarVisibleChange?.(!componentRadarVisible)}
+                    className="rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-white"
                   >
-                    {sortDirection === 'asc' ? 'Ascending' : 'Descending'}
+                    {componentRadarVisible
+                      ? 'Hide change component radar'
+                      : 'Show change component radar'}
                   </button>
                 </div>
-              ) : null}
-            </div>
+              </div>
 
-            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {componentRows.map(
-                ({ component, avgNum, exemplarTarget, actionCount, completedActionCount, delta, allLensesLevelFive }) => {
-                  const deliveryStatus = getDeliveryStatusFromAverage(
+              {componentRadarVisible ? (
+                <div
+                  className={`w-full ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} rounded-md border p-4`}
+                >
+                  <div
+                    className={`mx-auto flex items-center justify-center rounded border p-2 ${darkMode ? 'border-slate-700 bg-slate-950' : 'border-slate-100 bg-white'}`}
+                    style={{
+                      height: COMPONENT_RADAR_SIZE_PX[componentRadarSize],
+                      maxWidth: COMPONENT_RADAR_SIZE_PX[componentRadarSize] + 120,
+                    }}
+                  >
+                    <canvas id="adoption-component-radar-chart" className="block h-full w-full" />
+                  </div>
+                  <div
+                    id="radar-legend"
+                    className={`mt-4 flex flex-wrap justify-center gap-x-4 gap-y-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+                  >
+                    {SCORE_LEGEND_ITEMS.map((item) => (
+                      <div key={item.score} className="flex items-center">
+                        <span
+                          className="mr-2 h-3 w-3 rounded-full"
+                          style={{ backgroundColor: item.color }}
+                        />
+                        <span>
+                          {item.score} = {item.label}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  <p
+                    className={`mt-4 text-center text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
+                  >
+                    Visualises the weakest lens score for each component (a component is only as
+                    ready as its weakest lens) against the phase exemplar profile. Click a component
+                    label to jump to its assessment.
+                  </p>
+                </div>
+              ) : null}
+
+              <div className="mt-4 w-full space-y-3">
+                <p className={`text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
+                  BRAG scoring is used for the change component overview:
+                  <span className="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800">Blue</span> =
+                  every lens is level 5,{' '}
+                  <span className="px-1.5 py-0.5 rounded bg-green-100 text-green-800">Green</span> =
+                  on target,{' '}
+                  <span className="px-1.5 py-0.5 rounded bg-red-100 text-red-800">Red</span> =
+                  behind target dates,{' '}
+                  <span className="px-1.5 py-0.5 rounded bg-amber-100 text-amber-800">Amber</span> =
+                  at risk / nearing deadline.
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  <input
+                    type="search"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Search components..."
+                    className="rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:ring-blue-500"
+                  />
+                  <select
+                    value={statusFilter}
+                    onChange={(e) =>
+                      setStatusFilter(
+                        e.target.value as 'all' | 'not-started' | 'below-target' | 'on-track'
+                      )
+                    }
+                    className="rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:ring-blue-500"
+                  >
+                    <option value="all">All statuses</option>
+                    <option value="not-started">Not started</option>
+                    <option value="below-target">Below target</option>
+                    <option value="on-track">On track</option>
+                  </select>
+                  <select
+                    value={componentPhaseFilter}
+                    onChange={(e) =>
+                      setComponentPhaseFilter(
+                        e.target.value === 'all' ? 'all' : Number(e.target.value)
+                      )
+                    }
+                    className="rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:ring-blue-500"
+                  >
+                    <option value="all">All phases</option>
+                    {phases.map((phase) => (
+                      <option key={phase} value={phase}>
+                        {PHASE_NAMES[phase] || `Phase ${phase}`}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <FilterSummaryBar
+                  showAdvancedControls={showAdvancedComponentControls}
+                  onToggleAdvanced={() => setShowAdvancedComponentControls((current) => !current)}
+                  onReset={clearComponentFilters}
+                  resultText={`Showing ${componentRows.length} components`}
+                  activeFilters={activeComponentFilters}
+                  activeFiltersAriaLabel="Active component filters"
+                  darkMode={darkMode}
+                />
+
+                {showAdvancedComponentControls ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 rounded-md border border-slate-200 bg-slate-50 p-3">
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value as 'name' | 'score' | 'target')}
+                      className="rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:ring-blue-500"
+                    >
+                      <option value="score">Sort by score</option>
+                      <option value="name">Sort by name</option>
+                      <option value="target">Sort by target</option>
+                    </select>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setSortDirection((current) => (current === 'asc' ? 'desc' : 'asc'))
+                      }
+                      className="rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-white transition-colors"
+                    >
+                      {sortDirection === 'asc' ? 'Ascending' : 'Descending'}
+                    </button>
+                  </div>
+                ) : null}
+              </div>
+
+              <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {componentRows.map(
+                  ({
+                    component,
                     avgNum,
                     exemplarTarget,
                     actionCount,
                     completedActionCount,
-                    allLensesLevelFive
-                  );
-                  const readinessArrow =
-                    deliveryStatus === 'Red'
-                      ? '↓'
-                      : avgNum >= exemplarTarget
-                        ? '→'
-                        : avgNum <= 0
-                          ? '↑'
-                          : '↗';
-                  const arrowToneClass =
-                    deliveryStatus === 'Red'
-                      ? 'text-red-500'
-                      : avgNum >= exemplarTarget
-                      ? darkMode
-                        ? 'text-slate-300'
-                        : 'text-slate-500'
-                      : 'text-amber-600';
+                    delta,
+                    allLensesLevelFive,
+                  }) => {
+                    const deliveryStatus = getDeliveryStatusFromAverage(
+                      avgNum,
+                      exemplarTarget,
+                      actionCount,
+                      completedActionCount,
+                      allLensesLevelFive
+                    );
+                    const readinessArrow =
+                      deliveryStatus === 'Red'
+                        ? '↓'
+                        : avgNum >= exemplarTarget
+                          ? '→'
+                          : avgNum <= 0
+                            ? '↑'
+                            : '↗';
+                    const arrowToneClass =
+                      deliveryStatus === 'Red'
+                        ? 'text-red-500'
+                        : avgNum >= exemplarTarget
+                          ? darkMode
+                            ? 'text-slate-300'
+                            : 'text-slate-500'
+                          : 'text-amber-600';
 
-                  return (
-                    <button
-                      key={component.id}
-                      onClick={() => onComponentClick(component.id)}
-                      title={getComponentDescription(component.id)}
-                      className={`flex justify-between items-center p-3 rounded-md transition-colors group text-left ${
-                        darkMode
-                          ? 'bg-slate-900 border border-slate-700 hover:border-blue-400'
-                          : 'bg-slate-50 border border-slate-100 hover:border-blue-300'
-                      }`}
-                    >
-                      <span
-                        className={`text-sm font-medium truncate pr-2 group-hover:text-[#005eb8] ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}
+                    return (
+                      <button
+                        key={component.id}
+                        onClick={() => onComponentClick(component.id)}
+                        title={getComponentDescription(component.id)}
+                        className={`flex justify-between items-center p-3 rounded-md transition-colors group text-left ${
+                          darkMode
+                            ? 'bg-slate-900 border border-slate-700 hover:border-blue-400'
+                            : 'bg-slate-50 border border-slate-100 hover:border-blue-300'
+                        }`}
                       >
-                        {component.label}
-                      </span>
-                      <div className="flex items-center gap-1 shrink-0">
                         <span
-                          className={`text-xs font-semibold ${arrowToneClass}`}
-                          title={
-                            avgNum >= exemplarTarget
-                              ? 'On or above expected readiness for phase focus'
-                              : avgNum <= 0
-                                ? 'Not started: raise towards expected readiness'
-                                : 'Below expected readiness: continue improving'
-                          }
-                          aria-label={
-                            avgNum >= exemplarTarget
-                              ? 'At expected readiness'
-                              : avgNum <= 0
-                                ? 'Not started, increase readiness'
-                                : 'Below expected readiness'
-                          }
+                          className={`text-sm font-medium truncate pr-2 group-hover:text-[#005eb8] ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}
                         >
-                          {readinessArrow}
+                          {component.label}
                         </span>
-                        {delta !== null && (
+                        <div className="flex items-center gap-1 shrink-0">
                           <span
-                            className={`text-[11px] font-semibold ${
-                              delta > 0 ? 'text-green-600' : 'text-red-400'
-                            }`}
-                            title="Change versus last finalised month"
+                            className={`text-xs font-semibold ${arrowToneClass}`}
+                            title={
+                              avgNum >= exemplarTarget
+                                ? 'On or above expected readiness for phase focus'
+                                : avgNum <= 0
+                                  ? 'Not started: raise towards expected readiness'
+                                  : 'Below expected readiness: continue improving'
+                            }
+                            aria-label={
+                              avgNum >= exemplarTarget
+                                ? 'At expected readiness'
+                                : avgNum <= 0
+                                  ? 'Not started, increase readiness'
+                                  : 'Below expected readiness'
+                            }
                           >
-                            {delta > 0 ? '+' : ''}
-                            {delta.toFixed(1)}
+                            {readinessArrow}
                           </span>
-                        )}
-                        <span
-                          className={`text-xs font-bold px-2.5 py-1 rounded ${deliveryBadgeStyles[deliveryStatus]}`}
-                        >
-                          {deliveryStatus}
-                        </span>
-                      </div>
-                    </button>
-                  );
-                }
-              )}
-              {!componentRows.length && (
-                <div
-                  className={`col-span-full rounded-md border border-dashed p-6 text-sm ${darkMode ? 'border-slate-700 bg-slate-900 text-slate-300' : 'border-slate-200 bg-slate-50 text-slate-500'}`}
-                >
-                  No components match the current filters.
-                </div>
-              )}
-            </div>
+                          {delta !== null && (
+                            <span
+                              className={`text-[11px] font-semibold ${
+                                delta > 0 ? 'text-green-600' : 'text-red-400'
+                              }`}
+                              title="Change versus last finalised month"
+                            >
+                              {delta > 0 ? '+' : ''}
+                              {delta.toFixed(1)}
+                            </span>
+                          )}
+                          <span
+                            className={`text-xs font-bold px-2.5 py-1 rounded ${deliveryBadgeStyles[deliveryStatus]}`}
+                          >
+                            {deliveryStatus}
+                          </span>
+                        </div>
+                      </button>
+                    );
+                  }
+                )}
+                {!componentRows.length && (
+                  <div
+                    className={`col-span-full rounded-md border border-dashed p-6 text-sm ${darkMode ? 'border-slate-700 bg-slate-900 text-slate-300' : 'border-slate-200 bg-slate-50 text-slate-500'}`}
+                  >
+                    No components match the current filters.
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
@@ -1005,12 +1021,14 @@ export function AdoptionDashboard({
               className={`flex cursor-pointer list-none items-center justify-between px-5 py-4 text-lg font-semibold focus:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-[#ffeb3b] [&::-webkit-details-marker]:hidden ${darkMode ? 'text-slate-100 hover:bg-slate-700' : 'text-slate-800 hover:bg-slate-50'}`}
             >
               <span>Lenses and which components they apply to</span>
-              <span className="text-2xl font-normal transition-transform group-open:rotate-45">+</span>
+              <span className="text-2xl font-normal transition-transform group-open:rotate-45">
+                +
+              </span>
             </summary>
             <div className="border-t border-slate-200 p-5 dark:border-slate-700">
-            <div className="flex flex-col gap-3 mb-4 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                {/* <div className="flex items-center gap-2">
+              <div className="flex flex-col gap-3 mb-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  {/* <div className="flex items-center gap-2">
                   <h3
                     className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
                   >
@@ -1034,91 +1052,94 @@ export function AdoptionDashboard({
                     check both leadership alignment and whether people understand and believe in the
                     vision.
                   </p>
-                {/* // ) : null} */}
+                  {/* // ) : null} */}
+                </div>
+                <select
+                  value={lensPhaseFilter}
+                  onChange={(e) =>
+                    setLensPhaseFilter(e.target.value === 'all' ? 'all' : Number(e.target.value))
+                  }
+                  className="rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:ring-blue-500 sm:w-40"
+                >
+                  <option value="all">All phases</option>
+                  {phases.map((phase) => (
+                    <option key={phase} value={phase}>
+                      {PHASE_NAMES[phase] || `Phase ${phase}`}
+                    </option>
+                  ))}
+                  "
+                </select>
               </div>
-              <select
-                value={lensPhaseFilter}
-                onChange={(e) =>
-                  setLensPhaseFilter(e.target.value === 'all' ? 'all' : Number(e.target.value))
-                }
-                className="rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:ring-blue-500 sm:w-40"
-              >
-                <option value="all">All phases</option>
-                {phases.map((phase) => (
-                  <option key={phase} value={phase}>
-                    {PHASE_NAMES[phase] || `Phase ${phase}`}
-                  </option>
-                ))}
-                "
-              </select>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {lenses.map((lens) => {
-                const mapped = components
-                  .filter((component) => component.lenses.includes(lens))
-                  .filter(
-                    (component) => lensPhaseFilter === 'all' || component.phase === lensPhaseFilter
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {lenses.map((lens) => {
+                  const mapped = components
+                    .filter((component) => component.lenses.includes(lens))
+                    .filter(
+                      (component) =>
+                        lensPhaseFilter === 'all' || component.phase === lensPhaseFilter
+                    );
+
+                  if (!mapped.length) {
+                    return null;
+                  }
+
+                  return (
+                    <div
+                      key={lens}
+                      className={`rounded-md p-4 ${darkMode ? 'border border-slate-700 bg-slate-900' : 'border border-slate-100 bg-slate-50'}`}
+                    >
+                      <h4 className="font-bold text-sm text-[#005eb8] mb-3">{lens}</h4>
+                      <p
+                        className={`mb-3 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+                      >
+                        {getLensDescription(lens)}
+                      </p>
+                      <ul className="space-y-2">
+                        {mapped.map((component) => {
+                          const entry = getEntry(component.id, lens);
+                          const score = Number(entry.score || 0);
+                          const exemplarTarget = getComponentExemplarScore(
+                            component.id,
+                            effectivePhase,
+                            component.target
+                          );
+                          const actions = entry.actions || [];
+                          const deliveryStatus = getDeliveryStatusFromAverage(
+                            score,
+                            exemplarTarget,
+                            actions.length,
+                            actions.filter((action) => action.status === 'Completed').length,
+                            false
+                          );
+
+                          return (
+                            <li
+                              key={component.id}
+                              className={`text-xs flex justify-between items-center p-2 rounded ${
+                                darkMode
+                                  ? 'bg-slate-800 border border-slate-700'
+                                  : 'bg-white border border-slate-100'
+                              }`}
+                            >
+                              <span
+                                className={`truncate pr-2 font-medium ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}
+                              >
+                                {component.label}
+                              </span>
+                              <button
+                                onClick={() => onComponentClick(component.id)}
+                                className={`px-2.5 py-0.5 rounded font-bold ${deliveryBadgeStyles[deliveryStatus]}`}
+                              >
+                                {deliveryStatus}
+                              </button>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
                   );
-
-                if (!mapped.length) {
-                  return null;
-                }
-
-                return (
-                  <div
-                    key={lens}
-                    className={`rounded-md p-4 ${darkMode ? 'border border-slate-700 bg-slate-900' : 'border border-slate-100 bg-slate-50'}`}
-                  >
-                    <h4 className="font-bold text-sm text-[#005eb8] mb-3">{lens}</h4>
-                    <p className={`mb-3 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-                      {getLensDescription(lens)}
-                    </p>
-                    <ul className="space-y-2">
-                      {mapped.map((component) => {
-                        const entry = getEntry(component.id, lens);
-                        const score = Number(entry.score || 0);
-                        const exemplarTarget = getComponentExemplarScore(
-                          component.id,
-                          effectivePhase,
-                          component.target
-                        );
-                        const actions = entry.actions || [];
-                        const deliveryStatus = getDeliveryStatusFromAverage(
-                          score,
-                          exemplarTarget,
-                          actions.length,
-                          actions.filter((action) => action.status === 'Completed').length,
-                          false
-                        );
-
-                        return (
-                          <li
-                            key={component.id}
-                            className={`text-xs flex justify-between items-center p-2 rounded ${
-                              darkMode
-                                ? 'bg-slate-800 border border-slate-700'
-                                : 'bg-white border border-slate-100'
-                            }`}
-                          >
-                            <span
-                              className={`truncate pr-2 font-medium ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}
-                            >
-                              {component.label}
-                            </span>
-                            <button
-                              onClick={() => onComponentClick(component.id)}
-                              className={`px-2.5 py-0.5 rounded font-bold ${deliveryBadgeStyles[deliveryStatus]}`}
-                            >
-                              {deliveryStatus}
-                            </button>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
-                );
-              })}
-            </div>
+                })}
+              </div>
             </div>
           </details>
         </>

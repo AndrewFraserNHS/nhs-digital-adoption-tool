@@ -35,7 +35,9 @@ describe('syncTransferToBauDerivedContent', () => {
     expect(
       nextStore.currentDraft.transfer_bau['Strategic Direction and Leadership'].actions.length
     ).toBeGreaterThan(0);
-    expect(nextStore.currentDraft.transfer_bau['Process and Sustainment'].actions.length).toBeGreaterThan(0);
+    expect(
+      nextStore.currentDraft.transfer_bau['Process and Sustainment'].actions.length
+    ).toBeGreaterThan(0);
     expect(nextStore.objectives.transfer_bau.length).toBeGreaterThan(0);
     expect(nextStore.objectives.transfer_bau[0].id.startsWith('transfer-bau:outcome:')).toBe(true);
   });

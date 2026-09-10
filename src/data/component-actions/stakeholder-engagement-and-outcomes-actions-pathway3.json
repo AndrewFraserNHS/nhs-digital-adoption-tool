@@ -21,9 +21,7 @@
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
       "action": "Recognise that People Experience & Culture is inconsistent across teams/sites since go-live and gather evidence of where the gaps are in the stakeholder engagement approach.",
-      "outcomeIds": [
-        "SEC_P3_O1"
-      ],
+      "outcomeIds": ["SEC_P3_O1"],
       "readinessScore": 0
     },
     {
@@ -33,9 +31,7 @@
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
       "action": "Identify why the stakeholder engagement approach hasn't landed consistently for People Experience & Culture in specific teams/sites and agree a plan to address it.",
-      "outcomeIds": [
-        "SEC_P3_O1"
-      ],
+      "outcomeIds": ["SEC_P3_O1"],
       "readinessScore": 1
     },
     {
@@ -45,9 +41,7 @@
       "lens": "People Experience & Culture",
       "category": "Engagement",
       "action": "Re-engage leaders in lagging teams/sites to re-establish the stakeholder engagement approach for People Experience & Culture.",
-      "outcomeIds": [
-        "SEC_P3_O1"
-      ],
+      "outcomeIds": ["SEC_P3_O1"],
       "readinessScore": 2
     },
     {
@@ -57,9 +51,7 @@
       "lens": "People Experience & Culture",
       "category": "Measurement & Evaluation",
       "action": "Confirm the stakeholder engagement approach for People Experience & Culture is being applied consistently across previously inconsistent areas.",
-      "outcomeIds": [
-        "SEC_P3_O2"
-      ],
+      "outcomeIds": ["SEC_P3_O2"],
       "readinessScore": 3
     },
     {
@@ -69,9 +61,7 @@
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
       "action": "Monitor People Experience & Culture regularly to ensure the stakeholder engagement approach stays consistently reinforced everywhere.",
-      "outcomeIds": [
-        "SEC_P3_O2"
-      ],
+      "outcomeIds": ["SEC_P3_O2"],
       "readinessScore": 4
     },
     {
@@ -81,9 +71,7 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
       "action": "Survey teams/sites to understand how Strategic Direction & Leadership has been affected by inconsistent stakeholder engagement approach since go-live.",
-      "outcomeIds": [
-        "SEC_P3_O1"
-      ],
+      "outcomeIds": ["SEC_P3_O1"],
       "readinessScore": 0
     },
     {
@@ -93,9 +81,7 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Design",
       "action": "Develop a targeted plan to address the specific Strategic Direction & Leadership-related gaps identified in lagging areas.",
-      "outcomeIds": [
-        "SEC_P3_O1"
-      ],
+      "outcomeIds": ["SEC_P3_O1"],
       "readinessScore": 1
     },
     {
@@ -105,9 +91,7 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Communication",
       "action": "Deliver targeted support to strengthen Strategic Direction & Leadership in teams/sites where the stakeholder engagement approach is weakest.",
-      "outcomeIds": [
-        "SEC_P3_O1"
-      ],
+      "outcomeIds": ["SEC_P3_O1"],
       "readinessScore": 2
     },
     {
@@ -117,9 +101,7 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Measurement & Evaluation",
       "action": "Confirm Strategic Direction & Leadership has improved in previously lagging teams/sites.",
-      "outcomeIds": [
-        "SEC_P3_O2"
-      ],
+      "outcomeIds": ["SEC_P3_O2"],
       "readinessScore": 3
     },
     {
@@ -129,9 +111,7 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Reinforcement",
       "action": "Embed regular pulse-checks on Strategic Direction & Leadership so gaps in the stakeholder engagement approach are caught early in future.",
-      "outcomeIds": [
-        "SEC_P3_O2"
-      ],
+      "outcomeIds": ["SEC_P3_O2"],
       "readinessScore": 4
     }
   ]

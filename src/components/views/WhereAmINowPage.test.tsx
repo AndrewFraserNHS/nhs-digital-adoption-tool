@@ -35,7 +35,9 @@ describe('WhereAmINowPage', () => {
 
     // assert - applied automatically, no button needed
     expect(screen.getAllByText(/Phase 3: Development/).length).toBeGreaterThan(0);
-    expect(screen.queryByRole('button', { name: 'Set this as our current phase' })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Set this as our current phase' })
+    ).not.toBeInTheDocument();
     expect(onSetManualPhase).toHaveBeenLastCalledWith(3);
   });
 

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import visionActionsText from '../data/component-actions/vision-actions.json?raw';
 import type { AdoptionStore, DraftAction } from './adoptionState';
 import { initializeStore } from './adoptionState';
 import {
@@ -9,7 +10,6 @@ import {
   parseDerivedComponentSource,
   syncDerivedComponentContent,
 } from './componentDerivedAutomation';
-import visionActionsText from '../data/component-actions/vision-actions.json?raw';
 
 const CONFIG: DerivedComponentConfig = {
   componentId: 'vision',
@@ -28,16 +28,44 @@ function createStore(): AdoptionStore {
           justification: '',
           evidence: '',
           actions: [
-            { id: 'vision-action:strategic-direction:0-1:0', text: 'Auto action', owner: '', timescale: '', status: 'Planned' },
-            { id: 'user-added-action', text: 'My own action', owner: 'Alex', timescale: '', status: 'Planned' },
+            {
+              id: 'vision-action:strategic-direction:0-1:0',
+              text: 'Auto action',
+              owner: '',
+              timescale: '',
+              status: 'Planned',
+            },
+            {
+              id: 'user-added-action',
+              text: 'My own action',
+              owner: 'Alex',
+              timescale: '',
+              status: 'Planned',
+            },
           ],
         },
       },
     },
     objectives: {
       vision: [
-        { id: 'vision:outcome:o1', text: 'Auto outcome', owner: '', timescale: '', notes: '', evidence: '', linkedActions: [] },
-        { id: 'my-own-objective', text: 'Custom outcome', owner: '', timescale: '', notes: '', evidence: '', linkedActions: [] },
+        {
+          id: 'vision:outcome:o1',
+          text: 'Auto outcome',
+          owner: '',
+          timescale: '',
+          notes: '',
+          evidence: '',
+          linkedActions: [],
+        },
+        {
+          id: 'my-own-objective',
+          text: 'Custom outcome',
+          owner: '',
+          timescale: '',
+          notes: '',
+          evidence: '',
+          linkedActions: [],
+        },
       ],
     },
   }) as AdoptionStore;
@@ -53,7 +81,9 @@ describe('clearDerivedComponentContent', () => {
 
     // assert
     const actions = next.currentDraft.vision['Strategic Direction'].actions;
-    expect(actions.some((action) => action.id === 'vision-action:strategic-direction:0-1:0')).toBe(false);
+    expect(actions.some((action) => action.id === 'vision-action:strategic-direction:0-1:0')).toBe(
+      false
+    );
     expect(actions.some((action) => action.id === 'user-added-action')).toBe(true);
 
     const objectives = next.objectives.vision;
@@ -69,7 +99,15 @@ describe('clearDerivedComponentContent', () => {
         score: 1,
         justification: '',
         evidence: '',
-        actions: [{ id: 'benefits-action:planning-and-risk:0-1:0', text: 'Untouched', owner: '', timescale: '', status: 'Planned' }],
+        actions: [
+          {
+            id: 'benefits-action:planning-and-risk:0-1:0',
+            text: 'Untouched',
+            owner: '',
+            timescale: '',
+            status: 'Planned',
+          },
+        ],
       },
     };
 
@@ -139,7 +177,12 @@ describe('syncDerivedComponentContent - priority backfill', () => {
 describe('detectScoreAdvancementOpportunities', () => {
   it('SHOULD advance WHEN every action for the current score is Completed', () => {
     // arrange
-    const component = { actions: [makeAction({ status: 'Completed' }), makeAction({ id: 'action-2', status: 'Completed' })] };
+    const component = {
+      actions: [
+        makeAction({ status: 'Completed' }),
+        makeAction({ id: 'action-2', status: 'Completed' }),
+      ],
+    };
 
     // act
     const result = detectScoreAdvancementOpportunities(component, 0);
@@ -150,7 +193,12 @@ describe('detectScoreAdvancementOpportunities', () => {
 
   it('SHOULD advance WHEN the last unresolved action for the current score is Cancelled, not just Completed', () => {
     // arrange
-    const component = { actions: [makeAction({ status: 'Completed' }), makeAction({ id: 'action-2', status: 'Cancelled' })] };
+    const component = {
+      actions: [
+        makeAction({ status: 'Completed' }),
+        makeAction({ id: 'action-2', status: 'Cancelled' }),
+      ],
+    };
 
     // act
     const result = detectScoreAdvancementOpportunities(component, 0);
@@ -161,7 +209,12 @@ describe('detectScoreAdvancementOpportunities', () => {
 
   it('SHOULD NOT advance WHILE any action for the current score is still Planned or In Progress', () => {
     // arrange
-    const component = { actions: [makeAction({ status: 'Completed' }), makeAction({ id: 'action-2', status: 'In Progress' })] };
+    const component = {
+      actions: [
+        makeAction({ status: 'Completed' }),
+        makeAction({ id: 'action-2', status: 'In Progress' }),
+      ],
+    };
 
     // act
     const result = detectScoreAdvancementOpportunities(component, 0);

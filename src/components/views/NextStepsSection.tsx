@@ -24,7 +24,9 @@ export function NextStepsSection({
 }: NextStepsSectionProps): JSX.Element {
   const [expandedSteps, setExpandedSteps] = useState<Record<string, boolean>>({});
   const bragBadgeStyles =
-    colorAccessibilityMode === 'color-blind-friendly' ? BRAG_BADGE_STYLES_COLOR_BLIND : BRAG_BADGE_STYLES;
+    colorAccessibilityMode === 'color-blind-friendly'
+      ? BRAG_BADGE_STYLES_COLOR_BLIND
+      : BRAG_BADGE_STYLES;
 
   return (
     <div

@@ -96,7 +96,6 @@ describe('ImportConflictModal', () => {
     fireEvent.click(within(row).getByText('Trust B'));
     fireEvent.click(screen.getByTestId('import-conflict-apply'));
 
-
     // assert
     expect(onResolve).toHaveBeenCalledWith({
       'profile:trustName': 'theirs',
@@ -120,7 +119,6 @@ describe('ImportConflictModal', () => {
     // act
     fireEvent.click(screen.getByRole('button', { name: 'Use all theirs' }));
     fireEvent.click(screen.getByTestId('import-conflict-apply'));
-
 
     // assert
     expect(onResolve).toHaveBeenCalledWith({

@@ -8,7 +8,7 @@ export interface ToolkitOption {
 }
 
 export const TOOLKIT_OPTIONS: ToolkitOption[] = [
-    {
+  {
     key: 'change-management-v3-2023',
     label: 'Change Management Toolkit (V3.0, Sep 2023)',
     filename: 'Change Management Toolkit v3.0 September 2023.pdf',

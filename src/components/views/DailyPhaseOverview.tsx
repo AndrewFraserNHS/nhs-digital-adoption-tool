@@ -26,7 +26,12 @@ const PHASES: PhaseOverview[] = [
     label: 'Pre-Discovery',
     programmeStage: 'Concept',
     tagline: 'Define the change',
-    color: 'bg-blue-50', darkColor: 'bg-blue-950/45', textColor: 'text-blue-700', darkTextColor: 'text-blue-100', borderColor: 'border-blue-300', darkBorderColor: 'border-blue-700',
+    color: 'bg-blue-50',
+    darkColor: 'bg-blue-950/45',
+    textColor: 'text-blue-700',
+    darkTextColor: 'text-blue-100',
+    borderColor: 'border-blue-300',
+    darkBorderColor: 'border-blue-700',
     deliverables: [
       { text: 'Change Vision defined and communicated', componentIds: ['vision'] },
       {
@@ -41,7 +46,12 @@ const PHASES: PhaseOverview[] = [
     label: 'Solution Design',
     programmeStage: 'Definition',
     tagline: 'Prepare the change',
-    color: 'bg-violet-50', darkColor: 'bg-violet-950/45', textColor: 'text-violet-700', darkTextColor: 'text-violet-100', borderColor: 'border-violet-300', darkBorderColor: 'border-violet-700',
+    color: 'bg-violet-50',
+    darkColor: 'bg-violet-950/45',
+    textColor: 'text-violet-700',
+    darkTextColor: 'text-violet-100',
+    borderColor: 'border-violet-300',
+    darkBorderColor: 'border-violet-700',
     deliverables: [
       { text: 'Change Impact analysed', componentIds: ['change_impact'] },
       {
@@ -49,7 +59,10 @@ const PHASES: PhaseOverview[] = [
         componentIds: ['case_for_change'],
         showExternalGuidance: false,
       },
-      { text: 'Engagement and Comms Strategy developed', componentIds: ['change_network', 'stakeholder'] },
+      {
+        text: 'Engagement and Comms Strategy developed',
+        componentIds: ['change_network', 'stakeholder'],
+      },
     ],
   },
   {
@@ -57,7 +70,12 @@ const PHASES: PhaseOverview[] = [
     label: 'Development',
     programmeStage: 'Design & Develop',
     tagline: 'Plan the change',
-    color: 'bg-amber-50', darkColor: 'bg-amber-950/45', textColor: 'text-amber-700', darkTextColor: 'text-amber-100', borderColor: 'border-amber-300', darkBorderColor: 'border-amber-700',
+    color: 'bg-amber-50',
+    darkColor: 'bg-amber-950/45',
+    textColor: 'text-amber-700',
+    darkTextColor: 'text-amber-100',
+    borderColor: 'border-amber-300',
+    darkBorderColor: 'border-amber-700',
     deliverables: [
       { text: 'Engagement and Comms Plan developed', componentIds: ['stakeholder'] },
       { text: 'Change Management Plan developed', componentIds: ['cm_readiness'] },
@@ -68,7 +86,12 @@ const PHASES: PhaseOverview[] = [
     label: 'Deployment / Go Live',
     programmeStage: 'Implementation',
     tagline: 'Manage implementation of the change',
-    color: 'bg-orange-50', darkColor: 'bg-orange-950/45', textColor: 'text-orange-700', darkTextColor: 'text-orange-100', borderColor: 'border-orange-300', darkBorderColor: 'border-orange-700',
+    color: 'bg-orange-50',
+    darkColor: 'bg-orange-950/45',
+    textColor: 'text-orange-700',
+    darkTextColor: 'text-orange-100',
+    borderColor: 'border-orange-300',
+    darkBorderColor: 'border-orange-700',
     deliverables: [
       { text: 'Change Management Plan executed', componentIds: ['cm_readiness'] },
       { text: 'Communications delivered and Stakeholders engaged', componentIds: ['stakeholder'] },
@@ -82,7 +105,12 @@ const PHASES: PhaseOverview[] = [
     label: 'Post-Deployment',
     programmeStage: 'Transition / Close',
     tagline: 'Reinforce and sustain the change',
-    color: 'bg-green-50', darkColor: 'bg-green-950/45', textColor: 'text-green-700', darkTextColor: 'text-green-100', borderColor: 'border-green-300', darkBorderColor: 'border-green-700',
+    color: 'bg-green-50',
+    darkColor: 'bg-green-950/45',
+    textColor: 'text-green-700',
+    darkTextColor: 'text-green-100',
+    borderColor: 'border-green-300',
+    darkBorderColor: 'border-green-700',
     deliverables: [
       { text: 'Change adoption evaluated', componentIds: ['change_adoption'] },
       { text: 'Business Change refinements actioned', componentIds: ['reinforcement'] },
@@ -148,20 +176,29 @@ export function DailyPhaseOverview({
                   <span className="block text-sm font-semibold">
                     Phase {phase.phase}: {phase.label}
                   </span>
-                  <span className={`mt-0.5 block text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
+                  <span
+                    className={`mt-0.5 block text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
+                  >
                     {phase.tagline} · {phase.programmeStage}
                   </span>
                 </span>
-                <span className="text-xl font-bold transition-transform group-open:rotate-45" aria-hidden="true">
+                <span
+                  className="text-xl font-bold transition-transform group-open:rotate-45"
+                  aria-hidden="true"
+                >
                   +
                 </span>
               </summary>
-              <div className={`border-t p-4 ${darkMode ? `${phase.darkBorderColor} bg-slate-900` : `${phase.borderColor} bg-white`}`}>
+              <div
+                className={`border-t p-4 ${darkMode ? `${phase.darkBorderColor} bg-slate-900` : `${phase.borderColor} bg-white`}`}
+              >
                 <ul className="space-y-3">
                   {phase.deliverables.map((deliverable) => {
                     const componentsForDeliverable = deliverable.componentIds
                       .map((componentId) => getComponentById(componentId))
-                      .filter((component): component is NonNullable<typeof component> => Boolean(component));
+                      .filter((component): component is NonNullable<typeof component> =>
+                        Boolean(component)
+                      );
                     const guidanceLinks = componentsForDeliverable.flatMap((component) =>
                       resolveGuidanceLinksForAdoptionComponent(
                         guidanceTarget,
@@ -171,7 +208,8 @@ export function DailyPhaseOverview({
                         showAdditionalGuidanceLinks
                       ).slice(0, 1)
                     );
-                    const isOneToOne = componentsForDeliverable.length === 1 && guidanceLinks.length === 1;
+                    const isOneToOne =
+                      componentsForDeliverable.length === 1 && guidanceLinks.length === 1;
                     const hasDistinctGuidanceLabel =
                       deliverable.showExternalGuidance !== false &&
                       isOneToOne &&
@@ -180,11 +218,15 @@ export function DailyPhaseOverview({
 
                     return (
                       <li key={deliverable.text} className="flex items-start gap-2 text-sm">
-                        <span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-bold ${darkMode ? `${phase.darkColor} ${phase.darkTextColor}` : `${phase.color} ${phase.textColor}`}`}>
+                        <span
+                          className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-bold ${darkMode ? `${phase.darkColor} ${phase.darkTextColor}` : `${phase.color} ${phase.textColor}`}`}
+                        >
                           ✓
                         </span>
                         <span className="min-w-0 flex-1">
-                          <span className={darkMode ? 'text-slate-200' : 'text-slate-700'}>{deliverable.text}</span>
+                          <span className={darkMode ? 'text-slate-200' : 'text-slate-700'}>
+                            {deliverable.text}
+                          </span>
                           {isOneToOne ? (
                             <span className="ml-2 inline-flex flex-wrap items-center gap-2 text-xs">
                               <button
@@ -209,18 +251,27 @@ export function DailyPhaseOverview({
                           {!isOneToOne ? (
                             <span className="mt-1 flex flex-wrap gap-x-3 gap-y-1">
                               {componentsForDeliverable.map((component) => (
-                                <span key={component.id} className="inline-flex flex-wrap items-center gap-2 text-xs">
-                                <button
-                                  type="button"
-                                  onClick={() => onComponentClick(component.id)}
-                                  className="font-semibold text-[#005eb8] underline underline-offset-2 hover:text-[#003087]"
+                                <span
+                                  key={component.id}
+                                  className="inline-flex flex-wrap items-center gap-2 text-xs"
                                 >
-                                  {component.label}
-                                </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => onComponentClick(component.id)}
+                                    className="font-semibold text-[#005eb8] underline underline-offset-2 hover:text-[#003087]"
+                                  >
+                                    {component.label}
+                                  </button>
                                 </span>
                               ))}
                               {guidanceLinks.map((guidance) => (
-                                <a key={guidance.url} href={guidance.url} target="_blank" rel="noopener noreferrer" className="text-xs font-medium text-slate-500 underline underline-offset-2 hover:text-[#005eb8]">
+                                <a
+                                  key={guidance.url}
+                                  href={guidance.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-xs font-medium text-slate-500 underline underline-offset-2 hover:text-[#005eb8]"
+                                >
                                   External guidance ↗
                                 </a>
                               ))}

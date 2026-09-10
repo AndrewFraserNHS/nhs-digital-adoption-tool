@@ -29,9 +29,7 @@ const steps: NextStep[] = [
 describe('NextStepsSection', () => {
   it('SHOULD render a BRAG badge with a hover reason', () => {
     // arrange + act
-    render(
-      <NextStepsSection steps={steps} onComponentClick={vi.fn()} onActionView={vi.fn()} />
-    );
+    render(<NextStepsSection steps={steps} onComponentClick={vi.fn()} onActionView={vi.fn()} />);
 
     // assert
     const badge = screen.getByText('Red');

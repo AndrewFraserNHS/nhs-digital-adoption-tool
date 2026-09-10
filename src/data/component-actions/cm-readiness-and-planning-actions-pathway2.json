@@ -21,9 +21,7 @@
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
       "action": "Review pilot feedback on Planning & Risk to identify what needs to change in the readiness and planning approach before scaling.",
-      "outcomeIds": [
-        "RP_P2_O1"
-      ],
+      "outcomeIds": ["RP_P2_O1"],
       "readinessScore": 0
     },
     {
@@ -33,9 +31,7 @@
       "lens": "Planning & Risk",
       "category": "Design",
       "action": "Refine the readiness and planning approach to Planning & Risk based on lessons learned from the pilot.",
-      "outcomeIds": [
-        "RP_P2_O1"
-      ],
+      "outcomeIds": ["RP_P2_O1"],
       "readinessScore": 1
     },
     {
@@ -45,9 +41,7 @@
       "lens": "Planning & Risk",
       "category": "Governance",
       "action": "Secure sign-off for the refined readiness and planning approach covering Planning & Risk ahead of wider rollout.",
-      "outcomeIds": [
-        "RP_P2_O1"
-      ],
+      "outcomeIds": ["RP_P2_O1"],
       "readinessScore": 2
     },
     {
@@ -57,9 +51,7 @@
       "lens": "Planning & Risk",
       "category": "Communication",
       "action": "Ensure the refined readiness and planning approach for Planning & Risk is consistently communicated to new sites/teams joining the rollout.",
-      "outcomeIds": [
-        "RP_P2_O2"
-      ],
+      "outcomeIds": ["RP_P2_O2"],
       "readinessScore": 3
     },
     {
@@ -69,9 +61,7 @@
       "lens": "Planning & Risk",
       "category": "Measurement & Evaluation",
       "action": "Continuously validate that the readiness and planning approach for Planning & Risk remains effective as the change scales further.",
-      "outcomeIds": [
-        "RP_P2_O2"
-      ],
+      "outcomeIds": ["RP_P2_O2"],
       "readinessScore": 4
     },
     {
@@ -81,9 +71,7 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
       "action": "Gather feedback from pilot participants on how the readiness and planning approach affected Strategic Direction & Leadership.",
-      "outcomeIds": [
-        "RP_P2_O1"
-      ],
+      "outcomeIds": ["RP_P2_O1"],
       "readinessScore": 0
     },
     {
@@ -93,9 +81,7 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Design",
       "action": "Adapt the readiness and planning approach relating to Strategic Direction & Leadership for a wider, more diverse audience.",
-      "outcomeIds": [
-        "RP_P2_O1"
-      ],
+      "outcomeIds": ["RP_P2_O1"],
       "readinessScore": 1
     },
     {
@@ -105,9 +91,7 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Communication",
       "action": "Roll out the readiness and planning approach covering Strategic Direction & Leadership to stakeholders in newly onboarding sites/teams.",
-      "outcomeIds": [
-        "RP_P2_O1"
-      ],
+      "outcomeIds": ["RP_P2_O1"],
       "readinessScore": 2
     },
     {
@@ -117,9 +101,7 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Measurement & Evaluation",
       "action": "Monitor Strategic Direction & Leadership among stakeholders in the wider rollout and address any gaps.",
-      "outcomeIds": [
-        "RP_P2_O2"
-      ],
+      "outcomeIds": ["RP_P2_O2"],
       "readinessScore": 3
     },
     {
@@ -129,9 +111,7 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Reinforcement",
       "action": "Use champions from the pilot to help new sites/teams connect with the readiness and planning approach for Strategic Direction & Leadership.",
-      "outcomeIds": [
-        "RP_P2_O2"
-      ],
+      "outcomeIds": ["RP_P2_O2"],
       "readinessScore": 4
     }
   ]

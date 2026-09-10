@@ -71,10 +71,26 @@ export const CST_TYPE_OPTIONS: Array<{ value: CstType; label: string }> = [
   { value: 'initiative', label: 'Initiative' },
 ];
 
-export const PATHWAY_OPTIONS: Array<{ value: CstPathwayKey; label: string; simplifiedLabel: string }> = [
-  { value: 'pathway-1', label: 'Pathway 1 - Starting for the First Time', simplifiedLabel: 'Starting for the First Time' },
-  { value: 'pathway-2', label: 'Pathway 2 - Piloted and Ready to Scale Up', simplifiedLabel: 'Piloted and Ready to Scale Up' },
-  { value: 'pathway-3', label: 'Pathway 3 - Gone Live but Adoption is Patchy', simplifiedLabel: 'Gone Live but Adoption is Patchy' },
+export const PATHWAY_OPTIONS: Array<{
+  value: CstPathwayKey;
+  label: string;
+  simplifiedLabel: string;
+}> = [
+  {
+    value: 'pathway-1',
+    label: 'Pathway 1 - Starting for the First Time',
+    simplifiedLabel: 'Starting for the First Time',
+  },
+  {
+    value: 'pathway-2',
+    label: 'Pathway 2 - Piloted and Ready to Scale Up',
+    simplifiedLabel: 'Piloted and Ready to Scale Up',
+  },
+  {
+    value: 'pathway-3',
+    label: 'Pathway 3 - Gone Live but Adoption is Patchy',
+    simplifiedLabel: 'Gone Live but Adoption is Patchy',
+  },
 ];
 
 export const PATHWAY_LABELS: Record<CstPathwayKey, string> = PATHWAY_OPTIONS.reduce(

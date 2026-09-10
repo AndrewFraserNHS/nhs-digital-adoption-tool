@@ -85,7 +85,8 @@ function HomePage(): JSX.Element {
           <h2 className="tool-title">Action Library Review</h2>
           <p className="tool-desc">
             Review and refine the default change-management actions behind every component - edit
-            wording, adjust which level an action sits at, and reorder them, then export your review.
+            wording, adjust which level an action sits at, and reorder them, then export your
+            review.
           </p>
           <span className="tool-cta">
             Open review tool <CtaArrow />

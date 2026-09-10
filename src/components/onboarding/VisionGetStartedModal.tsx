@@ -17,7 +17,7 @@ const STEPS: Step[] = [
     body: (
       <div className="text-sm text-slate-700 space-y-2">
         <p>
-          Start by scoring where Vision stands today for each lens - be honest about the current
+          Start by assessing where Vision stands today for each lens - be honest about the current
           state, not where you'd like it to be.
         </p>
       </div>
@@ -27,9 +27,7 @@ const STEPS: Step[] = [
     title: 'Assign owners to actions',
     body: (
       <div className="text-sm text-slate-700 space-y-2">
-        <p>
-          Every action needs a named owner - without one, nothing moves and progress stalls.
-        </p>
+        <p>Every action needs a named owner - without one, nothing moves and progress stalls.</p>
         <p>
           As owners complete or cancel every action at a readiness level, that lens automatically
           advances to the next level.
@@ -59,10 +57,14 @@ export function VisionGetStartedModal({
       <div
         className={`relative w-full max-w-lg rounded-xl border p-6 shadow-2xl ${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'}`}
       >
-        <p className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-blue-300' : 'text-blue-600'}`}>
+        <p
+          className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-blue-300' : 'text-blue-600'}`}
+        >
           Getting started · Step {stepIndex + 1} of {STEPS.length}
         </p>
-        <h3 className={`mt-3 text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>
+        <h3
+          className={`mt-3 text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
+        >
           {step.title}
         </h3>
         <div className={`mt-3 ${darkMode ? 'text-slate-300' : ''}`}>{step.body}</div>

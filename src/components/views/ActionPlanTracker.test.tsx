@@ -45,7 +45,6 @@ describe('ActionPlanTracker', () => {
     // act 2
     fireEvent.change(statusSelect as HTMLSelectElement, { target: { value: 'Completed' } });
 
-
     // assert 2
     expect(screen.getByText('Publish baseline metrics')).toBeInTheDocument();
     expect(screen.queryByText('Run clinical workshop')).not.toBeInTheDocument();
@@ -67,18 +66,15 @@ describe('ActionPlanTracker', () => {
       .getAllByRole('combobox')
       .find((combobox) => within(combobox).queryByRole('option', { name: 'All owners' }));
 
-    
     // assert
     expect(ownerSelect).toBeTruthy();
-    expect(
-      within(ownerSelect as HTMLSelectElement).getByText('Casey Roster')
-    ).toBeInTheDocument();
+    expect(within(ownerSelect as HTMLSelectElement).getByText('Casey Roster')).toBeInTheDocument();
   });
 
   it('SHOULD notify parent WHERE a component link is clicked', () => {
     // arrange
     const onComponentClick = vi.fn();
-    
+
     // act
     render(<ActionPlanTracker actions={actions} onComponentClick={onComponentClick} />);
     fireEvent.click(screen.getByRole('button', { name: 'Vision' }));
@@ -104,11 +100,6 @@ describe('ActionPlanTracker', () => {
     });
 
     // assert
-    expect(onStatusChange).toHaveBeenCalledWith(
-      'vision',
-      'Strategic Direction',
-      'a1',
-      'Completed'
-    );
+    expect(onStatusChange).toHaveBeenCalledWith('vision', 'Strategic Direction', 'a1', 'Completed');
   });
 });

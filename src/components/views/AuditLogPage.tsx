@@ -1,6 +1,10 @@
 import type { AuditEvent } from '@lib/auditLog';
 import { useMemo, useState, type JSX } from 'react';
-import { PageHelpButton, PageIntroModal, usePageIntroSeen } from '@components/onboarding/PageIntroModal';
+import {
+  PageHelpButton,
+  PageIntroModal,
+  usePageIntroSeen,
+} from '@components/onboarding/PageIntroModal';
 
 interface AuditLogPageProps {
   events: AuditEvent[];
@@ -37,12 +41,18 @@ export function AuditLogPage({ events, darkMode = false }: AuditLogPageProps): J
   );
 
   const components = useMemo(
-    () => ['all', ...Array.from(new Set(events.map((event) => event.componentId).filter(Boolean))).sort()],
+    () => [
+      'all',
+      ...Array.from(new Set(events.map((event) => event.componentId).filter(Boolean))).sort(),
+    ],
     [events]
   );
 
   const actors = useMemo(
-    () => ['all', ...Array.from(new Set(events.map((event) => event.actor).filter(Boolean))).sort()],
+    () => [
+      'all',
+      ...Array.from(new Set(events.map((event) => event.actor).filter(Boolean))).sort(),
+    ],
     [events]
   );
 
@@ -89,8 +99,7 @@ export function AuditLogPage({ events, darkMode = false }: AuditLogPageProps): J
         body={
           <p>
             A timestamped history of changes made to your CST, including who made each change.
-            Filter by event type, component, or actor, and expand a row to see exactly what
-            changed.
+            Filter by event type, component, or actor, and expand a row to see exactly what changed.
           </p>
         }
       />
@@ -99,7 +108,9 @@ export function AuditLogPage({ events, darkMode = false }: AuditLogPageProps): J
         className={`grid gap-3 md:grid-cols-4 rounded-lg border p-4 ${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'}`}
       >
         <label className="text-sm">
-          <span className={`block mb-1 font-medium ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>
+          <span
+            className={`block mb-1 font-medium ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
+          >
             Event type
           </span>
           <select
@@ -119,7 +130,9 @@ export function AuditLogPage({ events, darkMode = false }: AuditLogPageProps): J
         </label>
 
         <label className="text-sm">
-          <span className={`block mb-1 font-medium ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>
+          <span
+            className={`block mb-1 font-medium ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
+          >
             Component
           </span>
           <select
@@ -139,7 +152,9 @@ export function AuditLogPage({ events, darkMode = false }: AuditLogPageProps): J
         </label>
 
         <label className="text-sm">
-          <span className={`block mb-1 font-medium ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>
+          <span
+            className={`block mb-1 font-medium ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
+          >
             Actor
           </span>
           <select
@@ -159,7 +174,9 @@ export function AuditLogPage({ events, darkMode = false }: AuditLogPageProps): J
         </label>
 
         <label className="text-sm">
-          <span className={`block mb-1 font-medium ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>
+          <span
+            className={`block mb-1 font-medium ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
+          >
             Search
           </span>
           <input
@@ -174,9 +191,13 @@ export function AuditLogPage({ events, darkMode = false }: AuditLogPageProps): J
         </label>
       </div>
 
-      <div className={`rounded-lg border overflow-hidden ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}>
+      <div
+        className={`rounded-lg border overflow-hidden ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}
+      >
         <table className="min-w-full text-sm">
-          <thead className={darkMode ? 'bg-slate-900 text-slate-200' : 'bg-slate-50 text-slate-700'}>
+          <thead
+            className={darkMode ? 'bg-slate-900 text-slate-200' : 'bg-slate-50 text-slate-700'}
+          >
             <tr>
               <th className="px-3 py-2 text-left">When</th>
               <th className="px-3 py-2 text-left">Who</th>
@@ -188,24 +209,39 @@ export function AuditLogPage({ events, darkMode = false }: AuditLogPageProps): J
           <tbody className={darkMode ? 'bg-slate-800 text-slate-100' : 'bg-white text-slate-800'}>
             {paged.length ? (
               paged.map((event) => (
-                <tr key={event.id} className={darkMode ? 'border-t border-slate-700' : 'border-t border-slate-100'}>
-                  <td className="px-3 py-2 align-top whitespace-nowrap">{formatTimestamp(event.timestamp)}</td>
-                  <td className="px-3 py-2 align-top whitespace-nowrap">{event.actor || 'Unknown user'}</td>
+                <tr
+                  key={event.id}
+                  className={darkMode ? 'border-t border-slate-700' : 'border-t border-slate-100'}
+                >
+                  <td className="px-3 py-2 align-top whitespace-nowrap">
+                    {formatTimestamp(event.timestamp)}
+                  </td>
+                  <td className="px-3 py-2 align-top whitespace-nowrap">
+                    {event.actor || 'Unknown user'}
+                  </td>
                   <td className="px-3 py-2 align-top">
                     <div className="font-medium">{event.summary}</div>
-                    <div className={`text-xs mt-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>{event.eventType}</div>
+                    <div
+                      className={`text-xs mt-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+                    >
+                      {event.eventType}
+                    </div>
                   </td>
                   <td className="px-3 py-2 align-top">
                     <div>{event.componentId || '-'}</div>
-                    <div className={`text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>{event.lens || '-'}</div>
+                    <div className={`text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                      {event.lens || '-'}
+                    </div>
                   </td>
                   <td className="px-3 py-2 align-top">
                     {event.reason ? <div>Reason: {event.reason}</div> : null}
                     {event.before || event.after ? (
                       <details className="mt-1">
                         <summary className="cursor-pointer text-xs underline">Before/After</summary>
-                        <pre className={`mt-1 text-xs whitespace-pre-wrap ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-{JSON.stringify({ before: event.before, after: event.after }, null, 2)}
+                        <pre
+                          className={`mt-1 text-xs whitespace-pre-wrap ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+                        >
+                          {JSON.stringify({ before: event.before, after: event.after }, null, 2)}
                         </pre>
                       </details>
                     ) : null}
@@ -225,7 +261,8 @@ export function AuditLogPage({ events, darkMode = false }: AuditLogPageProps): J
 
       <div className="flex items-center justify-between text-sm">
         <span className={darkMode ? 'text-slate-300' : 'text-slate-600'}>
-          Showing {paged.length ? start + 1 : 0}-{Math.min(start + PAGE_SIZE, filtered.length)} of {filtered.length}
+          Showing {paged.length ? start + 1 : 0}-{Math.min(start + PAGE_SIZE, filtered.length)} of{' '}
+          {filtered.length}
         </span>
         <div className="flex items-center gap-2">
           <button

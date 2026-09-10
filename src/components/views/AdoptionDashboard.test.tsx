@@ -36,7 +36,7 @@ const store: AdoptionStore = {
       goLiveDate: '2026-10-01',
       fullAdoptionDate: '',
       benefitRealizationDate: '',
-        toolkitChoice: 'avt-v2-2026',
+      toolkitChoice: 'avt-v2-2026',
       phaseCapability: {},
     },
   },
@@ -68,6 +68,8 @@ const store: AdoptionStore = {
       data: {},
     },
   ],
+  suppressedAutoActions: {},
+  auditLog: [],
 };
 
 const metrics: Metrics = {

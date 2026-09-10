@@ -6,7 +6,11 @@ import { ASSESSMENT_COMPONENTS } from '@data/components';
 import { type Metrics } from '@lib/adoptionMetrics';
 import { getBragStatusFromAverage, BRAG_BADGE_STYLES } from '@lib/bragStatus';
 import { RichTextEditor } from '@components/common/RichTextEditor';
-import { PageHelpButton, PageIntroModal, usePageIntroSeen } from '@components/onboarding/PageIntroModal';
+import {
+  PageHelpButton,
+  PageIntroModal,
+  usePageIntroSeen,
+} from '@components/onboarding/PageIntroModal';
 import { nhsColors } from '../../styles/nhsTheme';
 
 export interface BragActionRow {
@@ -109,7 +113,10 @@ const SECTION_OPTIONS = [
 
 type SectionId = (typeof SECTION_OPTIONS)[number]['id'];
 
-const SECTION_VISUALS: Record<SectionId, { label: string; kind: 'bars' | 'trend' | 'donut' | 'steps' | 'risk' }> = {
+const SECTION_VISUALS: Record<
+  SectionId,
+  { label: string; kind: 'bars' | 'trend' | 'donut' | 'steps' | 'risk' }
+> = {
   'executive-summary': { label: 'Headline scorecard', kind: 'donut' },
   'change-dashboard': { label: 'RAG trend chart', kind: 'trend' },
   'adoption-metrics': { label: 'KPI scorecard', kind: 'bars' },
@@ -187,7 +194,10 @@ function DashboardChart({ rows }: { rows: DashboardChartRow[] }): JSX.Element {
   return (
     <div className="space-y-5" aria-label="Current component scores compared with targets">
       {rows.map((row) => (
-        <div key={row.label} className="grid grid-cols-[minmax(130px,1fr),minmax(220px,2fr),48px] items-center gap-3">
+        <div
+          key={row.label}
+          className="grid grid-cols-[minmax(130px,1fr),minmax(220px,2fr),48px] items-center gap-3"
+        >
           <span className="text-sm font-semibold text-[#425563]">{row.label}</span>
           <div className="relative h-8 rounded bg-[#e8edee]">
             <div
@@ -200,12 +210,18 @@ function DashboardChart({ rows }: { rows: DashboardChartRow[] }): JSX.Element {
               title={`Target ${row.target}`}
             />
           </div>
-          <span className="text-right text-sm font-bold text-[#005eb8]">{row.current.toFixed(1)}</span>
+          <span className="text-right text-sm font-bold text-[#005eb8]">
+            {row.current.toFixed(1)}
+          </span>
         </div>
       ))}
       <div className="flex flex-wrap gap-5 border-t border-[#d8dde0] pt-4 text-xs text-[#425563]">
-        <span className="flex items-center gap-2"><span className="h-3 w-3 rounded-sm bg-[#005eb8]" /> Current average</span>
-        <span className="flex items-center gap-2"><span className="h-4 w-0.5 bg-[#da291c]" /> Target marker</span>
+        <span className="flex items-center gap-2">
+          <span className="h-3 w-3 rounded-sm bg-[#005eb8]" /> Current average
+        </span>
+        <span className="flex items-center gap-2">
+          <span className="h-4 w-0.5 bg-[#da291c]" /> Target marker
+        </span>
       </div>
     </div>
   );
@@ -486,7 +502,8 @@ export function HighlightBuilderTool({
 
   const addBragSlide = () => {
     const usedComponentIds = new Set(layout.bragSlides.map((slide) => slide.componentId));
-    const nextComponent = components.find((component) => !usedComponentIds.has(component.id)) || components[0];
+    const nextComponent =
+      components.find((component) => !usedComponentIds.has(component.id)) || components[0];
     const newSlide: BragSlide = { id: createId(), componentId: nextComponent?.id || '', rows: [] };
     setLayout((current) => ({ ...current, bragSlides: [...current.bragSlides, newSlide] }));
   };
@@ -528,7 +545,10 @@ export function HighlightBuilderTool({
       ...current,
       bragSlides: current.bragSlides.map((slide) =>
         slide.id === slideId
-          ? { ...slide, rows: slide.rows.map((row) => (row.id === rowId ? { ...row, ...updates } : row)) }
+          ? {
+              ...slide,
+              rows: slide.rows.map((row) => (row.id === rowId ? { ...row, ...updates } : row)),
+            }
           : slide
       ),
     }));
@@ -538,12 +558,17 @@ export function HighlightBuilderTool({
     setLayout((current) => ({
       ...current,
       bragSlides: current.bragSlides.map((slide) =>
-        slide.id === slideId ? { ...slide, rows: slide.rows.filter((row) => row.id !== rowId) } : slide
+        slide.id === slideId
+          ? { ...slide, rows: slide.rows.filter((row) => row.id !== rowId) }
+          : slide
       ),
     }));
   };
 
-  function addRow<K extends keyof HighlightBuilderLayout>(key: K, newItem: HighlightBuilderLayout[K] extends Array<infer T> ? T : never) {
+  function addRow<K extends keyof HighlightBuilderLayout>(
+    key: K,
+    newItem: HighlightBuilderLayout[K] extends Array<infer T> ? T : never
+  ) {
     setLayout((current) => ({
       ...current,
       [key]: [...(current[key] as unknown as unknown[]), newItem],
@@ -593,7 +618,11 @@ export function HighlightBuilderTool({
 
   const saveLayoutJson = () => {
     save(STORAGE_KEY, layout);
-    downloadFile('highlight-builder-layout.json', JSON.stringify(layout, null, 2), 'application/json');
+    downloadFile(
+      'highlight-builder-layout.json',
+      JSON.stringify(layout, null, 2),
+      'application/json'
+    );
     onLayoutSaved?.();
   };
 
@@ -689,7 +718,8 @@ export function HighlightBuilderTool({
   }, [componentScores, previousSnapshot]);
 
   const dashboardChartRows = useMemo<DashboardChartRow[]>(
-    () => dashboardRows.map((row) => ({ label: row.area, current: row.current, target: row.target })),
+    () =>
+      dashboardRows.map((row) => ({ label: row.area, current: row.current, target: row.target })),
     [dashboardRows]
   );
 
@@ -699,7 +729,9 @@ export function HighlightBuilderTool({
 
   const hasSectionContent = (sectionId: SectionId): boolean => {
     if (sectionId === 'decisions-required') {
-      return layout.decisionRows.some((row) => row.decision.trim() || row.owner.trim() || row.requiredBy.trim());
+      return layout.decisionRows.some(
+        (row) => row.decision.trim() || row.owner.trim() || row.requiredBy.trim()
+      );
     }
 
     if ((layout.sectionNarratives[sectionId] || '').trim()) {
@@ -718,7 +750,12 @@ export function HighlightBuilderTool({
       case 'risks-issues':
         return layout.riskRows.length > 0;
       case 'stakeholder-insights':
-        return layout.stakeholderPositivePct + layout.stakeholderNeutralPct + layout.stakeholderNegativePct > 0;
+        return (
+          layout.stakeholderPositivePct +
+            layout.stakeholderNeutralPct +
+            layout.stakeholderNegativePct >
+          0
+        );
       case 'interventions-delivered':
         return layout.interventionRows.length > 0;
       case 'upcoming-priorities':
@@ -732,7 +769,9 @@ export function HighlightBuilderTool({
     }
   };
 
-  const visibleSections = layout.sections.filter((sectionId) => hasSectionContent(sectionId as SectionId));
+  const visibleSections = layout.sections.filter((sectionId) =>
+    hasSectionContent(sectionId as SectionId)
+  );
 
   const buildReportNumberMap = (sectionIds: string[]) => {
     let number = 0;
@@ -758,9 +797,14 @@ export function HighlightBuilderTool({
     };
 
     if (visual.kind === 'donut') {
-      const values = sectionId === 'stakeholder-insights'
-        ? [layout.stakeholderPositivePct, layout.stakeholderNeutralPct, layout.stakeholderNegativePct]
-        : [Number(metrics.overallPct), Math.max(0, 100 - Number(metrics.overallPct))];
+      const values =
+        sectionId === 'stakeholder-insights'
+          ? [
+              layout.stakeholderPositivePct,
+              layout.stakeholderNeutralPct,
+              layout.stakeholderNegativePct,
+            ]
+          : [Number(metrics.overallPct), Math.max(0, 100 - Number(metrics.overallPct))];
       const total = values.reduce((sum, value) => sum + value, 0);
       if (!total) {
         return null;
@@ -776,17 +820,42 @@ export function HighlightBuilderTool({
           <div
             className="mx-auto mt-4 h-32 w-32 rounded-full"
             style={{
-              background: sectionId === 'stakeholder-insights'
-                ? `conic-gradient(#78be20 0 ${first}%, #ffb81c ${first}% ${first + second}%, #da291c ${first + second}% ${first + second + third}%, #d8eaf6 ${first + second + third}% 100%)`
-                : `conic-gradient(#005eb8 0 ${first}%, #41a6c8 ${first}% ${first + second}%, #d8eaf6 ${first + second}% 100%)`,
+              background:
+                sectionId === 'stakeholder-insights'
+                  ? `conic-gradient(#78be20 0 ${first}%, #ffb81c ${first}% ${first + second}%, #da291c ${first + second}% ${first + second + third}%, #d8eaf6 ${first + second + third}% 100%)`
+                  : `conic-gradient(#005eb8 0 ${first}%, #41a6c8 ${first}% ${first + second}%, #d8eaf6 ${first + second}% 100%)`,
               mask: 'radial-gradient(circle, transparent 55%, #000 56%)',
               WebkitMask: 'radial-gradient(circle, transparent 55%, #000 56%)',
             }}
           />
           <div className="mt-4 grid gap-2 text-xs text-[#425563]">
-            <span className="flex items-center justify-between gap-2"><span><i className={`mr-2 inline-block h-2.5 w-2.5 rounded-full ${sectionId === 'stakeholder-insights' ? 'bg-[#78be20]' : 'bg-[#005eb8]'}`} />{firstLabel}</span><strong>{values[0]}%</strong></span>
-            <span className="flex items-center justify-between gap-2"><span><i className={`mr-2 inline-block h-2.5 w-2.5 rounded-full ${sectionId === 'stakeholder-insights' ? 'bg-[#ffb81c]' : 'bg-[#41a6c8]'}`} />{secondLabel}</span><strong>{values[1]}%</strong></span>
-            {sectionId === 'stakeholder-insights' ? <span className="flex items-center justify-between gap-2"><span><i className="mr-2 inline-block h-2.5 w-2.5 rounded-full bg-[#da291c]" />Negative</span><strong>{values[2]}%</strong></span> : null}
+            <span className="flex items-center justify-between gap-2">
+              <span>
+                <i
+                  className={`mr-2 inline-block h-2.5 w-2.5 rounded-full ${sectionId === 'stakeholder-insights' ? 'bg-[#78be20]' : 'bg-[#005eb8]'}`}
+                />
+                {firstLabel}
+              </span>
+              <strong>{values[0]}%</strong>
+            </span>
+            <span className="flex items-center justify-between gap-2">
+              <span>
+                <i
+                  className={`mr-2 inline-block h-2.5 w-2.5 rounded-full ${sectionId === 'stakeholder-insights' ? 'bg-[#ffb81c]' : 'bg-[#41a6c8]'}`}
+                />
+                {secondLabel}
+              </span>
+              <strong>{values[1]}%</strong>
+            </span>
+            {sectionId === 'stakeholder-insights' ? (
+              <span className="flex items-center justify-between gap-2">
+                <span>
+                  <i className="mr-2 inline-block h-2.5 w-2.5 rounded-full bg-[#da291c]" />
+                  Negative
+                </span>
+                <strong>{values[2]}%</strong>
+              </span>
+            ) : null}
           </div>
         </aside>
       );
@@ -809,8 +878,23 @@ export function HighlightBuilderTool({
           <div className="mt-5 space-y-3">
             {entries.map(([status, count]) => (
               <div key={status}>
-                <div className="mb-1 flex justify-between text-xs font-semibold text-[#425563]"><span>{status}</span><span>{count}</span></div>
-                <div className="h-4 rounded bg-white"><div className="h-4 rounded" style={{ width: `${(count / maxCount) * 100}%`, backgroundColor: status.toLowerCase().includes('closed') ? '#78be20' : status.toLowerCase().includes('at risk') ? '#da291c' : '#ffb81c' }} /></div>
+                <div className="mb-1 flex justify-between text-xs font-semibold text-[#425563]">
+                  <span>{status}</span>
+                  <span>{count}</span>
+                </div>
+                <div className="h-4 rounded bg-white">
+                  <div
+                    className="h-4 rounded"
+                    style={{
+                      width: `${(count / maxCount) * 100}%`,
+                      backgroundColor: status.toLowerCase().includes('closed')
+                        ? '#78be20'
+                        : status.toLowerCase().includes('at risk')
+                          ? '#da291c'
+                          : '#ffb81c',
+                    }}
+                  />
+                </div>
               </div>
             ))}
           </div>
@@ -819,11 +903,12 @@ export function HighlightBuilderTool({
     }
 
     if (visual.kind === 'steps') {
-      const labels = sectionId === 'interventions-delivered'
-        ? layout.interventionRows.map((row) => row.text.trim()).filter(Boolean)
-        : sectionId === 'upcoming-priorities'
-          ? upcomingPriorities
-          : componentPreview.map((item) => item.component.label);
+      const labels =
+        sectionId === 'interventions-delivered'
+          ? layout.interventionRows.map((row) => row.text.trim()).filter(Boolean)
+          : sectionId === 'upcoming-priorities'
+            ? upcomingPriorities
+            : componentPreview.map((item) => item.component.label);
       if (!labels.length) {
         return null;
       }
@@ -832,8 +917,16 @@ export function HighlightBuilderTool({
           <p className="text-xs font-bold uppercase tracking-[0.14em]">{visual.label}</p>
           <div className="mt-5 space-y-3">
             {labels.slice(0, 5).map((label, index) => (
-              <div key={`${label}-${index}`} className="flex items-start gap-3 text-xs text-[#425563]">
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full font-bold text-white" style={{ backgroundColor: PHASE_ACCENTS[index % PHASE_ACCENTS.length] }}>{index + 1}</span>
+              <div
+                key={`${label}-${index}`}
+                className="flex items-start gap-3 text-xs text-[#425563]"
+              >
+                <span
+                  className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full font-bold text-white"
+                  style={{ backgroundColor: PHASE_ACCENTS[index % PHASE_ACCENTS.length] }}
+                >
+                  {index + 1}
+                </span>
                 <span className="pt-0.5">{label}</span>
               </div>
             ))}
@@ -853,7 +946,15 @@ export function HighlightBuilderTool({
           <div className="mt-5 space-y-3">
             {decisions.slice(0, 5).map((decision, index) => (
               <div key={`${decision}-${index}`} className="flex items-center gap-2">
-                <div className="h-5 flex-1 rounded bg-white"><div className="h-5 rounded" style={{ width: `${100 - index * 15}%`, backgroundColor: PHASE_ACCENTS[index % PHASE_ACCENTS.length] }} /></div>
+                <div className="h-5 flex-1 rounded bg-white">
+                  <div
+                    className="h-5 rounded"
+                    style={{
+                      width: `${100 - index * 15}%`,
+                      backgroundColor: PHASE_ACCENTS[index % PHASE_ACCENTS.length],
+                    }}
+                  />
+                </div>
                 <span className="max-w-[45%] text-right text-xs text-[#425563]">{decision}</span>
               </div>
             ))}
@@ -862,15 +963,24 @@ export function HighlightBuilderTool({
       );
     }
 
-    const barRows = sectionId === 'adoption-metrics'
-      ? layout.metricRows.map((row) => ({ label: row.measure, value: parseValue(row.current), max: Math.max(100, parseValue(row.target)) }))
-      : sectionId === 'change-lead-assessment'
-        ? (['High', 'Medium', 'Low'] as const).map((confidence) => ({
-            label: confidence,
-            value: layout.assessmentRows.filter((row) => row.confidence === confidence).length,
-            max: Math.max(1, layout.assessmentRows.length),
+    const barRows =
+      sectionId === 'adoption-metrics'
+        ? layout.metricRows.map((row) => ({
+            label: row.measure,
+            value: parseValue(row.current),
+            max: Math.max(100, parseValue(row.target)),
           }))
-        : componentPreview.map((item) => ({ label: item.component.label, value: item.average, max: 5 }));
+        : sectionId === 'change-lead-assessment'
+          ? (['High', 'Medium', 'Low'] as const).map((confidence) => ({
+              label: confidence,
+              value: layout.assessmentRows.filter((row) => row.confidence === confidence).length,
+              max: Math.max(1, layout.assessmentRows.length),
+            }))
+          : componentPreview.map((item) => ({
+              label: item.component.label,
+              value: item.average,
+              max: 5,
+            }));
     const chartRows = barRows.filter((row) => row.label.trim() && row.value > 0);
     if (!chartRows.length) {
       return null;
@@ -882,8 +992,19 @@ export function HighlightBuilderTool({
         <div className="mt-5 space-y-3">
           {chartRows.slice(0, 6).map((row) => (
             <div key={row.label}>
-              <div className="mb-1 flex justify-between gap-2 text-xs font-semibold text-[#425563]"><span>{row.label}</span><span>{row.value}</span></div>
-              <div className="h-4 rounded bg-white"><div className="h-4 rounded" style={{ width: `${Math.min(100, (row.value / row.max) * 100)}%`, backgroundColor: PHASE_ACCENTS[chartRows.indexOf(row) % PHASE_ACCENTS.length] }} /></div>
+              <div className="mb-1 flex justify-between gap-2 text-xs font-semibold text-[#425563]">
+                <span>{row.label}</span>
+                <span>{row.value}</span>
+              </div>
+              <div className="h-4 rounded bg-white">
+                <div
+                  className="h-4 rounded"
+                  style={{
+                    width: `${Math.min(100, (row.value / row.max) * 100)}%`,
+                    backgroundColor: PHASE_ACCENTS[chartRows.indexOf(row) % PHASE_ACCENTS.length],
+                  }}
+                />
+              </div>
             </div>
           ))}
         </div>
@@ -994,7 +1115,9 @@ export function HighlightBuilderTool({
                     <td className="px-3 py-2 align-top">
                       <input
                         value={row.measure}
-                        onChange={(event) => updateRow('metricRows', row.id, { measure: event.target.value })}
+                        onChange={(event) =>
+                          updateRow('metricRows', row.id, { measure: event.target.value })
+                        }
                         placeholder="e.g. Active Users"
                         className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
                       />
@@ -1002,7 +1125,9 @@ export function HighlightBuilderTool({
                     <td className="px-3 py-2 align-top">
                       <input
                         value={row.target}
-                        onChange={(event) => updateRow('metricRows', row.id, { target: event.target.value })}
+                        onChange={(event) =>
+                          updateRow('metricRows', row.id, { target: event.target.value })
+                        }
                         placeholder="e.g. 80%"
                         className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
                       />
@@ -1010,7 +1135,9 @@ export function HighlightBuilderTool({
                     <td className="px-3 py-2 align-top">
                       <input
                         value={row.current}
-                        onChange={(event) => updateRow('metricRows', row.id, { current: event.target.value })}
+                        onChange={(event) =>
+                          updateRow('metricRows', row.id, { current: event.target.value })
+                        }
                         placeholder="e.g. 62%"
                         className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
                       />
@@ -1019,7 +1146,9 @@ export function HighlightBuilderTool({
                       <select
                         value={row.status}
                         onChange={(event) =>
-                          updateRow('metricRows', row.id, { status: event.target.value as MetricRow['status'] })
+                          updateRow('metricRows', row.id, {
+                            status: event.target.value as MetricRow['status'],
+                          })
                         }
                         className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
                       >
@@ -1053,7 +1182,13 @@ export function HighlightBuilderTool({
             type="button"
             data-print-hide="true"
             onClick={() =>
-              addRow('metricRows', { id: createId(), measure: '', target: '', current: '', status: 'Amber' })
+              addRow('metricRows', {
+                id: createId(),
+                measure: '',
+                target: '',
+                current: '',
+                status: 'Amber',
+              })
             }
             className="mt-3 rounded-md bg-slate-100 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-200"
           >
@@ -1092,7 +1227,9 @@ export function HighlightBuilderTool({
                     <td className="px-3 py-2 align-top">
                       <input
                         value={row.risk}
-                        onChange={(event) => updateRow('riskRows', row.id, { risk: event.target.value })}
+                        onChange={(event) =>
+                          updateRow('riskRows', row.id, { risk: event.target.value })
+                        }
                         placeholder="e.g. Inconsistent adoption in Vision"
                         className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
                       />
@@ -1100,7 +1237,9 @@ export function HighlightBuilderTool({
                     <td className="px-3 py-2 align-top">
                       <input
                         value={row.impact}
-                        onChange={(event) => updateRow('riskRows', row.id, { impact: event.target.value })}
+                        onChange={(event) =>
+                          updateRow('riskRows', row.id, { impact: event.target.value })
+                        }
                         placeholder="e.g. Benefits may not be realised"
                         className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
                       />
@@ -1108,7 +1247,9 @@ export function HighlightBuilderTool({
                     <td className="px-3 py-2 align-top">
                       <input
                         value={row.mitigation}
-                        onChange={(event) => updateRow('riskRows', row.id, { mitigation: event.target.value })}
+                        onChange={(event) =>
+                          updateRow('riskRows', row.id, { mitigation: event.target.value })
+                        }
                         placeholder="e.g. Targeted coaching sessions"
                         className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
                       />
@@ -1116,7 +1257,9 @@ export function HighlightBuilderTool({
                     <td className="px-3 py-2 align-top">
                       <input
                         value={row.status}
-                        onChange={(event) => updateRow('riskRows', row.id, { status: event.target.value })}
+                        onChange={(event) =>
+                          updateRow('riskRows', row.id, { status: event.target.value })
+                        }
                         placeholder="Open"
                         className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
                       />
@@ -1146,7 +1289,13 @@ export function HighlightBuilderTool({
             type="button"
             data-print-hide="true"
             onClick={() =>
-              addRow('riskRows', { id: createId(), risk: '', impact: '', mitigation: '', status: 'Open' })
+              addRow('riskRows', {
+                id: createId(),
+                risk: '',
+                impact: '',
+                mitigation: '',
+                status: 'Open',
+              })
             }
             className="mt-3 rounded-md bg-slate-100 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-200"
           >
@@ -1203,7 +1352,9 @@ export function HighlightBuilderTool({
                   min={0}
                   max={100}
                   value={layout.stakeholderPositivePct}
-                  onChange={(event) => updateLayout({ stakeholderPositivePct: Number(event.target.value) })}
+                  onChange={(event) =>
+                    updateLayout({ stakeholderPositivePct: Number(event.target.value) })
+                  }
                   className="w-16 rounded-md border border-slate-300 px-2 py-1 text-sm"
                 />
                 %
@@ -1218,7 +1369,9 @@ export function HighlightBuilderTool({
                   min={0}
                   max={100}
                   value={layout.stakeholderNeutralPct}
-                  onChange={(event) => updateLayout({ stakeholderNeutralPct: Number(event.target.value) })}
+                  onChange={(event) =>
+                    updateLayout({ stakeholderNeutralPct: Number(event.target.value) })
+                  }
                   className="w-16 rounded-md border border-slate-300 px-2 py-1 text-sm"
                 />
                 %
@@ -1233,7 +1386,9 @@ export function HighlightBuilderTool({
                   min={0}
                   max={100}
                   value={layout.stakeholderNegativePct}
-                  onChange={(event) => updateLayout({ stakeholderNegativePct: Number(event.target.value) })}
+                  onChange={(event) =>
+                    updateLayout({ stakeholderNegativePct: Number(event.target.value) })
+                  }
                   className="w-16 rounded-md border border-slate-300 px-2 py-1 text-sm"
                 />
                 %
@@ -1253,7 +1408,9 @@ export function HighlightBuilderTool({
               <li key={row.id} className="flex items-center gap-2">
                 <input
                   value={row.text}
-                  onChange={(event) => updateRow('interventionRows', row.id, { text: event.target.value })}
+                  onChange={(event) =>
+                    updateRow('interventionRows', row.id, { text: event.target.value })
+                  }
                   placeholder="e.g. Sponsor briefing sessions"
                   className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
                 />
@@ -1309,7 +1466,9 @@ export function HighlightBuilderTool({
                     <td className="px-3 py-2 align-top">
                       <input
                         value={row.decision}
-                        onChange={(event) => updateRow('decisionRows', row.id, { decision: event.target.value })}
+                        onChange={(event) =>
+                          updateRow('decisionRows', row.id, { decision: event.target.value })
+                        }
                         placeholder="e.g. Approval for additional adoption support resource"
                         className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
                       />
@@ -1317,7 +1476,9 @@ export function HighlightBuilderTool({
                     <td className="px-3 py-2 align-top">
                       <input
                         value={row.owner}
-                        onChange={(event) => updateRow('decisionRows', row.id, { owner: event.target.value })}
+                        onChange={(event) =>
+                          updateRow('decisionRows', row.id, { owner: event.target.value })
+                        }
                         placeholder="e.g. Programme Board"
                         className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
                       />
@@ -1325,7 +1486,9 @@ export function HighlightBuilderTool({
                     <td className="px-3 py-2 align-top">
                       <input
                         value={row.requiredBy}
-                        onChange={(event) => updateRow('decisionRows', row.id, { requiredBy: event.target.value })}
+                        onChange={(event) =>
+                          updateRow('decisionRows', row.id, { requiredBy: event.target.value })
+                        }
                         placeholder="TBC"
                         className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
                       />
@@ -1354,7 +1517,9 @@ export function HighlightBuilderTool({
           <button
             type="button"
             data-print-hide="true"
-            onClick={() => addRow('decisionRows', { id: createId(), decision: '', owner: '', requiredBy: '' })}
+            onClick={() =>
+              addRow('decisionRows', { id: createId(), decision: '', owner: '', requiredBy: '' })
+            }
             className="mt-3 rounded-md bg-slate-100 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-200"
           >
             + Add Decision
@@ -1386,7 +1551,9 @@ export function HighlightBuilderTool({
                     <td className="px-3 py-2 align-top">
                       <input
                         value={row.area}
-                        onChange={(event) => updateRow('assessmentRows', row.id, { area: event.target.value })}
+                        onChange={(event) =>
+                          updateRow('assessmentRows', row.id, { area: event.target.value })
+                        }
                         placeholder="e.g. Stakeholder Engagement"
                         className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
                       />
@@ -1430,7 +1597,9 @@ export function HighlightBuilderTool({
           <button
             type="button"
             data-print-hide="true"
-            onClick={() => addRow('assessmentRows', { id: createId(), area: '', confidence: 'Medium' })}
+            onClick={() =>
+              addRow('assessmentRows', { id: createId(), area: '', confidence: 'Medium' })
+            }
             className="mt-3 rounded-md bg-slate-100 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-200"
           >
             + Add Assessment Area
@@ -1517,7 +1686,9 @@ export function HighlightBuilderTool({
               Highlight Builder Tool
             </p>
             <div className="flex items-center gap-2">
-              <h2 className="text-2xl font-bold text-slate-900">Create a polished highlight pack</h2>
+              <h2 className="text-2xl font-bold text-slate-900">
+                Create a polished highlight pack
+              </h2>
               <PageHelpButton onClick={pageIntro.reopen} />
             </div>
           </div>
@@ -1691,9 +1862,7 @@ export function HighlightBuilderTool({
                 {layout.bragSlides.map((slide, index) => (
                   <div key={slide.id} className="rounded-md border border-slate-200 px-3 py-2">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-xs font-semibold text-slate-500">
-                        Page {index + 1}
-                      </span>
+                      <span className="text-xs font-semibold text-slate-500">Page {index + 1}</span>
                       <button
                         type="button"
                         onClick={() => removeBragSlide(slide.id)}
@@ -1790,23 +1959,44 @@ export function HighlightBuilderTool({
         >
           <div
             className={`report-intro-slide ${isSlideMode ? 'report-slide' : ''} mb-6 overflow-hidden rounded-lg border border-[#003087] bg-white shadow-md ${
-              isSlideMode ? 'grid gap-8 p-8 lg:grid-cols-[1.2fr,0.8fr] lg:items-center' : 'flex items-center gap-3 p-3'
+              isSlideMode
+                ? 'grid gap-8 p-8 lg:grid-cols-[1.2fr,0.8fr] lg:items-center'
+                : 'flex items-center gap-3 p-3'
             }`}
-            style={isSlideMode ? { borderTop: `14px solid ${layout.themeColor || nhsColors.blue}` } : undefined}
+            style={
+              isSlideMode
+                ? { borderTop: `14px solid ${layout.themeColor || nhsColors.blue}` }
+                : undefined
+            }
           >
             <div className={isSlideMode ? 'space-y-6' : 'flex items-center gap-3'}>
               {layout.logoDataUrl ? (
-                <img alt="Logo preview" src={layout.logoDataUrl} className={isSlideMode ? 'max-h-20 w-auto' : 'max-h-12 w-auto'} />
+                <img
+                  alt="Logo preview"
+                  src={layout.logoDataUrl}
+                  className={isSlideMode ? 'max-h-20 w-auto' : 'max-h-12 w-auto'}
+                />
               ) : (
-                <div className={`flex items-center justify-center rounded-md bg-[#005eb8] font-bold text-white ${isSlideMode ? 'h-20 w-20 text-xl' : 'h-12 w-12 text-sm'}`}>
+                <div
+                  className={`flex items-center justify-center rounded-md bg-[#005eb8] font-bold text-white ${isSlideMode ? 'h-20 w-20 text-xl' : 'h-12 w-12 text-sm'}`}
+                >
                   NHS
                 </div>
               )}
               <div>
-                <div data-print-hide="true" className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                <div
+                  data-print-hide="true"
+                  className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500"
+                >
                   Builder Preview · Intro Slide
                 </div>
-                <div className={isSlideMode ? 'mt-3 text-4xl font-bold leading-tight text-[#003087]' : 'text-lg font-bold text-slate-900'}>
+                <div
+                  className={
+                    isSlideMode
+                      ? 'mt-3 text-4xl font-bold leading-tight text-[#003087]'
+                      : 'text-lg font-bold text-slate-900'
+                  }
+                >
                   {layout.title}
                 </div>
                 <div className="mt-2 text-sm text-slate-600">
@@ -1819,16 +2009,22 @@ export function HighlightBuilderTool({
                 </div>
                 {isSlideMode ? (
                   <p className="mt-8 max-w-xl border-l-4 border-[#41a6c8] pl-4 text-lg leading-7 text-[#425563]">
-                    Change adoption highlight report covering current progress, risks and priorities.
+                    Change adoption highlight report covering current progress, risks and
+                    priorities.
                   </p>
                 ) : null}
               </div>
             </div>
           </div>
 
-          <div className={isSlideMode ? 'grid gap-6' : 'grid gap-2'} data-orientation={layout.orientation}>
+          <div
+            className={isSlideMode ? 'grid gap-6' : 'grid gap-2'}
+            data-orientation={layout.orientation}
+          >
             {layout.bragSlides.map((slide) => {
-              const componentInfo = componentScores.find((item) => item.component.id === slide.componentId);
+              const componentInfo = componentScores.find(
+                (item) => item.component.id === slide.componentId
+              );
               const bragStatus = componentInfo
                 ? getBragStatusFromAverage(componentInfo.average, componentInfo.target)
                 : null;
@@ -1846,7 +2042,11 @@ export function HighlightBuilderTool({
                         ? 'flex flex-wrap items-center justify-between gap-3 px-5 py-3 text-white'
                         : 'flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-2'
                     }
-                    style={isSlideMode ? { backgroundColor: layout.themeColor || nhsColors.blue } : undefined}
+                    style={
+                      isSlideMode
+                        ? { backgroundColor: layout.themeColor || nhsColors.blue }
+                        : undefined
+                    }
                   >
                     <div>
                       <p
@@ -1918,21 +2118,27 @@ export function HighlightBuilderTool({
                             <td className="px-3 py-2 align-top">
                               <RichTextEditor
                                 value={row.preventingGreenHtml}
-                                onChange={(html) => updateBragRow(slide.id, row.id, { preventingGreenHtml: html })}
+                                onChange={(html) =>
+                                  updateBragRow(slide.id, row.id, { preventingGreenHtml: html })
+                                }
                                 placeholder="What's blocking green?"
                               />
                             </td>
                             <td className="px-3 py-2 align-top">
                               <RichTextEditor
                                 value={row.returnToGreenHtml}
-                                onChange={(html) => updateBragRow(slide.id, row.id, { returnToGreenHtml: html })}
+                                onChange={(html) =>
+                                  updateBragRow(slide.id, row.id, { returnToGreenHtml: html })
+                                }
                                 placeholder="What needs to happen?"
                               />
                             </td>
                             <td className="px-3 py-2 align-top">
                               <select
                                 value={row.ownerId}
-                                onChange={(event) => updateBragRow(slide.id, row.id, { ownerId: event.target.value })}
+                                onChange={(event) =>
+                                  updateBragRow(slide.id, row.id, { ownerId: event.target.value })
+                                }
                                 className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
                               >
                                 <option value="">Unassigned</option>
@@ -1948,7 +2154,11 @@ export function HighlightBuilderTool({
                               <input
                                 type="date"
                                 value={row.targetDate}
-                                onChange={(event) => updateBragRow(slide.id, row.id, { targetDate: event.target.value })}
+                                onChange={(event) =>
+                                  updateBragRow(slide.id, row.id, {
+                                    targetDate: event.target.value,
+                                  })
+                                }
                                 className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
                               />
                             </td>
@@ -1994,7 +2204,9 @@ export function HighlightBuilderTool({
               <React.Fragment key={sectionId}>
                 <article
                   data-brag-slide={isSlideMode ? 'true' : undefined}
-                  data-print-exclude={hasSectionContent(sectionId as SectionId) ? undefined : 'true'}
+                  data-print-exclude={
+                    hasSectionContent(sectionId as SectionId) ? undefined : 'true'
+                  }
                   className={`${reportArticleClassName} ${isSlideMode ? 'report-slide' : ''}`}
                   style={reportArticleStyle}
                 >
@@ -2012,28 +2224,49 @@ export function HighlightBuilderTool({
                       )}
                     </span>
                   </ReportSectionHeading>
-                  <div className={isSlideMode && sectionId !== 'change-dashboard' ? 'grid gap-5 px-5 pb-5 lg:grid-cols-[1fr,220px] lg:items-start' : undefined}>
-                    <ReportSectionBody>{renderSectionBody(sectionId as SectionId)}</ReportSectionBody>
-                    {sectionId !== 'change-dashboard' ? <DataVisual sectionId={sectionId as SectionId} /> : null}
+                  <div
+                    className={
+                      isSlideMode && sectionId !== 'change-dashboard'
+                        ? 'grid gap-5 px-5 pb-5 lg:grid-cols-[1fr,220px] lg:items-start'
+                        : undefined
+                    }
+                  >
+                    <ReportSectionBody>
+                      {renderSectionBody(sectionId as SectionId)}
+                    </ReportSectionBody>
+                    {sectionId !== 'change-dashboard' ? (
+                      <DataVisual sectionId={sectionId as SectionId} />
+                    ) : null}
                   </div>
                 </article>
                 {isSlideMode && sectionId === 'change-dashboard' ? (
                   <article
                     data-brag-slide="true"
-                    data-print-exclude={hasSectionContent(sectionId as SectionId) ? undefined : 'true'}
+                    data-print-exclude={
+                      hasSectionContent(sectionId as SectionId) ? undefined : 'true'
+                    }
                     className={`${reportArticleClassName} report-slide`}
                     style={reportArticleStyle}
                   >
                     <ReportSectionHeading>
-                      <span data-print-hide="true">{withSectionNumber((reportNumberMap[sectionId] || 0) + 1, 'Change Dashboard Chart')}</span>
+                      <span data-print-hide="true">
+                        {withSectionNumber(
+                          (reportNumberMap[sectionId] || 0) + 1,
+                          'Change Dashboard Chart'
+                        )}
+                      </span>
                       <span className="hidden" data-print-only="true">
-                        {withSectionNumber((printReportNumberMap[sectionId] || 0) + 1, 'Change Dashboard Chart')}
+                        {withSectionNumber(
+                          (printReportNumberMap[sectionId] || 0) + 1,
+                          'Change Dashboard Chart'
+                        )}
                       </span>
                     </ReportSectionHeading>
                     <div className="px-8 pb-8">
                       <div>
                         <p className="mb-6 max-w-2xl text-base leading-6 text-[#425563]">
-                          Current component averages compared with the target score. The red marker shows the target for each area.
+                          Current component averages compared with the target score. The red marker
+                          shows the target for each area.
                         </p>
                         <DashboardChart rows={dashboardChartRows} />
                       </div>

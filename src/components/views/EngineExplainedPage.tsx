@@ -17,7 +17,7 @@ const STEP_TITLES = ['Pathway', 'Phases', 'Component', 'Lens', 'Readiness', 'Act
 
 const PATHWAY_DETAILS: Record<CstPathwayKey, string> = {
   'pathway-1':
-    "For teams starting from scratch. Nothing has been built yet, so every component starts at Not Started and the guidance walks you through building the foundations - defining a vision, securing sponsorship, and putting the basics of a change plan in place - one readiness level at a time.",
+    'For teams starting from scratch. Nothing has been built yet, so every component starts at Not Started and the guidance walks you through building the foundations - defining a vision, securing sponsorship, and putting the basics of a change plan in place - one readiness level at a time.',
   'pathway-2':
     "For teams who've already run a successful pilot and now need to scale it up. The guidance and actions are framed around taking what worked in the pilot - the vision, the sponsorship, the early lessons - and rolling it out consistently to new sites and teams, rather than starting from nothing.",
   'pathway-3':
@@ -100,7 +100,8 @@ export function EngineExplainedPage({
   const [selectedPathway, setSelectedPathway] = useState<CstPathwayKey>('pathway-1');
   const [activeStep, setActiveStep] = useState(0);
 
-  const pathway = PATHWAY_OPTIONS.find((option) => option.value === selectedPathway) || PATHWAY_OPTIONS[0];
+  const pathway =
+    PATHWAY_OPTIONS.find((option) => option.value === selectedPathway) || PATHWAY_OPTIONS[0];
   const isLast = activeStep === STEP_TITLES.length - 1;
   const textClass = darkMode ? 'text-slate-300' : 'text-slate-700';
 
@@ -119,17 +120,25 @@ export function EngineExplainedPage({
       </div>
 
       {activeStep > 0 ? (
-        <Breadcrumb activeStep={activeStep} pathwayLabel={pathway.simplifiedLabel} darkMode={darkMode} />
+        <Breadcrumb
+          activeStep={activeStep}
+          pathwayLabel={pathway.simplifiedLabel}
+          darkMode={darkMode}
+        />
       ) : null}
 
       <Card darkMode={darkMode}>
-        <p className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-blue-300' : 'text-blue-700'}`}>
+        <p
+          className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-blue-300' : 'text-blue-700'}`}
+        >
           Step {activeStep + 1} of {STEP_TITLES.length} · {STEP_TITLES[activeStep]}
         </p>
 
         {activeStep === 0 ? (
           <>
-            <h3 className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>
+            <h3
+              className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
+            >
               Every programme starts with a pathway
             </h3>
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
@@ -168,7 +177,10 @@ export function EngineExplainedPage({
               className={`mt-4 rounded-md border p-4 text-sm ${darkMode ? 'border-blue-500/30 bg-blue-500/10 text-blue-100' : 'border-blue-200 bg-blue-50 text-blue-900'}`}
             >
               <p className="font-semibold">
-                {PATHWAY_OPTIONS.find((option) => option.value === selectedPathway)?.simplifiedLabel}
+                {
+                  PATHWAY_OPTIONS.find((option) => option.value === selectedPathway)
+                    ?.simplifiedLabel
+                }
               </p>
               <p className="mt-1">{PATHWAY_DETAILS[selectedPathway]}</p>
             </div>
@@ -177,17 +189,23 @@ export function EngineExplainedPage({
 
         {activeStep === 1 ? (
           <>
-            <h3 className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>
+            <h3
+              className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
+            >
               Your pathway is broken into the 5 change phases
             </h3>
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
               Every pathway runs through the same 5 phases, from the earliest thinking about a
-              change through to it being fully embedded as business as usual. This is the same
-              phase breakdown you'll see on your Daily Check-in once your project is set up - expand
-              a phase below to see what it covers.
+              change through to it being fully embedded as business as usual. This is the same phase
+              breakdown you'll see on your Daily Check-in once your project is set up - expand a
+              phase below to see what it covers.
             </p>
             <div className="mt-6">
-              <DailyPhaseOverview currentPhase={EXAMPLE_COMPONENT.phase} onComponentClick={onComponentClick} darkMode={darkMode} />
+              <DailyPhaseOverview
+                currentPhase={EXAMPLE_COMPONENT.phase}
+                onComponentClick={onComponentClick}
+                darkMode={darkMode}
+              />
             </div>
             <p className={`mt-4 text-sm ${textClass}`}>
               Each phase covers a set of change components that matter most at that stage - for
@@ -199,21 +217,27 @@ export function EngineExplainedPage({
 
         {activeStep === 2 ? (
           <>
-            <h3 className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>
+            <h3
+              className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
+            >
               A component is a specific area of change to get right
             </h3>
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
-              Each phase is made up of several components - focused topics like Vision,
-              Sponsorship, Capability or Benefits. Each one has its own readiness to build up, and
-              its own actions to get there. Here's the example we're following:
+              Each phase is made up of several components - focused topics like Vision, Sponsorship,
+              Capability or Benefits. Each one has its own readiness to build up, and its own
+              actions to get there. Here's the example we're following:
             </p>
             <div
               className={`mt-6 rounded-lg border p-5 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-white'}`}
             >
-              <p className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>
+              <p
+                className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
+              >
                 {EXAMPLE_COMPONENT.label}
               </p>
-              <p className={`mt-2 text-sm ${textClass}`}>{getComponentDescription(EXAMPLE_COMPONENT.id)}</p>
+              <p className={`mt-2 text-sm ${textClass}`}>
+                {getComponentDescription(EXAMPLE_COMPONENT.id)}
+              </p>
             </div>
             <p className={`mt-4 text-sm ${textClass}`}>
               But you don't assess a component all at once - you look at it through several
@@ -224,7 +248,9 @@ export function EngineExplainedPage({
 
         {activeStep === 3 ? (
           <>
-            <h3 className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>
+            <h3
+              className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
+            >
               A lens is a different angle on the same component
             </h3>
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
@@ -253,7 +279,9 @@ export function EngineExplainedPage({
                       {lens}
                       {isExample ? " - we'll follow this one" : ''}
                     </p>
-                    <p className={`mt-2 text-sm ${isExample && !darkMode ? 'text-blue-900' : textClass}`}>
+                    <p
+                      className={`mt-2 text-sm ${isExample && !darkMode ? 'text-blue-900' : textClass}`}
+                    >
                       {getLensDescription(lens)}
                     </p>
                   </div>
@@ -269,7 +297,9 @@ export function EngineExplainedPage({
 
         {activeStep === 4 ? (
           <>
-            <h3 className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>
+            <h3
+              className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
+            >
               Readiness is scored 0-5 for every lens
             </h3>
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
@@ -291,11 +321,15 @@ export function EngineExplainedPage({
                     }`}
                     style={{ borderLeftWidth: '4px', borderLeftColor: band.color }}
                   >
-                    <p className={`text-xs font-bold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
+                    <p
+                      className={`text-xs font-bold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+                    >
                       {band.score} - {band.label}
                       {band.score === EXAMPLE_BAND_SCORE ? ' - our example is here' : ''}
                     </p>
-                    <p className={`mt-0.5 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                    <p
+                      className={`mt-0.5 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+                    >
                       {detail}
                     </p>
                   </div>
@@ -307,21 +341,25 @@ export function EngineExplainedPage({
 
         {activeStep === 5 ? (
           <>
-            <h3 className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>
+            <h3
+              className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
+            >
               Actions are how you move up a readiness level
             </h3>
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
               At every readiness level, the engine suggests concrete actions - things to review,
-              decide, build, communicate or measure. For {EXAMPLE_COMPONENT.label} /{' '}
-              {EXAMPLE_LENS} at level {EXAMPLE_BAND_SCORE}, that might mean things like agreeing a
-              standard approach and getting it applied consistently.
+              decide, build, communicate or measure. For {EXAMPLE_COMPONENT.label} / {EXAMPLE_LENS}{' '}
+              at level {EXAMPLE_BAND_SCORE}, that might mean things like agreeing a standard
+              approach and getting it applied consistently.
             </p>
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
-              Assign each action an owner and a status. Once every action at a level is Completed
-              or Cancelled, that lens automatically moves up to the next readiness level - no
+              Assign each action an owner and a status. Once every action at a level is Completed or
+              Cancelled, that lens automatically moves up to the next readiness level - no
               guesswork, no manual tally.
             </p>
-            <p className={`mt-6 text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>
+            <p
+              className={`mt-6 text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
+            >
               That's the whole engine: Pathway → Phase → Component → Lens → Readiness → Actions.
               Time to set up your real project.
             </p>

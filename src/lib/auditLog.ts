@@ -1,10 +1,4 @@
-export type AuditEntityType =
-  | 'entry'
-  | 'action'
-  | 'objective'
-  | 'profile'
-  | 'history'
-  | 'system';
+export type AuditEntityType = 'entry' | 'action' | 'objective' | 'profile' | 'history' | 'system';
 
 export type AuditEventType =
   | 'entry-score-updated'

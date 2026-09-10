@@ -10,7 +10,7 @@ export interface RichTextEditorProps {
 
 function sanitizeHtml(value: string): string {
   return DOMPurify.sanitize(value, {
-    USE_PROFILES: { html: true }
+    USE_PROFILES: { html: true },
   });
 }
 
@@ -24,10 +24,15 @@ const TOOLBAR_BUTTONS: ToolbarButton[] = [
   { label: 'Bold', command: 'bold', icon: 'B' },
   { label: 'Italic', command: 'italic', icon: 'I' },
   { label: 'Bullet list', command: 'insertUnorderedList', icon: '•' },
-  { label: 'Numbered list', command: 'insertOrderedList', icon: '1.' }
+  { label: 'Numbered list', command: 'insertOrderedList', icon: '1.' },
 ];
 
-export function RichTextEditor({ value, onChange, placeholder, className }: RichTextEditorProps): JSX.Element {
+export function RichTextEditor({
+  value,
+  onChange,
+  placeholder,
+  className,
+}: RichTextEditorProps): JSX.Element {
   const editorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

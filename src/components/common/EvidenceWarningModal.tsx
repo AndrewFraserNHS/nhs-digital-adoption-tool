@@ -39,7 +39,9 @@ export function EvidenceWarningModal({
         <p className={`mt-3 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
           Please don't forget to attach evidence if you have it
         </p>
-        <label className={`mt-4 flex items-center gap-2 text-sm ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>
+        <label
+          className={`mt-4 flex items-center gap-2 text-sm ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
+        >
           <input
             type="checkbox"
             checked={doNotShowAgain}
@@ -52,7 +54,11 @@ export function EvidenceWarningModal({
           <button type="button" onClick={onCancel} className={nhsButtonSecondary}>
             Cancel
           </button>
-          <button type="button" onClick={() => onContinue(doNotShowAgain)} className={nhsButtonPrimary}>
+          <button
+            type="button"
+            onClick={() => onContinue(doNotShowAgain)}
+            className={nhsButtonPrimary}
+          >
             Continue
           </button>
         </div>

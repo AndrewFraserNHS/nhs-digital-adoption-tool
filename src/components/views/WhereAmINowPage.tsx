@@ -42,7 +42,8 @@ const PHASE_STATEMENTS: PhaseStatement[] = [
   },
   {
     phase: 5,
-    statement: "The change has gone live and we're now focused on reinforcing it and making it stick.",
+    statement:
+      "The change has gone live and we're now focused on reinforcing it and making it stick.",
   },
 ];
 
@@ -138,7 +139,10 @@ export function WhereAmINowPage({
                   type="checkbox"
                   checked={Boolean(checkedPhases[item.phase])}
                   onChange={(event) =>
-                    setCheckedPhases((current) => ({ ...current, [item.phase]: event.target.checked }))
+                    setCheckedPhases((current) => ({
+                      ...current,
+                      [item.phase]: event.target.checked,
+                    }))
                   }
                   className="mt-1 h-4 w-4"
                 />
@@ -148,7 +152,9 @@ export function WhereAmINowPage({
                   >
                     Phase {item.phase}: {PHASE_NAMES[item.phase]}
                   </span>
-                  <span className={`block text-sm ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>
+                  <span
+                    className={`block text-sm ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
+                  >
                     {item.statement}
                   </span>
                 </span>
@@ -175,9 +181,14 @@ export function WhereAmINowPage({
             <strong>
               Phase {effectivePhaseFocus}: {PHASE_NAMES[effectivePhaseFocus]}
             </strong>{' '}
-            ({phaseFocusMode === 'manual' ? 'set manually' : 'auto-detected from delivery progress'}).
+            ({phaseFocusMode === 'manual' ? 'set manually' : 'auto-detected from delivery progress'}
+            ).
             {phaseFocusMode === 'manual' ? (
-              <button type="button" onClick={onResetToAuto} className="ml-2 font-semibold text-[#005eb8] hover:underline">
+              <button
+                type="button"
+                onClick={onResetToAuto}
+                className="ml-2 font-semibold text-[#005eb8] hover:underline"
+              >
                 Reset to auto
               </button>
             ) : null}
@@ -193,8 +204,8 @@ export function WhereAmINowPage({
             Readiness by component
           </h3>
           <p className={`mt-1 text-xs ${textClass}`}>
-            Each component is scored by its weakest lens - click a label to jump to that
-            component's assessment.
+            Each component is scored by its weakest lens - click a label to jump to that component's
+            assessment.
           </p>
           <div
             className={`mx-auto mt-4 flex items-center justify-center rounded border p-2 ${darkMode ? 'border-slate-700 bg-slate-950' : 'border-slate-100 bg-slate-50'}`}

@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { type GuidanceLink, type LinkOverrides,resolveEffectiveLink } from './maturity-guidance-links';
+import {
+  type GuidanceLink,
+  type LinkOverrides,
+  resolveEffectiveLink,
+} from './maturity-guidance-links';
 
 const link: GuidanceLink = {
   key: 'fnhs_1',

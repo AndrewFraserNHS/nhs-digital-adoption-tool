@@ -36,6 +36,8 @@ describe('syncChangeNetworkDerivedContent', () => {
       nextStore.currentDraft.change_network['Strategic Direction and Leadership'].actions.length
     ).toBeGreaterThan(0);
     expect(nextStore.objectives.change_network.length).toBeGreaterThan(0);
-    expect(nextStore.objectives.change_network[0].id.startsWith('change-network:outcome:')).toBe(true);
+    expect(nextStore.objectives.change_network[0].id.startsWith('change-network:outcome:')).toBe(
+      true
+    );
   });
 });

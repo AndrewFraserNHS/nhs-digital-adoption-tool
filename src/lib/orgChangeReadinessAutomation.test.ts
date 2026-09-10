@@ -36,6 +36,8 @@ describe('syncOrgChangeReadinessDerivedContent', () => {
       nextStore.currentDraft.org_maturity['Strategic Direction and Leadership'].actions.length
     ).toBeGreaterThan(0);
     expect(nextStore.objectives.org_maturity.length).toBeGreaterThan(0);
-    expect(nextStore.objectives.org_maturity[0].id.startsWith('org-change-readiness:outcome:')).toBe(true);
+    expect(
+      nextStore.objectives.org_maturity[0].id.startsWith('org-change-readiness:outcome:')
+    ).toBe(true);
   });
 });

@@ -266,9 +266,7 @@ export function initializeStore(persisted?: Partial<AdoptionStore>): AdoptionSto
   };
 }
 
-function cloneSuppressedAutoActions(
-  map?: Record<string, string[]>
-): Record<string, string[]> {
+function cloneSuppressedAutoActions(map?: Record<string, string[]>): Record<string, string[]> {
   if (!map) {
     return {};
   }

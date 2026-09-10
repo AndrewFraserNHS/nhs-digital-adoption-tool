@@ -1,6 +1,9 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { ADOPTION_INTRODUCTION_COMPLETE_KEY, OnboardingOverviewPage } from './OnboardingOverviewPage';
+import {
+  ADOPTION_INTRODUCTION_COMPLETE_KEY,
+  OnboardingOverviewPage,
+} from './OnboardingOverviewPage';
 
 describe('OnboardingOverviewPage', () => {
   beforeEach(() => {
@@ -13,7 +16,9 @@ describe('OnboardingOverviewPage', () => {
     render(<OnboardingOverviewPage onGetStarted={onGetStarted} />);
 
     // assert 1 - starts on step 1, later steps locked
-    expect(screen.getByRole('heading', { name: 'What is the Adoption Engine?' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'What is the Adoption Engine?' })
+    ).toBeInTheDocument();
     expect(screen.getByRole('tab', { name: /5.*Change Manager/ })).toBeDisabled();
 
     // act - step through every step
@@ -60,7 +65,9 @@ describe('OnboardingOverviewPage', () => {
     render(<OnboardingOverviewPage onGetStarted={vi.fn()} />);
 
     // assert
-    expect(screen.getByRole('heading', { name: 'What is the Adoption Engine?' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'What is the Adoption Engine?' })
+    ).toBeInTheDocument();
     for (const tab of screen.getAllByRole('tab')) {
       expect(tab).not.toBeDisabled();
     }
@@ -74,6 +81,8 @@ describe('OnboardingOverviewPage', () => {
     fireEvent.click(screen.getByRole('tab', { name: /5.*Change Manager/ }));
 
     // assert - still on step 1
-    expect(screen.getByRole('heading', { name: 'What is the Adoption Engine?' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'What is the Adoption Engine?' })
+    ).toBeInTheDocument();
   });
 });

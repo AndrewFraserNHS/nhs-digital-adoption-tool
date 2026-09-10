@@ -32,8 +32,12 @@ describe('syncReinforcementDerivedContent', () => {
     const nextStore = syncReinforcementDerivedContent(store);
 
     // assert
-    expect(nextStore.currentDraft.reinforcement['Process and Sustainment'].actions.length).toBeGreaterThan(0);
+    expect(
+      nextStore.currentDraft.reinforcement['Process and Sustainment'].actions.length
+    ).toBeGreaterThan(0);
     expect(nextStore.objectives.reinforcement.length).toBeGreaterThan(0);
-    expect(nextStore.objectives.reinforcement[0].id.startsWith('reinforcement:outcome:')).toBe(true);
+    expect(nextStore.objectives.reinforcement[0].id.startsWith('reinforcement:outcome:')).toBe(
+      true
+    );
   });
 });

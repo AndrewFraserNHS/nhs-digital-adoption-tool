@@ -47,8 +47,8 @@ export function ReadinessScoreInfoModal({
         <div className={`p-6 space-y-3 text-sm ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>
           <p>
             Every lens is scored on the same 0-5 readiness scale. Here's what each level generally
-            means - each lens on a component page also shows guidance written specifically for
-            that lens at its current level. A lens advances automatically once every action at its
+            means - each lens on a component page also shows guidance written specifically for that
+            lens at its current level. A lens advances automatically once every action at its
             current level is marked Completed or Cancelled.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -60,7 +60,9 @@ export function ReadinessScoreInfoModal({
                   className={`rounded-md border p-2.5 ${darkMode ? 'border-slate-700' : ''}`}
                   style={{ borderLeftWidth: '4px', borderLeftColor: STAGE_COLORS[Number(level)] }}
                 >
-                  <p className={`text-xs font-bold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
+                  <p
+                    className={`text-xs font-bold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+                  >
                     {level} - {label}
                   </p>
                   <p className={`mt-0.5 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>

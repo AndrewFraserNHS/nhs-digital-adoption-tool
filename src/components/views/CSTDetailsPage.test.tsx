@@ -49,7 +49,7 @@ describe('ProjectDetailsPage', () => {
         onCurrentUserChange={vi.fn()}
       />
     );
-    
+
     // act
     fireEvent.change(screen.getByTestId('cst-trust-name-input'), {
       target: { value: 'Updated Trust' },
@@ -165,7 +165,9 @@ describe('ProjectDetailsPage', () => {
 
     // assert 1
     expect(onProfileUpdate).not.toHaveBeenCalled();
-    expect(screen.getByRole('heading', { name: /Change pathway to Pathway 2/ })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: /Change pathway to Pathway 2/ })
+    ).toBeInTheDocument();
 
     // act 2
     fireEvent.click(screen.getByRole('button', { name: 'Confirm change' }));

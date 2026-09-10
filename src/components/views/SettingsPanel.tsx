@@ -1,6 +1,10 @@
 import { useState, useCallback, JSX, useEffect } from 'react';
 import { nhsFocusRing } from '../../styles/nhsTheme';
-import { PageHelpButton, PageIntroModal, usePageIntroSeen } from '@components/onboarding/PageIntroModal';
+import {
+  PageHelpButton,
+  PageIntroModal,
+  usePageIntroSeen,
+} from '@components/onboarding/PageIntroModal';
 
 export interface AdoptionUserSettings {
   name: string;
@@ -141,15 +145,11 @@ export function SettingsPanel({
           <label
             className={`flex items-center justify-between rounded-md border px-3 py-2 text-sm ${darkMode ? 'border-slate-700 bg-slate-900 text-slate-100' : 'border-slate-200 bg-slate-50 text-slate-700'}`}
           >
-            <span>
-              Show external links section (Project Profile, even after marked initiated)
-            </span>
+            <span>Show external links section (Project Profile, even after marked initiated)</span>
             <input
               type="checkbox"
               checked={settings.showExternalLinksSection === true}
-              onChange={(e) =>
-                updateUserSettings({ showExternalLinksSection: e.target.checked })
-              }
+              onChange={(e) => updateUserSettings({ showExternalLinksSection: e.target.checked })}
               className="h-4 w-4"
             />
           </label>
@@ -164,9 +164,7 @@ export function SettingsPanel({
             <input
               type="checkbox"
               checked={settings.showActionPriorityColours === true}
-              onChange={(e) =>
-                updateUserSettings({ showActionPriorityColours: e.target.checked })
-              }
+              onChange={(e) => updateUserSettings({ showActionPriorityColours: e.target.checked })}
               className="h-4 w-4"
             />
           </label>
@@ -278,8 +276,8 @@ export function SettingsPanel({
             >
               Exemplar Example
             </button>
-            </div>
-            <div className="mt-3 flex flex-wrap gap-3">
+          </div>
+          <div className="mt-3 flex flex-wrap gap-3">
             <button
               onClick={onResetData}
               className={`inline-flex items-center justify-center rounded-md bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 border border-red-200 shadow-[0_3px_0_#fecaca] hover:bg-red-100 transition-colors ${nhsFocusRing}`}

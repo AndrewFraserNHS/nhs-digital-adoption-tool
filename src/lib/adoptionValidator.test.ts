@@ -144,8 +144,22 @@ describe('adoptionValidator', () => {
   it('SHOULD validate all action readiness scores in a collection WHERE valid', () => {
     // arrange
     const validActions = [
-      { id: 'A1', text: 'Action 1', owner: 'Owner', timescale: '2 weeks', status: 'Planned' as const, readinessScore: 1 },
-      { id: 'A2', text: 'Action 2', owner: 'Owner', timescale: '2 weeks', status: 'Planned' as const, readinessScore: 2 },
+      {
+        id: 'A1',
+        text: 'Action 1',
+        owner: 'Owner',
+        timescale: '2 weeks',
+        status: 'Planned' as const,
+        readinessScore: 1,
+      },
+      {
+        id: 'A2',
+        text: 'Action 2',
+        owner: 'Owner',
+        timescale: '2 weeks',
+        status: 'Planned' as const,
+        readinessScore: 2,
+      },
     ];
 
     // act
@@ -158,8 +172,22 @@ describe('adoptionValidator', () => {
   it('SHOULD validate all action readiness scores in a collection WHERE invalid', () => {
     // arrange
     const invalidActions = [
-      { id: 'A1', text: 'Action 1', owner: 'Owner', timescale: '2 weeks', status: 'Planned' as const, readinessScore: 1 },
-      { id: 'A2', text: 'Action 2', owner: 'Owner', timescale: '2 weeks', status: 'Planned' as const, readinessScore: 6 },
+      {
+        id: 'A1',
+        text: 'Action 1',
+        owner: 'Owner',
+        timescale: '2 weeks',
+        status: 'Planned' as const,
+        readinessScore: 1,
+      },
+      {
+        id: 'A2',
+        text: 'Action 2',
+        owner: 'Owner',
+        timescale: '2 weeks',
+        status: 'Planned' as const,
+        readinessScore: 6,
+      },
     ];
 
     // act
@@ -167,6 +195,6 @@ describe('adoptionValidator', () => {
 
     // assert
     expect(invalidResult.isValid).toBe(false);
-    expect(invalidResult.errors.some(e => e.field === 'readinessScore')).toBe(true);
+    expect(invalidResult.errors.some((e) => e.field === 'readinessScore')).toBe(true);
   });
 });

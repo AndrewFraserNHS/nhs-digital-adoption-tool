@@ -42,7 +42,11 @@ const ORG_CHANGE_READINESS_SOURCE = parseDerivedComponentSource(
 );
 
 export function syncOrgChangeReadinessDerivedContent(store: AdoptionStore): AdoptionStore {
-  return syncDerivedComponentContent(store, ORG_CHANGE_READINESS_CONFIG, ORG_CHANGE_READINESS_SOURCE);
+  return syncDerivedComponentContent(
+    store,
+    ORG_CHANGE_READINESS_CONFIG,
+    ORG_CHANGE_READINESS_SOURCE
+  );
 }
 
 export function clearOrgChangeReadinessDerivedContent(store: AdoptionStore): AdoptionStore {

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { buildAdoptionExportPayload, type SavedAdoptionAssessment } from './adoptionIO';
-import { type AdoptionStore,initializeStore } from './adoptionState';
+import { type AdoptionStore, initializeStore } from './adoptionState';
 import { applyConflictResolutions, buildConflictReport } from './cstConflict';
 
 function buildStore(overrides?: Partial<AdoptionStore>): AdoptionStore {
@@ -71,7 +71,7 @@ describe('buildConflictReport', () => {
     // act
     const report = buildConflictReport(mine, theirs);
 
-// assert
+    // assert
     expect(report.hasConflicts).toBe(false);
     expect(report.sections).toEqual([]);
     expect(report.autoMergeSummary).toEqual([]);
@@ -91,7 +91,11 @@ describe('buildConflictReport', () => {
     // assert
     expect(profileSection).toBeDefined();
     expect(profileSection?.items).toEqual([
-      expect.objectContaining({ id: 'profile:trustName', mineSummary: 'Trust A', theirsSummary: 'Trust B' }),
+      expect.objectContaining({
+        id: 'profile:trustName',
+        mineSummary: 'Trust A',
+        theirsSummary: 'Trust B',
+      }),
     ]);
   });
 

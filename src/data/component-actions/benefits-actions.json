@@ -25,9 +25,7 @@
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
       "action": "S Recognise the importance of benefits realisation as part of successful change delivery.",
-      "outcomeIds": [
-        "BEN_O1"
-      ],
+      "outcomeIds": ["BEN_O1"],
       "readinessScore": 0
     },
     {
@@ -37,9 +35,7 @@
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
       "action": "S Begin discussions with sponsors and leaders about the expected value of the change.",
-      "outcomeIds": [
-        "BEN_O1"
-      ],
+      "outcomeIds": ["BEN_O1"],
       "readinessScore": 0
     },
     {
@@ -49,9 +45,7 @@
       "lens": "Planning & Risk",
       "category": "Engagement",
       "action": "M Engage key stakeholders to explore potential organisational and stakeholder benefits.",
-      "outcomeIds": [
-        "BEN_O1"
-      ],
+      "outcomeIds": ["BEN_O1"],
       "readinessScore": 0
     },
     {
@@ -61,9 +55,7 @@
       "lens": "Process & Sustainment",
       "category": "Analysis & Insight",
       "action": "M Capture initial ideas regarding expected benefits and possible disbenefits.",
-      "outcomeIds": [
-        "BEN_O1"
-      ],
+      "outcomeIds": ["BEN_O1"],
       "readinessScore": 0
     },
     {
@@ -73,9 +65,7 @@
       "lens": "Process & Sustainment",
       "category": "Analysis & Insight",
       "action": "M Identify stakeholder groups likely to experience benefits from the change.",
-      "outcomeIds": [
-        "BEN_O1"
-      ],
+      "outcomeIds": ["BEN_O1"],
       "readinessScore": 0
     },
     {
@@ -85,9 +75,7 @@
       "lens": "Planning & Risk",
       "category": "Governance",
       "action": "M Gain initial leadership support for benefits identification and management activities.",
-      "outcomeIds": [
-        "BEN_O1"
-      ],
+      "outcomeIds": ["BEN_O1"],
       "readinessScore": 0
     },
     {
@@ -97,9 +85,7 @@
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
       "action": "S Review available evidence that may indicate potential benefits.",
-      "outcomeIds": [
-        "BEN_O1"
-      ],
+      "outcomeIds": ["BEN_O1"],
       "readinessScore": 0
     },
     {
@@ -109,9 +95,7 @@
       "lens": "Process & Sustainment",
       "category": "Communication",
       "action": "S Begin raising awareness that benefits will need to be defined, measured and realised.",
-      "outcomeIds": [
-        "BEN_O1"
-      ],
+      "outcomeIds": ["BEN_O1"],
       "readinessScore": 0
     },
     {
@@ -121,9 +105,7 @@
       "lens": "Planning & Risk",
       "category": "Engagement",
       "action": "S Facilitate structured benefits workshops with sponsors, leaders and subject matter experts.",
-      "outcomeIds": [
-        "BEN_O1"
-      ],
+      "outcomeIds": ["BEN_O1"],
       "readinessScore": 1
     },
     {
@@ -133,9 +115,7 @@
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
       "action": "M Document and categorise expected organisational, operational, financial and user benefits.",
-      "outcomeIds": [
-        "BEN_O1"
-      ],
+      "outcomeIds": ["BEN_O1"],
       "readinessScore": 1
     },
     {
@@ -145,9 +125,7 @@
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
       "action": "M Document likely disbenefits and trade-offs associated with the change.",
-      "outcomeIds": [
-        "BEN_O1"
-      ],
+      "outcomeIds": ["BEN_O1"],
       "readinessScore": 1
     },
     {
@@ -157,9 +135,7 @@
       "lens": "Planning & Risk",
       "category": "Design",
       "action": "M Develop measurable benefit statements and draft success criteria for priority benefits.",
-      "outcomeIds": [
-        "BEN_O1"
-      ],
+      "outcomeIds": ["BEN_O1"],
       "readinessScore": 1
     },
     {
@@ -169,9 +145,7 @@
       "lens": "Planning & Risk",
       "category": "Governance",
       "action": "M Identify proposed benefit owners and establish accountability for benefit realisation.",
-      "outcomeIds": [
-        "BEN_O1"
-      ],
+      "outcomeIds": ["BEN_O1"],
       "readinessScore": 1
     },
     {
@@ -181,9 +155,7 @@
       "lens": "Process & Sustainment",
       "category": "Analysis & Insight",
       "action": "M Develop stakeholder-specific ‘What’s in it for me?’ (WIIFM) benefit statements.",
-      "outcomeIds": [
-        "BEN_O1"
-      ],
+      "outcomeIds": ["BEN_O1"],
       "readinessScore": 1
     },
     {
@@ -193,9 +165,7 @@
       "lens": "Process & Sustainment",
       "category": "Engagement",
       "action": "S Validate with stakeholders which benefits are most important and meaningful to them.",
-      "outcomeIds": [
-        "BEN_O1"
-      ],
+      "outcomeIds": ["BEN_O1"],
       "readinessScore": 1
     },
     {
@@ -205,9 +175,7 @@
       "lens": "Process & Sustainment",
       "category": "Testing & Validation",
       "action": "S Review and validate draft benefits with stakeholders and sponsors.",
-      "outcomeIds": [
-        "BEN_O1"
-      ],
+      "outcomeIds": ["BEN_O1"],
       "readinessScore": 1
     },
     {
@@ -217,9 +185,7 @@
       "lens": "Process & Sustainment",
       "category": "Analysis & Insight",
       "action": "S Assess differences in expected value across stakeholder groups and business areas.",
-      "outcomeIds": [
-        "BEN_O1"
-      ],
+      "outcomeIds": ["BEN_O1"],
       "readinessScore": 1
     },
     {
@@ -229,9 +195,7 @@
       "lens": "Process & Sustainment",
       "category": "Design",
       "action": "S Refine benefit definitions, ownership and measures using stakeholder feedback.",
-      "outcomeIds": [
-        "BEN_O1"
-      ],
+      "outcomeIds": ["BEN_O1"],
       "readinessScore": 1
     },
     {
@@ -241,10 +205,7 @@
       "lens": "Planning & Risk",
       "category": "Governance",
       "action": "M Obtain approval and baseline the benefits realisation approach.",
-      "outcomeIds": [
-        "BEN_O1",
-        "BEN_O2"
-      ],
+      "outcomeIds": ["BEN_O1", "BEN_O2"],
       "readinessScore": 2
     },
     {
@@ -254,9 +215,7 @@
       "lens": "Planning & Risk",
       "category": "Measurement & Evaluation",
       "action": "M Define measures, KPIs and reporting arrangements for each benefit and record this in the benefits register.",
-      "outcomeIds": [
-        "BEN_O2"
-      ],
+      "outcomeIds": ["BEN_O2"],
       "readinessScore": 2
     },
     {
@@ -266,9 +225,7 @@
       "lens": "Planning & Risk",
       "category": "Measurement & Evaluation",
       "action": "M Establish baseline measures against which benefits can be assessed and include in the business case.",
-      "outcomeIds": [
-        "BEN_O2"
-      ],
+      "outcomeIds": ["BEN_O2"],
       "readinessScore": 2
     },
     {
@@ -278,9 +235,7 @@
       "lens": "Planning & Risk",
       "category": "Design",
       "action": "M Develop a benefits realisation plan including ownership, timelines and reporting.",
-      "outcomeIds": [
-        "BEN_O2"
-      ],
+      "outcomeIds": ["BEN_O2"],
       "readinessScore": 2
     },
     {
@@ -290,9 +245,7 @@
       "lens": "Planning & Risk",
       "category": "Governance",
       "action": "M Integrate benefits tracking into governance and programme reporting.",
-      "outcomeIds": [
-        "BEN_O2"
-      ],
+      "outcomeIds": ["BEN_O2"],
       "readinessScore": 2
     },
     {
@@ -302,9 +255,7 @@
       "lens": "Process & Sustainment",
       "category": "Communication",
       "action": "M Use stakeholder-facing benefit messages (WIIFM benefits) to build support and momentum.",
-      "outcomeIds": [
-        "BEN_O2"
-      ],
+      "outcomeIds": ["BEN_O2"],
       "readinessScore": 2
     },
     {
@@ -314,9 +265,7 @@
       "lens": "Process & Sustainment",
       "category": "Communication",
       "action": "S Communicate expected benefits and success measures to stakeholders.",
-      "outcomeIds": [
-        "BEN_O2"
-      ],
+      "outcomeIds": ["BEN_O2"],
       "readinessScore": 2
     },
     {
@@ -326,10 +275,7 @@
       "lens": "Process & Sustainment",
       "category": "Engagement",
       "action": "S Gather stakeholder feedback on benefit assumptions and expectations.",
-      "outcomeIds": [
-        "BEN_O1",
-        "BEN_O2"
-      ],
+      "outcomeIds": ["BEN_O1", "BEN_O2"],
       "readinessScore": 2
     },
     {
@@ -339,9 +285,7 @@
       "lens": "Process & Sustainment",
       "category": "Testing & Validation",
       "action": "S Validate that benefit measures are meaningful and understood by stakeholders.",
-      "outcomeIds": [
-        "BEN_O2"
-      ],
+      "outcomeIds": ["BEN_O2"],
       "readinessScore": 2
     },
     {
@@ -351,9 +295,7 @@
       "lens": "Process & Sustainment",
       "category": "Measurement & Evaluation",
       "action": "S Monitor stakeholder confidence in the expected benefits.",
-      "outcomeIds": [
-        "BEN_O2"
-      ],
+      "outcomeIds": ["BEN_O2"],
       "readinessScore": 2
     },
     {
@@ -363,10 +305,7 @@
       "lens": "Planning & Risk",
       "category": "Measurement & Evaluation",
       "action": "M Track benefit performance against agreed KPI's, measures and targets.",
-      "outcomeIds": [
-        "BEN_O2",
-        "BEN_O3"
-      ],
+      "outcomeIds": ["BEN_O2", "BEN_O3"],
       "readinessScore": 3
     },
     {
@@ -376,10 +315,7 @@
       "lens": "Planning & Risk",
       "category": "Governance",
       "action": "S Review realised, unrealised and unexpected benefits through governance forums.",
-      "outcomeIds": [
-        "BEN_O2",
-        "BEN_O3"
-      ],
+      "outcomeIds": ["BEN_O2", "BEN_O3"],
       "readinessScore": 3
     },
     {
@@ -389,9 +325,7 @@
       "lens": "Planning & Risk",
       "category": "Risk Management",
       "action": "M Identify risks to benefits realisation and agree mitigation actions.",
-      "outcomeIds": [
-        "BEN_O2"
-      ],
+      "outcomeIds": ["BEN_O2"],
       "readinessScore": 3
     },
     {
@@ -401,9 +335,7 @@
       "lens": "Planning & Risk",
       "category": "Measurement & Evaluation",
       "action": "M Assess whether expected benefits are being achieved and if not, why.",
-      "outcomeIds": [
-        "BEN_O3"
-      ],
+      "outcomeIds": ["BEN_O3"],
       "readinessScore": 3
     },
     {
@@ -413,10 +345,7 @@
       "lens": "Planning & Risk",
       "category": "Dependency Management",
       "action": "S Manage dependencies that affect benefit realisation (RAID log).",
-      "outcomeIds": [
-        "BEN_O2",
-        "BEN_O3"
-      ],
+      "outcomeIds": ["BEN_O2", "BEN_O3"],
       "readinessScore": 3
     },
     {
@@ -426,9 +355,7 @@
       "lens": "Process & Sustainment",
       "category": "Communication",
       "action": "S Share evidence of realised benefits and unintentional consequences with stakeholders.",
-      "outcomeIds": [
-        "BEN_O3"
-      ],
+      "outcomeIds": ["BEN_O3"],
       "readinessScore": 3
     },
     {
@@ -438,10 +365,7 @@
       "lens": "Process & Sustainment",
       "category": "Engagement",
       "action": "S Use stakeholder insight to understand barriers to achieving benefits.",
-      "outcomeIds": [
-        "BEN_O2",
-        "BEN_O3"
-      ],
+      "outcomeIds": ["BEN_O2", "BEN_O3"],
       "readinessScore": 3
     },
     {
@@ -451,9 +375,7 @@
       "lens": "Process & Sustainment",
       "category": "Measurement & Evaluation",
       "action": "S Monitor stakeholder perceptions of realised benefits and improvement.",
-      "outcomeIds": [
-        "BEN_O3"
-      ],
+      "outcomeIds": ["BEN_O3"],
       "readinessScore": 3
     },
     {
@@ -463,9 +385,7 @@
       "lens": "Process & Sustainment",
       "category": "Communication",
       "action": "M Use WIIFM benefit stories and examples to reinforce adoption.",
-      "outcomeIds": [
-        "BEN_O3"
-      ],
+      "outcomeIds": ["BEN_O3"],
       "readinessScore": 3
     },
     {
@@ -475,9 +395,7 @@
       "lens": "Process & Sustainment",
       "category": "Reinforcement",
       "action": "S Recognise teams and individuals contributing to benefit realisation.",
-      "outcomeIds": [
-        "BEN_O3"
-      ],
+      "outcomeIds": ["BEN_O3"],
       "readinessScore": 3
     },
     {
@@ -487,9 +405,7 @@
       "lens": "Planning & Risk",
       "category": "Measurement & Evaluation",
       "action": "M Continuously monitor long-term benefit realisation.",
-      "outcomeIds": [
-        "BEN_O3"
-      ],
+      "outcomeIds": ["BEN_O3"],
       "readinessScore": 4
     },
     {
@@ -499,9 +415,7 @@
       "lens": "Planning & Risk",
       "category": "Governance",
       "action": "S Embed benefits management into normal business and adoption management processes.",
-      "outcomeIds": [
-        "BEN_O3"
-      ],
+      "outcomeIds": ["BEN_O3"],
       "readinessScore": 4
     },
     {
@@ -511,9 +425,7 @@
       "lens": "Planning & Risk",
       "category": "Design",
       "action": "S Refine benefit measures and approaches using organisational learning.",
-      "outcomeIds": [
-        "BEN_O3"
-      ],
+      "outcomeIds": ["BEN_O3"],
       "readinessScore": 4
     },
     {
@@ -523,9 +435,7 @@
       "lens": "Planning & Risk",
       "category": "Measurement & Evaluation",
       "action": "S Use benefit evidence to inform future investment and change decisions.",
-      "outcomeIds": [
-        "BEN_O3"
-      ],
+      "outcomeIds": ["BEN_O3"],
       "readinessScore": 4
     },
     {
@@ -535,9 +445,7 @@
       "lens": "Planning & Risk",
       "category": "Dependency Management",
       "action": "S Maintain management of long-term dependencies affecting realised benefits.",
-      "outcomeIds": [
-        "BEN_O3"
-      ],
+      "outcomeIds": ["BEN_O3"],
       "readinessScore": 4
     },
     {
@@ -547,9 +455,7 @@
       "lens": "Process & Sustainment",
       "category": "Reinforcement",
       "action": "M Promote a culture of continuous benefits realisation and adoption.",
-      "outcomeIds": [
-        "BEN_O3"
-      ],
+      "outcomeIds": ["BEN_O3"],
       "readinessScore": 4
     },
     {
@@ -559,9 +465,7 @@
       "lens": "Process & Sustainment",
       "category": "Communication",
       "action": "S Regularly communicate realised benefits and improvement outcomes.",
-      "outcomeIds": [
-        "BEN_O3"
-      ],
+      "outcomeIds": ["BEN_O3"],
       "readinessScore": 4
     },
     {
@@ -571,9 +475,7 @@
       "lens": "Process & Sustainment",
       "category": "Engagement",
       "action": "S Use stakeholder feedback to identify opportunities for further benefits realisation.",
-      "outcomeIds": [
-        "BEN_O3"
-      ],
+      "outcomeIds": ["BEN_O3"],
       "readinessScore": 4
     },
     {
@@ -583,9 +485,7 @@
       "lens": "Process & Sustainment",
       "category": "Measurement & Evaluation",
       "action": "S Measure ongoing stakeholder perception of benefit delivered by the change.",
-      "outcomeIds": [
-        "BEN_O3"
-      ],
+      "outcomeIds": ["BEN_O3"],
       "readinessScore": 4
     },
     {
@@ -595,9 +495,7 @@
       "lens": "Process & Sustainment",
       "category": "Reinforcement",
       "action": "S Use success stories and achievements to sustain belief in the value of the change.",
-      "outcomeIds": [
-        "BEN_O3"
-      ],
+      "outcomeIds": ["BEN_O3"],
       "readinessScore": 4
     }
   ]

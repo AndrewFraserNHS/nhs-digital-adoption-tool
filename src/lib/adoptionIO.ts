@@ -245,7 +245,10 @@ function validateOrgProfile(value: unknown, path: string): void {
     assertOptionalString(value.cst.fullAdoptionDate, `${path}.cst.fullAdoptionDate`);
     assertOptionalString(value.cst.benefitRealizationDate, `${path}.cst.benefitRealizationDate`);
     assertOptionalString(value.cst.toolkitChoice, `${path}.cst.toolkitChoice`);
-    if (typeof value.cst.toolkitChoice === 'string' && !isToolkitOptionKey(value.cst.toolkitChoice)) {
+    if (
+      typeof value.cst.toolkitChoice === 'string' &&
+      !isToolkitOptionKey(value.cst.toolkitChoice)
+    ) {
       throw new Error(
         `Invalid adoption assessment payload at ${path}.cst.toolkitChoice: unexpected value "${value.cst.toolkitChoice}".`
       );
@@ -490,8 +493,7 @@ export function mergeImportedAdoptionState(
       : cloneAndNormaliseDraft(fallbackStore.currentDraft),
     objectives: hasImportedObjectives ? migrated.objectives : fallbackStore.objectives,
     auditLog: combinedAuditLog,
-    suppressedAutoActions:
-      migrated.suppressedAutoActions || fallbackStore.suppressedAutoActions,
+    suppressedAutoActions: migrated.suppressedAutoActions || fallbackStore.suppressedAutoActions,
     history: (migrated.history || fallbackStore.history).map((snapshot) => ({
       ...snapshot,
       data: cloneAndNormaliseDraft(snapshot.data),
@@ -570,9 +572,7 @@ function clonePathwayChecks(checks?: PathwayChecklistState): PathwayChecklistSta
   }, {});
 }
 
-function cloneSuppressedAutoActions(
-  map?: Record<string, string[]>
-): Record<string, string[]> {
+function cloneSuppressedAutoActions(map?: Record<string, string[]>): Record<string, string[]> {
   if (!map) {
     return {};
   }

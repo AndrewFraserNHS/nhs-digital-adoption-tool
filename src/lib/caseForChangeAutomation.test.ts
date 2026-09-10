@@ -42,7 +42,8 @@ describe('syncCaseForChangeDerivedContent', () => {
     expect(
       peopleEntry.actions.some(
         (action) =>
-          action.text.includes('Engage stakeholders to understand') && action.actionType === 'Engagement'
+          action.text.includes('Engage stakeholders to understand') &&
+          action.actionType === 'Engagement'
       )
     ).toBe(true);
 

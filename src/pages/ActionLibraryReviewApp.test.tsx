@@ -25,7 +25,7 @@ describe('ActionLibraryReviewApp', () => {
     expect(screen.getByText('New')).toBeInTheDocument();
   });
 
-  it('SHOULD keep each pathway\'s outcomes/actions separate, each with its own default content', () => {
+  it("SHOULD keep each pathway's outcomes/actions separate, each with its own default content", () => {
     // arrange
     render(<ActionLibraryReviewApp />);
     expect(
@@ -118,7 +118,9 @@ describe('ActionLibraryReviewApp', () => {
     const row = description.closest('div')?.parentElement?.parentElement as HTMLElement;
 
     // assert 1 - parsed as Must (the "M " prefix is stripped from the visible description)
-    const prioritySelect = within(row).getByRole('combobox', { name: 'Priority' }) as HTMLSelectElement;
+    const prioritySelect = within(row).getByRole('combobox', {
+      name: 'Priority',
+    }) as HTMLSelectElement;
     expect(prioritySelect.value).toBe('must');
     expect(screen.queryByDisplayValue(/^M /)).not.toBeInTheDocument();
 
@@ -139,7 +141,9 @@ describe('ActionLibraryReviewApp', () => {
     const row = description.closest('div')?.parentElement?.parentElement as HTMLElement;
 
     // assert
-    const prioritySelect = within(row).getByRole('combobox', { name: 'Priority' }) as HTMLSelectElement;
+    const prioritySelect = within(row).getByRole('combobox', {
+      name: 'Priority',
+    }) as HTMLSelectElement;
     expect(prioritySelect.value).toBe('could');
   });
 
@@ -149,15 +153,27 @@ describe('ActionLibraryReviewApp', () => {
 
     // act - open Level 4 for Vision
     fireEvent.click(screen.getByRole('button', { name: /Level 4/ }));
-    expect(screen.getByRole('button', { name: /Level 4/ })).toHaveAttribute('aria-expanded', 'true');
-    expect(screen.getByRole('button', { name: /Level 0/ })).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.getByRole('button', { name: /Level 4/ })).toHaveAttribute(
+      'aria-expanded',
+      'true'
+    );
+    expect(screen.getByRole('button', { name: /Level 0/ })).toHaveAttribute(
+      'aria-expanded',
+      'false'
+    );
 
     // act - switch to a different component
     fireEvent.click(screen.getByRole('button', { name: 'Case for Change' }));
 
     // assert - Level 0 is open again for the new component, not still stuck on Level 4
-    expect(screen.getByRole('button', { name: /Level 0/ })).toHaveAttribute('aria-expanded', 'true');
-    expect(screen.getByRole('button', { name: /Level 4/ })).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.getByRole('button', { name: /Level 0/ })).toHaveAttribute(
+      'aria-expanded',
+      'true'
+    );
+    expect(screen.getByRole('button', { name: /Level 4/ })).toHaveAttribute(
+      'aria-expanded',
+      'false'
+    );
   });
 
   it('SHOULD show no rework badges now every previously-flagged action has been resolved', () => {

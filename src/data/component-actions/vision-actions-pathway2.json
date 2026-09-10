@@ -2,18 +2,111 @@
   "component": { "id": "VISION", "name": "Vision" },
   "outcomes": [
     { "id": "VISION_P2_O1", "name": "The vision has been refined based on pilot learnings" },
-    { "id": "VISION_P2_O2", "name": "The vision is understood across every site/team joining the scaled rollout" }
+    {
+      "id": "VISION_P2_O2",
+      "name": "The vision is understood across every site/team joining the scaled rollout"
+    }
   ],
   "actions": [
-    { "id": "VISION_P2_001", "fromStatus": "Not Started", "toStatus": "Emerging", "lens": "Strategic Direction & Leadership", "category": "Analysis & Insight", "action": "Review feedback from the pilot to identify what worked well and what needs to change in the vision before scaling.", "outcomeIds": ["VISION_P2_O1"], "readinessScore": 0 },
-    { "id": "VISION_P2_002", "fromStatus": "Emerging", "toStatus": "Developing", "lens": "Strategic Direction & Leadership", "category": "Design", "action": "Refine the vision statement to reflect lessons learned from the pilot and the needs of the wider rollout.", "outcomeIds": ["VISION_P2_O1"], "readinessScore": 1 },
-    { "id": "VISION_P2_003", "fromStatus": "Developing", "toStatus": "Embedding", "lens": "Strategic Direction & Leadership", "category": "Governance", "action": "Secure sponsor endorsement of the refined vision for the scaled rollout.", "outcomeIds": ["VISION_P2_O1"], "readinessScore": 2 },
-    { "id": "VISION_P2_004", "fromStatus": "Embedding", "toStatus": "Adopted", "lens": "Strategic Direction & Leadership", "category": "Communication", "action": "Ensure the refined vision is consistently communicated to leaders as new sites/teams join the rollout.", "outcomeIds": ["VISION_P2_O2"], "readinessScore": 3 },
-    { "id": "VISION_P2_005", "fromStatus": "Adopted", "toStatus": "Thriving", "lens": "Strategic Direction & Leadership", "category": "Measurement & Evaluation", "action": "Continuously validate that the vision remains relevant as the change scales across the organisation.", "outcomeIds": ["VISION_P2_O2"], "readinessScore": 4 },
-    { "id": "VISION_P2_006", "fromStatus": "Not Started", "toStatus": "Emerging", "lens": "People Experience & Culture", "category": "Analysis & Insight", "action": "Gather feedback from pilot participants on how well the vision resonated with them.", "outcomeIds": ["VISION_P2_O1"], "readinessScore": 0 },
-    { "id": "VISION_P2_007", "fromStatus": "Emerging", "toStatus": "Developing", "lens": "People Experience & Culture", "category": "Design", "action": "Adapt the communication approaches that worked in the pilot for a wider, more diverse audience.", "outcomeIds": ["VISION_P2_O2"], "readinessScore": 1 },
-    { "id": "VISION_P2_008", "fromStatus": "Developing", "toStatus": "Embedding", "lens": "People Experience & Culture", "category": "Communication", "action": "Deliver vision communications to stakeholders in newly onboarding sites/teams.", "outcomeIds": ["VISION_P2_O2"], "readinessScore": 2 },
-    { "id": "VISION_P2_009", "fromStatus": "Embedding", "toStatus": "Adopted", "lens": "People Experience & Culture", "category": "Measurement & Evaluation", "action": "Monitor understanding of the vision among stakeholders in the wider rollout and address gaps.", "outcomeIds": ["VISION_P2_O2"], "readinessScore": 3 },
-    { "id": "VISION_P2_010", "fromStatus": "Adopted", "toStatus": "Thriving", "lens": "People Experience & Culture", "category": "Reinforcement", "action": "Use champions from the pilot to help new sites/teams connect with the vision.", "outcomeIds": ["VISION_P2_O2"], "readinessScore": 4 }
+    {
+      "id": "VISION_P2_001",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Analysis & Insight",
+      "action": "Review feedback from the pilot to identify what worked well and what needs to change in the vision before scaling.",
+      "outcomeIds": ["VISION_P2_O1"],
+      "readinessScore": 0
+    },
+    {
+      "id": "VISION_P2_002",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "Refine the vision statement to reflect lessons learned from the pilot and the needs of the wider rollout.",
+      "outcomeIds": ["VISION_P2_O1"],
+      "readinessScore": 1
+    },
+    {
+      "id": "VISION_P2_003",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "Secure sponsor endorsement of the refined vision for the scaled rollout.",
+      "outcomeIds": ["VISION_P2_O1"],
+      "readinessScore": 2
+    },
+    {
+      "id": "VISION_P2_004",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Communication",
+      "action": "Ensure the refined vision is consistently communicated to leaders as new sites/teams join the rollout.",
+      "outcomeIds": ["VISION_P2_O2"],
+      "readinessScore": 3
+    },
+    {
+      "id": "VISION_P2_005",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "Continuously validate that the vision remains relevant as the change scales across the organisation.",
+      "outcomeIds": ["VISION_P2_O2"],
+      "readinessScore": 4
+    },
+    {
+      "id": "VISION_P2_006",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "Gather feedback from pilot participants on how well the vision resonated with them.",
+      "outcomeIds": ["VISION_P2_O1"],
+      "readinessScore": 0
+    },
+    {
+      "id": "VISION_P2_007",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Design",
+      "action": "Adapt the communication approaches that worked in the pilot for a wider, more diverse audience.",
+      "outcomeIds": ["VISION_P2_O2"],
+      "readinessScore": 1
+    },
+    {
+      "id": "VISION_P2_008",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "Deliver vision communications to stakeholders in newly onboarding sites/teams.",
+      "outcomeIds": ["VISION_P2_O2"],
+      "readinessScore": 2
+    },
+    {
+      "id": "VISION_P2_009",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "Monitor understanding of the vision among stakeholders in the wider rollout and address gaps.",
+      "outcomeIds": ["VISION_P2_O2"],
+      "readinessScore": 3
+    },
+    {
+      "id": "VISION_P2_010",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "Use champions from the pilot to help new sites/teams connect with the vision.",
+      "outcomeIds": ["VISION_P2_O2"],
+      "readinessScore": 4
+    }
   ]
 }

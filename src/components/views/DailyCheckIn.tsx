@@ -2,7 +2,11 @@ import { JSX, useMemo } from 'react';
 import type { AssessmentComponent } from '@data/components';
 import type { AdoptionStore, DraftEntry } from '@lib/adoptionState';
 import { computeNextSteps, type Metrics } from '@lib/adoptionMetrics';
-import { PageHelpButton, PageIntroModal, usePageIntroSeen } from '@components/onboarding/PageIntroModal';
+import {
+  PageHelpButton,
+  PageIntroModal,
+  usePageIntroSeen,
+} from '@components/onboarding/PageIntroModal';
 import { NextStepsSection } from '@components/views/NextStepsSection';
 import { ProgrammeHierarchy } from '@components/views/ProgrammeHierarchy';
 import { DailyPhaseOverview } from '@components/views/DailyPhaseOverview';
@@ -99,9 +103,9 @@ export function DailyCheckIn({
         darkMode={darkMode}
         body={
           <p>
-            This is your daily triage page - "What To Do Next" lists every component in your
-            current phase with outstanding actions, ranked by timeline risk, and the Programme
-            Change Hierarchy below gives you the full picture across every phase.
+            This is your daily triage page - "What To Do Next" lists every component in your current
+            phase with outstanding actions, ranked by timeline risk, and the Programme Change
+            Hierarchy below gives you the full picture across every phase.
           </p>
         }
       />

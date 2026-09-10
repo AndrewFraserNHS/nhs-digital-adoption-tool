@@ -64,7 +64,9 @@ describe('adoptionIO', () => {
         ],
       },
       suppressedAutoActions: {
-        'vision:Strategic Direction and Leadership': ['vision-action:strategic-direction-and-leadership:0-1:0'],
+        'vision:Strategic Direction and Leadership': [
+          'vision-action:strategic-direction-and-leadership:0-1:0',
+        ],
       },
       auditLog: [
         {

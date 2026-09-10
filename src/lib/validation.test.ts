@@ -28,7 +28,7 @@ describe('validation helpers', () => {
   });
 
   it('SHOULD validates required and email formats', () => {
-    // arrange + act + assert 
+    // arrange + act + assert
     expect(validateRequired('')).toEqual({
       isValid: false,
       errors: [{ field: 'field', message: 'field is required' }],

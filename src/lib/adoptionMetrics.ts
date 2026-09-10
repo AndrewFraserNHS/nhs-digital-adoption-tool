@@ -9,7 +9,7 @@ import type { ChartData } from 'chart.js';
 import { PHASE_NAMES } from '../types/constants';
 import { isCompletedActionStatus } from './actionModel';
 import { AdoptionStore, deriveObjectiveStatus, DraftEntry } from './adoptionState';
-import { type BragStatus,getTimelineBragStatus } from './bragStatus';
+import { type BragStatus, getTimelineBragStatus } from './bragStatus';
 
 const COMPONENT_PHASE_EXEMPLARS: Record<number, Record<string, number>> = {
   1: {
@@ -176,9 +176,7 @@ export interface NextStep {
  */
 export function getEffectiveLensScore(entry: DraftEntry | undefined): number {
   const score = Number(entry?.score || 0);
-  const hasNotStartedActions = (entry?.actions || []).some(
-    (action) => action.readinessScore === 0
-  );
+  const hasNotStartedActions = (entry?.actions || []).some((action) => action.readinessScore === 0);
   return score === 0 && !hasNotStartedActions ? 1 : score;
 }
 
@@ -320,7 +318,11 @@ export function getMetrics(store: AdoptionStore, components: AssessmentComponent
     const avgScore = component.lenses.length
       ? Number((componentTotal / component.lenses.length).toFixed(1))
       : 0;
-    const phaseExpectedScore = getComponentExemplarScore(component.id, component.phase, component.target);
+    const phaseExpectedScore = getComponentExemplarScore(
+      component.id,
+      component.phase,
+      component.target
+    );
     if (avgScore >= phaseExpectedScore) {
       phaseBucket.onTrackComponents += 1;
     }
@@ -481,20 +483,20 @@ export function buildComponentRadarChartData(
     currentPhase && COMPONENT_PHASE_EXEMPLARS[currentPhase] ? currentPhase : null;
   const colorForScore = (score: number): string => {
     if (score <= 0) {
-return '#768692';
-}
+      return '#768692';
+    }
     if (score < 1.5) {
-return '#AE2521';
-}
+      return '#AE2521';
+    }
     if (score < 2.5) {
-return '#FFB81C';
-}
+      return '#FFB81C';
+    }
     if (score < 3.5) {
-return '#005EB8';
-}
+      return '#005EB8';
+    }
     if (score < 4.5) {
-return '#330072';
-}
+      return '#330072';
+    }
     return '#00A499';
   };
   // The weakest lens gates the component's overall readiness - a component isn't "ready" just
@@ -503,7 +505,11 @@ return '#330072';
   const weakestLensScores = components.map((component) => {
     const entries = component.lenses.map((lens) => getEntry(component.id, lens));
     const hasAssessment = entries.some(
-      (entry) => entry.score > 0 || Boolean(entry.justification.trim()) || Boolean(entry.evidence.trim()) || entry.actions.length > 0
+      (entry) =>
+        entry.score > 0 ||
+        Boolean(entry.justification.trim()) ||
+        Boolean(entry.evidence.trim()) ||
+        entry.actions.length > 0
     );
     if (!hasAssessment) {
       return null;
@@ -643,14 +649,15 @@ export function computeEngagementObjectives(
       id: `phase-${phase.phase}-assessed`,
       category: 'Phase',
       label: `Phase ${phase.phase}: ${phaseName} - fully assessed`,
-      description: 'Every lens across this phase\'s components has been scored.',
+      description: "Every lens across this phase's components has been scored.",
       completed: phase.totalLenses > 0 && phase.assessedLenses === phase.totalLenses,
     });
     objectives.push({
       id: `phase-${phase.phase}-on-track`,
       category: 'Phase',
       label: `Phase ${phase.phase}: ${phaseName} - on track`,
-      description: "Every component in this phase is scoring at or above its exemplar target for where the programme is now.",
+      description:
+        'Every component in this phase is scoring at or above its exemplar target for where the programme is now.',
       completed: phase.componentCount > 0 && phase.onTrackComponents === phase.componentCount,
     });
   });
@@ -672,7 +679,8 @@ export function computeEngagementObjectives(
     category: 'Ownership',
     label: 'Every outcome has an owner',
     description: 'No outcomes are left unassigned.',
-    completed: allOutcomes.length > 0 && allOutcomes.every((outcome) => Boolean(outcome.owner?.trim())),
+    completed:
+      allOutcomes.length > 0 && allOutcomes.every((outcome) => Boolean(outcome.owner?.trim())),
   });
 
   const now = Date.now();
@@ -707,7 +715,8 @@ export function computeEngagementObjectives(
     id: 'month-finalised',
     category: 'Cadence',
     label: 'This month finalised',
-    description: 'The current month has a finalised snapshot, so progress this month is captured for the trend.',
+    description:
+      'The current month has a finalised snapshot, so progress this month is captured for the trend.',
     completed: (store.history || []).some((snapshot) => snapshot.monthLabel === currentMonthLabel),
   });
 

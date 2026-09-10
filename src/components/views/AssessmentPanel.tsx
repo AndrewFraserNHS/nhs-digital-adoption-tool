@@ -33,7 +33,11 @@ import { OwnerAvatar } from '@components/ui/OwnerAvatar';
 import { ActionTimelineClock } from '@components/ui/ActionTimelineClock';
 import { PHASE_NAMES } from '../../types/constants';
 import componentDetailsText from '@data/component-descriptors/component-details.json?raw';
-import { PageHelpButton, PageIntroModal, usePageIntroSeen } from '@components/onboarding/PageIntroModal';
+import {
+  PageHelpButton,
+  PageIntroModal,
+  usePageIntroSeen,
+} from '@components/onboarding/PageIntroModal';
 import {
   EVIDENCE_WARNING_DISMISSED_KEY,
   EvidenceWarningModal,
@@ -204,8 +208,7 @@ export function buildLabelVariants(label: string): string[] {
 
 /** A guidance link (real URL) or a tool link (navigates in-app instead of opening a URL). */
 export type MatchableLink =
-  | (GuidanceLink & { kind: 'url' })
-  | { key: string; label: string; kind: 'tool'; tool: InAppTool };
+  (GuidanceLink & { kind: 'url' }) | { key: string; label: string; kind: 'tool'; tool: InAppTool };
 
 interface GuidanceLinkVariant {
   variant: string;
@@ -361,7 +364,12 @@ function ComponentOverviewPointList({
             {point.title}
           </p>
           <p className={`mt-0.5 text-sm ${styles.text}`}>
-            {renderActionTextWithGuidanceLinks(point.body, guidanceLinks, darkMode, onNavigateToTool)}
+            {renderActionTextWithGuidanceLinks(
+              point.body,
+              guidanceLinks,
+              darkMode,
+              onNavigateToTool
+            )}
           </p>
         </li>
       ))}
@@ -438,90 +446,118 @@ function ComponentOverviewContent({
           {detail.description}
         </p>
       )}
-      <div className={`mt-4 space-y-4 ${detail.description ? 'border-t pt-4' : ''} ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}>
-          {furtherReadingUrl && (
-            <a
-              href={furtherReadingUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`inline-flex items-center gap-1 rounded-md border px-3 py-1.5 text-xs font-semibold ${darkMode ? 'border-slate-600 bg-slate-800 text-blue-300 hover:bg-slate-700' : 'border-slate-300 bg-white text-[#005eb8] hover:bg-slate-50'}`}
+      <div
+        className={`mt-4 space-y-4 ${detail.description ? 'border-t pt-4' : ''} ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}
+      >
+        {furtherReadingUrl && (
+          <a
+            href={furtherReadingUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`inline-flex items-center gap-1 rounded-md border px-3 py-1.5 text-xs font-semibold ${darkMode ? 'border-slate-600 bg-slate-800 text-blue-300 hover:bg-slate-700' : 'border-slate-300 bg-white text-[#005eb8] hover:bg-slate-50'}`}
+          >
+            Further Reading ↗
+          </a>
+        )}
+        {detail.whatIsIt && (
+          <p className={`text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+            {renderActionTextWithGuidanceLinks(
+              detail.whatIsIt,
+              guidanceLinks,
+              darkMode,
+              onNavigateToTool
+            )}
+          </p>
+        )}
+        {detail.userInsight && (
+          <blockquote
+            className={`border-l-2 pl-3 text-sm italic ${darkMode ? 'border-slate-600 text-slate-300' : 'border-slate-300 text-slate-600'}`}
+          >
+            “
+            {renderActionTextWithGuidanceLinks(
+              detail.userInsight,
+              guidanceLinks,
+              darkMode,
+              onNavigateToTool
+            )}
+            ”
+          </blockquote>
+        )}
+        {detail.whyThisMatters && (
+          <div>
+            <p
+              className={`text-xs font-semibold uppercase tracking-wide ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
             >
-              Further Reading ↗
-            </a>
-          )}
-          {detail.whatIsIt && (
-            <p className={`text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-              {renderActionTextWithGuidanceLinks(detail.whatIsIt, guidanceLinks, darkMode, onNavigateToTool)}
+              Why this matters
             </p>
-          )}
-          {detail.userInsight && (
-            <blockquote
-              className={`border-l-2 pl-3 text-sm italic ${darkMode ? 'border-slate-600 text-slate-300' : 'border-slate-300 text-slate-600'}`}
+            <ul
+              className={`mt-1 list-disc space-y-1 pl-5 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
             >
-              “{renderActionTextWithGuidanceLinks(detail.userInsight, guidanceLinks, darkMode, onNavigateToTool)}”
-            </blockquote>
-          )}
-          {detail.whyThisMatters && (
-            <div>
-              <p
-                className={`text-xs font-semibold uppercase tracking-wide ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
-              >
-                Why this matters
-              </p>
-              <ul className={`mt-1 list-disc space-y-1 pl-5 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-                {splitSentences(detail.whyThisMatters).map((sentence) => (
-                  <li key={sentence}>
-                    {renderActionTextWithGuidanceLinks(sentence, guidanceLinks, darkMode, onNavigateToTool)}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-          {detail.quickRealityCheck && (
-            <div>
-              <p
-                className={`text-xs font-semibold uppercase tracking-wide ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
-              >
-                Quick reality check
-              </p>
-              <ul className={`mt-1 list-disc space-y-1 pl-5 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-                {splitSentences(detail.quickRealityCheck).map((question) => (
-                  <li key={question}>
-                    {renderActionTextWithGuidanceLinks(question, guidanceLinks, darkMode, onNavigateToTool)}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-          {(detail.whatGoodLooksLike.length > 0 || detail.risksIfYouDont.length > 0) && (
-            <div className="space-y-2">
-              {detail.whatGoodLooksLike.length > 0 && (
-                <ComponentOverviewSubsection
-                  title="What good looks like"
-                  points={detail.whatGoodLooksLike}
-                  tone="good"
-                  isOpen={showGoodPractice}
-                  onToggle={() => setShowGoodPractice((prev) => !prev)}
-                  guidanceLinks={guidanceLinks}
-                  darkMode={darkMode}
-                  onNavigateToTool={onNavigateToTool}
-                />
-              )}
-              {detail.risksIfYouDont.length > 0 && (
-                <ComponentOverviewSubsection
-                  title="Risks if you don't"
-                  points={detail.risksIfYouDont}
-                  tone="risk"
-                  isOpen={showRisks}
-                  onToggle={() => setShowRisks((prev) => !prev)}
-                  guidanceLinks={guidanceLinks}
-                  darkMode={darkMode}
-                  onNavigateToTool={onNavigateToTool}
-                />
-              )}
-            </div>
-          )}
-        </div>
+              {splitSentences(detail.whyThisMatters).map((sentence) => (
+                <li key={sentence}>
+                  {renderActionTextWithGuidanceLinks(
+                    sentence,
+                    guidanceLinks,
+                    darkMode,
+                    onNavigateToTool
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {detail.quickRealityCheck && (
+          <div>
+            <p
+              className={`text-xs font-semibold uppercase tracking-wide ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
+            >
+              Quick reality check
+            </p>
+            <ul
+              className={`mt-1 list-disc space-y-1 pl-5 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+            >
+              {splitSentences(detail.quickRealityCheck).map((question) => (
+                <li key={question}>
+                  {renderActionTextWithGuidanceLinks(
+                    question,
+                    guidanceLinks,
+                    darkMode,
+                    onNavigateToTool
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {(detail.whatGoodLooksLike.length > 0 || detail.risksIfYouDont.length > 0) && (
+          <div className="space-y-2">
+            {detail.whatGoodLooksLike.length > 0 && (
+              <ComponentOverviewSubsection
+                title="What good looks like"
+                points={detail.whatGoodLooksLike}
+                tone="good"
+                isOpen={showGoodPractice}
+                onToggle={() => setShowGoodPractice((prev) => !prev)}
+                guidanceLinks={guidanceLinks}
+                darkMode={darkMode}
+                onNavigateToTool={onNavigateToTool}
+              />
+            )}
+            {detail.risksIfYouDont.length > 0 && (
+              <ComponentOverviewSubsection
+                title="Risks if you don't"
+                points={detail.risksIfYouDont}
+                tone="risk"
+                isOpen={showRisks}
+                onToggle={() => setShowRisks((prev) => !prev)}
+                guidanceLinks={guidanceLinks}
+                darkMode={darkMode}
+                onNavigateToTool={onNavigateToTool}
+              />
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -701,7 +737,7 @@ function EvidenceLinksAndDocsSection({
           <p className={`mt-0.5 text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
             {rows.length
               ? `${rows.length} item${rows.length === 1 ? '' : 's'} attached across this component's actions.`
-              : 'Everything attached as evidence across this component\'s actions, in one place.'}
+              : "Everything attached as evidence across this component's actions, in one place."}
           </p>
         </div>
         <span
@@ -834,7 +870,13 @@ function HeaderInfoIcon(): JSX.Element {
 
 function PencilIcon(): JSX.Element {
   return (
-    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+    <svg
+      className="h-4 w-4"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -847,7 +889,13 @@ function PencilIcon(): JSX.Element {
 
 function BinIcon(): JSX.Element {
   return (
-    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+    <svg
+      className="h-4 w-4"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -994,7 +1042,9 @@ export function AssessmentPanel({
     (lens: string, previousScore: number, actions: DraftAction[]): number => {
       const nextScore = advanceScoreWhileActionsComplete(previousScore, actions);
       if (nextScore > previousScore) {
-        setScoreAdvanceToast(`${component.label} · ${lens} moved to ${getReadinessBand(nextScore).label}!`);
+        setScoreAdvanceToast(
+          `${component.label} · ${lens} moved to ${getReadinessBand(nextScore).label}!`
+        );
       }
       return nextScore;
     },
@@ -1014,9 +1064,7 @@ export function AssessmentPanel({
   const [expandedLensActions, setExpandedLensActions] = useState<Record<string, boolean>>({});
   const [editingOwnerRowKey, setEditingOwnerRowKey] = useState<string | null>(null);
   const [lensActionTypeFilters, setLensActionTypeFilters] = useState<Record<string, string>>({});
-  const [lensActionOwnerFilters, setLensActionOwnerFilters] = useState<Record<string, string>>(
-    {}
-  );
+  const [lensActionOwnerFilters, setLensActionOwnerFilters] = useState<Record<string, string>>({});
   const objectives = store.objectives?.[component.id] || [];
   const teamMembers = store.orgProfile.teamMembers || [];
   const signedInMemberName = teamMembers.find((member) => member.id === currentUserId)?.name || '';
@@ -1454,11 +1502,7 @@ export function AssessmentPanel({
     });
   };
 
-  const requestLinkedActionStatusChange = (
-    lens: string,
-    action: DraftAction,
-    status: string
-  ) => {
+  const requestLinkedActionStatusChange = (lens: string, action: DraftAction, status: string) => {
     const normalizedStatus = normalizeActionStatus(status);
 
     if (action.priority === 'must' && normalizedStatus === 'Cancelled') {
@@ -1722,8 +1766,8 @@ export function AssessmentPanel({
             </span>
           </h2>
           <p className={`mt-2 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-            Assess readiness at lens level. Change Component justification, outcomes, and actions are
-            tracked below.
+            Assess readiness at lens level. Change Component justification, outcomes, and actions
+            are tracked below.
           </p>
           {componentDetail && (
             <button
@@ -1802,7 +1846,7 @@ export function AssessmentPanel({
           )}
         </div>
       )}
-{/* 
+      {/* 
       <div
         className={`mb-6 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium ${darkMode ? 'border-emerald-500/40 bg-emerald-500/15 text-emerald-200' : 'border-emerald-200 bg-emerald-50 text-emerald-800'}`}
       >
@@ -1943,7 +1987,9 @@ export function AssessmentPanel({
               </table>
             </div>
           ) : (
-            <p className="text-sm text-slate-500">{noOutcomesOrActionsMessage('No outcomes yet.')}</p>
+            <p className="text-sm text-slate-500">
+              {noOutcomesOrActionsMessage('No outcomes yet.')}
+            </p>
           )
         ) : null}
       </div>
@@ -2013,30 +2059,28 @@ export function AssessmentPanel({
               ])
             ).sort((left, right) => left.localeCompare(right));
             const lensActions = [...actionsForLens]
-              .filter(
-                (resolvedAction) => {
-                  const actionReadinessScore =
-                    resolvedAction.action.readinessScore !== undefined
-                      ? resolvedAction.action.readinessScore
-                      : effectiveCurrentScore;
+              .filter((resolvedAction) => {
+                const actionReadinessScore =
+                  resolvedAction.action.readinessScore !== undefined
+                    ? resolvedAction.action.readinessScore
+                    : effectiveCurrentScore;
 
-                  if (actionReadinessScore !== effectiveCurrentScore) {
-                    return false;
-                  }
-
-                  if (
-                    lensActionTypeFilter !== 'all' &&
-                    (resolvedAction.action.actionType || '') !== lensActionTypeFilter
-                  ) {
-                    return false;
-                  }
-
-                  return (
-                    lensActionOwnerFilter === 'all' ||
-                    (resolvedAction.action.owner || '') === lensActionOwnerFilter
-                  );
+                if (actionReadinessScore !== effectiveCurrentScore) {
+                  return false;
                 }
-              )
+
+                if (
+                  lensActionTypeFilter !== 'all' &&
+                  (resolvedAction.action.actionType || '') !== lensActionTypeFilter
+                ) {
+                  return false;
+                }
+
+                return (
+                  lensActionOwnerFilter === 'all' ||
+                  (resolvedAction.action.owner || '') === lensActionOwnerFilter
+                );
+              })
               .sort((left, right) => {
                 const leftCompleted = normalizeActionStatus(left.action.status) === 'Completed';
                 const rightCompleted = normalizeActionStatus(right.action.status) === 'Completed';
@@ -2257,7 +2301,9 @@ export function AssessmentPanel({
                               ACTION_STATUS_BADGE_STYLES.Planned;
                             const rowKey = `${resolvedAction.sourceComponentId}:${resolvedAction.sourceLens}:${action.id}`;
                             const showPriorityColour =
-                              showActionPriorityColours && pathway === 'pathway-1' && action.priority;
+                              showActionPriorityColours &&
+                              pathway === 'pathway-1' &&
+                              action.priority;
                             const priorityRowClass = !showPriorityColour
                               ? ''
                               : action.priority === 'must'
@@ -2276,7 +2322,8 @@ export function AssessmentPanel({
                                   <div>
                                     {renderActionTextWithGuidanceLinks(
                                       action.text,
-                                      guidanceLinksByComponent[resolvedAction.sourceComponentId] || [],
+                                      guidanceLinksByComponent[resolvedAction.sourceComponentId] ||
+                                        [],
                                       darkMode,
                                       onNavigateToTool
                                     )}
@@ -2344,8 +2391,12 @@ export function AssessmentPanel({
                                         </option>
                                       ))}
                                       {action.owner &&
-                                      !teamMembers.some((member) => member.name === action.owner) ? (
-                                        <option value={action.owner}>{action.owner} (not on roster)</option>
+                                      !teamMembers.some(
+                                        (member) => member.name === action.owner
+                                      ) ? (
+                                        <option value={action.owner}>
+                                          {action.owner} (not on roster)
+                                        </option>
                                       ) : null}
                                     </select>
                                   ) : (
@@ -2502,7 +2553,8 @@ export function AssessmentPanel({
                 <span
                   className="mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-semibold text-white"
                   style={{
-                    backgroundColor: getReadinessBand(actionEditor.action.readinessScore ?? 0).color,
+                    backgroundColor: getReadinessBand(actionEditor.action.readinessScore ?? 0)
+                      .color,
                   }}
                 >
                   {getReadinessBand(actionEditor.action.readinessScore ?? 0).label}
@@ -2586,7 +2638,10 @@ export function AssessmentPanel({
                     value={actionEditor.action.status}
                     onChange={(event) => {
                       const nextStatus = event.target.value as DraftAction['status'];
-                      if (actionEditor.action.priority === 'must' && normalizeActionStatus(nextStatus) === 'Cancelled') {
+                      if (
+                        actionEditor.action.priority === 'must' &&
+                        normalizeActionStatus(nextStatus) === 'Cancelled'
+                      ) {
                         window.alert(
                           "You are trying to mark what we have classified as a MUST action as Cancelled, and it shouldn't be cancelled. Please re-review."
                         );
@@ -2767,7 +2822,9 @@ export function AssessmentPanel({
                     <p
                       className={`px-2 py-1 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
                     >
-                      {noOutcomesOrActionsMessage('No outcomes are defined for this component yet.')}
+                      {noOutcomesOrActionsMessage(
+                        'No outcomes are defined for this component yet.'
+                      )}
                     </p>
                   )}
                 </div>
@@ -2955,7 +3012,10 @@ export function AssessmentPanel({
       ) : null}
 
       {showReadinessScoreInfo ? (
-        <ReadinessScoreInfoModal onClose={() => setShowReadinessScoreInfo(false)} darkMode={darkMode} />
+        <ReadinessScoreInfoModal
+          onClose={() => setShowReadinessScoreInfo(false)}
+          darkMode={darkMode}
+        />
       ) : null}
 
       {scoreAdvanceToast ? (
@@ -3173,7 +3233,9 @@ export function AssessmentPanel({
             aria-label={objectiveEditor.mode === 'create' ? 'Add Outcome' : 'Edit Outcome'}
             className={`w-full max-w-lg max-h-[calc(100vh-2rem)] overflow-y-auto rounded-xl border p-6 shadow-2xl ${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'}`}
           >
-            <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>
+            <h3
+              className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
+            >
               {objectiveEditor.mode === 'create' ? 'Add Outcome' : 'Edit Outcome'}
             </h3>
 

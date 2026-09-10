@@ -32,8 +32,12 @@ describe('syncProcessChangeDerivedContent', () => {
     const nextStore = syncProcessChangeDerivedContent(store);
 
     // assert
-    expect(nextStore.currentDraft.process_change['Process and Sustainment'].actions.length).toBeGreaterThan(0);
+    expect(
+      nextStore.currentDraft.process_change['Process and Sustainment'].actions.length
+    ).toBeGreaterThan(0);
     expect(nextStore.objectives.process_change.length).toBeGreaterThan(0);
-    expect(nextStore.objectives.process_change[0].id.startsWith('process-change:outcome:')).toBe(true);
+    expect(nextStore.objectives.process_change[0].id.startsWith('process-change:outcome:')).toBe(
+      true
+    );
   });
 });

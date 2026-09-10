@@ -81,7 +81,9 @@ function ConflictRow({
         onClick={() => onChoose(item.id, 'mine')}
         darkMode={darkMode}
       >
-        <span className={`block text-[0.65rem] font-bold uppercase tracking-wide ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+        <span
+          className={`block text-[0.65rem] font-bold uppercase tracking-wide ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
+        >
           {myLabel}
         </span>
         {item.mineSummary}
@@ -91,7 +93,9 @@ function ConflictRow({
         onClick={() => onChoose(item.id, 'theirs')}
         darkMode={darkMode}
       >
-        <span className={`block text-[0.65rem] font-bold uppercase tracking-wide ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+        <span
+          className={`block text-[0.65rem] font-bold uppercase tracking-wide ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
+        >
           {theirLabel}
         </span>
         {item.theirsSummary}

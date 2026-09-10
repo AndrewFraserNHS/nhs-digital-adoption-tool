@@ -21,9 +21,7 @@
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
       "action": "Recognise that Planning & Risk is inconsistent across teams/sites since go-live and gather evidence of where the gaps are in the change impact assessment.",
-      "outcomeIds": [
-        "CI_P3_O1"
-      ],
+      "outcomeIds": ["CI_P3_O1"],
       "readinessScore": 0
     },
     {
@@ -33,9 +31,7 @@
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
       "action": "Identify why the change impact assessment hasn't landed consistently for Planning & Risk in specific teams/sites and agree a plan to address it.",
-      "outcomeIds": [
-        "CI_P3_O1"
-      ],
+      "outcomeIds": ["CI_P3_O1"],
       "readinessScore": 1
     },
     {
@@ -45,9 +41,7 @@
       "lens": "Planning & Risk",
       "category": "Engagement",
       "action": "Re-engage leaders in lagging teams/sites to re-establish the change impact assessment for Planning & Risk.",
-      "outcomeIds": [
-        "CI_P3_O1"
-      ],
+      "outcomeIds": ["CI_P3_O1"],
       "readinessScore": 2
     },
     {
@@ -57,9 +51,7 @@
       "lens": "Planning & Risk",
       "category": "Measurement & Evaluation",
       "action": "Confirm the change impact assessment for Planning & Risk is being applied consistently across previously inconsistent areas.",
-      "outcomeIds": [
-        "CI_P3_O2"
-      ],
+      "outcomeIds": ["CI_P3_O2"],
       "readinessScore": 3
     },
     {
@@ -69,9 +61,7 @@
       "lens": "Planning & Risk",
       "category": "Reinforcement",
       "action": "Monitor Planning & Risk regularly to ensure the change impact assessment stays consistently reinforced everywhere.",
-      "outcomeIds": [
-        "CI_P3_O2"
-      ],
+      "outcomeIds": ["CI_P3_O2"],
       "readinessScore": 4
     },
     {
@@ -81,9 +71,7 @@
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
       "action": "Survey teams/sites to understand how People Experience & Culture has been affected by inconsistent change impact assessment since go-live.",
-      "outcomeIds": [
-        "CI_P3_O1"
-      ],
+      "outcomeIds": ["CI_P3_O1"],
       "readinessScore": 0
     },
     {
@@ -93,9 +81,7 @@
       "lens": "People Experience & Culture",
       "category": "Design",
       "action": "Develop a targeted plan to address the specific People Experience & Culture-related gaps identified in lagging areas.",
-      "outcomeIds": [
-        "CI_P3_O1"
-      ],
+      "outcomeIds": ["CI_P3_O1"],
       "readinessScore": 1
     },
     {
@@ -105,9 +91,7 @@
       "lens": "People Experience & Culture",
       "category": "Communication",
       "action": "Deliver targeted support to strengthen People Experience & Culture in teams/sites where the change impact assessment is weakest.",
-      "outcomeIds": [
-        "CI_P3_O1"
-      ],
+      "outcomeIds": ["CI_P3_O1"],
       "readinessScore": 2
     },
     {
@@ -117,9 +101,7 @@
       "lens": "People Experience & Culture",
       "category": "Measurement & Evaluation",
       "action": "Confirm People Experience & Culture has improved in previously lagging teams/sites.",
-      "outcomeIds": [
-        "CI_P3_O2"
-      ],
+      "outcomeIds": ["CI_P3_O2"],
       "readinessScore": 3
     },
     {
@@ -129,9 +111,7 @@
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
       "action": "Embed regular pulse-checks on People Experience & Culture so gaps in the change impact assessment are caught early in future.",
-      "outcomeIds": [
-        "CI_P3_O2"
-      ],
+      "outcomeIds": ["CI_P3_O2"],
       "readinessScore": 4
     }
   ]

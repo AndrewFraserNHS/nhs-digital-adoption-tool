@@ -86,7 +86,10 @@ export function getTimelineBragStatus(
     };
   }
 
-  return { status: 'Green', reason: 'All outstanding actions are on track against their due dates.' };
+  return {
+    status: 'Green',
+    reason: 'All outstanding actions are on track against their due dates.',
+  };
 }
 
 export const BRAG_BADGE_STYLES: Record<BragStatus, string> = {

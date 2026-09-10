@@ -86,15 +86,19 @@ export function Toast({
   }, [message, durationMs, onDismiss]);
 
   const variantClasses =
-    variant === 'success'
-      ? 'bg-green-600 text-white'
-      : 'bg-slate-800 text-white';
+    variant === 'success' ? 'bg-green-600 text-white' : 'bg-slate-800 text-white';
 
   return (
     <>
       {celebrate ? <ConfettiBurst /> : null}
-      <div className="fixed bottom-6 right-6 z-[60] flex justify-end" role="status" aria-live="polite">
-        <div className={`flex items-center gap-3 rounded-lg px-4 py-3 shadow-2xl ${variantClasses}`}>
+      <div
+        className="fixed bottom-6 right-6 z-[60] flex justify-end"
+        role="status"
+        aria-live="polite"
+      >
+        <div
+          className={`flex items-center gap-3 rounded-lg px-4 py-3 shadow-2xl ${variantClasses}`}
+        >
           <span className="text-sm font-medium">{message}</span>
           <button
             type="button"
@@ -103,7 +107,12 @@ export function Toast({
             aria-label="Dismiss"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>

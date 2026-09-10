@@ -80,6 +80,8 @@ function createProps(overrides?: {
       history: [],
       phaseOverrides: {},
       pathwayChecks: {},
+      suppressedAutoActions: {},
+      auditLog: [],
     },
     components,
     activeComponentId: 'vision',
@@ -145,7 +147,7 @@ describe('AssessmentPanel', () => {
   it('SHOULD open lens info WHERE clicking the lens header button', () => {
     // arrange
     const props = createProps();
-    
+
     // act
     render(<AssessmentPanel {...props} />);
     fireEvent.click(screen.getByRole('button', { name: 'Strategic Direction' }));
@@ -345,7 +347,7 @@ describe('AssessmentPanel', () => {
 
     const props = createProps();
     props.activeComponentId = 'benefits';
-    props.store.currentDraft = {
+    const currentDraft: Record<string, Record<string, DraftEntry>> = {
       vision: {
         'Strategic Direction': sourceEntry,
       },
@@ -353,13 +355,12 @@ describe('AssessmentPanel', () => {
         'Strategic Direction': createEntry({ actions: [] }),
       },
     };
+    props.store.currentDraft = currentDraft;
     props.getEntry = (componentId: string, lens: string) =>
       props.store.currentDraft[componentId][lens];
 
-
     // act 1
     render(<AssessmentPanel {...props} />);
-
 
     // assert 1
     expect(screen.getByText('Shared action')).toBeTruthy();
@@ -485,7 +486,13 @@ describe('AssessmentPanel', () => {
     // arrange
     const sponsorshipComponents: AssessmentComponent[] = [
       ...components,
-      { id: 'sponsorship', label: 'Senior Sponsorship & Governance', lenses: ['Planning and Risk'], phase: 1, target: 4 },
+      {
+        id: 'sponsorship',
+        label: 'Senior Sponsorship & Governance',
+        lenses: ['Planning and Risk'],
+        phase: 1,
+        target: 4,
+      },
     ];
     const entry = createEntry({
       actions: [
@@ -517,7 +524,13 @@ describe('AssessmentPanel', () => {
     // arrange
     const sponsorshipComponents: AssessmentComponent[] = [
       ...components,
-      { id: 'sponsorship', label: 'Senior Sponsorship & Governance', lenses: ['Planning and Risk'], phase: 1, target: 4 },
+      {
+        id: 'sponsorship',
+        label: 'Senior Sponsorship & Governance',
+        lenses: ['Planning and Risk'],
+        phase: 1,
+        target: 4,
+      },
     ];
     const entry = createEntry({
       actions: [
@@ -558,9 +571,7 @@ describe('AssessmentPanel', () => {
     const onHideGuidedWorkflow = vi.fn();
 
     // act
-    render(
-      <AssessmentPanel {...props} onHideGuidedWorkflow={onHideGuidedWorkflow} />
-    );
+    render(<AssessmentPanel {...props} onHideGuidedWorkflow={onHideGuidedWorkflow} />);
 
     // assert 1
     expect(screen.getByText('Guided workflow')).toBeTruthy();
@@ -610,9 +621,10 @@ describe('AssessmentPanel', () => {
     render(<AssessmentPanel {...props} />);
 
     // assert
-    expect(
-      screen.getByRole('link', { name: 'Change Adoption Playbook' })
-    ).toHaveAttribute('href', 'https://example.org/playbook');
+    expect(screen.getByRole('link', { name: 'Change Adoption Playbook' })).toHaveAttribute(
+      'href',
+      'https://example.org/playbook'
+    );
   });
 
   it('SHOULD render a tool-link match as a button that calls onNavigateToTool', () => {
@@ -754,7 +766,9 @@ describe('AssessmentPanel', () => {
     render(<AssessmentPanel {...props} />);
 
     // act
-    fireEvent.click(screen.getByRole('button', { name: 'What do the readiness score levels mean?' }));
+    fireEvent.click(
+      screen.getByRole('button', { name: 'What do the readiness score levels mean?' })
+    );
 
     // assert
     expect(screen.getByRole('heading', { name: 'Readiness score levels' })).toBeInTheDocument();
@@ -765,7 +779,14 @@ describe('AssessmentPanel', () => {
     const entry = createEntry({
       score: 2,
       actions: [
-        { id: 'action-1', text: 'Run workshop', owner: 'PMO', timescale: 'Q3', status: 'Planned', readinessScore: 2 },
+        {
+          id: 'action-1',
+          text: 'Run workshop',
+          owner: 'PMO',
+          timescale: 'Q3',
+          status: 'Planned',
+          readinessScore: 2,
+        },
       ],
     });
     const props = createProps({ entry });
@@ -774,7 +795,10 @@ describe('AssessmentPanel', () => {
 
     // act
     render(
-      <AssessmentPanel {...props} focusAction={{ lens: 'Strategic Direction', actionId: 'action-1' }} />
+      <AssessmentPanel
+        {...props}
+        focusAction={{ lens: 'Strategic Direction', actionId: 'action-1' }}
+      />
     );
     fireEvent.change(screen.getByLabelText('Status'), { target: { value: 'Completed' } });
     fireEvent.click(screen.getByRole('button', { name: 'Save Action' }));
@@ -832,7 +856,14 @@ describe('AssessmentPanel', () => {
     // arrange
     const entry = createEntry({
       actions: [
-        { id: 'action-1', text: 'Must-do action', owner: 'PMO', timescale: '', status: 'Planned', priority: 'must' },
+        {
+          id: 'action-1',
+          text: 'Must-do action',
+          owner: 'PMO',
+          timescale: '',
+          status: 'Planned',
+          priority: 'must',
+        },
       ],
     });
     const props = createProps({ entry });
@@ -850,7 +881,14 @@ describe('AssessmentPanel', () => {
     // arrange
     const entry = createEntry({
       actions: [
-        { id: 'action-1', text: 'Must-do action', owner: 'PMO', timescale: '', status: 'Planned', priority: 'must' },
+        {
+          id: 'action-1',
+          text: 'Must-do action',
+          owner: 'PMO',
+          timescale: '',
+          status: 'Planned',
+          priority: 'must',
+        },
       ],
     });
     const props = createProps({ entry });
@@ -868,7 +906,14 @@ describe('AssessmentPanel', () => {
     // arrange
     const entry = createEntry({
       actions: [
-        { id: 'action-1', text: 'Must-do action', owner: 'PMO', timescale: '', status: 'Planned', priority: 'must' },
+        {
+          id: 'action-1',
+          text: 'Must-do action',
+          owner: 'PMO',
+          timescale: '',
+          status: 'Planned',
+          priority: 'must',
+        },
       ],
     });
     const props = createProps({ entry });
@@ -889,7 +934,14 @@ describe('AssessmentPanel', () => {
     // arrange
     const entry = createEntry({
       actions: [
-        { id: 'action-1', text: 'Must-do action', owner: 'PMO', timescale: '', status: 'Planned', priority: 'must' },
+        {
+          id: 'action-1',
+          text: 'Must-do action',
+          owner: 'PMO',
+          timescale: '',
+          status: 'Planned',
+          priority: 'must',
+        },
       ],
     });
     const props = createProps({ entry });
@@ -912,7 +964,14 @@ describe('AssessmentPanel', () => {
     // arrange
     const entry = createEntry({
       actions: [
-        { id: 'action-1', text: 'Should-do action', owner: 'PMO', timescale: '', status: 'Planned', priority: 'should' },
+        {
+          id: 'action-1',
+          text: 'Should-do action',
+          owner: 'PMO',
+          timescale: '',
+          status: 'Planned',
+          priority: 'should',
+        },
       ],
     });
     const props = createProps({ entry });
@@ -930,7 +989,14 @@ describe('AssessmentPanel', () => {
     // arrange
     const entry = createEntry({
       actions: [
-        { id: 'action-1', text: 'Must-do action', owner: 'PMO', timescale: '', status: 'Planned', priority: 'must' },
+        {
+          id: 'action-1',
+          text: 'Must-do action',
+          owner: 'PMO',
+          timescale: '',
+          status: 'Planned',
+          priority: 'must',
+        },
       ],
     });
     const props = createProps({ entry });
@@ -939,7 +1005,10 @@ describe('AssessmentPanel', () => {
 
     // act
     render(
-      <AssessmentPanel {...props} focusAction={{ lens: 'Strategic Direction', actionId: 'action-1' }} />
+      <AssessmentPanel
+        {...props}
+        focusAction={{ lens: 'Strategic Direction', actionId: 'action-1' }}
+      />
     );
     fireEvent.click(screen.getByRole('button', { name: 'Delete Action' }));
 
@@ -953,7 +1022,14 @@ describe('AssessmentPanel', () => {
     // arrange
     const entry = createEntry({
       actions: [
-        { id: 'action-1', text: 'Must-do action', owner: 'PMO', timescale: '', status: 'Planned', priority: 'must' },
+        {
+          id: 'action-1',
+          text: 'Must-do action',
+          owner: 'PMO',
+          timescale: '',
+          status: 'Planned',
+          priority: 'must',
+        },
       ],
     });
     const props = createProps({ entry });
@@ -962,7 +1038,10 @@ describe('AssessmentPanel', () => {
 
     // act
     render(
-      <AssessmentPanel {...props} focusAction={{ lens: 'Strategic Direction', actionId: 'action-1' }} />
+      <AssessmentPanel
+        {...props}
+        focusAction={{ lens: 'Strategic Direction', actionId: 'action-1' }}
+      />
     );
     fireEvent.change(screen.getByLabelText('Status'), { target: { value: 'Cancelled' } });
 

@@ -47,7 +47,11 @@ describe('regenerateContentForPathway', () => {
     // assert
     ASSESSMENT_COMPONENTS.forEach((component) => {
       Object.values(next.currentDraft[component.id] || {}).forEach((entry) => {
-        expect(entry.actions.some((action) => action.id.includes(`${component.id.replace(/_/g, '-')}-action:`))).toBe(false);
+        expect(
+          entry.actions.some((action) =>
+            action.id.includes(`${component.id.replace(/_/g, '-')}-action:`)
+          )
+        ).toBe(false);
       });
     });
     expect(
@@ -66,6 +70,8 @@ describe('regenerateContentForPathway', () => {
     const next = regenerateContentForPathway(store, 'pathway-1');
 
     // assert
-    expect(next.currentDraft.vision['Strategic Direction and Leadership'].actions.length).toBeGreaterThan(0);
+    expect(
+      next.currentDraft.vision['Strategic Direction and Leadership'].actions.length
+    ).toBeGreaterThan(0);
   });
 });

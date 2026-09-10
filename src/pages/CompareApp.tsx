@@ -1181,7 +1181,10 @@ export interface CompareAppProps {
   onBack?: () => void;
 }
 
-export default function CompareApp({ embedded = false, onBack }: CompareAppProps = {}): JSX.Element {
+export default function CompareApp({
+  embedded = false,
+  onBack,
+}: CompareAppProps = {}): JSX.Element {
   const [files, setFiles] = useState<LoadedFile[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [singleFileView, setSingleFileView] = useState<'engagement' | 'timeline'>('engagement');

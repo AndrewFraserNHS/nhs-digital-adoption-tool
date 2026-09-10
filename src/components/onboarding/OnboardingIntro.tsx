@@ -51,13 +51,14 @@ export function buildOnboardingSteps(): Step[] {
             hard to prove, hard to hand over, and easy to lose momentum on.
           </p>
           <p>
-            With it, you get a single, evidenced picture of where your change effort actually stands:
+            With it, you get a single, evidenced picture of where your change effort actually
+            stands:
           </p>
           <ul className="list-disc pl-5 space-y-1">
             <li>See at a glance what's on track, what's at risk, and what to do next.</li>
             <li>
-              Turn vague "how's it going?" conversations into a clear, evidence-backed status you can
-              show your sponsor or board.
+              Turn vague "how's it going?" conversations into a clear, evidence-backed status you
+              can show your sponsor or board.
             </li>
             <li>
               Get a ready-made action plan for each area, so you're not starting from a blank page.
@@ -132,7 +133,8 @@ export function buildOnboardingSteps(): Step[] {
             <li>Process and Sustainment</li>
           </ul>
           <p>
-            As you assess your readiness of each change component through the lenses, the engine recommends actions, resources and evidence to help improve adoption.
+            As you assess your readiness of each change component through the lenses, the engine
+            recommends actions, resources and evidence to help improve adoption.
           </p>
         </div>
       ),
@@ -143,8 +145,8 @@ export function buildOnboardingSteps(): Step[] {
         <div className="text-sm text-slate-700 space-y-3">
           <p>
             Every lens is scored on the same 0-5 readiness scale. Here's what each level generally
-            means - each lens on a component page also shows guidance written specifically for
-            that lens at its current level.
+            means - each lens on a component page also shows guidance written specifically for that
+            lens at its current level.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {Object.entries(GENERIC_RUBRIC).map(([level, description]) => {
@@ -170,7 +172,9 @@ export function buildOnboardingSteps(): Step[] {
       title: 'Getting Started',
       body: (
         <div className="text-sm text-slate-700 space-y-2">
-          <p className="text-sm text-slate-700">Start with Project Setup to review your project setup. </p>
+          <p className="text-sm text-slate-700">
+            Start with Project Setup to review your project setup.{' '}
+          </p>
           <p className="text-sm text-slate-700">Then visit the Dashboard to:</p>
           <ul className="list-decimal pl-5 space-y-1">
             <li>View your current position</li>

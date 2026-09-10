@@ -4,7 +4,11 @@ import { nhsButtonPrimary, nhsButtonSecondary } from '../../styles/nhsTheme';
 import { buildLabelVariants } from '@components/views/AssessmentPanel';
 import { validateOrgProfile, useFieldError } from '@lib/adoptionValidator';
 import { downloadFile } from '@lib/utils';
-import { PageHelpButton, PageIntroModal, usePageIntroSeen } from '@components/onboarding/PageIntroModal';
+import {
+  PageHelpButton,
+  PageIntroModal,
+  usePageIntroSeen,
+} from '@components/onboarding/PageIntroModal';
 import { PathwayContentNotice } from '@components/common/PathwayContentNotice';
 import { AssessmentComponent } from '@data/components';
 import {
@@ -27,7 +31,13 @@ import { PATHWAY_LABELS, PATHWAY_OPTIONS, type CstPathwayKey } from '@data/cst';
 import { TOOLKIT_OPTIONS, type ToolkitOptionKey } from '@data/toolkits';
 
 function sanitizeFileNamePart(value: string): string {
-  return value.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'export';
+  return (
+    value
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '') || 'export'
+  );
 }
 
 type LinkOverrideStatus = 'default' | 'custom' | 'base';
@@ -76,7 +86,11 @@ function AliasEditor({
               type="button"
               onClick={() => onChange(aliases.filter((a) => a !== alias))}
               aria-label={`Remove "${alias}"`}
-              className={darkMode ? 'text-slate-400 hover:text-slate-100' : 'text-slate-500 hover:text-slate-800'}
+              className={
+                darkMode
+                  ? 'text-slate-400 hover:text-slate-100'
+                  : 'text-slate-500 hover:text-slate-800'
+              }
             >
               ×
             </button>
@@ -194,7 +208,9 @@ function LinkOverrideModal({
                 className="mt-1"
               />
               <span className="flex-1">
-                <span className={`block font-medium ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
+                <span
+                  className={`block font-medium ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+                >
                   {option.label}
                 </span>
                 {option.value === 'custom' && source === 'custom' ? (
@@ -306,8 +322,8 @@ function MatchAliasesModal({
           </button>
         </div>
         <p className={`mt-2 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-          This link is automatically matched by its name. Add extra text below if it should match
-          on other words too.
+          This link is automatically matched by its name. Add extra text below if it should match on
+          other words too.
         </p>
         <div className="mt-3">
           <AliasEditor aliases={draftAliases} onChange={setDraftAliases} darkMode={darkMode} />
@@ -316,11 +332,7 @@ function MatchAliasesModal({
           <button type="button" onClick={onClose} className={nhsButtonSecondary}>
             Cancel
           </button>
-          <button
-            type="button"
-            onClick={() => onSave(draftAliases)}
-            className={nhsButtonPrimary}
-          >
+          <button type="button" onClick={() => onSave(draftAliases)} className={nhsButtonPrimary}>
             Save
           </button>
         </div>
@@ -383,9 +395,10 @@ export function ProjectDetailsPage({
 }: ProjectDetailsPageProps): JSX.Element {
   const [profile, setProfile] = useState<OrgProfile>(orgProfile);
   const [editingLink, setEditingLink] = useState<GuidanceLink | null>(null);
-  const [editingAliasesFor, setEditingAliasesFor] = useState<
-    { link: GuidanceLink; componentId?: string } | null
-  >(null);
+  const [editingAliasesFor, setEditingAliasesFor] = useState<{
+    link: GuidanceLink;
+    componentId?: string;
+  } | null>(null);
   const cstImportInputRef = useRef<HTMLInputElement>(null);
   const pageIntro = usePageIntroSeen('cst-personalisation');
   const profileValidation = validateOrgProfile(profile);
@@ -601,7 +614,8 @@ export function ProjectDetailsPage({
     [profile, onProfileUpdate, currentUserId, onCurrentUserChange]
   );
 
-  const effectiveCoreLinks = profile.coreLinks && profile.coreLinks.length > 0 ? profile.coreLinks : CORE_LINKS;
+  const effectiveCoreLinks =
+    profile.coreLinks && profile.coreLinks.length > 0 ? profile.coreLinks : CORE_LINKS;
 
   const handleAddCoreLink = useCallback(() => {
     const newLink: GuidanceLink = {
@@ -676,7 +690,9 @@ export function ProjectDetailsPage({
       const updated = {
         ...profile,
         toolLinks: toolLinks.map((link) =>
-          link.key === key ? { ...link, tool, matchText: DEFAULT_TOOL_LINK_TEXT[tool].matchText } : link
+          link.key === key
+            ? { ...link, tool, matchText: DEFAULT_TOOL_LINK_TEXT[tool].matchText }
+            : link
         ),
       };
       setProfile(updated);
@@ -896,151 +912,151 @@ export function ProjectDetailsPage({
           <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
             Step 2: Pathway and timeline
           </h3>
-        <p className={`text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+          <p className={`text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
             Choose the full pathway title for your programme, then set key timeline dates.
           </p>
-          </div>
-
-          <div className="mt-3">
-            <div>
-              <label
-                htmlFor="cst-pathway"
-                className={`block text-sm font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
-              >
-                Pathway
-              </label>
-              <select
-                id="cst-pathway"
-                className={`w-full rounded-md border shadow-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8] sm:text-sm p-2 pr-10 ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100' : 'border-[#768692] bg-white text-slate-900'}`}
-                value={profile.cst.pathway}
-                onChange={(event) => handlePathwaySelectChange(event.target.value as CstPathwayKey)}
-                aria-invalid={Boolean(fieldError('cst.pathway'))}
-                aria-describedby={fieldError('cst.pathway') ? 'cst-pathway-error' : undefined}
-              >
-                {PATHWAY_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              {fieldError('cst.pathway') ? (
-                <p
-                  id="cst-pathway-error"
-                  className={`mt-1 text-xs ${darkMode ? 'text-amber-300' : 'text-red-700'}`}
-                >
-                  {fieldError('cst.pathway')}
-                </p>
-              ) : null}
-            </div>
-          </div>
-
-          <PathwayContentNotice pathway={profile.cst.pathway} darkMode={darkMode} />
-
-          <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label
-                htmlFor="cst-go-live"
-                className={`block text-sm font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
-              >
-                Go Live Date (required)
-              </label>
-              <input
-                id="cst-go-live"
-                type="date"
-                className={`w-full rounded-md border shadow-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8] sm:text-sm p-2 ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100' : 'border-[#768692] bg-white text-slate-900'}`}
-                value={profile.cst.goLiveDate}
-                onChange={(event) => handleCstDateChange('goLiveDate', event.target.value)}
-                aria-invalid={Boolean(fieldError('cst.goLiveDate'))}
-                aria-describedby={fieldError('cst.goLiveDate') ? 'cst-go-live-error' : undefined}
-              />
-              {fieldError('cst.goLiveDate') ? (
-                <p
-                  id="cst-go-live-error"
-                  className={`mt-1 text-xs ${darkMode ? 'text-amber-300' : 'text-red-700'}`}
-                >
-                  {fieldError('cst.goLiveDate')}
-                </p>
-              ) : null}
-            </div>
-            <div>
-              <label
-                htmlFor="cst-full-adoption"
-                className={`block text-sm font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
-              >
-                Full Adoption Date (optional)
-              </label>
-              <input
-                id="cst-full-adoption"
-                type="date"
-                className={`w-full rounded-md border shadow-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8] sm:text-sm p-2 ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100' : 'border-[#768692] bg-white text-slate-900'}`}
-                value={profile.cst.fullAdoptionDate}
-                onChange={(event) => handleCstDateChange('fullAdoptionDate', event.target.value)}
-                aria-invalid={Boolean(fieldError('cst.fullAdoptionDate'))}
-                aria-describedby={
-                  fieldError('cst.fullAdoptionDate') ? 'cst-full-adoption-error' : undefined
-                }
-              />
-              {fieldError('cst.fullAdoptionDate') ? (
-                <p
-                  id="cst-full-adoption-error"
-                  className={`mt-1 text-xs ${darkMode ? 'text-amber-300' : 'text-red-700'}`}
-                >
-                  {fieldError('cst.fullAdoptionDate')}
-                </p>
-              ) : null}
-            </div>
-            <div>
-              <label
-                htmlFor="cst-benefit"
-                className={`block text-sm font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
-              >
-                Benefit Realisation Date (optional)
-              </label>
-              <input
-                id="cst-benefit"
-                type="date"
-                className={`w-full rounded-md border shadow-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8] sm:text-sm p-2 ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100' : 'border-[#768692] bg-white text-slate-900'}`}
-                value={profile.cst.benefitRealizationDate}
-                onChange={(event) =>
-                  handleCstDateChange('benefitRealizationDate', event.target.value)
-                }
-                aria-invalid={Boolean(fieldError('cst.benefitRealizationDate'))}
-                aria-describedby={
-                  fieldError('cst.benefitRealizationDate') ? 'cst-benefit-error' : undefined
-                }
-              />
-              {fieldError('cst.benefitRealizationDate') ? (
-                <p
-                  id="cst-benefit-error"
-                  className={`mt-1 text-xs ${darkMode ? 'text-amber-300' : 'text-red-700'}`}
-                >
-                  {fieldError('cst.benefitRealizationDate')}
-                </p>
-              ) : null}
-            </div>
-          </div>
-
-          {profileValidation.errors.filter((error) => error.field.startsWith('cst.')).length > 0 ? (
-            <div
-              className={`mt-4 rounded-md border p-3 ${darkMode ? 'border-amber-500/40 bg-amber-500/10' : 'border-amber-300 bg-amber-50'}`}
-            >
-              <p
-                className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-amber-200' : 'text-amber-800'}`}
-              >
-                CST validation warnings
-              </p>
-              <ul
-                className={`mt-2 space-y-1 text-sm ${darkMode ? 'text-amber-100' : 'text-amber-900'}`}
-              >
-                {profileValidation.errors
-                  .filter((error) => error.field.startsWith('cst.'))
-                  .map((error) => (
-                    <li key={error.field + error.message}>- {error.message}</li>
-                  ))}
-              </ul>
-            </div>
-          ) : null}
         </div>
+
+        <div className="mt-3">
+          <div>
+            <label
+              htmlFor="cst-pathway"
+              className={`block text-sm font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
+            >
+              Pathway
+            </label>
+            <select
+              id="cst-pathway"
+              className={`w-full rounded-md border shadow-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8] sm:text-sm p-2 pr-10 ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100' : 'border-[#768692] bg-white text-slate-900'}`}
+              value={profile.cst.pathway}
+              onChange={(event) => handlePathwaySelectChange(event.target.value as CstPathwayKey)}
+              aria-invalid={Boolean(fieldError('cst.pathway'))}
+              aria-describedby={fieldError('cst.pathway') ? 'cst-pathway-error' : undefined}
+            >
+              {PATHWAY_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            {fieldError('cst.pathway') ? (
+              <p
+                id="cst-pathway-error"
+                className={`mt-1 text-xs ${darkMode ? 'text-amber-300' : 'text-red-700'}`}
+              >
+                {fieldError('cst.pathway')}
+              </p>
+            ) : null}
+          </div>
+        </div>
+
+        <PathwayContentNotice pathway={profile.cst.pathway} darkMode={darkMode} />
+
+        <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label
+              htmlFor="cst-go-live"
+              className={`block text-sm font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
+            >
+              Go Live Date (required)
+            </label>
+            <input
+              id="cst-go-live"
+              type="date"
+              className={`w-full rounded-md border shadow-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8] sm:text-sm p-2 ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100' : 'border-[#768692] bg-white text-slate-900'}`}
+              value={profile.cst.goLiveDate}
+              onChange={(event) => handleCstDateChange('goLiveDate', event.target.value)}
+              aria-invalid={Boolean(fieldError('cst.goLiveDate'))}
+              aria-describedby={fieldError('cst.goLiveDate') ? 'cst-go-live-error' : undefined}
+            />
+            {fieldError('cst.goLiveDate') ? (
+              <p
+                id="cst-go-live-error"
+                className={`mt-1 text-xs ${darkMode ? 'text-amber-300' : 'text-red-700'}`}
+              >
+                {fieldError('cst.goLiveDate')}
+              </p>
+            ) : null}
+          </div>
+          <div>
+            <label
+              htmlFor="cst-full-adoption"
+              className={`block text-sm font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
+            >
+              Full Adoption Date (optional)
+            </label>
+            <input
+              id="cst-full-adoption"
+              type="date"
+              className={`w-full rounded-md border shadow-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8] sm:text-sm p-2 ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100' : 'border-[#768692] bg-white text-slate-900'}`}
+              value={profile.cst.fullAdoptionDate}
+              onChange={(event) => handleCstDateChange('fullAdoptionDate', event.target.value)}
+              aria-invalid={Boolean(fieldError('cst.fullAdoptionDate'))}
+              aria-describedby={
+                fieldError('cst.fullAdoptionDate') ? 'cst-full-adoption-error' : undefined
+              }
+            />
+            {fieldError('cst.fullAdoptionDate') ? (
+              <p
+                id="cst-full-adoption-error"
+                className={`mt-1 text-xs ${darkMode ? 'text-amber-300' : 'text-red-700'}`}
+              >
+                {fieldError('cst.fullAdoptionDate')}
+              </p>
+            ) : null}
+          </div>
+          <div>
+            <label
+              htmlFor="cst-benefit"
+              className={`block text-sm font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
+            >
+              Benefit Realisation Date (optional)
+            </label>
+            <input
+              id="cst-benefit"
+              type="date"
+              className={`w-full rounded-md border shadow-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8] sm:text-sm p-2 ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100' : 'border-[#768692] bg-white text-slate-900'}`}
+              value={profile.cst.benefitRealizationDate}
+              onChange={(event) =>
+                handleCstDateChange('benefitRealizationDate', event.target.value)
+              }
+              aria-invalid={Boolean(fieldError('cst.benefitRealizationDate'))}
+              aria-describedby={
+                fieldError('cst.benefitRealizationDate') ? 'cst-benefit-error' : undefined
+              }
+            />
+            {fieldError('cst.benefitRealizationDate') ? (
+              <p
+                id="cst-benefit-error"
+                className={`mt-1 text-xs ${darkMode ? 'text-amber-300' : 'text-red-700'}`}
+              >
+                {fieldError('cst.benefitRealizationDate')}
+              </p>
+            ) : null}
+          </div>
+        </div>
+
+        {profileValidation.errors.filter((error) => error.field.startsWith('cst.')).length > 0 ? (
+          <div
+            className={`mt-4 rounded-md border p-3 ${darkMode ? 'border-amber-500/40 bg-amber-500/10' : 'border-amber-300 bg-amber-50'}`}
+          >
+            <p
+              className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-amber-200' : 'text-amber-800'}`}
+            >
+              CST validation warnings
+            </p>
+            <ul
+              className={`mt-2 space-y-1 text-sm ${darkMode ? 'text-amber-100' : 'text-amber-900'}`}
+            >
+              {profileValidation.errors
+                .filter((error) => error.field.startsWith('cst.'))
+                .map((error) => (
+                  <li key={error.field + error.message}>- {error.message}</li>
+                ))}
+            </ul>
+          </div>
+        ) : null}
+      </div>
 
       <div
         className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-4`}
@@ -1081,7 +1097,10 @@ export function ProjectDetailsPage({
 
         <div className="space-y-2">
           {(profile.teamMembers || []).map((member) => (
-            <div key={member.id} className="grid grid-cols-1 md:grid-cols-[1fr,1fr,auto] gap-2 items-center">
+            <div
+              key={member.id}
+              className="grid grid-cols-1 md:grid-cols-[1fr,1fr,auto] gap-2 items-center"
+            >
               <input
                 value={member.name}
                 onChange={(event) => handleUpdateTeamMember(member.id, 'name', event.target.value)}
@@ -1123,8 +1142,8 @@ export function ProjectDetailsPage({
             What phase are you currently in?
           </p>
           <p className={`mt-1 text-xs ${darkMode ? 'text-blue-200' : 'text-blue-800'}`}>
-            Answer a few quick questions and see your readiness by component to figure out where
-            you really are in the change journey.
+            Answer a few quick questions and see your readiness by component to figure out where you
+            really are in the change journey.
           </p>
         </div>
         <button type="button" onClick={onGoToWhereAmINow} className={nhsButtonPrimary}>
@@ -1138,7 +1157,9 @@ export function ProjectDetailsPage({
       >
         <div>
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
+            <h3
+              className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+            >
               Step 4: External links
             </h3>
             <label
@@ -1160,462 +1181,499 @@ export function ProjectDetailsPage({
 
           {!profile.externalLinksInitiated || showExternalLinksSection ? (
             <>
-          <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-            All toolkit links across the tool point to the NHS Future platform by default. You can
-            override the base toolkit destination for your organisation, or change individual links
-            independently.
-          </p>
+              <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                All toolkit links across the tool point to the NHS Future platform by default. You
+                can override the base toolkit destination for your organisation, or change
+                individual links independently.
+              </p>
 
-          <div
-            className={`mt-3 rounded-md border p-3 text-xs ${darkMode ? 'border-blue-500/30 bg-blue-500/10 text-blue-100' : 'border-blue-200 bg-blue-50 text-blue-900'}`}
-          >
-            <p className="font-semibold">Fallback reference</p>
-            <p className="mt-1">
-              Project Specific Homepage: <span className="font-medium">{TOOLKIT_BASE_DEFAULTS.label}</span> ({TOOLKIT_BASE_DEFAULTS.url})
-            </p>
-            <p className="mt-1">
-              Default Toolkit Link: the original NHS Future link defined per guidance item.
-            </p>
-          </div>
-
-          <div
-            className={`mt-4 rounded-md border p-4 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
-          >
-            <label
-              htmlFor="cst-toolkit-choice"
-              className={`block text-xs font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
-            >
-              Default toolkit for assistant preview
-            </label>
-            <select
-              id="cst-toolkit-choice"
-              value={profile.cst.toolkitChoice}
-              onChange={(event) => handleToolkitChoiceChange(event.target.value as ToolkitOptionKey)}
-              className={`w-full rounded-md border shadow-sm sm:text-sm p-2 pr-10 ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100' : 'border-[#768692] bg-white text-slate-900'}`}
-            >
-              {TOOLKIT_OPTIONS.map((toolkit) => (
-                <option key={toolkit.key} value={toolkit.key}>
-                  {toolkit.label}
-                </option>
-              ))}
-            </select>
-            <p className={`mt-2 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-              This controls which toolkit the chatbot-style assistant opens by default across the tool.
-            </p>
-          </div>
-
-          {/* Base override */}
-          <div
-            className={`mt-4 rounded-md border p-4 space-y-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
-          >
-            <div>
-              <p
-                className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+              <div
+                className={`mt-3 rounded-md border p-3 text-xs ${darkMode ? 'border-blue-500/30 bg-blue-500/10 text-blue-100' : 'border-blue-200 bg-blue-50 text-blue-900'}`}
               >
-                Project Specific Homepage
-              </p>
-              <p className={`text-xs mt-0.5 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-                Replaces the Change Management Toolkit destination for all links that fall back to
-                it.
-              </p>
-              <p className="mt-1 text-xs">
-                Currently:{' '}
-                <a
-                  href={profile.linkOverrides?.base?.url?.trim() || TOOLKIT_BASE_DEFAULTS.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`underline ${darkMode ? 'text-blue-300 hover:text-blue-200' : 'text-[#005eb8] hover:text-[#00417a]'}`}
-                >
-                  {profile.linkOverrides?.base?.url?.trim() || TOOLKIT_BASE_DEFAULTS.url}
-                </a>
-              </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div>
-                <label
-                  className={`block text-xs font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
-                >
-                  Toolkit name
-                </label>
-                <input
-                  type="text"
-                  placeholder={TOOLKIT_BASE_DEFAULTS.label}
-                  value={profile.linkOverrides?.base?.label ?? ''}
-                  onChange={(e) =>
-                    handleLinkOverridesChange({
-                      ...profile.linkOverrides,
-                      base: { ...profile.linkOverrides?.base, label: e.target.value || undefined },
-                    })
-                  }
-                  className={`w-full rounded-md border shadow-sm sm:text-sm p-2 ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
-                />
+                <p className="font-semibold">Fallback reference</p>
+                <p className="mt-1">
+                  Project Specific Homepage:{' '}
+                  <span className="font-medium">{TOOLKIT_BASE_DEFAULTS.label}</span> (
+                  {TOOLKIT_BASE_DEFAULTS.url})
+                </p>
+                <p className="mt-1">
+                  Default Toolkit Link: the original NHS Future link defined per guidance item.
+                </p>
               </div>
-              <div>
+
+              <div
+                className={`mt-4 rounded-md border p-4 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
+              >
                 <label
+                  htmlFor="cst-toolkit-choice"
                   className={`block text-xs font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
                 >
-                  Toolkit URL
+                  Default toolkit for assistant preview
                 </label>
-                <div className="flex gap-2">
-                  <input
-                    type="url"
-                    placeholder={TOOLKIT_BASE_DEFAULTS.url}
-                    value={profile.linkOverrides?.base?.url ?? ''}
-                    onChange={(e) =>
-                      handleLinkOverridesChange({
-                        ...profile.linkOverrides,
-                        base: { ...profile.linkOverrides?.base, url: e.target.value || undefined },
-                      })
-                    }
-                    className={`flex-1 min-w-0 rounded-md border shadow-sm sm:text-sm p-2 ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
-                  />
-                  {profile.linkOverrides?.base?.url && (
-                    <button
-                      type="button"
-                      onClick={() =>
+                <select
+                  id="cst-toolkit-choice"
+                  value={profile.cst.toolkitChoice}
+                  onChange={(event) =>
+                    handleToolkitChoiceChange(event.target.value as ToolkitOptionKey)
+                  }
+                  className={`w-full rounded-md border shadow-sm sm:text-sm p-2 pr-10 ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100' : 'border-[#768692] bg-white text-slate-900'}`}
+                >
+                  {TOOLKIT_OPTIONS.map((toolkit) => (
+                    <option key={toolkit.key} value={toolkit.key}>
+                      {toolkit.label}
+                    </option>
+                  ))}
+                </select>
+                <p className={`mt-2 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
+                  This controls which toolkit the chatbot-style assistant opens by default across
+                  the tool.
+                </p>
+              </div>
+
+              {/* Base override */}
+              <div
+                className={`mt-4 rounded-md border p-4 space-y-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
+              >
+                <div>
+                  <p
+                    className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+                  >
+                    Project Specific Homepage
+                  </p>
+                  <p className={`text-xs mt-0.5 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
+                    Replaces the Change Management Toolkit destination for all links that fall back
+                    to it.
+                  </p>
+                  <p className="mt-1 text-xs">
+                    Currently:{' '}
+                    <a
+                      href={profile.linkOverrides?.base?.url?.trim() || TOOLKIT_BASE_DEFAULTS.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`underline ${darkMode ? 'text-blue-300 hover:text-blue-200' : 'text-[#005eb8] hover:text-[#00417a]'}`}
+                    >
+                      {profile.linkOverrides?.base?.url?.trim() || TOOLKIT_BASE_DEFAULTS.url}
+                    </a>
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div>
+                    <label
+                      className={`block text-xs font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
+                    >
+                      Toolkit name
+                    </label>
+                    <input
+                      type="text"
+                      placeholder={TOOLKIT_BASE_DEFAULTS.label}
+                      value={profile.linkOverrides?.base?.label ?? ''}
+                      onChange={(e) =>
                         handleLinkOverridesChange({
                           ...profile.linkOverrides,
-                          base: { ...profile.linkOverrides?.base, url: undefined },
+                          base: {
+                            ...profile.linkOverrides?.base,
+                            label: e.target.value || undefined,
+                          },
                         })
                       }
-                      className={`shrink-0 rounded-md border px-3 py-2 text-xs font-medium ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-50'}`}
+                      className={`w-full rounded-md border shadow-sm sm:text-sm p-2 ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
+                    />
+                  </div>
+                  <div>
+                    <label
+                      className={`block text-xs font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
                     >
-                      Reset
-                    </button>
-                  )}
+                      Toolkit URL
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="url"
+                        placeholder={TOOLKIT_BASE_DEFAULTS.url}
+                        value={profile.linkOverrides?.base?.url ?? ''}
+                        onChange={(e) =>
+                          handleLinkOverridesChange({
+                            ...profile.linkOverrides,
+                            base: {
+                              ...profile.linkOverrides?.base,
+                              url: e.target.value || undefined,
+                            },
+                          })
+                        }
+                        className={`flex-1 min-w-0 rounded-md border shadow-sm sm:text-sm p-2 ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
+                      />
+                      {profile.linkOverrides?.base?.url && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            handleLinkOverridesChange({
+                              ...profile.linkOverrides,
+                              base: { ...profile.linkOverrides?.base, url: undefined },
+                            })
+                          }
+                          className={`shrink-0 rounded-md border px-3 py-2 text-xs font-medium ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-50'}`}
+                        >
+                          Reset
+                        </button>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
 
-          {/* Core links - global reference links not tied to any one component */}
-          <div
-            className={`mt-4 rounded-md border p-4 space-y-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
-          >
-            <div>
-              <p
-                className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+              {/* Core links - global reference links not tied to any one component */}
+              <div
+                className={`mt-4 rounded-md border p-4 space-y-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
               >
-                Additional Links
-              </p>
-              <p className={`text-xs mt-0.5 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-                General reference links that aren't tied to a single component - shown here and
-                matched into action/summary text across every component.
-              </p>
-            </div>
-            <div className="space-y-2">
-              {effectiveCoreLinks.map((link) => (
-                <div
-                  key={link.key}
-                  className="grid grid-cols-1 md:grid-cols-[1fr,2fr,auto,auto] gap-2 items-center"
-                >
-                  <input
-                    type="text"
-                    placeholder="Link name"
-                    value={link.label}
-                    onChange={(e) => handleUpdateCoreLink(link.key, 'label', e.target.value)}
-                    className={`rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
-                  />
-                  <input
-                    type="url"
-                    placeholder="https://..."
-                    value={link.url}
-                    onChange={(e) => handleUpdateCoreLink(link.key, 'url', e.target.value)}
-                    className={`rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setEditingAliasesFor({ link })}
-                    aria-label={`Edit match text for ${link.label || 'this core link'}`}
-                    className={`shrink-0 rounded border px-1.5 py-1.5 text-xs ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-100'}`}
+                <div>
+                  <p
+                    className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
                   >
-                    ✎
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveCoreLink(link.key)}
-                    className={`shrink-0 rounded border px-2 py-1.5 text-xs font-medium ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-50'}`}
-                  >
-                    Remove
-                  </button>
+                    Additional Links
+                  </p>
+                  <p className={`text-xs mt-0.5 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
+                    General reference links that aren't tied to a single component - shown here and
+                    matched into action/summary text across every component.
+                  </p>
                 </div>
-              ))}
-            </div>
-            <button type="button" onClick={handleAddCoreLink} className={nhsButtonSecondary}>
-              + Add Core Link
-            </button>
-          </div>
-
-          {/* Tool linking - matches text in action/summary bodies to in-app tools instead of URLs */}
-          <div
-            className={`mt-4 rounded-md border p-4 space-y-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
-          >
-            <div>
-              <p
-                className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
-              >
-                Tool linking
-              </p>
-              <p className={`text-xs mt-0.5 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-                Matches text in action/summary bodies and turns it into a button that opens an
-                in-app tool, instead of a link to a URL.
-              </p>
-            </div>
-            <div className="space-y-2">
-              {toolLinks.map((link) => (
-                <div
-                  key={link.key}
-                  className="grid grid-cols-1 md:grid-cols-[1fr,2fr,auto] gap-2 items-center"
-                >
-                  <select
-                    value={link.tool}
-                    onChange={(e) => handleUpdateToolLinkTool(link.key, e.target.value as InAppTool)}
-                    className={`rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
-                  >
-                    {IN_APP_TOOLS.map((tool) => (
-                      <option key={tool} value={tool}>
-                        {DEFAULT_TOOL_LINK_TEXT[tool].label}
-                      </option>
-                    ))}
-                  </select>
-                  <input
-                    type="text"
-                    placeholder="Matched text"
-                    value={link.matchText}
-                    onChange={(e) => handleUpdateToolLinkMatchText(link.key, e.target.value)}
-                    className={`rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveToolLink(link.key)}
-                    className={`shrink-0 rounded border px-2 py-1.5 text-xs font-medium ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-50'}`}
-                  >
-                    Remove
-                  </button>
-                </div>
-              ))}
-            </div>
-            <button type="button" onClick={handleAddToolLink} className={nhsButtonSecondary}>
-              + Add Tool Link
-            </button>
-          </div>
-
-          {/* Per-component links: further reading + per-link overrides, grouped by component */}
-          <div className="mt-4 space-y-3">
-            <p
-              className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
-            >
-              Component links
-            </p>
-            <p className={`text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-              Set the "Further Reading" link shown on each component's overview panel, and override
-              any of its individual guidance links. Each link shows whether it currently points at
-              the <strong>Default Toolkit Link</strong> (the original NHS Future link),{' '}
-              <strong>Project Specific Homepage</strong> (your organisation's override above), or a{' '}
-              <strong>Custom</strong> URL you've set - click the pencil to change it. Additional
-              links can be hidden from Settings if you only want the essentials.
-            </p>
-            {components.map((component) => {
-              const sectionLinks = getGuidanceLinksForComponent(component.id);
-              const allLinks = [...sectionLinks.inputs, ...sectionLinks.deliverables];
-              const overrideCount = allLinks.filter((l) =>
-                profile.linkOverrides?.links?.[l.key]?.url?.trim()
-              ).length;
-              const hasFurtherReading = Boolean(profile.componentFurtherReading?.[component.id]);
-              return (
-                <details
-                  key={component.id}
-                  className={`group overflow-hidden rounded-md border ${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'}`}
-                >
-                  <summary
-                    className={`flex cursor-pointer list-none items-center justify-between gap-3 p-3 text-sm font-medium transition-colors focus:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-[#ffeb3b] ${darkMode ? 'bg-slate-800 text-slate-200 hover:bg-slate-700' : 'bg-slate-50 text-slate-700 hover:bg-blue-50'} [&::-webkit-details-marker]:hidden`}
-                  >
-                    <span className="flex min-w-0 items-center gap-2">
-                      <span
-                        aria-hidden="true"
-                        className={`shrink-0 text-lg font-bold leading-none transition-transform group-open:rotate-45 ${darkMode ? 'text-blue-300' : 'text-[#005eb8]'}`}
-                      >
-                        +
-                      </span>
-                      <span className="truncate">{component.label}</span>
-                    </span>
-                    <span className="flex items-center gap-2">
-                      {hasFurtherReading && (
-                        <span
-                          className={`rounded-full px-2 py-0.5 text-xs font-semibold ${darkMode ? 'bg-emerald-500/20 text-emerald-300' : 'bg-emerald-100 text-emerald-700'}`}
-                        >
-                          Further reading set
-                        </span>
-                      )}
-                      {overrideCount > 0 && (
-                        <span
-                          className={`rounded-full px-2 py-0.5 text-xs font-semibold ${darkMode ? 'bg-blue-500/20 text-blue-300' : 'bg-blue-100 text-blue-700'}`}
-                        >
-                          {overrideCount} override{overrideCount !== 1 ? 's' : ''}
-                        </span>
-                      )}
-                    </span>
-                  </summary>
-                  <div className={`border-t divide-y ${darkMode ? 'border-slate-700 divide-slate-700' : 'border-slate-200 divide-slate-100'}`}>
-                    <div className="p-3 space-y-1.5">
-                      <p
-                        className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
-                      >
-                        Further reading
-                      </p>
-                      <div className="flex gap-2">
-                        <input
-                          type="url"
-                          placeholder="https://..."
-                          value={profile.componentFurtherReading?.[component.id] ?? ''}
-                          onChange={(e) =>
-                            handleComponentFurtherReadingChange(component.id, e.target.value)
-                          }
-                          className={`flex-1 min-w-0 rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
-                        />
-                        {hasFurtherReading && (
-                          <button
-                            type="button"
-                            onClick={() => handleComponentFurtherReadingChange(component.id, '')}
-                            className={`shrink-0 rounded border px-2 py-1.5 text-xs font-medium ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-50'}`}
-                          >
-                            Clear
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                    {!allLinks.length && (
-                      <p className={`p-3 text-xs ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>
-                        No default guidance links for this component - add one below.
-                      </p>
-                    )}
-                    {(['inputs', 'deliverables'] as const).map((sect) => {
-                      const links = sectionLinks[sect] ?? [];
-                      if (!links.length) return null;
-                      return (
-                          <div key={sect} className="p-3 space-y-2">
-                            <p
-                              className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
-                            >
-                              {sect}
-                            </p>
-                            {links.map((link) => {
-                              const perLink = profile.linkOverrides?.links?.[link.key];
-                              const resolved = resolveEffectiveLink(link, profile.linkOverrides);
-                              const status = getLinkOverrideStatus(perLink);
-                              const statusStyles: Record<LinkOverrideStatus, string> = {
-                                default: darkMode
-                                  ? 'border-amber-500/40 bg-amber-500/15 text-amber-200'
-                                  : 'bg-amber-50 border-amber-200 text-amber-800',
-                                custom: darkMode
-                                  ? 'border-green-500/40 bg-green-500/15 text-green-200'
-                                  : 'bg-green-50 border-green-200 text-green-800',
-                                base: darkMode
-                                  ? 'border-red-500/30 bg-red-500/10 text-red-200'
-                                  : 'bg-red-50 border-red-100 text-red-700',
-                              };
-                              const statusLabel: Record<LinkOverrideStatus, string> = {
-                                default: 'Default Toolkit Link',
-                                custom: 'Custom',
-                                base: 'Project Specific Homepage',
-                              };
-                              return (
-                                <div key={link.key} className="flex items-center justify-between gap-2">
-                                  <span
-                                    className={`text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}
-                                  >
-                                    {link.type !== 'core' ? '(Optional) ' : ''}
-                                    {link.label}
-                                  </span>
-                                  <div className="flex items-center gap-2">
-                                    <a
-                                      href={resolved.url}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      title={resolved.url}
-                                      className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${statusStyles[status]}`}
-                                    >
-                                      {statusLabel[status]}
-                                    </a>
-                                    <button
-                                      type="button"
-                                      onClick={() => setEditingLink(link)}
-                                      aria-label={`Edit ${link.label} link`}
-                                      className={`shrink-0 rounded-md border px-1.5 py-0.5 text-xs ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-100'}`}
-                                    >
-                                      ✎
-                                    </button>
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        );
-                      })}
-                    <div className="p-3 space-y-2">
-                      <p
-                        className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
-                      >
-                        Custom links
-                      </p>
-                      {(profile.customComponentLinks?.[component.id] || []).map((link) => (
-                        <div
-                          key={link.key}
-                          className="grid grid-cols-1 md:grid-cols-[1fr,2fr,auto,auto] gap-2 items-center"
-                        >
-                          <input
-                            type="text"
-                            placeholder="Link name"
-                            value={link.label}
-                            onChange={(e) =>
-                              handleUpdateComponentLink(component.id, link.key, 'label', e.target.value)
-                            }
-                            className={`rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
-                          />
-                          <input
-                            type="url"
-                            placeholder="https://..."
-                            value={link.url}
-                            onChange={(e) =>
-                              handleUpdateComponentLink(component.id, link.key, 'url', e.target.value)
-                            }
-                            className={`rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setEditingAliasesFor({ link, componentId: component.id })}
-                            aria-label={`Edit match text for ${link.label || 'this link'}`}
-                            className={`shrink-0 rounded border px-1.5 py-1.5 text-xs ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-100'}`}
-                          >
-                            ✎
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveComponentLink(component.id, link.key)}
-                            className={`shrink-0 rounded border px-2 py-1.5 text-xs font-medium ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-50'}`}
-                          >
-                            Remove
-                          </button>
-                        </div>
-                      ))}
+                <div className="space-y-2">
+                  {effectiveCoreLinks.map((link) => (
+                    <div
+                      key={link.key}
+                      className="grid grid-cols-1 md:grid-cols-[1fr,2fr,auto,auto] gap-2 items-center"
+                    >
+                      <input
+                        type="text"
+                        placeholder="Link name"
+                        value={link.label}
+                        onChange={(e) => handleUpdateCoreLink(link.key, 'label', e.target.value)}
+                        className={`rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
+                      />
+                      <input
+                        type="url"
+                        placeholder="https://..."
+                        value={link.url}
+                        onChange={(e) => handleUpdateCoreLink(link.key, 'url', e.target.value)}
+                        className={`rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
+                      />
                       <button
                         type="button"
-                        onClick={() => handleAddComponentLink(component.id)}
-                        className={nhsButtonSecondary}
+                        onClick={() => setEditingAliasesFor({ link })}
+                        aria-label={`Edit match text for ${link.label || 'this core link'}`}
+                        className={`shrink-0 rounded border px-1.5 py-1.5 text-xs ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-100'}`}
                       >
-                        + Add Link
+                        ✎
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveCoreLink(link.key)}
+                        className={`shrink-0 rounded border px-2 py-1.5 text-xs font-medium ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-50'}`}
+                      >
+                        Remove
                       </button>
                     </div>
+                  ))}
+                </div>
+                <button type="button" onClick={handleAddCoreLink} className={nhsButtonSecondary}>
+                  + Add Core Link
+                </button>
+              </div>
+
+              {/* Tool linking - matches text in action/summary bodies to in-app tools instead of URLs */}
+              <div
+                className={`mt-4 rounded-md border p-4 space-y-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
+              >
+                <div>
+                  <p
+                    className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+                  >
+                    Tool linking
+                  </p>
+                  <p className={`text-xs mt-0.5 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
+                    Matches text in action/summary bodies and turns it into a button that opens an
+                    in-app tool, instead of a link to a URL.
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  {toolLinks.map((link) => (
+                    <div
+                      key={link.key}
+                      className="grid grid-cols-1 md:grid-cols-[1fr,2fr,auto] gap-2 items-center"
+                    >
+                      <select
+                        value={link.tool}
+                        onChange={(e) =>
+                          handleUpdateToolLinkTool(link.key, e.target.value as InAppTool)
+                        }
+                        className={`rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
+                      >
+                        {IN_APP_TOOLS.map((tool) => (
+                          <option key={tool} value={tool}>
+                            {DEFAULT_TOOL_LINK_TEXT[tool].label}
+                          </option>
+                        ))}
+                      </select>
+                      <input
+                        type="text"
+                        placeholder="Matched text"
+                        value={link.matchText}
+                        onChange={(e) => handleUpdateToolLinkMatchText(link.key, e.target.value)}
+                        className={`rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveToolLink(link.key)}
+                        className={`shrink-0 rounded border px-2 py-1.5 text-xs font-medium ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-50'}`}
+                      >
+                        Remove
+                      </button>
                     </div>
-                  </details>
-                );
-              })}
-          </div>
+                  ))}
+                </div>
+                <button type="button" onClick={handleAddToolLink} className={nhsButtonSecondary}>
+                  + Add Tool Link
+                </button>
+              </div>
+
+              {/* Per-component links: further reading + per-link overrides, grouped by component */}
+              <div className="mt-4 space-y-3">
+                <p
+                  className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+                >
+                  Component links
+                </p>
+                <p className={`text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
+                  Set the "Further Reading" link shown on each component's overview panel, and
+                  override any of its individual guidance links. Each link shows whether it
+                  currently points at the <strong>Default Toolkit Link</strong> (the original NHS
+                  Future link), <strong>Project Specific Homepage</strong> (your organisation's
+                  override above), or a <strong>Custom</strong> URL you've set - click the pencil to
+                  change it. Additional links can be hidden from Settings if you only want the
+                  essentials.
+                </p>
+                {components.map((component) => {
+                  const sectionLinks = getGuidanceLinksForComponent(component.id);
+                  const allLinks = [...sectionLinks.inputs, ...sectionLinks.deliverables];
+                  const overrideCount = allLinks.filter((l) =>
+                    profile.linkOverrides?.links?.[l.key]?.url?.trim()
+                  ).length;
+                  const hasFurtherReading = Boolean(
+                    profile.componentFurtherReading?.[component.id]
+                  );
+                  return (
+                    <details
+                      key={component.id}
+                      className={`group overflow-hidden rounded-md border ${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'}`}
+                    >
+                      <summary
+                        className={`flex cursor-pointer list-none items-center justify-between gap-3 p-3 text-sm font-medium transition-colors focus:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-[#ffeb3b] ${darkMode ? 'bg-slate-800 text-slate-200 hover:bg-slate-700' : 'bg-slate-50 text-slate-700 hover:bg-blue-50'} [&::-webkit-details-marker]:hidden`}
+                      >
+                        <span className="flex min-w-0 items-center gap-2">
+                          <span
+                            aria-hidden="true"
+                            className={`shrink-0 text-lg font-bold leading-none transition-transform group-open:rotate-45 ${darkMode ? 'text-blue-300' : 'text-[#005eb8]'}`}
+                          >
+                            +
+                          </span>
+                          <span className="truncate">{component.label}</span>
+                        </span>
+                        <span className="flex items-center gap-2">
+                          {hasFurtherReading && (
+                            <span
+                              className={`rounded-full px-2 py-0.5 text-xs font-semibold ${darkMode ? 'bg-emerald-500/20 text-emerald-300' : 'bg-emerald-100 text-emerald-700'}`}
+                            >
+                              Further reading set
+                            </span>
+                          )}
+                          {overrideCount > 0 && (
+                            <span
+                              className={`rounded-full px-2 py-0.5 text-xs font-semibold ${darkMode ? 'bg-blue-500/20 text-blue-300' : 'bg-blue-100 text-blue-700'}`}
+                            >
+                              {overrideCount} override{overrideCount !== 1 ? 's' : ''}
+                            </span>
+                          )}
+                        </span>
+                      </summary>
+                      <div
+                        className={`border-t divide-y ${darkMode ? 'border-slate-700 divide-slate-700' : 'border-slate-200 divide-slate-100'}`}
+                      >
+                        <div className="p-3 space-y-1.5">
+                          <p
+                            className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
+                          >
+                            Further reading
+                          </p>
+                          <div className="flex gap-2">
+                            <input
+                              type="url"
+                              placeholder="https://..."
+                              value={profile.componentFurtherReading?.[component.id] ?? ''}
+                              onChange={(e) =>
+                                handleComponentFurtherReadingChange(component.id, e.target.value)
+                              }
+                              className={`flex-1 min-w-0 rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
+                            />
+                            {hasFurtherReading && (
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleComponentFurtherReadingChange(component.id, '')
+                                }
+                                className={`shrink-0 rounded border px-2 py-1.5 text-xs font-medium ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-50'}`}
+                              >
+                                Clear
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                        {!allLinks.length && (
+                          <p
+                            className={`p-3 text-xs ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}
+                          >
+                            No default guidance links for this component - add one below.
+                          </p>
+                        )}
+                        {(['inputs', 'deliverables'] as const).map((sect) => {
+                          const links = sectionLinks[sect] ?? [];
+                          if (!links.length) return null;
+                          return (
+                            <div key={sect} className="p-3 space-y-2">
+                              <p
+                                className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
+                              >
+                                {sect}
+                              </p>
+                              {links.map((link) => {
+                                const perLink = profile.linkOverrides?.links?.[link.key];
+                                const resolved = resolveEffectiveLink(link, profile.linkOverrides);
+                                const status = getLinkOverrideStatus(perLink);
+                                const statusStyles: Record<LinkOverrideStatus, string> = {
+                                  default: darkMode
+                                    ? 'border-amber-500/40 bg-amber-500/15 text-amber-200'
+                                    : 'bg-amber-50 border-amber-200 text-amber-800',
+                                  custom: darkMode
+                                    ? 'border-green-500/40 bg-green-500/15 text-green-200'
+                                    : 'bg-green-50 border-green-200 text-green-800',
+                                  base: darkMode
+                                    ? 'border-red-500/30 bg-red-500/10 text-red-200'
+                                    : 'bg-red-50 border-red-100 text-red-700',
+                                };
+                                const statusLabel: Record<LinkOverrideStatus, string> = {
+                                  default: 'Default Toolkit Link',
+                                  custom: 'Custom',
+                                  base: 'Project Specific Homepage',
+                                };
+                                return (
+                                  <div
+                                    key={link.key}
+                                    className="flex items-center justify-between gap-2"
+                                  >
+                                    <span
+                                      className={`text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}
+                                    >
+                                      {link.type !== 'core' ? '(Optional) ' : ''}
+                                      {link.label}
+                                    </span>
+                                    <div className="flex items-center gap-2">
+                                      <a
+                                        href={resolved.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        title={resolved.url}
+                                        className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${statusStyles[status]}`}
+                                      >
+                                        {statusLabel[status]}
+                                      </a>
+                                      <button
+                                        type="button"
+                                        onClick={() => setEditingLink(link)}
+                                        aria-label={`Edit ${link.label} link`}
+                                        className={`shrink-0 rounded-md border px-1.5 py-0.5 text-xs ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-100'}`}
+                                      >
+                                        ✎
+                                      </button>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          );
+                        })}
+                        <div className="p-3 space-y-2">
+                          <p
+                            className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
+                          >
+                            Custom links
+                          </p>
+                          {(profile.customComponentLinks?.[component.id] || []).map((link) => (
+                            <div
+                              key={link.key}
+                              className="grid grid-cols-1 md:grid-cols-[1fr,2fr,auto,auto] gap-2 items-center"
+                            >
+                              <input
+                                type="text"
+                                placeholder="Link name"
+                                value={link.label}
+                                onChange={(e) =>
+                                  handleUpdateComponentLink(
+                                    component.id,
+                                    link.key,
+                                    'label',
+                                    e.target.value
+                                  )
+                                }
+                                className={`rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
+                              />
+                              <input
+                                type="url"
+                                placeholder="https://..."
+                                value={link.url}
+                                onChange={(e) =>
+                                  handleUpdateComponentLink(
+                                    component.id,
+                                    link.key,
+                                    'url',
+                                    e.target.value
+                                  )
+                                }
+                                className={`rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
+                              />
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setEditingAliasesFor({ link, componentId: component.id })
+                                }
+                                aria-label={`Edit match text for ${link.label || 'this link'}`}
+                                className={`shrink-0 rounded border px-1.5 py-1.5 text-xs ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-100'}`}
+                              >
+                                ✎
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveComponentLink(component.id, link.key)}
+                                className={`shrink-0 rounded border px-2 py-1.5 text-xs font-medium ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-50'}`}
+                              >
+                                Remove
+                              </button>
+                            </div>
+                          ))}
+                          <button
+                            type="button"
+                            onClick={() => handleAddComponentLink(component.id)}
+                            className={nhsButtonSecondary}
+                          >
+                            + Add Link
+                          </button>
+                        </div>
+                      </div>
+                    </details>
+                  );
+                })}
+              </div>
             </>
           ) : (
             <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-              External links were set up at project start. Turn on "Show external links section"
-              in Settings if you need to come back and edit them.
+              External links were set up at project start. Turn on "Show external links section" in
+              Settings if you need to come back and edit them.
             </p>
           )}
         </div>
@@ -1667,10 +1725,14 @@ export function ProjectDetailsPage({
           <div
             className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} w-full max-w-lg rounded-xl border p-6 shadow-2xl`}
           >
-            <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>
+            <h3
+              className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
+            >
               Change pathway to {PATHWAY_LABELS[pendingPathwayChange]}?
             </h3>
-            <div className={`mt-3 space-y-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+            <div
+              className={`mt-3 space-y-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+            >
               {pendingPathwayChange === 'pathway-1' ? (
                 <p>
                   This will regenerate every component's outcomes and actions for Pathway 1. Any
@@ -1708,10 +1770,10 @@ export function ProjectDetailsPage({
         darkMode={darkMode}
         body={
           <p>
-            This is the Context Specific Template (CST) for your programme: who it belongs to,
-            which of the three pathways it follows, and how it's tracking against its readiness
-            phases. You can export or import just this page's data, and manage the external links
-            shown throughout the tool.
+            This is the Context Specific Template (CST) for your programme: who it belongs to, which
+            of the three pathways it follows, and how it's tracking against its readiness phases.
+            You can export or import just this page's data, and manage the external links shown
+            throughout the tool.
           </p>
         }
       />

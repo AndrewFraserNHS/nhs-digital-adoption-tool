@@ -21,9 +21,7 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
       "action": "Review pilot feedback on Strategic Direction & Leadership to identify what needs to change in the organisational change readiness before scaling.",
-      "outcomeIds": [
-        "OCR_P2_O1"
-      ],
+      "outcomeIds": ["OCR_P2_O1"],
       "readinessScore": 0
     },
     {
@@ -33,9 +31,7 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Design",
       "action": "Refine the organisational change readiness to Strategic Direction & Leadership based on lessons learned from the pilot.",
-      "outcomeIds": [
-        "OCR_P2_O1"
-      ],
+      "outcomeIds": ["OCR_P2_O1"],
       "readinessScore": 1
     },
     {
@@ -45,9 +41,7 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
       "action": "Secure sign-off for the refined organisational change readiness covering Strategic Direction & Leadership ahead of wider rollout.",
-      "outcomeIds": [
-        "OCR_P2_O1"
-      ],
+      "outcomeIds": ["OCR_P2_O1"],
       "readinessScore": 2
     },
     {
@@ -57,9 +51,7 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Communication",
       "action": "Ensure the refined organisational change readiness for Strategic Direction & Leadership is consistently communicated to new sites/teams joining the rollout.",
-      "outcomeIds": [
-        "OCR_P2_O2"
-      ],
+      "outcomeIds": ["OCR_P2_O2"],
       "readinessScore": 3
     },
     {
@@ -69,9 +61,7 @@
       "lens": "Strategic Direction & Leadership",
       "category": "Measurement & Evaluation",
       "action": "Continuously validate that the organisational change readiness for Strategic Direction & Leadership remains effective as the change scales further.",
-      "outcomeIds": [
-        "OCR_P2_O2"
-      ],
+      "outcomeIds": ["OCR_P2_O2"],
       "readinessScore": 4
     },
     {
@@ -81,9 +71,7 @@
       "lens": "Skills & Behaviour",
       "category": "Analysis & Insight",
       "action": "Gather feedback from pilot participants on how the organisational change readiness affected Skills & Behaviour.",
-      "outcomeIds": [
-        "OCR_P2_O1"
-      ],
+      "outcomeIds": ["OCR_P2_O1"],
       "readinessScore": 0
     },
     {
@@ -93,9 +81,7 @@
       "lens": "Skills & Behaviour",
       "category": "Design",
       "action": "Adapt the organisational change readiness relating to Skills & Behaviour for a wider, more diverse audience.",
-      "outcomeIds": [
-        "OCR_P2_O1"
-      ],
+      "outcomeIds": ["OCR_P2_O1"],
       "readinessScore": 1
     },
     {
@@ -105,9 +91,7 @@
       "lens": "Skills & Behaviour",
       "category": "Communication",
       "action": "Roll out the organisational change readiness covering Skills & Behaviour to stakeholders in newly onboarding sites/teams.",
-      "outcomeIds": [
-        "OCR_P2_O1"
-      ],
+      "outcomeIds": ["OCR_P2_O1"],
       "readinessScore": 2
     },
     {
@@ -117,9 +101,7 @@
       "lens": "Skills & Behaviour",
       "category": "Measurement & Evaluation",
       "action": "Monitor Skills & Behaviour among stakeholders in the wider rollout and address any gaps.",
-      "outcomeIds": [
-        "OCR_P2_O2"
-      ],
+      "outcomeIds": ["OCR_P2_O2"],
       "readinessScore": 3
     },
     {
@@ -129,9 +111,7 @@
       "lens": "Skills & Behaviour",
       "category": "Reinforcement",
       "action": "Use champions from the pilot to help new sites/teams connect with the organisational change readiness for Skills & Behaviour.",
-      "outcomeIds": [
-        "OCR_P2_O2"
-      ],
+      "outcomeIds": ["OCR_P2_O2"],
       "readinessScore": 4
     }
   ]

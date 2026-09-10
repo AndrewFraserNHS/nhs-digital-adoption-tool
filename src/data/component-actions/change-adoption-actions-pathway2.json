@@ -21,9 +21,7 @@
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
       "action": "Review pilot feedback on Planning & Risk to identify what needs to change in the approach to change adoption before scaling.",
-      "outcomeIds": [
-        "CA_P2_O1"
-      ],
+      "outcomeIds": ["CA_P2_O1"],
       "readinessScore": 0
     },
     {
@@ -33,9 +31,7 @@
       "lens": "Planning & Risk",
       "category": "Design",
       "action": "Refine the approach to change adoption to Planning & Risk based on lessons learned from the pilot.",
-      "outcomeIds": [
-        "CA_P2_O1"
-      ],
+      "outcomeIds": ["CA_P2_O1"],
       "readinessScore": 1
     },
     {
@@ -45,9 +41,7 @@
       "lens": "Planning & Risk",
       "category": "Governance",
       "action": "Secure sign-off for the refined approach to change adoption covering Planning & Risk ahead of wider rollout.",
-      "outcomeIds": [
-        "CA_P2_O1"
-      ],
+      "outcomeIds": ["CA_P2_O1"],
       "readinessScore": 2
     },
     {
@@ -57,9 +51,7 @@
       "lens": "Planning & Risk",
       "category": "Communication",
       "action": "Ensure the refined approach to change adoption for Planning & Risk is consistently communicated to new sites/teams joining the rollout.",
-      "outcomeIds": [
-        "CA_P2_O2"
-      ],
+      "outcomeIds": ["CA_P2_O2"],
       "readinessScore": 3
     },
     {
@@ -69,9 +61,7 @@
       "lens": "Planning & Risk",
       "category": "Measurement & Evaluation",
       "action": "Continuously validate that the approach to change adoption for Planning & Risk remains effective as the change scales further.",
-      "outcomeIds": [
-        "CA_P2_O2"
-      ],
+      "outcomeIds": ["CA_P2_O2"],
       "readinessScore": 4
     },
     {
@@ -81,9 +71,7 @@
       "lens": "Skills & Behaviour",
       "category": "Analysis & Insight",
       "action": "Gather feedback from pilot participants on how the approach to change adoption affected Skills & Behaviour.",
-      "outcomeIds": [
-        "CA_P2_O1"
-      ],
+      "outcomeIds": ["CA_P2_O1"],
       "readinessScore": 0
     },
     {
@@ -93,9 +81,7 @@
       "lens": "Skills & Behaviour",
       "category": "Design",
       "action": "Adapt the approach to change adoption relating to Skills & Behaviour for a wider, more diverse audience.",
-      "outcomeIds": [
-        "CA_P2_O1"
-      ],
+      "outcomeIds": ["CA_P2_O1"],
       "readinessScore": 1
     },
     {
@@ -105,9 +91,7 @@
       "lens": "Skills & Behaviour",
       "category": "Communication",
       "action": "Roll out the approach to change adoption covering Skills & Behaviour to stakeholders in newly onboarding sites/teams.",
-      "outcomeIds": [
-        "CA_P2_O1"
-      ],
+      "outcomeIds": ["CA_P2_O1"],
       "readinessScore": 2
     },
     {
@@ -117,9 +101,7 @@
       "lens": "Skills & Behaviour",
       "category": "Measurement & Evaluation",
       "action": "Monitor Skills & Behaviour among stakeholders in the wider rollout and address any gaps.",
-      "outcomeIds": [
-        "CA_P2_O2"
-      ],
+      "outcomeIds": ["CA_P2_O2"],
       "readinessScore": 3
     },
     {
@@ -129,9 +111,7 @@
       "lens": "Skills & Behaviour",
       "category": "Reinforcement",
       "action": "Use champions from the pilot to help new sites/teams connect with the approach to change adoption for Skills & Behaviour.",
-      "outcomeIds": [
-        "CA_P2_O2"
-      ],
+      "outcomeIds": ["CA_P2_O2"],
       "readinessScore": 4
     },
     {
@@ -141,9 +121,7 @@
       "lens": "Process & Sustainment",
       "category": "Analysis & Insight",
       "action": "Gather feedback from pilot participants on how the approach to change adoption affected Process & Sustainment.",
-      "outcomeIds": [
-        "CA_P2_O1"
-      ],
+      "outcomeIds": ["CA_P2_O1"],
       "readinessScore": 0
     },
     {
@@ -153,9 +131,7 @@
       "lens": "Process & Sustainment",
       "category": "Design",
       "action": "Adapt the approach to change adoption relating to Process & Sustainment for a wider, more diverse audience.",
-      "outcomeIds": [
-        "CA_P2_O1"
-      ],
+      "outcomeIds": ["CA_P2_O1"],
       "readinessScore": 1
     },
     {
@@ -165,9 +141,7 @@
       "lens": "Process & Sustainment",
       "category": "Communication",
       "action": "Roll out the approach to change adoption covering Process & Sustainment to stakeholders in newly onboarding sites/teams.",
-      "outcomeIds": [
-        "CA_P2_O1"
-      ],
+      "outcomeIds": ["CA_P2_O1"],
       "readinessScore": 2
     },
     {
@@ -177,9 +151,7 @@
       "lens": "Process & Sustainment",
       "category": "Measurement & Evaluation",
       "action": "Monitor Process & Sustainment among stakeholders in the wider rollout and address any gaps.",
-      "outcomeIds": [
-        "CA_P2_O2"
-      ],
+      "outcomeIds": ["CA_P2_O2"],
       "readinessScore": 3
     },
     {
@@ -189,9 +161,7 @@
       "lens": "Process & Sustainment",
       "category": "Reinforcement",
       "action": "Use champions from the pilot to help new sites/teams connect with the approach to change adoption for Process & Sustainment.",
-      "outcomeIds": [
-        "CA_P2_O2"
-      ],
+      "outcomeIds": ["CA_P2_O2"],
       "readinessScore": 4
     }
   ]

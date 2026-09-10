@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import { isShouldLikePriority, moscowLetterForPriority, parseMoscowPrefix } from './moscow';
 
 describe('parseMoscowPrefix', () => {
@@ -37,7 +38,9 @@ describe('parseMoscowPrefix', () => {
   });
 
   it('SHOULD flag needsRework and strip the marker WHEN the prefix has "* " (asterisk with a space)', () => {
-    const result = parseMoscowPrefix('M * Develop a structured approach to sustaining a change network.');
+    const result = parseMoscowPrefix(
+      'M * Develop a structured approach to sustaining a change network.'
+    );
     expect(result).toEqual({
       priority: 'must',
       needsRework: true,
@@ -46,7 +49,9 @@ describe('parseMoscowPrefix', () => {
   });
 
   it('SHOULD flag needsRework and strip the marker WHEN the prefix has "*" with no trailing space', () => {
-    const result = parseMoscowPrefix('M *Embed the change network into future organisational change.');
+    const result = parseMoscowPrefix(
+      'M *Embed the change network into future organisational change.'
+    );
     expect(result).toEqual({
       priority: 'must',
       needsRework: true,
@@ -68,9 +73,9 @@ describe('parseMoscowPrefix', () => {
     expect(parseMoscowPrefix('Secure sponsor endorsement for the plan.').priority).toBeUndefined();
     expect(parseMoscowPrefix('Support teams through the transition.').priority).toBeUndefined();
     expect(parseMoscowPrefix('Coordinate activities across workstreams.').priority).toBeUndefined();
-    expect(
-      parseMoscowPrefix('Monitor the performance of the rollout.').text
-    ).toBe('Monitor the performance of the rollout.');
+    expect(parseMoscowPrefix('Monitor the performance of the rollout.').text).toBe(
+      'Monitor the performance of the rollout.'
+    );
   });
 
   it('SHOULD handle empty/undefined input', () => {

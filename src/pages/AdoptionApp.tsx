@@ -68,7 +68,7 @@ import {
   type ConflictChoice,
   type ConflictReport,
 } from '@lib/cstConflict';
-import { regenerateContentForPathway,syncDerivedContent } from '@lib/derivedContentSync';
+import { regenerateContentForPathway, syncDerivedContent } from '@lib/derivedContentSync';
 import { load, save } from '@lib/storage';
 import { downloadFile, escapeHtml } from '@lib/utils';
 import CompareApp from '@pages/CompareApp';
@@ -263,7 +263,9 @@ export function AdoptionApp() {
 
   const [activeLensInfo, setActiveLensInfo] = useState('');
   const visionGetStarted = usePageIntroSeen('vision-get-started');
-  const [currentUserId, setCurrentUserId] = useState<string>(() => load<string>(ADOPTION_CURRENT_USER_KEY) || '');
+  const [currentUserId, setCurrentUserId] = useState<string>(
+    () => load<string>(ADOPTION_CURRENT_USER_KEY) || ''
+  );
   /* Several audit-logging callbacks are memoized with empty dep arrays, so they close over stale
    * state on first render - refs keep the actor resolution reading live values instead. */
   const currentUserIdRef = React.useRef(currentUserId);
@@ -644,138 +646,141 @@ export function AdoptionApp() {
     return trimAuditEvents([...(prev.auditLog || []), ...events]);
   }
 
-  const updateEntry = useCallback((componentId: string, lens: string, entry: DraftEntry) => {
-    setStore((prev) => {
-      const previousEntry = prev.currentDraft[componentId]?.[lens] || createEmptyEntry();
-      const nextStore = {
-        ...prev,
-        currentDraft: {
-          ...prev.currentDraft,
-          [componentId]: {
-            ...prev.currentDraft[componentId],
-            [lens]: cloneEntry(entry),
+  const updateEntry = useCallback(
+    (componentId: string, lens: string, entry: DraftEntry) => {
+      setStore((prev) => {
+        const previousEntry = prev.currentDraft[componentId]?.[lens] || createEmptyEntry();
+        const nextStore = {
+          ...prev,
+          currentDraft: {
+            ...prev.currentDraft,
+            [componentId]: {
+              ...prev.currentDraft[componentId],
+              [lens]: cloneEntry(entry),
+            },
           },
-        },
-      };
-      const events: Array<Omit<AuditEvent, 'id' | 'timestamp' | 'actor'>> = [];
+        };
+        const events: Array<Omit<AuditEvent, 'id' | 'timestamp' | 'actor'>> = [];
 
-      if (previousEntry.score !== entry.score) {
-        events.push({
-          eventType: 'entry-score-updated',
-          entityType: 'entry',
-          entityId: `${componentId}:${lens}`,
-          summary: `Updated readiness score for ${componentId} / ${lens}: ${previousEntry.score} -> ${entry.score}`,
-          componentId,
-          lens,
-          before: { score: previousEntry.score },
-          after: { score: entry.score },
-          source: 'local',
-        });
-      }
-
-      if ((previousEntry.justification || '') !== (entry.justification || '')) {
-        events.push({
-          eventType: 'entry-justification-updated',
-          entityType: 'entry',
-          entityId: `${componentId}:${lens}`,
-          summary: `Updated justification for ${componentId} / ${lens}`,
-          componentId,
-          lens,
-          before: { justification: previousEntry.justification || '' },
-          after: { justification: entry.justification || '' },
-          source: 'local',
-        });
-      }
-
-      if ((previousEntry.evidence || '') !== (entry.evidence || '')) {
-        events.push({
-          eventType: 'entry-evidence-updated',
-          entityType: 'entry',
-          entityId: `${componentId}:${lens}`,
-          summary: `Updated evidence for ${componentId} / ${lens}`,
-          componentId,
-          lens,
-          before: { evidence: previousEntry.evidence || '' },
-          after: { evidence: entry.evidence || '' },
-          source: 'local',
-        });
-      }
-
-      const previousById = new Map(previousEntry.actions.map((action) => [action.id, action]));
-      entry.actions.forEach((action) => {
-        const previousAction = previousById.get(action.id);
-        if (!previousAction) {
+        if (previousEntry.score !== entry.score) {
           events.push({
-            eventType: 'action-created',
-            entityType: 'action',
-            entityId: action.id,
-            summary: `Created action in ${componentId} / ${lens}`,
+            eventType: 'entry-score-updated',
+            entityType: 'entry',
+            entityId: `${componentId}:${lens}`,
+            summary: `Updated readiness score for ${componentId} / ${lens}: ${previousEntry.score} -> ${entry.score}`,
             componentId,
             lens,
-            after: {
-              text: action.text,
-              status: action.status,
-              owner: action.owner,
-              actionType: action.actionType,
-            },
-            source: 'local',
-          });
-          return;
-        }
-
-        const previousActionFingerprint = JSON.stringify({
-          text: previousAction.text,
-          status: previousAction.status,
-          owner: previousAction.owner,
-          actionType: previousAction.actionType,
-          notes: previousAction.notes,
-          dueDate: previousAction.dueDate,
-          startDate: previousAction.startDate,
-          evidence: previousAction.evidence,
-        });
-        const nextActionFingerprint = JSON.stringify({
-          text: action.text,
-          status: action.status,
-          owner: action.owner,
-          actionType: action.actionType,
-          notes: action.notes,
-          dueDate: action.dueDate,
-          startDate: action.startDate,
-          evidence: action.evidence,
-        });
-
-        if (previousActionFingerprint !== nextActionFingerprint) {
-          events.push({
-            eventType: 'action-updated',
-            entityType: 'action',
-            entityId: action.id,
-            summary: `Updated action in ${componentId} / ${lens}`,
-            componentId,
-            lens,
-            before: {
-              text: previousAction.text,
-              status: previousAction.status,
-              owner: previousAction.owner,
-              actionType: previousAction.actionType,
-            },
-            after: {
-              text: action.text,
-              status: action.status,
-              owner: action.owner,
-              actionType: action.actionType,
-            },
+            before: { score: previousEntry.score },
+            after: { score: entry.score },
             source: 'local',
           });
         }
+
+        if ((previousEntry.justification || '') !== (entry.justification || '')) {
+          events.push({
+            eventType: 'entry-justification-updated',
+            entityType: 'entry',
+            entityId: `${componentId}:${lens}`,
+            summary: `Updated justification for ${componentId} / ${lens}`,
+            componentId,
+            lens,
+            before: { justification: previousEntry.justification || '' },
+            after: { justification: entry.justification || '' },
+            source: 'local',
+          });
+        }
+
+        if ((previousEntry.evidence || '') !== (entry.evidence || '')) {
+          events.push({
+            eventType: 'entry-evidence-updated',
+            entityType: 'entry',
+            entityId: `${componentId}:${lens}`,
+            summary: `Updated evidence for ${componentId} / ${lens}`,
+            componentId,
+            lens,
+            before: { evidence: previousEntry.evidence || '' },
+            after: { evidence: entry.evidence || '' },
+            source: 'local',
+          });
+        }
+
+        const previousById = new Map(previousEntry.actions.map((action) => [action.id, action]));
+        entry.actions.forEach((action) => {
+          const previousAction = previousById.get(action.id);
+          if (!previousAction) {
+            events.push({
+              eventType: 'action-created',
+              entityType: 'action',
+              entityId: action.id,
+              summary: `Created action in ${componentId} / ${lens}`,
+              componentId,
+              lens,
+              after: {
+                text: action.text,
+                status: action.status,
+                owner: action.owner,
+                actionType: action.actionType,
+              },
+              source: 'local',
+            });
+            return;
+          }
+
+          const previousActionFingerprint = JSON.stringify({
+            text: previousAction.text,
+            status: previousAction.status,
+            owner: previousAction.owner,
+            actionType: previousAction.actionType,
+            notes: previousAction.notes,
+            dueDate: previousAction.dueDate,
+            startDate: previousAction.startDate,
+            evidence: previousAction.evidence,
+          });
+          const nextActionFingerprint = JSON.stringify({
+            text: action.text,
+            status: action.status,
+            owner: action.owner,
+            actionType: action.actionType,
+            notes: action.notes,
+            dueDate: action.dueDate,
+            startDate: action.startDate,
+            evidence: action.evidence,
+          });
+
+          if (previousActionFingerprint !== nextActionFingerprint) {
+            events.push({
+              eventType: 'action-updated',
+              entityType: 'action',
+              entityId: action.id,
+              summary: `Updated action in ${componentId} / ${lens}`,
+              componentId,
+              lens,
+              before: {
+                text: previousAction.text,
+                status: previousAction.status,
+                owner: previousAction.owner,
+                actionType: previousAction.actionType,
+              },
+              after: {
+                text: action.text,
+                status: action.status,
+                owner: action.owner,
+                actionType: action.actionType,
+              },
+              source: 'local',
+            });
+          }
+        });
+
+        const syncedStore = syncDerivedContent(nextStore);
+        return {
+          ...syncedStore,
+          auditLog: appendAuditEvents(prev, events),
+        };
       });
-
-      const syncedStore = syncDerivedContent(nextStore);
-      return {
-        ...syncedStore,
-        auditLog: appendAuditEvents(prev, events),
-      };
-    });
-  }, [appendAuditEvents]);
+    },
+    [appendAuditEvents]
+  );
 
   const applyActionStatusChange = useCallback(
     (componentId: string, lens: string, actionId: string, status: UnifiedActionStatus) => {
@@ -821,7 +826,8 @@ export function AdoptionApp() {
           },
         };
 
-        const changed = JSON.stringify(previousObjectives) !== JSON.stringify(objectivesForComponent);
+        const changed =
+          JSON.stringify(previousObjectives) !== JSON.stringify(objectivesForComponent);
         if (!changed) {
           return nextStore;
         }
@@ -946,8 +952,11 @@ export function AdoptionApp() {
         const importedCstId = parsed.orgProfile?.cstId;
         const currentCstId = store.orgProfile.cstId;
         const currentLabel =
-          store.orgProfile.projectName || store.orgProfile.trustName || 'your currently loaded programme';
-        const theirLabel = parsed.orgProfile?.projectName || parsed.orgProfile?.trustName || file.name;
+          store.orgProfile.projectName ||
+          store.orgProfile.trustName ||
+          'your currently loaded programme';
+        const theirLabel =
+          parsed.orgProfile?.projectName || parsed.orgProfile?.trustName || file.name;
 
         if (importedCstId && importedCstId !== currentCstId) {
           const proceed = window.confirm(
@@ -1044,39 +1053,42 @@ export function AdoptionApp() {
     announceStatus('Import cancelled.');
   }, [announceStatus]);
 
-  const handleLoadExampleData = useCallback(async (profile: 'red' | 'amber' | 'green') => {
-    try {
-      const response = await fetch(EXAMPLE_DATA_FILES[profile]);
-      if (!response.ok) {
-        throw new Error(`Failed to load sample data: ${response.status}`);
-      }
+  const handleLoadExampleData = useCallback(
+    async (profile: 'red' | 'amber' | 'green') => {
+      try {
+        const response = await fetch(EXAMPLE_DATA_FILES[profile]);
+        if (!response.ok) {
+          throw new Error(`Failed to load sample data: ${response.status}`);
+        }
 
-      const payload = parseImportedAdoptionAssessment(await response.json());
-      setStore((prev) => {
-        const merged = syncDerivedContent(mergeImportedAdoptionState(payload, prev));
-        return {
-          ...merged,
-          auditLog: appendAuditEvents(merged, [
-            {
-              eventType: 'example-data-loaded',
-              entityType: 'system',
-              summary: 'Loaded example assessment data',
-              source: 'local',
-            },
-          ]),
-        };
-      });
-      setView('dashboard');
-      announceStatus('Example assessment data loaded.');
-      if (shouldAutoCloseSidebar()) {
-        setIsSidebarOpen(false);
+        const payload = parseImportedAdoptionAssessment(await response.json());
+        setStore((prev) => {
+          const merged = syncDerivedContent(mergeImportedAdoptionState(payload, prev));
+          return {
+            ...merged,
+            auditLog: appendAuditEvents(merged, [
+              {
+                eventType: 'example-data-loaded',
+                entityType: 'system',
+                summary: 'Loaded example assessment data',
+                source: 'local',
+              },
+            ]),
+          };
+        });
+        setView('dashboard');
+        announceStatus('Example assessment data loaded.');
+        if (shouldAutoCloseSidebar()) {
+          setIsSidebarOpen(false);
+        }
+      } catch (error) {
+        console.error(error);
+        announceStatus('Unable to load example data right now.');
+        window.alert('Unable to load example data right now. Please try again.');
       }
-    } catch (error) {
-      console.error(error);
-      announceStatus('Unable to load example data right now.');
-      window.alert('Unable to load example data right now. Please try again.');
-    }
-  }, [announceStatus, appendAuditEvents]);
+    },
+    [announceStatus, appendAuditEvents]
+  );
 
   const handleResetData = useCallback(() => {
     const confirmed = window.confirm(
@@ -1268,7 +1280,9 @@ export function AdoptionApp() {
       }
       const actions = e?.actions || [];
       actionCount += actions.length;
-      completedActionCount += actions.filter((action) => isCompletedActionStatus(action.status)).length;
+      completedActionCount += actions.filter((action) =>
+        isCompletedActionStatus(action.status)
+      ).length;
     });
 
     if (scoredCount === 0) {
@@ -1360,50 +1374,8 @@ export function AdoptionApp() {
           </button>
           {expandedNavSections.intro ? (
             <nav className="space-y-1 mb-4">
-              {(['introduction', 'engine-explained', 'project-details', 'where-am-i-now'] as View[]).map(
-                (v) => (
-                  <button
-                    key={v}
-                    ref={(el) => {
-                      navItemRefs.current[`view:${v}`] = el;
-                    }}
-                    onClick={() => handleViewChange(v)}
-                    className={`w-full flex items-center px-4 py-2.5 text-sm transition-colors ${
-                      view === v
-                        ? 'bg-blue-800 text-white font-medium border-l-4 border-white'
-                        : 'text-blue-100 hover:bg-blue-800 border-l-4 border-transparent'
-                    }`}
-                  >
-                    {v === 'introduction'
-                      ? 'Introduction'
-                      : v === 'engine-explained'
-                        ? 'Engine Explained'
-                        : v === 'project-details'
-                          ? 'Project Profile'
-                          : 'Where Am I Now?'}
-                  </button>
-                )
-              )}
-            </nav>
-          ) : null}
-
-          {projectConfigured ? (
-            <>
-          <button
-            type="button"
-            aria-expanded={expandedNavSections.overview}
-            onClick={() =>
-              setExpandedNavSections((current) => ({ ...current, overview: !current.overview }))
-            }
-            className="mb-2 flex w-full items-center justify-between px-4 text-left text-xs font-semibold uppercase tracking-wider text-blue-300 hover:text-white"
-          >
-            <span>Overview</span>
-            <span aria-hidden="true">{expandedNavSections.overview ? '−' : '+'}</span>
-          </button>
-          {expandedNavSections.overview ? (
-            <nav className="space-y-1 mb-4">
               {(
-                ['dashboard', 'daily-checkin', 'action-plan', 'roadmap-view'] as View[]
+                ['introduction', 'engine-explained', 'project-details', 'where-am-i-now'] as View[]
               ).map((v) => (
                 <button
                   key={v}
@@ -1417,120 +1389,162 @@ export function AdoptionApp() {
                       : 'text-blue-100 hover:bg-blue-800 border-l-4 border-transparent'
                   }`}
                 >
-                  {v === 'dashboard'
-                    ? 'Metrics Dashboard'
-                    : v === 'daily-checkin'
-                      ? 'Daily Check-in'
-                      : v === 'action-plan'
-                        ? 'Action Tracker'
-                        : 'Component Delivery Timeline'}
+                  {v === 'introduction'
+                    ? 'Introduction'
+                    : v === 'engine-explained'
+                      ? 'Engine Explained'
+                      : v === 'project-details'
+                        ? 'Project Profile'
+                        : 'Where Am I Now?'}
                 </button>
               ))}
             </nav>
           ) : null}
 
-          <div className="px-4 mb-2 text-xs font-semibold text-blue-300 uppercase tracking-wider">
-            Change Components
-          </div>
-          <nav className="space-y-2 mb-8">
-            {Array.from(new Set(COMPONENTS.map((comp) => comp.phase))).map((phase) => {
-              const phaseComponents = COMPONENTS.filter((comp) => comp.phase === phase);
-              const isExpanded = expandedNavPhases[phase] ?? false;
-              return (
-                <div
-                  key={phase}
-                  className="mx-2 overflow-hidden rounded-md"
-                  style={{ backgroundColor: `${PHASE_SIDEBAR_COLORS[phase] || '#3b82f6'}33` }}
-                >
-                  <button
-                    type="button"
-                    aria-expanded={isExpanded}
-                    onClick={() =>
-                      setExpandedNavPhases((current) => ({
-                        ...current,
-                        [phase]: !isExpanded,
-                      }))
-                    }
-                    className="flex w-full items-center justify-between px-3 pb-1.5 pt-2.5 text-left text-sm font-semibold uppercase tracking-wider text-white"
-                  >
-                    <span>{PHASE_NAMES[phase] || `Phase ${phase}`}</span>
-                    <span aria-hidden="true">{isExpanded ? '−' : '+'}</span>
-                  </button>
-                  {isExpanded
-                    ? phaseComponents.map((comp) => {
-                        const isActive = view === 'assessment' && activeComponentId === comp.id;
-                        const status = getComponentStatus(comp);
-                        return (
-                          <button
-                            key={comp.id}
-                            ref={(el) => {
-                              navItemRefs.current[`component:${comp.id}`] = el;
-                            }}
-                            onClick={() => {
-                              openComponentAssessment(comp.id);
-                            }}
-                            className={`w-full text-left px-4 py-2 text-sm flex items-center justify-between transition-colors ${
-                              isActive
-                                ? 'bg-white font-medium text-[#005eb8]'
-                                : `hover:bg-blue-800 ${status.color}`
-                            }`}
-                          >
-                            <span className="truncate pr-2">{escapeHtml(comp.label)}</span>
-                            <span
-                              className="text-xs flex-shrink-0"
-                              title={status.label}
-                              aria-label={status.label}
-                            >
-                              {status.icon}
-                            </span>
-                          </button>
-                        );
-                      })
-                    : null}
-                </div>
-              );
-            })}
-          </nav>
+          {projectConfigured ? (
+            <>
+              <button
+                type="button"
+                aria-expanded={expandedNavSections.overview}
+                onClick={() =>
+                  setExpandedNavSections((current) => ({ ...current, overview: !current.overview }))
+                }
+                className="mb-2 flex w-full items-center justify-between px-4 text-left text-xs font-semibold uppercase tracking-wider text-blue-300 hover:text-white"
+              >
+                <span>Overview</span>
+                <span aria-hidden="true">{expandedNavSections.overview ? '−' : '+'}</span>
+              </button>
+              {expandedNavSections.overview ? (
+                <nav className="space-y-1 mb-4">
+                  {(['dashboard', 'daily-checkin', 'action-plan', 'roadmap-view'] as View[]).map(
+                    (v) => (
+                      <button
+                        key={v}
+                        ref={(el) => {
+                          navItemRefs.current[`view:${v}`] = el;
+                        }}
+                        onClick={() => handleViewChange(v)}
+                        className={`w-full flex items-center px-4 py-2.5 text-sm transition-colors ${
+                          view === v
+                            ? 'bg-blue-800 text-white font-medium border-l-4 border-white'
+                            : 'text-blue-100 hover:bg-blue-800 border-l-4 border-transparent'
+                        }`}
+                      >
+                        {v === 'dashboard'
+                          ? 'Metrics Dashboard'
+                          : v === 'daily-checkin'
+                            ? 'Daily Check-in'
+                            : v === 'action-plan'
+                              ? 'Action Tracker'
+                              : 'Component Delivery Timeline'}
+                      </button>
+                    )
+                  )}
+                </nav>
+              ) : null}
 
-          <button
-            type="button"
-            aria-expanded={expandedNavSections.tools}
-            onClick={() =>
-              setExpandedNavSections((current) => ({ ...current, tools: !current.tools }))
-            }
-            className="mb-2 flex w-full items-center justify-between px-4 text-left text-xs font-semibold uppercase tracking-wider text-blue-300 hover:text-white"
-          >
-            <span>Tools</span>
-            <span aria-hidden="true">{expandedNavSections.tools ? '−' : '+'}</span>
-          </button>
-          {expandedNavSections.tools ? (
-            <nav className="space-y-1 mb-8">
-              {(
-                ['highlight-builder', 'force-field-analysis', 'compare', 'audit-log'] as View[]
-              ).map((v) => (
-                <button
-                  key={v}
-                  ref={(el) => {
-                    navItemRefs.current[`view:${v}`] = el;
-                  }}
-                  onClick={() => handleViewChange(v)}
-                  className={`w-full flex items-center px-4 py-1 text-sm transition-colors ${
-                    view === v
-                      ? 'bg-blue-800 text-white font-medium border-l-4 border-white'
-                      : 'text-blue-100 hover:bg-blue-800 border-l-4 border-transparent'
-                  }`}
-                >
-                  {v === 'highlight-builder'
-                    ? 'Highlight Builder'
-                    : v === 'force-field-analysis'
-                      ? 'Force Field Analysis'
-                      : v === 'compare'
-                        ? 'Assess & Compare'
-                        : 'Audit Log'}
-                </button>
-              ))}
-            </nav>
-          ) : null}
+              <div className="px-4 mb-2 text-xs font-semibold text-blue-300 uppercase tracking-wider">
+                Change Components
+              </div>
+              <nav className="space-y-2 mb-8">
+                {Array.from(new Set(COMPONENTS.map((comp) => comp.phase))).map((phase) => {
+                  const phaseComponents = COMPONENTS.filter((comp) => comp.phase === phase);
+                  const isExpanded = expandedNavPhases[phase] ?? false;
+                  return (
+                    <div
+                      key={phase}
+                      className="mx-2 overflow-hidden rounded-md"
+                      style={{ backgroundColor: `${PHASE_SIDEBAR_COLORS[phase] || '#3b82f6'}33` }}
+                    >
+                      <button
+                        type="button"
+                        aria-expanded={isExpanded}
+                        onClick={() =>
+                          setExpandedNavPhases((current) => ({
+                            ...current,
+                            [phase]: !isExpanded,
+                          }))
+                        }
+                        className="flex w-full items-center justify-between px-3 pb-1.5 pt-2.5 text-left text-sm font-semibold uppercase tracking-wider text-white"
+                      >
+                        <span>{PHASE_NAMES[phase] || `Phase ${phase}`}</span>
+                        <span aria-hidden="true">{isExpanded ? '−' : '+'}</span>
+                      </button>
+                      {isExpanded
+                        ? phaseComponents.map((comp) => {
+                            const isActive = view === 'assessment' && activeComponentId === comp.id;
+                            const status = getComponentStatus(comp);
+                            return (
+                              <button
+                                key={comp.id}
+                                ref={(el) => {
+                                  navItemRefs.current[`component:${comp.id}`] = el;
+                                }}
+                                onClick={() => {
+                                  openComponentAssessment(comp.id);
+                                }}
+                                className={`w-full text-left px-4 py-2 text-sm flex items-center justify-between transition-colors ${
+                                  isActive
+                                    ? 'bg-white font-medium text-[#005eb8]'
+                                    : `hover:bg-blue-800 ${status.color}`
+                                }`}
+                              >
+                                <span className="truncate pr-2">{escapeHtml(comp.label)}</span>
+                                <span
+                                  className="text-xs flex-shrink-0"
+                                  title={status.label}
+                                  aria-label={status.label}
+                                >
+                                  {status.icon}
+                                </span>
+                              </button>
+                            );
+                          })
+                        : null}
+                    </div>
+                  );
+                })}
+              </nav>
+
+              <button
+                type="button"
+                aria-expanded={expandedNavSections.tools}
+                onClick={() =>
+                  setExpandedNavSections((current) => ({ ...current, tools: !current.tools }))
+                }
+                className="mb-2 flex w-full items-center justify-between px-4 text-left text-xs font-semibold uppercase tracking-wider text-blue-300 hover:text-white"
+              >
+                <span>Tools</span>
+                <span aria-hidden="true">{expandedNavSections.tools ? '−' : '+'}</span>
+              </button>
+              {expandedNavSections.tools ? (
+                <nav className="space-y-1 mb-8">
+                  {(
+                    ['highlight-builder', 'force-field-analysis', 'compare', 'audit-log'] as View[]
+                  ).map((v) => (
+                    <button
+                      key={v}
+                      ref={(el) => {
+                        navItemRefs.current[`view:${v}`] = el;
+                      }}
+                      onClick={() => handleViewChange(v)}
+                      className={`w-full flex items-center px-4 py-1 text-sm transition-colors ${
+                        view === v
+                          ? 'bg-blue-800 text-white font-medium border-l-4 border-white'
+                          : 'text-blue-100 hover:bg-blue-800 border-l-4 border-transparent'
+                      }`}
+                    >
+                      {v === 'highlight-builder'
+                        ? 'Highlight Builder'
+                        : v === 'force-field-analysis'
+                          ? 'Force Field Analysis'
+                          : v === 'compare'
+                            ? 'Assess & Compare'
+                            : 'Audit Log'}
+                    </button>
+                  ))}
+                </nav>
+              ) : null}
             </>
           ) : null}
 
@@ -1538,24 +1552,25 @@ export function AdoptionApp() {
             Account
           </div>
           <nav className="space-y-1 mb-8">
-            {(projectConfigured ? (['settings', 'profile'] as View[]) : (['profile'] as View[])).map(
-              (v) => (
-                <button
-                  key={v}
-                  ref={(el) => {
-                    navItemRefs.current[`view:${v}`] = el;
-                  }}
-                  onClick={() => handleViewChange(v)}
-                  className={`w-full flex items-center px-4 py-1 text-sm transition-colors ${
-                    view === v
-                      ? 'bg-blue-800 text-white font-medium border-l-4 border-white'
-                      : 'text-blue-100 hover:bg-blue-800 border-l-4 border-transparent'
-                  }`}
-                >
-                  {v === 'settings' ? 'Settings' : 'Profile'}
-                </button>
-              )
-            )}
+            {(projectConfigured
+              ? (['settings', 'profile'] as View[])
+              : (['profile'] as View[])
+            ).map((v) => (
+              <button
+                key={v}
+                ref={(el) => {
+                  navItemRefs.current[`view:${v}`] = el;
+                }}
+                onClick={() => handleViewChange(v)}
+                className={`w-full flex items-center px-4 py-1 text-sm transition-colors ${
+                  view === v
+                    ? 'bg-blue-800 text-white font-medium border-l-4 border-white'
+                    : 'text-blue-100 hover:bg-blue-800 border-l-4 border-transparent'
+                }`}
+              >
+                {v === 'settings' ? 'Settings' : 'Profile'}
+              </button>
+            ))}
           </nav>
 
           <div className="mt-8 px-4 pb-4 border-t border-blue-800 pt-6">
@@ -1666,7 +1681,7 @@ export function AdoptionApp() {
               >
                 Home
               </button>
-              
+
               <button onClick={handleImportClick} className={`${nhsButtonSecondary} h-9 px-3 py-0`}>
                 Import
               </button>
@@ -1754,7 +1769,10 @@ export function AdoptionApp() {
                   setUserSettings((prev) => ({
                     ...prev,
                     phaseFocusMode: mode,
-                    manualPhaseFocus: mode === 'manual' ? prev.manualPhaseFocus || metrics.currentPhase : prev.manualPhaseFocus,
+                    manualPhaseFocus:
+                      mode === 'manual'
+                        ? prev.manualPhaseFocus || metrics.currentPhase
+                        : prev.manualPhaseFocus,
                   }))
                 }
                 onManualPhaseFocusChange={(phase) =>
@@ -2075,7 +2093,6 @@ export function AdoptionApp() {
           }}
           darkMode={Boolean(userSettings.darkMode)}
         />
-
       </div>
     </div>
   );

@@ -50,15 +50,30 @@ import visionRaw from '@data/component-actions/vision-actions.json';
 import visionRawP2 from '@data/component-actions/vision-actions-pathway2.json';
 import visionRawP3 from '@data/component-actions/vision-actions-pathway3.json';
 import { ASSESSMENT_COMPONENTS } from '@data/components';
-import { type CstPathwayKey,OVERARCHING_PHASES, PATHWAY_OPTIONS } from '@data/cst';
+import { type CstPathwayKey, OVERARCHING_PHASES, PATHWAY_OPTIONS } from '@data/cst';
+import { type ActionPriority, moscowLetterForPriority, parseMoscowPrefix } from '@lib/moscow';
 import { load, save } from '@lib/storage';
-import { moscowLetterForPriority, parseMoscowPrefix, type ActionPriority } from '@lib/moscow';
 import { downloadFile } from '@lib/utils';
-import { type ChangeEvent, type JSX, type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  type ChangeEvent,
+  type JSX,
+  type ReactNode,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 const STORAGE_KEY = 'nhs-action-library-review';
 
-const BAND_LABELS = ['Not Started', 'Emerging', 'Developing', 'Embedding', 'Adopted', 'Thriving'] as const;
+const BAND_LABELS = [
+  'Not Started',
+  'Emerging',
+  'Developing',
+  'Embedding',
+  'Adopted',
+  'Thriving',
+] as const;
 
 /**
  * The bundled component-actions/*.json files write lenses with an ampersand ("Strategic
@@ -261,21 +276,23 @@ function buildDefaultComponentData(
   };
 }
 
-const DEFAULT_COMPONENTS_BY_PATHWAY: Record<CstPathwayKey, Record<string, ComponentActionsData>> =
-  PATHWAY_KEYS.reduce(
-    (byPathway, pathway) => {
-      const rawSources = RAW_SOURCES_BY_PATHWAY[pathway];
-      byPathway[pathway] = ASSESSMENT_COMPONENTS.reduce(
-        (map, component) => {
-          map[component.id] = buildDefaultComponentData(component.id, rawSources);
-          return map;
-        },
-        {} as Record<string, ComponentActionsData>
-      );
-      return byPathway;
-    },
-    {} as Record<CstPathwayKey, Record<string, ComponentActionsData>>
-  );
+const DEFAULT_COMPONENTS_BY_PATHWAY: Record<
+  CstPathwayKey,
+  Record<string, ComponentActionsData>
+> = PATHWAY_KEYS.reduce(
+  (byPathway, pathway) => {
+    const rawSources = RAW_SOURCES_BY_PATHWAY[pathway];
+    byPathway[pathway] = ASSESSMENT_COMPONENTS.reduce(
+      (map, component) => {
+        map[component.id] = buildDefaultComponentData(component.id, rawSources);
+        return map;
+      },
+      {} as Record<string, ComponentActionsData>
+    );
+    return byPathway;
+  },
+  {} as Record<CstPathwayKey, Record<string, ComponentActionsData>>
+);
 
 function normaliseComponentData(
   raw: unknown,
@@ -285,7 +302,11 @@ function normaliseComponentData(
   if (!raw || typeof raw !== 'object') {
     return fallback;
   }
-  const value = raw as { component?: { id?: string; name?: string }; outcomes?: RawOutcome[]; actions?: unknown };
+  const value = raw as {
+    component?: { id?: string; name?: string };
+    outcomes?: RawOutcome[];
+    actions?: unknown;
+  };
   const actions = parseActionsFromRaw(value.actions, componentId);
   const outcomes = Array.isArray(value.outcomes)
     ? value.outcomes
@@ -335,7 +356,12 @@ function normaliseState(parsed: unknown): ReviewState {
   const rawPathways = (
     value.pathways && typeof value.pathways === 'object'
       ? value.pathways
-      : { 'pathway-1': { components: value.components, reviewedComponentIds: value.reviewedComponentIds } }
+      : {
+          'pathway-1': {
+            components: value.components,
+            reviewedComponentIds: value.reviewedComponentIds,
+          },
+        }
   ) as Record<string, unknown>;
 
   const pathways = PATHWAY_KEYS.reduce(
@@ -383,7 +409,11 @@ function moveActionInGroup(
   return next;
 }
 
-function updateActionBand(actions: LibraryAction[], actionId: string, newBand: number): LibraryAction[] {
+function updateActionBand(
+  actions: LibraryAction[],
+  actionId: string,
+  newBand: number
+): LibraryAction[] {
   const currentIndex = actions.findIndex((action) => action.id === actionId);
   if (currentIndex < 0) {
     return actions;
@@ -479,9 +509,7 @@ function AccordionSection({
           +
         </span>
       </button>
-      {isOpen ? (
-        <div className="border-t border-slate-100 bg-white p-4">{children}</div>
-      ) : null}
+      {isOpen ? <div className="border-t border-slate-100 bg-white p-4">{children}</div> : null}
     </section>
   );
 }
@@ -548,7 +576,9 @@ function ActionRow({
           <select
             value={action.priority || ''}
             onChange={(event) =>
-              onUpdate({ priority: (event.target.value || undefined) as ActionPriority | undefined })
+              onUpdate({
+                priority: (event.target.value || undefined) as ActionPriority | undefined,
+              })
             }
             aria-label="Priority"
             className="rounded-md border border-slate-300 px-2 py-1 text-xs font-semibold text-slate-700"
@@ -692,7 +722,9 @@ function OutcomeRow({
 export default function ActionLibraryReviewApp(): JSX.Element {
   const [state, setState] = useState<ReviewState>(() => readStoredState());
   const [selectedPathway, setSelectedPathway] = useState<CstPathwayKey>('pathway-1');
-  const [selectedComponentId, setSelectedComponentId] = useState<string>(ASSESSMENT_COMPONENTS[0].id);
+  const [selectedComponentId, setSelectedComponentId] = useState<string>(
+    ASSESSMENT_COMPONENTS[0].id
+  );
   const [openBand, setOpenBand] = useState<number | null>(0);
   const [filterText, setFilterText] = useState('');
   const [importError, setImportError] = useState<string | null>(null);
@@ -799,14 +831,14 @@ export default function ActionLibraryReviewApp(): JSX.Element {
           action.id === actionId ? { ...action, description: updates.description! } : action
         );
       }
-      return actions.map((action) =>
-        action.id === actionId ? { ...action, ...updates } : action
-      );
+      return actions.map((action) => (action.id === actionId ? { ...action, ...updates } : action));
     });
   };
 
   const moveAction = (componentId: string, actionId: string, direction: -1 | 1) => {
-    updateComponentActions(componentId, (actions) => moveActionInGroup(actions, actionId, direction));
+    updateComponentActions(componentId, (actions) =>
+      moveActionInGroup(actions, actionId, direction)
+    );
   };
 
   const resetAction = (componentId: string, actionId: string) => {
@@ -863,7 +895,9 @@ export default function ActionLibraryReviewApp(): JSX.Element {
       return;
     }
     updateComponentOutcomes(componentId, (outcomes) =>
-      outcomes.map((outcome) => (outcome.id === outcomeId ? { ...outcome, name: original.name } : outcome))
+      outcomes.map((outcome) =>
+        outcome.id === outcomeId ? { ...outcome, name: original.name } : outcome
+      )
     );
   };
 
@@ -898,7 +932,9 @@ export default function ActionLibraryReviewApp(): JSX.Element {
           reviewedComponentIds: current.pathways[selectedPathway].reviewedComponentIds.includes(
             componentId
           )
-            ? current.pathways[selectedPathway].reviewedComponentIds.filter((id) => id !== componentId)
+            ? current.pathways[selectedPathway].reviewedComponentIds.filter(
+                (id) => id !== componentId
+              )
             : [...current.pathways[selectedPathway].reviewedComponentIds, componentId],
         },
       },
@@ -1004,11 +1040,11 @@ export default function ActionLibraryReviewApp(): JSX.Element {
             Pick a pathway and a component. Each action can have its wording edited, be moved to a
             different level using the dropdown, or reordered with the ▲▼ buttons within its group.
             Use <strong>+ Add action</strong> at the bottom of a group to add a new one, or
-            <strong> Remove</strong> on a row to take it out (removed actions can be restored further
-            down if you change your mind). Outcomes work the same way, in the section above the
-            actions. Your changes save automatically in this browser. Tick "Reviewed" once you're
-            happy with a component, then use <strong>Export my review</strong> when you're done and
-            send the downloaded file back.
+            <strong> Remove</strong> on a row to take it out (removed actions can be restored
+            further down if you change your mind). Outcomes work the same way, in the section above
+            the actions. Your changes save automatically in this browser. Tick "Reviewed" once
+            you're happy with a component, then use <strong>Export my review</strong> when you're
+            done and send the downloaded file back.
           </p>
         </div>
 
@@ -1039,8 +1075,8 @@ export default function ActionLibraryReviewApp(): JSX.Element {
           </div>
           {selectedPathway !== 'pathway-1' ? (
             <p className="mt-1.5 text-xs text-slate-500">
-              This pathway's default content is an early first pass - please review it carefully and edit
-              as needed.
+              This pathway's default content is an early first pass - please review it carefully and
+              edit as needed.
             </p>
           ) : null}
         </div>
@@ -1093,7 +1129,8 @@ export default function ActionLibraryReviewApp(): JSX.Element {
               <div>
                 <h2 className="text-lg font-bold text-slate-800">{selectedComponent?.label}</h2>
                 <p className="text-xs text-slate-500">
-                  {selectedData.actions.length} actions across {selectedComponent?.lenses.length} lens(es)
+                  {selectedData.actions.length} actions across {selectedComponent?.lenses.length}{' '}
+                  lens(es)
                 </p>
               </div>
               <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
@@ -1181,7 +1218,8 @@ export default function ActionLibraryReviewApp(): JSX.Element {
               const actionsInBand = selectedData.actions.filter(
                 (action) =>
                   action.band === level.value &&
-                  (!filterText || action.description.toLowerCase().includes(filterText.toLowerCase()))
+                  (!filterText ||
+                    action.description.toLowerCase().includes(filterText.toLowerCase()))
               );
 
               return (
@@ -1189,7 +1227,9 @@ export default function ActionLibraryReviewApp(): JSX.Element {
                   key={level.value}
                   title={`${level.label} (${actionsInBand.length})`}
                   isOpen={openBand === level.value}
-                  onToggle={() => setOpenBand((current) => (current === level.value ? null : level.value))}
+                  onToggle={() =>
+                    setOpenBand((current) => (current === level.value ? null : level.value))
+                  }
                 >
                   <div className="space-y-5">
                     {selectedComponent?.lenses.map((lens) => {
@@ -1208,7 +1248,9 @@ export default function ActionLibraryReviewApp(): JSX.Element {
                                 onUpdate={(updates) =>
                                   updateAction(selectedComponentId, action.id, updates)
                                 }
-                                onMove={(direction) => moveAction(selectedComponentId, action.id, direction)}
+                                onMove={(direction) =>
+                                  moveAction(selectedComponentId, action.id, direction)
+                                }
                                 onReset={() => resetAction(selectedComponentId, action.id)}
                                 onRemove={() => removeAction(selectedComponentId, action.id)}
                                 canMoveUp={index > 0}

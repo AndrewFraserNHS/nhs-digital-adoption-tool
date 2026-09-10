@@ -126,7 +126,7 @@ describe('EngineExplainedPage', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Piloted and Ready to Scale Up' }));
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
 
-    // assert - breadcrumb reflects the chosen pathway
-    expect(screen.getByText('Piloted and Ready to Scale Up')).toBeInTheDocument();
+    // assert - breadcrumb uses the generic relationship heading
+    expect(screen.getByText('Pathway')).toBeInTheDocument();
   });
 });

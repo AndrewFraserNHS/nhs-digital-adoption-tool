@@ -46,7 +46,7 @@ export function PageIntroModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45">
       <div
         className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} w-full max-w-lg rounded-xl border p-6 shadow-2xl`}
       >

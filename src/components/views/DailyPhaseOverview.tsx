@@ -122,6 +122,7 @@ const PHASES: PhaseOverview[] = [
 export interface DailyPhaseOverviewProps {
   currentPhase: number;
   onComponentClick: (componentId: string) => void;
+  headingsOnly?: boolean;
   guidanceTarget?: MaturityGuidanceTarget;
   linkOverrides?: LinkOverrides;
   showAdditionalGuidanceLinks?: boolean;
@@ -131,6 +132,7 @@ export interface DailyPhaseOverviewProps {
 export function DailyPhaseOverview({
   currentPhase,
   onComponentClick,
+  headingsOnly = false,
   guidanceTarget = 'Default',
   linkOverrides,
   showAdditionalGuidanceLinks = true,
@@ -156,6 +158,22 @@ export function DailyPhaseOverview({
       </div>
       <div className="space-y-3 p-4">
         {PHASES.map((phase) => {
+          if (headingsOnly) {
+            return (
+              <div
+                key={phase.phase}
+                className={`rounded-md border px-4 py-3 ${darkMode ? `${phase.darkBorderColor} ${phase.darkColor}` : `${phase.borderColor} ${phase.color}`}`}
+              >
+                <span className={`block text-sm font-semibold ${darkMode ? phase.darkTextColor : phase.textColor}`}>
+                  Phase {phase.phase}: {phase.label}
+                </span>
+                <span className={`mt-0.5 block text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
+                  {phase.tagline} · {phase.programmeStage}
+                </span>
+              </div>
+            );
+          }
+
           return (
             <details
               key={phase.phase}

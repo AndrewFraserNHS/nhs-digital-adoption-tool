@@ -2,6 +2,7 @@ import { JSX, useState, type ReactNode } from 'react';
 import { ASSESSMENT_COMPONENTS, getComponentsByPhase } from '@data/components';
 import { PATHWAY_OPTIONS, type CstPathwayKey } from '@data/cst';
 import { getComponentDescription, getLensDescription } from '@data/descriptions';
+import { ASSESSMENT_LENSES } from '@data/lenses';
 import { PHASE_NAMES } from '../../types/constants';
 import { READINESS_BANDS } from '@lib/readinessBands';
 import { GENERIC_RUBRIC } from '@data/rubrics';
@@ -40,21 +41,19 @@ const EXAMPLE_BAND_SCORE = 2;
 /** Small horizontal trail showing which relationship is being built up as the tutorial progresses. */
 function Breadcrumb({
   activeStep,
-  pathwayLabel,
   darkMode,
 }: {
   activeStep: number;
-  pathwayLabel: string;
   darkMode: boolean;
 }): JSX.Element {
   const crumbs = [
-    pathwayLabel,
-    `Phase ${EXAMPLE_COMPONENT.phase}: ${PHASE_NAMES[EXAMPLE_COMPONENT.phase] || ''}`,
+    'Pathway',
+    'Phases',
     'Components',
     EXAMPLE_COMPONENT.label,
     'Lens',
     EXAMPLE_LENS,
-    `Readiness ${EXAMPLE_BAND_SCORE}`,
+    `Readiness`,
     'Actions',
   ];
 
@@ -93,55 +92,38 @@ function Breadcrumb({
  * names plainly - no deliverable copy, no guidance links, nothing clickable. Purely introducing
  * "components live inside phases" before we zoom into one specific component next.
  */
-function ComponentsOverviewAccordion({ darkMode }: { darkMode: boolean }): JSX.Element {
-  const [expandedPhase, setExpandedPhase] = useState(EXAMPLE_COMPONENT.phase);
+function ComponentsOverviewTable({ darkMode }: { darkMode: boolean }): JSX.Element {
   const phases = [1, 2, 3, 4, 5];
+  const phaseStyles = [
+    { border: 'border-blue-300', heading: 'bg-blue-50 text-blue-700', body: 'bg-blue-50/40' },
+    { border: 'border-violet-300', heading: 'bg-violet-50 text-violet-700', body: 'bg-violet-50/40' },
+    { border: 'border-amber-300', heading: 'bg-amber-50 text-amber-700', body: 'bg-amber-50/40' },
+    { border: 'border-orange-300', heading: 'bg-orange-50 text-orange-700', body: 'bg-orange-50/40' },
+    { border: 'border-green-300', heading: 'bg-green-50 text-green-700', body: 'bg-green-50/40' },
+  ];
 
   return (
-    <div className="space-y-3">
-      {phases.map((phase) => {
+    <div className={`overflow-hidden rounded-md border ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}>
+      <div className={`grid grid-cols-[minmax(150px,0.7fr),minmax(0,2fr)] text-xs font-bold uppercase tracking-wider ${darkMode ? 'bg-slate-900 text-slate-300' : 'bg-slate-100 text-slate-600'}`}>
+        <div className="border-r px-4 py-3">Phase</div>
+        <div className="px-4 py-3">Components</div>
+      </div>
+      {phases.map((phase, index) => {
         const phaseComponents = getComponentsByPhase(phase);
+        const styles = phaseStyles[index];
         return (
-          <details
-            key={phase}
-            open={expandedPhase === phase}
-            onToggle={(event) => {
-              if (event.currentTarget.open) {
-                setExpandedPhase(phase);
-              } else if (expandedPhase === phase) {
-                setExpandedPhase(0);
-              }
-            }}
-            className={`group overflow-hidden rounded-md border ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}
-          >
-            <summary
-              className={`flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-left focus:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-[#ffeb3b] [&::-webkit-details-marker]:hidden ${darkMode ? 'bg-slate-900 text-slate-100 hover:bg-slate-700' : 'bg-slate-50 text-slate-800 hover:bg-slate-100'}`}
-            >
-              <span className="text-sm font-semibold">
-                Phase {phase}: {PHASE_NAMES[phase] || ''}
-              </span>
-              <span
-                className="text-xl font-bold transition-transform group-open:rotate-45"
-                aria-hidden="true"
-              >
-                +
-              </span>
-            </summary>
-            <div
-              className={`border-t p-4 ${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'}`}
-            >
-              <div className="flex flex-wrap gap-2">
-                {phaseComponents.map((phaseComponent) => (
-                  <span
-                    key={phaseComponent.id}
-                    className={`rounded-full px-3 py-1 text-xs font-semibold ${darkMode ? 'bg-slate-900 text-slate-200' : 'bg-slate-100 text-slate-700'}`}
-                  >
-                    {phaseComponent.label}
-                  </span>
-                ))}
-              </div>
+          <div key={phase} className={`grid grid-cols-[minmax(150px,0.7fr),minmax(0,2fr)] border-t ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}>
+            <div className={`border-r px-4 py-4 text-sm font-semibold ${darkMode ? 'bg-slate-900 text-slate-100' : `${styles.heading} ${styles.border}`}`}>
+              Phase {phase}: {PHASE_NAMES[phase] || ''}
             </div>
-          </details>
+            <div className={`flex flex-wrap gap-2 px-4 py-4 ${darkMode ? 'bg-slate-800' : styles.body}`}>
+              {phaseComponents.map((phaseComponent) => (
+                <span key={phaseComponent.id} className={`rounded-full px-3 py-1 text-xs font-semibold ${darkMode ? 'bg-slate-900 text-slate-200' : 'bg-white text-slate-700 shadow-sm'}`}>
+                  {phaseComponent.label}
+                </span>
+              ))}
+            </div>
+          </div>
         );
       })}
     </div>
@@ -193,7 +175,6 @@ export function EngineExplainedPage({
       {activeStep > 0 ? (
         <Breadcrumb
           activeStep={activeStep}
-          pathwayLabel={pathway.simplifiedLabel}
           darkMode={darkMode}
         />
       ) : null}
@@ -268,13 +249,14 @@ export function EngineExplainedPage({
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
               Every pathway runs through the same 5 phases, from the earliest thinking about a
               change through to it being fully embedded as business as usual. This is the same phase
-              breakdown you'll see on your Daily Check-in once your project is set up - expand a
-              phase below to see what it covers.
+              breakdown you'll see on your Daily Check-in once your project is set up. The phase
+              headings are shown below.
             </p>
             <div className="mt-6">
               <DailyPhaseOverview
                 currentPhase={EXAMPLE_COMPONENT.phase}
                 onComponentClick={onComponentClick}
+                headingsOnly
                 darkMode={darkMode}
               />
             </div>
@@ -295,11 +277,11 @@ export function EngineExplainedPage({
             </h3>
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
               Components are the focused topics within each phase - things like Vision, Sponsorship,
-              Capability or Benefits. Expand a phase below to see which components sit inside it (in
-              the real tool, each one is clickable and has its own readiness and actions):
+              Capability or Benefits. The table below shows which components sit inside each phase
+              (in the real tool, each one is clickable and has its own readiness and actions):
             </p>
             <div className="mt-6">
-              <ComponentsOverviewAccordion darkMode={darkMode} />
+              <ComponentsOverviewTable darkMode={darkMode} />
             </div>
             <p className={`mt-4 text-sm ${textClass}`}>
               Let's zoom into one specific component from Phase {EXAMPLE_COMPONENT.phase}:{' '}
@@ -350,10 +332,10 @@ export function EngineExplainedPage({
               Every component is assessed through a handful of lenses - perspectives like
               leadership, culture, planning, skills or process. Each lens gets its own readiness
               score, because a component can be strong in one lens and weak in another. Here are all
-              of {EXAMPLE_COMPONENT.label}'s lenses:
+              of the lenses used across the Adoption Engine:
             </p>
             <div className="mt-6 grid grid-cols-1 gap-3">
-              {EXAMPLE_COMPONENT.lenses.map((lens) => (
+              {ASSESSMENT_LENSES.map((lens) => (
                 <div
                   key={lens}
                   className={`rounded-lg border p-5 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-white'}`}

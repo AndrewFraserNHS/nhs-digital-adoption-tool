@@ -100,6 +100,19 @@ export function WhereAmINowPage({
     return checked.length ? Math.max(...checked) : 1;
   }, [checkedPhases]);
 
+  /** First component (in phase order) whose weakest lens hasn't yet reached full readiness - i.e. where to pick up next. */
+  const nextUnderdevelopedComponent = useMemo(() => {
+    return (
+      components.find((component) => {
+        const scores = component.lenses.map((lens) =>
+          Number(getEntry(component.id, lens).score || 0)
+        );
+        const weakestScore = scores.length ? Math.min(...scores) : 0;
+        return weakestScore < 5;
+      }) || null
+    );
+  }, [components, getEntry]);
+
   const hasAnsweredAnything = Object.values(checkedPhases).some(Boolean);
   const textClass = darkMode ? 'text-slate-300' : 'text-slate-600';
 
@@ -215,17 +228,21 @@ export function WhereAmINowPage({
           </div>
 
           <p className={`mt-4 text-center text-sm italic ${textClass}`}>
-            We suggest if you haven't already starting from Vision and moving clockwise.
+            {nextUnderdevelopedComponent
+              ? `We suggest picking up next at ${nextUnderdevelopedComponent.label}, then working outward from there.`
+              : "Every component has reached full readiness on its weakest lens - nice work."}
           </p>
 
           <div className="mt-4 flex justify-center">
-            <button
-              type="button"
-              onClick={() => onComponentClick('vision')}
-              className="rounded-md bg-[#005eb8] px-5 py-2 text-sm font-semibold text-white shadow-[0_3px_0_#003087] hover:bg-[#00417a]"
-            >
-              Let's check out our Vision component
-            </button>
+            {nextUnderdevelopedComponent ? (
+              <button
+                type="button"
+                onClick={() => onComponentClick(nextUnderdevelopedComponent.id)}
+                className="rounded-md bg-[#005eb8] px-5 py-2 text-sm font-semibold text-white shadow-[0_3px_0_#003087] hover:bg-[#00417a]"
+              >
+                Let's check out our {nextUnderdevelopedComponent.label} component
+              </button>
+            ) : null}
           </div>
         </div>
       </div>

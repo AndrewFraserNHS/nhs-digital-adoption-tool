@@ -57,13 +57,51 @@ describe('WhereAmINowPage', () => {
     );
 
     // assert
-    expect(screen.getByText(/starting from Vision and moving clockwise/)).toBeInTheDocument();
+    expect(screen.getByText(/picking up next at Vision/)).toBeInTheDocument();
 
     // act
     fireEvent.click(screen.getByRole('button', { name: "Let's check out our Vision component" }));
 
     // assert
     expect(onComponentClick).toHaveBeenCalledWith('vision');
+  });
+
+  it('SHOULD link to the next component that has not yet reached full readiness, not always Vision', () => {
+    // arrange - Vision is fully ready (every lens at 5), Sponsorship is not
+    const mixedComponents: AssessmentComponent[] = [
+      { id: 'vision', label: 'Vision', lenses: ['Lens A'], phase: 1, target: 4 },
+      { id: 'sponsorship', label: 'Sponsorship', lenses: ['Lens A'], phase: 1, target: 4 },
+    ];
+    const onComponentClick = vi.fn();
+    render(
+      <WhereAmINowPage
+        components={mixedComponents}
+        getEntry={(componentId) => ({
+          score: componentId === 'vision' ? 5 : 2,
+          justification: '',
+          evidence: '',
+          actions: [],
+        })}
+        effectivePhaseFocus={1}
+        phaseFocusMode="auto"
+        onComponentClick={onComponentClick}
+        onSetManualPhase={vi.fn()}
+        onResetToAuto={vi.fn()}
+      />
+    );
+
+    // assert - CTA points at Sponsorship, not Vision
+    expect(
+      screen.getByRole('button', { name: "Let's check out our Sponsorship component" })
+    ).toBeInTheDocument();
+
+    // act
+    fireEvent.click(
+      screen.getByRole('button', { name: "Let's check out our Sponsorship component" })
+    );
+
+    // assert
+    expect(onComponentClick).toHaveBeenCalledWith('sponsorship');
   });
 
   it('SHOULD offer a reset-to-auto control only WHILE the phase is manually set', () => {

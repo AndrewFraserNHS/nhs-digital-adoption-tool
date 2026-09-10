@@ -1036,15 +1036,19 @@ export function AssessmentPanel({
   ]);
   const [actionEditor, setActionEditor] = useState<ActionEditorState | null>(null);
   const [showReadinessScoreInfo, setShowReadinessScoreInfo] = useState(false);
-  const [scoreAdvanceToast, setScoreAdvanceToast] = useState<string | null>(null);
+  const [scoreAdvanceToastQueue, setScoreAdvanceToastQueue] = useState<
+    { id: string; message: string }[]
+  >([]);
 
   const applyScoreAdvance = useCallback(
     (lens: string, previousScore: number, actions: DraftAction[]): number => {
       const nextScore = advanceScoreWhileActionsComplete(previousScore, actions);
       if (nextScore > previousScore) {
-        setScoreAdvanceToast(
-          `${component.label} · ${lens} moved to ${getReadinessBand(nextScore).label}!`
-        );
+        const message = `${component.label} · ${lens} moved to ${getReadinessBand(nextScore).label}!`;
+        setScoreAdvanceToastQueue((queue) => [
+          ...queue,
+          { id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, message },
+        ]);
       }
       return nextScore;
     },
@@ -3018,8 +3022,13 @@ export function AssessmentPanel({
         />
       ) : null}
 
-      {scoreAdvanceToast ? (
-        <Toast message={scoreAdvanceToast} onDismiss={() => setScoreAdvanceToast(null)} celebrate />
+      {scoreAdvanceToastQueue.length > 0 ? (
+        <Toast
+          key={scoreAdvanceToastQueue[0].id}
+          message={scoreAdvanceToastQueue[0].message}
+          onDismiss={() => setScoreAdvanceToastQueue((queue) => queue.slice(1))}
+          celebrate
+        />
       ) : null}
 
       {objectiveViewer && activeObjective && activeObjectiveStatus ? (

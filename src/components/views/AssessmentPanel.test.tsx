@@ -809,6 +809,86 @@ describe('AssessmentPanel', () => {
     expect(screen.getByText(/moved to Embedding!/)).toBeInTheDocument();
   });
 
+  it('SHOULD queue a second readiness-upgrade toast (with its own confetti) instead of dropping it WHILE one is already open', () => {
+    // arrange - a component with two lenses, each with one action ready to complete
+    const twoLensComponents: AssessmentComponent[] = [
+      {
+        id: 'vision',
+        label: 'Vision',
+        lenses: ['Strategic Direction', 'Leadership'],
+        phase: 1,
+        target: 4,
+      },
+    ];
+    const strategicEntry = createEntry({
+      score: 2,
+      actions: [
+        {
+          id: 'action-1',
+          text: 'Run workshop',
+          owner: 'PMO',
+          timescale: 'Q3',
+          status: 'Planned',
+          readinessScore: 2,
+        },
+      ],
+    });
+    const leadershipEntry = createEntry({
+      score: 2,
+      actions: [
+        {
+          id: 'action-2',
+          text: 'Brief the SRO',
+          owner: 'PMO',
+          timescale: 'Q3',
+          status: 'Planned',
+          readinessScore: 2,
+        },
+      ],
+    });
+    const entryByKey: Record<string, DraftEntry> = {
+      'vision:Strategic Direction': strategicEntry,
+      'vision:Leadership': leadershipEntry,
+    };
+    const props = {
+      ...createProps({ entry: strategicEntry }),
+      components: twoLensComponents,
+      getEntry: (componentId: string, lens: string) => entryByKey[`${componentId}:${lens}`],
+    };
+    localStorage.setItem(EVIDENCE_WARNING_DISMISSED_KEY, 'true');
+    localStorage.setItem(ASSESSMENT_PAGE_INTRO_SEEN_KEY, 'true');
+
+    // act 1 - complete the Strategic Direction action, showing the first toast
+    const { rerender } = render(
+      <AssessmentPanel
+        {...props}
+        focusAction={{ lens: 'Strategic Direction', actionId: 'action-1' }}
+      />
+    );
+    fireEvent.change(screen.getByLabelText('Status'), { target: { value: 'Completed' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save Action' }));
+    expect(screen.getByText(/Strategic Direction moved to/)).toBeInTheDocument();
+    expect(document.querySelector('[aria-hidden="true"].pointer-events-none')).toBeTruthy();
+
+    // act 2 - WHILE that toast is still open, complete the Leadership action too
+    rerender(
+      <AssessmentPanel {...props} focusAction={{ lens: 'Leadership', actionId: 'action-2' }} />
+    );
+    fireEvent.change(screen.getByLabelText('Status'), { target: { value: 'Completed' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save Action' }));
+
+    // assert 1 - the first toast is still showing (not silently replaced/dropped)
+    expect(screen.getByText(/Strategic Direction moved to/)).toBeInTheDocument();
+    expect(screen.queryByText(/Leadership moved to/)).not.toBeInTheDocument();
+
+    // act 3 - dismiss the first toast
+    fireEvent.click(screen.getByLabelText('Dismiss'));
+
+    // assert 2 - the second toast now appears, with its own confetti burst
+    expect(screen.getByText(/Leadership moved to/)).toBeInTheDocument();
+    expect(document.querySelector('[aria-hidden="true"].pointer-events-none')).toBeTruthy();
+  });
+
   it('SHOULD turn the owner avatar into a select on click and update the owner on change', () => {
     // arrange
     const entry = createEntry();

@@ -13,7 +13,16 @@ export interface EngineExplainedPageProps {
   onComponentClick: (componentId: string) => void;
 }
 
-const STEP_TITLES = ['Pathway', 'Phases', 'Component', 'Lens', 'Readiness', 'Actions'];
+const STEP_TITLES = [
+  'Pathways',
+  'Phases',
+  'Components',
+  'Vision',
+  'Lens',
+  'Strat Direct',
+  'Readiness',
+  'Actions',
+];
 
 const PATHWAY_DETAILS: Record<CstPathwayKey, string> = {
   'pathway-1':
@@ -41,7 +50,9 @@ function Breadcrumb({
   const crumbs = [
     pathwayLabel,
     `Phase ${EXAMPLE_COMPONENT.phase}: ${PHASE_NAMES[EXAMPLE_COMPONENT.phase] || ''}`,
+    'Components',
     EXAMPLE_COMPONENT.label,
+    'Lens',
     EXAMPLE_LENS,
     `Readiness ${EXAMPLE_BAND_SCORE}`,
     'Actions',
@@ -73,6 +84,66 @@ function Breadcrumb({
           ) : null}
         </span>
       ))}
+    </div>
+  );
+}
+
+/**
+ * Same phase-grouped accordion shell as the Phases step, but listing each phase's component
+ * names plainly - no deliverable copy, no guidance links, nothing clickable. Purely introducing
+ * "components live inside phases" before we zoom into one specific component next.
+ */
+function ComponentsOverviewAccordion({ darkMode }: { darkMode: boolean }): JSX.Element {
+  const [expandedPhase, setExpandedPhase] = useState(EXAMPLE_COMPONENT.phase);
+  const phases = [1, 2, 3, 4, 5];
+
+  return (
+    <div className="space-y-3">
+      {phases.map((phase) => {
+        const phaseComponents = getComponentsByPhase(phase);
+        return (
+          <details
+            key={phase}
+            open={expandedPhase === phase}
+            onToggle={(event) => {
+              if (event.currentTarget.open) {
+                setExpandedPhase(phase);
+              } else if (expandedPhase === phase) {
+                setExpandedPhase(0);
+              }
+            }}
+            className={`group overflow-hidden rounded-md border ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}
+          >
+            <summary
+              className={`flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-left focus:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-[#ffeb3b] [&::-webkit-details-marker]:hidden ${darkMode ? 'bg-slate-900 text-slate-100 hover:bg-slate-700' : 'bg-slate-50 text-slate-800 hover:bg-slate-100'}`}
+            >
+              <span className="text-sm font-semibold">
+                Phase {phase}: {PHASE_NAMES[phase] || ''}
+              </span>
+              <span
+                className="text-xl font-bold transition-transform group-open:rotate-45"
+                aria-hidden="true"
+              >
+                +
+              </span>
+            </summary>
+            <div
+              className={`border-t p-4 ${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'}`}
+            >
+              <div className="flex flex-wrap gap-2">
+                {phaseComponents.map((phaseComponent) => (
+                  <span
+                    key={phaseComponent.id}
+                    className={`rounded-full px-3 py-1 text-xs font-semibold ${darkMode ? 'bg-slate-900 text-slate-200' : 'bg-slate-100 text-slate-700'}`}
+                  >
+                    {phaseComponent.label}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </details>
+        );
+      })}
     </div>
   );
 }
@@ -220,6 +291,28 @@ export function EngineExplainedPage({
             <h3
               className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
             >
+              Every phase is made up of several components
+            </h3>
+            <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
+              Components are the focused topics within each phase - things like Vision, Sponsorship,
+              Capability or Benefits. Expand a phase below to see which components sit inside it (in
+              the real tool, each one is clickable and has its own readiness and actions):
+            </p>
+            <div className="mt-6">
+              <ComponentsOverviewAccordion darkMode={darkMode} />
+            </div>
+            <p className={`mt-4 text-sm ${textClass}`}>
+              Let's zoom into one specific component from Phase {EXAMPLE_COMPONENT.phase}:{' '}
+              {EXAMPLE_COMPONENT.label}.
+            </p>
+          </>
+        ) : null}
+
+        {activeStep === 3 ? (
+          <>
+            <h3
+              className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
+            >
               A component is a specific area of change to get right
             </h3>
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
@@ -246,7 +339,7 @@ export function EngineExplainedPage({
           </>
         ) : null}
 
-        {activeStep === 3 ? (
+        {activeStep === 4 ? (
           <>
             <h3
               className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
@@ -260,42 +353,59 @@ export function EngineExplainedPage({
               of {EXAMPLE_COMPONENT.label}'s lenses:
             </p>
             <div className="mt-6 grid grid-cols-1 gap-3">
-              {EXAMPLE_COMPONENT.lenses.map((lens) => {
-                const isExample = lens === EXAMPLE_LENS;
-                return (
-                  <div
-                    key={lens}
-                    className={`rounded-lg border p-5 ${
-                      isExample
-                        ? 'border-[#005eb8] bg-blue-50'
-                        : darkMode
-                          ? 'border-slate-700 bg-slate-900'
-                          : 'border-slate-200 bg-white'
-                    }`}
+              {EXAMPLE_COMPONENT.lenses.map((lens) => (
+                <div
+                  key={lens}
+                  className={`rounded-lg border p-5 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-white'}`}
+                >
+                  <p
+                    className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
                   >
-                    <p
-                      className={`text-lg font-semibold ${isExample ? 'text-[#005eb8]' : darkMode ? 'text-slate-100' : 'text-slate-900'}`}
-                    >
-                      {lens}
-                      {isExample ? " - we'll follow this one" : ''}
-                    </p>
-                    <p
-                      className={`mt-2 text-sm ${isExample && !darkMode ? 'text-blue-900' : textClass}`}
-                    >
-                      {getLensDescription(lens)}
-                    </p>
-                  </div>
-                );
-              })}
+                    {lens}
+                  </p>
+                  <p className={`mt-2 text-sm ${textClass}`}>{getLensDescription(lens)}</p>
+                </div>
+              ))}
             </div>
             <p className={`mt-4 text-sm ${textClass}`}>
-              So now we have a specific thing to score: {EXAMPLE_COMPONENT.label}, seen through the{' '}
-              {EXAMPLE_LENS} lens. That's exactly what a readiness score measures.
+              Let's follow one lens through in detail: {EXAMPLE_LENS}.
             </p>
           </>
         ) : null}
 
-        {activeStep === 4 ? (
+        {activeStep === 5 ? (
+          <>
+            <h3
+              className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
+            >
+              Following {EXAMPLE_LENS} through to a score
+            </h3>
+            <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
+              {EXAMPLE_COMPONENT.label}, seen through the {EXAMPLE_LENS} lens, is the specific thing
+              we're going to score. That's exactly what a readiness score measures - not a whole
+              component at once, but one lens on it.
+            </p>
+            <div
+              className={`mt-6 rounded-lg border p-5 ${darkMode ? 'border-[#005eb8] bg-slate-900' : 'border-[#005eb8] bg-blue-50'}`}
+            >
+              <p
+                className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-[#005eb8]'}`}
+              >
+                {EXAMPLE_COMPONENT.label} · {EXAMPLE_LENS}
+              </p>
+              <p
+                className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-blue-900'}`}
+              >
+                {getLensDescription(EXAMPLE_LENS)}
+              </p>
+            </div>
+            <p className={`mt-4 text-sm ${textClass}`}>
+              Next: how that score actually works.
+            </p>
+          </>
+        ) : null}
+
+        {activeStep === 6 ? (
           <>
             <h3
               className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
@@ -339,7 +449,7 @@ export function EngineExplainedPage({
           </>
         ) : null}
 
-        {activeStep === 5 ? (
+        {activeStep === 7 ? (
           <>
             <h3
               className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}

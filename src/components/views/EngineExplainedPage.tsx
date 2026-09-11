@@ -5,7 +5,7 @@ import { PATHWAY_OPTIONS, type CstPathwayKey } from '@data/cst';
 import { getComponentDescription, getLensDescription } from '@data/descriptions';
 import { ASSESSMENT_LENSES } from '@data/lenses';
 import { PHASE_NAMES } from '../../types/constants';
-import { READINESS_BANDS } from '@lib/readinessBands';
+import { READINESS_BANDS, getReadinessBand } from '@lib/readinessBands';
 import { GENERIC_RUBRIC } from '@data/rubrics';
 import { getComponentExemplarScore } from '@lib/adoptionMetrics';
 import { createRadarChart } from '@lib/charts';
@@ -54,6 +54,7 @@ const EXCELLING_SCORES = [4, 3, 5, 4];
 function buildNotionalPhase2RadarData(
   scores: number[]
 ): ChartData<'radar', number[], string> {
+  const pointColors = scores.map((score) => getReadinessBand(score).color);
   return {
     labels: PHASE_2_COMPONENTS.map((component) => component.label),
     datasets: [
@@ -63,8 +64,10 @@ function buildNotionalPhase2RadarData(
         borderColor: '#005EB8',
         backgroundColor: 'rgba(0, 94, 184, 0.12)',
         borderWidth: 2,
-        pointRadius: 3,
-        pointHoverRadius: 5,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+        pointBackgroundColor: pointColors,
+        pointBorderColor: pointColors,
       },
       {
         label: 'Phase 2 expected',
@@ -96,13 +99,23 @@ function MiniMaturityRadar({
     }
     createRadarChart(canvasRef.current, buildNotionalPhase2RadarData(scores), {
       maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
+      plugins: {
+        legend: { display: true, position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } },
+        tooltip: {
+          callbacks: {
+            label: (context) => {
+              const value = Number(context.parsed.r ?? 0);
+              return `${context.dataset.label}: ${getReadinessBand(value).label}`;
+            },
+          },
+        },
+      },
       scales: {
         r: {
           min: 0,
           max: 5,
           ticks: { display: false },
-          pointLabels: { display: true, font: { size: 9 } },
+          pointLabels: { display: true, font: { size: 9 }, padding: 18 },
         },
       },
     });
@@ -110,7 +123,7 @@ function MiniMaturityRadar({
   }, [darkMode]);
 
   return (
-    <div style={{ height: 200 }}>
+    <div style={{ height: 240 }}>
       <canvas ref={canvasRef} className="block h-full w-full" />
     </div>
   );

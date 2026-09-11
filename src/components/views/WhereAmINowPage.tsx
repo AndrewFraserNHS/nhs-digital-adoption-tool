@@ -68,25 +68,49 @@ function ComponentLensBarChart({
       return;
     }
     const target = getComponentExemplarScore(component.id, phase, component.target);
-    createBarChart(canvasRef.current, {
-      labels: component.lenses,
-      datasets: [
-        {
-          label: 'Current',
-          data: component.lenses.map((lens) => Number(getEntry(component.id, lens).score || 0)),
-          backgroundColor: '#005EB8',
+    const tickColor = darkMode ? '#e2e8f0' : '#0b1220';
+    const gridColor = darkMode ? 'rgba(226,232,240,0.10)' : 'rgba(11,18,32,0.06)';
+    createBarChart(
+      canvasRef.current,
+      {
+        labels: component.lenses,
+        datasets: [
+          {
+            label: 'Current',
+            data: component.lenses.map((lens) => Number(getEntry(component.id, lens).score || 0)),
+            backgroundColor: '#005EB8',
+          },
+          {
+            label: 'Target',
+            data: component.lenses.map(() => target),
+            backgroundColor: 'transparent',
+            borderColor: '#94a3b8',
+            borderWidth: 2,
+            // borderDash isn't in this Chart.js version's bar dataset types but is a valid runtime option.
+            ...({ borderDash: [5, 5] } as Record<string, unknown>),
+          },
+        ],
+      },
+      {
+        indexAxis: 'y',
+        scales: {
+          x: {
+            min: 0,
+            max: 5,
+            grid: { color: gridColor },
+            ticks: {
+              color: tickColor,
+              stepSize: 1,
+              callback: (value) => getReadinessBand(Number(value)).label,
+            },
+          },
+          y: {
+            grid: { display: false },
+            ticks: { color: tickColor, font: { size: 11 } },
+          },
         },
-        {
-          label: 'Target',
-          data: component.lenses.map(() => target),
-          backgroundColor: 'transparent',
-          borderColor: '#94a3b8',
-          borderWidth: 2,
-          // borderDash isn't in this Chart.js version's bar dataset types but is a valid runtime option.
-          ...({ borderDash: [5, 5] } as Record<string, unknown>),
-        },
-      ],
-    });
+      }
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [component, phase, darkMode]);
 
@@ -97,7 +121,7 @@ function ComponentLensBarChart({
       <p className={`text-xs font-semibold ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>
         {component.label}
       </p>
-      <div style={{ height: 180 }} className="mt-2">
+      <div style={{ height: Math.max(120, component.lenses.length * 60) }} className="mt-2">
         <canvas ref={canvasRef} className="block h-full w-full" />
       </div>
     </div>
@@ -147,6 +171,7 @@ export function WhereAmINowPage({
             min: -1,
             max: 5,
             ticks: readinessScaleTicks,
+            pointLabels: { padding: 28 },
           },
         },
       },
@@ -164,8 +189,14 @@ export function WhereAmINowPage({
     if (readinessTab !== 'by-lens' || !byLensCanvasRef.current) {
       return;
     }
+    // Only components that actually have the selected lens become axes - mixing in components
+    // that don't (as null points) breaks the filled polygon shape, so they're left out entirely
+    // rather than shown as gaps.
+    const componentsWithLens = components.filter((component) =>
+      component.lenses.includes(selectedLens)
+    );
     const chartData = buildComponentRadarChartData(
-      components,
+      componentsWithLens,
       getEntry,
       effectivePhaseFocus,
       selectedLens
@@ -180,11 +211,12 @@ export function WhereAmINowPage({
             min: -1,
             max: 5,
             ticks: readinessScaleTicks,
+            pointLabels: { padding: 28 },
           },
         },
       },
       (index) => {
-        const targetComponent = components[index];
+        const targetComponent = componentsWithLens[index];
         if (targetComponent) {
           onComponentClick(targetComponent.id);
         }
@@ -428,7 +460,7 @@ export function WhereAmINowPage({
                 Every component in Phase {effectivePhaseFocus}: {PHASE_NAMES[effectivePhaseFocus]}
                 , with a bar per lens and a dashed target bar for where it's expected to be.
               </p>
-              <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div className="mt-4 grid grid-cols-1 gap-3">
                 {componentsInCurrentPhase.map((component) => (
                   <ComponentLensBarChart
                     key={component.id}

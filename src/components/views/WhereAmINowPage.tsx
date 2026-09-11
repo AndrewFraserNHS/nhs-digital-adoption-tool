@@ -140,12 +140,12 @@ export function WhereAmINowPage({
   darkMode = false,
 }: WhereAmINowPageProps): JSX.Element {
   const [checkedPhases, setCheckedPhases] = useState<Record<number, boolean>>({});
-  const [readinessTab, setReadinessTab] = useState<'overview' | 'by-lens' | 'by-phases'>(
-    'overview'
+  const [readinessTab, setReadinessTab] = useState<'by-component' | 'by-lens' | 'by-phases'>(
+    'by-component'
   );
   const [selectedLens, setSelectedLens] = useState<string>(ASSESSMENT_LENSES[0]);
 
-  const overviewCanvasRef = useRef<HTMLCanvasElement>(null);
+  const byComponentCanvasRef = useRef<HTMLCanvasElement>(null);
   const byLensCanvasRef = useRef<HTMLCanvasElement>(null);
 
   const readinessScaleTicks = {
@@ -157,12 +157,12 @@ export function WhereAmINowPage({
   };
 
   useEffect(() => {
-    if (readinessTab !== 'overview' || !overviewCanvasRef.current) {
+    if (readinessTab !== 'by-component' || !byComponentCanvasRef.current) {
       return;
     }
     const chartData = buildComponentRadarChartData(components, getEntry, effectivePhaseFocus);
     createRadarChart(
-      overviewCanvasRef.current,
+      byComponentCanvasRef.current,
       chartData,
       {
         maintainAspectRatio: false,
@@ -361,7 +361,7 @@ export function WhereAmINowPage({
           >
             {(
               [
-                { id: 'overview', label: 'Overview' },
+                { id: 'by-component', label: 'By Component' },
                 { id: 'by-lens', label: 'By Lens' },
                 { id: 'by-phases', label: 'By Phases' },
               ] as const
@@ -385,7 +385,7 @@ export function WhereAmINowPage({
             ))}
           </div>
 
-          {readinessTab === 'overview' ? (
+          {readinessTab === 'by-component' ? (
             <>
               <p className={`mt-3 text-xs ${textClass}`}>
                 Each component is scored by its weakest lens - click a label to jump to that
@@ -395,7 +395,7 @@ export function WhereAmINowPage({
                 className={`mx-auto mt-4 flex items-center justify-center rounded border p-2 ${darkMode ? 'border-slate-700 bg-slate-950' : 'border-slate-100 bg-slate-50'}`}
                 style={{ height: 720 }}
               >
-                <canvas ref={overviewCanvasRef} className="block h-full w-full" />
+                <canvas ref={byComponentCanvasRef} className="block h-full w-full" />
               </div>
 
               <p className={`mt-4 text-center text-sm italic ${textClass}`}>

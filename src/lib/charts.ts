@@ -161,7 +161,7 @@ export function createRadarChart(
     responsive: true,
     layout: { padding: 56 },
     plugins: {
-      legend: { display: true, position: 'bottom' },
+      legend: { display: true, position: 'chartArea', align: 'start', labels: { padding: 5, boxWidth: 30, font: { size: 13 } } },
       tooltip: {
         enabled: true,
         backgroundColor: darkMode ? 'rgba(15,23,42,0.98)' : 'rgba(11,18,32,0.95)',

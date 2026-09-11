@@ -390,7 +390,9 @@ export function EngineExplainedPage({
       const next = current.map((action) =>
         action.id === id ? { ...action, ...updates } : action
       );
-      const allComplete = next.every((action) => action.status === 'Completed');
+      const allComplete = next.every(
+        (action) => action.status === 'Completed' && action.owner.trim() !== ''
+      );
       if (allComplete && !notionalExerciseDone) {
         setNotionalExerciseDone(true);
         setNotionalToastQueue((queue) => [
@@ -858,7 +860,7 @@ Let's see the whole picture before you set up your real project.
               title={
                 notionalExerciseDone
                   ? undefined
-                  : 'Mark every notional action Completed above to continue'
+                  : 'Mark every notional action Completed with an owner assigned to continue'
               }
               className="rounded-md bg-[#005eb8] px-5 py-2 text-sm font-semibold text-white shadow-[0_3px_0_#003087] hover:bg-[#00417a] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#005eb8]"
             >
@@ -868,7 +870,13 @@ Let's see the whole picture before you set up your real project.
             <button
               type="button"
               onClick={goNext}
-              className="rounded-md bg-[#005eb8] px-5 py-2 text-sm font-semibold text-white shadow-[0_3px_0_#003087] hover:bg-[#00417a]"
+              disabled={activeStep === 7 && !notionalExerciseDone}
+              title={
+                activeStep === 7 && !notionalExerciseDone
+                  ? 'Mark every notional action Completed with an owner assigned to continue'
+                  : undefined
+              }
+              className="rounded-md bg-[#005eb8] px-5 py-2 text-sm font-semibold text-white shadow-[0_3px_0_#003087] hover:bg-[#00417a] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#005eb8]"
             >
               Next
             </button>

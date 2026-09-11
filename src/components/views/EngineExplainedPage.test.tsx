@@ -2,6 +2,18 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { EngineExplainedPage } from './EngineExplainedPage';
 
+/** Assigns an owner to and marks Completed every row of the notional actions table on the Actions step. */
+function completeNotionalExercise() {
+  screen.getAllByRole('button', { name: /^Change owner for/ }).forEach((ownerButton) => {
+    fireEvent.click(ownerButton);
+    const select = screen.getByRole('combobox', { name: /^Owner for/ });
+    fireEvent.change(select, { target: { value: 'Alex Morgan' } });
+  });
+  screen.getAllByRole('combobox', { name: /^Status for/ }).forEach((select) => {
+    fireEvent.change(select, { target: { value: 'Completed' } });
+  });
+}
+
 describe('EngineExplainedPage', () => {
   it('SHOULD start on the pathway-picker step with all 3 pathways as cards', () => {
     // arrange
@@ -97,8 +109,10 @@ describe('EngineExplainedPage', () => {
 
     // assert 7
     expect(screen.getByRole('heading', { name: 'Actions' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled();
 
-    // act 8 - move to Overview
+    // act 8 - complete the notional exercise, then move to Overview
+    completeNotionalExercise();
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
 
     // assert 8 - the full recap diagram, built from real data
@@ -111,39 +125,50 @@ describe('EngineExplainedPage', () => {
     expect(screen.queryByRole('button', { name: 'Next' })).not.toBeInTheDocument();
   });
 
-  it('SHOULD keep "Get started" disabled until the notional actions are all marked Completed, then enable it and show a celebratory toast', () => {
+  it('SHOULD block leaving the Actions step until every notional action has an owner and is Completed, then unlock Next and Get started with a celebratory toast', () => {
     // arrange
     const onGetStarted = vi.fn();
     render(<EngineExplainedPage onGetStarted={onGetStarted} onComponentClick={vi.fn()} />);
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < 7; i++) {
       fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     }
+    expect(screen.getByRole('heading', { name: 'Actions' })).toBeInTheDocument();
 
-    // assert 1 - disabled before the exercise is done, on the final Overview step
-    expect(screen.getByRole('heading', { name: 'The whole engine, one page' })).toBeInTheDocument();
-    const getStartedButton = screen.getByRole('button', { name: 'Get started' });
-    expect(getStartedButton).toBeDisabled();
+    // assert 1 - can't leave the Actions step yet
+    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled();
 
-    // act - go back to the Actions step and mark every notional action Completed
-    fireEvent.click(screen.getByRole('button', { name: 'Back' }));
-    const statusSelects = screen.getAllByRole('combobox', { name: /^Status for/ });
-    statusSelects.forEach((select) => {
+    // act - mark every action Completed WITHOUT assigning an owner
+    screen.getAllByRole('combobox', { name: /^Status for/ }).forEach((select) => {
       fireEvent.change(select, { target: { value: 'Completed' } });
     });
 
-    // assert 2 - toast fires
-    expect(screen.getByText(/moved to the next readiness level/)).toBeInTheDocument();
+    // assert 2 - still blocked, owners are required too
+    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled();
+    expect(screen.queryByText(/moved to the next readiness level/)).not.toBeInTheDocument();
 
-    // act - move back to the final step
+    // act - now assign an owner to every row
+    screen.getAllByRole('button', { name: /^Change owner for/ }).forEach((ownerButton) => {
+      fireEvent.click(ownerButton);
+      fireEvent.change(screen.getByRole('combobox', { name: /^Owner for/ }), {
+        target: { value: 'Alex Morgan' },
+      });
+    });
+
+    // assert 3 - toast fires and Next unlocks
+    expect(screen.getByText(/moved to the next readiness level/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Next' })).not.toBeDisabled();
+
+    // act - move to the final Overview step
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
 
-    // assert 3 - button now enabled
-    expect(screen.getByRole('button', { name: 'Get started' })).not.toBeDisabled();
+    // assert 4 - Get started is enabled there
+    const getStartedButton = screen.getByRole('button', { name: 'Get started' });
+    expect(getStartedButton).not.toBeDisabled();
 
     // act - click it
-    fireEvent.click(screen.getByRole('button', { name: 'Get started' }));
+    fireEvent.click(getStartedButton);
 
-    // assert 4
+    // assert 5
     expect(onGetStarted).toHaveBeenCalled();
   });
 

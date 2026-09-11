@@ -614,9 +614,9 @@ Here are all of the lenses used across the Adoption Engine: not all of them will
             </h3>
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
               The {EXAMPLE_COMPONENT.label}, can be seen through 2 difference lenses.</p>
-              <ol>
-                <li>{EXAMPLE_LENSES[0]}</li>
-                <li>{EXAMPLE_LENSES[1]}</li>
+              <ol className={`mt-3 max-w-2xl text-sm ${textClass}`}>
+                <li>1. {EXAMPLE_LENSES[0]} lens</li>
+                <li>2. {EXAMPLE_LENSES[1]} lens</li>
               </ol>
                <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
              Both lenses, give a different perspective on the same change component.

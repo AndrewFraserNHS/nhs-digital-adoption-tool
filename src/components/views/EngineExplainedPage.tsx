@@ -407,8 +407,6 @@ export function EngineExplainedPage({
     });
   };
 
-  const pathway =
-    PATHWAY_OPTIONS.find((option) => option.value === selectedPathway) || PATHWAY_OPTIONS[0];
   const isLast = activeStep === STEP_TITLES.length - 1;
   const textClass = darkMode ? 'text-slate-300' : 'text-slate-700';
 
@@ -612,14 +610,17 @@ Here are all of the lenses used across the Adoption Engine: not all of them will
             <h3
               className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
             >
-              An example lens on our example component
+              An example lens for our example change component
             </h3>
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
-              {EXAMPLE_COMPONENT.label}, can be seen through the {EXAMPLE_LENSES[0]} lens. As well as the {EXAMPLE_LENSES[1]} lens.</p>
+              The {EXAMPLE_COMPONENT.label}, can be seen through 2 difference lenses.</p>
+              <ol>
+                <li>{EXAMPLE_LENSES[0]}</li>
+                <li>{EXAMPLE_LENSES[1]}</li>
+              </ol>
                <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
-              Both lenses, give a different perspective on the same component. In this example, we will follow the {EXAMPLE_LENSES[0]} lens through to a readiness score.
-              we're going to score. That's exactly what a readiness score measures - not a whole
-              component at once, but one lens on it.
+             Both lenses, give a different perspective on the same change component.
+We will follow the Strategic Direction and Leadership lens through to a readiness score. 
             </p>
                 {EXAMPLE_LENSES.map((lens, index) => {
                   return  <div
@@ -651,9 +652,8 @@ Here are all of the lenses used across the Adoption Engine: not all of them will
               Readiness is scored on a scale from 'Not Started', to 'Thriving' for every lens
             </h3>
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
-              Every lens on every component is scored on the same 0-5 scale, so progress is always
-              comparable. Here's what each level means, and what that looks like on the readiness
-              radar you'll see elsewhere in the tool:
+            Each lens for each Change Component will need its own readiness status, because a Change Component could be strong through one lens and weak in another. 
+Here is what each level means and what that will look like on the readiness radar you will see elsewhere in the tool:
             </p>
             <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
               <div className="grid grid-cols-1 gap-2">

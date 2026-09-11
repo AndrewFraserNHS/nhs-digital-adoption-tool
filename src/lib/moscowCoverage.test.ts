@@ -1,12 +1,21 @@
 import { describe, expect, it } from 'vitest';
 
 import benefitsActionsText from '../data/component-actions/benefits-actions.json?raw';
+import capabilityActionsText from '../data/component-actions/capability-and-confidence-actions.json?raw';
 import caseForChangeActionsText from '../data/component-actions/case-for-change-actions.json?raw';
+import changeAdoptionActionsText from '../data/component-actions/change-adoption-actions.json?raw';
 import changeImpactActionsText from '../data/component-actions/change-impact-actions.json?raw';
 import changeNetworkActionsText from '../data/component-actions/change-network-actions.json?raw';
 import cmReadinessActionsText from '../data/component-actions/cm-readiness-and-planning-actions.json?raw';
+import orgMaturityActionsText from '../data/component-actions/org-change-readiness-actions.json?raw';
+import processChangeActionsText from '../data/component-actions/process-change-actions.json?raw';
+import reinforcementActionsText from '../data/component-actions/reinforcement-actions.json?raw';
+import resistanceActionsText from '../data/component-actions/resistance-management-actions.json?raw';
 import riskManagementActionsText from '../data/component-actions/risk-management-actions.json?raw';
 import sponsorshipActionsText from '../data/component-actions/senior-sponsorship-and-governance-actions.json?raw';
+import skillsLearningActionsText from '../data/component-actions/skills-and-learning-actions.json?raw';
+import stakeholderActionsText from '../data/component-actions/stakeholder-engagement-and-outcomes-actions.json?raw';
+import transferBauActionsText from '../data/component-actions/transfer-to-bau-actions.json?raw';
 import visionActionsText from '../data/component-actions/vision-actions.json?raw';
 import {
   type DerivedComponentConfig,
@@ -28,6 +37,16 @@ const PRIORITY_REVIEWED_SOURCES: Record<string, string> = {
   benefits: benefitsActionsText,
   change_impact: changeImpactActionsText,
   risk_management: riskManagementActionsText,
+  cm_readiness: cmReadinessActionsText,
+  stakeholder: stakeholderActionsText,
+  resistance: resistanceActionsText,
+  skills_learning: skillsLearningActionsText,
+  capability: capabilityActionsText,
+  change_adoption: changeAdoptionActionsText,
+  process_change: processChangeActionsText,
+  reinforcement: reinforcementActionsText,
+  org_maturity: orgMaturityActionsText,
+  transfer_bau: transferBauActionsText,
 };
 
 describe('MoSCoW priority coverage (Pathway 1 bundled defaults)', () => {
@@ -42,15 +61,6 @@ describe('MoSCoW priority coverage (Pathway 1 bundled defaults)', () => {
       expect(templates.every((template) => Boolean(template.priority))).toBe(true);
     }
   );
-
-  it('SHOULD leave priority unset for a component that has not been reviewed yet', () => {
-    // act
-    const { templates } = parseDerivedComponentSource(cmReadinessActionsText, CONFIG);
-
-    // assert
-    expect(templates.length).toBeGreaterThan(0);
-    expect(templates.every((template) => template.priority === undefined)).toBe(true);
-  });
 
   it('SHOULD flag no actions as needing rework now every asterisk-marked action has been resolved', () => {
     // act

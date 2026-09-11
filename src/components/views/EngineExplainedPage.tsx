@@ -52,9 +52,7 @@ const PHASE_2_TARGETS = PHASE_2_COMPONENTS.map((component) =>
 const AT_RISK_SCORES = [1, 0, 1, 1];
 const EXCELLING_SCORES = [4, 3, 5, 4];
 
-function buildNotionalPhase2RadarData(
-  scores: number[]
-): ChartData<'radar', number[], string> {
+function buildNotionalPhase2RadarData(scores: number[]): ChartData<'radar', number[], string> {
   const pointColors = scores.map((score) => getReadinessBand(score).color);
   return {
     labels: PHASE_2_COMPONENTS.map((component) => component.label),
@@ -103,7 +101,12 @@ function MiniMaturityRadar({
       // The built-in legend sits too close to the bottom points to reliably space it - a plain
       // HTML legend below the canvas (with real CSS margin) replaces it instead.
       plugins: {
-        legend: { display: true, position: 'chartArea', align: 'start', labels: { padding: 5, boxWidth: 30, font: { size: 13 } } },
+        legend: {
+          display: true,
+          position: 'chartArea',
+          align: 'start',
+          labels: { padding: 5, boxWidth: 30, font: { size: 13 } },
+        },
         tooltip: {
           callbacks: {
             label: (context) => {
@@ -193,15 +196,27 @@ function ComponentsOverviewTable({ darkMode }: { darkMode: boolean }): JSX.Eleme
   const phases = [1, 2, 3, 4, 5];
   const phaseStyles = [
     { border: 'border-blue-300', heading: 'bg-blue-50 text-blue-700', body: 'bg-blue-50/40' },
-    { border: 'border-violet-300', heading: 'bg-violet-50 text-violet-700', body: 'bg-violet-50/40' },
+    {
+      border: 'border-violet-300',
+      heading: 'bg-violet-50 text-violet-700',
+      body: 'bg-violet-50/40',
+    },
     { border: 'border-amber-300', heading: 'bg-amber-50 text-amber-700', body: 'bg-amber-50/40' },
-    { border: 'border-orange-300', heading: 'bg-orange-50 text-orange-700', body: 'bg-orange-50/40' },
+    {
+      border: 'border-orange-300',
+      heading: 'bg-orange-50 text-orange-700',
+      body: 'bg-orange-50/40',
+    },
     { border: 'border-green-300', heading: 'bg-green-50 text-green-700', body: 'bg-green-50/40' },
   ];
 
   return (
-    <div className={`overflow-hidden rounded-md border ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}>
-      <div className={`grid grid-cols-[minmax(150px,0.7fr),minmax(0,2fr)] text-xs font-bold uppercase tracking-wider ${darkMode ? 'bg-slate-900 text-slate-300' : 'bg-slate-100 text-slate-600'}`}>
+    <div
+      className={`overflow-hidden rounded-md border ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}
+    >
+      <div
+        className={`grid grid-cols-[minmax(150px,0.7fr),minmax(0,2fr)] text-xs font-bold uppercase tracking-wider ${darkMode ? 'bg-slate-900 text-slate-300' : 'bg-slate-100 text-slate-600'}`}
+      >
         <div className="border-r px-4 py-3">Phase</div>
         <div className="px-4 py-3">Components</div>
       </div>
@@ -209,13 +224,23 @@ function ComponentsOverviewTable({ darkMode }: { darkMode: boolean }): JSX.Eleme
         const phaseComponents = getComponentsByPhase(phase);
         const styles = phaseStyles[index];
         return (
-          <div key={phase} className={`grid grid-cols-[minmax(150px,0.7fr),minmax(0,2fr)] border-t ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}>
-            <div className={`border-r px-4 py-4 text-sm font-semibold ${darkMode ? 'bg-slate-900 text-slate-100' : `${styles.heading} ${styles.border}`}`}>
+          <div
+            key={phase}
+            className={`grid grid-cols-[minmax(150px,0.7fr),minmax(0,2fr)] border-t ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}
+          >
+            <div
+              className={`border-r px-4 py-4 text-sm font-semibold ${darkMode ? 'bg-slate-900 text-slate-100' : `${styles.heading} ${styles.border}`}`}
+            >
               Phase {phase}: {PHASE_NAMES[phase] || ''}
             </div>
-            <div className={`flex flex-wrap gap-2 px-4 py-4 ${darkMode ? 'bg-slate-800' : styles.body}`}>
+            <div
+              className={`flex flex-wrap gap-2 px-4 py-4 ${darkMode ? 'bg-slate-800' : styles.body}`}
+            >
               {phaseComponents.map((phaseComponent) => (
-                <span key={phaseComponent.id} className={`rounded-full px-3 py-1 text-xs font-semibold ${darkMode ? 'bg-slate-900 text-slate-200' : 'bg-white text-slate-700 shadow-sm'}`}>
+                <span
+                  key={phaseComponent.id}
+                  className={`rounded-full px-3 py-1 text-xs font-semibold ${darkMode ? 'bg-slate-900 text-slate-200' : 'bg-white text-slate-700 shadow-sm'}`}
+                >
                   {phaseComponent.label}
                 </span>
               ))}
@@ -361,9 +386,24 @@ interface NotionalAction {
 const NOTIONAL_OWNERS = ['Alex Morgan', 'Sam Patel'];
 
 const NOTIONAL_ACTIONS_SEED: NotionalAction[] = [
-  { id: 'notional-1', text: `Agree the ${EXAMPLE_LENSES[0]} approach with the SRO`, status: 'Planned', owner: '' },
-  { id: 'notional-2', text: 'Document the agreed approach for the team', status: 'Planned', owner: '' },
-  { id: 'notional-3', text: 'Share the approach with key stakeholders', status: 'Planned', owner: '' },
+  {
+    id: 'notional-1',
+    text: `Agree the ${EXAMPLE_LENSES[0]} approach with the SRO`,
+    status: 'Planned',
+    owner: '',
+  },
+  {
+    id: 'notional-2',
+    text: 'Document the agreed approach for the team',
+    status: 'Planned',
+    owner: '',
+  },
+  {
+    id: 'notional-3',
+    text: 'Share the approach with key stakeholders',
+    status: 'Planned',
+    owner: '',
+  },
 ];
 
 /**
@@ -387,9 +427,7 @@ export function EngineExplainedPage({
 
   const updateNotionalAction = (id: string, updates: Partial<NotionalAction>) => {
     setNotionalActions((current) => {
-      const next = current.map((action) =>
-        action.id === id ? { ...action, ...updates } : action
-      );
+      const next = current.map((action) => (action.id === id ? { ...action, ...updates } : action));
       const allComplete = next.every(
         (action) => action.status === 'Completed' && action.owner.trim() !== ''
       );
@@ -424,12 +462,7 @@ export function EngineExplainedPage({
         </p>
       </div>
 
-      {activeStep > 0 ? (
-        <Breadcrumb
-          activeStep={activeStep}
-          darkMode={darkMode}
-        />
-      ) : null}
+      {activeStep > 0 ? <Breadcrumb activeStep={activeStep} darkMode={darkMode} /> : null}
 
       <Card darkMode={darkMode}>
         <p
@@ -446,12 +479,17 @@ export function EngineExplainedPage({
               Every programme starts with a pathway
             </h3>
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
-              A pathway describes the current status of your project and will determine the change journey required for successful adoption.</p>
-              <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
-              The Pathway will tailor the  guidance, actions and resources you will see everywhere else in the tool.</p>
-<p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
-In this example walkthrough of the Adoption Engine we'll use pathway 1 - Starting for the First time.
-You will be able to select the correct pathway when you set up your project later on.
+              A pathway describes the current status of your project and will determine the change
+              journey required for successful adoption.
+            </p>
+            <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
+              The Pathway will tailor the guidance, actions and resources you will see everywhere
+              else in the tool.
+            </p>
+            <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
+              In this example walkthrough of the Adoption Engine we'll use pathway 1 - Starting for
+              the First time. You will be able to select the correct pathway when you set up your
+              project later on.
             </p>
             <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
               {PATHWAY_OPTIONS.map((option) => {
@@ -501,11 +539,11 @@ You will be able to select the correct pathway when you set up your project late
               Each pathway is broken into the 5 change phases
             </h3>
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
-              Every Pathway runs through 5 phases which are aligned to a project lifecycle.
-              It starts from the earliest thinking about a change through to it being fully embedded as business as usual.</p>
-<p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
-See the 5 Change phases below.
+              Every Pathway runs through 5 phases which are aligned to a project lifecycle. It
+              starts from the earliest thinking about a change through to it being fully embedded as
+              business as usual.
             </p>
+            <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>See the 5 Change phases below.</p>
             <div className="mt-6">
               <DailyPhaseOverview
                 currentPhase={EXAMPLE_COMPONENT.phase}
@@ -515,7 +553,8 @@ See the 5 Change phases below.
               />
             </div>
             <p className={`mt-4 text-sm ${textClass}`}>
-              At each phase there are 'Change Components' that need to be focused on at that particular phase of a project.
+              At each phase there are 'Change Components' that need to be focused on at that
+              particular phase of a project.
             </p>
           </>
         ) : null}
@@ -525,19 +564,22 @@ See the 5 Change phases below.
             <h3
               className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
             >
-             Change components
+              Change components
             </h3>
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
-              Change Components are the focused topics and change activities that are relevant to each phase.</p>
- <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
-The table below shows which components are included in each phase (these will be clickable when using the adoption engine.)
+              Change Components are the focused topics and change activities that are relevant to
+              each phase.
+            </p>
+            <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
+              The table below shows which components are included in each phase (these will be
+              clickable when using the adoption engine.)
             </p>
             <div className="mt-6">
               <ComponentsOverviewTable darkMode={darkMode} />
             </div>
             <p className={`mt-4 text-sm ${textClass}`}>
-              To continue with the example lets zoom into one of the specific Change Component. Phase {EXAMPLE_COMPONENT.phase}:{' '}
-              {EXAMPLE_COMPONENT.label}.
+              To continue with the example lets zoom into one of the specific Change Component.
+              Phase {EXAMPLE_COMPONENT.phase}: {EXAMPLE_COMPONENT.label}.
             </p>
           </>
         ) : null}
@@ -550,7 +592,8 @@ The table below shows which components are included in each phase (these will be
               Vision is an example of a Change Component
             </h3>
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
-              The Vision sits as a Change Component in Phase 1  of a project because it needs to be developed right at the start.
+              The Vision sits as a Change Component in Phase 1 of a project because it needs to be
+              developed right at the start.
             </p>
             <div
               className={`mt-6 rounded-lg border p-5 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-white'}`}
@@ -565,7 +608,7 @@ The table below shows which components are included in each phase (these will be
               </p>
             </div>
             <p className={`mt-4 text-sm ${textClass}`}>
-             A Vision can be looked at through particular 'lenses' - Let's see what that means.
+              A Vision can be looked at through particular 'lenses' - Let's see what that means.
             </p>
           </>
         ) : null}
@@ -578,8 +621,9 @@ The table below shows which components are included in each phase (these will be
               A Lens is a different perspective of the same Change Component
             </h3>
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
-              Each Change Component can be looked at through different lenses that show different perspectives.
-Here are all of the lenses used across the Adoption Engine: not all of them will relate to every Change Component.
+              Each Change Component can be looked at through different lenses that show different
+              perspectives. Here are all of the lenses used across the Adoption Engine: not all of
+              them will relate to every Change Component.
             </p>
             <div className="mt-6 grid grid-cols-1 gap-3">
               {ASSESSMENT_LENSES.map((lens) => (
@@ -596,9 +640,7 @@ Here are all of the lenses used across the Adoption Engine: not all of them will
                 </div>
               ))}
             </div>
-            <p className={`mt-4 text-sm ${textClass}`}>
-              Let's follow one lens through in detail.
-            </p>
+            <p className={`mt-4 text-sm ${textClass}`}>Let's follow one lens through in detail.</p>
           </>
         ) : null}
 
@@ -610,33 +652,35 @@ Here are all of the lenses used across the Adoption Engine: not all of them will
               An example lens for our example change component
             </h3>
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
-              The {EXAMPLE_COMPONENT.label}, can be seen through 2 difference lenses.</p>
-              <ol className={`mt-3 max-w-2xl text-sm ${textClass}`}>
-                <li>1. {EXAMPLE_LENSES[0]} lens</li>
-                <li>2. {EXAMPLE_LENSES[1]} lens</li>
-              </ol>
-               <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
-             Both lenses, give a different perspective on the same change component.
-We will follow the Strategic Direction and Leadership lens through to a readiness score. 
+              The {EXAMPLE_COMPONENT.label}, can be seen through 2 difference lenses.
             </p>
-                {EXAMPLE_LENSES.map((lens, index) => {
-                  return  <div
-                    className={`mt-6 rounded-lg border p-5 ${darkMode ? 'border-[#005eb8] bg-slate-900' :  index === 0 ? 'border-[#005eb8] bg-blue-50' : 'border-slate-200 bg-white'}`}
+            <ol className={`mt-3 max-w-2xl text-sm ${textClass}`}>
+              <li>1. {EXAMPLE_LENSES[0]} lens</li>
+              <li>2. {EXAMPLE_LENSES[1]} lens</li>
+            </ol>
+            <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
+              Both lenses, give a different perspective on the same change component. We will follow
+              the Strategic Direction and Leadership lens through to a readiness score.
+            </p>
+            {EXAMPLE_LENSES.map((lens, index) => {
+              return (
+                <div
+                  className={`mt-6 rounded-lg border p-5 ${darkMode ? 'border-[#005eb8] bg-slate-900' : index === 0 ? 'border-[#005eb8] bg-blue-50' : 'border-slate-200 bg-white'}`}
+                >
+                  <p
+                    className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-[#005eb8]'}`}
                   >
-                    <p
-                      className={`text-lg font-semibold ${darkMode  ? 'text-slate-100' : 'text-[#005eb8]'}`}
-                    >
-                      {EXAMPLE_COMPONENT.label} · {lens}
-                    </p>
-                    <p
-                      className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-blue-900'}`}
-                    >
-                      {getLensDescription(lens)}
-                    </p>
-                  </div>
-                })}
+                    {EXAMPLE_COMPONENT.label} · {lens}
+                  </p>
+                  <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-blue-900'}`}>
+                    {getLensDescription(lens)}
+                  </p>
+                </div>
+              );
+            })}
             <p className={`mt-4 text-sm ${textClass}`}>
-              Now we need to look at scoring each Change Component in Terms of Readiness for Change through each of the relevant lenses.
+              Now we need to look at scoring each Change Component in Terms of Readiness for Change
+              through each of the relevant lenses.
             </p>
           </>
         ) : null}
@@ -649,8 +693,10 @@ We will follow the Strategic Direction and Leadership lens through to a readines
               Readiness is scored on a scale from 'Not Started', to 'Thriving' for every lens
             </h3>
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
-            Each lens for each Change Component will need its own readiness status, because a Change Component could be strong through one lens and weak in another. 
-Here is what each level means and what that will look like on the readiness radar you will see elsewhere in the tool:
+              Each lens for each Change Component will need its own readiness status, because a
+              Change Component could be strong through one lens and weak in another. Here is what
+              each level means and what that will look like on the readiness radar you will see
+              elsewhere in the tool:
             </p>
             <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
               <div className="grid grid-cols-1 gap-2">
@@ -680,9 +726,7 @@ Here is what each level means and what that will look like on the readiness rada
               <div
                 className={`rounded-lg border p-4 ${darkMode ? 'border-red-500/30 bg-red-500/5' : 'border-red-200 bg-red-50'}`}
               >
-                <p
-                  className={`text-sm font-bold ${darkMode ? 'text-red-200' : 'text-red-800'}`}
-                >
+                <p className={`text-sm font-bold ${darkMode ? 'text-red-200' : 'text-red-800'}`}>
                   At risk example
                 </p>
                 <p className={`mt-1 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
@@ -720,12 +764,14 @@ Here is what each level means and what that will look like on the readiness rada
               Actions
             </h3>
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
-              To improve readiness for each component through each lens there are a set of suggested actions to be completed.
-These Actions can be edited or removed or you can add your own actions.
+              To improve readiness for each component through each lens there are a set of suggested
+              actions to be completed. These Actions can be edited or removed or you can add your
+              own actions.
             </p>
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
-              Actions can be assigned to team members and have completion dates assigned if required.
-Once the Actions at each readiness level is Completed or Cancelled, that lens automatically moves up to the next readiness level.
+              Actions can be assigned to team members and have completion dates assigned if
+              required. Once the Actions at each readiness level is Completed or Cancelled, that
+              lens automatically moves up to the next readiness level.
             </p>
             <p className={`mt-4 text-sm font-semibold ${textClass}`}>
               Try assigning these actions and then marking them as complete.
@@ -815,9 +861,8 @@ Once the Actions at each readiness level is Completed or Cancelled, that lens au
             <p
               className={`mt-6 text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
             >
-              That's Adoption Engine explained:
-              Pathway → Phase → Component → Lens → Readiness → Actions.
-Let's see the whole picture before you set up your real project.
+              That's Adoption Engine explained: Pathway → Phase → Component → Lens → Readiness →
+              Actions. Let's see the whole picture before you set up your real project.
             </p>
           </>
         ) : null}
@@ -831,8 +876,8 @@ Let's see the whole picture before you set up your real project.
             </h3>
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
               Every pathway, phase, component, lens and readiness level really used in this tool,
-              laid out top to bottom. Components and lenses connect both ways, since every
-              component is viewed through several lenses.
+              laid out top to bottom. Components and lenses connect both ways, since every component
+              is viewed through several lenses.
             </p>
             <div className="mt-6">
               <EngineOverviewDiagram darkMode={darkMode} />

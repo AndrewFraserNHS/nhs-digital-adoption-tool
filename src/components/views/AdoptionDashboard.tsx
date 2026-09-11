@@ -808,7 +808,7 @@ export function AdoptionDashboard({
                           style={{ backgroundColor: item.color }}
                         />
                         <span>
-                          {item.score} = {item.label}
+                          {item.label}
                         </span>
                       </div>
                     ))}

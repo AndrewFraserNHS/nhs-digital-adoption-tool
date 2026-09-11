@@ -102,7 +102,7 @@ function MiniMaturityRadar({
       // The built-in legend sits too close to the bottom points to reliably space it - a plain
       // HTML legend below the canvas (with real CSS margin) replaces it instead.
       plugins: {
-        legend: { display: false },
+        legend: { display: true, position: 'chartArea', align: 'start', labels: { padding: 5, boxWidth: 30, font: { size: 13 } } },
         tooltip: {
           callbacks: {
             label: (context) => {
@@ -126,23 +126,8 @@ function MiniMaturityRadar({
 
   return (
     <div>
-      <div style={{ height: 220 }}>
+      <div style={{ height: 400 }}>
         <canvas ref={canvasRef} className="block h-full w-full" />
-      </div>
-      <div
-        className={`mt-[30px] flex items-center justify-center gap-4 text-[10px] ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
-      >
-        <span className="flex items-center gap-1.5">
-          <span className="inline-block h-2.5 w-2.5 rounded-sm" style={{ backgroundColor: '#005EB8' }} />
-          Notional current
-        </span>
-        <span className="flex items-center gap-1.5">
-          <span
-            className="inline-block h-0 w-3 border-t-2"
-            style={{ borderColor: '#94a3b8', borderStyle: 'dashed' }}
-          />
-          Phase 2 expected
-        </span>
       </div>
     </div>
   );

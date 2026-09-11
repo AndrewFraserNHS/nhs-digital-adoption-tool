@@ -253,6 +253,34 @@ export function createLineChart(
   return createChart('line', ctx, data, { ...defaultOpts, ...options });
 }
 
+export function createBarChart(
+  ctx: CanvasRenderingContext2D | HTMLCanvasElement,
+  data: ChartConfiguration<'bar'>['data'],
+  options: ChartConfiguration<'bar'>['options'] = {}
+) {
+  const darkMode = isDarkThemeEnabled();
+  const tickColor = darkMode ? '#e2e8f0' : '#0b1220';
+  const xGridColor = darkMode ? 'rgba(226,232,240,0.08)' : 'rgba(11,18,32,0.04)';
+  const yGridColor = darkMode ? 'rgba(226,232,240,0.10)' : 'rgba(11,18,32,0.06)';
+  const defaultOpts = {
+    scales: {
+      x: {
+        display: true,
+        grid: { color: xGridColor },
+        ticks: { color: tickColor, font: { size: 11 } },
+      },
+      y: {
+        beginAtZero: true,
+        min: 0,
+        max: 5,
+        grid: { color: yGridColor },
+        ticks: { color: tickColor, font: { size: 11 }, stepSize: 1 },
+      },
+    },
+  };
+  return createChart('bar', ctx, data, { ...defaultOpts, ...options });
+}
+
 export function toBase64Image(chart: Chart): string {
   // Chart.js exposes toBase64Image on the instance
   // @ts-ignore

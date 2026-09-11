@@ -477,7 +477,8 @@ export function buildRadarChartData(
 export function buildComponentRadarChartData(
   components: AssessmentComponent[],
   getEntry: (componentId: string, lens: string) => DraftEntry,
-  currentPhase?: number
+  currentPhase?: number,
+  lens?: string
 ): ChartData<'radar', (number | null)[], string> {
   const exemplarPhase =
     currentPhase && COMPONENT_PHASE_EXEMPLARS[currentPhase] ? currentPhase : null;
@@ -501,9 +502,15 @@ export function buildComponentRadarChartData(
   };
   // The weakest lens gates the component's overall readiness - a component isn't "ready" just
   // because most of its lenses score well while one lags badly, so we surface the minimum rather
-  // than smoothing it away with an average.
-  const weakestLensScores = components.map((component) => {
-    const entries = component.lenses.map((lens) => getEntry(component.id, lens));
+  // than smoothing it away with an average. WHEN a specific lens is requested, that lens's own
+  // score is used instead (null for a component that doesn't have that lens at all).
+  const scoresByComponent = components.map((component) => {
+    if (lens) {
+      return component.lenses.includes(lens)
+        ? Number(getEntry(component.id, lens).score || 0)
+        : null;
+    }
+    const entries = component.lenses.map((componentLens) => getEntry(component.id, componentLens));
     const hasAssessment = entries.some(
       (entry) =>
         entry.score > 0 ||
@@ -522,15 +529,15 @@ export function buildComponentRadarChartData(
     labels: components.map((component) => component.label),
     datasets: [
       {
-        label: 'Current Readiness (weakest lens)',
-        data: weakestLensScores,
+        label: lens ? `Current Readiness (${lens})` : 'Current Readiness (weakest lens)',
+        data: scoresByComponent,
         borderColor: '#005EB8',
         backgroundColor: 'rgba(0, 94, 184, 0.12)',
         borderWidth: 2,
-        pointRadius: weakestLensScores.map((score) => (score === null ? 0 : 4)),
-        pointHoverRadius: weakestLensScores.map((score) => (score === null ? 0 : 6)),
-        pointBackgroundColor: weakestLensScores.map((score) => colorForScore(score ?? 0)),
-        pointBorderColor: weakestLensScores.map((score) => colorForScore(score ?? 0)),
+        pointRadius: scoresByComponent.map((score) => (score === null ? 0 : 4)),
+        pointHoverRadius: scoresByComponent.map((score) => (score === null ? 0 : 6)),
+        pointBackgroundColor: scoresByComponent.map((score) => colorForScore(score ?? 0)),
+        pointBorderColor: scoresByComponent.map((score) => colorForScore(score ?? 0)),
       },
       {
         label: exemplarPhase ? `Exemplar (Phase ${exemplarPhase})` : 'Target Average',

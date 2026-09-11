@@ -1,4 +1,5 @@
-import { JSX, useState, type ReactNode } from 'react';
+import { JSX, useEffect, useRef, useState, type ReactNode } from 'react';
+import type { ChartData } from 'chart.js';
 import { ASSESSMENT_COMPONENTS, getComponentsByPhase } from '@data/components';
 import { PATHWAY_OPTIONS, type CstPathwayKey } from '@data/cst';
 import { getComponentDescription, getLensDescription } from '@data/descriptions';
@@ -6,7 +7,12 @@ import { ASSESSMENT_LENSES } from '@data/lenses';
 import { PHASE_NAMES } from '../../types/constants';
 import { READINESS_BANDS } from '@lib/readinessBands';
 import { GENERIC_RUBRIC } from '@data/rubrics';
+import { getComponentExemplarScore } from '@lib/adoptionMetrics';
+import { createRadarChart } from '@lib/charts';
+import { UNIFIED_ACTION_STATUSES, ACTION_STATUS_BADGE_STYLES } from '@lib/actionModel';
 import { DailyPhaseOverview } from '@components/views/DailyPhaseOverview';
+import { OwnerAvatar } from '@components/ui/OwnerAvatar';
+import { Toast } from '@components/ui/Toast';
 
 export interface EngineExplainedPageProps {
   darkMode?: boolean;
@@ -36,6 +42,79 @@ const PATHWAY_DETAILS: Record<CstPathwayKey, string> = {
 
 const EXAMPLE_COMPONENT = getComponentsByPhase(1)[0] || ASSESSMENT_COMPONENTS[0];
 const EXAMPLE_LENSES = EXAMPLE_COMPONENT.lenses;
+
+const PHASE_2_COMPONENTS = getComponentsByPhase(2);
+const PHASE_2_TARGETS = PHASE_2_COMPONENTS.map((component) =>
+  getComponentExemplarScore(component.id, 2, component.target)
+);
+/** Hand-picked notional scores - deliberately below/above PHASE_2_TARGETS, not derived from any real project. */
+const AT_RISK_SCORES = [1, 0, 1, 1];
+const EXCELLING_SCORES = [4, 3, 5, 4];
+
+function buildNotionalPhase2RadarData(
+  scores: number[]
+): ChartData<'radar', number[], string> {
+  return {
+    labels: PHASE_2_COMPONENTS.map((component) => component.label),
+    datasets: [
+      {
+        label: 'Notional current',
+        data: scores,
+        borderColor: '#005EB8',
+        backgroundColor: 'rgba(0, 94, 184, 0.12)',
+        borderWidth: 2,
+        pointRadius: 3,
+        pointHoverRadius: 5,
+      },
+      {
+        label: 'Phase 2 expected',
+        data: PHASE_2_TARGETS,
+        borderColor: '#94a3b8',
+        backgroundColor: 'rgba(148, 163, 184, 0.06)',
+        borderWidth: 2,
+        borderDash: [5, 5],
+        pointRadius: 2,
+        pointHoverRadius: 4,
+      },
+    ],
+  };
+}
+
+/** Small canvas-backed radar showing a notional example (not real project data) against the real Phase 2 expected line. */
+function MiniMaturityRadar({
+  scores,
+  darkMode,
+}: {
+  scores: number[];
+  darkMode: boolean;
+}): JSX.Element {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    if (!canvasRef.current) {
+      return;
+    }
+    createRadarChart(canvasRef.current, buildNotionalPhase2RadarData(scores), {
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        r: {
+          min: 0,
+          max: 5,
+          ticks: { display: false },
+          pointLabels: { display: true, font: { size: 9 } },
+        },
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [darkMode]);
+
+  return (
+    <div style={{ height: 200 }}>
+      <canvas ref={canvasRef} className="block h-full w-full" />
+    </div>
+  );
+}
 
 /** Small horizontal trail showing which relationship is being built up as the tutorial progresses. */
 function Breadcrumb({
@@ -139,6 +218,21 @@ function Card({ children, darkMode }: { children: ReactNode; darkMode: boolean }
   );
 }
 
+interface NotionalAction {
+  id: string;
+  text: string;
+  status: (typeof UNIFIED_ACTION_STATUSES)[number];
+  owner: string;
+}
+
+const NOTIONAL_OWNERS = ['Alex Morgan', 'Sam Patel'];
+
+const NOTIONAL_ACTIONS_SEED: NotionalAction[] = [
+  { id: 'notional-1', text: `Agree the ${EXAMPLE_LENSES[0]} approach with the SRO`, status: 'Planned', owner: '' },
+  { id: 'notional-2', text: 'Document the agreed approach for the team', status: 'Planned', owner: '' },
+  { id: 'notional-3', text: 'Share the approach with key stakeholders', status: 'Planned', owner: '' },
+];
+
 /**
  * A guided, six-step tutorial that walks a new user through one worked example - Pathway ->
  * Phase -> Component -> Lens -> Readiness -> Actions - teaching what each level means and how
@@ -151,6 +245,32 @@ export function EngineExplainedPage({
 }: EngineExplainedPageProps): JSX.Element {
   const [selectedPathway, setSelectedPathway] = useState<CstPathwayKey>('pathway-1');
   const [activeStep, setActiveStep] = useState(0);
+  const [notionalActions, setNotionalActions] = useState<NotionalAction[]>(NOTIONAL_ACTIONS_SEED);
+  const [editingOwnerRowId, setEditingOwnerRowId] = useState<string | null>(null);
+  const [notionalToastQueue, setNotionalToastQueue] = useState<{ id: string; message: string }[]>(
+    []
+  );
+  const [notionalExerciseDone, setNotionalExerciseDone] = useState(false);
+
+  const updateNotionalAction = (id: string, updates: Partial<NotionalAction>) => {
+    setNotionalActions((current) => {
+      const next = current.map((action) =>
+        action.id === id ? { ...action, ...updates } : action
+      );
+      const allComplete = next.every((action) => action.status === 'Completed');
+      if (allComplete && !notionalExerciseDone) {
+        setNotionalExerciseDone(true);
+        setNotionalToastQueue((queue) => [
+          ...queue,
+          {
+            id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+            message: `${EXAMPLE_COMPONENT.label} · ${EXAMPLE_LENSES[0]} moved to the next readiness level!`,
+          },
+        ]);
+      }
+      return next;
+    });
+  };
 
   const pathway =
     PATHWAY_OPTIONS.find((option) => option.value === selectedPathway) || PATHWAY_OPTIONS[0];
@@ -397,34 +517,65 @@ Here are all of the lenses used across the Adoption Engine: not all of them will
             </h3>
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
               Every lens on every component is scored on the same 0-5 scale, so progress is always
-              comparable. Here's what each level means:
+              comparable. Here's what each level means, and what that looks like on the readiness
+              radar you'll see elsewhere in the tool:
             </p>
-            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {READINESS_BANDS.map((band) => {
-                const [, detail] = (GENERIC_RUBRIC[band.score] || '').split(/:\s(.+)/);
-                return (
-                  <div
-                    key={band.score}
-                    className={`rounded-md border p-2.5 ${
-                        darkMode
-                          ? 'border-slate-700'
-                          : ''
-                    }`}
-                    style={{ borderLeftWidth: '4px', borderLeftColor: band.color }}
-                  >
-                    <p
-                      className={`text-xs font-bold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+            <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
+              <div className="grid grid-cols-1 gap-2">
+                {READINESS_BANDS.map((band) => {
+                  const [, detail] = (GENERIC_RUBRIC[band.score] || '').split(/:\s(.+)/);
+                  return (
+                    <div
+                      key={band.score}
+                      className={`rounded-md border p-2.5 ${darkMode ? 'border-slate-700' : ''}`}
+                      style={{ borderLeftWidth: '4px', borderLeftColor: band.color }}
                     >
-                      {band.label}
-                    </p>
-                    <p
-                      className={`mt-0.5 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
-                    >
-                      {detail}
-                    </p>
-                  </div>
-                );
-              })}
+                      <p
+                        className={`text-xs font-bold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+                      >
+                        {band.label}
+                      </p>
+                      <p
+                        className={`mt-0.5 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+                      >
+                        {detail}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div
+                className={`rounded-lg border p-4 ${darkMode ? 'border-red-500/30 bg-red-500/5' : 'border-red-200 bg-red-50'}`}
+              >
+                <p
+                  className={`text-sm font-bold ${darkMode ? 'text-red-200' : 'text-red-800'}`}
+                >
+                  At risk example
+                </p>
+                <p className={`mt-1 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                  Notional scores trailing behind where Phase 2 expects these components to be.
+                </p>
+                <div className="mt-3">
+                  <MiniMaturityRadar scores={AT_RISK_SCORES} darkMode={darkMode} />
+                </div>
+              </div>
+
+              <div
+                className={`rounded-lg border p-4 ${darkMode ? 'border-emerald-500/30 bg-emerald-500/5' : 'border-emerald-200 bg-emerald-50'}`}
+              >
+                <p
+                  className={`text-sm font-bold ${darkMode ? 'text-emerald-200' : 'text-emerald-800'}`}
+                >
+                  Excelling example
+                </p>
+                <p className={`mt-1 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                  Notional scores ahead of where Phase 2 expects these components to be.
+                </p>
+                <div className="mt-3">
+                  <MiniMaturityRadar scores={EXCELLING_SCORES} darkMode={darkMode} />
+                </div>
+              </div>
             </div>
           </>
         ) : null}
@@ -444,6 +595,91 @@ These Actions can be edited or removed or you can add your own actions.
               Actions can be assigned to team members and have completion dates assigned if required.
 Once the Actions at each readiness level is Completed or Cancelled, that lens automatically moves up to the next readiness level.
             </p>
+            <p className={`mt-4 text-sm font-semibold ${textClass}`}>
+              Try assigning these actions and then marking them as complete.
+            </p>
+            <div
+              className={`mt-3 overflow-x-auto rounded-md border ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}
+            >
+              <table className="min-w-full divide-y divide-slate-200">
+                <thead className={darkMode ? 'bg-slate-900' : 'bg-slate-50'}>
+                  <tr>
+                    <th
+                      className={`px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
+                    >
+                      Action
+                    </th>
+                    <th
+                      className={`px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
+                    >
+                      Owner
+                    </th>
+                    <th
+                      className={`px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
+                    >
+                      Status
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {notionalActions.map((action) => (
+                    <tr key={action.id}>
+                      <td className={`px-3 py-2 align-top text-sm ${textClass}`}>{action.text}</td>
+                      <td className="px-3 py-2 align-top">
+                        {editingOwnerRowId === action.id ? (
+                          <select
+                            autoFocus
+                            aria-label={`Owner for ${action.text}`}
+                            value={action.owner}
+                            onChange={(event) => {
+                              updateNotionalAction(action.id, { owner: event.target.value });
+                              setEditingOwnerRowId(null);
+                            }}
+                            onBlur={() => setEditingOwnerRowId(null)}
+                            className="rounded-md border border-slate-300 px-2 py-1 text-xs font-semibold"
+                          >
+                            <option value="">Unassigned</option>
+                            {NOTIONAL_OWNERS.map((owner) => (
+                              <option key={owner} value={owner}>
+                                {owner}
+                              </option>
+                            ))}
+                          </select>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => setEditingOwnerRowId(action.id)}
+                            aria-label={`Change owner for ${action.text}`}
+                            className="rounded-full focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b]"
+                          >
+                            <OwnerAvatar name={action.owner} darkMode={darkMode} />
+                          </button>
+                        )}
+                      </td>
+                      <td className="px-3 py-2 align-top">
+                        <select
+                          aria-label={`Status for ${action.text}`}
+                          value={action.status}
+                          onChange={(event) =>
+                            updateNotionalAction(action.id, {
+                              status: event.target.value as NotionalAction['status'],
+                            })
+                          }
+                          className={`rounded-md border px-2 py-1 text-xs font-semibold ${ACTION_STATUS_BADGE_STYLES[action.status]}`}
+                        >
+                          {UNIFIED_ACTION_STATUSES.map((status) => (
+                            <option key={status} value={status}>
+                              {status}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
             <p
               className={`mt-6 text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
             >
@@ -467,7 +703,13 @@ Now it is time to set up your real project.
             <button
               type="button"
               onClick={onGetStarted}
-              className="rounded-md bg-[#005eb8] px-5 py-2 text-sm font-semibold text-white shadow-[0_3px_0_#003087] hover:bg-[#00417a]"
+              disabled={!notionalExerciseDone}
+              title={
+                notionalExerciseDone
+                  ? undefined
+                  : 'Mark every notional action Completed above to continue'
+              }
+              className="rounded-md bg-[#005eb8] px-5 py-2 text-sm font-semibold text-white shadow-[0_3px_0_#003087] hover:bg-[#00417a] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#005eb8]"
             >
               Get started
             </button>
@@ -482,6 +724,15 @@ Now it is time to set up your real project.
           )}
         </div>
       </Card>
+
+      {notionalToastQueue.length > 0 ? (
+        <Toast
+          key={notionalToastQueue[0].id}
+          message={notionalToastQueue[0].message}
+          onDismiss={() => setNotionalToastQueue((queue) => queue.slice(1))}
+          celebrate
+        />
+      ) : null}
     </div>
   );
 }

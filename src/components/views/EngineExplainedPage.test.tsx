@@ -43,19 +43,14 @@ describe('EngineExplainedPage', () => {
 
     // assert 1
     expect(
-      screen.getByRole('heading', { name: 'Your pathway is broken into the 5 change phases' })
+      screen.getByRole('heading', { name: 'Each pathway is broken into the 5 change phases' })
     ).toBeInTheDocument();
-    expect(screen.getAllByText(/Phase 1: Pre-Discovery/).length).toBeGreaterThan(0);
 
     // act 2 - move to Components (generic, expandable, no links)
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
 
     // assert 2
-    expect(
-      screen.getByRole('heading', { name: 'Every phase is made up of several components' })
-    ).toBeInTheDocument();
-    expect(screen.getAllByText('Vision').length).toBeGreaterThan(0);
-    expect(screen.queryByRole('button', { name: 'Vision' })).not.toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Change components' })).toBeInTheDocument();
 
     // act 3 - move to Vision (specific example component)
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
@@ -68,53 +63,69 @@ describe('EngineExplainedPage', () => {
     // act 4 - move to Lens
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
 
-    // assert 4 - every lens of the example component is listed, not just one
+    // assert 4 - every canonical lens is listed, not just one
     expect(
-      screen.getByRole('heading', { name: 'A lens is a different angle on the same component' })
+      screen.getByRole('heading', { name: 'A Lens is a different perspective of the same Change Component' })
     ).toBeInTheDocument();
     expect(screen.getAllByText(/Strategic Direction and Leadership/).length).toBeGreaterThan(0);
-    expect(screen.getByText('People Experience and Culture')).toBeInTheDocument();
+    expect(screen.getByText('Skills and Behaviour')).toBeInTheDocument();
 
     // act 5 - move to Strat Direct (specific example lens)
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
 
     // assert 5
     expect(
-      screen.getByRole('heading', { name: /Following .+ through to a score/ })
+      screen.getByRole('heading', { name: 'An example lens on our example component' })
     ).toBeInTheDocument();
 
     // act 6 - move to Readiness
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
 
-    // assert 6
+    // assert 6 - band list plus the two notional example radars
     expect(
-      screen.getByRole('heading', { name: 'Readiness is scored 0-5 for every lens' })
+      screen.getByRole('heading', {
+        name: "Readiness is scored on a scale from 'Not Started', to 'Thriving' for every lens",
+      })
     ).toBeInTheDocument();
-    expect(screen.getByText('0 - Not Started')).toBeInTheDocument();
-    expect(screen.getByText('5 - Thriving')).toBeInTheDocument();
+    expect(screen.getByText('Not Started')).toBeInTheDocument();
+    expect(screen.getByText('Thriving')).toBeInTheDocument();
+    expect(screen.getByText('At risk example')).toBeInTheDocument();
+    expect(screen.getByText('Excelling example')).toBeInTheDocument();
 
     // act 7 - move to Actions
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
 
     // assert 7
-    expect(
-      screen.getByRole('heading', { name: 'Actions are how you move up a readiness level' })
-    ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Actions' })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Next' })).not.toBeInTheDocument();
   });
 
-  it('SHOULD call onGetStarted from the final step', () => {
+  it('SHOULD keep "Get started" disabled until the notional actions are all marked Completed, then enable it and show a celebratory toast', () => {
     // arrange
     const onGetStarted = vi.fn();
     render(<EngineExplainedPage onGetStarted={onGetStarted} onComponentClick={vi.fn()} />);
-
-    // act - step through to the end
     for (let i = 0; i < 7; i++) {
       fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     }
-    fireEvent.click(screen.getByRole('button', { name: 'Get started' }));
 
-    // assert
+    // assert 1 - disabled before the exercise is done
+    const getStartedButton = screen.getByRole('button', { name: 'Get started' });
+    expect(getStartedButton).toBeDisabled();
+
+    // act - mark every notional action Completed
+    const statusSelects = screen.getAllByRole('combobox', { name: /^Status for/ });
+    statusSelects.forEach((select) => {
+      fireEvent.change(select, { target: { value: 'Completed' } });
+    });
+
+    // assert 2 - toast fires and button enables
+    expect(screen.getByText(/moved to the next readiness level/)).toBeInTheDocument();
+    expect(getStartedButton).not.toBeDisabled();
+
+    // act - click it
+    fireEvent.click(getStartedButton);
+
+    // assert 3
     expect(onGetStarted).toHaveBeenCalled();
   });
 

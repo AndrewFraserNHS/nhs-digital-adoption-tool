@@ -640,7 +640,7 @@ export function EngineExplainedPage({
                 </div>
               ))}
             </div>
-            <p className={`mt-4 text-sm ${textClass}`}>Let's follow one lens through in detail.</p>
+            <p className={`mt-4 text-sm ${textClass}`}>Let's look at the lenses that relate to a Vision to follow our example through.</p>
           </>
         ) : null}
 
@@ -652,7 +652,7 @@ export function EngineExplainedPage({
               An example lens for our example change component
             </h3>
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
-              The {EXAMPLE_COMPONENT.label}, can be seen through 2 difference lenses.
+              The {EXAMPLE_COMPONENT.label}, can be seen through 2 different lenses.
             </p>
             <ol className={`mt-3 max-w-2xl text-sm ${textClass}`}>
               <li>1. {EXAMPLE_LENSES[0]} lens</li>

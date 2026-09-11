@@ -97,6 +97,17 @@ describe('EngineExplainedPage', () => {
 
     // assert 7
     expect(screen.getByRole('heading', { name: 'Actions' })).toBeInTheDocument();
+
+    // act 8 - move to Overview
+    fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+
+    // assert 8 - the full recap diagram, built from real data
+    expect(screen.getByRole('heading', { name: 'The whole engine, one page' })).toBeInTheDocument();
+    expect(screen.getByText('Starting for the First Time')).toBeInTheDocument();
+    expect(screen.getByText('Pre-Discovery')).toBeInTheDocument();
+    expect(screen.getByText('Senior Sponsorship & Governance')).toBeInTheDocument();
+    expect(screen.getAllByText('Strategic Direction and Leadership').length).toBeGreaterThan(0);
+    expect(screen.getByText('Thriving')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Next' })).not.toBeInTheDocument();
   });
 
@@ -104,28 +115,35 @@ describe('EngineExplainedPage', () => {
     // arrange
     const onGetStarted = vi.fn();
     render(<EngineExplainedPage onGetStarted={onGetStarted} onComponentClick={vi.fn()} />);
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 8; i++) {
       fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     }
 
-    // assert 1 - disabled before the exercise is done
+    // assert 1 - disabled before the exercise is done, on the final Overview step
+    expect(screen.getByRole('heading', { name: 'The whole engine, one page' })).toBeInTheDocument();
     const getStartedButton = screen.getByRole('button', { name: 'Get started' });
     expect(getStartedButton).toBeDisabled();
 
-    // act - mark every notional action Completed
+    // act - go back to the Actions step and mark every notional action Completed
+    fireEvent.click(screen.getByRole('button', { name: 'Back' }));
     const statusSelects = screen.getAllByRole('combobox', { name: /^Status for/ });
     statusSelects.forEach((select) => {
       fireEvent.change(select, { target: { value: 'Completed' } });
     });
 
-    // assert 2 - toast fires and button enables
+    // assert 2 - toast fires
     expect(screen.getByText(/moved to the next readiness level/)).toBeInTheDocument();
-    expect(getStartedButton).not.toBeDisabled();
+
+    // act - move back to the final step
+    fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+
+    // assert 3 - button now enabled
+    expect(screen.getByRole('button', { name: 'Get started' })).not.toBeDisabled();
 
     // act - click it
-    fireEvent.click(getStartedButton);
+    fireEvent.click(screen.getByRole('button', { name: 'Get started' }));
 
-    // assert 3
+    // assert 4
     expect(onGetStarted).toHaveBeenCalled();
   });
 

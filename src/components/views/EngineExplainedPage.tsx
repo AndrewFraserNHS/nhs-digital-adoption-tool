@@ -29,6 +29,7 @@ const STEP_TITLES = [
   'Strat Direct',
   'Readiness',
   'Actions',
+  'Overview',
 ];
 
 const PATHWAY_DETAILS: Record<CstPathwayKey, string> = {
@@ -165,6 +166,7 @@ function Breadcrumb({
     EXAMPLE_LENSES[0],
     `Readiness`,
     'Actions',
+    'Overview',
   ];
 
   return (
@@ -236,6 +238,120 @@ function ComponentsOverviewTable({ darkMode }: { darkMode: boolean }): JSX.Eleme
           </div>
         );
       })}
+    </div>
+  );
+}
+
+const ACTION_EXAMPLES = ['Assign owner', 'Set due date', 'Mark complete'];
+
+/** A top to bottom recap of the whole engine, built from the real data (pathways, phases, all components, all lenses, all readiness bands) so it never drifts out of sync. */
+function EngineOverviewDiagram({ darkMode }: { darkMode: boolean }): JSX.Element {
+  const tierClass = `rounded-lg border border-dashed p-4 ${darkMode ? 'border-slate-700' : 'border-slate-300'}`;
+  const tierLabelClass = `mb-3 text-center text-xs font-bold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`;
+  const chipRow = 'flex flex-wrap items-center justify-center gap-2';
+
+  const downArrow = (
+    <div className="flex justify-center py-1" aria-hidden="true">
+      <span className={darkMode ? 'text-slate-600' : 'text-slate-300'}>↓</span>
+    </div>
+  );
+  const bothWaysArrow = (
+    <div className="flex justify-center py-1" aria-hidden="true">
+      <span className={darkMode ? 'text-slate-600' : 'text-slate-300'}>↕</span>
+    </div>
+  );
+
+  const pathwayChip = `rounded-full border px-3 py-1 text-xs font-semibold ${darkMode ? 'border-violet-700 bg-violet-950/40 text-violet-100' : 'border-violet-200 bg-violet-50 text-violet-700'}`;
+  const phaseChip = `rounded-full border px-3 py-1 text-xs font-semibold ${darkMode ? 'border-blue-700 bg-blue-950/40 text-blue-100' : 'border-blue-200 bg-blue-50 text-blue-700'}`;
+  const componentChip = `rounded-full border px-3 py-1 text-xs font-semibold ${darkMode ? 'border-orange-700 bg-orange-950/40 text-orange-100' : 'border-orange-200 bg-orange-50 text-orange-700'}`;
+  const lensChip = `rounded-full border px-3 py-1 text-xs font-semibold ${darkMode ? 'border-rose-700 bg-rose-950/40 text-rose-100' : 'border-rose-200 bg-rose-50 text-rose-700'}`;
+  const actionChip = `rounded-full border px-3 py-1 text-xs font-semibold ${darkMode ? 'border-green-700 bg-green-950/40 text-green-100' : 'border-green-200 bg-green-50 text-green-700'}`;
+
+  return (
+    <div className="space-y-1">
+      <div className={tierClass}>
+        <p className={tierLabelClass}>Pathways</p>
+        <div className={chipRow}>
+          {PATHWAY_OPTIONS.map((option) => (
+            <span key={option.value} className={pathwayChip}>
+              {option.simplifiedLabel}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {downArrow}
+
+      <div className={tierClass}>
+        <p className={tierLabelClass}>Phases</p>
+        <div className={chipRow}>
+          {[1, 2, 3, 4, 5].map((phase) => (
+            <span key={phase} className={phaseChip}>
+              {PHASE_NAMES[phase]}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {downArrow}
+
+      <div className={tierClass}>
+        <p className={tierLabelClass}>Components</p>
+        <div className={chipRow}>
+          {ASSESSMENT_COMPONENTS.map((component) => (
+            <span key={component.id} className={componentChip}>
+              {component.label}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {bothWaysArrow}
+
+      <div className={tierClass}>
+        <p className={tierLabelClass}>Lenses</p>
+        <div className={chipRow}>
+          {ASSESSMENT_LENSES.map((lens) => (
+            <span key={lens} className={lensChip}>
+              {lens}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {downArrow}
+
+      <div className={tierClass}>
+        <p className={tierLabelClass}>Readiness score</p>
+        <div className="flex overflow-hidden rounded-md">
+          {READINESS_BANDS.map((band) => (
+            <div
+              key={band.score}
+              className="flex-1 py-2 text-center"
+              style={{ backgroundColor: band.color }}
+            >
+              <span
+                className={`text-[10px] font-semibold ${band.score === 2 ? 'text-slate-900' : 'text-white'}`}
+              >
+                {band.label}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {downArrow}
+
+      <div className={tierClass}>
+        <p className={tierLabelClass}>Actions</p>
+        <div className={chipRow}>
+          {ACTION_EXAMPLES.map((action) => (
+            <span key={action} className={actionChip}>
+              {action}
+            </span>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
@@ -717,8 +833,26 @@ Once the Actions at each readiness level is Completed or Cancelled, that lens au
             >
               That's Adoption Engine explained:
               Pathway → Phase → Component → Lens → Readiness → Actions.
-Now it is time to set up your real project.
+Let's see the whole picture before you set up your real project.
             </p>
+          </>
+        ) : null}
+
+        {activeStep === 8 ? (
+          <>
+            <h3
+              className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
+            >
+              The whole engine, one page
+            </h3>
+            <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
+              Every pathway, phase, component, lens and readiness level really used in this tool,
+              laid out top to bottom. Components and lenses connect both ways, since every
+              component is viewed through several lenses.
+            </p>
+            <div className="mt-6">
+              <EngineOverviewDiagram darkMode={darkMode} />
+            </div>
           </>
         ) : null}
 

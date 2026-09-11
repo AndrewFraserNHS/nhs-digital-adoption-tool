@@ -35,8 +35,7 @@ const PATHWAY_DETAILS: Record<CstPathwayKey, string> = {
 };
 
 const EXAMPLE_COMPONENT = getComponentsByPhase(1)[0] || ASSESSMENT_COMPONENTS[0];
-const EXAMPLE_LENS = EXAMPLE_COMPONENT.lenses[0];
-const EXAMPLE_BAND_SCORE = 2;
+const EXAMPLE_LENSES = EXAMPLE_COMPONENT.lenses;
 
 /** Small horizontal trail showing which relationship is being built up as the tutorial progresses. */
 function Breadcrumb({
@@ -52,7 +51,7 @@ function Breadcrumb({
     'Components',
     EXAMPLE_COMPONENT.label,
     'Lens',
-    EXAMPLE_LENS,
+    EXAMPLE_LENSES[0],
     `Readiness`,
     'Actions',
   ];
@@ -194,10 +193,12 @@ export function EngineExplainedPage({
               Every programme starts with a pathway
             </h3>
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
-              A pathway describes the change journey your programme is on. It tailors which
-              guidance, actions and resources you see everywhere else in the tool. Pick one below -
-              we'll use it for the rest of this walkthrough (you can change it for real later, in
-              Project Profile).
+              A pathway describes the current status of your project and will determine the change journey required for successful adoption.</p>
+              <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
+              The Pathway will tailor the  guidance, actions and resources you will see everywhere else in the tool.</p>
+<p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
+In this example walkthrough of the Adoption Engine we'll use pathway 1 - Starting for the First time.
+You will be able to select the correct pathway when you set up your project later on.
             </p>
             <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
               {PATHWAY_OPTIONS.map((option) => {
@@ -244,13 +245,13 @@ export function EngineExplainedPage({
             <h3
               className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
             >
-              Your pathway is broken into the 5 change phases
+              Each pathway is broken into the 5 change phases
             </h3>
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
-              Every pathway runs through the same 5 phases, from the earliest thinking about a
-              change through to it being fully embedded as business as usual. This is the same phase
-              breakdown you'll see on your Daily Check-in once your project is set up. The phase
-              headings are shown below.
+              Every Pathway runs through 5 phases which are aligned to a project lifecycle.
+              It starts from the earliest thinking about a change through to it being fully embedded as business as usual.</p>
+<p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
+See the 5 Change phases below.
             </p>
             <div className="mt-6">
               <DailyPhaseOverview
@@ -261,9 +262,7 @@ export function EngineExplainedPage({
               />
             </div>
             <p className={`mt-4 text-sm ${textClass}`}>
-              Each phase covers a set of change components that matter most at that stage - for
-              example, Vision and the Case for Change come first, while things like Transfer to BAU
-              come much later. Let's look at what a "component" actually is.
+              At each phase there are 'Change Components' that need to be focused on at that particular phase of a project.
             </p>
           </>
         ) : null}
@@ -273,18 +272,18 @@ export function EngineExplainedPage({
             <h3
               className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
             >
-              Every phase is made up of several components
+             Change components
             </h3>
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
-              Components are the focused topics within each phase - things like Vision, Sponsorship,
-              Capability or Benefits. The table below shows which components sit inside each phase
-              (in the real tool, each one is clickable and has its own readiness and actions):
+              Change Components are the focused topics and change activities that are relevant to each phase.</p>
+ <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
+The table below shows which components are included in each phase (these will be clickable when using the adoption engine.)
             </p>
             <div className="mt-6">
               <ComponentsOverviewTable darkMode={darkMode} />
             </div>
             <p className={`mt-4 text-sm ${textClass}`}>
-              Let's zoom into one specific component from Phase {EXAMPLE_COMPONENT.phase}:{' '}
+              To continue with the example lets zoom into one of the specific Change Component. Phase {EXAMPLE_COMPONENT.phase}:{' '}
               {EXAMPLE_COMPONENT.label}.
             </p>
           </>
@@ -326,13 +325,11 @@ export function EngineExplainedPage({
             <h3
               className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
             >
-              A lens is a different angle on the same component
+              A Lens is a different perspective of the same Change Component
             </h3>
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
-              Every component is assessed through a handful of lenses - perspectives like
-              leadership, culture, planning, skills or process. Each lens gets its own readiness
-              score, because a component can be strong in one lens and weak in another. Here are all
-              of the lenses used across the Adoption Engine:
+              Each Change Component can be looked at through different lenses that show different perspectives.
+Here are all of the lenses used across the Adoption Engine: not all of them will relate to every Change Component.
             </p>
             <div className="mt-6 grid grid-cols-1 gap-3">
               {ASSESSMENT_LENSES.map((lens) => (
@@ -350,7 +347,7 @@ export function EngineExplainedPage({
               ))}
             </div>
             <p className={`mt-4 text-sm ${textClass}`}>
-              Let's follow one lens through in detail: {EXAMPLE_LENS}.
+              Let's follow one lens through in detail.
             </p>
           </>
         ) : null}
@@ -360,29 +357,33 @@ export function EngineExplainedPage({
             <h3
               className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
             >
-              Following {EXAMPLE_LENS} through to a score
+              Following {EXAMPLE_LENSES[0]} through to a score
             </h3>
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
-              {EXAMPLE_COMPONENT.label}, seen through the {EXAMPLE_LENS} lens, is the specific thing
+              {EXAMPLE_COMPONENT.label}, can be seen through the {EXAMPLE_LENSES[0]} lens. As well as the {EXAMPLE_LENSES[1]} lens.</p>
+               <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
+              Both lenses, give a different perspective on the same component. In this example, we will follow the {EXAMPLE_LENSES[0]} lens through to a readiness score.
               we're going to score. That's exactly what a readiness score measures - not a whole
               component at once, but one lens on it.
             </p>
-            <div
-              className={`mt-6 rounded-lg border p-5 ${darkMode ? 'border-[#005eb8] bg-slate-900' : 'border-[#005eb8] bg-blue-50'}`}
-            >
-              <p
-                className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-[#005eb8]'}`}
-              >
-                {EXAMPLE_COMPONENT.label} · {EXAMPLE_LENS}
-              </p>
-              <p
-                className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-blue-900'}`}
-              >
-                {getLensDescription(EXAMPLE_LENS)}
-              </p>
-            </div>
+                {EXAMPLE_LENSES.map((lens) => {
+                  return  <div
+                    className={`mt-6 rounded-lg border p-5 ${darkMode ? 'border-[#005eb8] bg-slate-900' : 'border-[#005eb8] bg-blue-50'}`}
+                  >
+                    <p
+                      className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-[#005eb8]'}`}
+                    >
+                      {EXAMPLE_COMPONENT.label} · {lens}
+                    </p>
+                    <p
+                      className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-blue-900'}`}
+                    >
+                      {getLensDescription(lens)}
+                    </p>
+                  </div>
+                })}
             <p className={`mt-4 text-sm ${textClass}`}>
-              Next: how that score actually works.
+              Now we need to look at scoring each Change Component in Terms of Readiness for Change through each of the relevant lenses.
             </p>
           </>
         ) : null}
@@ -405,9 +406,7 @@ export function EngineExplainedPage({
                   <div
                     key={band.score}
                     className={`rounded-md border p-2.5 ${
-                      band.score === EXAMPLE_BAND_SCORE
-                        ? 'ring-2 ring-[#005eb8]'
-                        : darkMode
+                        darkMode
                           ? 'border-slate-700'
                           : ''
                     }`}
@@ -417,7 +416,7 @@ export function EngineExplainedPage({
                       className={`text-xs font-bold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
                     >
                       {band.score} - {band.label}
-                      {band.score === EXAMPLE_BAND_SCORE ? ' - our example is here' : ''}
+                      {/* {band.score === EXAMPLE_BAND_SCORE ? ' - our example is here' : ''} */}
                     </p>
                     <p
                       className={`mt-0.5 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
@@ -436,24 +435,22 @@ export function EngineExplainedPage({
             <h3
               className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
             >
-              Actions are how you move up a readiness level
+              Actions
             </h3>
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
-              At every readiness level, the engine suggests concrete actions - things to review,
-              decide, build, communicate or measure. For {EXAMPLE_COMPONENT.label} / {EXAMPLE_LENS}{' '}
-              at level {EXAMPLE_BAND_SCORE}, that might mean things like agreeing a standard
-              approach and getting it applied consistently.
+              To improve readiness for each component through each lens there are a set of suggested actions to be completed.
+These Actions can be edited or removed or you can add your own actions.
             </p>
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
-              Assign each action an owner and a status. Once every action at a level is Completed or
-              Cancelled, that lens automatically moves up to the next readiness level - no
-              guesswork, no manual tally.
+              Actions can be assigned to team members and have completion dates assigned if required.
+Once the Actions at each readiness level is Completed or Cancelled, that lens automatically moves up to the next readiness level.
             </p>
             <p
               className={`mt-6 text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
             >
-              That's the whole engine: Pathway → Phase → Component → Lens → Readiness → Actions.
-              Time to set up your real project.
+              That's Adoption Engine explained:
+              Pathway → Phase → Component → Lens → Readiness → Actions.
+Now it is time to set up your real project.
             </p>
           </>
         ) : null}

@@ -802,7 +802,7 @@ function EvidenceLinksAndDocsSection({
                             {row.item.label || row.item.href}
                           </a>
                         ) : (
-                          row.item.label || '—'
+                          row.item.label || '-'
                         )}
                       </td>
                     </tr>

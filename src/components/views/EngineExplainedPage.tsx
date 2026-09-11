@@ -357,7 +357,7 @@ Here are all of the lenses used across the Adoption Engine: not all of them will
             <h3
               className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
             >
-              Following {EXAMPLE_LENSES[0]} through to a score
+              An example lens on our example component
             </h3>
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
               {EXAMPLE_COMPONENT.label}, can be seen through the {EXAMPLE_LENSES[0]} lens. As well as the {EXAMPLE_LENSES[1]} lens.</p>
@@ -366,12 +366,12 @@ Here are all of the lenses used across the Adoption Engine: not all of them will
               we're going to score. That's exactly what a readiness score measures - not a whole
               component at once, but one lens on it.
             </p>
-                {EXAMPLE_LENSES.map((lens) => {
+                {EXAMPLE_LENSES.map((lens, index) => {
                   return  <div
-                    className={`mt-6 rounded-lg border p-5 ${darkMode ? 'border-[#005eb8] bg-slate-900' : 'border-[#005eb8] bg-blue-50'}`}
+                    className={`mt-6 rounded-lg border p-5 ${darkMode ? 'border-[#005eb8] bg-slate-900' :  index === 0 ? 'border-[#005eb8] bg-blue-50' : 'border-slate-200 bg-white'}`}
                   >
                     <p
-                      className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-[#005eb8]'}`}
+                      className={`text-lg font-semibold ${darkMode  ? 'text-slate-100' : 'text-[#005eb8]'}`}
                     >
                       {EXAMPLE_COMPONENT.label} · {lens}
                     </p>
@@ -393,7 +393,7 @@ Here are all of the lenses used across the Adoption Engine: not all of them will
             <h3
               className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
             >
-              Readiness is scored 0-5 for every lens
+              Readiness is scored on a scale from 'Not Started', to 'Thriving' for every lens
             </h3>
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
               Every lens on every component is scored on the same 0-5 scale, so progress is always
@@ -415,8 +415,7 @@ Here are all of the lenses used across the Adoption Engine: not all of them will
                     <p
                       className={`text-xs font-bold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
                     >
-                      {band.score} - {band.label}
-                      {/* {band.score === EXAMPLE_BAND_SCORE ? ' - our example is here' : ''} */}
+                      {band.label}
                     </p>
                     <p
                       className={`mt-0.5 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}

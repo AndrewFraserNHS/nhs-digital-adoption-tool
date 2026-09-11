@@ -547,12 +547,10 @@ The table below shows which components are included in each phase (these will be
             <h3
               className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
             >
-              A component is a specific area of change to get right
+              Vision is an example of a Change Component
             </h3>
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
-              Each phase is made up of several components - focused topics like Vision, Sponsorship,
-              Capability or Benefits. Each one has its own readiness to build up, and its own
-              actions to get there. Here's the example we're following:
+              The Vision sits as a Change Component in Phase 1  of a project because it needs to be developed right at the start.
             </p>
             <div
               className={`mt-6 rounded-lg border p-5 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-white'}`}
@@ -567,8 +565,7 @@ The table below shows which components are included in each phase (these will be
               </p>
             </div>
             <p className={`mt-4 text-sm ${textClass}`}>
-              But you don't assess a component all at once - you look at it through several
-              different "lenses". Let's see what that means.
+             A Vision can be looked at through particular 'lenses' - Let's see what that means.
             </p>
           </>
         ) : null}

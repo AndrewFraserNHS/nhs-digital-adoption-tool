@@ -2008,7 +2008,16 @@ export function AdoptionApp() {
             />
           )}
           {view === 'force-field-analysis' && (
-            <ForceFieldAnalysisApp embedded onBack={() => handleViewChange('dashboard')} />
+            <ForceFieldAnalysisApp
+              embedded
+              onBack={() => handleViewChange('dashboard')}
+              components={COMPONENTS}
+              teamMembers={store.orgProfile.teamMembers || []}
+              objectives={store.objectives}
+              getEntry={getEntry}
+              onEntryUpdate={updateEntry}
+              onObjectivesUpdate={updateComponentObjectives}
+            />
           )}
           {view === 'compare' && (
             <CompareApp embedded onBack={() => handleViewChange('dashboard')} />

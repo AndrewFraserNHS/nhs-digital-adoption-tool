@@ -42,6 +42,7 @@ import {
   EVIDENCE_WARNING_DISMISSED_KEY,
   EvidenceWarningModal,
 } from '@components/common/EvidenceWarningModal';
+import { ActionEditorFields } from '@components/common/ActionEditorFields';
 import { load, save } from '@lib/storage';
 
 type AssessmentPanelStore = AdoptionStore;
@@ -2595,104 +2596,12 @@ export function AssessmentPanel({
                 appear.
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <label className={`text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
-                  <span className="mb-1 block font-semibold">Action Type</span>
-                  <select
-                    value={actionEditor.action.actionType || 'Admin'}
-                    onChange={(event) =>
-                      updateActionEditor({
-                        actionType: event.target.value as DraftAction['actionType'],
-                      })
-                    }
-                    className={`w-full rounded-md border px-3 py-2 text-sm ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
-                  >
-                    {ACTION_TYPES.map((actionType) => (
-                      <option key={actionType} value={actionType}>
-                        {actionType}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label className={`text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
-                  <span className="mb-1 block font-semibold">Owner</span>
-                  <select
-                    value={actionEditor.action.owner}
-                    onChange={(event) => updateActionEditor({ owner: event.target.value })}
-                    className={`w-full rounded-md border px-3 py-2 text-sm ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
-                  >
-                    <option value="">Unassigned</option>
-                    {teamMembers.map((member) => (
-                      <option key={member.id} value={member.name}>
-                        {member.name}
-                        {member.role ? ` - ${member.role}` : ''}
-                      </option>
-                    ))}
-                    {actionEditor.action.owner &&
-                    !teamMembers.some((member) => member.name === actionEditor.action.owner) ? (
-                      <option value={actionEditor.action.owner}>
-                        {actionEditor.action.owner} (not on roster)
-                      </option>
-                    ) : null}
-                  </select>
-                </label>
-                <label className={`text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
-                  <span className="mb-1 block font-semibold">Status</span>
-                  <select
-                    value={actionEditor.action.status}
-                    onChange={(event) => {
-                      const nextStatus = event.target.value as DraftAction['status'];
-                      if (
-                        actionEditor.action.priority === 'must' &&
-                        normalizeActionStatus(nextStatus) === 'Cancelled'
-                      ) {
-                        window.alert(
-                          "You are trying to mark what we have classified as a MUST action as Cancelled, and it shouldn't be cancelled. Please re-review."
-                        );
-                        return;
-                      }
-                      updateActionEditor({ status: nextStatus });
-                    }}
-                    className={`w-full rounded-md border px-3 py-2 text-sm ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
-                  >
-                    {STATUS_OPTIONS.map((status) => (
-                      <option key={status} value={status}>
-                        {status}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <label className={`text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
-                  <span className="mb-1 block font-semibold">Start Date</span>
-                  <input
-                    type="date"
-                    value={actionEditor.action.startDate || ''}
-                    onChange={(event) => updateActionEditor({ startDate: event.target.value })}
-                    className={`w-full rounded-md border px-3 py-2 text-sm ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
-                  />
-                </label>
-                <label className={`text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
-                  <span className="mb-1 block font-semibold">End Date</span>
-                  <input
-                    type="date"
-                    value={actionEditor.action.dueDate || ''}
-                    onChange={(event) => updateActionEditor({ dueDate: event.target.value })}
-                    className={`w-full rounded-md border px-3 py-2 text-sm ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
-                  />
-                </label>
-              </div>
-
-              <label className={`text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
-                <span className="mb-1 block font-semibold">Notes</span>
-                <textarea
-                  value={actionEditor.action.notes || ''}
-                  onChange={(event) => updateActionEditor({ notes: event.target.value })}
-                  className={`w-full rounded-md border px-3 py-2 text-sm h-20 ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
-                />
-              </label>
+              <ActionEditorFields
+                action={actionEditor.action}
+                onChange={updateActionEditor}
+                teamMembers={teamMembers}
+                darkMode={darkMode}
+              />
 
               <div
                 className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} rounded-lg border p-3`}

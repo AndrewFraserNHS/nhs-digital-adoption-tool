@@ -1,8 +1,11 @@
 import { load, save } from '@lib/storage';
 import { downloadFile } from '@lib/utils';
+import type { AssessmentComponent } from '@data/components';
+import type { ComponentObjective, DraftAction, DraftEntry, TeamMember } from '@lib/adoptionState';
 import { type ChangeEvent, JSX, useEffect, useRef, useState } from 'react';
 
-import { nhsButtonSecondary } from '../styles/nhsTheme';
+import { ActionEditorFields } from '@components/common/ActionEditorFields';
+import { nhsButtonPrimary, nhsButtonSecondary } from '../styles/nhsTheme';
 
 type ForceSide = 'driving' | 'restraining';
 type ForceActionStatus = 'Planned' | 'In Progress' | 'Blocked' | 'Completed';
@@ -154,6 +157,19 @@ function deriveMitigatedScore(force: Force, actions: ForceAction[]): number {
     .filter((action) => action.forceId === force.id && action.status === 'Completed')
     .reduce((total, action) => total + action.impact, 0);
   return Math.max(0, Math.min(10, force.score + completedImpact));
+}
+
+/**
+ * A read-only preview of what a force's mitigated score would become if the given action were
+ * Completed right now, regardless of its actual current status - lets a reviewer see an action's
+ * effect before it's actually marked Completed. The real mitigated score (deriveMitigatedScore)
+ * is unaffected by this - it still only counts actions that are genuinely Completed.
+ */
+function previewMitigatedScore(force: Force, actions: ForceAction[], action: ForceAction): number {
+  const hypothetical = actions.map((candidate) =>
+    candidate.id === action.id ? { ...candidate, status: 'Completed' as ForceActionStatus } : candidate
+  );
+  return deriveMitigatedScore(force, hypothetical);
 }
 
 function sumMitigatedScores(forces: Force[], actions: ForceAction[], side: ForceSide): number {
@@ -338,16 +354,20 @@ function ForcesScreen({
 
 function ActionsScreen({
   state,
+  teamMembers,
   onUpdateAction,
   onAddAction,
   onRemoveAction,
   onBack,
+  onContinue,
 }: {
   state: ForceFieldAnalysisState;
+  teamMembers: TeamMember[];
   onUpdateAction: (id: string, updates: Partial<ForceAction>) => void;
   onAddAction: (forceId: string) => void;
   onRemoveAction: (id: string) => void;
   onBack: () => void;
+  onContinue: () => void;
 }): JSX.Element {
   const drivingMitigated = sumMitigatedScores(state.forces, state.actions, 'driving');
   const restrainingMitigated = sumMitigatedScores(state.forces, state.actions, 'restraining');
@@ -386,19 +406,19 @@ function ActionsScreen({
           <table className="min-w-full divide-y divide-slate-200 bg-white">
             <thead className="bg-slate-50">
               <tr>
-                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
-                  Force
-                </th>
-                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                <th className="w-[12%] px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
                   Side
                 </th>
-                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                <th className="w-1/2 px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                  Force
+                </th>
+                <th className="w-[12%] px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
                   Original Score
                 </th>
-                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                <th className="w-[12%] px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
                   Mitigated Score
                 </th>
-                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                <th className="w-[12%] px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
                   Actions
                 </th>
               </tr>
@@ -412,31 +432,31 @@ function ActionsScreen({
                 const mitigatedScore = deriveMitigatedScore(force, state.actions);
                 return (
                   <tr key={force.id}>
-                    <td className="px-3 py-2 text-sm text-slate-800">
-                      {force.text || 'Untitled force'}
-                    </td>
-                    <td className="px-3 py-2 text-sm">
+                    <td className="w-[12%] px-3 py-2 text-sm">
                       <span
                         className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-semibold ${force.side === 'driving' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'}`}
                       >
                         {force.side === 'driving' ? 'Driving' : 'Restraining'}
                       </span>
                     </td>
-                    <td className="px-3 py-2">
+                    <td className="w-1/2 px-3 py-2 text-sm text-slate-800">
+                      {force.text || 'Untitled force'}
+                    </td>
+                    <td className="w-[12%] px-3 py-2">
                       <span
                         className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-bold ${scoreBadgeClass(force.score, force.side)}`}
                       >
                         {force.score}
                       </span>
                     </td>
-                    <td className="px-3 py-2">
+                    <td className="w-[12%] px-3 py-2">
                       <span
                         className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-bold ${scoreBadgeClass(mitigatedScore, force.side)}`}
                       >
                         {mitigatedScore}
                       </span>
                     </td>
-                    <td className="px-3 py-2 text-sm text-slate-600">
+                    <td className="w-[12%] px-3 py-2 text-sm text-slate-600">
                       {completedCount}/{forceActions.length} complete
                     </td>
                   </tr>
@@ -468,10 +488,10 @@ function ActionsScreen({
           <table className="min-w-full divide-y divide-slate-200 bg-white">
             <thead className="bg-slate-50">
               <tr>
-                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                <th className="w-[20%] px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
                   Force
                 </th>
-                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                <th className="w-[28%] px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
                   Action
                 </th>
                 <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
@@ -490,87 +510,114 @@ function ActionsScreen({
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {state.actions.map((action) => (
-                <tr key={action.id}>
-                  <td className="px-3 py-2">
-                    <select
-                      value={action.forceId}
-                      onChange={(event) =>
-                        onUpdateAction(action.id, { forceId: event.target.value })
-                      }
-                      className="rounded-md border border-slate-300 px-2 py-1 text-xs"
-                    >
-                      {state.forces.map((force) => (
-                        <option key={force.id} value={force.id}>
-                          {force.text || 'Untitled force'}
-                        </option>
-                      ))}
-                    </select>
-                  </td>
-                  <td className="px-3 py-2">
-                    <input
-                      value={action.text}
-                      onChange={(event) => onUpdateAction(action.id, { text: event.target.value })}
-                      className="w-full min-w-[12rem] rounded-md border border-slate-300 px-2 py-1 text-sm"
-                    />
-                  </td>
-                  <td className="px-3 py-2">
-                    <input
-                      value={action.owner}
-                      onChange={(event) => onUpdateAction(action.id, { owner: event.target.value })}
-                      className="w-28 rounded-md border border-slate-300 px-2 py-1 text-sm"
-                    />
-                  </td>
-                  <td className="px-3 py-2">
-                    <input
-                      type="date"
-                      value={action.dueDate}
-                      onChange={(event) =>
-                        onUpdateAction(action.id, { dueDate: event.target.value })
-                      }
-                      className="rounded-md border border-slate-300 px-2 py-1 text-sm"
-                    />
-                  </td>
-                  <td className="px-3 py-2">
-                    <select
-                      value={action.status}
-                      onChange={(event) =>
-                        onUpdateAction(action.id, {
-                          status: event.target.value as ForceActionStatus,
-                        })
-                      }
-                      className="rounded-md border border-slate-300 px-2 py-1 text-xs"
-                    >
-                      {STATUS_OPTIONS.map((status) => (
-                        <option key={status} value={status}>
-                          {status}
-                        </option>
-                      ))}
-                    </select>
-                  </td>
-                  <td className="px-3 py-2">
-                    <input
-                      type="number"
-                      min={-10}
-                      max={10}
-                      value={action.impact}
-                      onChange={(event) =>
-                        onUpdateAction(action.id, { impact: Number(event.target.value) })
-                      }
-                      className="w-16 rounded-md border border-slate-300 px-2 py-1 text-sm"
-                    />
-                  </td>
-                  <td className="px-3 py-2">
-                    <button
-                      type="button"
-                      onClick={() => onRemoveAction(action.id)}
-                      className="rounded-md border border-red-200 bg-red-50 px-2.5 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100"
-                    >
-                      Remove
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {state.actions.map((action) => {
+                const force = state.forces.find((candidate) => candidate.id === action.forceId);
+                const previewScore = force
+                  ? previewMitigatedScore(force, state.actions, action)
+                  : null;
+                return (
+                  <tr key={action.id}>
+                    <td className="w-[20%] px-3 py-2">
+                      <select
+                        value={action.forceId}
+                        onChange={(event) =>
+                          onUpdateAction(action.id, { forceId: event.target.value })
+                        }
+                        className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+                      >
+                        {state.forces.map((candidate) => (
+                          <option key={candidate.id} value={candidate.id}>
+                            {candidate.text || 'Untitled force'}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                    <td className="w-[28%] px-3 py-2">
+                      <textarea
+                        rows={2}
+                        value={action.text}
+                        onChange={(event) =>
+                          onUpdateAction(action.id, { text: event.target.value })
+                        }
+                        className="w-full rounded-md border border-slate-300 px-2 py-1 text-sm"
+                      />
+                    </td>
+                    <td className="px-3 py-2">
+                      <select
+                        value={action.owner}
+                        onChange={(event) =>
+                          onUpdateAction(action.id, { owner: event.target.value })
+                        }
+                        className="w-full rounded-md border border-slate-300 px-2 py-1 text-sm"
+                      >
+                        <option value="">Unassigned</option>
+                        {teamMembers.map((member) => (
+                          <option key={member.id} value={member.name}>
+                            {member.name}
+                            {member.role ? ` - ${member.role}` : ''}
+                          </option>
+                        ))}
+                        {action.owner && !teamMembers.some((member) => member.name === action.owner) ? (
+                          <option value={action.owner}>{action.owner} (not on roster)</option>
+                        ) : null}
+                      </select>
+                    </td>
+                    <td className="px-3 py-2">
+                      <input
+                        type="date"
+                        value={action.dueDate}
+                        onChange={(event) =>
+                          onUpdateAction(action.id, { dueDate: event.target.value })
+                        }
+                        className="rounded-md border border-slate-300 px-2 py-1 text-sm"
+                      />
+                    </td>
+                    <td className="px-3 py-2">
+                      <select
+                        value={action.status}
+                        onChange={(event) =>
+                          onUpdateAction(action.id, {
+                            status: event.target.value as ForceActionStatus,
+                          })
+                        }
+                        className="rounded-md border border-slate-300 px-2 py-1 text-xs"
+                      >
+                        {STATUS_OPTIONS.map((status) => (
+                          <option key={status} value={status}>
+                            {status}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                    <td className="px-3 py-2">
+                      <input
+                        type="number"
+                        min={-10}
+                        max={10}
+                        value={action.impact}
+                        onChange={(event) =>
+                          onUpdateAction(action.id, { impact: Number(event.target.value) })
+                        }
+                        className="w-16 rounded-md border border-slate-300 px-2 py-1 text-sm"
+                      />
+                      {previewScore !== null ? (
+                        <p className="mt-1 text-xs text-slate-500" title="Force's mitigated score if this action were Completed">
+                          → {previewScore}
+                        </p>
+                      ) : null}
+                    </td>
+                    <td className="px-3 py-2">
+                      <button
+                        type="button"
+                        onClick={() => onRemoveAction(action.id)}
+                        className="rounded-md border border-red-200 bg-red-50 px-2.5 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100"
+                      >
+                        Remove
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
               {!state.actions.length ? (
                 <tr>
                   <td className="px-3 py-2 text-sm text-slate-500" colSpan={7}>
@@ -597,7 +644,7 @@ function ActionsScreen({
         ) : null}
       </div>
 
-      <div>
+      <div className="flex items-center justify-between">
         <button
           type="button"
           onClick={onBack}
@@ -605,7 +652,321 @@ function ActionsScreen({
         >
           ← Back to Forces
         </button>
+        <button
+          type="button"
+          onClick={onContinue}
+          className="rounded-md bg-[#005eb8] px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
+        >
+          Apply to Project →
+        </button>
       </div>
+    </div>
+  );
+}
+
+const CUSTOM_OUTCOME_PREFIX = 'custom-outcome:';
+
+/**
+ * Lets the user push mitigation actions into a real component/lens as DraftActions (via the same
+ * ActionEditorFields used on the component page), and push forces into a real component as
+ * outcomes (ComponentObjectives), with editable wording so a force statement can be reworded to
+ * read like an outcome. Both writes go through the same getEntry/onEntryUpdate/onObjectivesUpdate
+ * callbacks the component page itself uses.
+ */
+function ApplyScreen({
+  state,
+  components,
+  teamMembers,
+  objectives,
+  getEntry,
+  onEntryUpdate,
+  onObjectivesUpdate,
+  onBack,
+}: {
+  state: ForceFieldAnalysisState;
+  components: AssessmentComponent[];
+  teamMembers: TeamMember[];
+  objectives: Record<string, ComponentObjective[]>;
+  getEntry?: (componentId: string, lens: string) => DraftEntry;
+  onEntryUpdate?: (componentId: string, lens: string, entry: DraftEntry) => void;
+  onObjectivesUpdate?: (componentId: string, objectives: ComponentObjective[]) => void;
+  onBack: () => void;
+}): JSX.Element {
+  const canApply = Boolean(getEntry && onEntryUpdate && onObjectivesUpdate && components.length);
+
+  const [actionTargets, setActionTargets] = useState<
+    Record<string, { componentId: string; lens: string }>
+  >({});
+  const [addedActionIds, setAddedActionIds] = useState<Record<string, boolean>>({});
+  const [modalDraft, setModalDraft] = useState<{
+    sourceComponentId: string;
+    sourceLens: string;
+    forceActionId: string;
+    action: DraftAction;
+  } | null>(null);
+
+  const [outcomeDrafts, setOutcomeDrafts] = useState<
+    Record<string, { text: string; componentId: string }>
+  >({});
+  const [addedOutcomeIds, setAddedOutcomeIds] = useState<Record<string, boolean>>({});
+
+  const getActionTarget = (forceAction: ForceAction) => {
+    const existing = actionTargets[forceAction.id];
+    if (existing) {
+      return existing;
+    }
+    const fallbackComponent = components[0];
+    return { componentId: fallbackComponent?.id || '', lens: fallbackComponent?.lenses[0] || '' };
+  };
+
+  const getOutcomeDraft = (force: Force) => {
+    const existing = outcomeDrafts[force.id];
+    if (existing) {
+      return existing;
+    }
+    return { text: force.text, componentId: components[0]?.id || '' };
+  };
+
+  const openActionModal = (forceAction: ForceAction) => {
+    const target = getActionTarget(forceAction);
+    if (!target.componentId || !target.lens || !getEntry) {
+      return;
+    }
+    const entry = getEntry(target.componentId, target.lens);
+    setModalDraft({
+      sourceComponentId: target.componentId,
+      sourceLens: target.lens,
+      forceActionId: forceAction.id,
+      action: {
+        id: createId(),
+        text: forceAction.text,
+        owner: forceAction.owner,
+        timescale: forceAction.dueDate,
+        dueDate: forceAction.dueDate,
+        status: forceAction.status,
+        readinessScore: entry.score,
+      },
+    });
+  };
+
+  const saveActionModal = () => {
+    if (!modalDraft || !getEntry || !onEntryUpdate) {
+      return;
+    }
+    const entry = getEntry(modalDraft.sourceComponentId, modalDraft.sourceLens);
+    onEntryUpdate(modalDraft.sourceComponentId, modalDraft.sourceLens, {
+      ...entry,
+      actions: [...entry.actions, modalDraft.action],
+    });
+    setAddedActionIds((current) => ({ ...current, [modalDraft.forceActionId]: true }));
+    setModalDraft(null);
+  };
+
+  const addOutcome = (force: Force) => {
+    const draft = getOutcomeDraft(force);
+    if (!draft.componentId || !draft.text.trim() || !onObjectivesUpdate) {
+      return;
+    }
+    const newObjective: ComponentObjective = {
+      id: `${CUSTOM_OUTCOME_PREFIX}${createId()}`,
+      text: draft.text.trim(),
+      owner: '',
+      timescale: '',
+      linkedActions: [],
+    };
+    onObjectivesUpdate(draft.componentId, [...(objectives[draft.componentId] || []), newObjective]);
+    setAddedOutcomeIds((current) => ({ ...current, [force.id]: true }));
+  };
+
+  return (
+    <div className="space-y-6">
+      {!canApply ? (
+        <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+          Apply to Project is only available when this tool is opened from inside a project.
+        </div>
+      ) : null}
+
+      <div className="rounded-lg border border-slate-200 bg-white p-5">
+        <h3 className="text-lg font-semibold text-slate-800 mb-1">
+          Add mitigation actions to your project
+        </h3>
+        <p className="text-sm text-slate-500 mb-4">
+          Pick which component and lens each action belongs to, then review and confirm it in the
+          same editor used on the component page.
+        </p>
+        <div className="space-y-3">
+          {state.actions.map((forceAction) => {
+            const target = getActionTarget(forceAction);
+            const targetComponent = components.find((c) => c.id === target.componentId);
+            const isAdded = addedActionIds[forceAction.id];
+            return (
+              <div
+                key={forceAction.id}
+                className="flex flex-wrap items-center gap-2 rounded-md border border-slate-200 p-3"
+              >
+                <p className="flex-1 min-w-[12rem] text-sm text-slate-700">{forceAction.text}</p>
+                <select
+                  value={target.componentId}
+                  disabled={!canApply}
+                  onChange={(event) =>
+                    setActionTargets((current) => ({
+                      ...current,
+                      [forceAction.id]: {
+                        componentId: event.target.value,
+                        lens: components.find((c) => c.id === event.target.value)?.lenses[0] || '',
+                      },
+                    }))
+                  }
+                  className="rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+                >
+                  {components.map((component) => (
+                    <option key={component.id} value={component.id}>
+                      {component.label}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  value={target.lens}
+                  disabled={!canApply}
+                  onChange={(event) =>
+                    setActionTargets((current) => ({
+                      ...current,
+                      [forceAction.id]: { componentId: target.componentId, lens: event.target.value },
+                    }))
+                  }
+                  className="rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+                >
+                  {(targetComponent?.lenses || []).map((lens) => (
+                    <option key={lens} value={lens}>
+                      {lens}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  disabled={!canApply}
+                  onClick={() => openActionModal(forceAction)}
+                  className="rounded-md bg-[#005eb8] px-3 py-1.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isAdded ? 'Added ✓ - add again' : 'Add to project'}
+                </button>
+              </div>
+            );
+          })}
+          {!state.actions.length ? (
+            <p className="text-sm text-slate-500">No mitigation actions yet.</p>
+          ) : null}
+        </div>
+      </div>
+
+      <div className="rounded-lg border border-slate-200 bg-white p-5">
+        <h3 className="text-lg font-semibold text-slate-800 mb-1">Add forces as outcomes</h3>
+        <p className="text-sm text-slate-500 mb-4">
+          Tweak the wording so each reads like an outcome, then add it to the chosen component.
+        </p>
+        <div className="space-y-3">
+          {state.forces.map((force) => {
+            const draft = getOutcomeDraft(force);
+            const isAdded = addedOutcomeIds[force.id];
+            return (
+              <div
+                key={force.id}
+                className="flex flex-wrap items-center gap-2 rounded-md border border-slate-200 p-3"
+              >
+                <input
+                  value={draft.text}
+                  disabled={!canApply}
+                  onChange={(event) =>
+                    setOutcomeDrafts((current) => ({
+                      ...current,
+                      [force.id]: { ...draft, text: event.target.value },
+                    }))
+                  }
+                  className="flex-1 min-w-[12rem] rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+                />
+                <select
+                  value={draft.componentId}
+                  disabled={!canApply}
+                  onChange={(event) =>
+                    setOutcomeDrafts((current) => ({
+                      ...current,
+                      [force.id]: { ...draft, componentId: event.target.value },
+                    }))
+                  }
+                  className="rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+                >
+                  {components.map((component) => (
+                    <option key={component.id} value={component.id}>
+                      {component.label}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  disabled={!canApply}
+                  onClick={() => addOutcome(force)}
+                  className="rounded-md bg-[#005eb8] px-3 py-1.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isAdded ? 'Added ✓ - add again' : 'Add outcome'}
+                </button>
+              </div>
+            );
+          })}
+          {!state.forces.length ? (
+            <p className="text-sm text-slate-500">No forces yet.</p>
+          ) : null}
+        </div>
+      </div>
+
+      <div>
+        <button type="button" onClick={onBack} className={nhsButtonSecondary}>
+          ← Back to Actions
+        </button>
+      </div>
+
+      {modalDraft ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 p-4">
+          <div className="w-full max-w-2xl max-h-[calc(100vh-2rem)] overflow-y-auto rounded-xl border border-slate-200 bg-white p-6 shadow-2xl">
+            <div className="flex items-center justify-between gap-3">
+              <h3 className="text-lg font-semibold text-slate-900">Confirm action</h3>
+              <button
+                type="button"
+                onClick={() => setModalDraft(null)}
+                className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-100"
+              >
+                Close
+              </button>
+            </div>
+            <p className="mt-1 text-sm text-slate-500">
+              Adding to {components.find((c) => c.id === modalDraft.sourceComponentId)?.label} /{' '}
+              {modalDraft.sourceLens}
+            </p>
+            <div className="mt-4">
+              <ActionEditorFields
+                action={modalDraft.action}
+                onChange={(updates) =>
+                  setModalDraft((current) =>
+                    current ? { ...current, action: { ...current.action, ...updates } } : current
+                  )
+                }
+                teamMembers={teamMembers}
+              />
+            </div>
+            <div className="mt-4 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setModalDraft(null)}
+                className={nhsButtonSecondary}
+              >
+                Cancel
+              </button>
+              <button type="button" onClick={saveActionModal} className={nhsButtonPrimary}>
+                Save Action
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -614,14 +975,27 @@ export interface ForceFieldAnalysisAppProps {
   /** Rendered inside another app's shell (e.g. the Adoption tool's sidenav) - skips this page's own outer shell/header/back-link. */
   embedded?: boolean;
   onBack?: () => void;
+  /** The following are only needed to support the "Apply to project" screen - pushing mitigation actions/forces into real components. */
+  components?: AssessmentComponent[];
+  teamMembers?: TeamMember[];
+  objectives?: Record<string, ComponentObjective[]>;
+  getEntry?: (componentId: string, lens: string) => DraftEntry;
+  onEntryUpdate?: (componentId: string, lens: string, entry: DraftEntry) => void;
+  onObjectivesUpdate?: (componentId: string, objectives: ComponentObjective[]) => void;
 }
 
 export default function ForceFieldAnalysisApp({
   embedded = false,
   onBack,
+  components = [],
+  teamMembers = [],
+  objectives = {},
+  getEntry,
+  onEntryUpdate,
+  onObjectivesUpdate,
 }: ForceFieldAnalysisAppProps = {}): JSX.Element {
   const [state, setState] = useState<ForceFieldAnalysisState>(() => readStoredState());
-  const [screen, setScreen] = useState<'forces' | 'actions'>('forces');
+  const [screen, setScreen] = useState<'forces' | 'actions' | 'apply'>('forces');
   const [importError, setImportError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -786,7 +1160,15 @@ export default function ForceFieldAnalysisApp({
             aria-pressed={screen === 'actions'}
             className={`px-4 py-2 transition-colors border-l border-slate-300 ${screen === 'actions' ? 'bg-[#005eb8] text-white' : 'bg-white text-slate-600 hover:bg-slate-100'}`}
           >
-            2. Actions &amp; Mitigation
+            2. Actions & Mitigation
+          </button>
+          <button
+            type="button"
+            onClick={() => setScreen('apply')}
+            aria-pressed={screen === 'apply'}
+            className={`px-4 py-2 transition-colors border-l border-slate-300 ${screen === 'apply' ? 'bg-[#005eb8] text-white' : 'bg-white text-slate-600 hover:bg-slate-100'}`}
+          >
+            3. Apply to Project
           </button>
         </div>
       </div>
@@ -811,15 +1193,30 @@ export default function ForceFieldAnalysisApp({
           onRemoveForce={removeForce}
           onContinue={() => setScreen('actions')}
         />
-      ) : (
+      ) : null}
+      {screen === 'actions' ? (
         <ActionsScreen
           state={state}
+          teamMembers={teamMembers}
           onUpdateAction={updateAction}
           onAddAction={addAction}
           onRemoveAction={removeAction}
           onBack={() => setScreen('forces')}
+          onContinue={() => setScreen('apply')}
         />
-      )}
+      ) : null}
+      {screen === 'apply' ? (
+        <ApplyScreen
+          state={state}
+          components={components}
+          teamMembers={teamMembers}
+          objectives={objectives}
+          getEntry={getEntry}
+          onEntryUpdate={onEntryUpdate}
+          onObjectivesUpdate={onObjectivesUpdate}
+          onBack={() => setScreen('actions')}
+        />
+      ) : null}
     </>
   );
 

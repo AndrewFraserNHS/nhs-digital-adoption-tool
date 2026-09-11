@@ -123,7 +123,7 @@ function MiniMaturityRadar({
   }, [darkMode]);
 
   return (
-    <div style={{ height: 240 }}>
+    <div style={{ height: 500 }}>
       <canvas ref={canvasRef} className="block h-full w-full" />
     </div>
   );

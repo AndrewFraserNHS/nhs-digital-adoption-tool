@@ -121,7 +121,7 @@ function ComponentLensBarChart({
       <p className={`text-xs font-semibold ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>
         {component.label}
       </p>
-      <div style={{ height: Math.max(120, component.lenses.length * 60) }} className="mt-2">
+      <div style={{ height: Math.max(400, component.lenses.length * 60) }} className="mt-2">
         <canvas ref={canvasRef} className="block h-full w-full" />
       </div>
     </div>

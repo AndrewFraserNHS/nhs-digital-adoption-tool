@@ -376,7 +376,7 @@ export const VERSION_HISTORY_ITEMS = [
   {
     version: '5.5',
     notes: [
-      'Visual Refresh (Step 3 of 5): Redesigned the main assessment area, introducing clearer typography, better spacing, and a more intuitive layout for maturity selection, justification, and action planning sections.',
+      'Visual Refresh (Step 3 of 5): Redesigned the main assessment area, introducing clearer typography, better spacing, and a more intuitive layout for maturity selection, rationale, and action planning sections.',
     ],
   },
   {
@@ -471,7 +471,7 @@ export const VERSION_HISTORY_ITEMS = [
   {
     version: '4.1',
     notes: [
-      'Implemented a data history feature. All text entries (justification, evidence, actions, etc.) are now saved independently for each maturity stage.',
+      'Implemented a data history feature. All text entries (rationale, evidence, actions, etc.) are now saved independently for each maturity stage.',
       "Selecting a different maturity stage will now load the historical data associated with it, allowing users to track their assessment's evolution over time.",
       'Added a visual separator between themes on the Action Plan report for improved readability.',
     ],

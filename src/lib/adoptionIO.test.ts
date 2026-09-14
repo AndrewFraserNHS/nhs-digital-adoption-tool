@@ -38,7 +38,7 @@ describe('adoptionIO', () => {
         vision: {
           'Strategic Direction and Leadership': {
             score: 3,
-            justification: 'Defined',
+            rationale: 'Defined',
             evidence: 'Deck',
             actions: [
               {
@@ -237,7 +237,7 @@ describe('adoptionIO', () => {
       vision: {
         'Strategic Direction and Leadership': {
           score: 4,
-          justification: 'Strong',
+          rationale: 'Strong',
           evidence: 'Plan',
           actions: [
             { id: '1', text: 'Communicate', owner: 'Lead', timescale: 'Aug', status: 'Planned' },

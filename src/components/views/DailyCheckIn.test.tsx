@@ -35,7 +35,7 @@ const store: AdoptionStore = {
     vision: {
       'Strategic Direction': {
         score: 0,
-        justification: '',
+        rationale: '',
         evidence: '',
         actions: [
           {

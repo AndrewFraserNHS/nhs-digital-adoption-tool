@@ -104,12 +104,12 @@ describe('adoptionState', () => {
     const empty = createEmptyEntry();
 
     // assert 1
-    expect(empty).toEqual({ score: 0, justification: '', evidence: '', actions: [] });
+    expect(empty).toEqual({ score: 0, rationale: '', evidence: '', actions: [] });
 
     // arrange 2
     const source = {
       score: 3,
-      justification: 'why',
+      rationale: 'why',
       evidence: 'doc',
       actions: [{ id: '1', text: 'Act', owner: 'Owner', timescale: 'Q3', status: 'In Progress' }],
     };
@@ -128,7 +128,7 @@ describe('adoptionState', () => {
       vision: {
         LensA: {
           score: 2,
-          justification: '',
+          rationale: '',
           evidence: '',
           actions: [{ id: '1', text: 'One', owner: 'A', timescale: 'Q1', status: 'Planned' }],
         },

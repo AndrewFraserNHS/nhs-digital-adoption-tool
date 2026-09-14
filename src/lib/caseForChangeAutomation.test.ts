@@ -11,13 +11,13 @@ describe('syncCaseForChangeDerivedContent', () => {
         case_for_change: {
           'Strategic Direction and Leadership': {
             score: 1,
-            justification: '',
+            rationale: '',
             evidence: '',
             actions: [],
           },
           'People Experience and Culture': {
             score: 1,
-            justification: '',
+            rationale: '',
             evidence: '',
             actions: [],
           },
@@ -65,7 +65,7 @@ describe('syncCaseForChangeDerivedContent', () => {
         case_for_change: {
           'Strategic Direction and Leadership': {
             score: 1,
-            justification: '',
+            rationale: '',
             evidence: '',
             actions: [],
           },

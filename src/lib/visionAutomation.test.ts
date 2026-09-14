@@ -11,13 +11,13 @@ describe('syncVisionDerivedContent', () => {
         vision: {
           'Strategic Direction and Leadership': {
             score: 0,
-            justification: '',
+            rationale: '',
             evidence: '',
             actions: [],
           },
           'People Experience and Culture': {
             score: 0,
-            justification: '',
+            rationale: '',
             evidence: '',
             actions: [],
           },
@@ -61,13 +61,13 @@ describe('syncVisionDerivedContent', () => {
         vision: {
           'Strategic Direction and Leadership': {
             score: 4,
-            justification: '',
+            rationale: '',
             evidence: '',
             actions: [],
           },
           'People Experience and Culture': {
             score: 4,
-            justification: '',
+            rationale: '',
             evidence: '',
             actions: [],
           },
@@ -96,13 +96,13 @@ describe('syncVisionDerivedContent', () => {
         vision: {
           'Strategic Direction and Leadership': {
             score: 0,
-            justification: '',
+            rationale: '',
             evidence: '',
             actions: [],
           },
           'People Experience and Culture': {
             score: 0,
-            justification: '',
+            rationale: '',
             evidence: '',
             actions: [],
           },
@@ -132,7 +132,7 @@ describe('syncVisionDerivedContent', () => {
         vision: {
           'Strategic Direction and Leadership': {
             score: 0,
-            justification: '',
+            rationale: '',
             evidence: '',
             actions: [],
           },

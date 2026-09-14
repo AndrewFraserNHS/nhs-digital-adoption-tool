@@ -514,7 +514,7 @@ export function buildComponentRadarChartData(
     const hasAssessment = entries.some(
       (entry) =>
         entry.score > 0 ||
-        Boolean(entry.justification.trim()) ||
+        Boolean(entry.rationale.trim()) ||
         Boolean(entry.evidence.trim()) ||
         entry.actions.length > 0
     );

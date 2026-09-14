@@ -28,7 +28,7 @@ function buildStore(overrides?: Partial<AdoptionStore>): AdoptionStore {
       vision: {
         'Strategic Direction': {
           score: 2,
-          justification: 'Initial rationale',
+          rationale: 'Initial rationale',
           evidence: 'Doc link',
           actions: [
             {

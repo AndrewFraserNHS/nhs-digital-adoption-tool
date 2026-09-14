@@ -11,13 +11,13 @@ describe('syncProcessChangeDerivedContent', () => {
         process_change: {
           'Process and Sustainment': {
             score: 2,
-            justification: '',
+            rationale: '',
             evidence: '',
             actions: [],
           },
           'Skills and Behaviour': {
             score: 2,
-            justification: '',
+            rationale: '',
             evidence: '',
             actions: [],
           },

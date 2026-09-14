@@ -80,7 +80,7 @@ function validateAction(value: unknown, path: string): void {
 function validateDraftEntry(value: unknown, path: string): void {
   assertRecord(value, path);
   assertOptionalNumber(value.score, `${path}.score`);
-  assertOptionalString(value.justification, `${path}.justification`);
+  assertOptionalString(value.rationale, `${path}.rationale`);
   assertOptionalString(value.evidence, `${path}.evidence`);
   assertOptionalArray(value.actions, `${path}.actions`);
   (value.actions || []).forEach((action, actionIndex) => {

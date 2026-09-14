@@ -11,13 +11,13 @@ describe('syncChangeNetworkDerivedContent', () => {
         change_network: {
           'Strategic Direction and Leadership': {
             score: 2,
-            justification: '',
+            rationale: '',
             evidence: '',
             actions: [],
           },
           'People Experience and Culture': {
             score: 2,
-            justification: '',
+            rationale: '',
             evidence: '',
             actions: [],
           },

@@ -1176,9 +1176,9 @@ export function AssessmentPanel({
     return rows;
   }, [actionsByTarget, component.id, component.lenses]);
 
-  const componentJustification = useMemo(() => {
+  const componentRationale = useMemo(() => {
     const firstLens = component.lenses[0];
-    return firstLens ? getEntry(component.id, firstLens).justification : '';
+    return firstLens ? getEntry(component.id, firstLens).rationale : '';
   }, [component.id, component.lenses, getEntry]);
 
   const actionEditorSourceLabel = useMemo(() => {
@@ -1233,13 +1233,6 @@ export function AssessmentPanel({
     });
   }, [activeObjective, componentActionsByLens]);
 
-  const handleComponentSelect = useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
-      onComponentChange(e.target.value);
-    },
-    [onComponentChange]
-  );
-
   const handleScoreChange = useCallback(
     (lens: string, newScore: number) => {
       const entry = getEntry(component.id, lens);
@@ -1251,13 +1244,13 @@ export function AssessmentPanel({
     [component.id, getEntry, onEntryUpdate]
   );
 
-  const handleComponentJustificationChange = useCallback(
+  const handleComponentRationaleChange = useCallback(
     (value: string) => {
       component.lenses.forEach((lens) => {
         const entry = getEntry(component.id, lens);
         onEntryUpdate(component.id, lens, {
           ...entry,
-          justification: value,
+          rationale: value,
         });
       });
     },
@@ -1771,7 +1764,7 @@ export function AssessmentPanel({
             </span>
           </h2>
           <p className={`mt-2 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-            Assess readiness at lens level. Change Component justification, outcomes, and actions
+            Assess readiness at lens level. Change Component rationale, outcomes, and actions
             are tracked below.
           </p>
           {componentDetail && (
@@ -1882,7 +1875,7 @@ export function AssessmentPanel({
             <label
               className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}
             >
-              Change Component Justification
+              Assessment Rationale
             </label>
             <p className={`text-xs mb-2 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
               Explain what is currently known, what evidence supports that view, and where the
@@ -1890,8 +1883,8 @@ export function AssessmentPanel({
               monthly steering update yet; next step is to agree a trust-wide sponsor cadence."
             </p>
             <textarea
-              value={componentJustification}
-              onChange={(event) => handleComponentJustificationChange(event.target.value)}
+              value={componentRationale}
+              onChange={(event) => handleComponentRationaleChange(event.target.value)}
               className={`w-full rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm h-24 p-2 border ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
               placeholder="Record what is currently known for this change component, the evidence behind it, and the key improvement needed next."
             />

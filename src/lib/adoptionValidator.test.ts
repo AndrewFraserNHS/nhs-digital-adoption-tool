@@ -28,14 +28,14 @@ describe('adoptionValidator', () => {
     // arrange + act
     const invalid = validateEntry({
       score: 2,
-      justification: 'x'.repeat(5001),
+      rationale: 'x'.repeat(5001),
       evidence: 'y'.repeat(2001),
       actions: [],
     });
 
     // assert
     expect(invalid.isValid).toBe(false);
-    expect(invalid.errors.some((error) => error.field === 'justification')).toBe(true);
+    expect(invalid.errors.some((error) => error.field === 'rationale')).toBe(true);
     expect(invalid.errors.some((error) => error.field === 'evidence')).toBe(true);
   });
 

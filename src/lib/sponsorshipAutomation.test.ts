@@ -11,13 +11,13 @@ describe('syncSponsorshipDerivedContent', () => {
         sponsorship: {
           'Strategic Direction and Leadership': {
             score: 1,
-            justification: '',
+            rationale: '',
             evidence: '',
             actions: [],
           },
           'People Experience and Culture': {
             score: 1,
-            justification: '',
+            rationale: '',
             evidence: '',
             actions: [],
           },

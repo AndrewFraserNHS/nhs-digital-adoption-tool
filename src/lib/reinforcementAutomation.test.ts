@@ -11,13 +11,13 @@ describe('syncReinforcementDerivedContent', () => {
         reinforcement: {
           'Process and Sustainment': {
             score: 2,
-            justification: '',
+            rationale: '',
             evidence: '',
             actions: [],
           },
           'People Experience and Culture': {
             score: 2,
-            justification: '',
+            rationale: '',
             evidence: '',
             actions: [],
           },

@@ -2,7 +2,7 @@ export type AuditEntityType = 'entry' | 'action' | 'objective' | 'profile' | 'hi
 
 export type AuditEventType =
   | 'entry-score-updated'
-  | 'entry-justification-updated'
+  | 'entry-rationale-updated'
   | 'entry-evidence-updated'
   | 'action-created'
   | 'action-updated'

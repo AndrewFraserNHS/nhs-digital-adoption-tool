@@ -25,7 +25,7 @@ function createStore(): AdoptionStore {
       vision: {
         'Strategic Direction': {
           score: 2,
-          justification: '',
+          rationale: '',
           evidence: '',
           actions: [
             {
@@ -97,7 +97,7 @@ describe('clearDerivedComponentContent', () => {
     store.currentDraft.benefits = {
       'Planning and Risk': {
         score: 1,
-        justification: '',
+        rationale: '',
         evidence: '',
         actions: [
           {
@@ -145,7 +145,7 @@ describe('syncDerivedComponentContent - priority backfill', () => {
         vision: {
           [firstTemplate.lens]: {
             score: 0,
-            justification: '',
+            rationale: '',
             evidence: '',
             actions: [
               {

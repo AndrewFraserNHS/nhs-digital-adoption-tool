@@ -11,13 +11,13 @@ describe('syncTransferToBauDerivedContent', () => {
         transfer_bau: {
           'Strategic Direction and Leadership': {
             score: 2,
-            justification: '',
+            rationale: '',
             evidence: '',
             actions: [],
           },
           'Process and Sustainment': {
             score: 2,
-            justification: '',
+            rationale: '',
             evidence: '',
             actions: [],
           },

@@ -109,7 +109,7 @@ export function deriveObjectiveStatus(
 
 export interface DraftEntry {
   score: number;
-  justification: string;
+  rationale: string;
   evidence: string;
   actions: DraftAction[];
 }
@@ -313,7 +313,7 @@ export function createReactiveAdoptionStore(persisted?: Partial<AdoptionStore>):
 export function createEmptyEntry(): DraftEntry {
   return {
     score: 0,
-    justification: '',
+    rationale: '',
     evidence: '',
     actions: [],
   };
@@ -325,7 +325,7 @@ export function createEmptyEntry(): DraftEntry {
 export function cloneEntry(entry: DraftEntry): DraftEntry {
   return {
     score: entry.score,
-    justification: entry.justification,
+    rationale: entry.rationale,
     evidence: entry.evidence,
     actions: entry.actions.map((action) => ({
       ...action,

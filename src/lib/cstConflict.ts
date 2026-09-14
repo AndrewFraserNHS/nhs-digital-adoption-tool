@@ -115,12 +115,12 @@ function summarizeTeamMember(member: TeamMember): string {
 }
 
 function entryCoreEqual(a: DraftEntry, b: DraftEntry): boolean {
-  return a.score === b.score && a.justification === b.justification && a.evidence === b.evidence;
+  return a.score === b.score && a.rationale === b.rationale && a.evidence === b.evidence;
 }
 
 function summarizeEntry(entry: DraftEntry): string {
   const scoreLabel = `Score ${entry.score}`;
-  return entry.justification ? `${scoreLabel} - ${entry.justification}` : scoreLabel;
+  return entry.rationale ? `${scoreLabel} - ${entry.rationale}` : scoreLabel;
 }
 
 /** Union-by-id merge with per-item conflict detection, generic over any id-keyed collection. */
@@ -314,19 +314,19 @@ function diffDraft(
           let core = mineEntry
             ? {
                 score: mineEntry.score,
-                justification: mineEntry.justification,
+                rationale: mineEntry.rationale,
                 evidence: mineEntry.evidence,
               }
             : {
                 score: theirsEntry.score,
-                justification: theirsEntry.justification,
+                rationale: theirsEntry.rationale,
                 evidence: theirsEntry.evidence,
               };
 
           if (mineEntry && theirsEntry && resolutions[`entry:${key}`] === 'theirs') {
             core = {
               score: theirsEntry.score,
-              justification: theirsEntry.justification,
+              rationale: theirsEntry.rationale,
               evidence: theirsEntry.evidence,
             };
           }

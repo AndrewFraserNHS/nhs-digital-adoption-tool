@@ -16,7 +16,7 @@ const components: AssessmentComponent[] = [
 ];
 
 function makeEntry(actions: DraftEntry['actions'] = []): DraftEntry {
-  return { score: 2, justification: '', evidence: '', actions };
+  return { score: 2, rationale: '', evidence: '', actions };
 }
 
 describe('ProgrammeHierarchy', () => {

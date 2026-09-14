@@ -319,7 +319,7 @@ function cloneEntry(entry: DraftEntry): DraftEntry {
 function createEmptyEntry(): DraftEntry {
   return {
     score: 0,
-    justification: '',
+    rationale: '',
     evidence: '',
     actions: [],
   };

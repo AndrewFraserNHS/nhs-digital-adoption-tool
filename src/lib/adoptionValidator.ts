@@ -128,10 +128,10 @@ export function validateEntry(entry: DraftEntry): ValidationResult {
     errors.push(...scoreValidation.errors);
   }
 
-  if (entry.justification && entry.justification.length > 5000) {
+  if (entry.rationale && entry.rationale.length > 5000) {
     errors.push({
-      field: 'justification',
-      message: 'Justification cannot exceed 5000 characters',
+      field: 'rationale',
+      message: 'Rationale cannot exceed 5000 characters',
     });
   }
 

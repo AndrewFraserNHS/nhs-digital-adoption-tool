@@ -9,7 +9,7 @@ const components: AssessmentComponent[] = [
 ];
 
 function getEntry(): DraftEntry {
-  return { score: 1, justification: '', evidence: '', actions: [] };
+  return { score: 1, rationale: '', evidence: '', actions: [] };
 }
 
 describe('WhereAmINowPage', () => {
@@ -78,7 +78,7 @@ describe('WhereAmINowPage', () => {
         components={mixedComponents}
         getEntry={(componentId) => ({
           score: componentId === 'vision' ? 5 : 2,
-          justification: '',
+          rationale: '',
           evidence: '',
           actions: [],
         })}

@@ -15,7 +15,7 @@ interface ComponentAnalysis {
   onTarget: boolean;
   scoredLenses: number;
   totalLenses: number;
-  hasJustification: boolean;
+  hasRationale: boolean;
   hasEvidence: boolean;
   actionCount: number;
   completedActionCount: number;
@@ -24,9 +24,9 @@ interface ComponentAnalysis {
 
 interface EngagementMetrics {
   scoringCoverage: number;
-  justificationCoverage: number;
+  rationaleCoverage: number;
   evidenceCoverage: number;
-  avgJustificationWords: number;
+  avgRationaleWords: number;
   totalActions: number;
   completedActions: number;
   inProgressActions: number;
@@ -61,14 +61,14 @@ function wordCount(text: string | undefined): number {
 
 function classify(
   hasScore: boolean,
-  hasJustification: boolean,
+  hasRationale: boolean,
   hasEvidence: boolean,
   hasActions: boolean
 ): ComponentAnalysis['engagement'] {
   if (!hasScore) {
     return 'none';
   }
-  if (!hasJustification) {
+  if (!hasRationale) {
     return 'minimal';
   }
   if (!hasEvidence && !hasActions) {
@@ -87,7 +87,7 @@ function analyseFile(payload: SavedAdoptionAssessment): AnalysisResult {
   let scoredLensPairs = 0;
   let justifiedEntries = 0;
   let evidencedEntries = 0;
-  let justificationWordSum = 0;
+  let rationaleWordSum = 0;
   let totalActions = 0;
   let completedActions = 0;
   let inProgressActions = 0;
@@ -116,8 +116,8 @@ function analyseFile(payload: SavedAdoptionAssessment): AnalysisResult {
         scoredLensPairs += 1;
         compScored += 1;
 
-        const jWords = wordCount(entry?.justification);
-        justificationWordSum += jWords;
+        const jWords = wordCount(entry?.rationale);
+        rationaleWordSum += jWords;
         compJustWords += jWords;
         if (jWords >= 5) {
           justifiedEntries += 1;
@@ -160,7 +160,7 @@ function analyseFile(payload: SavedAdoptionAssessment): AnalysisResult {
       onTarget: avgScore >= comp.target,
       scoredLenses: compScored,
       totalLenses: comp.lenses.length,
-      hasJustification: compJustWords >= 5,
+      hasRationale: compJustWords >= 5,
       hasEvidence: compHasEvidence,
       actionCount: compActions,
       completedActionCount: compCompletedActions,
@@ -169,14 +169,14 @@ function analyseFile(payload: SavedAdoptionAssessment): AnalysisResult {
   });
 
   const scoringCoverage = totalLensPairs ? Math.round((scoredLensPairs / totalLensPairs) * 100) : 0;
-  const justificationCoverage = scoredLensPairs
+  const rationaleCoverage = scoredLensPairs
     ? Math.round((justifiedEntries / scoredLensPairs) * 100)
     : 0;
   const evidenceCoverage = scoredLensPairs
     ? Math.round((evidencedEntries / scoredLensPairs) * 100)
     : 0;
-  const avgJustificationWords = scoredLensPairs
-    ? Math.round(justificationWordSum / scoredLensPairs)
+  const avgRationaleWords = scoredLensPairs
+    ? Math.round(rationaleWordSum / scoredLensPairs)
     : 0;
   const historyCount = (payload.history || []).length;
 
@@ -188,7 +188,7 @@ function analyseFile(payload: SavedAdoptionAssessment): AnalysisResult {
 
   const engagementIndex = Math.round(
     scoringCoverage * 0.3 +
-      justificationCoverage * 0.25 +
+      rationaleCoverage * 0.25 +
       evidenceCoverage * 0.2 +
       actionDensityScore * 0.15 +
       historyScore * 0.1
@@ -204,15 +204,15 @@ function analyseFile(payload: SavedAdoptionAssessment): AnalysisResult {
     insights.push({
       kind: 'success',
       title: 'Strong tool engagement',
-      detail: `Engagement index of ${engagementIndex}/100 - scores, justifications, evidence, and actions are being used thoroughly across the assessment.`,
+      detail: `Engagement index of ${engagementIndex}/100 - scores, rationales, evidence, and actions are being used thoroughly across the assessment.`,
     });
   }
 
-  if (scoringCoverage > 70 && justificationCoverage < 40) {
+  if (scoringCoverage > 70 && rationaleCoverage < 40) {
     insights.push({
       kind: 'warning',
       title: 'Possible score inflation',
-      detail: `${scoringCoverage}% of lens pairs are scored but only ${justificationCoverage}% have supporting justification. Without rationale, scores may not accurately reflect actual readiness.`,
+      detail: `${scoringCoverage}% of lens pairs are scored but only ${rationaleCoverage}% have supporting rationale. Without rationale, scores may not accurately reflect actual readiness.`,
     });
   }
 
@@ -224,11 +224,11 @@ function analyseFile(payload: SavedAdoptionAssessment): AnalysisResult {
     });
   }
 
-  if (avgJustificationWords > 0 && avgJustificationWords < 8 && justificationCoverage > 0) {
+  if (avgRationaleWords > 0 && avgRationaleWords < 8 && rationaleCoverage > 0) {
     insights.push({
       kind: 'info',
-      title: 'Justifications are brief',
-      detail: `Average justification is ${avgJustificationWords} words. Expanding these with specific context will better demonstrate readiness to stakeholders.`,
+      title: 'Rationales are brief',
+      detail: `Average rationale is ${avgRationaleWords} words. Expanding these with specific context will better demonstrate readiness to stakeholders.`,
     });
   }
 
@@ -274,7 +274,7 @@ function analyseFile(payload: SavedAdoptionAssessment): AnalysisResult {
     insights.push({
       kind: 'info',
       title: `${noneCount} components not yet started`,
-      detail: `These components have no scores, justifications, or actions. Prioritise the earliest-phase unstarted components first.`,
+      detail: `These components have no scores, rationales, or actions. Prioritise the earliest-phase unstarted components first.`,
     });
   }
 
@@ -291,7 +291,7 @@ function analyseFile(payload: SavedAdoptionAssessment): AnalysisResult {
       kind: 'info',
       title: 'Assessment in early stages',
       detail:
-        'Not enough data to generate specific insights yet. Begin scoring components and recording justifications to unlock recommendations.',
+        'Not enough data to generate specific insights yet. Begin scoring components and recording rationales to unlock recommendations.',
     });
   }
 
@@ -299,9 +299,9 @@ function analyseFile(payload: SavedAdoptionAssessment): AnalysisResult {
     orgProfile: payload.orgProfile || { trustName: '', region: '', trustType: '' },
     engagement: {
       scoringCoverage,
-      justificationCoverage,
+      rationaleCoverage,
       evidenceCoverage,
-      avgJustificationWords,
+      avgRationaleWords,
       totalActions,
       completedActions,
       inProgressActions,
@@ -763,14 +763,14 @@ function SingleAnalysis({ result, fileName }: { result: AnalysisResult; fileName
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <MetricBar label="Scoring coverage" value={eng.scoringCoverage} color="bg-[#005eb8]" />
           <MetricBar
-            label="Justification coverage"
-            value={eng.justificationCoverage}
+            label="Rationale coverage"
+            value={eng.rationaleCoverage}
             color="bg-violet-500"
           />
           <MetricBar label="Evidence coverage" value={eng.evidenceCoverage} color="bg-teal-500" />
           <MetricBar
-            label="Avg justification length"
-            value={Math.min(eng.avgJustificationWords, 50)}
+            label="Avg rationale length"
+            value={Math.min(eng.avgRationaleWords, 50)}
             max={50}
             color="bg-amber-500"
           />
@@ -914,9 +914,9 @@ function SingleAnalysis({ result, fileName }: { result: AnalysisResult; fileName
             detail="Without monthly snapshots, progress is invisible to stakeholders. Embed a monthly 'Finalise' step in your project governance cycle."
           />
           <EstateSignal
-            title="Improve justification quality"
-            active={eng.avgJustificationWords < 10 && eng.justificationCoverage < 60}
-            detail="Short or missing justifications reduce assessment credibility. Provide example rationale for each lens to guide practitioners."
+            title="Improve rationale quality"
+            active={eng.avgRationaleWords < 10 && eng.rationaleCoverage < 60}
+            detail="Short or missing rationales reduce assessment credibility. Provide example rationale for each lens to guide practitioners."
           />
           <EstateSignal
             title="Address phase sequencing"
@@ -1034,8 +1034,8 @@ function CompareView({
             <div className="mt-4 space-y-2">
               <MetricBar label="Scoring coverage" value={result.engagement.scoringCoverage} />
               <MetricBar
-                label="Justification coverage"
-                value={result.engagement.justificationCoverage}
+                label="Rationale coverage"
+                value={result.engagement.rationaleCoverage}
                 color="bg-violet-500"
               />
               <MetricBar

@@ -18,7 +18,7 @@ function renderApp(overrides?: {
   onObjectivesUpdate?: (componentId: string, objectives: ComponentObjective[]) => void;
 }) {
   const getEntry = vi.fn(
-    (): DraftEntry => ({ score: 2, justification: '', evidence: '', actions: [] })
+    (): DraftEntry => ({ score: 2, rationale: '', evidence: '', actions: [] })
   );
   const onEntryUpdate = overrides?.onEntryUpdate || vi.fn();
   const onObjectivesUpdate = overrides?.onObjectivesUpdate || vi.fn();

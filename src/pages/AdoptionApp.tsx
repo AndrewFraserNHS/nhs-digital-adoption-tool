@@ -71,9 +71,9 @@ import {
 import { regenerateContentForPathway, syncDerivedContent } from '@lib/derivedContentSync';
 import { load, save } from '@lib/storage';
 import { downloadFile, escapeHtml } from '@lib/utils';
+import ChangeImpactAssessmentApp from '@pages/ChangeImpactAssessmentApp';
 import CompareApp from '@pages/CompareApp';
 import ForceFieldAnalysisApp from '@pages/ForceFieldAnalysisApp';
-import ChangeImpactAssessmentApp from '@pages/ChangeImpactAssessmentApp';
 import StakeholderAnalysisApp from '@pages/StakeholderAnalysisApp';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -680,16 +680,16 @@ export function AdoptionApp() {
           });
         }
 
-        if ((previousEntry.justification || '') !== (entry.justification || '')) {
+        if ((previousEntry.rationale || '') !== (entry.rationale || '')) {
           events.push({
-            eventType: 'entry-justification-updated',
+            eventType: 'entry-rationale-updated',
             entityType: 'entry',
             entityId: `${componentId}:${lens}`,
-            summary: `Updated justification for ${componentId} / ${lens}`,
+            summary: `Updated rationale for ${componentId} / ${lens}`,
             componentId,
             lens,
-            before: { justification: previousEntry.justification || '' },
-            after: { justification: entry.justification || '' },
+            before: { rationale: previousEntry.rationale || '' },
+            after: { rationale: entry.rationale || '' },
             source: 'local',
           });
         }
@@ -1278,7 +1278,7 @@ export function AdoptionApp() {
       const e = store.currentDraft[comp.id]?.[l];
       if (e && e.score > 0) {
         scoredCount++;
-        if (e.justification?.trim()) {
+        if (e.rationale?.trim()) {
           justifiedCount++;
         }
       }
@@ -1293,7 +1293,7 @@ export function AdoptionApp() {
       return { icon: '◯', color: 'text-blue-100', label: 'Not Started' };
     }
     if (scoredCount > justifiedCount) {
-      return { icon: '⚠', color: 'text-red-300', label: 'Missing Justification' };
+      return { icon: '⚠', color: 'text-red-300', label: 'Missing Rationale' };
     }
     if (scoredCount < comp.lenses.length) {
       return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
@@ -1595,7 +1595,7 @@ export function AdoptionApp() {
             <div className="space-y-2 text-xs text-blue-200">
               <div>◯ Not Started</div>
               <div>◐ In Progress</div>
-              <div>⚠ Missing Justification</div>
+              <div>⚠ Missing Rationale</div>
               <div>✓ Completed</div>
             </div>
           </div>

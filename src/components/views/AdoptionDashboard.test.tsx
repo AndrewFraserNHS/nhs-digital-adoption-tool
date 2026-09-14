@@ -44,7 +44,7 @@ const store: AdoptionStore = {
     vision: {
       'Strategic Lens': {
         score: 5,
-        justification: 'Complete',
+        rationale: 'Complete',
         evidence: 'Deck',
         actions: [],
       },
@@ -52,7 +52,7 @@ const store: AdoptionStore = {
     benefits: {
       'Strategic Lens': {
         score: 1,
-        justification: 'Partial',
+        rationale: 'Partial',
         evidence: 'Note',
         actions: [],
       },

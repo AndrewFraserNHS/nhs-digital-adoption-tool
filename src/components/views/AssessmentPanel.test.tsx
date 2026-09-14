@@ -27,7 +27,7 @@ const components: AssessmentComponent[] = [
 function createEntry(overrides?: Partial<DraftEntry>): DraftEntry {
   return {
     score: 2,
-    justification: 'Existing rationale',
+    rationale: 'Existing rationale',
     evidence: 'Document link',
     actions: [
       {
@@ -110,7 +110,7 @@ describe('AssessmentPanel', () => {
     expect(props.onComponentChange).toHaveBeenCalledWith('benefits');
   });
 
-  it('SHOULD update score and component justification through onEntryUpdate', () => {
+  it('SHOULD update score and component rationale through onEntryUpdate', () => {
     // arrange
     const props = createProps();
 
@@ -121,14 +121,14 @@ describe('AssessmentPanel', () => {
     fireEvent.change(controls[1], { target: { value: '4' } });
 
     const areas = screen.getAllByRole('textbox');
-    fireEvent.change(areas[0], { target: { value: 'Updated justification' } });
+    fireEvent.change(areas[0], { target: { value: 'Updated rationale' } });
 
     const updatedEntries = props.onEntryUpdate.mock.calls.map((call) => call[2]);
 
     // assert
     expect(updatedEntries.some((entry: DraftEntry) => entry.score === 4)).toBe(true);
     expect(
-      updatedEntries.some((entry: DraftEntry) => entry.justification === 'Updated justification')
+      updatedEntries.some((entry: DraftEntry) => entry.rationale === 'Updated rationale')
     ).toBe(true);
   });
 

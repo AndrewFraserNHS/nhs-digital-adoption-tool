@@ -11,13 +11,13 @@ describe('syncBenefitsDerivedContent', () => {
         benefits: {
           'Planning and Risk': {
             score: 1,
-            justification: '',
+            rationale: '',
             evidence: '',
             actions: [],
           },
           'Process and Sustainment': {
             score: 1,
-            justification: '',
+            rationale: '',
             evidence: '',
             actions: [],
           },

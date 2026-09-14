@@ -50,7 +50,7 @@ const store: AdoptionStore = {
     vision: {
       'Lens A': {
         score: 4,
-        justification: '',
+        rationale: '',
         evidence: '',
         actions: [
           { id: '1', text: 'Action A', owner: 'Alex', timescale: 'Q3', status: 'In Progress' },
@@ -58,7 +58,7 @@ const store: AdoptionStore = {
       },
       'Lens B': {
         score: 0,
-        justification: '',
+        rationale: '',
         evidence: '',
         actions: [],
       },
@@ -66,7 +66,7 @@ const store: AdoptionStore = {
     benefits: {
       'Lens A': {
         score: 2,
-        justification: '',
+        rationale: '',
         evidence: '',
         actions: [
           { id: '2', text: 'Action B', owner: 'Blair', timescale: 'Q4', status: 'Completed' },
@@ -147,7 +147,7 @@ describe('adoptionMetrics', () => {
         vision: {
           'Lens A': {
             score: 1,
-            justification: '',
+            rationale: '',
             evidence: '',
             actions: [
               {
@@ -162,7 +162,7 @@ describe('adoptionMetrics', () => {
           },
           'Lens B': {
             score: 0,
-            justification: '',
+            rationale: '',
             evidence: '',
             actions: [],
           },
@@ -170,7 +170,7 @@ describe('adoptionMetrics', () => {
         benefits: {
           'Lens A': {
             score: 1,
-            justification: '',
+            rationale: '',
             evidence: '',
             actions: [],
           },
@@ -222,7 +222,7 @@ describe('adoptionMetrics', () => {
         vision: {
           'Lens A': {
             score: 5,
-            justification: '',
+            rationale: '',
             evidence: '',
             actions: [],
           },
@@ -230,7 +230,7 @@ describe('adoptionMetrics', () => {
         benefits: {
           'Lens A': {
             score: 1,
-            justification: '',
+            rationale: '',
             evidence: '',
             actions: [],
           },
@@ -238,7 +238,7 @@ describe('adoptionMetrics', () => {
         sponsorship: {
           'Lens A': {
             score: 1,
-            justification: '',
+            rationale: '',
             evidence: '',
             actions: [],
           },
@@ -260,7 +260,7 @@ describe('adoptionMetrics', () => {
         sponsorship: {
           'Lens A': {
             score: 2,
-            justification: '',
+            rationale: '',
             evidence: '',
             actions: [],
           },

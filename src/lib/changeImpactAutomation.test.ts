@@ -11,13 +11,13 @@ describe('syncChangeImpactDerivedContent', () => {
         change_impact: {
           'Planning and Risk': {
             score: 1,
-            justification: '',
+            rationale: '',
             evidence: '',
             actions: [],
           },
           'People Experience and Culture': {
             score: 1,
-            justification: '',
+            rationale: '',
             evidence: '',
             actions: [],
           },

@@ -128,14 +128,10 @@ function buildSteps(darkMode: boolean): Step[] {
       body: (
         <div className={`text-sm space-y-2 ${textClass}`}>
           <p>
-            Change management is the structured discipline of helping people move from how things
-            work today to how they'll work in future - deliberately, not by accident.
+           <strong>Change management is the people side of change. </strong> It helps individuals and organisations understand, adopt and sustain new ways of working so that change delivers benefits.
           </p>
           <p>
-            A new system, process or way of working only delivers its benefits once people actually
-            adopt it. Change management is the set of activities - building the case, engaging
-            stakeholders, communicating, training, reinforcing - that make that adoption happen,
-            rather than leaving it to chance.
+           <strong> In simple terms: </strong>it helps people move from the way things are today to the way they need to be tomorrow, so that change delivers its intended value.
           </p>
           <p>
             It sits alongside project management: project management delivers the change itself (the

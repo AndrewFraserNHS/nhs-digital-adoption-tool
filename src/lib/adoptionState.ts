@@ -184,6 +184,8 @@ export type View =
   | 'highlight-builder'
   | 'force-field-analysis'
   | 'compare'
+  | 'change-impact-assessment'
+  | 'stakeholder-analysis'
   | 'audit-log'
   | 'project-details'
   | 'settings'

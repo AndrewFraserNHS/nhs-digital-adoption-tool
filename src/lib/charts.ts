@@ -281,6 +281,40 @@ export function createBarChart(
   return createChart('bar', ctx, data, { ...defaultOpts, ...options });
 }
 
+export function createDoughnutChart(
+  ctx: CanvasRenderingContext2D | HTMLCanvasElement,
+  data: ChartConfiguration<'doughnut'>['data'],
+  options: ChartConfiguration<'doughnut'>['options'] = {},
+  onSegmentClick?: (index: number) => void
+) {
+  const darkMode = isDarkThemeEnabled();
+  const labelColor = darkMode ? '#e2e8f0' : '#0b1220';
+  const defaultOpts = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom' as const,
+        labels: { boxWidth: 12, padding: 15, color: labelColor },
+      },
+      tooltip: {
+        callbacks: {
+          label: (context: { label?: string; parsed?: number }) =>
+            `${context.label || ''}: ${context.parsed ?? ''}`,
+        },
+      },
+    },
+    onClick: onSegmentClick
+      ? (_event: unknown, elements: { index: number }[]) => {
+          if (elements.length > 0) {
+            onSegmentClick(elements[0].index);
+          }
+        }
+      : undefined,
+  };
+  return createChart('doughnut', ctx, data, { ...defaultOpts, ...options });
+}
+
 export function toBase64Image(chart: Chart): string {
   // Chart.js exposes toBase64Image on the instance
   // @ts-ignore

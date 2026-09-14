@@ -73,6 +73,8 @@ import { load, save } from '@lib/storage';
 import { downloadFile, escapeHtml } from '@lib/utils';
 import CompareApp from '@pages/CompareApp';
 import ForceFieldAnalysisApp from '@pages/ForceFieldAnalysisApp';
+import ChangeImpactAssessmentApp from '@pages/ChangeImpactAssessmentApp';
+import StakeholderAnalysisApp from '@pages/StakeholderAnalysisApp';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { nhsButtonSecondary, nhsFocusRing } from '../styles/nhsTheme';
@@ -401,6 +403,8 @@ export function AdoptionApp() {
       'highlight-builder': 'tools',
       'force-field-analysis': 'tools',
       compare: 'tools',
+      'change-impact-assessment': 'tools',
+      'stakeholder-analysis': 'tools',
       'audit-log': 'tools',
     };
     const section = sectionByView[view];
@@ -1520,7 +1524,14 @@ export function AdoptionApp() {
               {expandedNavSections.tools ? (
                 <nav className="space-y-1 mb-8">
                   {(
-                    ['highlight-builder', 'force-field-analysis', 'compare', 'audit-log'] as View[]
+                    [
+                      'highlight-builder',
+                      'force-field-analysis',
+                      'compare',
+                      'change-impact-assessment',
+                      'stakeholder-analysis',
+                      'audit-log',
+                    ] as View[]
                   ).map((v) => (
                     <button
                       key={v}
@@ -1540,7 +1551,11 @@ export function AdoptionApp() {
                           ? 'Force Field Analysis'
                           : v === 'compare'
                             ? 'Assess & Compare'
-                            : 'Audit Log'}
+                            : v === 'change-impact-assessment'
+                              ? 'Change Impact Assessment'
+                              : v === 'stakeholder-analysis'
+                                ? 'Stakeholder Analysis'
+                                : 'Audit Log'}
                     </button>
                   ))}
                 </nav>
@@ -2021,6 +2036,12 @@ export function AdoptionApp() {
           )}
           {view === 'compare' && (
             <CompareApp embedded onBack={() => handleViewChange('dashboard')} />
+          )}
+          {view === 'change-impact-assessment' && (
+            <ChangeImpactAssessmentApp embedded onBack={() => handleViewChange('dashboard')} />
+          )}
+          {view === 'stakeholder-analysis' && (
+            <StakeholderAnalysisApp embedded onBack={() => handleViewChange('dashboard')} />
           )}
           {view === 'audit-log' && (
             <AuditLogPage events={store.auditLog} darkMode={Boolean(userSettings.darkMode)} />

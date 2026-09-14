@@ -1,0 +1,2198 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stakeholder Analysis and Management Tool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .tab-button.active {
+            border-color: #4f46e5;
+            color: #4f46e5;
+            background-color: #eef2ff;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1010;
+        }
+        .map-cell {
+            position: relative;
+        }
+        .stakeholder-dot {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            border: 2px solid white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        .stakeholder-dot:hover {
+            transform: scale(1.5);
+            z-index: 10;
+        }
+        .stakeholder-dot.faded {
+            opacity: 0.2;
+            transform: scale(0.8);
+        }
+        .tooltip {
+            display: none;
+            position: absolute;
+            bottom: 150%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #111827;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            white-space: nowrap;
+            z-index: 20;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .stakeholder-dot:hover .tooltip {
+            display: block;
+            opacity: 1;
+        }
+        .legend-item {
+            cursor: pointer;
+            transition: background-color 0.2s;
+            padding: 2px 6px;
+            border-radius: 6px;
+        }
+        .legend-item:hover {
+            background-color: #eef2ff; /* A light indigo */
+        }
+        .table-auto th, .table-auto td {
+            min-width: 150px; /* Increased min-width for wider columns */
+            white-space: nowrap;
+        }
+        .sortable-header {
+            cursor: pointer;
+            position: relative;
+            user-select: none;
+        }
+        .sort-icon {
+            display: inline-block;
+            margin-left: 5px;
+            color: #9ca3af; /* gray-400 */
+        }
+        .sortable-header.sorted-asc .sort-icon,
+        .sortable-header.sorted-desc .sort-icon {
+            color: #111827; /* gray-900 */
+        }
+        .header-filter {
+            margin-top: 4px;
+            width: 100%;
+        }
+        .table-scroll-container {
+            max-height: 70vh;
+            overflow: auto;
+        }
+        .table-scroll-container thead th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background-color: #f9fafb; 
+        }
+
+        /* --- Sticky First & Last Columns --- */
+        .table-scroll-container thead th:first-child,
+        .table-scroll-container tbody td:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 5;
+        }
+
+        .table-scroll-container thead th:last-child,
+        .table-scroll-container tbody td:last-child {
+            position: sticky;
+            right: 0;
+            z-index: 5;
+        }
+
+        /* Add background to sticky body cells to hide scrolling content */
+        .table-scroll-container tbody td:first-child,
+        .table-scroll-container tbody td:last-child {
+            background-color: #ffffff; /* bg-white */
+        }
+        
+        /* Add borders for visual separation */
+        .table-scroll-container tbody td:first-child {
+            border-right: 1px solid #e5e7eb; /* gray-200 */
+        }
+        .table-scroll-container tbody td:last-child {
+            border-left: 1px solid #e5e7eb; /* gray-200 */
+        }
+
+        /* Ensure corner cells are on top */
+        .table-scroll-container thead th:first-child,
+        .table-scroll-container thead th:last-child {
+            z-index: 11;
+        }
+        
+        .table-scroll-container tbody tr:hover {
+            background-color: #f9fafb; /* bg-gray-50 */
+            transition-property: background-color;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
+        }
+        
+        /* Prose styles for guidance tab */
+        .prose h3 { margin-top: 1.5em; margin-bottom: 0.5em; font-size: 1.25rem; font-weight: 600; }
+        .prose h4 { margin-top: 1.25em; margin-bottom: 0.5em; font-size: 1.1rem; font-weight: 600; }
+        .prose p { margin-bottom: 1em; line-height: 1.6; }
+        .prose ul { list-style-type: disc; margin-left: 1.5em; margin-bottom: 1em; }
+        .prose li { margin-bottom: 0.5em; }
+        .prose strong { font-weight: 600; }
+        .prose code { background-color: #f3f4f6; padding: 0.2em 0.4em; border-radius: 0.25rem; font-size: 0.9em; }
+
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="w-full p-4 sm:p-6 lg:p-8">
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 flex items-center">
+                Stakeholder Analysis and Management Tool
+                <span class="text-sm font-normal text-gray-500 ml-2">V5.5</span>
+            </h1>
+            <p class="text-gray-600 mt-1">An interactive tool to manage and analyse project stakeholders.</p>
+        </header>
+
+        <!-- Tabs -->
+        <div class="mb-6 border-b border-gray-200">
+            <nav class="flex flex-wrap -mb-px" aria-label="Tabs">
+                <button onclick="changeTab(event, 'dashboard')" class="tab-button active whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm text-gray-500 hover:text-indigo-600 hover:border-indigo-300">Dashboard</button>
+                <button onclick="changeTab(event, 'stakeholders')" class="tab-button whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm text-gray-500 hover:text-indigo-600 hover:border-indigo-300">Stakeholders</button>
+                <button onclick="changeTab(event, 'engagement')" class="tab-button whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm text-gray-500 hover:text-indigo-600 hover:border-indigo-300">Engagement Plan</button>
+                <button onclick="changeTab(event, 'map')" class="tab-button whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm text-gray-500 hover:text-indigo-600 hover:border-indigo-300">Analysis Map</button>
+                <button onclick="changeTab(event, 'activities')" class="tab-button whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm text-gray-500 hover:text-indigo-600 hover:border-indigo-300">Activities</button>
+                <button onclick="changeTab(event, 'reference')" class="tab-button whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm text-gray-500 hover:text-indigo-600 hover:border-indigo-300">Reference Data</button>
+                <button onclick="changeTab(event, 'guidance')" class="tab-button whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm text-gray-500 hover:text-indigo-600 hover:border-indigo-300">Guidance</button>
+            </nav>
+        </div>
+
+        <!-- Tab Content -->
+        <main>
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="tab-content active">
+                <!-- JS will populate this -->
+            </div>
+
+            <!-- Stakeholders Detail Tab -->
+            <div id="stakeholders" class="tab-content bg-white p-6 rounded-lg shadow-sm">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold">Stakeholder Details</h2>
+                    <div class="flex items-center gap-4">
+                        <button id="resetFiltersBtn" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 transition-colors">Reset Filters</button>
+                        <button id="addStakeholderBtn" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors">Add Stakeholder</button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto table-scroll-container">
+                    <table class="table-auto w-full text-sm text-left text-gray-500">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50" id="stakeholder-table-head">
+                           <!-- JS will populate this -->
+                        </thead>
+                        <tbody id="stakeholder-table-body">
+                           <!-- JS will populate this -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Engagement Plan Tab -->
+            <div id="engagement" class="tab-content bg-white p-6 rounded-lg shadow-sm">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold">Engagement Plan & Log</h2>
+                     <div class="flex items-center gap-4">
+                        <button id="resetEngagementFiltersBtn" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 transition-colors">Reset Filters</button>
+                        <button id="addEngagementBtn" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors">Add Engagement Log</button>
+                    </div>
+                </div>
+                 <div class="overflow-x-auto table-scroll-container">
+                    <table class="table-auto w-full text-sm text-left text-gray-500">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50" id="engagement-table-head">
+                           <!-- JS will populate this -->
+                        </thead>
+                        <tbody id="engagement-table-body">
+                           <!-- JS will populate this -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Analysis Map Tab -->
+            <div id="map" class="tab-content bg-white p-6 rounded-lg shadow-sm">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold">Stakeholder Analysis Map</h2>
+                    <button id="resetMapFiltersBtn" class="text-sm text-indigo-600 hover:underline">Reset Filters</button>
+                </div>
+                
+                <div id="map-filters-container" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 p-4 bg-gray-50 rounded-lg">
+                    <!-- JS will populate filters here -->
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                    <div class="md:col-span-2">
+                        <label for="y-axis-select" class="block text-sm font-medium text-gray-700">Vertical Axis (Y)</label>
+                        <select id="y-axis-select" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"></select>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label for="x-axis-select" class="block text-sm font-medium text-gray-700">Horizontal Axis (X)</label>
+                        <select id="x-axis-select" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"></select>
+                    </div>
+                </div>
+
+
+                <div class="flex flex-col md:flex-row gap-6">
+                    <div class="flex-grow">
+                         <div class="grid grid-cols-5 text-center text-sm font-medium text-gray-600">
+                            <div></div>
+                            <div class="p-2 border-b-2 border-r-2 border-gray-300">Low</div>
+                            <div class="p-2 border-b-2 border-r-2 border-gray-300">Medium</div>
+                            <div class="p-2 border-b-2 border-r-2 border-gray-300">High</div>
+                            <div class="p-2 border-b-2 border-gray-300">Very High</div>
+                        </div>
+                        <div class="grid grid-cols-5 h-[400px]">
+                            <div class="grid grid-rows-4 text-center font-medium text-gray-600">
+                                <div class="flex items-center justify-center p-2 border-r-2 border-gray-300">Very High</div>
+                                <div class="flex items-center justify-center p-2 border-r-2 border-gray-300">High</div>
+                                <div class="flex items-center justify-center p-2 border-r-2 border-gray-300">Medium</div>
+                                <div class="flex items-center justify-center p-2 border-r-2 border-gray-300">Low</div>
+                            </div>
+                            <div class="col-span-4 grid grid-cols-4 grid-rows-4 border-r border-b border-gray-300" id="map-grid">
+                                <!-- Map cells will be populated by JS -->
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-5 text-center text-xs mt-1 text-gray-500">
+                             <div></div>
+                             <div id="x-axis-label" class="col-span-4 font-semibold"></div>
+                        </div>
+                    </div>
+                    <div class="w-full md:w-64">
+                        <h4 class="font-semibold mb-2 text-gray-700">Legend</h4>
+                        <div class="space-y-1" id="map-legend">
+                            <!-- JS will populate legend -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Activities Tab -->
+            <div id="activities" class="tab-content bg-white p-6 rounded-lg shadow-sm">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold">Engagement Activities</h2>
+                    <button id="addActivityBtn" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors">Add Activity</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Engagement Activities</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Inform</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Consult</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Involve</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Collaborate</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Empower</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200" id="activities-table-body">
+                            <!-- JS Populated -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Reference Data Tab -->
+            <div id="reference" class="tab-content bg-white p-6 rounded-lg shadow-sm">
+                <h2 class="text-xl font-semibold mb-4">Reference Data Management</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="reference-data-container">
+                    <!-- JS will populate this -->
+                </div>
+            </div>
+
+            <!-- Guidance Tab -->
+            <div id="guidance" class="tab-content bg-white p-6 rounded-lg shadow-sm">
+                 <div class="prose max-w-none text-gray-700">
+                    <h2>Guidance for Using the Stakeholder Analysis Tool</h2>
+            
+                    <h3>Introduction</h3>
+                    <p>Welcome to the Stakeholder Analysis Tool. This guide provides comprehensive instructions on how to use its features effectively. Stakeholder analysis is a critical process for identifying individuals or groups who can impact or are impacted by a project. This tool is designed to help you systematically analyse your stakeholders, devise engagement strategies, and track your progress.</p>
+            
+                    <h3>Core Features: Managing Your Data</h3>
+                    <p>On the top-right of the <strong>Dashboard</strong>, you will find the main controls for managing your data.</p>
+                    <ul>
+                        <li><strong>Save to File:</strong> This is the most important button. It allows you to save your entire analysis (all stakeholders, engagement logs, and reference data) to a single <code>.json</code> file on your computer. When clicked, it will open a "Save As..." dialogue box, allowing you to choose where to save the file and what to name it. <strong>Good Practice:</strong> Save your work frequently and use descriptive filenames that include the date (e.g., <code>Project-Alpha-Stakeholders-2025-10-12.json</code>).</li>
+                        <li><strong>Load from File:</strong> This allows you to load a previously saved <code>.json</code> file, completely replacing any data currently in the tool. You will be asked to confirm this action as it cannot be undone.</li>
+                        <li><strong>Refresh:</strong> This button re-draws all the charts and tables on the screen, which can be useful if something doesn't appear to have updated correctly.</li>
+                        <li><strong>Clear Data:</strong> This will completely reset the tool to a blank state. You will be shown a warning and asked for confirmation, as this action is irreversible.</li>
+                    </ul>
+            
+                    <h3>Step-by-Step Guide</h3>
+            
+                    <h4>Step 1: Customise Your Project (Dashboard Tab)</h4>
+                    <p>Before you begin, set up your project details on the <strong>Dashboard</strong>. You can click on the text for "Organisation" and "Project / Programme" to edit them. This information is saved with your file.</p>
+            
+                    <h4>Step 2: Define Your Terms (Reference Data Tab)</h4>
+                    <p>The <strong>Reference Data</strong> tab is the best place to start. It allows you to customise the dropdown options used throughout the tool. This ensures consistency in your data entry.</p>
+                    <ul>
+                        <li><strong>How to use:</strong> Simply type your list of items into the text boxes, with one item per line. Click "Save" for that category when you are finished.</li>
+                        <li><strong>Good Practice:</strong> Define your <code>Groups</code>, <code>Sub-Groups</code>, <code>Locations</code>, and <code>Relationships</code> before adding any stakeholders. This makes the data entry process much smoother.</li>
+                    </ul>
+            
+                    <h4>Step 3: Add Your Stakeholders (Stakeholders Tab)</h4>
+                    <p>This is the core of your analysis. Use the <strong>Add Stakeholder</strong> button to open the pop-up form and fill in the details.</p>
+                    <ul>
+                        <li><strong>Interest, Impact, Power, & Influence:</strong> These four ratings are the foundation of the analysis map. Assess each stakeholder from Low to Very High.</li>
+                        <li><strong>Commitment (Current vs. Target):</strong> Assess where the stakeholder is now (e.g., <code>Resistant</code>) and where you need them to be (e.g., <code>Supporting</code>). The tool will automatically calculate the "Commitment Gap".</li>
+                        <li><strong>Capability (Current vs. Target):</strong> Assess the stakeholder's current ability to adopt the change and what level of capability they will need. The "Capability Gap" is also calculated automatically.</li>
+                        <li><strong>Good Practice:</strong> Be as specific as possible. Instead of "IT Department", consider adding the "Head of IT" or "Network Manager" if they are the key individuals.</li>
+                    </ul>
+                    <p>Once added, the main table provides powerful features:</p>
+                    <ul>
+                        <li><strong>Sorting & Filtering:</strong> Click any column header to sort by that column. Use the input boxes below the headers to filter the entire table in real-time.</li>
+                        <li><strong>Actions:</strong> You can <code>Edit</code>, <code>Duplicate</code> (which creates a quick copy), or <code>Delete</code> any stakeholder.</li>
+                        <li><strong>Conditional Formatting:</strong> Key columns like Gaps, Ratings, and Dates are colour-coded to provide at-a-glance insights.</li>
+                    </ul>
+            
+                    <h4>Step 4: Create Your Action Plan (Engagement Plan Tab)</h4>
+                    <p>Analysis is only useful if it leads to action. Use the <strong>Engagement Plan</strong> tab to log and track your communications.</p>
+                    <ul>
+                        <li><strong>Add Engagement Log:</strong> When adding a log, you can select the specific stakeholder from a dropdown. This dropdown includes extra details (Group, Sub-Group, Location) to help you identify the correct person.</li>
+                        <li><strong>Track Progress:</strong> Set an owner, due date, and status (Planned, In Progress, Completed) for each activity.</li>
+                        <li><strong>Good Practice:</strong> Use this tab to plan future activities, not just to log past ones. This turns your analysis into a proactive engagement strategy.</li>
+                    </ul>
+            
+                    <h4>Step 5: Visualise and Prioritise (Analysis Map & Dashboard)</h4>
+                    <ul>
+                        <li><strong>Analysis Map:</strong> This provides a visual grid of your stakeholders based on their power, influence, interest, and impact. Use the dropdown filters at the top to narrow down the view and identify key groups. The legend on the right shows the colour-coding for each group.</li>
+                        <li><strong>Dashboard:</strong> This is your strategic overview. The interactive doughnut charts allow you to see the breakdown of your stakeholder landscape. Click on any segment of a chart to see a list of the stakeholders that make up that segment. From there, you can click a name to edit that stakeholder directly.</li>
+                    </ul>
+                    
+                    <h3>Good Practice Tips</h3>
+                    <ul>
+                        <li><strong>Iterate and Review:</strong> Stakeholder analysis is a living process, not a one-off task. Revisit this tool regularly throughout your project lifecycle to update assessments as attitudes and situations change.</li>
+                        <li><strong>Collaborate:</strong> Use the <code>Save to File</code> and <code>Load from File</code> features to share your analysis with team members. Getting different perspectives will make your analysis more robust.</li>
+                        <li><strong>Focus on the Gaps:</strong> The "Commitment Gap" and "Capability Gap" are your primary indicators for action. A large gap means a significant engagement or training effort is required. Use the doughnut charts on the dashboard to identify where the biggest challenges lie.</li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for Add/Edit Stakeholder -->
+    <div id="stakeholder-modal-backdrop" class="modal-backdrop"></div>
+    <div id="stakeholder-modal" class="modal bg-white rounded-lg shadow-xl w-full max-w-3xl">
+        <div class="p-6">
+            <div class="flex justify-between items-start">
+                <div class="flex items-center gap-3">
+                    <h3 class="text-xl font-semibold text-gray-900" id="modal-title">Add New Stakeholder</h3>
+                    <button type="button" id="engagement-indicator" class="hidden px-2 py-1 text-xs font-medium text-green-800 bg-green-100 rounded-full hover:bg-green-200 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"></button>
+                </div>
+                <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center" id="close-modal-btn">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                </button>
+            </div>
+            <form id="stakeholder-form" class="mt-4 space-y-4">
+                <input type="hidden" id="stakeholder-id">
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                    <div>
+                        <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Name</label>
+                        <input type="text" id="name" name="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5" required>
+                    </div>
+                     <div>
+                        <label for="groupSize" class="block mb-2 text-sm font-medium text-gray-900">Group Size</label>
+                        <input type="number" id="groupSize" name="groupSize" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5">
+                    </div>
+                    <div>
+                        <label for="group" class="block mb-2 text-sm font-medium text-gray-900">Group</label>
+                        <select id="group" name="group" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"></select>
+                    </div>
+                     <div>
+                        <label for="subGroup" class="block mb-2 text-sm font-medium text-gray-900">Sub-Group</label>
+                        <select id="subGroup" name="subGroup" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"></select>
+                    </div>
+                     <div>
+                        <label for="location" class="block mb-2 text-sm font-medium text-gray-900">Location/Organisation</label>
+                        <select id="location" name="location" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"></select>
+                    </div>
+                     <div>
+                        <label for="relationship" class="block mb-2 text-sm font-medium text-gray-900">Relationship Category</label>
+                        <select id="relationship" name="relationship" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"></select>
+                    </div>
+                    <div>
+                        <label for="interest" class="block mb-2 text-sm font-medium text-gray-900">Interest</label>
+                        <select id="interest" name="interest" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"></select>
+                    </div>
+                     <div>
+                        <label for="impact" class="block mb-2 text-sm font-medium text-gray-900">Impact</label>
+                        <select id="impact" name="impact" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"></select>
+                    </div>
+                    <div>
+                        <label for="currentCommitment" class="block mb-2 text-sm font-medium text-gray-900">Current Commitment</label>
+                        <select id="currentCommitment" name="currentCommitment" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"></select>
+                    </div>
+                    <div>
+                        <label for="targetCommitment" class="block mb-2 text-sm font-medium text-gray-900">Target Commitment</label>
+                        <select id="targetCommitment" name="targetCommitment" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"></select>
+                    </div>
+                     <div>
+                        <label class="block mb-2 text-sm font-medium text-gray-900">Commitment Gap</label>
+                        <div id="commitmentGapDisplay" class="w-full p-2.5 text-sm rounded-lg text-center font-bold bg-gray-100"></div>
+                    </div>
+                    <div>
+                        <label for="influence" class="block mb-2 text-sm font-medium text-gray-900">Influence</label>
+                        <select id="influence" name="influence" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"></select>
+                    </div>
+                     <div>
+                        <label for="capabilityCurrent" class="block mb-2 text-sm font-medium text-gray-900">Current Capability</label>
+                        <select id="capabilityCurrent" name="capabilityCurrent" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"></select>
+                    </div>
+                     <div>
+                        <label for="capabilityTarget" class="block mb-2 text-sm font-medium text-gray-900">Target Capability</label>
+                        <select id="capabilityTarget" name="capabilityTarget" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"></select>
+                    </div>
+                     <div>
+                        <label class="block mb-2 text-sm font-medium text-gray-900">Capability Gap</label>
+                        <div id="capabilityGapDisplay" class="w-full p-2.5 text-sm rounded-lg text-center font-bold bg-gray-100"></div>
+                    </div>
+                    <div>
+                        <label for="power" class="block mb-2 text-sm font-medium text-gray-900">Power</label>
+                        <select id="power" name="power" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"></select>
+                    </div>
+                     <div>
+                        <label for="targetDate" class="block mb-2 text-sm font-medium text-gray-900">Target Date</label>
+                        <input type="date" id="targetDate" name="targetDate" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5">
+                    </div>
+                </div>
+                 <div class="flex items-center justify-between mt-6">
+                    <div>
+                        <button type="button" id="add-engagement-from-stakeholder-btn" class="hidden text-white bg-teal-600 hover:bg-teal-700 focus:ring-4 focus:outline-none focus:ring-teal-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Add Engagement Log</button>
+                    </div>
+                    <div class="space-x-2">
+                        <button type="button" id="cancel-modal-btn" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10">Cancel</button>
+                        <button type="submit" class="text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Save Stakeholder</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Modal for Add/Edit Engagement -->
+    <div id="engagement-modal-backdrop" class="modal-backdrop"></div>
+    <div id="engagement-modal" class="modal bg-white rounded-lg shadow-xl w-full max-w-lg">
+        <div class="p-6">
+            <div class="flex justify-between items-start">
+                <h3 class="text-xl font-semibold text-gray-900" id="engagement-modal-title">Add Engagement Log</h3>
+                <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center" id="close-engagement-modal-btn">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                </button>
+            </div>
+            <form id="engagement-form" class="mt-4 space-y-4">
+                <input type="hidden" id="engagement-id">
+                <div>
+                    <label for="engagement-stakeholder" class="block mb-2 text-sm font-medium text-gray-900">Stakeholder</label>
+                    <select id="engagement-stakeholder" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5" required></select>
+                </div>
+                <div>
+                    <label for="engagement-activity-select" class="block mb-2 text-sm font-medium text-gray-900">Engagement Activity</label>
+                    <select id="engagement-activity-select" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5" required></select>
+                </div>
+                <div>
+                    <label for="engagement-activity" class="block mb-2 text-sm font-medium text-gray-900">Activity Description</label>
+                    <input type="text" id="engagement-activity" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5" required>
+                </div>
+                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="engagement-owner" class="block mb-2 text-sm font-medium text-gray-900">Owner</label>
+                        <input type="text" id="engagement-owner" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5">
+                    </div>
+                    <div>
+                        <label for="engagement-status" class="block mb-2 text-sm font-medium text-gray-900">Status</label>
+                        <select id="engagement-status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5">
+                            <option>Planned</option>
+                            <option>In Progress</option>
+                            <option>Completed</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label for="engagement-dueDate" class="block mb-2 text-sm font-medium text-gray-900">Due Date</label>
+                    <input type="date" id="engagement-dueDate" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5">
+                </div>
+                <div>
+                    <label for="engagement-notes" class="block mb-2 text-sm font-medium text-gray-900">Notes</label>
+                    <textarea id="engagement-notes" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"></textarea>
+                </div>
+                <div class="flex items-center justify-end mt-6 space-x-2">
+                    <button type="button" id="cancel-engagement-modal-btn" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10">Cancel</button>
+                    <button type="submit" id="save-engagement-btn" class="text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center disabled:bg-indigo-400 disabled:cursor-not-allowed">Save Log</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Modal for Add/Edit Activity -->
+    <div id="activity-modal-backdrop" class="modal-backdrop"></div>
+    <div id="activity-modal" class="modal bg-white rounded-lg shadow-xl w-full max-w-2xl">
+        <div class="p-6">
+            <div class="flex justify-between items-start">
+                <h3 class="text-xl font-semibold text-gray-900" id="activity-modal-title">Add Activity</h3>
+                <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center" id="close-activity-modal-btn">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                </button>
+            </div>
+            <form id="activity-form" class="mt-4 space-y-4">
+                <input type="hidden" id="activity-id">
+                <div>
+                    <label for="activity-name" class="block mb-2 text-sm font-medium text-gray-900">Activity Name</label>
+                    <input type="text" id="activity-name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5" required>
+                </div>
+                <div class="grid grid-cols-5 gap-4">
+                    <div>
+                        <label for="activity-inform" class="block mb-2 text-sm font-medium text-gray-900">Inform</label>
+                        <select id="activity-inform" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"></select>
+                    </div>
+                    <div>
+                        <label for="activity-consult" class="block mb-2 text-sm font-medium text-gray-900">Consult</label>
+                        <select id="activity-consult" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"></select>
+                    </div>
+                    <div>
+                        <label for="activity-involve" class="block mb-2 text-sm font-medium text-gray-900">Involve</label>
+                        <select id="activity-involve" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"></select>
+                    </div>
+                    <div>
+                        <label for="activity-collaborate" class="block mb-2 text-sm font-medium text-gray-900">Collaborate</label>
+                        <select id="activity-collaborate" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"></select>
+                    </div>
+                    <div>
+                        <label for="activity-empower" class="block mb-2 text-sm font-medium text-gray-900">Empower</label>
+                        <select id="activity-empower" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"></select>
+                    </div>
+                </div>
+                <div class="flex items-center justify-end mt-6 space-x-2">
+                    <button type="button" id="cancel-activity-modal-btn" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10">Cancel</button>
+                    <button type="submit" class="text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Save Activity</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for Clear Data Confirmation -->
+    <div id="clear-data-modal-backdrop" class="modal-backdrop"></div>
+    <div id="clear-data-modal" class="modal bg-white rounded-lg shadow-xl w-full max-w-md">
+        <div class="p-6 text-center">
+            <svg class="mx-auto mb-4 w-14 h-14 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            <h3 class="mb-5 text-lg font-normal text-gray-500">Are you sure you want to clear all data?</h3>
+            <p class="text-sm text-gray-500 mb-6">This action is irreversible and will reset the entire tool to its default blank state.</p>
+            <button id="confirm-clear-btn" type="button" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2">
+                Yes, I'm sure
+            </button>
+            <button id="cancel-clear-btn" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10">No, cancel</button>
+        </div>
+    </div>
+
+
+<script>
+// --- CORE APP LOGIC ---
+const App = {
+    // --- STATE MANAGEMENT ---
+    state: {
+        organisationName: 'Your Organisation',
+        projectName: 'Your Project/Programme',
+        lastUpdated: null,
+        loadedFileName: null,
+        stakeholders: [],
+        engagementLog: [],
+        referenceData: {
+            groups: [],
+            subGroups: [],
+            locations: [],
+            relationships: [],
+            commitments: [],
+            capabilities: [],
+            ratings: [],
+            engagementActivities: [],
+        },
+        groupColors: {},
+        sortConfig: { key: 'name', direction: 'ascending' },
+        filterConfig: {},
+        engagementSortConfig: { key: 'stakeholderId', direction: 'ascending' },
+        engagementFilterConfig: {},
+        mapFilterConfig: { group: 'All', subGroup: 'All', location: 'All', relationship: 'All' },
+        mapAxisConfig: { x: 'power', y: 'interest' },
+        activitySortConfig: { key: 'name', direction: 'ascending' },
+        dashboardChartConfig: { chart1: 'mapping', chart2: 'commitmentGap', chart3: 'group', chart4: 'capabilityGap' }
+    },
+    
+    // --- CHART INSTANCES ---
+    charts: {
+        chart1: null,
+        chart2: null,
+        chart3: null,
+        chart4: null
+    },
+    
+    // --- DATA MAPPING ---
+    maps: {
+        ratings: { 'Low': 1, 'Medium': 2, 'High': 3, 'Very High': 4 },
+        commitments: { 'Resistant': 1, 'Opposed': 2, 'Ambivalent': 3, 'Complying': 4, 'Supporting': 5, 'Leading': 6 },
+        capabilities: { 'Unaware': 1, 'Aware': 2, 'Informed': 3, 'Equipped': 4, 'Practised': 5, 'Exemplary': 6 }
+    },
+
+    // --- INITIALIZATION ---
+    init() {
+        this.loadState();
+        this.renderAll();
+        this.attachEventListeners();
+    },
+
+    loadState() {
+        const savedState = localStorage.getItem('stakeholderAppState');
+        if (savedState) {
+             const loaded = JSON.parse(savedState);
+             // Robust state merging
+             const defaultState = this.getFreshState();
+             Object.keys(defaultState).forEach(key => {
+                 this.state[key] = loaded[key] !== undefined ? loaded[key] : defaultState[key];
+             });
+             this.state.referenceData = {...defaultState.referenceData, ...(loaded.referenceData || {})};
+             this.state.mapFilterConfig = {...defaultState.mapFilterConfig, ...(loaded.mapFilterConfig || {})};
+             this.state.mapAxisConfig = {...defaultState.mapAxisConfig, ...(loaded.mapAxisConfig || {})};
+        } else {
+            this.resetStateToDefault();
+        }
+        this.assignGroupColors();
+    },
+    
+    saveState() {
+        this.state.lastUpdated = new Date().toISOString();
+        localStorage.setItem('stakeholderAppState', JSON.stringify(this.state));
+    },
+        
+    // --- EVENT LISTENERS ---
+    attachEventListeners() {
+        document.body.addEventListener('click', (e) => {
+            if (e.target.id === 'saveDataBtn') this.saveToFile();
+            if (e.target.id === 'loadDataBtn') document.getElementById('fileLoader').click();
+            if (e.target.id === 'refreshAppBtn') this.renderAll();
+            if (e.target.id === 'clearDataBtn') this.openClearDataModal();
+            if (e.target.id === 'resetMapFiltersBtn') this.resetMapFilters();
+        });
+        
+        document.body.addEventListener('change', (e) => {
+            if (e.target.id === 'orgNameInput' || e.target.id === 'projectNameInput') this.updateProjectDetails();
+            if (e.target.id === 'fileLoader') this.loadFromFile(e);
+            if (e.target.closest('#map-filters-container')) this.updateMapFilters();
+            if (e.target.id === 'x-axis-select' || e.target.id === 'y-axis-select') this.updateMapAxes();
+            if (e.target.classList.contains('dashboard-chart-select')) {
+                const chartId = e.target.dataset.chartId;
+                this.state.dashboardChartConfig[chartId] = e.target.value;
+                this.saveState();
+                this.renderDashboardCharts();
+            }
+        });
+        
+        document.getElementById('addStakeholderBtn').addEventListener('click', () => this.openModal());
+        document.getElementById('resetFiltersBtn').addEventListener('click', () => this.resetFiltersAndSort());
+        document.getElementById('close-modal-btn').addEventListener('click', () => this.closeModal());
+        document.getElementById('cancel-modal-btn').addEventListener('click', () => this.closeModal());
+        document.getElementById('stakeholder-modal-backdrop').addEventListener('click', () => this.closeModal());
+        document.getElementById('stakeholder-form').addEventListener('submit', (e) => this.handleFormSubmit(e));
+        
+        // Add listener for modal form changes
+        document.getElementById('stakeholder-form').addEventListener('change', (e) => {
+            const fieldIds = ['interest', 'impact', 'power', 'influence', 'targetDate'];
+            if (fieldIds.includes(e.target.id)) {
+                this.updateModalStyling();
+            }
+            const gapFieldIds = ['currentCommitment', 'targetCommitment', 'capabilityCurrent', 'capabilityTarget'];
+            if (gapFieldIds.includes(e.target.id)) {
+                this.updateModalGapDisplays();
+            }
+        });
+        
+        document.getElementById('addEngagementBtn').addEventListener('click', () => this.openEngagementModal());
+        document.getElementById('resetEngagementFiltersBtn').addEventListener('click', () => this.resetEngagementFiltersAndSort());
+        document.getElementById('close-engagement-modal-btn').addEventListener('click', () => this.closeEngagementModal());
+        document.getElementById('cancel-engagement-modal-btn').addEventListener('click', () => this.closeEngagementModal());
+        document.getElementById('engagement-modal-backdrop').addEventListener('click', () => this.closeEngagementModal());
+        document.getElementById('engagement-form').addEventListener('submit', (e) => this.handleEngagementFormSubmit(e));
+        document.getElementById('engagement-form').addEventListener('change', () => this.validateEngagementForm());
+
+        // Activity Listeners
+        document.getElementById('addActivityBtn').addEventListener('click', () => this.openActivityModal());
+        document.getElementById('close-activity-modal-btn').addEventListener('click', () => this.closeActivityModal());
+        document.getElementById('cancel-activity-modal-btn').addEventListener('click', () => this.closeActivityModal());
+        document.getElementById('activity-modal-backdrop').addEventListener('click', () => this.closeActivityModal());
+        document.getElementById('activity-form').addEventListener('submit', (e) => this.handleActivityFormSubmit(e));
+
+        const activitiesTableHead = document.querySelector('#activities thead');
+        activitiesTableHead.addEventListener('click', (e) => {
+            const header = e.target.closest('.sortable-header');
+            if (header) this.updateActivitySort(header.dataset.sortKey);
+        });
+
+
+        document.getElementById('confirm-clear-btn').addEventListener('click', () => this.clearAllData());
+        document.getElementById('cancel-clear-btn').addEventListener('click', () => this.closeClearDataModal());
+        document.getElementById('clear-data-modal-backdrop').addEventListener('click', () => this.closeClearDataModal());
+
+        const stakeholderTableHead = document.getElementById('stakeholder-table-head');
+        stakeholderTableHead.addEventListener('click', (e) => {
+            const header = e.target.closest('.sortable-header');
+            if (header) this.updateSort(header.dataset.sortKey);
+        });
+        stakeholderTableHead.addEventListener('input', (e) => {
+            if (e.target.classList.contains('header-filter')) this.updateFilters();
+        });
+        stakeholderTableHead.addEventListener('change', (e) => {
+            if (e.target.classList.contains('header-filter')) this.updateFilters();
+        });
+
+        const engagementTableHead = document.getElementById('engagement-table-head');
+        engagementTableHead.addEventListener('click', (e) => {
+            const header = e.target.closest('.sortable-header');
+            if(header) this.updateEngagementSort(header.dataset.sortKey);
+        });
+        engagementTableHead.addEventListener('input', (e) => {
+            if(e.target.classList.contains('header-filter')) this.updateEngagementFilters();
+        });
+        engagementTableHead.addEventListener('change', (e) => {
+            if(e.target.classList.contains('header-filter')) this.updateEngagementFilters();
+        });
+    },
+
+    // --- DATA MANIPULATION ---
+    addOrUpdateStakeholder(data) {
+        if (data.id) {
+            const index = this.state.stakeholders.findIndex(s => s.id === data.id);
+            if (index !== -1) this.state.stakeholders[index] = data;
+        } else {
+            data.id = Date.now().toString();
+            this.state.stakeholders.push(data);
+        }
+        this.saveAndRender();
+    },
+
+    deleteStakeholder(id) {
+        if (confirm('Are you sure you want to delete this stakeholder? This will also delete all associated engagement logs.')) {
+            this.state.stakeholders = this.state.stakeholders.filter(s => s.id !== id);
+            this.state.engagementLog = this.state.engagementLog.filter(log => log.stakeholderId !== id);
+            this.saveAndRender();
+        }
+    },
+
+    duplicateStakeholder(id) {
+        const originalStakeholder = this.state.stakeholders.find(s => s.id === id);
+        if (!originalStakeholder) return;
+        const newStakeholder = JSON.parse(JSON.stringify(originalStakeholder));
+        newStakeholder.id = Date.now().toString();
+        newStakeholder.name = `${originalStakeholder.name} (copy)`;
+        this.state.stakeholders.push(newStakeholder);
+        this.saveAndRender();
+    },
+
+    addOrUpdateEngagementLog(data) {
+        if (data.id) {
+            const index = this.state.engagementLog.findIndex(log => log.id === data.id);
+            if (index !== -1) this.state.engagementLog[index] = data;
+        } else {
+            data.id = 'eng-' + Date.now().toString();
+            this.state.engagementLog.push(data);
+        }
+        this.saveAndRender();
+    },
+
+    deleteEngagementLog(id) {
+        if (confirm('Are you sure you want to delete this engagement log?')) {
+            this.state.engagementLog = this.state.engagementLog.filter(log => log.id !== id);
+            this.saveAndRender();
+        }
+    },
+    
+    updateReferenceData(category, values) {
+        this.state.referenceData[category] = values;
+        if(category === 'groups') this.assignGroupColors();
+        this.saveAndRender();
+    },
+
+    updateProjectDetails() {
+        this.state.organisationName = document.getElementById('orgNameInput').value;
+        this.state.projectName = document.getElementById('projectNameInput').value;
+        this.saveState();
+        this.renderDashboard();
+    },
+
+    updateSort(key) {
+        let direction = 'ascending';
+        if (this.state.sortConfig.key === key && this.state.sortConfig.direction === 'ascending') {
+            direction = 'descending';
+        }
+        this.state.sortConfig = { key, direction };
+        this.renderStakeholderTable();
+    },
+
+    updateFilters() {
+        const newFilters = {};
+        document.querySelectorAll('#stakeholder-table-head .header-filter').forEach(filterInput => {
+            if (filterInput.value) newFilters[filterInput.dataset.filterKey] = filterInput.value;
+        });
+        this.state.filterConfig = newFilters;
+        this.renderStakeholderTable();
+    },
+
+    resetFiltersAndSort() {
+        this.state.filterConfig = {};
+        this.state.sortConfig = { key: 'name', direction: 'ascending' };
+        this.renderStakeholderTable();
+    },
+
+    updateEngagementSort(key) {
+        let direction = 'ascending';
+        if (this.state.engagementSortConfig.key === key && this.state.engagementSortConfig.direction === 'ascending') {
+            direction = 'descending';
+        }
+        this.state.engagementSortConfig = { key, direction };
+        this.renderEngagementPlan();
+    },
+
+    updateEngagementFilters() {
+        const newFilters = {};
+        document.querySelectorAll('#engagement-table-head .header-filter').forEach(filterInput => {
+            if (filterInput.value) newFilters[filterInput.dataset.filterKey] = filterInput.value;
+        });
+        this.state.engagementFilterConfig = newFilters;
+        this.renderEngagementPlan();
+    },
+
+    resetEngagementFiltersAndSort() {
+        this.state.engagementFilterConfig = {};
+        this.state.engagementSortConfig = { key: 'stakeholderId', direction: 'ascending' };
+        this.renderEngagementPlan();
+    },
+
+    updateMapFilters() {
+        this.state.mapFilterConfig.group = document.getElementById('map-filter-group').value;
+        this.state.mapFilterConfig.subGroup = document.getElementById('map-filter-subGroup').value;
+        this.state.mapFilterConfig.location = document.getElementById('map-filter-location').value;
+        this.state.mapFilterConfig.relationship = document.getElementById('map-filter-relationship').value;
+        this.renderAnalysisMap();
+    },
+    
+    updateMapAxes() {
+        this.state.mapAxisConfig.x = document.getElementById('x-axis-select').value;
+        this.state.mapAxisConfig.y = document.getElementById('y-axis-select').value;
+        this.renderAnalysisMap();
+    },
+
+    updateActivitySort(key) {
+        let direction = 'ascending';
+        if (this.state.activitySortConfig.key === key && this.state.activitySortConfig.direction === 'ascending') {
+            direction = 'descending';
+        }
+        this.state.activitySortConfig = { key, direction };
+        this.renderActivitiesTable();
+    },
+
+    resetMapFilters() {
+        this.state.mapFilterConfig = { group: 'All', subGroup: 'All', location: 'All', relationship: 'All' };
+        this.renderAnalysisMap(); // This will re-render the map with default filters
+        this.renderMapFilters(); // This will re-render the filter dropdowns to show 'All'
+    },
+
+    clearAllData() {
+        localStorage.removeItem('stakeholderAppState');
+        this.resetStateToDefault();
+        this.saveAndRender();
+        this.closeClearDataModal();
+    },
+    
+    // --- FILE OPERATIONS ---
+    async saveToFile() {
+        try {
+            const dataStr = JSON.stringify(this.state, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            
+            if (window.showSaveFilePicker) {
+                const handle = await window.showSaveFilePicker({
+                    suggestedName: `stakeholder-analysis-${new Date().toISOString().slice(0, 10)}.json`,
+                    types: [{
+                        description: 'JSON Files',
+                        accept: { 'application/json': ['.json'] },
+                    }],
+                });
+                const writable = await handle.createWritable();
+                await writable.write(blob);
+                await writable.close();
+            } else {
+                // Fallback for older browsers
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `stakeholder-analysis-${new Date().toISOString().slice(0, 10)}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+        } catch (error) {
+            if (error.name !== 'AbortError') {
+                 console.error('Error saving data:', error);
+                 alert('Could not save data to file.');
+            }
+        }
+    },
+
+    loadFromFile(event) {
+        if (!confirm('Loading a file will overwrite all current data. Are you sure you want to proceed?')) {
+            event.target.value = '';
+            return;
+        }
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const loadedState = JSON.parse(e.target.result);
+                
+                // Robust validation to ensure the file is at least minimally correct.
+                if (!loadedState || typeof loadedState.stakeholders === 'undefined') {
+                    throw new Error('Invalid file format: missing essential data.');
+                }
+
+                const defaultState = this.getFreshState();
+                
+                // Create the new state by layering the default state first, then the loaded state.
+                const newState = { ...defaultState, ...loadedState };
+
+                // Now, explicitly deep-merge the nested objects. This prevents incomplete objects
+                // in the loaded file (e.g., "sortConfig": {}) from overwriting the complete default objects.
+                newState.referenceData = { ...defaultState.referenceData, ...(loadedState.referenceData || {}) };
+                newState.sortConfig = { ...defaultState.sortConfig, ...(loadedState.sortConfig || {}) };
+                newState.engagementSortConfig = { ...defaultState.engagementSortConfig, ...(loadedState.engagementSortConfig || {}) };
+                newState.activitySortConfig = { ...defaultState.activitySortConfig, ...(loadedState.activitySortConfig || {}) };
+                newState.mapFilterConfig = { ...defaultState.mapFilterConfig, ...(loadedState.mapFilterConfig || {}) };
+                newState.mapAxisConfig = { ...defaultState.mapAxisConfig, ...(loadedState.mapAxisConfig || {}) };
+                newState.dashboardChartConfig = { ...defaultState.dashboardChartConfig, ...(loadedState.dashboardChartConfig || {}) };
+                
+                // Assign the fully and safely merged state.
+                this.state = newState;
+                this.state.loadedFileName = file.name;
+                
+                this.assignGroupColors();
+                this.saveAndRender();
+
+            } catch (error) {
+                console.error('Error loading data:', error);
+                if (error instanceof SyntaxError) {
+                    alert('Could not load data. The file does not appear to be valid JSON. Please check for syntax errors.');
+                } else {
+                    alert('Could not load data. Please ensure you select a valid JSON file. Error: ' + error.message);
+                }
+            } finally {
+                event.target.value = '';
+            }
+        };
+        reader.onerror = () => {
+             alert('Error reading the file.');
+             event.target.value = '';
+        }
+        reader.readAsText(file);
+    },
+
+    // --- RENDERING ---
+    renderAll() {
+        this.renderDashboard();
+        this.renderStakeholderTable();
+        this.renderEngagementPlan();
+        this.renderMapFilters(); // Render filters before map
+        this.renderMapAxisSelectors();
+        this.renderAnalysisMap();
+        this.renderActivitiesTable();
+        this.renderReferenceData();
+    },
+
+    saveAndRender() {
+        this.saveState();
+        this.renderAll();
+    },
+    
+    renderDashboard() {
+        const container = document.getElementById('dashboard');
+        const stakeholders = this.state.stakeholders;
+        
+        const dateCounts = { red: 0, yellow: 0, green: 0 };
+        stakeholders.forEach(s => {
+            const status = this.getTargetDateStatus(s.targetDate);
+            if (status !== 'none') {
+                dateCounts[status]++;
+            }
+        });
+
+        container.innerHTML = `
+            <div class="flex justify-between items-center mb-6">
+                 <h2 class="text-2xl font-bold text-gray-800">Dashboard Overview</h2>
+                 <div class="flex items-center gap-4">
+                    <button id="clearDataBtn" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors">Clear Data</button>
+                    <button id="refreshAppBtn" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 transition-colors">Refresh</button>
+                    <button id="saveDataBtn" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors">Save to File</button>
+                    <button id="loadDataBtn" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">Load from File</button>
+                    <input type="file" id="fileLoader" class="hidden" accept=".json">
+                 </div>
+            </div>
+
+            <div class="bg-white p-4 rounded-lg shadow-sm mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+                    <div>
+                        <label for="orgNameInput" class="block text-sm font-medium text-gray-500">Organisation</label>
+                        <input type="text" id="orgNameInput" class="mt-1 block w-full text-lg font-semibold text-gray-900 border-0 border-b-2 border-transparent focus:ring-0 focus:border-indigo-500 transition p-1" value="${this.state.organisationName}">
+                    </div>
+                    <div>
+                        <label for="projectNameInput" class="block text-sm font-medium text-gray-500">Project / Programme</label>
+                        <input type="text" id="projectNameInput" class="mt-1 block w-full text-lg font-semibold text-gray-900 border-0 border-b-2 border-transparent focus:ring-0 focus:border-indigo-500 transition p-1" value="${this.state.projectName}">
+                    </div>
+                     <div>
+                        <h3 class="text-sm font-medium text-gray-500">Loaded File</h3>
+                        <p class="mt-1 text-lg font-semibold text-gray-900 truncate" title="${this.state.loadedFileName || 'N/A'}">${this.state.loadedFileName || 'N/A'}</p>
+                    </div>
+                    <div class="text-right">
+                        <h3 class="text-sm font-medium text-gray-500">Last Updated</h3>
+                        <p class="mt-1 text-lg font-semibold text-gray-900">${this.formatDateTime(this.state.lastUpdated)}</p>
+                    </div>
+                </div>
+            </div>
+
+             <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div class="bg-white p-4 rounded-lg shadow-sm"><h3 class="text-sm font-medium text-gray-500 truncate">Total Stakeholders</h3><p class="mt-1 text-2xl font-semibold text-gray-900">${stakeholders.length}</p></div>
+                <button onclick="App.showDateFilteredStakeholders('red')" class="bg-red-100 p-4 rounded-lg shadow-sm text-left hover:bg-red-200 transition-colors"><h3 class="text-sm font-medium text-red-800 truncate">Overdue Target Dates</h3><p class="mt-1 text-2xl font-semibold text-red-900">${dateCounts.red}</p></button>
+                <button onclick="App.showDateFilteredStakeholders('yellow')" class="bg-yellow-100 p-4 rounded-lg shadow-sm text-left hover:bg-yellow-200 transition-colors"><h3 class="text-sm font-medium text-yellow-800 truncate">Due in &lt;30 Days</h3><p class="mt-1 text-2xl font-semibold text-yellow-900">${dateCounts.yellow}</p></button>
+                <button onclick="App.showDateFilteredStakeholders('green')" class="bg-green-100 p-4 rounded-lg shadow-sm text-left hover:bg-green-200 transition-colors"><h3 class="text-sm font-medium text-green-800 truncate">On Track</h3><p class="mt-1 text-2xl font-semibold text-green-900">${dateCounts.green}</p></button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div id="dashboard-charts-grid" class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Charts will be rendered here by JS -->
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm lg:col-span-1" id="dashboard-details-panel"></div>
+            </div>`;
+        
+        this.renderDashboardCharts();
+        
+        // Initially render the details panel with instructional text
+        document.getElementById('dashboard-details-panel').innerHTML = `<h3 class="font-semibold text-lg mb-2">Stakeholder Details</h3><p class="text-gray-500 text-sm">Click a segment on any chart to view the filtered list.</p>`;
+    },
+
+    renderDashboardCharts() {
+        const chartContainer = document.getElementById('dashboard-charts-grid');
+        chartContainer.innerHTML = ''; // Clear previous charts
+        
+        const chartOptions = [
+            { key: 'mapping', label: 'Stakeholder Mapping' }, { key: 'group', label: 'Group' },
+            { key: 'subGroup', label: 'Sub-Group' }, { key: 'location', label: 'Location' },
+            { key: 'relationship', label: 'Relationship' }, { key: 'interest', label: 'Interest' },
+            { key: 'impact', label: 'Impact' }, { key: 'power', label: 'Power' },
+            { key: 'influence', label: 'Influence' }, { key: 'currentCommitment', label: 'Current Commitment' },
+            { key: 'targetCommitment', label: 'Target Commitment' }, { key: 'commitmentGap', label: 'Commitment Gap' },
+            { key: 'capabilityCurrent', label: 'Current Capability' }, { key: 'capabilityTarget', label: 'Target Capability' },
+            { key: 'capabilityGap', label: 'Capability Gap' }
+        ];
+
+        const selectHTML = chartOptions.map(opt => `<option value="${opt.key}">${opt.label}</option>`).join('');
+
+        ['chart1', 'chart2', 'chart3', 'chart4'].forEach((chartId, index) => {
+            const selectedOption = this.state.dashboardChartConfig[chartId];
+            const selectedLabel = chartOptions.find(opt => opt.key === selectedOption)?.label || 'Select Data';
+
+            chartContainer.innerHTML += `
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-semibold text-lg">${selectedLabel}</h3>
+                        <select data-chart-id="${chartId}" class="dashboard-chart-select text-sm border-gray-300 rounded-md">
+                            ${selectHTML}
+                        </select>
+                    </div>
+                    <div class="h-64 mx-auto" style="position: relative; max-width: 300px;"><canvas id="${chartId}"></canvas></div>
+                </div>
+            `;
+        });
+        
+        // Set the selected values for the dropdowns
+        ['chart1', 'chart2', 'chart3', 'chart4'].forEach(chartId => {
+            const select = chartContainer.querySelector(`select[data-chart-id="${chartId}"]`);
+            if(select) select.value = this.state.dashboardChartConfig[chartId];
+        });
+
+        this.generateDashboardChartData();
+    },
+
+    generateDashboardChartData() {
+        const chartConfigs = this.state.dashboardChartConfig;
+        for (const chartId in chartConfigs) {
+            const key = chartConfigs[chartId];
+            const data = this.getAggregatedData(key);
+            this.renderDoughnutChart(chartId, data.labels, data.values, key);
+        }
+    },
+    
+    getAggregatedData(key) {
+        const counts = {};
+        this.state.stakeholders.forEach(s => {
+            let value;
+            if (key === 'mapping') {
+                value = this.getStakeholderMapping(this.calculateScores(s).pi, this.calculateScores(s).ii);
+            } else if (key === 'commitmentGap') {
+                value = 'Gap: ' + this.getGap(s.currentCommitment, s.targetCommitment, 'commitments').gap;
+            } else if (key === 'capabilityGap') {
+                value = 'Gap: ' + this.getGap(s.capabilityCurrent, s.capabilityTarget, 'capabilities').gap;
+            } else {
+                value = s[key] || 'N/A';
+            }
+            counts[value] = (counts[value] || 0) + 1;
+        });
+        
+        const sortedEntries = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+        return {
+            labels: sortedEntries.map(entry => entry[0]),
+            values: sortedEntries.map(entry => entry[1])
+        };
+    },
+
+    renderDoughnutChart(chartId, labels, values, key) {
+        if (this.charts[chartId]) this.charts[chartId].destroy();
+        const ctx = document.getElementById(chartId)?.getContext('2d');
+        if (!ctx) return;
+        
+        const colors = this.getChartColors(key, labels);
+
+        this.charts[chartId] = new Chart(ctx, {
+            type: 'doughnut',
+            data: { labels: labels, datasets: [{ data: values, backgroundColor: colors, borderColor: '#ffffff', borderWidth: 2 }] },
+            options: { 
+                responsive: true, maintainAspectRatio: false, 
+                plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 15 } }, tooltip: { callbacks: { label: (c) => `${c.label || ''}: ${c.parsed || ''}` } } },
+                onClick: (e, els) => {
+                    if (els.length > 0) {
+                        const label = this.charts[chartId].data.labels[els[0].index];
+                        const filtered = this.state.stakeholders.filter(s => {
+                            let value;
+                            if (key === 'mapping') value = this.getStakeholderMapping(this.calculateScores(s).pi, this.calculateScores(s).ii);
+                            else if (key === 'commitmentGap') value = 'Gap: ' + this.getGap(s.currentCommitment, s.targetCommitment, 'commitments').gap;
+                            else if (key === 'capabilityGap') value = 'Gap: ' + this.getGap(s.capabilityCurrent, s.capabilityTarget, 'capabilities').gap;
+                            else value = s[key] || 'N/A';
+                            return value.toString() === label.toString();
+                        });
+                        this.renderDashboardDetailsPanel(filtered, `Filter: "${label}"`);
+                    }
+                }
+            }
+        });
+    },
+
+    getChartColors(key, labels) {
+        const baseColors = ['#3b82f6', '#10b981', '#f97316', '#8b5cf6', '#ef4444', '#f59e0b', '#14b8a6', '#6366f1', '#d946ef', '#0ea5e9'];
+        if (key === 'mapping') {
+            return labels.map(l => ({'Manage Closely': '#ef4444', 'Keep Satisfied': '#3b82f6', 'Keep Informed': '#10b981', 'Monitor': '#6b7280'}[l]));
+        }
+        if (key.includes('Gap')) {
+             return labels.map(l => {
+                const gap = parseInt(l.replace('Gap: ', ''), 10);
+                if (gap < 0) return '#d1d5db'; if (gap === 0) return '#60a5fa'; if (gap === 1) return '#4ade80';
+                if (gap === 2) return '#facc15'; if (gap === 3) return '#f87171'; if (gap >= 4) return '#dc2626';
+                return '#e5e7eb';
+            });
+        }
+        return labels.map((_, i) => baseColors[i % baseColors.length]);
+    },
+    
+    renderDashboardDetailsPanel(stakeholders, title = 'High-Priority Stakeholders') {
+        const detailsPanel = document.getElementById('dashboard-details-panel');
+        let listHTML = '';
+        if (stakeholders.length > 0) {
+            listHTML = stakeholders.map(s => {
+                const hasLogs = this.state.engagementLog.some(log => log.stakeholderId === s.id);
+                const engagementIndicatorHTML = hasLogs 
+                    ? `<button onclick="App.showStakeholderEngagements('${s.id}', '${s.name.replace(/'/g, "\\'")}')" class="mt-1 px-2 py-0.5 text-xs font-medium text-green-800 bg-green-100 rounded-full hover:bg-green-200 transition-colors focus:outline-none">Has Engagement Log</button>` 
+                    : '';
+
+                return `
+                <li class="flex justify-between items-center py-2 border-b border-gray-100">
+                    <div>
+                        <button onclick="App.openModal('${s.id}')" class="font-medium text-indigo-600 hover:underline text-left focus:outline-none">${s.name}</button>
+                        <p class="text-sm text-gray-500">${s.group || 'N/A'} | ${s.subGroup || 'N/A'} | ${s.location || 'N/A'}</p>
+                        ${engagementIndicatorHTML}
+                    </div>
+                    ${title === 'High-Priority Stakeholders' ? `<span class="font-bold text-indigo-600 text-lg">${s.priorityScore.toFixed(1)}</span>` : ''}
+                </li>`;
+            }).join('');
+        } else {
+            listHTML = `<li class="text-gray-500 text-center py-4">No stakeholders in this category.</li>`;
+        }
+        const backButtonHTML = title !== 'High-Priority Stakeholders' 
+            ? `<button onclick="App.renderInitialDashboardDetails()" class="text-sm text-indigo-600 hover:underline mb-3">&larr; Clear Selection</button>` 
+            : '';
+        detailsPanel.innerHTML = `<h3 class="font-semibold text-lg mb-2">${title}</h3>${backButtonHTML}<ul class="space-y-1 overflow-y-auto" style="max-height: 28rem;">${listHTML}</ul>`;
+    },
+
+    renderInitialDashboardDetails() {
+        // This function is called when the 'back' button is clicked in the details panel.
+        // It now clears the panel and shows the initial instructional text.
+        document.getElementById('dashboard-details-panel').innerHTML = `<h3 class="font-semibold text-lg mb-2">Stakeholder Details</h3><p class="text-gray-500 text-sm">Click a segment on any chart to view the filtered list.</p>`;
+    },
+
+    renderStakeholderTable() {
+        this.renderStakeholderTableHeader();
+        const tbody = document.getElementById('stakeholder-table-body');
+        tbody.innerHTML = '';
+        let filteredStakeholders = [...this.state.stakeholders];
+
+        Object.keys(this.state.filterConfig).forEach(key => {
+            const filterValue = this.state.filterConfig[key].toLowerCase();
+            if(filterValue) {
+                if (key === 'mapping') {
+                    filteredStakeholders = filteredStakeholders.filter(s => 
+                        this.getStakeholderMapping(this.calculateScores(s).pi, this.calculateScores(s).ii).toLowerCase() === filterValue
+                    );
+                } else {
+                    filteredStakeholders = filteredStakeholders.filter(s => (s[key] || '').toString().toLowerCase().includes(filterValue));
+                }
+            }
+        });
+        
+        const { key, direction } = this.state.sortConfig;
+        filteredStakeholders.sort((a, b) => {
+            let valA, valB;
+            if (key === 'commitmentGap') { valA = this.getGap(a.currentCommitment, a.targetCommitment, 'commitments').gap; valB = this.getGap(b.currentCommitment, b.targetCommitment, 'commitments').gap; }
+            else if (key === 'capabilityGap') { valA = this.getGap(a.capabilityCurrent, a.capabilityTarget, 'capabilities').gap; valB = this.getGap(b.capabilityCurrent, b.capabilityTarget, 'capabilities').gap; }
+            else if (key === 'mapping') { valA = this.getStakeholderMapping(this.calculateScores(a).pi, this.calculateScores(a).ii); valB = this.getStakeholderMapping(this.calculateScores(b).pi, this.calculateScores(b).ii); }
+            else { valA = a[key] || ''; valB = b[key] || ''; }
+            valA = (valA === '' || valA === null) ? -Infinity : valA; valB = (valB === '' || valB === null) ? -Infinity : valB;
+            if (valA < valB) return direction === 'ascending' ? -1 : 1;
+            if (valA > valB) return direction === 'ascending' ? 1 : -1;
+            return 0;
+        });
+
+        if (filteredStakeholders.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="19" class="text-center py-4 text-gray-500">No stakeholders match the current filters.</td></tr>`;
+            return;
+        }
+
+        filteredStakeholders.forEach(s => {
+            const commitmentGap = this.getGap(s.currentCommitment, s.targetCommitment, 'commitments');
+            const capabilityGap = this.getGap(s.capabilityCurrent, s.capabilityTarget, 'capabilities');
+            const mapping = this.getStakeholderMapping(this.calculateScores(s).pi, this.calculateScores(s).ii);
+            const dateStyle = this.getDateStyling(s.targetDate);
+            const tr = document.createElement('tr');
+            tr.className = 'bg-white border-b cursor-pointer';
+            tr.onclick = () => App.openModal(s.id);
+            tr.innerHTML = `
+                <td class="px-4 py-3 font-medium text-gray-900"><span class="text-indigo-600 hover:underline">${s.name || ''}</span></td>
+                <td class="px-4 py-3">${s.groupSize || ''}</td> <td class="px-4 py-3">${s.group || ''}</td>
+                <td class="px-4 py-3">${s.subGroup || ''}</td> <td class="px-4 py-3">${s.location || ''}</td>
+                <td class="px-4 py-3">${s.relationship || ''}</td>
+                <td class="px-4 py-3 text-center"><span class="${this.getRatingStyling(s.interest).colorClass}">${s.interest || ''}</span></td>
+                <td class="px-4 py-3 text-center"><span class="${this.getRatingStyling(s.impact).colorClass}">${s.impact || ''}</span></td>
+                <td class="px-4 py-3 text-center"><span class="${this.getRatingStyling(s.power).colorClass}">${s.power || ''}</span></td>
+                <td class="px-4 py-3 text-center"><span class="${this.getRatingStyling(s.influence).colorClass}">${s.influence || ''}</span></td>
+                <td class="px-4 py-3 text-center"><span class="px-2 py-1 text-xs font-medium rounded-full ${this.getMappingStyling(mapping).colorClass}">${mapping}</span></td>
+                <td class="px-4 py-3">${s.currentCommitment || ''}</td> <td class="px-4 py-3">${s.targetCommitment || ''}</td>
+                <td class="px-4 py-3 font-medium text-center ${commitmentGap.colorClass}">${commitmentGap.gap}</td>
+                <td class="px-4 py-3">${s.capabilityCurrent || ''}</td> <td class="px-4 py-3">${s.capabilityTarget || ''}</td>
+                <td class="px-4 py-3 font-medium text-center ${capabilityGap.colorClass}">${capabilityGap.gap}</td>
+                <td class="px-4 py-3"><span class="px-2 py-1 text-xs font-medium rounded-full ${dateStyle.colorClass}">${this.formatDisplayDate(s.targetDate)}</span></td>
+                <td class="px-4 py-3 flex items-center gap-3">
+                    <button onclick="event.stopPropagation(); App.openModal('${s.id}')" title="Edit" class="text-indigo-600 hover:text-indigo-900">Edit</button>
+                    <button onclick="event.stopPropagation(); App.duplicateStakeholder('${s.id}')" title="Duplicate" class="text-green-600 hover:text-green-900">Duplicate</button>
+                    <button onclick="event.stopPropagation(); App.deleteStakeholder('${s.id}')" title="Delete" class="text-red-600 hover:text-red-900">Delete</button>
+                </td>`;
+            tbody.appendChild(tr);
+        });
+    },
+
+    renderStakeholderTableHeader() {
+        const thead = document.getElementById('stakeholder-table-head');
+        const headers = [
+            { key: 'name', label: 'Name' }, { key: 'groupSize', label: 'Group Size' }, { key: 'group', label: 'Group' }, 
+            { key: 'subGroup', label: 'Sub-Group' }, { key: 'location', label: 'Location' }, { key: 'relationship', label: 'Relationship' },
+            { key: 'interest', label: 'Interest' }, { key: 'impact', label: 'Impact' }, { key: 'power', label: 'Power' }, { key: 'influence', label: 'Influence' },
+            { key: 'mapping', label: 'Mapping' }, { key: 'currentCommitment', label: 'Current Commitment' },
+            { key: 'targetCommitment', label: 'Target Commitment' }, { key: 'commitmentGap', label: 'Commitment Gap', noFilter: true },
+            { key: 'capabilityCurrent', label: 'Current Capability' }, { key: 'capabilityTarget', label: 'Target Capability' },
+            { key: 'capabilityGap', label: 'Capability Gap', noFilter: true }, { key: 'targetDate', label: 'Target Date' }
+        ];
+        let headerHTML = '<tr>';
+        headers.forEach(({key, label, noFilter}) => {
+            const isSorted = this.state.sortConfig.key === key;
+            const sortClass = isSorted ? `sorted-${this.state.sortConfig.direction.slice(0,3)}` : '';
+            const sortIcon = isSorted ? (this.state.sortConfig.direction === 'ascending' ? '▲' : '▼') : '↕';
+            let filterControl = '';
+            if (!noFilter) {
+                if (key === 'name' || key === 'groupSize' || key === 'targetDate') {
+                    filterControl = `<input type="${key === 'groupSize' ? 'number':'text'}" placeholder="Filter..." data-filter-key="${key}" class="header-filter bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-1.5" value="${this.state.filterConfig[key] || ''}" onclick="event.stopPropagation()">`;
+                } else if (key === 'mapping') {
+                    const mappingValues = ['Manage Closely', 'Keep Satisfied', 'Keep Informed', 'Monitor'];
+                    const options = mappingValues.map(v => `<option value="${v}">${v}</option>`).join('');
+                    filterControl = `<select data-filter-key="mapping" class="header-filter bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-1.5" onclick="event.stopPropagation()"><option value="">All</option>${options}</select>`;
+                }
+                else {
+                    const uniqueValues = [...new Set(this.state.stakeholders.map(s => s[key]))].filter(Boolean).sort();
+                    const options = uniqueValues.map(v => `<option value="${v}">${v}</option>`).join('');
+                    filterControl = `<select data-filter-key="${key}" class="header-filter bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-1.5" onclick="event.stopPropagation()"><option value="">All</option>${options}</select>`;
+                }
+            }
+            headerHTML += `<th scope="col" class="px-4 py-3 align-top"><div class="sortable-header ${sortClass}" data-sort-key="${key}">${label} <span class="sort-icon">${sortIcon}</span></div>${filterControl}</th>`;
+        });
+        headerHTML += '<th scope="col" class="px-4 py-3 align-top">Actions</th></tr>';
+        thead.innerHTML = headerHTML;
+        Object.keys(this.state.filterConfig).forEach(key => {
+            const filterInput = thead.querySelector(`[data-filter-key="${key}"]`);
+            if (filterInput) filterInput.value = this.state.filterConfig[key];
+        });
+    },
+
+    renderEngagementPlan() {
+        this.renderEngagementPlanHeader();
+        const tbody = document.getElementById('engagement-table-body');
+        tbody.innerHTML = '';
+        let filteredLogs = [...this.state.engagementLog];
+        const stakeholderMap = Object.fromEntries(this.state.stakeholders.map(s => [s.id, s.name]));
+
+        Object.keys(this.state.engagementFilterConfig).forEach(key => {
+            const filterValue = this.state.engagementFilterConfig[key].toLowerCase();
+            if(filterValue) filteredLogs = filteredLogs.filter(log => {
+                const val = (key === 'stakeholderId') ? (stakeholderMap[log[key]] || '') : (log[key] || '');
+                return val.toString().toLowerCase().includes(filterValue);
+            });
+        });
+        
+        const { key, direction } = this.state.engagementSortConfig;
+        filteredLogs.sort((a, b) => {
+            let valA = (key === 'stakeholderId') ? (stakeholderMap[a[key]] || '') : (a[key] || '');
+            let valB = (key === 'stakeholderId') ? (stakeholderMap[b[key]] || '') : (b[key] || '');
+            if (valA < valB) return direction === 'ascending' ? -1 : 1;
+            if (valA > valB) return direction === 'ascending' ? 1 : -1;
+            return 0;
+        });
+
+        if (filteredLogs.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-gray-500">No engagement logs match the current filters.</td></tr>`;
+            return;
+        }
+
+        filteredLogs.forEach(log => {
+            const dateStyle = this.getDateStyling(log.dueDate);
+            const tr = document.createElement('tr');
+            tr.className = 'bg-white border-b cursor-pointer';
+            tr.onclick = () => App.openEngagementModal(log.id);
+            tr.innerHTML = `
+                <td class="px-4 py-3 font-medium text-gray-900">${stakeholderMap[log.stakeholderId] || 'Unknown'}</td>
+                <td class="px-4 py-3">${log.engagementActivity || ''}</td>
+                <td class="px-4 py-3">${log.activity || ''}</td> <td class="px-4 py-3">${log.owner || ''}</td>
+                <td class="px-4 py-3"><span class="px-2 py-1 text-xs font-medium rounded-full ${dateStyle.colorClass}">${this.formatDisplayDate(log.dueDate)}</span></td>
+                <td class="px-4 py-3">${log.status || ''}</td> <td class="px-4 py-3 whitespace-pre-wrap">${log.notes || ''}</td>
+                <td class="px-4 py-3 flex items-center gap-3">
+                    <button onclick="event.stopPropagation(); App.openEngagementModal('${log.id}')" title="Edit" class="text-indigo-600 hover:text-indigo-900">Edit</button>
+                    <button onclick="event.stopPropagation(); App.deleteEngagementLog('${log.id}')" title="Delete" class="text-red-600 hover:text-red-900">Delete</button>
+                </td>`;
+            tbody.appendChild(tr);
+        });
+    },
+
+    renderEngagementPlanHeader() {
+        const thead = document.getElementById('engagement-table-head');
+        const headers = [
+            { key: 'stakeholderId', label: 'Stakeholder' }, { key: 'engagementActivity', label: 'Engagement Activity' }, 
+            { key: 'activity', label: 'Activity Description' }, { key: 'owner', label: 'Owner' },
+            { key: 'dueDate', label: 'Due Date' }, { key: 'status', label: 'Status' }, { key: 'notes', label: 'Notes' }
+        ];
+        let headerHTML = '<tr>';
+        headers.forEach(({key, label}) => {
+            const isSorted = this.state.engagementSortConfig.key === key;
+            const sortClass = isSorted ? `sorted-${this.state.engagementSortConfig.direction.slice(0,3)}` : '';
+            const sortIcon = isSorted ? (this.state.engagementSortConfig.direction === 'ascending' ? '▲' : '▼') : '↕';
+            let filterControl;
+            if (key === 'stakeholderId' || key === 'status') {
+                const uniqueValues = (key === 'stakeholderId') 
+                    ? [...new Set(this.state.engagementLog.map(log => this.state.stakeholders.find(s=>s.id === log.stakeholderId)?.name).filter(Boolean))].sort()
+                    : ['Planned', 'In Progress', 'Completed'];
+                const options = uniqueValues.map(v => `<option value="${v}">${v}</option>`).join('');
+                filterControl = `<select data-filter-key="${key}" class="header-filter bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-1.5" onclick="event.stopPropagation()"><option value="">All</option>${options}</select>`;
+            } else {
+                filterControl = `<input type="${key === 'dueDate' ? 'date':'text'}" placeholder="Filter..." data-filter-key="${key}" class="header-filter bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-1.5" value="${this.state.engagementFilterConfig[key] || ''}" onclick="event.stopPropagation()">`;
+            }
+            headerHTML += `<th scope="col" class="px-4 py-3 align-top"><div class="sortable-header ${sortClass}" data-sort-key="${key}">${label} <span class="sort-icon">${sortIcon}</span></div>${filterControl}</th>`;
+        });
+        headerHTML += '<th scope="col" class="px-4 py-3 align-top">Actions</th></tr>';
+        thead.innerHTML = headerHTML;
+        Object.keys(this.state.engagementFilterConfig).forEach(key => {
+            const filterInput = thead.querySelector(`[data-filter-key="${key}"]`);
+            if (filterInput) filterInput.value = this.state.engagementFilterConfig[key];
+        });
+    },
+
+    renderAnalysisMap() {
+        const mapGrid = document.getElementById('map-grid');
+        const { x: xAxisKey, y: yAxisKey } = this.state.mapAxisConfig;
+        
+        // Use default quadrant backgrounds only for a default-style power/interest view
+        const xIsPowerInfluence = ['power', 'influence'].includes(xAxisKey);
+        const yIsInterestImpact = ['interest', 'impact'].includes(yAxisKey);
+        const isDefaultView = xIsPowerInfluence && yIsInterestImpact;
+        let cellsHTML = '';
+        const quadrantBGs = isDefaultView ? [
+            'bg-green-50', 'bg-green-50', 'bg-red-50', 'bg-red-50',
+            'bg-green-50', 'bg-green-50', 'bg-red-50', 'bg-red-50',
+            'bg-gray-100', 'bg-gray-100', 'bg-blue-50', 'bg-blue-50',
+            'bg-gray-100', 'bg-gray-100', 'bg-blue-50', 'bg-blue-50'
+        ] : Array(16).fill('bg-white');
+
+        for (let i = 0; i < 16; i++) {
+            cellsHTML += `<div class="map-cell border-t border-l border-gray-300 ${quadrantBGs[i]}"></div>`;
+        }
+        mapGrid.innerHTML = cellsHTML;
+        
+        const mapCells = mapGrid.querySelectorAll('.map-cell');
+        this.renderMapLegend();
+        
+        const { group, subGroup, location, relationship } = this.state.mapFilterConfig;
+        
+        const filteredStakeholders = this.state.stakeholders.filter(s => {
+            const groupMatch = group === 'All' || s.group === group;
+            const subGroupMatch = subGroup === 'All' || s.subGroup === subGroup;
+            const locationMatch = location === 'All' || s.location === location;
+            const relationshipMatch = relationship === 'All' || s.relationship === relationship;
+            return groupMatch && subGroupMatch && locationMatch && relationshipMatch;
+        });
+
+        filteredStakeholders.forEach(s => {
+            const x = this.getAxisValue(s, xAxisKey);
+            const y = this.getAxisValue(s, yAxisKey);
+            
+            if (x > 0 && y > 0) {
+                const cellIndex = (4 - y) * 4 + (x - 1);
+                if(mapCells[cellIndex]){
+                    const dot = document.createElement('div');
+                    dot.className = 'stakeholder-dot';
+                    dot.dataset.group = s.group || 'none';
+                    dot.style.backgroundColor = this.state.groupColors[s.group] || '#718096';
+                    const existingDots = mapCells[cellIndex].children.length;
+                    dot.style.left = `${10 + (existingDots % 4) * 15}px`;
+                    dot.style.top = `${10 + Math.floor(existingDots / 4) * 15}px`;
+                    dot.innerHTML = `<span class="tooltip">${s.name}</span>`;
+                    dot.onclick = () => App.openModal(s.id);
+                    mapCells[cellIndex].appendChild(dot);
+                }
+            }
+        });
+    },
+
+    renderMapFilters() {
+        const container = document.getElementById('map-filters-container');
+        container.innerHTML = '';
+        
+        const filterCategories = [
+            { id: 'group', title: 'Group' },
+            { id: 'subGroup', title: 'Sub-Group' },
+            { id: 'location', title: 'Location' },
+            { id: 'relationship', title: 'Relationship' },
+        ];
+
+        filterCategories.forEach(({ id, title }) => {
+            const uniqueValues = [...new Set(this.state.stakeholders.map(s => s[id]).filter(Boolean))].sort();
+            const options = uniqueValues.map(value => {
+                return `<option value="${value}">${value}</option>`;
+            }).join('');
+
+            container.innerHTML += `
+                <div>
+                    <label for="map-filter-${id}" class="block text-sm font-medium text-gray-700">${title}</label>
+                    <select id="map-filter-${id}" name="${id}" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                        <option value="All">All</option>
+                        ${options}
+                    </select>
+                </div>
+            `;
+        });
+        
+        filterCategories.forEach(({id}) => {
+             document.getElementById(`map-filter-${id}`).value = this.state.mapFilterConfig[id];
+        });
+    },
+
+    renderMapAxisSelectors() {
+        const axisOptions = [
+            { key: 'power', label: 'Power' },
+            { key: 'influence', label: 'Influence' },
+            { key: 'interest', label: 'Interest' },
+            { key: 'impact', label: 'Impact' }
+        ];
+
+        const xSelect = document.getElementById('x-axis-select');
+        const ySelect = document.getElementById('y-axis-select');
+        
+        const optionsHTML = axisOptions.map(opt => `<option value="${opt.key}">${opt.label}</option>`).join('');
+        xSelect.innerHTML = optionsHTML;
+        ySelect.innerHTML = optionsHTML;
+        
+        xSelect.value = this.state.mapAxisConfig.x;
+        ySelect.value = this.state.mapAxisConfig.y;
+        
+        const selectedLabel = axisOptions.find(o => o.key === this.state.mapAxisConfig.x)?.label || axisOptions[0].label;
+        document.getElementById('x-axis-label').textContent = selectedLabel + ' →';
+    },
+    
+    renderMapLegend() {
+        const legendContainer = document.getElementById('map-legend');
+        legendContainer.innerHTML = '';
+        this.state.referenceData.groups.forEach(group => {
+            const color = this.state.groupColors[group] || '#718096';
+            const legendItem = document.createElement('div');
+            legendItem.className = 'legend-item flex items-center';
+            legendItem.innerHTML = `<span class="w-4 h-4 rounded-full mr-2" style="background-color: ${color}; border: 1px solid #ccc;"></span><span>${group}</span>`;
+            
+            legendItem.addEventListener('mouseenter', () => {
+                document.querySelectorAll('.stakeholder-dot').forEach(dot => {
+                    if (dot.dataset.group !== group) {
+                        dot.classList.add('faded');
+                    }
+                });
+            });
+
+            legendItem.addEventListener('mouseleave', () => {
+                document.querySelectorAll('.stakeholder-dot').forEach(dot => {
+                    dot.classList.remove('faded');
+                });
+            });
+
+            legendContainer.appendChild(legendItem);
+        });
+    },
+
+    renderActivitiesTable() {
+        this.renderActivitiesTableHeader();
+        const tbody = document.getElementById('activities-table-body');
+        tbody.innerHTML = ''; // Clear existing rows
+        
+        let activitiesData = [...this.state.referenceData.engagementActivities];
+        const { key, direction } = this.state.activitySortConfig;
+        const sortMap = { '': 0, 'Low': 1, 'Medium': 2, 'High': 3 };
+
+        activitiesData.sort((a, b) => {
+            let valA = a[key] || '';
+            let valB = b[key] || '';
+            if (key !== 'name') {
+                valA = sortMap[valA] || 0;
+                valB = sortMap[valB] || 0;
+            }
+            if (valA < valB) return direction === 'ascending' ? -1 : 1;
+            if (valA > valB) return direction === 'ascending' ? 1 : -1;
+            return 0;
+        });
+
+        activitiesData.forEach(act => {
+             const tr = document.createElement('tr');
+             tr.innerHTML = `
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${act.name}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${act.inform}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${act.consult}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${act.involve}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${act.collaborate}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${act.empower}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <button onclick="App.openActivityModal('${act.id}')" class="text-indigo-600 hover:text-indigo-900">Edit</button>
+                    <button onclick="App.deleteActivity('${act.id}')" class="text-red-600 hover:text-red-900 ml-4">Delete</button>
+                </td>
+            `;
+             tbody.appendChild(tr);
+        });
+    },
+
+    renderActivitiesTableHeader() {
+        const thead = document.querySelector('#activities thead');
+        const headers = [
+            { key: 'name', label: 'Engagement Activities' },
+            { key: 'inform', label: 'Inform' }, { key: 'consult', label: 'Consult' },
+            { key: 'involve', label: 'Involve' }, { key: 'collaborate', label: 'Collaborate' },
+            { key: 'empower', label: 'Empower' }
+        ];
+
+        let headerHTML = '<tr>';
+        headers.forEach(({ key, label }) => {
+            const isSorted = this.state.activitySortConfig.key === key;
+            const sortClass = isSorted ? `sorted-${this.state.activitySortConfig.direction.slice(0, 3)}` : '';
+            const sortIcon = isSorted ? (this.state.activitySortConfig.direction === 'ascending' ? '▲' : '▼') : '↕';
+            headerHTML += `
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <div class="sortable-header ${sortClass}" data-sort-key="${key}">${label} <span class="sort-icon">${sortIcon}</span></div>
+                </th>
+            `;
+        });
+        headerHTML += '<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th></tr>';
+        thead.innerHTML = headerHTML;
+    },
+
+    renderReferenceData() {
+        const container = document.getElementById('reference-data-container');
+        container.innerHTML = Object.keys(this.state.referenceData).map(key => {
+            if (key === 'ratings' || key === 'engagementActivities') return ''; // Exclude managed lists
+            const data = this.state.referenceData[key];
+            const title = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+            return `<div class="bg-gray-50 p-4 rounded-lg border">
+                <h3 class="font-semibold mb-2 text-gray-800">${title}</h3>
+                <textarea class="w-full h-32 p-2 border rounded-md text-sm">${data.join('\n')}</textarea>
+                <button class="mt-2 bg-indigo-600 text-white px-3 py-1.5 rounded-md hover:bg-indigo-700 text-sm" onclick="App.handleReferenceUpdate('${key}', this)">Save ${title}</button>
+            </div>`;
+        }).join('');
+    },
+    
+    // --- MODAL & FORM HANDLING ---
+    openModal(id = null) {
+        const form = document.getElementById('stakeholder-form');
+        form.reset(); this.populateSelects();
+        
+        const engagementIndicator = document.getElementById('engagement-indicator');
+        engagementIndicator.classList.add('hidden'); // Reset indicator
+        engagementIndicator.onclick = null; // Clear previous handler
+        
+        const addEngagementBtn = document.getElementById('add-engagement-from-stakeholder-btn');
+        addEngagementBtn.classList.add('hidden'); // Hide by default
+        addEngagementBtn.onclick = null; // Clear handler
+
+        // Reset styles first
+        ['interest', 'impact', 'power', 'influence', 'targetDate'].forEach(fieldId => {
+            const el = document.getElementById(fieldId);
+            this.updateElementStyle(el, 'bg-gray-50 text-gray-900');
+        });
+
+        if (id) {
+            const s = this.state.stakeholders.find(st => st.id === id);
+            if (!s) return;
+
+            const hasLogs = this.state.engagementLog.some(log => log.stakeholderId === id);
+            if (hasLogs) {
+                engagementIndicator.textContent = 'Has Engagement Log';
+                engagementIndicator.classList.remove('hidden');
+                engagementIndicator.onclick = () => this.showStakeholderEngagements(s.id, s.name);
+            }
+
+            addEngagementBtn.classList.remove('hidden');
+            addEngagementBtn.onclick = () => this.addEngagementForStakeholder(id);
+
+            document.getElementById('modal-title').innerText = 'Edit Stakeholder';
+            document.getElementById('stakeholder-id').value = s.id;
+            for(const key in s) {
+                 const el = form.elements[key];
+                 if(el) el.value = s[key] || '';
+            }
+        } else {
+            document.getElementById('modal-title').innerText = 'Add New Stakeholder';
+            document.getElementById('stakeholder-id').value = '';
+        }
+        
+        this.updateModalGapDisplays(); // Call to set initial gap values
+        this.updateModalStyling(); // Call this after populating data
+
+        document.getElementById('stakeholder-modal').style.display = 'block';
+        document.getElementById('stakeholder-modal-backdrop').style.display = 'block';
+        
+        this.updateModalGapDisplays(); // Call to set initial gap values
+        this.updateModalStyling(); // Call this after populating data
+    },
+
+    closeModal() {
+        document.getElementById('stakeholder-modal').style.display = 'none';
+        document.getElementById('stakeholder-modal-backdrop').style.display = 'none';
+    },
+    
+    openEngagementModal(id = null, preselectedStakeholderId = null) {
+        const form = document.getElementById('engagement-form');
+        form.reset();
+        
+        const stakeholderSelect = document.getElementById('engagement-stakeholder');
+        stakeholderSelect.innerHTML = [...this.state.stakeholders]
+            .sort((a,b) => a.name.localeCompare(b.name))
+            .map(s => {
+                const displayText = `${s.name} (${s.group || 'N/A'} | ${s.subGroup || 'N/A'} | ${s.location || 'N/A'})`;
+                return `<option value="${s.id}">${displayText}</option>`
+            }).join('');
+
+        const activitySelect = document.getElementById('engagement-activity-select');
+        activitySelect.innerHTML = ['<option value="">Select Activity...</option>', ...this.state.referenceData.engagementActivities.map(act => `<option value="${act.name}">${act.name}</option>`)].join('');
+
+        if (id) {
+            const log = this.state.engagementLog.find(l => l.id === id);
+            if (!log) return;
+            document.getElementById('engagement-modal-title').innerText = 'Edit Engagement Log';
+            document.getElementById('engagement-id').value = log.id;
+            document.getElementById('engagement-stakeholder').value = log.stakeholderId;
+            document.getElementById('engagement-activity-select').value = log.engagementActivity || '';
+            document.getElementById('engagement-activity').value = log.activity;
+            document.getElementById('engagement-owner').value = log.owner;
+            document.getElementById('engagement-status').value = log.status;
+            document.getElementById('engagement-dueDate').value = log.dueDate;
+            document.getElementById('engagement-notes').value = log.notes;
+        } else {
+            document.getElementById('engagement-modal-title').innerText = 'Add Engagement Log';
+            document.getElementById('engagement-id').value = '';
+            if (preselectedStakeholderId) {
+                stakeholderSelect.value = preselectedStakeholderId;
+            }
+        }
+        document.getElementById('engagement-modal').style.display = 'block';
+        document.getElementById('engagement-modal-backdrop').style.display = 'block';
+        this.validateEngagementForm();
+    },
+    
+    closeEngagementModal() {
+        document.getElementById('engagement-modal').style.display = 'none';
+        document.getElementById('engagement-modal-backdrop').style.display = 'none';
+    },
+
+    openActivityModal(id = null) {
+        const form = document.getElementById('activity-form');
+        form.reset();
+        const modalTitle = document.getElementById('activity-modal-title');
+        
+        const options = ['', 'Low', 'Medium', 'High'].map(o => `<option value="${o}">${o || 'N/A'}</option>`).join('');
+        ['inform', 'consult', 'involve', 'collaborate', 'empower'].forEach(type => {
+            document.getElementById(`activity-${type}`).innerHTML = options;
+        });
+
+        if (id) {
+            const activity = this.state.referenceData.engagementActivities.find(a => a.id === id);
+            if (!activity) return;
+            modalTitle.textContent = 'Edit Activity';
+            document.getElementById('activity-id').value = activity.id;
+            document.getElementById('activity-name').value = activity.name;
+            document.getElementById('activity-inform').value = activity.inform;
+            document.getElementById('activity-consult').value = activity.consult;
+            document.getElementById('activity-involve').value = activity.involve;
+            document.getElementById('activity-collaborate').value = activity.collaborate;
+            document.getElementById('activity-empower').value = activity.empower;
+        } else {
+            modalTitle.textContent = 'Add Activity';
+            document.getElementById('activity-id').value = '';
+        }
+
+        document.getElementById('activity-modal').style.display = 'block';
+        document.getElementById('activity-modal-backdrop').style.display = 'block';
+    },
+
+    closeActivityModal() {
+        document.getElementById('activity-modal').style.display = 'none';
+        document.getElementById('activity-modal-backdrop').style.display = 'none';
+    },
+
+    openClearDataModal() {
+        document.getElementById('clear-data-modal').style.display = 'block';
+        document.getElementById('clear-data-modal-backdrop').style.display = 'block';
+    },
+
+    closeClearDataModal() {
+        document.getElementById('clear-data-modal').style.display = 'none';
+        document.getElementById('clear-data-modal-backdrop').style.display = 'none';
+    },
+
+    validateEngagementForm() {
+        const stakeholderSelect = document.getElementById('engagement-stakeholder');
+        const activitySelect = document.getElementById('engagement-activity-select');
+        const saveBtn = document.getElementById('save-engagement-btn');
+        
+        if (stakeholderSelect.value && activitySelect.value) {
+            saveBtn.disabled = false;
+        } else {
+            saveBtn.disabled = true;
+        }
+    },
+
+    handleFormSubmit(event) {
+        event.preventDefault();
+        const formData = Object.fromEntries(new FormData(event.target).entries());
+        this.addOrUpdateStakeholder({
+            id: document.getElementById('stakeholder-id').value, ...formData
+        });
+        this.closeModal();
+    },
+
+    handleEngagementFormSubmit(event) {
+        event.preventDefault();
+        const formData = {
+            id: document.getElementById('engagement-id').value,
+            stakeholderId: document.getElementById('engagement-stakeholder').value,
+            engagementActivity: document.getElementById('engagement-activity-select').value,
+            activity: document.getElementById('engagement-activity').value,
+            owner: document.getElementById('engagement-owner').value,
+            status: document.getElementById('engagement-status').value,
+            dueDate: document.getElementById('engagement-dueDate').value,
+            notes: document.getElementById('engagement-notes').value,
+        };
+        this.addOrUpdateEngagementLog(formData);
+        this.closeEngagementModal();
+    },
+    
+    handleActivityFormSubmit(event) {
+        event.preventDefault();
+        const id = document.getElementById('activity-id').value;
+        const newActivity = {
+            id: id || `act-${Date.now()}`,
+            name: document.getElementById('activity-name').value,
+            inform: document.getElementById('activity-inform').value,
+            consult: document.getElementById('activity-consult').value,
+            involve: document.getElementById('activity-involve').value,
+            collaborate: document.getElementById('activity-collaborate').value,
+            empower: document.getElementById('activity-empower').value,
+        };
+
+        if (id) {
+            const index = this.state.referenceData.engagementActivities.findIndex(a => a.id === id);
+            this.state.referenceData.engagementActivities[index] = newActivity;
+        } else {
+            this.state.referenceData.engagementActivities.push(newActivity);
+        }
+        
+        this.saveAndRender();
+        this.closeActivityModal();
+    },
+
+    deleteActivity(id) {
+        if (confirm('Are you sure you want to delete this engagement activity?')) {
+            this.state.referenceData.engagementActivities = this.state.referenceData.engagementActivities.filter(a => a.id !== id);
+            this.saveAndRender();
+        }
+    },
+
+    handleReferenceUpdate(category, button) {
+        const textarea = button.previousElementSibling;
+        const newValues = textarea.value.split('\n').map(v => v.trim()).filter(Boolean);
+
+        if (category === 'groups' || category === 'subGroups' || category === 'locations' || category === 'relationships') {
+            const stakeholderProperty = category.slice(0, -1); 
+            const oldValues = [...this.state.referenceData[category]];
+            
+            if (oldValues.length === newValues.length) {
+                const changedValues = newValues.filter(v => !oldValues.includes(v));
+                const removedValues = oldValues.filter(v => !newValues.includes(v));
+
+                if (changedValues.length === 1 && removedValues.length === 1) {
+                    const oldValue = removedValues[0];
+                    const newValue = changedValues[0];
+                    
+                    this.state.stakeholders.forEach(stakeholder => {
+                        if (stakeholder[stakeholderProperty] === oldValue) {
+                            stakeholder[stakeholderProperty] = newValue;
+                        }
+                    });
+                }
+            }
+        }
+
+        this.updateReferenceData(category, newValues);
+        button.innerText = 'Saved!';
+        setTimeout(() => {
+            const title = category.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+            button.innerText = `Save ${title}`;
+        }, 1500);
+    },
+    
+    // --- UTILITIES & CALCULATIONS ---
+    addEngagementForStakeholder(stakeholderId) {
+        this.closeModal();
+        this.openEngagementModal(null, stakeholderId);
+    },
+
+    showStakeholderEngagements(stakeholderId, stakeholderName) {
+        if(document.getElementById('stakeholder-modal')?.style.display === 'block') {
+            this.closeModal();
+        }
+        this.state.engagementFilterConfig = { stakeholderId: stakeholderName };
+        this.switchToTab('engagement');
+        this.renderEngagementPlan();
+    },
+
+    switchToTab(tabName, clickedButton = null) {
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+        
+        document.getElementById(tabName).classList.add('active');
+        
+        const buttonToActivate = clickedButton || document.querySelector(`button[onclick*="'${tabName}'"]`);
+        if (buttonToActivate) buttonToActivate.classList.add('active');
+
+        // Trigger renders for specific tabs
+        if (tabName === 'map') {
+            this.renderMapFilters();
+            this.renderMapAxisSelectors();
+            this.renderAnalysisMap();
+        }
+        if (tabName === 'dashboard') {
+            this.renderDashboard();
+        }
+    },
+
+    showDateFilteredStakeholders(status) {
+        const filtered = this.state.stakeholders.filter(s => this.getTargetDateStatus(s.targetDate) === status);
+        const titles = {
+            red: 'Overdue Stakeholders',
+            yellow: 'Stakeholders Due Soon',
+            green: 'On-Track Stakeholders'
+        };
+        this.renderDashboardDetailsPanel(filtered, titles[status]);
+    },
+
+    getFreshState() {
+        return {
+            organisationName: 'Your Organisation', projectName: 'Your Project/Programme', lastUpdated: null, loadedFileName: null,
+            stakeholders: [], engagementLog: [],
+            referenceData: {
+                groups: ['Finance', 'HR', 'IT', 'Operations', 'External'], subGroups: ['Frontline', 'First line manager', 'Senior rank', 'Support'],
+                locations: ['New York', 'London', 'Tokyo', 'Remote'], relationships: ['Customer', 'Provider', 'Influencer', 'Governance'],
+                commitments: ['Resistant', 'Opposed', 'Ambivalent', 'Complying', 'Supporting', 'Leading'],
+                capabilities: ['Unaware', 'Aware', 'Informed', 'Equipped', 'Practised', 'Exemplary'],
+                ratings: ['Low', 'Medium', 'High', 'Very High'],
+                engagementActivities: [
+                    { id: 'act-1', name: 'Targeted X (Twitter) Feed', inform: 'High', consult: 'Medium', involve: '', collaborate: '', empower: '' },
+                    { id: 'act-2', name: 'Roadshows', inform: 'High', consult: 'High', involve: 'Medium', collaborate: '', empower: '' },
+                    { id: 'act-3', name: 'Briefings', inform: 'High', consult: 'Medium', involve: '', collaborate: '', empower: '' },
+                    { id: 'act-4', name: 'Workshops', inform: 'Medium', consult: 'High', involve: 'High', collaborate: 'Medium', empower: '' },
+                    { id: 'act-5', name: 'Focus Groups', inform: 'Medium', consult: 'High', involve: 'Medium', collaborate: '', empower: '' },
+                    { id: 'act-6', name: 'Secondments', inform: '', consult: 'Medium', involve: 'High', collaborate: 'High', empower: 'Medium' },
+                    { id: 'act-7', name: 'Steering Committee', inform: 'Medium', consult: 'High', involve: 'High', collaborate: 'High', empower: 'High' },
+                ]
+            },
+            groupColors: {}, 
+            sortConfig: { key: 'name', direction: 'ascending' }, 
+            filterConfig: {},
+            engagementSortConfig: { key: 'stakeholderId', direction: 'ascending' }, 
+            engagementFilterConfig: {},
+            mapFilterConfig: { group: 'All', subGroup: 'All', location: 'All', relationship: 'All' },
+            mapAxisConfig: { x: 'power', y: 'interest' },
+            activitySortConfig: { key: 'name', direction: 'ascending' },
+            dashboardChartConfig: { chart1: 'mapping', chart2: 'commitmentGap', chart3: 'group', chart4: 'capabilityGap' }
+        };
+    },
+
+    resetStateToDefault() {
+         this.state = this.getFreshState();
+    },
+
+    calculateScores(s) {
+        const interest = this.maps.ratings[s.interest] || 0;
+        const impact = this.maps.ratings[s.impact] || 0;
+        const power = this.maps.ratings[s.power] || 0;
+        const influence = this.maps.ratings[s.influence] || 0;
+        return { 
+            interest, impact, power, influence, 
+            pi: power + influence, 
+            ii: interest + impact
+        };
+    },
+
+    getAxisValue(stakeholder, axisKey) {
+        const scores = this.calculateScores(stakeholder);
+        switch (axisKey) {
+            case 'power':
+                return scores.power;
+            case 'influence':
+                return scores.influence;
+            case 'interest':
+                return scores.interest;
+            case 'impact':
+                return scores.impact;
+            default: return 0;
+        }
+    },
+
+    getStakeholderMapping(piScore, iiScore) {
+        if (piScore >= 5 && iiScore >= 5) return 'Manage Closely'; if (piScore >= 5 && iiScore < 5) return 'Keep Satisfied';
+        if (piScore < 5 && iiScore >= 5) return 'Keep Informed'; return 'Monitor';
+    },
+    
+    getMappingStyling(m) {
+        const styles = { 'Manage Closely': 'bg-red-100 text-red-800', 'Keep Satisfied': 'bg-blue-100 text-blue-800',
+                         'Keep Informed': 'bg-green-100 text-green-800', 'Monitor': 'bg-gray-200 text-gray-800' };
+        return { colorClass: styles[m] || styles['Monitor'] };
+    },
+
+    getRatingStyling(r) {
+        const styles = { 'Low': 'bg-gray-100 text-gray-800', 'Medium': 'bg-blue-100 text-blue-800', 
+                         'High': 'bg-yellow-100 text-yellow-800', 'Very High': 'bg-red-100 text-red-800' };
+        return { colorClass: `${styles[r] || styles['Low']} rounded-full px-2 py-0.5 text-xs font-medium` };
+    },
+
+    getGap(current, target, type) {
+        const map = this.maps[type];
+        if (!map || !map[current] || !map[target]) return { gap: '', colorClass: '' };
+        const gap = map[target] - map[current];
+        const styles = { 0: 'bg-blue-100 text-blue-800', 1: 'bg-green-100 text-green-800', 2: 'bg-yellow-100 text-yellow-800', 3: 'bg-red-100 text-red-800' };
+        let colorClass = (gap >= 4) ? 'bg-red-200 text-red-900 font-bold' : (gap < 0) ? 'bg-red-200 text-red-900 font-bold' : styles[gap];
+        return { gap, colorClass };
+    },
+
+    getTargetDateStatus(dateString) {
+        if (!dateString) return 'none';
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const diffDays = Math.ceil((new Date(dateString) - today) / (1000 * 60 * 60 * 24));
+        if (diffDays < 0) return 'red';
+        if (diffDays <= 30) return 'yellow';
+        return 'green';
+    },
+
+    getDateStyling(dateString) {
+        if (!dateString) return { colorClass: '' };
+        const status = this.getTargetDateStatus(dateString);
+        const styles = {
+            red: 'bg-red-100 text-red-800',
+            yellow: 'bg-yellow-100 text-yellow-800',
+            green: 'bg-green-100 text-green-800',
+            none: ''
+        };
+        return { colorClass: styles[status] };
+    },
+
+    formatDateTime(iso) {
+        if (!iso) return 'Not saved yet';
+        return new Date(iso).toLocaleString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }).replace(',', '');
+    },
+
+    formatDisplayDate(ds) {
+        if (!ds) return '';
+        const [y, m, d] = ds.split('-');
+        return (d && m && y) ? `${d}/${m}/${y}` : ds;
+    },
+
+    populateSelects() {
+        const { groups, subGroups, locations, relationships, commitments, capabilities, ratings } = this.state.referenceData;
+        const createOptions = (data) => ['<option value=""></option>', ...data.map(item => `<option value="${item}">${item}</option>`)].join('');
+        
+        document.getElementById('group').innerHTML = createOptions(groups);
+        document.getElementById('subGroup').innerHTML = createOptions(subGroups);
+        document.getElementById('location').innerHTML = createOptions(locations);
+        document.getElementById('relationship').innerHTML = createOptions(relationships);
+        document.getElementById('currentCommitment').innerHTML = createOptions(commitments);
+        document.getElementById('targetCommitment').innerHTML = createOptions(commitments);
+        document.getElementById('capabilityCurrent').innerHTML = createOptions(capabilities);
+        document.getElementById('capabilityTarget').innerHTML = createOptions(capabilities);
+        
+        const ratingOptions = createOptions(ratings);
+        ['interest', 'impact', 'power', 'influence'].forEach(id => document.getElementById(id).innerHTML = ratingOptions);
+    },
+
+    assignGroupColors() {
+        const colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'];
+        this.state.groupColors = Object.fromEntries(this.state.referenceData.groups.map((group, i) => [group, colors[i % colors.length]]));
+    },
+
+    getModalRatingStyle(rating) {
+        let colorClass = 'bg-gray-50 text-gray-900'; // Default
+        switch (rating) {
+            case 'Medium': colorClass = 'bg-blue-100 text-blue-800'; break;
+            case 'High': colorClass = 'bg-yellow-100 text-yellow-800'; break;
+            case 'Very High': colorClass = 'bg-red-100 text-red-800'; break;
+        }
+        return colorClass;
+    },
+    
+    getModalDateStyle(dateString) {
+        if (!dateString) return 'bg-gray-50 text-gray-900';
+        const status = this.getTargetDateStatus(dateString);
+        const styles = {
+            red: 'bg-red-100 text-red-800',
+            yellow: 'bg-yellow-100 text-yellow-800',
+            green: 'bg-green-100 text-green-800',
+            none: 'bg-gray-50 text-gray-900'
+        };
+        return styles[status];
+    },
+
+    updateElementStyle(element, newStyle) {
+        if (!element) return;
+        const classesToRemove = [];
+        element.classList.forEach(cls => {
+            if (cls.startsWith('bg-') || cls.startsWith('text-')) {
+                classesToRemove.push(cls);
+            }
+        });
+        element.classList.remove(...classesToRemove);
+        
+        if (newStyle) {
+            element.classList.add(...newStyle.split(' '));
+        }
+    },
+    
+    updateModalStyling() {
+        const interest = document.getElementById('interest');
+        const impact = document.getElementById('impact');
+        const power = document.getElementById('power');
+        const influence = document.getElementById('influence');
+        const targetDate = document.getElementById('targetDate');
+
+        this.updateElementStyle(interest, this.getModalRatingStyle(interest.value));
+        this.updateElementStyle(impact, this.getModalRatingStyle(impact.value));
+        this.updateElementStyle(power, this.getModalRatingStyle(power.value));
+        this.updateElementStyle(influence, this.getModalRatingStyle(influence.value));
+        this.updateElementStyle(targetDate, this.getModalDateStyle(targetDate.value));
+    },
+
+    updateModalGapDisplays() {
+        const currentCommitment = document.getElementById('currentCommitment').value;
+        const targetCommitment = document.getElementById('targetCommitment').value;
+        const commitmentGap = this.getGap(currentCommitment, targetCommitment, 'commitments');
+        const commitmentGapEl = document.getElementById('commitmentGapDisplay');
+        commitmentGapEl.textContent = commitmentGap.gap;
+        this.updateElementStyle(commitmentGapEl, commitmentGap.colorClass);
+        commitmentGapEl.classList.add('p-2.5'); // Ensure padding is consistent
+
+        const capabilityCurrent = document.getElementById('capabilityCurrent').value;
+        const capabilityTarget = document.getElementById('capabilityTarget').value;
+        const capabilityGap = this.getGap(capabilityCurrent, capabilityTarget, 'capabilities');
+        const capabilityGapEl = document.getElementById('capabilityGapDisplay');
+        capabilityGapEl.textContent = capabilityGap.gap;
+        this.updateElementStyle(capabilityGapEl, capabilityGap.colorClass);
+        capabilityGapEl.classList.add('p-2.5'); // Ensure padding is consistent
+    },
+};
+
+// --- GLOBAL UI FUNCTIONS ---
+function changeTab(event, tabName) {
+    App.switchToTab(tabName, event.currentTarget);
+}
+
+// --- APP START ---
+window.onload = () => App.init();
+
+</script>
+</body>
+</html>
+

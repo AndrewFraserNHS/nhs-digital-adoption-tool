@@ -138,6 +138,8 @@ function buildSteps(darkMode: boolean): Step[] {
             system, the process); change management makes sure the people affected by it are ready,
             willing and able to use it.
           </p>
+          <p> 
+The Change Onion illustrates how successful transformation is built through a series of connected layers. It starts with Implementation, providing the technology or physical capability. Business Change establishes new processes, while Change Management helps people understand, adopt and sustain new ways of working. When all of these layers are brought together, organisations can achieve Transformation and realise the full benefits of change.</p>
         </div>
       ),
     },

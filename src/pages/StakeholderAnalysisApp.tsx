@@ -9,20 +9,15 @@ import {
   PlusCircleIcon,
 } from '@components/common/IconButtons';
 import type { AssessmentComponent } from '@data/components';
-<<<<<<< HEAD
-import { createDoughnutChart } from '@lib/charts';
 import {
-  DEFAULT_STAKEHOLDER_REFERENCE_LISTS,
   type ComponentObjective,
+  DEFAULT_STAKEHOLDER_REFERENCE_LISTS,
   type DraftAction,
   type DraftEntry,
   type StakeholderReferenceLists,
   type TeamMember,
 } from '@lib/adoptionState';
-=======
-import type { ComponentObjective, DraftAction, DraftEntry, TeamMember } from '@lib/adoptionState';
 import { createDoughnutChart } from '@lib/charts';
->>>>>>> 67aa671ca8a564ccda4079618b627a1d90d487cc
 import { load, save } from '@lib/storage';
 import { downloadFile } from '@lib/utils';
 import { type ChangeEvent, JSX, useEffect, useMemo, useRef, useState } from 'react';
@@ -2316,7 +2311,6 @@ function ScaleReferenceTable({
   return (
     <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
       <h3 className="font-semibold mb-2 text-gray-800">{title}</h3>
-<<<<<<< HEAD
       <table className="w-full text-sm text-left">
         <tbody className="divide-y divide-gray-200">
           {levels.map((level) => (
@@ -2329,50 +2323,6 @@ function ScaleReferenceTable({
           ))}
         </tbody>
       </table>
-=======
-      <ul className="space-y-1 mb-3">
-        {values.map((value, index) => (
-          <li
-            key={value}
-            className="flex items-center justify-between gap-2 bg-white border border-gray-200 rounded-md px-2 py-1.5"
-          >
-            <span className="text-sm text-gray-800">{value}</span>
-            <IconActionButton
-              onClick={() => onUpdate(values.filter((_, i) => i !== index))}
-              title={`Remove ${value}`}
-              variant="danger"
-            >
-              <BinIcon />
-            </IconActionButton>
-          </li>
-        ))}
-        {values.length === 0 ? (
-          <li className="text-sm text-gray-400 italic">No items yet.</li>
-        ) : null}
-      </ul>
-      <div className="flex gap-2">
-        <input
-          type="text"
-          value={newValue}
-          onChange={(event) => setNewValue(event.target.value)}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter') {
-              event.preventDefault();
-              addValue();
-            }
-          }}
-          placeholder={`Add a ${title.toLowerCase()} item...`}
-          className="flex-1 p-2 border border-gray-300 rounded-md text-sm"
-        />
-        <button
-          type="button"
-          onClick={addValue}
-          className="bg-indigo-600 text-white px-3 py-1.5 rounded-md hover:bg-indigo-700 text-sm"
-        >
-          Add
-        </button>
-      </div>
->>>>>>> 67aa671ca8a564ccda4079618b627a1d90d487cc
     </div>
   );
 }

@@ -640,7 +640,9 @@ export function EngineExplainedPage({
                 </div>
               ))}
             </div>
-            <p className={`mt-4 text-sm ${textClass}`}>Let's look at the lenses that relate to a Vision to follow our example through.</p>
+            <p className={`mt-4 text-sm ${textClass}`}>
+              Let's look at the lenses that relate to a Vision to follow our example through.
+            </p>
           </>
         ) : null}
 

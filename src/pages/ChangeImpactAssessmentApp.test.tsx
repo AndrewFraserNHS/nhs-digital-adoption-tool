@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import ChangeImpactAssessmentApp from './ChangeImpactAssessmentApp';
 
 describe('ChangeImpactAssessmentApp', () => {
@@ -21,8 +22,12 @@ describe('ChangeImpactAssessmentApp', () => {
     fireEvent.click(screen.getByRole('button', { name: '+ New Assessment' }));
 
     // act
-    fireEvent.change(screen.getByPlaceholderText('e.g. HR, Finance'), { target: { value: 'Finance' } });
-    fireEvent.change(screen.getByPlaceholderText('e.g. Payroll Run'), { target: { value: 'Year End Close' } });
+    fireEvent.change(screen.getByPlaceholderText('e.g. HR, Finance'), {
+      target: { value: 'Finance' },
+    });
+    fireEvent.change(screen.getByPlaceholderText('e.g. Payroll Run'), {
+      target: { value: 'Year End Close' },
+    });
     fireEvent.click(screen.getByRole('button', { name: 'Save Assessment' }));
 
     // assert - row appears with default 1/1/1/2/2/2/1/1 scores:
@@ -43,7 +48,9 @@ describe('ChangeImpactAssessmentApp', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Save Assessment' }));
 
     // assert
-    expect(alertSpy).toHaveBeenCalledWith('Please enter at least a Business Function and Process Name.');
+    expect(alertSpy).toHaveBeenCalledWith(
+      'Please enter at least a Business Function and Process Name.'
+    );
     alertSpy.mockRestore();
   });
 
@@ -66,7 +73,9 @@ describe('ChangeImpactAssessmentApp', () => {
     render(<ChangeImpactAssessmentApp embedded />);
     fireEvent.click(screen.getByRole('button', { name: '+ New Assessment' }));
     fireEvent.change(screen.getByPlaceholderText('e.g. HR, Finance'), { target: { value: 'IT' } });
-    fireEvent.change(screen.getByPlaceholderText('e.g. Payroll Run'), { target: { value: 'Cloud Migration' } });
+    fireEvent.change(screen.getByPlaceholderText('e.g. Payroll Run'), {
+      target: { value: 'Cloud Migration' },
+    });
 
     // act
     fireEvent.click(screen.getByRole('button', { name: 'Save Assessment' }));

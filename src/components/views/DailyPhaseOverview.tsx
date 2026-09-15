@@ -164,10 +164,14 @@ export function DailyPhaseOverview({
                 key={phase.phase}
                 className={`rounded-md border px-4 py-3 ${darkMode ? `${phase.darkBorderColor} ${phase.darkColor}` : `${phase.borderColor} ${phase.color}`}`}
               >
-                <span className={`block text-sm font-semibold ${darkMode ? phase.darkTextColor : phase.textColor}`}>
+                <span
+                  className={`block text-sm font-semibold ${darkMode ? phase.darkTextColor : phase.textColor}`}
+                >
                   Phase {phase.phase}: {phase.label}
                 </span>
-                <span className={`mt-0.5 block text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
+                <span
+                  className={`mt-0.5 block text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
+                >
                   {phase.tagline} · {phase.programmeStage}
                 </span>
               </div>

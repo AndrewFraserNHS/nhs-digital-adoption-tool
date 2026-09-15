@@ -128,18 +128,27 @@ function buildSteps(darkMode: boolean): Step[] {
       body: (
         <div className={`text-sm space-y-2 ${textClass}`}>
           <p>
-           <strong>Change management is the people side of change. </strong> It helps individuals and organisations understand, adopt and sustain new ways of working so that change delivers benefits.
+            <strong>Change management is the people side of change. </strong> It helps individuals
+            and organisations understand, adopt and sustain new ways of working so that change
+            delivers benefits.
           </p>
           <p>
-           <strong> In simple terms: </strong>it helps people move from the way things are today to the way they need to be tomorrow, so that change delivers its intended value.
+            <strong> In simple terms: </strong>it helps people move from the way things are today to
+            the way they need to be tomorrow, so that change delivers its intended value.
           </p>
           <p>
             It sits alongside project management: project management delivers the change itself (the
             system, the process); change management makes sure the people affected by it are ready,
             willing and able to use it.
           </p>
-          <p> 
-The Change Onion illustrates how successful transformation is built through a series of connected layers. It starts with Implementation, providing the technology or physical capability. Business Change establishes new processes, while Change Management helps people understand, adopt and sustain new ways of working. When all of these layers are brought together, organisations can achieve Transformation and realise the full benefits of change.</p>
+          <p>
+            The Change Onion illustrates how successful transformation is built through a series of
+            connected layers. It starts with Implementation, providing the technology or physical
+            capability. Business Change establishes new processes, while Change Management helps
+            people understand, adopt and sustain new ways of working. When all of these layers are
+            brought together, organisations can achieve Transformation and realise the full benefits
+            of change.
+          </p>
         </div>
       ),
     },

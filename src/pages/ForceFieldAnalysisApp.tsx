@@ -1,10 +1,10 @@
-import { load, save } from '@lib/storage';
-import { downloadFile } from '@lib/utils';
+import { ActionEditorFields } from '@components/common/ActionEditorFields';
 import type { AssessmentComponent } from '@data/components';
 import type { ComponentObjective, DraftAction, DraftEntry, TeamMember } from '@lib/adoptionState';
+import { load, save } from '@lib/storage';
+import { downloadFile } from '@lib/utils';
 import { type ChangeEvent, JSX, useEffect, useRef, useState } from 'react';
 
-import { ActionEditorFields } from '@components/common/ActionEditorFields';
 import { nhsButtonPrimary, nhsButtonSecondary } from '../styles/nhsTheme';
 
 type ForceSide = 'driving' | 'restraining';
@@ -167,7 +167,9 @@ function deriveMitigatedScore(force: Force, actions: ForceAction[]): number {
  */
 function previewMitigatedScore(force: Force, actions: ForceAction[], action: ForceAction): number {
   const hypothetical = actions.map((candidate) =>
-    candidate.id === action.id ? { ...candidate, status: 'Completed' as ForceActionStatus } : candidate
+    candidate.id === action.id
+      ? { ...candidate, status: 'Completed' as ForceActionStatus }
+      : candidate
   );
   return deriveMitigatedScore(force, hypothetical);
 }
@@ -557,7 +559,8 @@ function ActionsScreen({
                             {member.role ? ` - ${member.role}` : ''}
                           </option>
                         ))}
-                        {action.owner && !teamMembers.some((member) => member.name === action.owner) ? (
+                        {action.owner &&
+                        !teamMembers.some((member) => member.name === action.owner) ? (
                           <option value={action.owner}>{action.owner} (not on roster)</option>
                         ) : null}
                       </select>
@@ -601,7 +604,10 @@ function ActionsScreen({
                         className="w-16 rounded-md border border-slate-300 px-2 py-1 text-sm"
                       />
                       {previewScore !== null ? (
-                        <p className="mt-1 text-xs text-slate-500" title="Force's mitigated score if this action were Completed">
+                        <p
+                          className="mt-1 text-xs text-slate-500"
+                          title="Force's mitigated score if this action were Completed"
+                        >
                           → {previewScore}
                         </p>
                       ) : null}
@@ -831,7 +837,10 @@ function ApplyScreen({
                   onChange={(event) =>
                     setActionTargets((current) => ({
                       ...current,
-                      [forceAction.id]: { componentId: target.componentId, lens: event.target.value },
+                      [forceAction.id]: {
+                        componentId: target.componentId,
+                        lens: event.target.value,
+                      },
                     }))
                   }
                   className="rounded-md border border-slate-300 px-2 py-1.5 text-sm"
@@ -912,9 +921,7 @@ function ApplyScreen({
               </div>
             );
           })}
-          {!state.forces.length ? (
-            <p className="text-sm text-slate-500">No forces yet.</p>
-          ) : null}
+          {!state.forces.length ? <p className="text-sm text-slate-500">No forces yet.</p> : null}
         </div>
       </div>
 

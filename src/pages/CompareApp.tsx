@@ -175,9 +175,7 @@ function analyseFile(payload: SavedAdoptionAssessment): AnalysisResult {
   const evidenceCoverage = scoredLensPairs
     ? Math.round((evidencedEntries / scoredLensPairs) * 100)
     : 0;
-  const avgRationaleWords = scoredLensPairs
-    ? Math.round(rationaleWordSum / scoredLensPairs)
-    : 0;
+  const avgRationaleWords = scoredLensPairs ? Math.round(rationaleWordSum / scoredLensPairs) : 0;
   const historyCount = (payload.history || []).length;
 
   // Normalise action density: 5+ actions per scored component → 100

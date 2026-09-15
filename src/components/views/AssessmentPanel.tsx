@@ -1764,8 +1764,8 @@ export function AssessmentPanel({
             </span>
           </h2>
           <p className={`mt-2 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-            Assess readiness at lens level. Change Component rationale, outcomes, and actions
-            are tracked below.
+            Assess readiness at lens level. Change Component rationale, outcomes, and actions are
+            tracked below.
           </p>
           {componentDetail && (
             <button

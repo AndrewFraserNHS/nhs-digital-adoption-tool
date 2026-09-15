@@ -77,7 +77,9 @@ describe('EngineExplainedPage', () => {
 
     // assert 4 - every canonical lens is listed, not just one
     expect(
-      screen.getByRole('heading', { name: 'A Lens is a different perspective of the same Change Component' })
+      screen.getByRole('heading', {
+        name: 'A Lens is a different perspective of the same Change Component',
+      })
     ).toBeInTheDocument();
     expect(screen.getAllByText(/Strategic Direction and Leadership/).length).toBeGreaterThan(0);
     expect(screen.getByText('Skills and Behaviour')).toBeInTheDocument();

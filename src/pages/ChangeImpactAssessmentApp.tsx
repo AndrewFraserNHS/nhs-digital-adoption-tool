@@ -1,6 +1,7 @@
-import { type ChangeEvent, type RefObject, JSX, useEffect, useMemo, useRef, useState } from 'react';
 import { load, save } from '@lib/storage';
 import { downloadFile } from '@lib/utils';
+import { type ChangeEvent, JSX, type RefObject, useEffect, useMemo, useRef, useState } from 'react';
+
 import { nhsButtonSecondary } from '../styles/nhsTheme';
 
 type ScoreValue = 1 | 2 | 3 | 4;
@@ -11,7 +12,14 @@ interface ScoringOption {
 }
 
 const SCORING_CRITERIA: Record<
-  'complexity' | 'frequency' | 'distance' | 'attitude' | 'conditions' | 'resources' | 'network' | 'capability',
+  | 'complexity'
+  | 'frequency'
+  | 'distance'
+  | 'attitude'
+  | 'conditions'
+  | 'resources'
+  | 'network'
+  | 'capability',
   ScoringOption[]
 > = {
   complexity: [
@@ -106,26 +114,301 @@ const INITIAL_FORM_STATE: AssessmentFormState = {
 };
 
 const DEMO_DATA: ChangeImpactAssessment[] = [
-  { id: 'demo1', function: 'Finance', process: 'Year End Close', processRef: 'FIN-001', benefitsRef: 'BEN-02', peopleImpacted: 15, impactDate: '2026-03-15', timestamp: '', complexity: 4, frequency: 1, distance: 3, attitude: 3, conditions: 3, resources: 2, network: 3, capability: 2 },
-  { id: 'demo2', function: 'Finance', process: 'Invoice Processing', processRef: 'FIN-002', benefitsRef: 'BEN-05', peopleImpacted: 8, impactDate: '2026-04-01', timestamp: '', complexity: 2, frequency: 4, distance: 4, attitude: 2, conditions: 2, resources: 3, network: 2, capability: 2 },
-  { id: 'demo3', function: 'HR', process: 'New Onboarding Flow', processRef: 'HR-101', benefitsRef: 'BEN-10', peopleImpacted: 50, impactDate: '2026-06-01', timestamp: '', complexity: 2, frequency: 2, distance: 3, attitude: 4, conditions: 4, resources: 4, network: 4, capability: 4 },
-  { id: 'demo4', function: 'HR', process: 'Payroll Migration', processRef: 'HR-200', benefitsRef: 'BEN-11', peopleImpacted: 120, impactDate: '2026-01-25', timestamp: '', complexity: 4, frequency: 3, distance: 4, attitude: 1, conditions: 2, resources: 1, network: 1, capability: 1 },
-  { id: 'demo5', function: 'IT', process: 'Security Patch 4.0', processRef: 'IT-900', benefitsRef: 'BEN-20', peopleImpacted: 200, impactDate: '2026-02-15', timestamp: '', complexity: 3, frequency: 1, distance: 2, attitude: 3, conditions: 4, resources: 4, network: 3, capability: 2 },
-  { id: 'demo6', function: 'IT', process: 'Helpdesk Ticketing', processRef: 'IT-950', benefitsRef: 'BEN-22', peopleImpacted: 25, impactDate: '2026-05-10', timestamp: '', complexity: 2, frequency: 4, distance: 3, attitude: 2, conditions: 3, resources: 3, network: 2, capability: 2 },
-  { id: 'demo7', function: 'Operations', process: 'Shift Scheduling', processRef: 'OPS-300', benefitsRef: 'BEN-30', peopleImpacted: 300, impactDate: '2026-04-20', timestamp: '', complexity: 3, frequency: 2, distance: 4, attitude: 1, conditions: 1, resources: 2, network: 2, capability: 1 },
-  { id: 'demo8', function: 'Operations', process: 'Inventory Audit', processRef: 'OPS-400', benefitsRef: 'BEN-35', peopleImpacted: 40, impactDate: '2026-11-05', timestamp: '', complexity: 2, frequency: 1, distance: 1, attitude: 4, conditions: 4, resources: 4, network: 3, capability: 3 },
-  { id: 'demo9', function: 'Marketing', process: 'Rebrand Launch', processRef: 'MKT-500', benefitsRef: 'BEN-40', peopleImpacted: 12, impactDate: '2026-09-01', timestamp: '', complexity: 4, frequency: 1, distance: 3, attitude: 4, conditions: 2, resources: 3, network: 4, capability: 3 },
-  { id: 'demo10', function: 'Sales', process: 'CRM Upgrade', processRef: 'SLS-600', benefitsRef: 'BEN-45', peopleImpacted: 60, impactDate: '2026-07-15', timestamp: '', complexity: 3, frequency: 4, distance: 2, attitude: 2, conditions: 3, resources: 2, network: 2, capability: 2 },
-  { id: 'demo11', function: 'Compliance', process: 'GDPR Audit', processRef: 'COM-700', benefitsRef: 'BEN-50', peopleImpacted: 5, impactDate: '2026-05-20', timestamp: '', complexity: 3, frequency: 1, distance: 2, attitude: 3, conditions: 4, resources: 3, network: 4, capability: 3 },
-  { id: 'demo12', function: 'Legal', process: 'Contract Review Sys', processRef: 'LEG-800', benefitsRef: 'BEN-55', peopleImpacted: 10, impactDate: '2026-08-10', timestamp: '', complexity: 2, frequency: 3, distance: 3, attitude: 2, conditions: 3, resources: 2, network: 1, capability: 2 },
-  { id: 'demo13', function: 'HR', process: 'Performance Review', processRef: 'HR-150', benefitsRef: 'BEN-12', peopleImpacted: 150, impactDate: '2026-11-01', timestamp: '', complexity: 2, frequency: 1, distance: 2, attitude: 3, conditions: 3, resources: 3, network: 3, capability: 3 },
-  { id: 'demo14', function: 'Operations', process: 'Fleet Maintenance', processRef: 'OPS-450', benefitsRef: 'BEN-32', peopleImpacted: 20, impactDate: '2026-06-15', timestamp: '', complexity: 3, frequency: 2, distance: 2, attitude: 4, conditions: 4, resources: 4, network: 4, capability: 4 },
-  { id: 'demo15', function: 'Finance', process: 'Budget Planning', processRef: 'FIN-005', benefitsRef: 'BEN-03', peopleImpacted: 10, impactDate: '2026-10-01', timestamp: '', complexity: 4, frequency: 1, distance: 2, attitude: 2, conditions: 1, resources: 2, network: 2, capability: 2 },
-  { id: 'demo16', function: 'IT', process: 'Cloud Migration', processRef: 'IT-990', benefitsRef: 'BEN-25', peopleImpacted: 15, impactDate: '2026-12-01', timestamp: '', complexity: 4, frequency: 4, distance: 4, attitude: 3, conditions: 2, resources: 3, network: 3, capability: 2 },
+  {
+    id: 'demo1',
+    function: 'Finance',
+    process: 'Year End Close',
+    processRef: 'FIN-001',
+    benefitsRef: 'BEN-02',
+    peopleImpacted: 15,
+    impactDate: '2026-03-15',
+    timestamp: '',
+    complexity: 4,
+    frequency: 1,
+    distance: 3,
+    attitude: 3,
+    conditions: 3,
+    resources: 2,
+    network: 3,
+    capability: 2,
+  },
+  {
+    id: 'demo2',
+    function: 'Finance',
+    process: 'Invoice Processing',
+    processRef: 'FIN-002',
+    benefitsRef: 'BEN-05',
+    peopleImpacted: 8,
+    impactDate: '2026-04-01',
+    timestamp: '',
+    complexity: 2,
+    frequency: 4,
+    distance: 4,
+    attitude: 2,
+    conditions: 2,
+    resources: 3,
+    network: 2,
+    capability: 2,
+  },
+  {
+    id: 'demo3',
+    function: 'HR',
+    process: 'New Onboarding Flow',
+    processRef: 'HR-101',
+    benefitsRef: 'BEN-10',
+    peopleImpacted: 50,
+    impactDate: '2026-06-01',
+    timestamp: '',
+    complexity: 2,
+    frequency: 2,
+    distance: 3,
+    attitude: 4,
+    conditions: 4,
+    resources: 4,
+    network: 4,
+    capability: 4,
+  },
+  {
+    id: 'demo4',
+    function: 'HR',
+    process: 'Payroll Migration',
+    processRef: 'HR-200',
+    benefitsRef: 'BEN-11',
+    peopleImpacted: 120,
+    impactDate: '2026-01-25',
+    timestamp: '',
+    complexity: 4,
+    frequency: 3,
+    distance: 4,
+    attitude: 1,
+    conditions: 2,
+    resources: 1,
+    network: 1,
+    capability: 1,
+  },
+  {
+    id: 'demo5',
+    function: 'IT',
+    process: 'Security Patch 4.0',
+    processRef: 'IT-900',
+    benefitsRef: 'BEN-20',
+    peopleImpacted: 200,
+    impactDate: '2026-02-15',
+    timestamp: '',
+    complexity: 3,
+    frequency: 1,
+    distance: 2,
+    attitude: 3,
+    conditions: 4,
+    resources: 4,
+    network: 3,
+    capability: 2,
+  },
+  {
+    id: 'demo6',
+    function: 'IT',
+    process: 'Helpdesk Ticketing',
+    processRef: 'IT-950',
+    benefitsRef: 'BEN-22',
+    peopleImpacted: 25,
+    impactDate: '2026-05-10',
+    timestamp: '',
+    complexity: 2,
+    frequency: 4,
+    distance: 3,
+    attitude: 2,
+    conditions: 3,
+    resources: 3,
+    network: 2,
+    capability: 2,
+  },
+  {
+    id: 'demo7',
+    function: 'Operations',
+    process: 'Shift Scheduling',
+    processRef: 'OPS-300',
+    benefitsRef: 'BEN-30',
+    peopleImpacted: 300,
+    impactDate: '2026-04-20',
+    timestamp: '',
+    complexity: 3,
+    frequency: 2,
+    distance: 4,
+    attitude: 1,
+    conditions: 1,
+    resources: 2,
+    network: 2,
+    capability: 1,
+  },
+  {
+    id: 'demo8',
+    function: 'Operations',
+    process: 'Inventory Audit',
+    processRef: 'OPS-400',
+    benefitsRef: 'BEN-35',
+    peopleImpacted: 40,
+    impactDate: '2026-11-05',
+    timestamp: '',
+    complexity: 2,
+    frequency: 1,
+    distance: 1,
+    attitude: 4,
+    conditions: 4,
+    resources: 4,
+    network: 3,
+    capability: 3,
+  },
+  {
+    id: 'demo9',
+    function: 'Marketing',
+    process: 'Rebrand Launch',
+    processRef: 'MKT-500',
+    benefitsRef: 'BEN-40',
+    peopleImpacted: 12,
+    impactDate: '2026-09-01',
+    timestamp: '',
+    complexity: 4,
+    frequency: 1,
+    distance: 3,
+    attitude: 4,
+    conditions: 2,
+    resources: 3,
+    network: 4,
+    capability: 3,
+  },
+  {
+    id: 'demo10',
+    function: 'Sales',
+    process: 'CRM Upgrade',
+    processRef: 'SLS-600',
+    benefitsRef: 'BEN-45',
+    peopleImpacted: 60,
+    impactDate: '2026-07-15',
+    timestamp: '',
+    complexity: 3,
+    frequency: 4,
+    distance: 2,
+    attitude: 2,
+    conditions: 3,
+    resources: 2,
+    network: 2,
+    capability: 2,
+  },
+  {
+    id: 'demo11',
+    function: 'Compliance',
+    process: 'GDPR Audit',
+    processRef: 'COM-700',
+    benefitsRef: 'BEN-50',
+    peopleImpacted: 5,
+    impactDate: '2026-05-20',
+    timestamp: '',
+    complexity: 3,
+    frequency: 1,
+    distance: 2,
+    attitude: 3,
+    conditions: 4,
+    resources: 3,
+    network: 4,
+    capability: 3,
+  },
+  {
+    id: 'demo12',
+    function: 'Legal',
+    process: 'Contract Review Sys',
+    processRef: 'LEG-800',
+    benefitsRef: 'BEN-55',
+    peopleImpacted: 10,
+    impactDate: '2026-08-10',
+    timestamp: '',
+    complexity: 2,
+    frequency: 3,
+    distance: 3,
+    attitude: 2,
+    conditions: 3,
+    resources: 2,
+    network: 1,
+    capability: 2,
+  },
+  {
+    id: 'demo13',
+    function: 'HR',
+    process: 'Performance Review',
+    processRef: 'HR-150',
+    benefitsRef: 'BEN-12',
+    peopleImpacted: 150,
+    impactDate: '2026-11-01',
+    timestamp: '',
+    complexity: 2,
+    frequency: 1,
+    distance: 2,
+    attitude: 3,
+    conditions: 3,
+    resources: 3,
+    network: 3,
+    capability: 3,
+  },
+  {
+    id: 'demo14',
+    function: 'Operations',
+    process: 'Fleet Maintenance',
+    processRef: 'OPS-450',
+    benefitsRef: 'BEN-32',
+    peopleImpacted: 20,
+    impactDate: '2026-06-15',
+    timestamp: '',
+    complexity: 3,
+    frequency: 2,
+    distance: 2,
+    attitude: 4,
+    conditions: 4,
+    resources: 4,
+    network: 4,
+    capability: 4,
+  },
+  {
+    id: 'demo15',
+    function: 'Finance',
+    process: 'Budget Planning',
+    processRef: 'FIN-005',
+    benefitsRef: 'BEN-03',
+    peopleImpacted: 10,
+    impactDate: '2026-10-01',
+    timestamp: '',
+    complexity: 4,
+    frequency: 1,
+    distance: 2,
+    attitude: 2,
+    conditions: 1,
+    resources: 2,
+    network: 2,
+    capability: 2,
+  },
+  {
+    id: 'demo16',
+    function: 'IT',
+    process: 'Cloud Migration',
+    processRef: 'IT-990',
+    benefitsRef: 'BEN-25',
+    peopleImpacted: 15,
+    impactDate: '2026-12-01',
+    timestamp: '',
+    complexity: 4,
+    frequency: 4,
+    distance: 4,
+    attitude: 3,
+    conditions: 2,
+    resources: 3,
+    network: 3,
+    capability: 2,
+  },
 ];
 
 /** Change Score: (Complexity + Frequency + 2*Distance) / 16 * 100. Readiness Score: (Attitude + Conditions + Resources + Network + Capability) / 20 * 100. */
-function calculateScores(item: ChangeImpactAssessment): { changeScore: number; readinessScore: number } {
+function calculateScores(item: ChangeImpactAssessment): {
+  changeScore: number;
+  readinessScore: number;
+} {
   const changeScoreRaw = item.complexity + item.frequency + 2 * item.distance;
   const changeScore = (changeScoreRaw / 16) * 100;
   const readinessScoreRaw =
@@ -141,13 +424,21 @@ function createId(): string {
 function ScoreBadge({ score, type }: { score: number; type: 'change' | 'readiness' }): JSX.Element {
   let colorClass = 'bg-slate-100 text-slate-800 border-slate-200';
   if (type === 'change') {
-    if (score >= 70) colorClass = 'bg-red-100 text-red-800 border-red-200';
-    else if (score >= 40) colorClass = 'bg-amber-100 text-amber-800 border-amber-200';
-    else colorClass = 'bg-green-100 text-green-800 border-green-200';
+    if (score >= 70) {
+      colorClass = 'bg-red-100 text-red-800 border-red-200';
+    } else if (score >= 40) {
+      colorClass = 'bg-amber-100 text-amber-800 border-amber-200';
+    } else {
+      colorClass = 'bg-green-100 text-green-800 border-green-200';
+    }
   } else {
-    if (score >= 70) colorClass = 'bg-green-100 text-green-800 border-green-200';
-    else if (score >= 40) colorClass = 'bg-amber-100 text-amber-800 border-amber-200';
-    else colorClass = 'bg-red-100 text-red-800 border-red-200';
+    if (score >= 70) {
+      colorClass = 'bg-green-100 text-green-800 border-green-200';
+    } else if (score >= 40) {
+      colorClass = 'bg-amber-100 text-amber-800 border-amber-200';
+    } else {
+      colorClass = 'bg-red-100 text-red-800 border-red-200';
+    }
   }
   return (
     <span className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-bold ${colorClass}`}>
@@ -222,10 +513,18 @@ function AssessmentsTab({
           aValue = a[sortKey as keyof ChangeImpactAssessment] as string | number;
           bValue = b[sortKey as keyof ChangeImpactAssessment] as string | number;
         }
-        if (typeof aValue === 'string') aValue = aValue.toLowerCase();
-        if (typeof bValue === 'string') bValue = bValue.toLowerCase();
-        if (aValue < bValue) return sortDirection === 'ascending' ? -1 : 1;
-        if (aValue > bValue) return sortDirection === 'ascending' ? 1 : -1;
+        if (typeof aValue === 'string') {
+          aValue = aValue.toLowerCase();
+        }
+        if (typeof bValue === 'string') {
+          bValue = bValue.toLowerCase();
+        }
+        if (aValue < bValue) {
+          return sortDirection === 'ascending' ? -1 : 1;
+        }
+        if (aValue > bValue) {
+          return sortDirection === 'ascending' ? 1 : -1;
+        }
         return 0;
       });
     }
@@ -233,7 +532,9 @@ function AssessmentsTab({
   }, [items, sortKey, sortDirection, functionFilter, processFilter]);
 
   const sortIndicator = (column: string) => {
-    if (sortKey !== column) return '';
+    if (sortKey !== column) {
+      return '';
+    }
     return sortDirection === 'ascending' ? ' ▲' : ' ▼';
   };
 
@@ -253,8 +554,18 @@ function AssessmentsTab({
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <h2 className="text-xl font-semibold text-slate-800">Detailed Impact Assessments</h2>
         <div className="flex flex-wrap gap-2">
-          <input ref={fileInputRef} type="file" onChange={onImportFile} accept=".csv" className="hidden" />
-          <button type="button" onClick={onLoadDemo} className="text-sm text-slate-500 hover:text-blue-600 px-3 py-2">
+          <input
+            ref={fileInputRef}
+            type="file"
+            onChange={onImportFile}
+            accept=".csv"
+            className="hidden"
+          />
+          <button
+            type="button"
+            onClick={onLoadDemo}
+            className="text-sm text-slate-500 hover:text-blue-600 px-3 py-2"
+          >
             Load Demo Data
           </button>
           <button type="button" onClick={onImportClick} className={nhsButtonSecondary}>
@@ -288,9 +599,13 @@ function AssessmentsTab({
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="space-y-4">
-              <h4 className="font-semibold text-blue-800 border-b border-blue-200 pb-1">1. Process Details</h4>
+              <h4 className="font-semibold text-blue-800 border-b border-blue-200 pb-1">
+                1. Process Details
+              </h4>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Business Function</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Business Function
+                </label>
                 <input
                   type="text"
                   placeholder="e.g. HR, Finance"
@@ -300,7 +615,9 @@ function AssessmentsTab({
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Process Name</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Process Name
+                </label>
                 <input
                   type="text"
                   placeholder="e.g. Payroll Run"
@@ -312,7 +629,8 @@ function AssessmentsTab({
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">
-                    Process Ref # <span className="text-xs text-slate-400 font-normal">(Optional)</span>
+                    Process Ref #{' '}
+                    <span className="text-xs text-slate-400 font-normal">(Optional)</span>
                   </label>
                   <input
                     type="text"
@@ -324,7 +642,8 @@ function AssessmentsTab({
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">
-                    Benefit Ref # <span className="text-xs text-slate-400 font-normal">(Optional)</span>
+                    Benefit Ref #{' '}
+                    <span className="text-xs text-slate-400 font-normal">(Optional)</span>
                   </label>
                   <input
                     type="text"
@@ -337,7 +656,9 @@ function AssessmentsTab({
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1"># Impacted</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                    # Impacted
+                  </label>
                   <input
                     type="number"
                     value={formData.peopleImpacted}
@@ -348,7 +669,9 @@ function AssessmentsTab({
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Impact Date</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                    Impact Date
+                  </label>
                   <input
                     type="date"
                     value={formData.impactDate}
@@ -360,7 +683,9 @@ function AssessmentsTab({
             </div>
 
             <div className="space-y-4">
-              <h4 className="font-semibold text-blue-800 border-b border-blue-200 pb-1">2. Change Impact</h4>
+              <h4 className="font-semibold text-blue-800 border-b border-blue-200 pb-1">
+                2. Change Impact
+              </h4>
               {(['complexity', 'frequency', 'distance'] as const).map((field) => (
                 <div key={field}>
                   <label className="block text-sm font-medium text-slate-700 mb-1 capitalize">
@@ -384,10 +709,14 @@ function AssessmentsTab({
             </div>
 
             <div className="space-y-4">
-              <h4 className="font-semibold text-blue-800 border-b border-blue-200 pb-1">3. Business Readiness</h4>
+              <h4 className="font-semibold text-blue-800 border-b border-blue-200 pb-1">
+                3. Business Readiness
+              </h4>
               {(['attitude', 'conditions'] as const).map((field) => (
                 <div key={field}>
-                  <label className="block text-sm font-medium text-slate-700 mb-1 capitalize">{field}</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1 capitalize">
+                    {field}
+                  </label>
                   <select
                     value={formData[field]}
                     onChange={(event) =>
@@ -406,7 +735,9 @@ function AssessmentsTab({
               <div className="grid grid-cols-2 gap-2">
                 {(['resources', 'network'] as const).map((field) => (
                   <div key={field}>
-                    <label className="block text-sm font-medium text-slate-700 mb-1 capitalize">{field}</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-1 capitalize">
+                      {field}
+                    </label>
                     <select
                       value={formData[field]}
                       onChange={(event) =>
@@ -424,7 +755,9 @@ function AssessmentsTab({
                 ))}
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Capability (ADKAR)</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Capability (ADKAR)
+                </label>
                 <select
                   value={formData.capability}
                   onChange={(event) =>
@@ -566,7 +899,8 @@ function DashboardTab({ items }: { items: ChangeImpactAssessment[] }): JSX.Eleme
   );
 
   const filteredItems = useMemo(
-    () => (filterFunction === 'All' ? items : items.filter((item) => item.function === filterFunction)),
+    () =>
+      filterFunction === 'All' ? items : items.filter((item) => item.function === filterFunction),
     [items, filterFunction]
   );
 
@@ -607,13 +941,19 @@ function DashboardTab({ items }: { items: ChangeImpactAssessment[] }): JSX.Eleme
     const results = Object.keys(groups).map((key) => {
       const g = groups[key];
       const avgReadiness =
-        weightedView && g.totalImpacted > 0 ? g.weightedReadinessSum / g.totalImpacted : g.totalReadiness / g.count;
+        weightedView && g.totalImpacted > 0
+          ? g.weightedReadinessSum / g.totalImpacted
+          : g.totalReadiness / g.count;
       const avgChange =
-        weightedView && g.totalImpacted > 0 ? g.weightedChangeSum / g.totalImpacted : g.totalChange / g.count;
+        weightedView && g.totalImpacted > 0
+          ? g.weightedChangeSum / g.totalImpacted
+          : g.totalChange / g.count;
       return { name: key, avgReadiness, avgChange, totalImpacted: g.totalImpacted };
     });
 
-    return results.sort((a, b) => (readinessSort === 'asc' ? a.avgReadiness - b.avgReadiness : b.avgReadiness - a.avgReadiness));
+    return results.sort((a, b) =>
+      readinessSort === 'asc' ? a.avgReadiness - b.avgReadiness : b.avgReadiness - a.avgReadiness
+    );
   }, [filteredItems, weightedView, readinessSort]);
 
   const kpiMetrics = useMemo(() => {
@@ -629,21 +969,40 @@ function DashboardTab({ items }: { items: ChangeImpactAssessment[] }): JSX.Eleme
         avgReadiness = weightedSum / totalPeople;
       } else {
         avgReadiness =
-          filteredItems.reduce((acc, curr) => acc + calculateScores(curr).readinessScore, 0) / totalProcesses;
+          filteredItems.reduce((acc, curr) => acc + calculateScores(curr).readinessScore, 0) /
+          totalProcesses;
       }
     }
     return { totalProcesses, totalPeople, avgReadiness };
   }, [filteredItems, weightedView]);
 
   const heatmapData = useMemo(() => {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
     const grid: Record<
       string,
       { count: number; changeSum: number; readinessSum: number; capabilitySum: number }[]
     > = {};
     const funcs = [...new Set(filteredItems.map((i) => i.function))];
     funcs.forEach((f) => {
-      grid[f] = Array.from({ length: 12 }, () => ({ count: 0, changeSum: 0, readinessSum: 0, capabilitySum: 0 }));
+      grid[f] = Array.from({ length: 12 }, () => ({
+        count: 0,
+        changeSum: 0,
+        readinessSum: 0,
+        capabilitySum: 0,
+      }));
     });
     filteredItems.forEach((item) => {
       if (item.impactDate && item.function) {
@@ -682,7 +1041,9 @@ function DashboardTab({ items }: { items: ChangeImpactAssessment[] }): JSX.Eleme
           </select>
         </div>
         <div className="flex items-center gap-2">
-          <span className={`text-sm font-medium ${!weightedView ? 'text-blue-600' : 'text-slate-500'}`}>
+          <span
+            className={`text-sm font-medium ${!weightedView ? 'text-blue-600' : 'text-slate-500'}`}
+          >
             Simple Avg
           </span>
           <button
@@ -694,29 +1055,44 @@ function DashboardTab({ items }: { items: ChangeImpactAssessment[] }): JSX.Eleme
               className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${weightedView ? 'translate-x-6' : 'translate-x-1'}`}
             />
           </button>
-          <span className={`text-sm font-medium ${weightedView ? 'text-blue-600' : 'text-slate-500'}`}>
+          <span
+            className={`text-sm font-medium ${weightedView ? 'text-blue-600' : 'text-slate-500'}`}
+          >
             Weighted by Impact
           </span>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="rounded-lg border border-slate-200 bg-white p-4" style={{ borderLeftWidth: 4, borderLeftColor: '#3b82f6' }}>
+        <div
+          className="rounded-lg border border-slate-200 bg-white p-4"
+          style={{ borderLeftWidth: 4, borderLeftColor: '#3b82f6' }}
+        >
           <h3 className="text-slate-500 text-sm font-medium uppercase">Total Processes</h3>
           <p className="text-2xl font-bold text-slate-800">{kpiMetrics.totalProcesses}</p>
           <p className="text-xs text-slate-400 mt-1">Filtered View</p>
         </div>
-        <div className="rounded-lg border border-slate-200 bg-white p-4" style={{ borderLeftWidth: 4, borderLeftColor: '#f59e0b' }}>
+        <div
+          className="rounded-lg border border-slate-200 bg-white p-4"
+          style={{ borderLeftWidth: 4, borderLeftColor: '#f59e0b' }}
+        >
           <h3 className="text-slate-500 text-sm font-medium uppercase">Total People Impacted</h3>
           <p className="text-2xl font-bold text-slate-800">{kpiMetrics.totalPeople}</p>
           <p className="text-xs text-slate-400 mt-1">across all processes</p>
         </div>
-        <div className="rounded-lg border border-slate-200 bg-white p-4" style={{ borderLeftWidth: 4, borderLeftColor: '#22c55e' }}>
+        <div
+          className="rounded-lg border border-slate-200 bg-white p-4"
+          style={{ borderLeftWidth: 4, borderLeftColor: '#22c55e' }}
+        >
           <h3 className="text-slate-500 text-sm font-medium uppercase">Avg Readiness</h3>
           <div className="flex items-baseline gap-2">
-            <p className="text-2xl font-bold text-slate-800">{kpiMetrics.avgReadiness.toFixed(0)}%</p>
+            <p className="text-2xl font-bold text-slate-800">
+              {kpiMetrics.avgReadiness.toFixed(0)}%
+            </p>
             {weightedView ? (
-              <span className="text-xs font-bold text-blue-600 bg-blue-50 px-1 rounded">Weighted</span>
+              <span className="text-xs font-bold text-blue-600 bg-blue-50 px-1 rounded">
+                Weighted
+              </span>
             ) : null}
           </div>
           <p className="text-xs text-slate-400 mt-1">
@@ -744,9 +1120,12 @@ function DashboardTab({ items }: { items: ChangeImpactAssessment[] }): JSX.Eleme
         </div>
         <p className="text-sm text-slate-500 mb-6">
           {heatmapOverlay === 'count' && 'Visualizing periods of high change activity (count).'}
-          {heatmapOverlay === 'changeScore' && 'Visualizing average impact scores (Higher % = More Impact).'}
-          {heatmapOverlay === 'readinessScore' && 'Visualizing average readiness scores (Higher % = More Ready).'}
-          {heatmapOverlay === 'capability' && 'Visualizing team capability scores on a 1-4 scale (Higher = More Capable).'}
+          {heatmapOverlay === 'changeScore' &&
+            'Visualizing average impact scores (Higher % = More Impact).'}
+          {heatmapOverlay === 'readinessScore' &&
+            'Visualizing average readiness scores (Higher % = More Ready).'}
+          {heatmapOverlay === 'capability' &&
+            'Visualizing team capability scores on a 1-4 scale (Higher = More Capable).'}
         </p>
         <div className="overflow-x-auto">
           <div className="min-w-[800px]">
@@ -759,8 +1138,13 @@ function DashboardTab({ items }: { items: ChangeImpactAssessment[] }): JSX.Eleme
               ))}
             </div>
             {Object.keys(heatmapData.grid).map((func) => (
-              <div key={func} className="flex items-center border-b border-slate-100 py-2 hover:bg-slate-50">
-                <div className="w-40 text-sm font-medium text-slate-800 shrink-0 truncate pr-2">{func}</div>
+              <div
+                key={func}
+                className="flex items-center border-b border-slate-100 py-2 hover:bg-slate-50"
+              >
+                <div className="w-40 text-sm font-medium text-slate-800 shrink-0 truncate pr-2">
+                  {func}
+                </div>
                 {heatmapData.grid[func].map((cell, idx) => {
                   const { count, changeSum, readinessSum, capabilitySum } = cell;
                   let valueToDisplay: string | number = '-';
@@ -771,28 +1155,46 @@ function DashboardTab({ items }: { items: ChangeImpactAssessment[] }): JSX.Eleme
                     textClass = 'text-white';
                     if (heatmapOverlay === 'count') {
                       valueToDisplay = count;
-                      if (count === 1) bgClass = 'bg-blue-200';
-                      else if (count === 2) bgClass = 'bg-blue-400';
-                      else if (count >= 3) bgClass = 'bg-blue-600';
-                      if (count >= 5) bgClass = 'bg-indigo-800';
+                      if (count === 1) {
+                        bgClass = 'bg-blue-200';
+                      } else if (count === 2) {
+                        bgClass = 'bg-blue-400';
+                      } else if (count >= 3) {
+                        bgClass = 'bg-blue-600';
+                      }
+                      if (count >= 5) {
+                        bgClass = 'bg-indigo-800';
+                      }
                     } else if (heatmapOverlay === 'changeScore') {
                       const avgChange = changeSum / count;
                       valueToDisplay = `${avgChange.toFixed(0)}%`;
-                      if (avgChange >= 70) bgClass = 'bg-red-500';
-                      else if (avgChange >= 40) bgClass = 'bg-amber-400';
-                      else bgClass = 'bg-green-500';
+                      if (avgChange >= 70) {
+                        bgClass = 'bg-red-500';
+                      } else if (avgChange >= 40) {
+                        bgClass = 'bg-amber-400';
+                      } else {
+                        bgClass = 'bg-green-500';
+                      }
                     } else if (heatmapOverlay === 'readinessScore') {
                       const avgReady = readinessSum / count;
                       valueToDisplay = `${avgReady.toFixed(0)}%`;
-                      if (avgReady >= 70) bgClass = 'bg-green-500';
-                      else if (avgReady >= 40) bgClass = 'bg-amber-400';
-                      else bgClass = 'bg-red-500';
+                      if (avgReady >= 70) {
+                        bgClass = 'bg-green-500';
+                      } else if (avgReady >= 40) {
+                        bgClass = 'bg-amber-400';
+                      } else {
+                        bgClass = 'bg-red-500';
+                      }
                     } else if (heatmapOverlay === 'capability') {
                       const avgCap = capabilitySum / count;
                       valueToDisplay = avgCap.toFixed(1);
-                      if (avgCap >= 3) bgClass = 'bg-green-500';
-                      else if (avgCap >= 2) bgClass = 'bg-amber-400';
-                      else bgClass = 'bg-red-500';
+                      if (avgCap >= 3) {
+                        bgClass = 'bg-green-500';
+                      } else if (avgCap >= 2) {
+                        bgClass = 'bg-amber-400';
+                      } else {
+                        bgClass = 'bg-red-500';
+                      }
                     }
                   }
 
@@ -810,7 +1212,9 @@ function DashboardTab({ items }: { items: ChangeImpactAssessment[] }): JSX.Eleme
               </div>
             ))}
             {Object.keys(heatmapData.grid).length === 0 ? (
-              <div className="p-8 text-center text-slate-400 italic">No data available for heatmap</div>
+              <div className="p-8 text-center text-slate-400 italic">
+                No data available for heatmap
+              </div>
             ) : null}
           </div>
         </div>
@@ -851,7 +1255,9 @@ function DashboardTab({ items }: { items: ChangeImpactAssessment[] }): JSX.Eleme
         </div>
 
         <div className="rounded-lg border border-slate-200 bg-white p-6">
-          <h3 className="text-lg font-bold text-slate-800 mb-2">Change Risk Matrix (Bubble Chart)</h3>
+          <h3 className="text-lg font-bold text-slate-800 mb-2">
+            Change Risk Matrix (Bubble Chart)
+          </h3>
           <p className="text-xs text-slate-500 mb-6">Size of bubble = # People Impacted</p>
           <div className="relative h-64 border-l border-b border-slate-300 bg-slate-50">
             <div className="absolute top-2 right-2 text-xs font-bold text-amber-600 bg-amber-50 px-2 rounded">
@@ -901,8 +1307,8 @@ function GuideTab(): JSX.Element {
       <div className="rounded-lg border border-slate-200 bg-white p-8">
         <h2 className="text-2xl font-bold text-slate-800 mb-4">Assessment Criteria Guide</h2>
         <p className="text-slate-600 mb-8">
-          The following criteria are used to calculate the Change Impact Score and the Readiness Score. Use this
-          guide to ensure consistency across all process assessments.
+          The following criteria are used to calculate the Change Impact Score and the Readiness
+          Score. Use this guide to ensure consistency across all process assessments.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
@@ -919,7 +1325,8 @@ function GuideTab(): JSX.Element {
                   <ul className="text-sm text-slate-600 space-y-1">
                     {[...SCORING_CRITERIA[field]].reverse().map((opt) => (
                       <li key={opt.value}>
-                        <strong className="text-slate-900">{opt.value}:</strong> {opt.label.replace(/^\d+ - /, '')}
+                        <strong className="text-slate-900">{opt.value}:</strong>{' '}
+                        {opt.label.replace(/^\d+ - /, '')}
                       </li>
                     ))}
                   </ul>
@@ -935,18 +1342,21 @@ function GuideTab(): JSX.Element {
               Formula: (Attitude + Conditions + Resources + Network + Capability) / 20
             </p>
             <div className="space-y-6">
-              {(['attitude', 'conditions', 'resources', 'network', 'capability'] as const).map((field) => (
-                <div key={field}>
-                  <h4 className="font-semibold text-slate-800 mb-2 capitalize">{field}</h4>
-                  <ul className="text-sm text-slate-600 space-y-1">
-                    {[...SCORING_CRITERIA[field]].reverse().map((opt) => (
-                      <li key={opt.value}>
-                        <strong className="text-slate-900">{opt.value}:</strong> {opt.label.replace(/^\d+ - /, '')}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
+              {(['attitude', 'conditions', 'resources', 'network', 'capability'] as const).map(
+                (field) => (
+                  <div key={field}>
+                    <h4 className="font-semibold text-slate-800 mb-2 capitalize">{field}</h4>
+                    <ul className="text-sm text-slate-600 space-y-1">
+                      {[...SCORING_CRITERIA[field]].reverse().map((opt) => (
+                        <li key={opt.value}>
+                          <strong className="text-slate-900">{opt.value}:</strong>{' '}
+                          {opt.label.replace(/^\d+ - /, '')}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )
+              )}
             </div>
           </div>
         </div>
@@ -993,7 +1403,9 @@ export default function ChangeImpactAssessmentApp({
   embedded = false,
   onBack,
 }: ChangeImpactAssessmentAppProps = {}): JSX.Element {
-  const [items, setItems] = useState<ChangeImpactAssessment[]>(() => load<ChangeImpactAssessment[]>(STORAGE_KEY) || []);
+  const [items, setItems] = useState<ChangeImpactAssessment[]>(
+    () => load<ChangeImpactAssessment[]>(STORAGE_KEY) || []
+  );
   const [activeTab, setActiveTab] = useState<'assessment' | 'dashboard' | 'guide'>('assessment');
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState<AssessmentFormState>(INITIAL_FORM_STATE);
@@ -1041,20 +1453,49 @@ export default function ChangeImpactAssessmentApp({
 
   const handleExportCsv = () => {
     const headers = [
-      'Function', 'Process', 'Process Ref', 'Benefit Ref', 'People Impacted', 'Impact Date',
-      'Change Score', 'Readiness Score', 'Complexity', 'Frequency', 'Distance', 'Attitude',
-      'Conditions', 'Resources', 'Network', 'Capability',
+      'Function',
+      'Process',
+      'Process Ref',
+      'Benefit Ref',
+      'People Impacted',
+      'Impact Date',
+      'Change Score',
+      'Readiness Score',
+      'Complexity',
+      'Frequency',
+      'Distance',
+      'Attitude',
+      'Conditions',
+      'Resources',
+      'Network',
+      'Capability',
     ];
     const rows = items.map((item) => {
       const { changeScore, readinessScore } = calculateScores(item);
       return [
-        `"${item.function}"`, `"${item.process}"`, `"${item.processRef || ''}"`, `"${item.benefitsRef || ''}"`,
-        item.peopleImpacted, item.impactDate, `${changeScore.toFixed(2)}%`, `${readinessScore.toFixed(2)}%`,
-        item.complexity, item.frequency, item.distance, item.attitude, item.conditions, item.resources,
-        item.network, item.capability,
+        `"${item.function}"`,
+        `"${item.process}"`,
+        `"${item.processRef || ''}"`,
+        `"${item.benefitsRef || ''}"`,
+        item.peopleImpacted,
+        item.impactDate,
+        `${changeScore.toFixed(2)}%`,
+        `${readinessScore.toFixed(2)}%`,
+        item.complexity,
+        item.frequency,
+        item.distance,
+        item.attitude,
+        item.conditions,
+        item.resources,
+        item.network,
+        item.capability,
       ].join(',');
     });
-    downloadFile('change_impact_assessment.csv', [headers.join(','), ...rows].join('\n'), 'text/csv');
+    downloadFile(
+      'change_impact_assessment.csv',
+      [headers.join(','), ...rows].join('\n'),
+      'text/csv'
+    );
   };
 
   const handleImportClick = () => {
@@ -1063,14 +1504,21 @@ export default function ChangeImpactAssessmentApp({
 
   const handleImportFile = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (!file) return;
+    if (!file) {
+      return;
+    }
 
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
         const text = String(e.target?.result || '');
-        const lines = text.split('\n').map((line) => line.trim()).filter(Boolean);
-        if (lines.length < 2) return;
+        const lines = text
+          .split('\n')
+          .map((line) => line.trim())
+          .filter(Boolean);
+        if (lines.length < 2) {
+          return;
+        }
 
         const newItems: ChangeImpactAssessment[] = [];
         for (let i = 1; i < lines.length; i += 1) {
@@ -1098,14 +1546,20 @@ export default function ChangeImpactAssessmentApp({
         }
 
         if (newItems.length > 0) {
-          if (window.confirm(`Found ${newItems.length} valid records. Append them to your current list? (Cancel to Replace)`)) {
+          if (
+            window.confirm(
+              `Found ${newItems.length} valid records. Append them to your current list? (Cancel to Replace)`
+            )
+          ) {
             setItems((current) => [...current, ...newItems]);
           } else {
             setItems(newItems);
           }
           window.alert('Import successful!');
         } else {
-          window.alert('Could not parse any valid records. Please ensure CSV matches the export format.');
+          window.alert(
+            'Could not parse any valid records. Please ensure CSV matches the export format.'
+          );
         }
       } catch (err) {
         console.error('Import Error:', err);
@@ -1118,8 +1572,15 @@ export default function ChangeImpactAssessmentApp({
   };
 
   const handleLoadDemo = () => {
-    if (window.confirm('This will load sample data for testing. Add to existing data? (Cancel to Replace)')) {
-      setItems((current) => [...current, ...DEMO_DATA.map((item) => ({ ...item, timestamp: new Date().toISOString() }))]);
+    if (
+      window.confirm(
+        'This will load sample data for testing. Add to existing data? (Cancel to Replace)'
+      )
+    ) {
+      setItems((current) => [
+        ...current,
+        ...DEMO_DATA.map((item) => ({ ...item, timestamp: new Date().toISOString() })),
+      ]);
     } else {
       setItems(DEMO_DATA.map((item) => ({ ...item, timestamp: new Date().toISOString() })));
     }
@@ -1144,7 +1605,9 @@ export default function ChangeImpactAssessmentApp({
           </button>
         ) : null}
         <h1 className="text-lg font-bold text-slate-800">Change Impact Assessment Tool</h1>
-        <p className="text-xs text-slate-500">Process impact vs business readiness scoring and analysis</p>
+        <p className="text-xs text-slate-500">
+          Process impact vs business readiness scoring and analysis
+        </p>
       </div>
     </header>
   );

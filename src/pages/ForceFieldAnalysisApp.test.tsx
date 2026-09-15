@@ -1,8 +1,9 @@
-import { fireEvent, render, screen, within } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import ForceFieldAnalysisApp from './ForceFieldAnalysisApp';
 import type { AssessmentComponent } from '@data/components';
 import type { ComponentObjective, DraftEntry, TeamMember } from '@lib/adoptionState';
+import { fireEvent, render, screen, within } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import ForceFieldAnalysisApp from './ForceFieldAnalysisApp';
 
 const TEAM_MEMBERS: TeamMember[] = [
   { id: 'member-1', name: 'Alex Morgan', role: 'Change Lead' },
@@ -17,9 +18,12 @@ function renderApp(overrides?: {
   onEntryUpdate?: (componentId: string, lens: string, entry: DraftEntry) => void;
   onObjectivesUpdate?: (componentId: string, objectives: ComponentObjective[]) => void;
 }) {
-  const getEntry = vi.fn(
-    (): DraftEntry => ({ score: 2, rationale: '', evidence: '', actions: [] })
-  );
+  const getEntry = vi.fn((): DraftEntry => ({
+    score: 2,
+    rationale: '',
+    evidence: '',
+    actions: [],
+  }));
   const onEntryUpdate = overrides?.onEntryUpdate || vi.fn();
   const onObjectivesUpdate = overrides?.onObjectivesUpdate || vi.fn();
 

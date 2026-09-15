@@ -807,9 +807,7 @@ export function AdoptionDashboard({
                           className="mr-2 h-3 w-3 rounded-full"
                           style={{ backgroundColor: item.color }}
                         />
-                        <span>
-                          {item.label}
-                        </span>
+                        <span>{item.label}</span>
                       </div>
                     ))}
                   </div>

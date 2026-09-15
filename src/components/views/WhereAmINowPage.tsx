@@ -401,7 +401,7 @@ export function WhereAmINowPage({
               <p className={`mt-4 text-center text-sm italic ${textClass}`}>
                 {nextUnderdevelopedComponent
                   ? `We suggest picking up next at ${nextUnderdevelopedComponent.label}, then working outward from there.`
-                  : "Every component has reached full readiness on its weakest lens - nice work."}
+                  : 'Every component has reached full readiness on its weakest lens - nice work.'}
               </p>
 
               <div className="mt-4 flex justify-center">
@@ -457,8 +457,8 @@ export function WhereAmINowPage({
           {readinessTab === 'by-phases' ? (
             <>
               <p className={`mt-3 text-xs ${textClass}`}>
-                Every component in Phase {effectivePhaseFocus}: {PHASE_NAMES[effectivePhaseFocus]}
-                , with a bar per lens and a dashed target bar for where it's expected to be.
+                Every component in Phase {effectivePhaseFocus}: {PHASE_NAMES[effectivePhaseFocus]},
+                with a bar per lens and a dashed target bar for where it's expected to be.
               </p>
               <div className="mt-4 grid grid-cols-1 gap-3">
                 {componentsInCurrentPhase.map((component) => (

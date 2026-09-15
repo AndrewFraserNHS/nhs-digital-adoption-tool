@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import StakeholderAnalysisApp from './StakeholderAnalysisApp';
 
 function addStakeholder(name: string) {
@@ -61,8 +62,12 @@ describe('StakeholderAnalysisApp', () => {
     addStakeholder('Alex Chen');
 
     // act - Resistant (1) -> Supporting (5): gap = 4
-    fireEvent.change(screen.getByLabelText('Current Commitment'), { target: { value: 'Resistant' } });
-    fireEvent.change(screen.getByLabelText('Target Commitment'), { target: { value: 'Supporting' } });
+    fireEvent.change(screen.getByLabelText('Current Commitment'), {
+      target: { value: 'Resistant' },
+    });
+    fireEvent.change(screen.getByLabelText('Target Commitment'), {
+      target: { value: 'Supporting' },
+    });
 
     // assert - the modal's own "Commitment Gap" label is the last match (table column header is the other)
     const gapLabels = screen.getAllByText('Commitment Gap');
@@ -78,7 +83,9 @@ describe('StakeholderAnalysisApp', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Guidance' }));
 
     // assert
-    expect(screen.getByText('Guidance for Using the Stakeholder Analysis Tool')).toBeInTheDocument();
+    expect(
+      screen.getByText('Guidance for Using the Stakeholder Analysis Tool')
+    ).toBeInTheDocument();
   });
 
   it('SHOULD persist stakeholders to localStorage', () => {

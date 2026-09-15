@@ -1,3 +1,4 @@
+import { toAbsoluteUrl } from '@lib/utils';
 import type { PhaseCapabilityProfile } from './cst';
 
 export const MATURITY_GUIDANCE_TARGETS = ['Default', 'Product', 'EPR'] as const;
@@ -46,12 +47,12 @@ export function resolveEffectiveLink(link: GuidanceLink, overrides?: LinkOverrid
   const overrideUrl = perLink?.url?.trim();
   const overrideLabel = perLink?.label?.trim() || link.label;
   if (overrideUrl) {
-    return { ...link, label: overrideLabel, url: overrideUrl };
+    return { ...link, label: overrideLabel, url: toAbsoluteUrl(overrideUrl) };
   }
   // no per-link url - check fallback
   const fallback = perLink?.fallback ?? 'default';
   if (fallback === 'base' && overrides.base?.url?.trim()) {
-    return { ...link, label: overrideLabel, url: overrides.base.url.trim() };
+    return { ...link, label: overrideLabel, url: toAbsoluteUrl(overrides.base.url.trim()) };
   }
   return { ...link, label: overrideLabel };
 }

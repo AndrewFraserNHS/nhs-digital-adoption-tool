@@ -2,7 +2,7 @@ import { FilterBar } from '@components/common/FilterBar';
 import { BinIcon, IconActionButton, PencilIcon } from '@components/common/IconButtons';
 import { bragBadgeClass, getBragStatus } from '@lib/brag';
 import { load, save } from '@lib/storage';
-import { downloadFile } from '@lib/utils';
+import { downloadFile, toAbsoluteUrl } from '@lib/utils';
 import { type ChangeEvent, JSX, type RefObject, useEffect, useMemo, useRef, useState } from 'react';
 
 import { nhsButtonSecondary } from '../styles/nhsTheme';
@@ -915,7 +915,7 @@ function AssessmentsTab({
                     <td className="px-2 py-3 text-xs">
                       {item.processRefUrl ? (
                         <a
-                          href={item.processRefUrl}
+                          href={toAbsoluteUrl(item.processRefUrl)}
                           target="_blank"
                           rel="noreferrer"
                           className="text-blue-600 underline hover:text-blue-800"
@@ -933,7 +933,7 @@ function AssessmentsTab({
                       >
                         {item.benefitsRefUrl ? (
                           <a
-                            href={item.benefitsRefUrl}
+                            href={toAbsoluteUrl(item.benefitsRefUrl)}
                             target="_blank"
                             rel="noreferrer"
                             className="underline"

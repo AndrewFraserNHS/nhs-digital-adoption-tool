@@ -27,6 +27,7 @@ import {
 } from '@lib/actionModel';
 import { detectScoreAdvancementOpportunities } from '@lib/componentDerivedAutomation';
 import { READINESS_BANDS, getReadinessBand } from '@lib/readinessBands';
+import { toAbsoluteUrl } from '@lib/utils';
 import { ReadinessScoreInfoModal } from './ReadinessScoreInfoModal';
 import { Toast } from '@components/ui/Toast';
 import { OwnerAvatar } from '@components/ui/OwnerAvatar';
@@ -452,7 +453,7 @@ function ComponentOverviewContent({
       >
         {furtherReadingUrl && (
           <a
-            href={furtherReadingUrl}
+            href={toAbsoluteUrl(furtherReadingUrl)}
             target="_blank"
             rel="noopener noreferrer"
             className={`inline-flex items-center gap-1 rounded-md border px-3 py-1.5 text-xs font-semibold ${darkMode ? 'border-slate-600 bg-slate-800 text-blue-300 hover:bg-slate-700' : 'border-slate-300 bg-white text-[#005eb8] hover:bg-slate-50'}`}
@@ -795,7 +796,7 @@ function EvidenceLinksAndDocsSection({
                       >
                         {row.item.href ? (
                           <a
-                            href={row.item.href}
+                            href={toAbsoluteUrl(row.item.href)}
                             target="_blank"
                             rel="noopener noreferrer"
                             className={`underline ${darkMode ? 'text-blue-300 hover:text-blue-200' : 'text-[#005eb8] hover:text-blue-800'}`}
@@ -1019,7 +1020,11 @@ export function AssessmentPanel({
       const customLinks = store.orgProfile?.customComponentLinks?.[componentId] || [];
       [...base[componentId], ...coreForToggle, ...customLinks].forEach((link) => {
         if (link.label && link.label.trim().length >= MIN_GUIDANCE_LINK_LABEL_LENGTH) {
-          byLabel.set(link.label.toLowerCase(), { ...link, kind: 'url' });
+          byLabel.set(link.label.toLowerCase(), {
+            ...link,
+            kind: 'url',
+            url: toAbsoluteUrl(link.url),
+          });
         }
       });
       toolLinkMatches.forEach((link) => {

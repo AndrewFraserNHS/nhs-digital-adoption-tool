@@ -9,7 +9,7 @@ import {
 import { nhsButtonPrimary, nhsButtonSecondary } from '../../styles/nhsTheme';
 import { buildLabelVariants } from '@components/views/AssessmentPanel';
 import { validateOrgProfile, useFieldError } from '@lib/adoptionValidator';
-import { downloadFile } from '@lib/utils';
+import { downloadFile, toAbsoluteUrl } from '@lib/utils';
 import {
   PageHelpButton,
   PageIntroModal,
@@ -1314,7 +1314,9 @@ export function ProjectDetailsPage({
                   <p className="mt-1 text-xs">
                     Currently:{' '}
                     <a
-                      href={profile.linkOverrides?.base?.url?.trim() || TOOLKIT_BASE_DEFAULTS.url}
+                      href={toAbsoluteUrl(
+                        profile.linkOverrides?.base?.url?.trim() || TOOLKIT_BASE_DEFAULTS.url
+                      )}
                       target="_blank"
                       rel="noopener noreferrer"
                       className={`underline ${darkMode ? 'text-blue-300 hover:text-blue-200' : 'text-[#005eb8] hover:text-[#00417a]'}`}

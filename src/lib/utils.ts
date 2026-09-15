@@ -36,6 +36,23 @@ export function escapeCsv(value: string | null | undefined): string {
 }
 
 /**
+ * Ensures a user-entered external URL is absolute (e.g. "nhs.uk" -> "https://nhs.uk") so an <a
+ * href> can't be resolved as a same-origin relative path and navigate inside the app. Leaves
+ * values that already have a scheme (https:, mailto:, etc.) or are protocol-relative ("//...")
+ * untouched.
+ */
+export function toAbsoluteUrl(url: string | null | undefined): string {
+  const trimmed = (url || '').trim();
+  if (!trimmed) {
+    return trimmed;
+  }
+  if (/^([a-z][a-z0-9+.-]*:|\/\/)/i.test(trimmed)) {
+    return trimmed;
+  }
+  return `https://${trimmed}`;
+}
+
+/**
  * Trigger file download in browser
  */
 export function downloadFile(filename: string, content: string, mime = 'text/csv'): void {

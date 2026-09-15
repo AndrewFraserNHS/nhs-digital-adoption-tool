@@ -1,5 +1,11 @@
 import { useCallback, useEffect, useRef, useState, type JSX } from 'react';
-import { normalizeOrgProfile, OrgProfile, type TeamMember } from '@lib/adoptionState';
+import {
+  DEFAULT_STAKEHOLDER_REFERENCE_LISTS,
+  normalizeOrgProfile,
+  OrgProfile,
+  type StakeholderReferenceLists,
+  type TeamMember,
+} from '@lib/adoptionState';
 import { nhsButtonPrimary, nhsButtonSecondary } from '../../styles/nhsTheme';
 import { buildLabelVariants } from '@components/views/AssessmentPanel';
 import { validateOrgProfile, useFieldError } from '@lib/adoptionValidator';
@@ -56,10 +62,16 @@ function AliasEditor({
   aliases,
   onChange,
   darkMode,
+  placeholder = 'Add text this link should also match...',
+  emptyLabel = 'No extra matching text added yet.',
+  addButtonLabel = 'Add',
 }: {
   aliases: string[];
   onChange: (aliases: string[]) => void;
   darkMode?: boolean;
+  placeholder?: string;
+  emptyLabel?: string;
+  addButtonLabel?: string;
 }): JSX.Element {
   const [draft, setDraft] = useState('');
 
@@ -98,7 +110,7 @@ function AliasEditor({
         ))}
         {!aliases.length && (
           <span className={`text-xs ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>
-            No extra matching text added yet.
+            {emptyLabel}
           </span>
         )}
       </div>
@@ -113,11 +125,11 @@ function AliasEditor({
               addAlias();
             }
           }}
-          placeholder="Add text this link should also match..."
+          placeholder={placeholder}
           className={`flex-1 min-w-0 rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
         />
         <button type="button" onClick={addAlias} className={nhsButtonSecondary}>
-          Add
+          {addButtonLabel}
         </button>
       </div>
     </div>
@@ -612,6 +624,21 @@ export function ProjectDetailsPage({
       }
     },
     [profile, onProfileUpdate, currentUserId, onCurrentUserChange]
+  );
+
+  const effectiveStakeholderReferenceLists =
+    profile.stakeholderReferenceLists || DEFAULT_STAKEHOLDER_REFERENCE_LISTS;
+
+  const handleUpdateStakeholderReferenceList = useCallback(
+    (key: keyof StakeholderReferenceLists, values: string[]) => {
+      const updated = {
+        ...profile,
+        stakeholderReferenceLists: { ...effectiveStakeholderReferenceLists, [key]: values },
+      };
+      setProfile(updated);
+      onProfileUpdate(updated);
+    },
+    [profile, onProfileUpdate, effectiveStakeholderReferenceLists]
   );
 
   const effectiveCoreLinks =
@@ -1132,6 +1159,51 @@ export function ProjectDetailsPage({
         <button type="button" onClick={handleAddTeamMember} className={nhsButtonSecondary}>
           + Add Team Member
         </button>
+      </div>
+
+      <div
+        className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-4`}
+      >
+        <div>
+          <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
+            Stakeholder Reference Data
+          </h3>
+          <p className={`text-sm mt-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+            Groups, Sub-Groups, Locations and Relationships used by the Stakeholder Analysis tool -
+            defined once here so every stakeholder record uses the same options.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {(
+            [
+              { key: 'groups', label: 'Groups', placeholder: 'Add a group...' },
+              { key: 'subGroups', label: 'Sub-Groups', placeholder: 'Add a sub-group...' },
+              { key: 'locations', label: 'Locations', placeholder: 'Add a location...' },
+              {
+                key: 'relationships',
+                label: 'Relationships',
+                placeholder: 'Add a relationship...',
+              },
+            ] as const
+          ).map(({ key, label, placeholder }) => (
+            <div key={key}>
+              <p
+                className={`text-sm font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
+              >
+                {label}
+              </p>
+              <AliasEditor
+                aliases={effectiveStakeholderReferenceLists[key]}
+                onChange={(values) => handleUpdateStakeholderReferenceList(key, values)}
+                darkMode={darkMode}
+                placeholder={placeholder}
+                emptyLabel="None added yet."
+                addButtonLabel={`Add ${label.toLowerCase()}`}
+              />
+            </div>
+          ))}
+        </div>
       </div>
 
       <div

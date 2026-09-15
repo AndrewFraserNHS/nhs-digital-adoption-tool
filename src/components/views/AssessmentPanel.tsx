@@ -2306,11 +2306,11 @@ export function AssessmentPanel({
                               ? ''
                               : action.priority === 'must'
                                 ? darkMode
-                                  ? 'bg-red-950/30'
-                                  : 'bg-red-50'
+                                  ? 'bg-red-900/40 border-l-4 border-red-500'
+                                  : 'bg-red-50 border-l-4 border-red-400'
                                 : darkMode
-                                  ? 'bg-amber-950/30'
-                                  : 'bg-amber-50';
+                                  ? 'bg-amber-900/40 border-l-4 border-amber-500'
+                                  : 'bg-amber-50 border-l-4 border-amber-400';
 
                             return (
                               <tr key={rowKey} className={priorityRowClass}>

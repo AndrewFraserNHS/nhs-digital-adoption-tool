@@ -58,7 +58,13 @@ import type {
   OrgProfile,
   View,
 } from '@lib/adoptionState';
-import { cloneEntry, createCstId, createEmptyEntry, initializeStore } from '@lib/adoptionState';
+import {
+  cloneEntry,
+  createCstId,
+  createEmptyEntry,
+  DEFAULT_STAKEHOLDER_REFERENCE_LISTS,
+  initializeStore,
+} from '@lib/adoptionState';
 import { validateCstProfile } from '@lib/adoptionValidator';
 import { type AuditEvent, createAuditEvent, trimAuditEvents } from '@lib/auditLog';
 import { createLineChart, createRadarChart } from '@lib/charts';
@@ -69,6 +75,7 @@ import {
   type ConflictReport,
 } from '@lib/cstConflict';
 import { regenerateContentForPathway, syncDerivedContent } from '@lib/derivedContentSync';
+import { getReadinessBand } from '@lib/readinessBands';
 import { load, save } from '@lib/storage';
 import { downloadFile, escapeHtml } from '@lib/utils';
 import ChangeImpactAssessmentApp from '@pages/ChangeImpactAssessmentApp';
@@ -483,8 +490,10 @@ export function AdoptionApp() {
                     display: true,
                     stepSize: 1,
                     backdropColor: 'transparent',
-                    callback: (value: string | number) => (Number(value) < 0 ? '' : value),
+                    callback: (value: string | number) =>
+                      Number(value) < 0 ? '' : getReadinessBand(Number(value)).label,
                   },
+                  pointLabels: { padding: 28 },
                 },
               },
             },
@@ -1714,7 +1723,7 @@ export function AdoptionApp() {
         </header>
 
         {/* Main Content Area */}
-        <main ref={mainContentRef} className="flex-1 overflow-y-auto p-8">
+        <main ref={mainContentRef} className="flex-1 overflow-y-auto px-8 pt-8 pb-28">
           {view === 'daily-checkin' && showEngagementCard ? (
             <section
               className={`${userSettings.darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'} mb-6 rounded-xl border p-4 shadow-sm`}
@@ -2052,6 +2061,9 @@ export function AdoptionApp() {
               trustName={store.orgProfile.trustName}
               projectName={store.orgProfile.projectName}
               teamMembers={store.orgProfile.teamMembers || []}
+              referenceLists={
+                store.orgProfile.stakeholderReferenceLists || DEFAULT_STAKEHOLDER_REFERENCE_LISTS
+              }
               components={COMPONENTS}
               getEntry={getEntry}
               onEntryUpdate={updateEntry}

@@ -10,7 +10,14 @@ import {
 import { FilterBar } from '@components/common/FilterBar';
 import type { AssessmentComponent } from '@data/components';
 import { createDoughnutChart } from '@lib/charts';
-import type { ComponentObjective, DraftAction, DraftEntry, TeamMember } from '@lib/adoptionState';
+import {
+  DEFAULT_STAKEHOLDER_REFERENCE_LISTS,
+  type ComponentObjective,
+  type DraftAction,
+  type DraftEntry,
+  type StakeholderReferenceLists,
+  type TeamMember,
+} from '@lib/adoptionState';
 import { load, save } from '@lib/storage';
 import { downloadFile } from '@lib/utils';
 import { type ChangeEvent, JSX, useEffect, useMemo, useRef, useState } from 'react';
@@ -112,6 +119,24 @@ const CAPABILITIES_MAP: Record<string, number> = {
   Equipped: 4,
   Practised: 5,
   Exemplary: 6,
+};
+
+const COMMITMENT_DESCRIPTIONS: Record<string, string> = {
+  Resistant: 'Actively opposes the change and may work against it.',
+  Opposed: 'Disagrees with the change but is not actively undermining it.',
+  Ambivalent: 'Neither supports nor opposes the change; not yet engaged.',
+  Complying: 'Follows the change because required to, without genuine buy-in.',
+  Supporting: 'Agrees with the change and cooperates willingly.',
+  Leading: 'Actively champions the change and helps bring others along.',
+};
+
+const CAPABILITY_DESCRIPTIONS: Record<string, string> = {
+  Unaware: 'Has not yet been informed the change is happening.',
+  Aware: 'Knows the change is happening but not yet why or what it means for them.',
+  Informed: 'Understands why the change is happening and what will be expected.',
+  Equipped: 'Has the knowledge and skills needed to work in the new way.',
+  Practised: 'Has started using the new way of working with growing confidence.',
+  Exemplary: 'Fully proficient, and can support or coach others through the change.',
 };
 
 const GROUP_COLOR_PALETTE = [
@@ -446,6 +471,40 @@ function StakeholderModal({
     </div>
   );
 
+  /** Like listSelect, but for the fixed Commitment/Capability scales - shows the selected level's meaning as helper text and a hover tooltip. */
+  const scaleSelect = (
+    label: string,
+    field: keyof Stakeholder,
+    options: string[],
+    descriptions: Record<string, string>
+  ) => {
+    const selected = draft[field] as string;
+    return (
+      <div>
+        <label htmlFor={`sh-${field}`} className="block mb-2 text-sm font-medium text-gray-900">
+          {label}
+        </label>
+        <select
+          id={`sh-${field}`}
+          value={selected}
+          title={descriptions[selected] || undefined}
+          onChange={(event) => update({ [field]: event.target.value } as Partial<Stakeholder>)}
+          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+        >
+          <option value=""></option>
+          {options.map((o) => (
+            <option key={o} value={o} title={descriptions[o]}>
+              {o}
+            </option>
+          ))}
+        </select>
+        {selected && descriptions[selected] ? (
+          <p className="mt-1 text-xs text-gray-500">{descriptions[selected]}</p>
+        ) : null}
+      </div>
+    );
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div className="w-full max-w-3xl max-h-[calc(100vh-2rem)] overflow-y-auto rounded-lg bg-white shadow-xl p-6">
@@ -505,8 +564,18 @@ function StakeholderModal({
           {listSelect('Relationship Category', 'relationship', referenceData.relationships)}
           {ratingSelect('Interest', 'interest')}
           {ratingSelect('Impact', 'impact')}
-          {listSelect('Current Commitment', 'currentCommitment', referenceData.commitments)}
-          {listSelect('Target Commitment', 'targetCommitment', referenceData.commitments)}
+          {scaleSelect(
+            'Current Commitment',
+            'currentCommitment',
+            referenceData.commitments,
+            COMMITMENT_DESCRIPTIONS
+          )}
+          {scaleSelect(
+            'Target Commitment',
+            'targetCommitment',
+            referenceData.commitments,
+            COMMITMENT_DESCRIPTIONS
+          )}
           <div>
             <label className="block mb-2 text-sm font-medium text-gray-900">Commitment Gap</label>
             <div
@@ -516,8 +585,18 @@ function StakeholderModal({
             </div>
           </div>
           {ratingSelect('Influence', 'influence')}
-          {listSelect('Current Capability', 'capabilityCurrent', referenceData.capabilities)}
-          {listSelect('Target Capability', 'capabilityTarget', referenceData.capabilities)}
+          {scaleSelect(
+            'Current Capability',
+            'capabilityCurrent',
+            referenceData.capabilities,
+            CAPABILITY_DESCRIPTIONS
+          )}
+          {scaleSelect(
+            'Target Capability',
+            'capabilityTarget',
+            referenceData.capabilities,
+            CAPABILITY_DESCRIPTIONS
+          )}
           <div>
             <label className="block mb-2 text-sm font-medium text-gray-900">Capability Gap</label>
             <div
@@ -1308,11 +1387,41 @@ function StakeholdersTab({
           onChange: (value) => onFilterChange('name', value),
         }}
         selects={[
-          { key: 'group', label: 'Filter by group', value: state.filterConfig.group || '', options: uniqueValues('group'), onChange: (v) => onFilterChange('group', v) },
-          { key: 'subGroup', label: 'Filter by sub-group', value: state.filterConfig.subGroup || '', options: uniqueValues('subGroup'), onChange: (v) => onFilterChange('subGroup', v) },
-          { key: 'location', label: 'Filter by location', value: state.filterConfig.location || '', options: uniqueValues('location'), onChange: (v) => onFilterChange('location', v) },
-          { key: 'relationship', label: 'Filter by relationship', value: state.filterConfig.relationship || '', options: uniqueValues('relationship'), onChange: (v) => onFilterChange('relationship', v) },
-          { key: 'mapping', label: 'Filter by mapping', value: state.filterConfig.mapping || '', options: ['Manage Closely', 'Keep Satisfied', 'Keep Informed', 'Monitor'], onChange: (v) => onFilterChange('mapping', v) },
+          {
+            key: 'group',
+            label: 'Filter by group',
+            value: state.filterConfig.group || '',
+            options: uniqueValues('group'),
+            onChange: (v) => onFilterChange('group', v),
+          },
+          {
+            key: 'subGroup',
+            label: 'Filter by sub-group',
+            value: state.filterConfig.subGroup || '',
+            options: uniqueValues('subGroup'),
+            onChange: (v) => onFilterChange('subGroup', v),
+          },
+          {
+            key: 'location',
+            label: 'Filter by location',
+            value: state.filterConfig.location || '',
+            options: uniqueValues('location'),
+            onChange: (v) => onFilterChange('location', v),
+          },
+          {
+            key: 'relationship',
+            label: 'Filter by relationship',
+            value: state.filterConfig.relationship || '',
+            options: uniqueValues('relationship'),
+            onChange: (v) => onFilterChange('relationship', v),
+          },
+          {
+            key: 'mapping',
+            label: 'Filter by mapping',
+            value: state.filterConfig.mapping || '',
+            options: ['Manage Closely', 'Keep Satisfied', 'Keep Informed', 'Monitor'],
+            onChange: (v) => onFilterChange('mapping', v),
+          },
         ]}
         onReset={onResetFilters}
       />
@@ -1471,7 +1580,10 @@ function ApplyToProjectModal({
         <h3 className="text-xl font-semibold text-gray-900 mb-4">Add to Project Plan</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
           <div>
-            <label htmlFor="apply-component" className="block mb-2 text-sm font-medium text-gray-900">
+            <label
+              htmlFor="apply-component"
+              className="block mb-2 text-sm font-medium text-gray-900"
+            >
               Component
             </label>
             <select
@@ -1626,7 +1738,11 @@ function EngagementTab({
 
   const uniqueStakeholderNames = useMemo(
     () =>
-      [...new Set(state.engagementLog.map((log) => stakeholderMap[log.stakeholderId]).filter(Boolean))].sort(),
+      [
+        ...new Set(
+          state.engagementLog.map((log) => stakeholderMap[log.stakeholderId]).filter(Boolean)
+        ),
+      ].sort(),
     [state.engagementLog, stakeholderMap]
   );
 
@@ -1719,11 +1835,17 @@ function EngagementTab({
                         className="flex items-center gap-2"
                         onClick={(event) => event.stopPropagation()}
                       >
-                        <IconActionButton onClick={() => onOpen(log.id)} title="Edit engagement log">
+                        <IconActionButton
+                          onClick={() => onOpen(log.id)}
+                          title="Edit engagement log"
+                        >
                           <PencilIcon />
                         </IconActionButton>
                         {canApply ? (
-                          <IconActionButton onClick={() => onApply(log)} title="Add to project plan">
+                          <IconActionButton
+                            onClick={() => onApply(log)}
+                            title="Add to project plan"
+                          >
                             <PlusCircleIcon />
                           </IconActionButton>
                         ) : null}
@@ -1756,6 +1878,7 @@ const MAP_AXIS_OPTIONS: { key: MapAxisKey; label: string }[] = [
 
 function AnalysisMapTab({
   state,
+  groups,
   groupColors,
   onFilterChange,
   onAxisChange,
@@ -1763,6 +1886,7 @@ function AnalysisMapTab({
   onOpenStakeholder,
 }: {
   state: StakeholderAnalysisState;
+  groups: string[];
   groupColors: Record<string, string>;
   onFilterChange: (key: 'group' | 'subGroup' | 'location' | 'relationship', value: string) => void;
   onAxisChange: (axis: 'x' | 'y', value: MapAxisKey) => void;
@@ -1950,7 +2074,7 @@ function AnalysisMapTab({
         <div className="w-full md:w-64">
           <h4 className="font-semibold mb-2 text-gray-700">Legend</h4>
           <div className="space-y-1">
-            {state.referenceData.groups.map((g) => (
+            {groups.map((g) => (
               <div key={g} className="flex items-center gap-2 px-1.5 py-0.5 rounded-md">
                 <span
                   className="inline-block h-3 w-3 rounded-full"
@@ -1977,7 +2101,9 @@ function ActivityRatingBadge({ value }: { value: ActivityRating }): JSX.Element 
     return null;
   }
   return (
-    <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${ACTIVITY_RATING_CLASS[value]}`}>
+    <span
+      className={`px-2 py-0.5 text-xs font-medium rounded-full ${ACTIVITY_RATING_CLASS[value]}`}
+    >
       {value}
     </span>
   );
@@ -2070,101 +2196,56 @@ function ActivitiesTab({
   );
 }
 
-const REFERENCE_KEYS: { key: keyof ReferenceData; title: string }[] = [
-  { key: 'groups', title: 'Groups' },
-  { key: 'subGroups', title: 'Sub Groups' },
-  { key: 'locations', title: 'Locations' },
-  { key: 'relationships', title: 'Relationships' },
-  { key: 'commitments', title: 'Commitments' },
-  { key: 'capabilities', title: 'Capabilities' },
-];
-
-function ReferenceListCard({
+function ScaleReferenceTable({
   title,
-  values,
-  onUpdate,
+  levels,
+  descriptions,
 }: {
   title: string;
-  values: string[];
-  onUpdate: (values: string[]) => void;
+  levels: string[];
+  descriptions: Record<string, string>;
 }): JSX.Element {
-  const [newValue, setNewValue] = useState('');
-
-  const addValue = () => {
-    const trimmed = newValue.trim();
-    if (!trimmed || values.includes(trimmed)) {
-      return;
-    }
-    onUpdate([...values, trimmed]);
-    setNewValue('');
-  };
-
   return (
     <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
       <h3 className="font-semibold mb-2 text-gray-800">{title}</h3>
-      <ul className="space-y-1 mb-3">
-        {values.map((value, index) => (
-          <li
-            key={value}
-            className="flex items-center justify-between gap-2 bg-white border border-gray-200 rounded-md px-2 py-1.5"
-          >
-            <span className="text-sm text-gray-800">{value}</span>
-            <IconActionButton
-              onClick={() => onUpdate(values.filter((_, i) => i !== index))}
-              title={`Remove ${value}`}
-              variant="danger"
-            >
-              <BinIcon />
-            </IconActionButton>
-          </li>
-        ))}
-        {values.length === 0 ? <li className="text-sm text-gray-400 italic">No items yet.</li> : null}
-      </ul>
-      <div className="flex gap-2">
-        <input
-          type="text"
-          value={newValue}
-          onChange={(event) => setNewValue(event.target.value)}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter') {
-              event.preventDefault();
-              addValue();
-            }
-          }}
-          placeholder={`Add a ${title.toLowerCase()} item...`}
-          className="flex-1 p-2 border border-gray-300 rounded-md text-sm"
-        />
-        <button
-          type="button"
-          onClick={addValue}
-          className="bg-indigo-600 text-white px-3 py-1.5 rounded-md hover:bg-indigo-700 text-sm"
-        >
-          Add
-        </button>
-      </div>
+      <table className="w-full text-sm text-left">
+        <tbody className="divide-y divide-gray-200">
+          {levels.map((level) => (
+            <tr key={level}>
+              <td className="py-2 pr-3 font-medium text-gray-800 align-top whitespace-nowrap">
+                {level}
+              </td>
+              <td className="py-2 text-gray-600">{descriptions[level]}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
 
-function ReferenceTab({
-  referenceData,
-  onUpdate,
-}: {
-  referenceData: ReferenceData;
-  onUpdate: (key: keyof ReferenceData, values: string[]) => void;
-}): JSX.Element {
+function ReferenceTab(): JSX.Element {
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-      <h2 className="text-xl font-semibold mb-4">Reference Data Management</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {REFERENCE_KEYS.map(({ key, title }) => (
-          <ReferenceListCard
-            key={key}
-            title={title}
-            values={referenceData[key] as string[]}
-            onUpdate={(values) => onUpdate(key, values)}
-          />
-        ))}
+    <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 space-y-6">
+      <div>
+        <h2 className="text-xl font-semibold mb-2">Reference Data</h2>
+        <p className="text-sm text-gray-600">
+          Groups, Sub-Groups, Locations and Relationships are shared across the Adoption Engine and
+          are now managed from <strong>Project Details</strong>. The commitment and capability
+          scales below are fixed and shown here for reference.
+        </p>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <ScaleReferenceTable
+          title="Commitment levels"
+          levels={Object.keys(COMMITMENTS_MAP)}
+          descriptions={COMMITMENT_DESCRIPTIONS}
+        />
+        <ScaleReferenceTable
+          title="Capability levels"
+          levels={Object.keys(CAPABILITIES_MAP)}
+          descriptions={CAPABILITY_DESCRIPTIONS}
+        />
       </div>
     </div>
   );
@@ -2215,10 +2296,11 @@ function GuidanceTab({
           Details.
         </p>
 
-        <h4 className="font-semibold">Step 2: Define Your Terms (Reference Data Tab)</h4>
+        <h4 className="font-semibold">Step 2: Check Your Terms (Reference Data Tab)</h4>
         <p>
-          Customise the dropdown options used throughout the tool before adding stakeholders -
-          Groups, Sub-Groups, Locations and Relationships - one item per line, then Save.
+          Groups, Sub-Groups, Locations and Relationships are set up once from Project Details and
+          shared across the Adoption Engine. The Reference Data tab also shows what each Commitment
+          and Capability level means.
         </p>
 
         <h4 className="font-semibold">Step 3: Add Your Stakeholders (Stakeholders Tab)</h4>
@@ -2298,6 +2380,8 @@ export interface StakeholderAnalysisAppProps {
   trustName?: string;
   projectName?: string;
   teamMembers?: TeamMember[];
+  /** Groups/Sub-Groups/Locations/Relationships - now managed centrally on Project Details. */
+  referenceLists?: StakeholderReferenceLists;
   components?: AssessmentComponent[];
   objectives?: Record<string, ComponentObjective[]>;
   getEntry?: (componentId: string, lens: string) => DraftEntry;
@@ -2314,6 +2398,7 @@ export default function StakeholderAnalysisApp({
   trustName = '',
   projectName = '',
   teamMembers = [],
+  referenceLists = DEFAULT_STAKEHOLDER_REFERENCE_LISTS,
   components = [],
   getEntry,
   onEntryUpdate,
@@ -2321,8 +2406,8 @@ export default function StakeholderAnalysisApp({
   const [state, setState] = useState<StakeholderAnalysisState>(
     () => load<StakeholderAnalysisState>(STORAGE_KEY) || freshState()
   );
-  const [activeTab, setActiveTab] = useState<Tab>(
-    () => (load<StakeholderAnalysisState>(STORAGE_KEY)?.guidanceRead ? 'dashboard' : 'guidance')
+  const [activeTab, setActiveTab] = useState<Tab>(() =>
+    load<StakeholderAnalysisState>(STORAGE_KEY)?.guidanceRead ? 'dashboard' : 'guidance'
   );
   const [stakeholderModal, setStakeholderModal] = useState<Stakeholder | null>(null);
   const [engagementModal, setEngagementModal] = useState<EngagementLog | null>(null);
@@ -2335,8 +2420,24 @@ export default function StakeholderAnalysisApp({
   }, [state]);
 
   const groupColors = useMemo(
-    () => assignGroupColors(state.referenceData.groups),
-    [state.referenceData.groups]
+    () => assignGroupColors(referenceLists.groups),
+    [referenceLists.groups]
+  );
+
+  /** Merges the locally-stored reference data (ratings, activity templates) with the project-level
+   * lists (groups/sub-groups/locations/relationships, now edited from Project Details) and the fixed
+   * commitment/capability scales, into the single shape the modals/tables expect. */
+  const effectiveReferenceData: ReferenceData = useMemo(
+    () => ({
+      ...state.referenceData,
+      groups: referenceLists.groups,
+      subGroups: referenceLists.subGroups,
+      locations: referenceLists.locations,
+      relationships: referenceLists.relationships,
+      commitments: Object.keys(COMMITMENTS_MAP),
+      capabilities: Object.keys(CAPABILITIES_MAP),
+    }),
+    [state.referenceData, referenceLists]
   );
 
   const stakeholderMap = useMemo(
@@ -2674,6 +2775,7 @@ export default function StakeholderAnalysisApp({
       {activeTab === 'map' ? (
         <AnalysisMapTab
           state={state}
+          groups={referenceLists.groups}
           groupColors={groupColors}
           onFilterChange={(key, value) =>
             updateState({ mapFilterConfig: { ...state.mapFilterConfig, [key]: value } })
@@ -2701,14 +2803,7 @@ export default function StakeholderAnalysisApp({
           onDelete={deleteActivity}
         />
       ) : null}
-      {activeTab === 'reference' ? (
-        <ReferenceTab
-          referenceData={state.referenceData}
-          onUpdate={(key, values) =>
-            updateState({ referenceData: { ...state.referenceData, [key]: values } })
-          }
-        />
-      ) : null}
+      {activeTab === 'reference' ? <ReferenceTab /> : null}
       {activeTab === 'guidance' ? (
         <GuidanceTab
           guidanceRead={state.guidanceRead}
@@ -2719,7 +2814,7 @@ export default function StakeholderAnalysisApp({
       {stakeholderModal ? (
         <StakeholderModal
           stakeholder={stakeholderModal}
-          referenceData={state.referenceData}
+          referenceData={effectiveReferenceData}
           hasEngagementLogs={stakeholderHasLogs}
           onSave={saveStakeholder}
           onCancel={() => setStakeholderModal(null)}

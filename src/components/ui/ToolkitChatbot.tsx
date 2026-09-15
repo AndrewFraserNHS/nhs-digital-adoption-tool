@@ -382,7 +382,6 @@ export function ToolkitChatbot({
         className="inline-flex items-center gap-2 rounded-full bg-[#005eb8] px-4 py-2 text-sm font-semibold text-white shadow-lg hover:bg-blue-700"
         aria-label="Open toolkit assistant"
       >
-        <span aria-hidden="true">💬</span>
         Toolkit assistant
       </button>
     </div>

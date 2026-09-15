@@ -426,23 +426,24 @@ export function EngineExplainedPage({
   const [notionalExerciseDone, setNotionalExerciseDone] = useState(false);
 
   const updateNotionalAction = (id: string, updates: Partial<NotionalAction>) => {
-    setNotionalActions((current) => {
-      const next = current.map((action) => (action.id === id ? { ...action, ...updates } : action));
-      const allComplete = next.every(
-        (action) => action.status === 'Completed' && action.owner.trim() !== ''
-      );
-      if (allComplete && !notionalExerciseDone) {
-        setNotionalExerciseDone(true);
-        setNotionalToastQueue((queue) => [
-          ...queue,
-          {
-            id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-            message: `${EXAMPLE_COMPONENT.label} · ${EXAMPLE_LENSES[0]} moved to the next readiness level!`,
-          },
-        ]);
-      }
-      return next;
-    });
+    const next = notionalActions.map((action) =>
+      action.id === id ? { ...action, ...updates } : action
+    );
+    setNotionalActions(next);
+
+    const allComplete = next.every(
+      (action) => action.status === 'Completed' && action.owner.trim() !== ''
+    );
+    if (allComplete && !notionalExerciseDone) {
+      setNotionalExerciseDone(true);
+      setNotionalToastQueue((queue) => [
+        ...queue,
+        {
+          id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+          message: `${EXAMPLE_COMPONENT.label} · ${EXAMPLE_LENSES[0]} moved to the next readiness level!`,
+        },
+      ]);
+    }
   };
 
   const isLast = activeStep === STEP_TITLES.length - 1;

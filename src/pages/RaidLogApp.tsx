@@ -71,7 +71,9 @@ function riskSeverity(item: RaidItem): number | null {
 function SeverityBadge({ severity }: { severity: number }): JSX.Element {
   const status = getBragStatus(16 - severity, { blue: 13, green: 9, amber: 5 });
   return (
-    <span className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-bold ${bragBadgeClass(status)}`}>
+    <span
+      className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-bold ${bragBadgeClass(status)}`}
+    >
       {severity}
     </span>
   );
@@ -106,7 +108,10 @@ export default function RaidLogApp({
     setFormData((current) => ({ ...current, ...updates }));
 
   const uniqueOwners = useMemo(
-    () => Array.from(new Set(items.map((item) => item.owner))).filter(Boolean).sort(),
+    () =>
+      Array.from(new Set(items.map((item) => item.owner)))
+        .filter(Boolean)
+        .sort(),
     [items]
   );
 
@@ -131,7 +136,9 @@ export default function RaidLogApp({
     }
     const newItem: RaidItem = { ...formData, id: formData.id || createId() };
     setItems((current) =>
-      formData.id ? current.map((item) => (item.id === formData.id ? newItem : item)) : [...current, newItem]
+      formData.id
+        ? current.map((item) => (item.id === formData.id ? newItem : item))
+        : [...current, newItem]
     );
     setFormData(INITIAL_FORM_STATE);
     setShowForm(false);
@@ -191,7 +198,10 @@ export default function RaidLogApp({
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div>
-                <label htmlFor="raid-type" className="block text-sm font-medium text-slate-700 mb-1">
+                <label
+                  htmlFor="raid-type"
+                  className="block text-sm font-medium text-slate-700 mb-1"
+                >
                   Type
                 </label>
                 <select
@@ -208,7 +218,10 @@ export default function RaidLogApp({
                 </select>
               </div>
               <div>
-                <label htmlFor="raid-title" className="block text-sm font-medium text-slate-700 mb-1">
+                <label
+                  htmlFor="raid-title"
+                  className="block text-sm font-medium text-slate-700 mb-1"
+                >
                   Title
                 </label>
                 <input
@@ -220,7 +233,10 @@ export default function RaidLogApp({
                 />
               </div>
               <div>
-                <label htmlFor="raid-owner" className="block text-sm font-medium text-slate-700 mb-1">
+                <label
+                  htmlFor="raid-owner"
+                  className="block text-sm font-medium text-slate-700 mb-1"
+                >
                   Owner
                 </label>
                 <select
@@ -252,7 +268,10 @@ export default function RaidLogApp({
                 />
               </div>
               <div>
-                <label htmlFor="raid-status" className="block text-sm font-medium text-slate-700 mb-1">
+                <label
+                  htmlFor="raid-status"
+                  className="block text-sm font-medium text-slate-700 mb-1"
+                >
                   Status
                 </label>
                 <select
@@ -347,7 +366,10 @@ export default function RaidLogApp({
                 </>
               ) : null}
               <div className="lg:col-span-3">
-                <label htmlFor="raid-notes" className="block text-sm font-medium text-slate-700 mb-1">
+                <label
+                  htmlFor="raid-notes"
+                  className="block text-sm font-medium text-slate-700 mb-1"
+                >
                   Notes
                 </label>
                 <textarea

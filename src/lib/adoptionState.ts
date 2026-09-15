@@ -120,6 +120,21 @@ export interface TeamMember {
   role: string;
 }
 
+/** Groups/Sub-Groups/Locations/Relationships shared by the Stakeholder Analysis tool - one definition per project. */
+export interface StakeholderReferenceLists {
+  groups: string[];
+  subGroups: string[];
+  locations: string[];
+  relationships: string[];
+}
+
+export const DEFAULT_STAKEHOLDER_REFERENCE_LISTS: StakeholderReferenceLists = {
+  groups: ['Finance', 'HR', 'IT', 'Operations', 'External'],
+  subGroups: ['Frontline', 'First line manager', 'Senior rank', 'Support'],
+  locations: ['New York', 'London', 'Tokyo', 'Remote'],
+  relationships: ['Customer', 'Provider', 'Influencer', 'Governance'],
+};
+
 export interface OrgProfile {
   trustName: string;
   region: string;
@@ -148,6 +163,8 @@ export interface OrgProfile {
    */
   externalLinksInitiated?: boolean;
   teamMembers?: TeamMember[];
+  /** Groups/Sub-Groups/Locations/Relationships used by the Stakeholder Analysis tool - shared here so every project only defines them once. */
+  stakeholderReferenceLists?: StakeholderReferenceLists;
   /**
    * Stable identity for this CST, assigned once and carried through every export so two
    * copies of the same programme can be recognised as such after diverging. Never invented
@@ -232,6 +249,8 @@ export function normalizeOrgProfile(profile?: Partial<OrgProfile>): OrgProfile {
       })),
     externalLinksInitiated: profile?.externalLinksInitiated,
     teamMembers: profile?.teamMembers || [],
+    stakeholderReferenceLists:
+      profile?.stakeholderReferenceLists || DEFAULT_STAKEHOLDER_REFERENCE_LISTS,
     cstId: profile?.cstId,
   };
 }

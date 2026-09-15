@@ -1,5 +1,5 @@
-import { BinIcon, IconActionButton, PencilIcon } from '@components/common/IconButtons';
 import { FilterBar } from '@components/common/FilterBar';
+import { BinIcon, IconActionButton, PencilIcon } from '@components/common/IconButtons';
 import { bragBadgeClass, getBragStatus } from '@lib/brag';
 import { load, save } from '@lib/storage';
 import { downloadFile } from '@lib/utils';
@@ -547,7 +547,10 @@ function AssessmentsTab({
   }, [items, sortKey, sortDirection, functionFilter, processFilter]);
 
   const uniqueFunctions = useMemo(
-    () => Array.from(new Set(items.map((item) => item.function))).filter(Boolean).sort(),
+    () =>
+      Array.from(new Set(items.map((item) => item.function)))
+        .filter(Boolean)
+        .sort(),
     [items]
   );
   const functionOptions = useMemo(
@@ -555,7 +558,10 @@ function AssessmentsTab({
     [uniqueFunctions]
   );
   const uniqueProcesses = useMemo(
-    () => Array.from(new Set(items.map((item) => item.process))).filter(Boolean).sort(),
+    () =>
+      Array.from(new Set(items.map((item) => item.process)))
+        .filter(Boolean)
+        .sort(),
     [items]
   );
 
@@ -631,7 +637,10 @@ function AssessmentsTab({
                 1. Process Details
               </h4>
               <div>
-                <label htmlFor="cia-function" className="block text-sm font-medium text-slate-700 mb-1">
+                <label
+                  htmlFor="cia-function"
+                  className="block text-sm font-medium text-slate-700 mb-1"
+                >
                   Business Function
                 </label>
                 <select

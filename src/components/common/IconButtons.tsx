@@ -2,7 +2,13 @@ import type { JSX } from 'react';
 
 export function PencilIcon(): JSX.Element {
   return (
-    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+    <svg
+      className="h-4 w-4"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -15,7 +21,13 @@ export function PencilIcon(): JSX.Element {
 
 export function BinIcon(): JSX.Element {
   return (
-    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+    <svg
+      className="h-4 w-4"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -28,7 +40,13 @@ export function BinIcon(): JSX.Element {
 
 export function DuplicateIcon(): JSX.Element {
   return (
-    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+    <svg
+      className="h-4 w-4"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -41,7 +59,13 @@ export function DuplicateIcon(): JSX.Element {
 
 export function PlusCircleIcon(): JSX.Element {
   return (
-    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+    <svg
+      className="h-4 w-4"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -54,7 +78,13 @@ export function PlusCircleIcon(): JSX.Element {
 
 export function LockIcon(): JSX.Element {
   return (
-    <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+    <svg
+      className="h-3.5 w-3.5"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -85,7 +115,8 @@ export function IconActionButton({
   darkMode = false,
   disabled = false,
 }: IconActionButtonProps): JSX.Element {
-  const base = 'inline-flex h-8 w-8 items-center justify-center rounded-md border disabled:opacity-40 disabled:cursor-not-allowed';
+  const base =
+    'inline-flex h-8 w-8 items-center justify-center rounded-md border disabled:opacity-40 disabled:cursor-not-allowed';
   const neutral = darkMode
     ? 'border-slate-600 bg-slate-800 text-slate-100 hover:bg-slate-700'
     : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100';

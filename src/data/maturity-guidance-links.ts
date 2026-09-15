@@ -616,15 +616,9 @@ const PRODUCT_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
   // TODO(Product): Populate product-specific guidance links per theme.Vision: { inputs: [], deliverables: [] },'Case for Change': { inputs: [], deliverables: [] },'Sponsorship/ Change Network': { inputs: [], deliverables: [] },Benefits: { inputs: [], deliverables: [] },'Change Impact & Risk': { inputs: [], deliverables: [] },'Change Management Readiness & Planning': { inputs: [], deliverables: [] },'Stakeholder Engagement & Comms': { inputs: [], deliverables: [] },'Resistance Management': { inputs: [], deliverables: [] },'Skills/Learning': { inputs: [], deliverables: [] },'Process change': { inputs: [], deliverables: [] },Reinforcement: { inputs: [], deliverables: [] },'Change Management Capability': { inputs: [], deliverables: [] },
 };
 
-const EPR_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
-  // TODO(EPR): Populate EPR-specific guidance links per theme.Vision: { inputs: [], deliverables: [] },'Case for Change': { inputs: [], deliverables: [] },'Sponsorship/ Change Network': { inputs: [], deliverables: [] },Benefits: { inputs: [], deliverables: [] },'Change Impact & Risk': { inputs: [], deliverables: [] },'Change Management Readiness & Planning': { inputs: [], deliverables: [] },'Stakeholder Engagement & Comms': { inputs: [], deliverables: [] },'Resistance Management': { inputs: [], deliverables: [] },'Skills/Learning': { inputs: [], deliverables: [] },'Process change': { inputs: [], deliverables: [] },Reinforcement: { inputs: [], deliverables: [] },'Change Management Capability': { inputs: [], deliverables: [] },
-};
-
 export const MATURITY_GUIDANCE_LINKS: Record<MaturityGuidanceTarget, GuidanceLinkMap> = {
   Default: DEFAULT_GUIDANCE_LINK_MAP,
   Product: PRODUCT_GUIDANCE_LINK_MAP,
-  AVT: PRODUCT_GUIDANCE_LINK_MAP,
-  EPR: EPR_GUIDANCE_LINK_MAP,
 };
 
 function readStoredGuidanceWorkstreams(): GuidanceWorkstreamDefinition[] {

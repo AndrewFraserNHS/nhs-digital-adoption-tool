@@ -23,10 +23,17 @@ interface FilterBarProps {
 }
 
 /** Reusable "filters live above the table" row: labeled selects plus an optional search box and reset button. */
-export function FilterBar({ selects, search, onReset, darkMode = false }: FilterBarProps): JSX.Element {
+export function FilterBar({
+  selects,
+  search,
+  onReset,
+  darkMode = false,
+}: FilterBarProps): JSX.Element {
   const labelClass = `block text-xs font-medium mb-1 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`;
   const controlClass = `text-sm rounded-md border px-2 py-1.5 ${
-    darkMode ? 'border-slate-600 bg-slate-800 text-slate-100' : 'border-slate-300 bg-white text-slate-700'
+    darkMode
+      ? 'border-slate-600 bg-slate-800 text-slate-100'
+      : 'border-slate-300 bg-white text-slate-700'
   }`;
 
   return (

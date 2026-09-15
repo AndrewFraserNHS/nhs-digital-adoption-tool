@@ -1,4 +1,5 @@
 import { ActionEditorFields } from '@components/common/ActionEditorFields';
+import { FilterBar } from '@components/common/FilterBar';
 import {
   BinIcon,
   DuplicateIcon,
@@ -7,10 +8,9 @@ import {
   PencilIcon,
   PlusCircleIcon,
 } from '@components/common/IconButtons';
-import { FilterBar } from '@components/common/FilterBar';
 import type { AssessmentComponent } from '@data/components';
-import { createDoughnutChart } from '@lib/charts';
 import type { ComponentObjective, DraftAction, DraftEntry, TeamMember } from '@lib/adoptionState';
+import { createDoughnutChart } from '@lib/charts';
 import { load, save } from '@lib/storage';
 import { downloadFile } from '@lib/utils';
 import { type ChangeEvent, JSX, useEffect, useMemo, useRef, useState } from 'react';
@@ -97,21 +97,25 @@ interface StakeholderAnalysisState {
 const STORAGE_KEY = 'nhs-stakeholder-analysis';
 
 const RATINGS_MAP: Record<string, number> = { Low: 1, Medium: 2, High: 3, 'Very High': 4 };
+
+// TODO: Descriptions need available to users in frontend
 const COMMITMENTS_MAP: Record<string, number> = {
-  Resistant: 1,
-  Opposed: 2,
-  Ambivalent: 3,
-  Complying: 4,
-  Supporting: 5,
-  Leading: 6,
+  Resistant: 1, // Opposed to the change and is actively hostile towards it
+  Opposed: 2, // Quietly opposed to the change without proactive resistance
+  Ambivalent: 3, // Unconvinced about the change but is not actively opposed
+  Complying: 4, // Supportive of the change but only because they see that they have no choice rather than that they agree with it
+  Supporting: 5, // Actively supportive of the change and is committed to its success
+  Leading: 6, // Actively leading the change within their area or the organisation as a whole with total commitment
 };
+
+// TODO: Descriptions need available to users in frontend
 const CAPABILITIES_MAP: Record<string, number> = {
-  Unaware: 1,
-  Aware: 2,
-  Informed: 3,
-  Equipped: 4,
-  Practised: 5,
-  Exemplary: 6,
+  Unaware: 1, // Unaware	Not yet aware of the change
+  Aware: 2, // Aware of the change but has little information
+  Informed: 3, // Has information but is not sure how the change will affect them
+  Equipped: 4, // Equipped with sufficient knowledge and skills to be able to make the change
+  Practised: 5, // Practised in the use of the knowledge and skills required to make the change a success
+  Exemplary: 6, // An exemplar of good practice in relation to the change
 };
 
 const GROUP_COLOR_PALETTE = [
@@ -131,6 +135,24 @@ function createId(prefix = ''): string {
   return `${prefix}${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
+// Todo: Bring this table data into the reference data
+// Ideally this would be done in Project Set-up though, and just be seen + updated in Reference data but is owned at a project level.
+
+// Functional Group		Location		Department		Relationship Categories
+// SRO		LRH		Ward 1		Customer
+// Manager		GH		Ward 2		Provider
+// Trades Union		Community 		Ward 3		Influencer
+// Programme		CCG office		Ward 4		Governance
+// Project				Pharmacy
+// Trainer				Pathology
+// Clinical				A+E
+// Arms Length Body				Main Reception
+// CCG				Exec Offices
+// GP				GP Practices
+// CSU				IT
+// Staff				HR
+// 				Comms
+
 function freshReferenceData(): ReferenceData {
   return {
     groups: ['Finance', 'HR', 'IT', 'Operations', 'External'],
@@ -142,26 +164,8 @@ function freshReferenceData(): ReferenceData {
     ratings: ['Low', 'Medium', 'High', 'Very High'],
     engagementActivities: [
       {
-        id: 'act-1a',
-        name: 'Facebook',
-        inform: 'High',
-        consult: 'Medium',
-        involve: '',
-        collaborate: '',
-        empower: '',
-      },
-      {
-        id: 'act-1b',
-        name: 'X',
-        inform: 'High',
-        consult: 'Medium',
-        involve: '',
-        collaborate: '',
-        empower: '',
-      },
-      {
-        id: 'act-1c',
-        name: 'Instagram',
+        id: 'act-1',
+        name: 'Targetted email bulletin/letter',
         inform: 'High',
         consult: 'Medium',
         involve: '',
@@ -170,16 +174,16 @@ function freshReferenceData(): ReferenceData {
       },
       {
         id: 'act-2',
-        name: 'Roadshows',
-        inform: 'High',
-        consult: 'High',
-        involve: 'Medium',
+        name: 'General email bulletin/letter',
+        inform: 'Medium',
+        consult: '',
+        involve: '',
         collaborate: '',
         empower: '',
       },
       {
         id: 'act-3',
-        name: 'Briefings',
+        name: 'Targetted X/Twitter Feed',
         inform: 'High',
         consult: 'Medium',
         involve: '',
@@ -188,6 +192,105 @@ function freshReferenceData(): ReferenceData {
       },
       {
         id: 'act-4',
+        name: 'Case Study',
+        inform: 'High',
+        consult: 'Medium',
+        involve: '',
+        collaborate: '',
+        empower: '',
+      },
+      {
+        id: 'act-5',
+        name: 'Programme/Product/Service engagement pack',
+        inform: 'High',
+        consult: 'High',
+        involve: 'Medium',
+        collaborate: '',
+        empower: '',
+      },
+      {
+        id: 'act-6',
+        name: 'Presence at corporate events',
+        inform: 'Medium',
+        consult: '',
+        involve: 'Medium',
+        collaborate: '',
+        empower: '',
+      },
+      {
+        id: 'act-7',
+        name: 'Face to Face meeting',
+        inform: 'High',
+        consult: 'High',
+        involve: 'High',
+        collaborate: 'High',
+        empower: 'Medium',
+      },
+      {
+        id: 'act-8',
+        name: 'Updates to website and specific programme pages',
+        inform: 'Medium',
+        consult: '',
+        involve: '',
+        collaborate: '',
+        empower: '',
+      },
+      {
+        id: 'act-9',
+        name: 'Webinar',
+        inform: 'High',
+        consult: 'Medium',
+        involve: 'Medium',
+        collaborate: 'Medium',
+        empower: 'Medium',
+      },
+      {
+        id: 'act-10',
+        name: 'Fact sheet',
+        inform: 'High',
+        consult: '',
+        involve: '',
+        collaborate: '',
+        empower: '',
+      },
+      {
+        id: 'act-11',
+        name: 'Ways of working leaflet',
+        inform: 'High',
+        consult: '',
+        involve: 'Medium',
+        collaborate: '',
+        empower: '',
+      },
+      {
+        id: 'act-12',
+        name: 'Core setting engagement pack',
+        inform: '',
+        consult: '',
+        involve: 'High',
+        collaborate: 'High',
+        empower: 'High',
+      },
+      {
+        id: 'act-13',
+        name: 'Roadshows',
+        inform: 'High',
+        consult: 'High',
+        involve: 'Medium',
+        collaborate: '',
+        empower: '',
+      },
+      {
+        id: 'act-14',
+        name: 'Briefings',
+        inform: 'High',
+        consult: 'Medium',
+        involve: '',
+        collaborate: '',
+        empower: '',
+      },
+      {
+        id: 'act-15',
         name: 'Workshops',
         inform: 'Medium',
         consult: 'High',
@@ -196,7 +299,7 @@ function freshReferenceData(): ReferenceData {
         empower: '',
       },
       {
-        id: 'act-5',
+        id: 'act-16',
         name: 'Focus Groups',
         inform: 'Medium',
         consult: 'High',
@@ -205,7 +308,7 @@ function freshReferenceData(): ReferenceData {
         empower: '',
       },
       {
-        id: 'act-6',
+        id: 'act-17',
         name: 'Secondments',
         inform: '',
         consult: 'Medium',
@@ -214,7 +317,7 @@ function freshReferenceData(): ReferenceData {
         empower: 'Medium',
       },
       {
-        id: 'act-7',
+        id: 'act-18',
         name: 'Steering Committee',
         inform: 'Medium',
         consult: 'High',
@@ -1308,11 +1411,41 @@ function StakeholdersTab({
           onChange: (value) => onFilterChange('name', value),
         }}
         selects={[
-          { key: 'group', label: 'Filter by group', value: state.filterConfig.group || '', options: uniqueValues('group'), onChange: (v) => onFilterChange('group', v) },
-          { key: 'subGroup', label: 'Filter by sub-group', value: state.filterConfig.subGroup || '', options: uniqueValues('subGroup'), onChange: (v) => onFilterChange('subGroup', v) },
-          { key: 'location', label: 'Filter by location', value: state.filterConfig.location || '', options: uniqueValues('location'), onChange: (v) => onFilterChange('location', v) },
-          { key: 'relationship', label: 'Filter by relationship', value: state.filterConfig.relationship || '', options: uniqueValues('relationship'), onChange: (v) => onFilterChange('relationship', v) },
-          { key: 'mapping', label: 'Filter by mapping', value: state.filterConfig.mapping || '', options: ['Manage Closely', 'Keep Satisfied', 'Keep Informed', 'Monitor'], onChange: (v) => onFilterChange('mapping', v) },
+          {
+            key: 'group',
+            label: 'Filter by group',
+            value: state.filterConfig.group || '',
+            options: uniqueValues('group'),
+            onChange: (v) => onFilterChange('group', v),
+          },
+          {
+            key: 'subGroup',
+            label: 'Filter by sub-group',
+            value: state.filterConfig.subGroup || '',
+            options: uniqueValues('subGroup'),
+            onChange: (v) => onFilterChange('subGroup', v),
+          },
+          {
+            key: 'location',
+            label: 'Filter by location',
+            value: state.filterConfig.location || '',
+            options: uniqueValues('location'),
+            onChange: (v) => onFilterChange('location', v),
+          },
+          {
+            key: 'relationship',
+            label: 'Filter by relationship',
+            value: state.filterConfig.relationship || '',
+            options: uniqueValues('relationship'),
+            onChange: (v) => onFilterChange('relationship', v),
+          },
+          {
+            key: 'mapping',
+            label: 'Filter by mapping',
+            value: state.filterConfig.mapping || '',
+            options: ['Manage Closely', 'Keep Satisfied', 'Keep Informed', 'Monitor'],
+            onChange: (v) => onFilterChange('mapping', v),
+          },
         ]}
         onReset={onResetFilters}
       />
@@ -1471,7 +1604,10 @@ function ApplyToProjectModal({
         <h3 className="text-xl font-semibold text-gray-900 mb-4">Add to Project Plan</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
           <div>
-            <label htmlFor="apply-component" className="block mb-2 text-sm font-medium text-gray-900">
+            <label
+              htmlFor="apply-component"
+              className="block mb-2 text-sm font-medium text-gray-900"
+            >
               Component
             </label>
             <select
@@ -1626,7 +1762,11 @@ function EngagementTab({
 
   const uniqueStakeholderNames = useMemo(
     () =>
-      [...new Set(state.engagementLog.map((log) => stakeholderMap[log.stakeholderId]).filter(Boolean))].sort(),
+      [
+        ...new Set(
+          state.engagementLog.map((log) => stakeholderMap[log.stakeholderId]).filter(Boolean)
+        ),
+      ].sort(),
     [state.engagementLog, stakeholderMap]
   );
 
@@ -1719,11 +1859,17 @@ function EngagementTab({
                         className="flex items-center gap-2"
                         onClick={(event) => event.stopPropagation()}
                       >
-                        <IconActionButton onClick={() => onOpen(log.id)} title="Edit engagement log">
+                        <IconActionButton
+                          onClick={() => onOpen(log.id)}
+                          title="Edit engagement log"
+                        >
                           <PencilIcon />
                         </IconActionButton>
                         {canApply ? (
-                          <IconActionButton onClick={() => onApply(log)} title="Add to project plan">
+                          <IconActionButton
+                            onClick={() => onApply(log)}
+                            title="Add to project plan"
+                          >
                             <PlusCircleIcon />
                           </IconActionButton>
                         ) : null}
@@ -1977,7 +2123,9 @@ function ActivityRatingBadge({ value }: { value: ActivityRating }): JSX.Element 
     return null;
   }
   return (
-    <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${ACTIVITY_RATING_CLASS[value]}`}>
+    <span
+      className={`px-2 py-0.5 text-xs font-medium rounded-full ${ACTIVITY_RATING_CLASS[value]}`}
+    >
       {value}
     </span>
   );
@@ -2118,7 +2266,9 @@ function ReferenceListCard({
             </IconActionButton>
           </li>
         ))}
-        {values.length === 0 ? <li className="text-sm text-gray-400 italic">No items yet.</li> : null}
+        {values.length === 0 ? (
+          <li className="text-sm text-gray-400 italic">No items yet.</li>
+        ) : null}
       </ul>
       <div className="flex gap-2">
         <input
@@ -2321,8 +2471,8 @@ export default function StakeholderAnalysisApp({
   const [state, setState] = useState<StakeholderAnalysisState>(
     () => load<StakeholderAnalysisState>(STORAGE_KEY) || freshState()
   );
-  const [activeTab, setActiveTab] = useState<Tab>(
-    () => (load<StakeholderAnalysisState>(STORAGE_KEY)?.guidanceRead ? 'dashboard' : 'guidance')
+  const [activeTab, setActiveTab] = useState<Tab>(() =>
+    load<StakeholderAnalysisState>(STORAGE_KEY)?.guidanceRead ? 'dashboard' : 'guidance'
   );
   const [stakeholderModal, setStakeholderModal] = useState<Stakeholder | null>(null);
   const [engagementModal, setEngagementModal] = useState<EngagementLog | null>(null);
@@ -2587,7 +2737,11 @@ export default function StakeholderAnalysisApp({
             Stakeholder Analysis and Management Tool
           </h1>
           <p className="text-xs text-slate-500">
-            Analyse stakeholders and plan engagement activities
+            The Analysis Map plots your Details tab results. It will group your individuals and
+            groups into a pivot table working on a Interest/Impact vs Power/Influence axis. The
+            table divides into four categories - Low/Medium/High/Very High. If an individual is high
+            or very high on both axis they have the potential to be extremely influential to your
+            change project/programme, either positively or negatively.
           </p>
         </div>
       </header>

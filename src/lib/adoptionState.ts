@@ -124,14 +124,41 @@ export interface TeamMember {
 export interface StakeholderReferenceLists {
   groups: string[];
   subGroups: string[];
-  locations: string[];
+  departments: string[];
   relationships: string[];
 }
 
 export const DEFAULT_STAKEHOLDER_REFERENCE_LISTS: StakeholderReferenceLists = {
-  groups: ['Finance', 'HR', 'IT', 'Operations', 'External'],
-  subGroups: ['Frontline', 'First line manager', 'Senior rank', 'Support'],
-  locations: ['New York', 'London', 'Tokyo', 'Remote'],
+  groups: [
+    'SRO',
+    'Manager',
+    'Trades Union',
+    'Programme',
+    'Project',
+    'Trainer',
+    'Clinical',
+    'Arms Length Body',
+    'CCG',
+    'GP',
+    'CSU',
+    'Staff',
+  ],
+  subGroups: ['LRH', 'GH', 'Community', 'CGC office'],
+  departments: [
+    'Ward 1',
+    'Ward 2',
+    'Ward 3',
+    'Ward 4',
+    'Pharmacy',
+    'Pathology',
+    'A+E',
+    'Main Reception',
+    'Exec Offices',
+    'GP Practices',
+    'IT',
+    'HR',
+    'Comms',
+  ],
   relationships: ['Customer', 'Provider', 'Influencer', 'Governance'],
 };
 

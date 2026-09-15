@@ -36,7 +36,7 @@ interface Stakeholder {
   groupSize: string;
   group: string;
   subGroup: string;
-  location: string;
+  department: string;
   relationship: string;
   interest: Rating;
   impact: Rating;
@@ -73,7 +73,7 @@ interface Activity {
 interface ReferenceData {
   groups: string[];
   subGroups: string[];
-  locations: string[];
+  departments: string[];
   relationships: string[];
   commitments: string[];
   capabilities: string[];
@@ -94,7 +94,7 @@ interface StakeholderAnalysisState {
   filterConfig: Record<string, string>;
   engagementSortConfig: SortConfig;
   engagementFilterConfig: Record<string, string>;
-  mapFilterConfig: { group: string; subGroup: string; location: string; relationship: string };
+  mapFilterConfig: { group: string; subGroup: string; department: string; relationship: string };
   mapAxisConfig: { x: MapAxisKey; y: MapAxisKey };
   activitySortConfig: SortConfig;
   dashboardChartConfig: { chart1: string; chart2: string; chart3: string; chart4: string };
@@ -180,9 +180,32 @@ function createId(prefix = ''): string {
 
 function freshReferenceData(): ReferenceData {
   return {
-    groups: ['Finance', 'HR', 'IT', 'Operations', 'External'],
-    subGroups: ['Frontline', 'First line manager', 'Senior rank', 'Support'],
-    locations: ['New York', 'London', 'Tokyo', 'Remote'],
+    groups: ['SRO',
+    'Manager',
+    'Trades Union',
+    'Programme',
+    'Project',
+    'Trainer',
+    'Clinical',
+    'Arms Length Body',
+    'CCG',
+    'GP',
+    'CSU',
+    'Staff',],
+    subGroups: ['LRH', 'GH', 'Community', 'CGC office'],
+    departments: ['Ward 1',
+    'Ward 2',
+    'Ward 3',
+    'Ward 4',
+    'Pharmacy',
+    'Pathology',
+    'A+E',
+    'Main Reception',
+    'Exec Offices',
+    'GP Practices',
+    'IT',
+    'HR',
+    'Comms'],
     relationships: ['Customer', 'Provider', 'Influencer', 'Governance'],
     commitments: ['Resistant', 'Opposed', 'Ambivalent', 'Complying', 'Supporting', 'Leading'],
     capabilities: ['Unaware', 'Aware', 'Informed', 'Equipped', 'Practised', 'Exemplary'],
@@ -363,7 +386,7 @@ function freshState(): StakeholderAnalysisState {
     filterConfig: {},
     engagementSortConfig: { key: 'stakeholderId', direction: 'ascending' },
     engagementFilterConfig: {},
-    mapFilterConfig: { group: 'All', subGroup: 'All', location: 'All', relationship: 'All' },
+    mapFilterConfig: { group: 'All', subGroup: 'All', department: 'All', relationship: 'All' },
     mapAxisConfig: { x: 'power', y: 'interest' },
     activitySortConfig: { key: 'name', direction: 'ascending' },
     dashboardChartConfig: {
@@ -473,7 +496,7 @@ const EMPTY_STAKEHOLDER: Omit<Stakeholder, 'id'> = {
   groupSize: '',
   group: '',
   subGroup: '',
-  location: '',
+  department: '',
   relationship: '',
   interest: '',
   impact: '',
@@ -663,7 +686,7 @@ function StakeholderModal({
           </div>
           {listSelect('Group', 'group', referenceData.groups)}
           {listSelect('Sub-Group', 'subGroup', referenceData.subGroups)}
-          {listSelect('Location/Organisation', 'location', referenceData.locations)}
+          {listSelect('Department', 'department', referenceData.departments)}
           {listSelect('Relationship Category', 'relationship', referenceData.relationships)}
           {ratingSelect('Interest', 'interest')}
           {ratingSelect('Impact', 'impact')}
@@ -822,7 +845,7 @@ function EngagementModal({
               <option value="">Select stakeholder...</option>
               {sortedStakeholders.map((s) => (
                 <option key={s.id} value={s.id}>
-                  {s.name} ({s.group || 'N/A'} | {s.subGroup || 'N/A'} | {s.location || 'N/A'})
+                  {s.name} ({s.group || 'N/A'} | {s.subGroup || 'N/A'} | {s.department || 'N/A'})
                 </option>
               ))}
             </select>
@@ -1051,7 +1074,7 @@ const DASHBOARD_CHART_OPTIONS: { key: string; label: string }[] = [
   { key: 'mapping', label: 'Stakeholder Mapping' },
   { key: 'group', label: 'Group' },
   { key: 'subGroup', label: 'Sub-Group' },
-  { key: 'location', label: 'Location' },
+  { key: 'department', label: 'Department' },
   { key: 'relationship', label: 'Relationship' },
   { key: 'interest', label: 'Interest' },
   { key: 'impact', label: 'Impact' },
@@ -1372,7 +1395,7 @@ function DashboardTab({
                           {s.name}
                         </button>
                         <p className="text-sm text-gray-500">
-                          {s.group || 'N/A'} | {s.subGroup || 'N/A'} | {s.location || 'N/A'}
+                          {s.group || 'N/A'} | {s.subGroup || 'N/A'} | {s.department || 'N/A'}
                         </p>
                       </div>
                     </li>
@@ -1390,7 +1413,7 @@ function DashboardTab({
 const STAKEHOLDER_COLUMNS: { key: string; label: string }[] = [
   { key: 'name', label: 'Name' },
   { key: 'group', label: 'Group / Sub-Group' },
-  { key: 'location', label: 'Location' },
+  { key: 'department', label: 'Department' },
   { key: 'relationship', label: 'Relationship' },
   { key: 'mapping', label: 'Mapping' },
   { key: 'commitmentGap', label: 'Commitment' },
@@ -1505,11 +1528,11 @@ function StakeholdersTab({
             onChange: (v) => onFilterChange('subGroup', v),
           },
           {
-            key: 'location',
-            label: 'Filter by location',
-            value: state.filterConfig.location || '',
-            options: uniqueValues('location'),
-            onChange: (v) => onFilterChange('location', v),
+            key: 'department',
+            label: 'Filter by department',
+            value: state.filterConfig.department || '',
+            options: uniqueValues('department'),
+            onChange: (v) => onFilterChange('department', v),
           },
           {
             key: 'relationship',
@@ -1587,7 +1610,7 @@ function StakeholdersTab({
                       {s.group}
                       {s.subGroup ? <span className="text-gray-400"> / {s.subGroup}</span> : null}
                     </td>
-                    <td className="px-4 py-3">{s.location}</td>
+                    <td className="px-4 py-3">{s.department}</td>
                     <td className="px-4 py-3">{s.relationship}</td>
                     <td className="px-4 py-3 text-center">
                       <span
@@ -1991,22 +2014,22 @@ function AnalysisMapTab({
   state: StakeholderAnalysisState;
   groups: string[];
   groupColors: Record<string, string>;
-  onFilterChange: (key: 'group' | 'subGroup' | 'location' | 'relationship', value: string) => void;
+  onFilterChange: (key: 'group' | 'subGroup' | 'department' | 'relationship', value: string) => void;
   onAxisChange: (axis: 'x' | 'y', value: MapAxisKey) => void;
   onResetFilters: () => void;
   onOpenStakeholder: (id: string) => void;
 }): JSX.Element {
-  const { group, subGroup, location, relationship } = state.mapFilterConfig;
+  const { group, subGroup, department, relationship } = state.mapFilterConfig;
   const { x: xAxis, y: yAxis } = state.mapAxisConfig;
 
   const filterCategories: {
-    id: 'group' | 'subGroup' | 'location' | 'relationship';
+    id: 'group' | 'subGroup' | 'department' | 'relationship';
     title: string;
     current: string;
   }[] = [
     { id: 'group', title: 'Group', current: group },
     { id: 'subGroup', title: 'Sub-Group', current: subGroup },
-    { id: 'location', title: 'Location', current: location },
+    { id: 'department', title: 'Department', current: department },
     { id: 'relationship', title: 'Relationship', current: relationship },
   ];
 
@@ -2037,7 +2060,7 @@ function AnalysisMapTab({
     return (
       (group === 'All' || s.group === group) &&
       (subGroup === 'All' || s.subGroup === subGroup) &&
-      (location === 'All' || s.location === location) &&
+      (department === 'All' || s.department === department) &&
       (relationship === 'All' || s.relationship === relationship)
     );
   });
@@ -2483,7 +2506,7 @@ export interface StakeholderAnalysisAppProps {
   trustName?: string;
   projectName?: string;
   teamMembers?: TeamMember[];
-  /** Groups/Sub-Groups/Locations/Relationships - now managed centrally on Project Details. */
+  /** Groups/Sub-Groups/Departments/Relationships - now managed centrally on Project Details. */
   referenceLists?: StakeholderReferenceLists;
   components?: AssessmentComponent[];
   objectives?: Record<string, ComponentObjective[]>;
@@ -2497,7 +2520,6 @@ type Tab =
 
 export default function StakeholderAnalysisApp({
   embedded = false,
-  onBack,
   trustName = '',
   projectName = '',
   teamMembers = [],
@@ -2528,14 +2550,14 @@ export default function StakeholderAnalysisApp({
   );
 
   /** Merges the locally-stored reference data (ratings, activity templates) with the project-level
-   * lists (groups/sub-groups/locations/relationships, now edited from Project Details) and the fixed
+   * lists (groups/sub-groups/departments/relationships, now edited from Project Details) and the fixed
    * commitment/capability scales, into the single shape the modals/tables expect. */
   const effectiveReferenceData: ReferenceData = useMemo(
     () => ({
       ...state.referenceData,
       groups: referenceLists.groups,
       subGroups: referenceLists.subGroups,
-      locations: referenceLists.locations,
+      departments: referenceLists.departments,
       relationships: referenceLists.relationships,
       commitments: Object.keys(COMMITMENTS_MAP),
       capabilities: Object.keys(CAPABILITIES_MAP),
@@ -2778,15 +2800,6 @@ export default function StakeholderAnalysisApp({
         }
       >
         <div>
-          {embedded ? (
-            <button
-              type="button"
-              onClick={onBack}
-              className="text-sm px-3 py-2 -ml-3 text-slate-600 hover:bg-slate-100 rounded-md font-medium mb-1"
-            >
-              ← Back
-            </button>
-          ) : null}
           <h1 className="text-lg font-bold text-slate-800">
             Stakeholder Analysis and Management Tool
           </h1>
@@ -2895,7 +2908,7 @@ export default function StakeholderAnalysisApp({
               mapFilterConfig: {
                 group: 'All',
                 subGroup: 'All',
-                location: 'All',
+                department: 'All',
                 relationship: 'All',
               },
             })

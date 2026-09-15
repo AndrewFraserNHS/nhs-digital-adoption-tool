@@ -87,33 +87,35 @@ function AliasEditor({
 
   return (
     <div>
-      <div className="flex flex-wrap gap-1.5">
-        {aliases.map((alias) => (
-          <span
-            key={alias}
-            className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-200' : 'border-slate-300 bg-slate-100 text-slate-700'}`}
-          >
-            {alias}
-            <button
-              type="button"
-              onClick={() => onChange(aliases.filter((a) => a !== alias))}
-              aria-label={`Remove "${alias}"`}
-              className={
-                darkMode
-                  ? 'text-slate-400 hover:text-slate-100'
-                  : 'text-slate-500 hover:text-slate-800'
-              }
+      {aliases &&
+        <div className="flex flex-wrap gap-1.5">
+          {aliases.map((alias) => (
+            <span
+              key={alias}
+              className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-200' : 'border-slate-300 bg-slate-100 text-slate-700'}`}
             >
-              ×
-            </button>
-          </span>
-        ))}
-        {!aliases.length && (
-          <span className={`text-xs ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>
-            {emptyLabel}
-          </span>
-        )}
-      </div>
+              {alias}
+              <button
+                type="button"
+                onClick={() => onChange(aliases.filter((a) => a !== alias))}
+                aria-label={`Remove "${alias}"`}
+                className={
+                  darkMode
+                    ? 'text-slate-400 hover:text-slate-100'
+                    : 'text-slate-500 hover:text-slate-800'
+                }
+              >
+                ×
+              </button>
+            </span>
+          ))}
+          {!aliases.length && (
+            <span className={`text-xs ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>
+              {emptyLabel}
+            </span>
+          )}
+        </div>
+      }
       <div className="mt-2 flex gap-2">
         <input
           type="text"
@@ -396,7 +398,6 @@ export function ProjectDetailsPage({
   orgProfile,
   onProfileUpdate,
   components,
-  onComponentClick,
   onGoToIntroduction,
   onContinueToVision,
   onGoToWhereAmINow,
@@ -415,12 +416,6 @@ export function ProjectDetailsPage({
   const pageIntro = usePageIntroSeen('cst-personalisation');
   const profileValidation = validateOrgProfile(profile);
   const fieldError = useFieldError(profileValidation);
-
-  const stageOneComplete = Boolean(
-    profile.trustName.trim() &&
-    (profile.projectName || '').trim() &&
-    (profile.leadName || '').trim()
-  );
 
   useEffect(() => {
     setProfile(orgProfile);
@@ -1169,17 +1164,17 @@ export function ProjectDetailsPage({
             Stakeholder Reference Data
           </h3>
           <p className={`text-sm mt-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-            Groups, Sub-Groups, Locations and Relationships used by the Stakeholder Analysis tool -
+            Groups, Sub-Groups, Departments and Relationships used by the Stakeholder Analysis tool -
             defined once here so every stakeholder record uses the same options.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
           {(
             [
               { key: 'groups', label: 'Groups', placeholder: 'Add a group...' },
               { key: 'subGroups', label: 'Sub-Groups', placeholder: 'Add a sub-group...' },
-              { key: 'locations', label: 'Locations', placeholder: 'Add a location...' },
+              { key: 'departments', label: 'Departments', placeholder: 'Add a department...' },
               {
                 key: 'relationships',
                 label: 'Relationships',

@@ -1,4 +1,5 @@
 import { ActionEditorFields } from '@components/common/ActionEditorFields';
+import { FilterBar } from '@components/common/FilterBar';
 import {
   BinIcon,
   DuplicateIcon,
@@ -7,8 +8,8 @@ import {
   PencilIcon,
   PlusCircleIcon,
 } from '@components/common/IconButtons';
-import { FilterBar } from '@components/common/FilterBar';
 import type { AssessmentComponent } from '@data/components';
+<<<<<<< HEAD
 import { createDoughnutChart } from '@lib/charts';
 import {
   DEFAULT_STAKEHOLDER_REFERENCE_LISTS,
@@ -18,6 +19,10 @@ import {
   type StakeholderReferenceLists,
   type TeamMember,
 } from '@lib/adoptionState';
+=======
+import type { ComponentObjective, DraftAction, DraftEntry, TeamMember } from '@lib/adoptionState';
+import { createDoughnutChart } from '@lib/charts';
+>>>>>>> 67aa671ca8a564ccda4079618b627a1d90d487cc
 import { load, save } from '@lib/storage';
 import { downloadFile } from '@lib/utils';
 import { type ChangeEvent, JSX, useEffect, useMemo, useRef, useState } from 'react';
@@ -104,21 +109,25 @@ interface StakeholderAnalysisState {
 const STORAGE_KEY = 'nhs-stakeholder-analysis';
 
 const RATINGS_MAP: Record<string, number> = { Low: 1, Medium: 2, High: 3, 'Very High': 4 };
+
+// TODO: Descriptions need available to users in frontend
 const COMMITMENTS_MAP: Record<string, number> = {
-  Resistant: 1,
-  Opposed: 2,
-  Ambivalent: 3,
-  Complying: 4,
-  Supporting: 5,
-  Leading: 6,
+  Resistant: 1, // Opposed to the change and is actively hostile towards it
+  Opposed: 2, // Quietly opposed to the change without proactive resistance
+  Ambivalent: 3, // Unconvinced about the change but is not actively opposed
+  Complying: 4, // Supportive of the change but only because they see that they have no choice rather than that they agree with it
+  Supporting: 5, // Actively supportive of the change and is committed to its success
+  Leading: 6, // Actively leading the change within their area or the organisation as a whole with total commitment
 };
+
+// TODO: Descriptions need available to users in frontend
 const CAPABILITIES_MAP: Record<string, number> = {
-  Unaware: 1,
-  Aware: 2,
-  Informed: 3,
-  Equipped: 4,
-  Practised: 5,
-  Exemplary: 6,
+  Unaware: 1, // Unaware	Not yet aware of the change
+  Aware: 2, // Aware of the change but has little information
+  Informed: 3, // Has information but is not sure how the change will affect them
+  Equipped: 4, // Equipped with sufficient knowledge and skills to be able to make the change
+  Practised: 5, // Practised in the use of the knowledge and skills required to make the change a success
+  Exemplary: 6, // An exemplar of good practice in relation to the change
 };
 
 const COMMITMENT_DESCRIPTIONS: Record<string, string> = {
@@ -156,6 +165,24 @@ function createId(prefix = ''): string {
   return `${prefix}${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
+// Todo: Bring this table data into the reference data
+// Ideally this would be done in Project Set-up though, and just be seen + updated in Reference data but is owned at a project level.
+
+// Functional Group		Location		Department		Relationship Categories
+// SRO		LRH		Ward 1		Customer
+// Manager		GH		Ward 2		Provider
+// Trades Union		Community 		Ward 3		Influencer
+// Programme		CCG office		Ward 4		Governance
+// Project				Pharmacy
+// Trainer				Pathology
+// Clinical				A+E
+// Arms Length Body				Main Reception
+// CCG				Exec Offices
+// GP				GP Practices
+// CSU				IT
+// Staff				HR
+// 				Comms
+
 function freshReferenceData(): ReferenceData {
   return {
     groups: ['Finance', 'HR', 'IT', 'Operations', 'External'],
@@ -167,26 +194,8 @@ function freshReferenceData(): ReferenceData {
     ratings: ['Low', 'Medium', 'High', 'Very High'],
     engagementActivities: [
       {
-        id: 'act-1a',
-        name: 'Facebook',
-        inform: 'High',
-        consult: 'Medium',
-        involve: '',
-        collaborate: '',
-        empower: '',
-      },
-      {
-        id: 'act-1b',
-        name: 'X',
-        inform: 'High',
-        consult: 'Medium',
-        involve: '',
-        collaborate: '',
-        empower: '',
-      },
-      {
-        id: 'act-1c',
-        name: 'Instagram',
+        id: 'act-1',
+        name: 'Targetted email bulletin/letter',
         inform: 'High',
         consult: 'Medium',
         involve: '',
@@ -195,16 +204,16 @@ function freshReferenceData(): ReferenceData {
       },
       {
         id: 'act-2',
-        name: 'Roadshows',
-        inform: 'High',
-        consult: 'High',
-        involve: 'Medium',
+        name: 'General email bulletin/letter',
+        inform: 'Medium',
+        consult: '',
+        involve: '',
         collaborate: '',
         empower: '',
       },
       {
         id: 'act-3',
-        name: 'Briefings',
+        name: 'Targetted X/Twitter Feed',
         inform: 'High',
         consult: 'Medium',
         involve: '',
@@ -213,6 +222,105 @@ function freshReferenceData(): ReferenceData {
       },
       {
         id: 'act-4',
+        name: 'Case Study',
+        inform: 'High',
+        consult: 'Medium',
+        involve: '',
+        collaborate: '',
+        empower: '',
+      },
+      {
+        id: 'act-5',
+        name: 'Programme/Product/Service engagement pack',
+        inform: 'High',
+        consult: 'High',
+        involve: 'Medium',
+        collaborate: '',
+        empower: '',
+      },
+      {
+        id: 'act-6',
+        name: 'Presence at corporate events',
+        inform: 'Medium',
+        consult: '',
+        involve: 'Medium',
+        collaborate: '',
+        empower: '',
+      },
+      {
+        id: 'act-7',
+        name: 'Face to Face meeting',
+        inform: 'High',
+        consult: 'High',
+        involve: 'High',
+        collaborate: 'High',
+        empower: 'Medium',
+      },
+      {
+        id: 'act-8',
+        name: 'Updates to website and specific programme pages',
+        inform: 'Medium',
+        consult: '',
+        involve: '',
+        collaborate: '',
+        empower: '',
+      },
+      {
+        id: 'act-9',
+        name: 'Webinar',
+        inform: 'High',
+        consult: 'Medium',
+        involve: 'Medium',
+        collaborate: 'Medium',
+        empower: 'Medium',
+      },
+      {
+        id: 'act-10',
+        name: 'Fact sheet',
+        inform: 'High',
+        consult: '',
+        involve: '',
+        collaborate: '',
+        empower: '',
+      },
+      {
+        id: 'act-11',
+        name: 'Ways of working leaflet',
+        inform: 'High',
+        consult: '',
+        involve: 'Medium',
+        collaborate: '',
+        empower: '',
+      },
+      {
+        id: 'act-12',
+        name: 'Core setting engagement pack',
+        inform: '',
+        consult: '',
+        involve: 'High',
+        collaborate: 'High',
+        empower: 'High',
+      },
+      {
+        id: 'act-13',
+        name: 'Roadshows',
+        inform: 'High',
+        consult: 'High',
+        involve: 'Medium',
+        collaborate: '',
+        empower: '',
+      },
+      {
+        id: 'act-14',
+        name: 'Briefings',
+        inform: 'High',
+        consult: 'Medium',
+        involve: '',
+        collaborate: '',
+        empower: '',
+      },
+      {
+        id: 'act-15',
         name: 'Workshops',
         inform: 'Medium',
         consult: 'High',
@@ -221,7 +329,7 @@ function freshReferenceData(): ReferenceData {
         empower: '',
       },
       {
-        id: 'act-5',
+        id: 'act-16',
         name: 'Focus Groups',
         inform: 'Medium',
         consult: 'High',
@@ -230,7 +338,7 @@ function freshReferenceData(): ReferenceData {
         empower: '',
       },
       {
-        id: 'act-6',
+        id: 'act-17',
         name: 'Secondments',
         inform: '',
         consult: 'Medium',
@@ -239,7 +347,7 @@ function freshReferenceData(): ReferenceData {
         empower: 'Medium',
       },
       {
-        id: 'act-7',
+        id: 'act-18',
         name: 'Steering Committee',
         inform: 'Medium',
         consult: 'High',
@@ -2208,6 +2316,7 @@ function ScaleReferenceTable({
   return (
     <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
       <h3 className="font-semibold mb-2 text-gray-800">{title}</h3>
+<<<<<<< HEAD
       <table className="w-full text-sm text-left">
         <tbody className="divide-y divide-gray-200">
           {levels.map((level) => (
@@ -2220,6 +2329,50 @@ function ScaleReferenceTable({
           ))}
         </tbody>
       </table>
+=======
+      <ul className="space-y-1 mb-3">
+        {values.map((value, index) => (
+          <li
+            key={value}
+            className="flex items-center justify-between gap-2 bg-white border border-gray-200 rounded-md px-2 py-1.5"
+          >
+            <span className="text-sm text-gray-800">{value}</span>
+            <IconActionButton
+              onClick={() => onUpdate(values.filter((_, i) => i !== index))}
+              title={`Remove ${value}`}
+              variant="danger"
+            >
+              <BinIcon />
+            </IconActionButton>
+          </li>
+        ))}
+        {values.length === 0 ? (
+          <li className="text-sm text-gray-400 italic">No items yet.</li>
+        ) : null}
+      </ul>
+      <div className="flex gap-2">
+        <input
+          type="text"
+          value={newValue}
+          onChange={(event) => setNewValue(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') {
+              event.preventDefault();
+              addValue();
+            }
+          }}
+          placeholder={`Add a ${title.toLowerCase()} item...`}
+          className="flex-1 p-2 border border-gray-300 rounded-md text-sm"
+        />
+        <button
+          type="button"
+          onClick={addValue}
+          className="bg-indigo-600 text-white px-3 py-1.5 rounded-md hover:bg-indigo-700 text-sm"
+        >
+          Add
+        </button>
+      </div>
+>>>>>>> 67aa671ca8a564ccda4079618b627a1d90d487cc
     </div>
   );
 }
@@ -2688,7 +2841,11 @@ export default function StakeholderAnalysisApp({
             Stakeholder Analysis and Management Tool
           </h1>
           <p className="text-xs text-slate-500">
-            Analyse stakeholders and plan engagement activities
+            The Analysis Map plots your Details tab results. It will group your individuals and
+            groups into a pivot table working on a Interest/Impact vs Power/Influence axis. The
+            table divides into four categories - Low/Medium/High/Very High. If an individual is high
+            or very high on both axis they have the potential to be extremely influential to your
+            change project/programme, either positively or negatively.
           </p>
         </div>
       </header>

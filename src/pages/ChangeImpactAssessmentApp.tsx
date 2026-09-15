@@ -1,5 +1,5 @@
-import { BinIcon, IconActionButton, PencilIcon } from '@components/common/IconButtons';
 import { FilterBar } from '@components/common/FilterBar';
+import { BinIcon, IconActionButton, PencilIcon } from '@components/common/IconButtons';
 import { bragBadgeClass, getBragStatus } from '@lib/brag';
 import { load, save } from '@lib/storage';
 import { downloadFile } from '@lib/utils';

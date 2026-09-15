@@ -149,6 +149,11 @@ function buildSteps(darkMode: boolean): Step[] {
             brought together, organisations can achieve Transformation and realise the full benefits
             of change.
           </p>
+          <img
+            src="/assets/The%20Change%20Onion.png"
+            alt="The Change Onion diagram"
+            className="w-full max-w-xl mx-auto rounded-md border border-slate-200"
+          />
         </div>
       ),
     },

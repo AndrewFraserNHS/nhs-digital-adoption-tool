@@ -1,8 +1,23 @@
+import { BinIcon, IconActionButton, PencilIcon } from '@components/common/IconButtons';
+import { FilterBar } from '@components/common/FilterBar';
+import { bragBadgeClass, getBragStatus } from '@lib/brag';
 import { load, save } from '@lib/storage';
 import { downloadFile } from '@lib/utils';
 import { type ChangeEvent, JSX, type RefObject, useEffect, useMemo, useRef, useState } from 'react';
 
 import { nhsButtonSecondary } from '../styles/nhsTheme';
+
+const FUNCTION_OPTIONS = [
+  'Finance',
+  'HR',
+  'IT & Digital',
+  'Operations',
+  'Clinical',
+  'Estates & Facilities',
+  'Procurement',
+  'Communications',
+  'Other',
+];
 
 type ScoreValue = 1 | 2 | 3 | 4;
 
@@ -77,7 +92,9 @@ interface ChangeImpactAssessment {
   function: string;
   process: string;
   processRef: string;
+  processRefUrl?: string;
   benefitsRef: string;
+  benefitsRefUrl?: string;
   peopleImpacted: number;
   impactDate: string;
   timestamp: string;
@@ -100,7 +117,9 @@ const INITIAL_FORM_STATE: AssessmentFormState = {
   function: '',
   process: '',
   processRef: '',
+  processRefUrl: '',
   benefitsRef: '',
+  benefitsRefUrl: '',
   peopleImpacted: 0,
   impactDate: '',
   complexity: 1,
@@ -493,14 +512,10 @@ function AssessmentsTab({
   const sortedAndFiltered = useMemo(() => {
     let result = [...items];
     if (functionFilter) {
-      result = result.filter((item) =>
-        item.function.toLowerCase().includes(functionFilter.toLowerCase())
-      );
+      result = result.filter((item) => item.function === functionFilter);
     }
     if (processFilter) {
-      result = result.filter((item) =>
-        item.process.toLowerCase().includes(processFilter.toLowerCase())
-      );
+      result = result.filter((item) => item.process === processFilter);
     }
     if (sortKey) {
       result.sort((a, b) => {
@@ -530,6 +545,19 @@ function AssessmentsTab({
     }
     return result;
   }, [items, sortKey, sortDirection, functionFilter, processFilter]);
+
+  const uniqueFunctions = useMemo(
+    () => Array.from(new Set(items.map((item) => item.function))).filter(Boolean).sort(),
+    [items]
+  );
+  const functionOptions = useMemo(
+    () => Array.from(new Set([...FUNCTION_OPTIONS, ...uniqueFunctions])),
+    [uniqueFunctions]
+  );
+  const uniqueProcesses = useMemo(
+    () => Array.from(new Set(items.map((item) => item.process))).filter(Boolean).sort(),
+    [items]
+  );
 
   const sortIndicator = (column: string) => {
     if (sortKey !== column) {
@@ -603,16 +631,22 @@ function AssessmentsTab({
                 1. Process Details
               </h4>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label htmlFor="cia-function" className="block text-sm font-medium text-slate-700 mb-1">
                   Business Function
                 </label>
-                <input
-                  type="text"
-                  placeholder="e.g. HR, Finance"
+                <select
+                  id="cia-function"
                   value={formData.function}
                   onChange={(event) => onFormDataChange({ function: event.target.value })}
                   className="w-full p-2 border border-slate-300 rounded outline-none"
-                />
+                >
+                  <option value="">Select a function...</option>
+                  {functionOptions.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">
@@ -639,6 +673,13 @@ function AssessmentsTab({
                     onChange={(event) => onFormDataChange({ processRef: event.target.value })}
                     className="w-full p-2 border border-slate-300 rounded outline-none"
                   />
+                  <input
+                    type="url"
+                    placeholder="Link URL (optional)"
+                    value={formData.processRefUrl || ''}
+                    onChange={(event) => onFormDataChange({ processRefUrl: event.target.value })}
+                    className="w-full mt-1 p-2 border border-slate-300 rounded outline-none text-xs"
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">
@@ -651,6 +692,13 @@ function AssessmentsTab({
                     value={formData.benefitsRef}
                     onChange={(event) => onFormDataChange({ benefitsRef: event.target.value })}
                     className="w-full p-2 border border-slate-300 rounded outline-none"
+                  />
+                  <input
+                    type="url"
+                    placeholder="Link URL (optional)"
+                    value={formData.benefitsRefUrl || ''}
+                    onChange={(event) => onFormDataChange({ benefitsRefUrl: event.target.value })}
+                    className="w-full mt-1 p-2 border border-slate-300 rounded outline-none text-xs"
                   />
                 </div>
               </div>
@@ -794,6 +842,29 @@ function AssessmentsTab({
         </div>
       ) : null}
 
+      <FilterBar
+        selects={[
+          {
+            key: 'function',
+            label: 'Function',
+            value: functionFilter,
+            options: uniqueFunctions,
+            onChange: setFunctionFilter,
+          },
+          {
+            key: 'process',
+            label: 'Process',
+            value: processFilter,
+            options: uniqueProcesses,
+            onChange: setProcessFilter,
+          },
+        ]}
+        onReset={() => {
+          setFunctionFilter('');
+          setProcessFilter('');
+        }}
+      />
+
       <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white">
         <table className="min-w-full text-sm text-left border-collapse">
           <thead className="bg-slate-50 text-slate-600 font-medium border-b border-slate-200">
@@ -810,27 +881,6 @@ function AssessmentsTab({
               ))}
               <th className="px-4 py-3 text-right">Actions</th>
             </tr>
-            <tr className="bg-slate-50">
-              <th className="px-4 py-2">
-                <input
-                  type="text"
-                  placeholder="Filter Function..."
-                  value={functionFilter}
-                  onChange={(event) => setFunctionFilter(event.target.value)}
-                  className="w-full px-2 py-1 text-xs border border-slate-300 rounded outline-none font-normal"
-                />
-              </th>
-              <th className="px-4 py-2">
-                <input
-                  type="text"
-                  placeholder="Filter Process..."
-                  value={processFilter}
-                  onChange={(event) => setProcessFilter(event.target.value)}
-                  className="w-full px-2 py-1 text-xs border border-slate-300 rounded outline-none font-normal"
-                />
-              </th>
-              <th colSpan={7}></th>
-            </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
             {sortedAndFiltered.length === 0 ? (
@@ -844,12 +894,48 @@ function AssessmentsTab({
             ) : (
               sortedAndFiltered.map((item) => {
                 const scores = calculateScores(item);
+                const benefitStatus = getBragStatus(scores.readinessScore - scores.changeScore, {
+                  blue: 30,
+                  green: 10,
+                  amber: -10,
+                });
                 return (
                   <tr key={item.id} className="hover:bg-slate-50">
                     <td className="px-4 py-3 font-medium text-slate-800">{item.function}</td>
                     <td className="px-4 py-3 text-slate-600">{item.process}</td>
-                    <td className="px-2 py-3 text-slate-500 text-xs">{item.processRef || '-'}</td>
-                    <td className="px-2 py-3 text-slate-500 text-xs">{item.benefitsRef || '-'}</td>
+                    <td className="px-2 py-3 text-xs">
+                      {item.processRefUrl ? (
+                        <a
+                          href={item.processRefUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-blue-600 underline hover:text-blue-800"
+                        >
+                          {item.processRef || '-'}
+                        </a>
+                      ) : (
+                        <span className="text-slate-500">{item.processRef || '-'}</span>
+                      )}
+                    </td>
+                    <td className="px-2 py-3 text-xs">
+                      <span
+                        className={`inline-flex rounded-full border px-2 py-0.5 ${bragBadgeClass(benefitStatus)}`}
+                        title="Benefit status: readiness vs. change demand"
+                      >
+                        {item.benefitsRefUrl ? (
+                          <a
+                            href={item.benefitsRefUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="underline"
+                          >
+                            {item.benefitsRef || '-'}
+                          </a>
+                        ) : (
+                          item.benefitsRef || '-'
+                        )}
+                      </span>
+                    </td>
                     <td className="px-4 py-3 text-slate-600">{item.peopleImpacted}</td>
                     <td className="px-4 py-3 text-slate-600">{item.impactDate}</td>
                     <td className="px-4 py-3 text-center">
@@ -859,20 +945,18 @@ function AssessmentsTab({
                       <ScoreBadge score={scores.readinessScore} type="readiness" />
                     </td>
                     <td className="px-4 py-3 text-right">
-                      <button
-                        type="button"
-                        onClick={() => onEdit(item)}
-                        className="text-blue-600 hover:text-blue-800 mr-3"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => onDelete(item.id)}
-                        className="text-red-600 hover:text-red-800"
-                      >
-                        Delete
-                      </button>
+                      <div className="flex justify-end gap-2">
+                        <IconActionButton onClick={() => onEdit(item)} title="Edit assessment">
+                          <PencilIcon />
+                        </IconActionButton>
+                        <IconActionButton
+                          onClick={() => onDelete(item.id)}
+                          title="Delete assessment"
+                          variant="danger"
+                        >
+                          <BinIcon />
+                        </IconActionButton>
+                      </div>
                     </td>
                   </tr>
                 );
@@ -890,7 +974,7 @@ function DashboardTab({ items }: { items: ChangeImpactAssessment[] }): JSX.Eleme
   const [weightedView, setWeightedView] = useState(false);
   const [heatmapOverlay, setHeatmapOverlay] = useState<
     'count' | 'changeScore' | 'readinessScore' | 'capability'
-  >('count');
+  >('readinessScore');
   const [readinessSort, setReadinessSort] = useState<'asc' | 'desc'>('desc');
 
   const uniqueFunctions = useMemo(
@@ -1068,7 +1152,7 @@ function DashboardTab({ items }: { items: ChangeImpactAssessment[] }): JSX.Eleme
           className="rounded-lg border border-slate-200 bg-white p-4"
           style={{ borderLeftWidth: 4, borderLeftColor: '#3b82f6' }}
         >
-          <h3 className="text-slate-500 text-sm font-medium uppercase">Total Processes</h3>
+          <h3 className="text-slate-500 text-sm font-medium">Total Processes</h3>
           <p className="text-2xl font-bold text-slate-800">{kpiMetrics.totalProcesses}</p>
           <p className="text-xs text-slate-400 mt-1">Filtered View</p>
         </div>
@@ -1076,7 +1160,7 @@ function DashboardTab({ items }: { items: ChangeImpactAssessment[] }): JSX.Eleme
           className="rounded-lg border border-slate-200 bg-white p-4"
           style={{ borderLeftWidth: 4, borderLeftColor: '#f59e0b' }}
         >
-          <h3 className="text-slate-500 text-sm font-medium uppercase">Total People Impacted</h3>
+          <h3 className="text-slate-500 text-sm font-medium">Total People Impacted</h3>
           <p className="text-2xl font-bold text-slate-800">{kpiMetrics.totalPeople}</p>
           <p className="text-xs text-slate-400 mt-1">across all processes</p>
         </div>
@@ -1084,7 +1168,7 @@ function DashboardTab({ items }: { items: ChangeImpactAssessment[] }): JSX.Eleme
           className="rounded-lg border border-slate-200 bg-white p-4"
           style={{ borderLeftWidth: 4, borderLeftColor: '#22c55e' }}
         >
-          <h3 className="text-slate-500 text-sm font-medium uppercase">Avg Readiness</h3>
+          <h3 className="text-slate-500 text-sm font-medium">Avg Readiness</h3>
           <div className="flex items-baseline gap-2">
             <p className="text-2xl font-bold text-slate-800">
               {kpiMetrics.avgReadiness.toFixed(0)}%
@@ -1401,7 +1485,6 @@ function parseCsvLine(line: string): string[] {
 
 export default function ChangeImpactAssessmentApp({
   embedded = false,
-  onBack,
 }: ChangeImpactAssessmentAppProps = {}): JSX.Element {
   const [items, setItems] = useState<ChangeImpactAssessment[]>(
     () => load<ChangeImpactAssessment[]>(STORAGE_KEY) || []
@@ -1595,15 +1678,6 @@ export default function ChangeImpactAssessmentApp({
       }
     >
       <div>
-        {embedded ? (
-          <button
-            type="button"
-            onClick={onBack}
-            className="text-sm px-3 py-2 -ml-3 text-slate-600 hover:bg-slate-100 rounded-md font-medium mb-1"
-          >
-            ← Back
-          </button>
-        ) : null}
         <h1 className="text-lg font-bold text-slate-800">Change Impact Assessment Tool</h1>
         <p className="text-xs text-slate-500">
           Process impact vs business readiness scoring and analysis

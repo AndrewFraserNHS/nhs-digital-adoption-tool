@@ -186,6 +186,7 @@ export type View =
   | 'compare'
   | 'change-impact-assessment'
   | 'stakeholder-analysis'
+  | 'raid-log'
   | 'audit-log'
   | 'project-details'
   | 'settings'

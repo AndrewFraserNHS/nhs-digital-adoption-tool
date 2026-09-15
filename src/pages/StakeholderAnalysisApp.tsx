@@ -1,4 +1,16 @@
+import { ActionEditorFields } from '@components/common/ActionEditorFields';
+import {
+  BinIcon,
+  DuplicateIcon,
+  IconActionButton,
+  LockIcon,
+  PencilIcon,
+  PlusCircleIcon,
+} from '@components/common/IconButtons';
+import { FilterBar } from '@components/common/FilterBar';
+import type { AssessmentComponent } from '@data/components';
 import { createDoughnutChart } from '@lib/charts';
+import type { ComponentObjective, DraftAction, DraftEntry, TeamMember } from '@lib/adoptionState';
 import { load, save } from '@lib/storage';
 import { downloadFile } from '@lib/utils';
 import { type ChangeEvent, JSX, useEffect, useMemo, useRef, useState } from 'react';
@@ -68,8 +80,6 @@ interface SortConfig {
 }
 
 interface StakeholderAnalysisState {
-  organisationName: string;
-  projectName: string;
   stakeholders: Stakeholder[];
   engagementLog: EngagementLog[];
   referenceData: ReferenceData;
@@ -81,6 +91,7 @@ interface StakeholderAnalysisState {
   mapAxisConfig: { x: MapAxisKey; y: MapAxisKey };
   activitySortConfig: SortConfig;
   dashboardChartConfig: { chart1: string; chart2: string; chart3: string; chart4: string };
+  guidanceRead: boolean;
 }
 
 const STORAGE_KEY = 'nhs-stakeholder-analysis';
@@ -131,8 +142,26 @@ function freshReferenceData(): ReferenceData {
     ratings: ['Low', 'Medium', 'High', 'Very High'],
     engagementActivities: [
       {
-        id: 'act-1',
-        name: 'Targeted Social Media Feed',
+        id: 'act-1a',
+        name: 'Facebook',
+        inform: 'High',
+        consult: 'Medium',
+        involve: '',
+        collaborate: '',
+        empower: '',
+      },
+      {
+        id: 'act-1b',
+        name: 'X',
+        inform: 'High',
+        consult: 'Medium',
+        involve: '',
+        collaborate: '',
+        empower: '',
+      },
+      {
+        id: 'act-1c',
+        name: 'Instagram',
         inform: 'High',
         consult: 'Medium',
         involve: '',
@@ -199,8 +228,6 @@ function freshReferenceData(): ReferenceData {
 
 function freshState(): StakeholderAnalysisState {
   return {
-    organisationName: 'Your Organisation',
-    projectName: 'Your Project/Programme',
     stakeholders: [],
     engagementLog: [],
     referenceData: freshReferenceData(),
@@ -217,6 +244,7 @@ function freshState(): StakeholderAnalysisState {
       chart3: 'group',
       chart4: 'capabilityGap',
     },
+    guidanceRead: false,
   };
 }
 
@@ -251,13 +279,6 @@ const MAPPING_BADGE_CLASS: Record<string, string> = {
   'Keep Satisfied': 'bg-blue-100 text-blue-800',
   'Keep Informed': 'bg-green-100 text-green-800',
   Monitor: 'bg-gray-200 text-gray-800',
-};
-
-const RATING_BADGE_CLASS: Record<string, string> = {
-  Low: 'bg-gray-100 text-gray-800',
-  Medium: 'bg-blue-100 text-blue-800',
-  High: 'bg-yellow-100 text-yellow-800',
-  'Very High': 'bg-red-100 text-red-800',
 };
 
 function getGap(
@@ -565,12 +586,14 @@ function EngagementModal({
   log,
   stakeholders,
   activities,
+  teamMembers,
   onSave,
   onCancel,
 }: {
   log: EngagementLog;
   stakeholders: Stakeholder[];
   activities: Activity[];
+  teamMembers: TeamMember[];
   onSave: (log: EngagementLog) => void;
   onCancel: () => void;
 }): JSX.Element {
@@ -663,13 +686,19 @@ function EngagementModal({
               <label htmlFor="eng-owner" className="block mb-2 text-sm font-medium text-gray-900">
                 Owner
               </label>
-              <input
+              <select
                 id="eng-owner"
-                type="text"
                 value={draft.owner}
                 onChange={(event) => update({ owner: event.target.value })}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
-              />
+              >
+                <option value="">Unassigned</option>
+                {teamMembers.map((member) => (
+                  <option key={member.id} value={member.name}>
+                    {member.name}
+                  </option>
+                ))}
+              </select>
             </div>
             <div>
               <label htmlFor="eng-dueDate" className="block mb-2 text-sm font-medium text-gray-900">
@@ -984,7 +1013,8 @@ function DashboardChart({
 
 function DashboardTab({
   state,
-  onUpdateProjectDetails,
+  trustName,
+  projectName,
   onChartConfigChange,
   onOpenStakeholder,
   onClearData,
@@ -992,7 +1022,8 @@ function DashboardTab({
   onLoadFromFile,
 }: {
   state: StakeholderAnalysisState;
-  onUpdateProjectDetails: (updates: { organisationName?: string; projectName?: string }) => void;
+  trustName: string;
+  projectName: string;
   onChartConfigChange: (chartId: 'chart1' | 'chart2' | 'chart3' | 'chart4', key: string) => void;
   onOpenStakeholder: (id: string) => void;
   onClearData: () => void;
@@ -1065,28 +1096,16 @@ function DashboardTab({
       <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="dash-org" className="block text-sm font-medium text-gray-500">
-              Organisation
-            </label>
-            <input
-              id="dash-org"
-              type="text"
-              value={state.organisationName}
-              onChange={(event) => onUpdateProjectDetails({ organisationName: event.target.value })}
-              className="mt-1 block w-full text-lg font-semibold text-gray-900 border-0 border-b-2 border-transparent focus:ring-0 focus:border-indigo-500 p-1"
-            />
+            <h3 className="text-sm font-medium text-gray-500">Organisation</h3>
+            <p className="mt-1 text-lg font-semibold text-gray-900">
+              {trustName || 'Your Organisation'}
+            </p>
           </div>
           <div>
-            <label htmlFor="dash-project" className="block text-sm font-medium text-gray-500">
-              Project / Programme
-            </label>
-            <input
-              id="dash-project"
-              type="text"
-              value={state.projectName}
-              onChange={(event) => onUpdateProjectDetails({ projectName: event.target.value })}
-              className="mt-1 block w-full text-lg font-semibold text-gray-900 border-0 border-b-2 border-transparent focus:ring-0 focus:border-indigo-500 p-1"
-            />
+            <h3 className="text-sm font-medium text-gray-500">Project / Programme</h3>
+            <p className="mt-1 text-lg font-semibold text-gray-900">
+              {projectName || 'Your Project/Programme'}
+            </p>
           </div>
         </div>
       </div>
@@ -1186,24 +1205,14 @@ function DashboardTab({
   );
 }
 
-const STAKEHOLDER_COLUMNS: { key: string; label: string; noFilter?: boolean }[] = [
+const STAKEHOLDER_COLUMNS: { key: string; label: string }[] = [
   { key: 'name', label: 'Name' },
-  { key: 'groupSize', label: 'Group Size' },
-  { key: 'group', label: 'Group' },
-  { key: 'subGroup', label: 'Sub-Group' },
+  { key: 'group', label: 'Group / Sub-Group' },
   { key: 'location', label: 'Location' },
   { key: 'relationship', label: 'Relationship' },
-  { key: 'interest', label: 'Interest' },
-  { key: 'impact', label: 'Impact' },
-  { key: 'power', label: 'Power' },
-  { key: 'influence', label: 'Influence' },
   { key: 'mapping', label: 'Mapping' },
-  { key: 'currentCommitment', label: 'Current Commitment' },
-  { key: 'targetCommitment', label: 'Target Commitment' },
-  { key: 'commitmentGap', label: 'Commitment Gap', noFilter: true },
-  { key: 'capabilityCurrent', label: 'Current Capability' },
-  { key: 'capabilityTarget', label: 'Target Capability' },
-  { key: 'capabilityGap', label: 'Capability Gap', noFilter: true },
+  { key: 'commitmentGap', label: 'Commitment' },
+  { key: 'capabilityGap', label: 'Capability' },
   { key: 'targetDate', label: 'Target Date' },
 ];
 
@@ -1283,23 +1292,30 @@ function StakeholdersTab({
     <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Stakeholder Details</h2>
-        <div className="flex items-center gap-4">
-          <button
-            type="button"
-            onClick={onResetFilters}
-            className="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 text-sm"
-          >
-            Reset Filters
-          </button>
-          <button
-            type="button"
-            onClick={() => onOpen(null)}
-            className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 text-sm"
-          >
-            Add Stakeholder
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => onOpen(null)}
+          className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 text-sm"
+        >
+          Add Stakeholder
+        </button>
       </div>
+      <FilterBar
+        search={{
+          label: 'Search name',
+          value: state.filterConfig.name || '',
+          placeholder: 'Search by name...',
+          onChange: (value) => onFilterChange('name', value),
+        }}
+        selects={[
+          { key: 'group', label: 'Filter by group', value: state.filterConfig.group || '', options: uniqueValues('group'), onChange: (v) => onFilterChange('group', v) },
+          { key: 'subGroup', label: 'Filter by sub-group', value: state.filterConfig.subGroup || '', options: uniqueValues('subGroup'), onChange: (v) => onFilterChange('subGroup', v) },
+          { key: 'location', label: 'Filter by location', value: state.filterConfig.location || '', options: uniqueValues('location'), onChange: (v) => onFilterChange('location', v) },
+          { key: 'relationship', label: 'Filter by relationship', value: state.filterConfig.relationship || '', options: uniqueValues('relationship'), onChange: (v) => onFilterChange('relationship', v) },
+          { key: 'mapping', label: 'Filter by mapping', value: state.filterConfig.mapping || '', options: ['Manage Closely', 'Keep Satisfied', 'Keep Informed', 'Monitor'], onChange: (v) => onFilterChange('mapping', v) },
+        ]}
+        onReset={onResetFilters}
+      />
       <div className="overflow-auto" style={{ maxHeight: '70vh' }}>
         <table className="w-full text-sm text-left text-gray-500 border-collapse">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 sticky top-0">
@@ -1312,54 +1328,12 @@ function StakeholdersTab({
                     : '▼'
                   : '↕';
                 return (
-                  <th key={col.key} className="px-4 py-3 align-top">
-                    <div
-                      onClick={() => onSortChange(col.key)}
-                      className="cursor-pointer select-none"
-                    >
-                      {col.label} <span className="text-gray-400">{icon}</span>
-                    </div>
-                    {!col.noFilter ? (
-                      col.key === 'mapping' ? (
-                        <select
-                          value={state.filterConfig[col.key] || ''}
-                          onChange={(event) => onFilterChange(col.key, event.target.value)}
-                          className="mt-1 w-full bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg p-1.5"
-                        >
-                          <option value="">All</option>
-                          {['Manage Closely', 'Keep Satisfied', 'Keep Informed', 'Monitor'].map(
-                            (v) => (
-                              <option key={v} value={v}>
-                                {v}
-                              </option>
-                            )
-                          )}
-                        </select>
-                      ) : col.key === 'name' ||
-                        col.key === 'groupSize' ||
-                        col.key === 'targetDate' ? (
-                        <input
-                          type={col.key === 'groupSize' ? 'number' : 'text'}
-                          placeholder="Filter..."
-                          value={state.filterConfig[col.key] || ''}
-                          onChange={(event) => onFilterChange(col.key, event.target.value)}
-                          className="mt-1 w-full bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg p-1.5"
-                        />
-                      ) : (
-                        <select
-                          value={state.filterConfig[col.key] || ''}
-                          onChange={(event) => onFilterChange(col.key, event.target.value)}
-                          className="mt-1 w-full bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg p-1.5"
-                        >
-                          <option value="">All</option>
-                          {uniqueValues(col.key).map((v) => (
-                            <option key={v} value={v}>
-                              {v}
-                            </option>
-                          ))}
-                        </select>
-                      )
-                    ) : null}
+                  <th
+                    key={col.key}
+                    onClick={() => onSortChange(col.key)}
+                    className="px-4 py-3 align-top cursor-pointer select-none"
+                  >
+                    {col.label} <span className="text-gray-400">{icon}</span>
                   </th>
                 );
               })}
@@ -1369,7 +1343,7 @@ function StakeholdersTab({
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={19} className="text-center py-4 text-gray-500">
+                <td colSpan={9} className="text-center py-4 text-gray-500">
                   No stakeholders match the current filters.
                 </td>
               </tr>
@@ -1397,47 +1371,12 @@ function StakeholdersTab({
                     <td className="px-4 py-3 font-medium text-gray-900">
                       <span className="text-indigo-600 hover:underline">{s.name}</span>
                     </td>
-                    <td className="px-4 py-3">{s.groupSize}</td>
-                    <td className="px-4 py-3">{s.group}</td>
-                    <td className="px-4 py-3">{s.subGroup}</td>
+                    <td className="px-4 py-3">
+                      {s.group}
+                      {s.subGroup ? <span className="text-gray-400"> / {s.subGroup}</span> : null}
+                    </td>
                     <td className="px-4 py-3">{s.location}</td>
                     <td className="px-4 py-3">{s.relationship}</td>
-                    <td className="px-4 py-3 text-center">
-                      {s.interest ? (
-                        <span
-                          className={`rounded-full px-2 py-0.5 text-xs font-medium ${RATING_BADGE_CLASS[s.interest]}`}
-                        >
-                          {s.interest}
-                        </span>
-                      ) : null}
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      {s.impact ? (
-                        <span
-                          className={`rounded-full px-2 py-0.5 text-xs font-medium ${RATING_BADGE_CLASS[s.impact]}`}
-                        >
-                          {s.impact}
-                        </span>
-                      ) : null}
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      {s.power ? (
-                        <span
-                          className={`rounded-full px-2 py-0.5 text-xs font-medium ${RATING_BADGE_CLASS[s.power]}`}
-                        >
-                          {s.power}
-                        </span>
-                      ) : null}
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      {s.influence ? (
-                        <span
-                          className={`rounded-full px-2 py-0.5 text-xs font-medium ${RATING_BADGE_CLASS[s.influence]}`}
-                        >
-                          {s.influence}
-                        </span>
-                      ) : null}
-                    </td>
                     <td className="px-4 py-3 text-center">
                       <span
                         className={`px-2 py-1 text-xs font-medium rounded-full ${MAPPING_BADGE_CLASS[mapping]}`}
@@ -1445,15 +1384,15 @@ function StakeholdersTab({
                         {mapping}
                       </span>
                     </td>
-                    <td className="px-4 py-3">{s.currentCommitment}</td>
-                    <td className="px-4 py-3">{s.targetCommitment}</td>
-                    <td className={`px-4 py-3 font-medium text-center ${commitmentGap.colorClass}`}>
-                      {commitmentGap.gap}
+                    <td className={`px-4 py-3 text-center ${commitmentGap.colorClass}`}>
+                      <span className="font-medium">
+                        {s.currentCommitment || '-'} → {s.targetCommitment || '-'}
+                      </span>
                     </td>
-                    <td className="px-4 py-3">{s.capabilityCurrent}</td>
-                    <td className="px-4 py-3">{s.capabilityTarget}</td>
-                    <td className={`px-4 py-3 font-medium text-center ${capabilityGap.colorClass}`}>
-                      {capabilityGap.gap}
+                    <td className={`px-4 py-3 text-center ${capabilityGap.colorClass}`}>
+                      <span className="font-medium">
+                        {s.capabilityCurrent || '-'} → {s.capabilityTarget || '-'}
+                      </span>
                     </td>
                     <td className="px-4 py-3">
                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${dateClass}`}>
@@ -1462,30 +1401,25 @@ function StakeholdersTab({
                     </td>
                     <td className="px-4 py-3">
                       <div
-                        className="flex items-center gap-3"
+                        className="flex items-center gap-2"
                         onClick={(event) => event.stopPropagation()}
                       >
-                        <button
-                          type="button"
-                          onClick={() => onOpen(s.id)}
-                          className="text-indigo-600 hover:text-indigo-900"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          type="button"
+                        <IconActionButton onClick={() => onOpen(s.id)} title="Edit stakeholder">
+                          <PencilIcon />
+                        </IconActionButton>
+                        <IconActionButton
                           onClick={() => onDuplicate(s.id)}
-                          className="text-green-600 hover:text-green-900"
+                          title="Duplicate stakeholder"
                         >
-                          Duplicate
-                        </button>
-                        <button
-                          type="button"
+                          <DuplicateIcon />
+                        </IconActionButton>
+                        <IconActionButton
                           onClick={() => onDelete(s.id)}
-                          className="text-red-600 hover:text-red-900"
+                          title="Delete stakeholder"
+                          variant="danger"
                         >
-                          Delete
-                        </button>
+                          <BinIcon />
+                        </IconActionButton>
                       </div>
                     </td>
                   </tr>
@@ -1499,26 +1433,146 @@ function StakeholdersTab({
   );
 }
 
+/** Converts an engagement log entry into a real DraftAction on a chosen component/lens - mirrors ForceFieldAnalysisApp's ApplyScreen. */
+function ApplyToProjectModal({
+  log,
+  stakeholderName,
+  components,
+  teamMembers,
+  getEntry,
+  onConfirm,
+  onCancel,
+}: {
+  log: EngagementLog;
+  stakeholderName: string;
+  components: AssessmentComponent[];
+  teamMembers: TeamMember[];
+  getEntry: (componentId: string, lens: string) => DraftEntry;
+  onConfirm: (componentId: string, lens: string, action: DraftAction) => void;
+  onCancel: () => void;
+}): JSX.Element {
+  const [componentId, setComponentId] = useState(components[0]?.id || '');
+  const component = components.find((c) => c.id === componentId);
+  const [lens, setLens] = useState(component?.lenses[0] || '');
+  const [action, setAction] = useState<DraftAction>({
+    id: createId('action-'),
+    text: `${stakeholderName}: ${log.activity}`.trim(),
+    owner: log.owner,
+    timescale: log.dueDate,
+    dueDate: log.dueDate,
+    status: 'Planned',
+  });
+
+  const currentLenses = component?.lenses || [];
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="w-full max-w-2xl rounded-lg bg-white shadow-xl p-6">
+        <h3 className="text-xl font-semibold text-gray-900 mb-4">Add to Project Plan</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label htmlFor="apply-component" className="block mb-2 text-sm font-medium text-gray-900">
+              Component
+            </label>
+            <select
+              id="apply-component"
+              value={componentId}
+              onChange={(event) => {
+                const nextComponent = components.find((c) => c.id === event.target.value);
+                setComponentId(event.target.value);
+                setLens(nextComponent?.lenses[0] || '');
+              }}
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+            >
+              {components.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="apply-lens" className="block mb-2 text-sm font-medium text-gray-900">
+              Lens
+            </label>
+            <select
+              id="apply-lens"
+              value={lens}
+              onChange={(event) => setLens(event.target.value)}
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+            >
+              {currentLenses.map((l) => (
+                <option key={l} value={l}>
+                  {l}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <label htmlFor="apply-text" className="block mb-2 text-sm font-medium text-gray-900">
+          Action Text
+        </label>
+        <input
+          id="apply-text"
+          type="text"
+          value={action.text}
+          onChange={(event) => setAction((current) => ({ ...current, text: event.target.value }))}
+          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 mb-4"
+        />
+        <ActionEditorFields
+          action={action}
+          onChange={(updates) => setAction((current) => ({ ...current, ...updates }))}
+          teamMembers={teamMembers}
+        />
+        <div className="flex justify-end gap-2 mt-6">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="text-gray-500 bg-white hover:bg-gray-100 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              if (!componentId || !lens) {
+                window.alert('Please choose a component and lens.');
+                return;
+              }
+              const entry = getEntry(componentId, lens);
+              onConfirm(componentId, lens, { ...action, readinessScore: entry.score });
+            }}
+            className="text-white bg-indigo-600 hover:bg-indigo-700 font-medium rounded-lg text-sm px-5 py-2.5"
+          >
+            Add to Project
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function EngagementTab({
   state,
+  stakeholderMap,
+  canApply,
   onOpen,
   onDelete,
+  onApply,
   onSortChange,
   onFilterChange,
   onResetFilters,
 }: {
   state: StakeholderAnalysisState;
+  stakeholderMap: Record<string, string>;
+  canApply: boolean;
   onOpen: (id: string | null) => void;
   onDelete: (id: string) => void;
+  onApply: (log: EngagementLog) => void;
   onSortChange: (key: string) => void;
   onFilterChange: (key: string, value: string) => void;
   onResetFilters: () => void;
 }): JSX.Element {
-  const stakeholderMap = useMemo(
-    () => Object.fromEntries(state.stakeholders.map((s) => [s.id, s.name])),
-    [state.stakeholders]
-  );
-
   const columns = [
     { key: 'stakeholderId', label: 'Stakeholder' },
     { key: 'engagementActivity', label: 'Engagement Activity' },
@@ -1570,27 +1624,43 @@ function EngagementTab({
     stakeholderMap,
   ]);
 
+  const uniqueStakeholderNames = useMemo(
+    () =>
+      [...new Set(state.engagementLog.map((log) => stakeholderMap[log.stakeholderId]).filter(Boolean))].sort(),
+    [state.engagementLog, stakeholderMap]
+  );
+
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Engagement Plan &amp; Log</h2>
-        <div className="flex items-center gap-4">
-          <button
-            type="button"
-            onClick={onResetFilters}
-            className="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 text-sm"
-          >
-            Reset Filters
-          </button>
-          <button
-            type="button"
-            onClick={() => onOpen(null)}
-            className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 text-sm"
-          >
-            Add Engagement Log
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => onOpen(null)}
+          className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 text-sm"
+        >
+          Add Engagement Log
+        </button>
       </div>
+      <FilterBar
+        selects={[
+          {
+            key: 'stakeholder',
+            label: 'Stakeholder',
+            value: state.engagementFilterConfig.stakeholderId || '',
+            options: uniqueStakeholderNames,
+            onChange: (v) => onFilterChange('stakeholderId', v),
+          },
+          {
+            key: 'status',
+            label: 'Status',
+            value: state.engagementFilterConfig.status || '',
+            options: ['Planned', 'In Progress', 'Completed'],
+            onChange: (v) => onFilterChange('status', v),
+          },
+        ]}
+        onReset={onResetFilters}
+      />
       <div className="overflow-auto" style={{ maxHeight: '70vh' }}>
         <table className="w-full text-sm text-left text-gray-500 border-collapse">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 sticky top-0">
@@ -1602,48 +1672,13 @@ function EngagementTab({
                     ? '▲'
                     : '▼'
                   : '↕';
-                const uniqueValues =
-                  col.key === 'stakeholderId'
-                    ? [
-                        ...new Set(
-                          state.engagementLog
-                            .map((log) => stakeholderMap[log.stakeholderId])
-                            .filter(Boolean)
-                        ),
-                      ].sort()
-                    : col.key === 'status'
-                      ? ['Planned', 'In Progress', 'Completed']
-                      : null;
                 return (
-                  <th key={col.key} className="px-4 py-3 align-top">
-                    <div
-                      onClick={() => onSortChange(col.key)}
-                      className="cursor-pointer select-none"
-                    >
-                      {col.label} <span className="text-gray-400">{icon}</span>
-                    </div>
-                    {uniqueValues ? (
-                      <select
-                        value={state.engagementFilterConfig[col.key] || ''}
-                        onChange={(event) => onFilterChange(col.key, event.target.value)}
-                        className="mt-1 w-full bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg p-1.5"
-                      >
-                        <option value="">All</option>
-                        {uniqueValues.map((v) => (
-                          <option key={v} value={v}>
-                            {v}
-                          </option>
-                        ))}
-                      </select>
-                    ) : (
-                      <input
-                        type={col.key === 'dueDate' ? 'date' : 'text'}
-                        placeholder="Filter..."
-                        value={state.engagementFilterConfig[col.key] || ''}
-                        onChange={(event) => onFilterChange(col.key, event.target.value)}
-                        className="mt-1 w-full bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg p-1.5"
-                      />
-                    )}
+                  <th
+                    key={col.key}
+                    onClick={() => onSortChange(col.key)}
+                    className="px-4 py-3 align-top cursor-pointer select-none"
+                  >
+                    {col.label} <span className="text-gray-400">{icon}</span>
                   </th>
                 );
               })}
@@ -1681,23 +1716,24 @@ function EngagementTab({
                     <td className="px-4 py-3 whitespace-pre-wrap">{log.notes}</td>
                     <td className="px-4 py-3">
                       <div
-                        className="flex items-center gap-3"
+                        className="flex items-center gap-2"
                         onClick={(event) => event.stopPropagation()}
                       >
-                        <button
-                          type="button"
-                          onClick={() => onOpen(log.id)}
-                          className="text-indigo-600 hover:text-indigo-900"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          type="button"
+                        <IconActionButton onClick={() => onOpen(log.id)} title="Edit engagement log">
+                          <PencilIcon />
+                        </IconActionButton>
+                        {canApply ? (
+                          <IconActionButton onClick={() => onApply(log)} title="Add to project plan">
+                            <PlusCircleIcon />
+                          </IconActionButton>
+                        ) : null}
+                        <IconActionButton
                           onClick={() => onDelete(log.id)}
-                          className="text-red-600 hover:text-red-900"
+                          title="Delete engagement log"
+                          variant="danger"
                         >
-                          Delete
-                        </button>
+                          <BinIcon />
+                        </IconActionButton>
                       </div>
                     </td>
                   </tr>
@@ -1930,6 +1966,23 @@ function AnalysisMapTab({
   );
 }
 
+const ACTIVITY_RATING_CLASS: Record<string, string> = {
+  Low: 'bg-slate-100 text-slate-700',
+  Medium: 'bg-amber-100 text-amber-800',
+  High: 'bg-indigo-100 text-indigo-800',
+};
+
+function ActivityRatingBadge({ value }: { value: ActivityRating }): JSX.Element | null {
+  if (!value) {
+    return null;
+  }
+  return (
+    <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${ACTIVITY_RATING_CLASS[value]}`}>
+      {value}
+    </span>
+  );
+}
+
 function ActivitiesTab({
   activities,
   onOpen,
@@ -1979,28 +2032,34 @@ function ActivitiesTab({
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                   {act.name}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{act.inform}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{act.consult}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{act.involve}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {act.collaborate}
+                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                  <ActivityRatingBadge value={act.inform} />
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{act.empower}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                  <ActivityRatingBadge value={act.consult} />
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                  <ActivityRatingBadge value={act.involve} />
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                  <ActivityRatingBadge value={act.collaborate} />
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                  <ActivityRatingBadge value={act.empower} />
+                </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <button
-                    type="button"
-                    onClick={() => onOpen(act.id)}
-                    className="text-indigo-600 hover:text-indigo-900"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => onDelete(act.id)}
-                    className="text-red-600 hover:text-red-900 ml-4"
-                  >
-                    Delete
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <IconActionButton onClick={() => onOpen(act.id)} title="Edit activity">
+                      <PencilIcon />
+                    </IconActionButton>
+                    <IconActionButton
+                      onClick={() => onDelete(act.id)}
+                      title="Delete activity"
+                      variant="danger"
+                    >
+                      <BinIcon />
+                    </IconActionButton>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -2020,6 +2079,73 @@ const REFERENCE_KEYS: { key: keyof ReferenceData; title: string }[] = [
   { key: 'capabilities', title: 'Capabilities' },
 ];
 
+function ReferenceListCard({
+  title,
+  values,
+  onUpdate,
+}: {
+  title: string;
+  values: string[];
+  onUpdate: (values: string[]) => void;
+}): JSX.Element {
+  const [newValue, setNewValue] = useState('');
+
+  const addValue = () => {
+    const trimmed = newValue.trim();
+    if (!trimmed || values.includes(trimmed)) {
+      return;
+    }
+    onUpdate([...values, trimmed]);
+    setNewValue('');
+  };
+
+  return (
+    <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+      <h3 className="font-semibold mb-2 text-gray-800">{title}</h3>
+      <ul className="space-y-1 mb-3">
+        {values.map((value, index) => (
+          <li
+            key={value}
+            className="flex items-center justify-between gap-2 bg-white border border-gray-200 rounded-md px-2 py-1.5"
+          >
+            <span className="text-sm text-gray-800">{value}</span>
+            <IconActionButton
+              onClick={() => onUpdate(values.filter((_, i) => i !== index))}
+              title={`Remove ${value}`}
+              variant="danger"
+            >
+              <BinIcon />
+            </IconActionButton>
+          </li>
+        ))}
+        {values.length === 0 ? <li className="text-sm text-gray-400 italic">No items yet.</li> : null}
+      </ul>
+      <div className="flex gap-2">
+        <input
+          type="text"
+          value={newValue}
+          onChange={(event) => setNewValue(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') {
+              event.preventDefault();
+              addValue();
+            }
+          }}
+          placeholder={`Add a ${title.toLowerCase()} item...`}
+          className="flex-1 p-2 border border-gray-300 rounded-md text-sm"
+        />
+        <button
+          type="button"
+          onClick={addValue}
+          className="bg-indigo-600 text-white px-3 py-1.5 rounded-md hover:bg-indigo-700 text-sm"
+        >
+          Add
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function ReferenceTab({
   referenceData,
   onUpdate,
@@ -2027,49 +2153,30 @@ function ReferenceTab({
   referenceData: ReferenceData;
   onUpdate: (key: keyof ReferenceData, values: string[]) => void;
 }): JSX.Element {
-  const [drafts, setDrafts] = useState<Record<string, string>>(() =>
-    Object.fromEntries(
-      REFERENCE_KEYS.map(({ key }) => [key, (referenceData[key] as string[]).join('\n')])
-    )
-  );
-
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
       <h2 className="text-xl font-semibold mb-4">Reference Data Management</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {REFERENCE_KEYS.map(({ key, title }) => (
-          <div key={key} className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-            <h3 className="font-semibold mb-2 text-gray-800">{title}</h3>
-            <textarea
-              value={drafts[key]}
-              onChange={(event) =>
-                setDrafts((current) => ({ ...current, [key]: event.target.value }))
-              }
-              className="w-full h-32 p-2 border border-gray-300 rounded-md text-sm"
-            />
-            <button
-              type="button"
-              onClick={() =>
-                onUpdate(
-                  key,
-                  drafts[key]
-                    .split('\n')
-                    .map((v) => v.trim())
-                    .filter(Boolean)
-                )
-              }
-              className="mt-2 bg-indigo-600 text-white px-3 py-1.5 rounded-md hover:bg-indigo-700 text-sm"
-            >
-              Save {title}
-            </button>
-          </div>
+          <ReferenceListCard
+            key={key}
+            title={title}
+            values={referenceData[key] as string[]}
+            onUpdate={(values) => onUpdate(key, values)}
+          />
         ))}
       </div>
     </div>
   );
 }
 
-function GuidanceTab(): JSX.Element {
+function GuidanceTab({
+  guidanceRead,
+  onMarkRead,
+}: {
+  guidanceRead: boolean;
+  onMarkRead: () => void;
+}): JSX.Element {
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
       <div className="max-w-none text-gray-700 space-y-4">
@@ -2102,9 +2209,10 @@ function GuidanceTab(): JSX.Element {
         </ul>
 
         <h3 className="text-lg font-semibold">Step-by-Step Guide</h3>
-        <h4 className="font-semibold">Step 1: Customise Your Project (Dashboard Tab)</h4>
+        <h4 className="font-semibold">Step 1: Check Your Project (Dashboard Tab)</h4>
         <p>
-          Set up your organisation and project name on the Dashboard - this is saved with your file.
+          Your organisation and project name are shown on the Dashboard, pulled from Project
+          Details.
         </p>
 
         <h4 className="font-semibold">Step 2: Define Your Terms (Reference Data Tab)</h4>
@@ -2163,6 +2271,22 @@ function GuidanceTab(): JSX.Element {
             for where an engagement or training effort is required.
           </li>
         </ul>
+
+        {!guidanceRead ? (
+          <div className="pt-2">
+            <button
+              type="button"
+              onClick={onMarkRead}
+              className="bg-indigo-600 text-white px-5 py-2.5 rounded-md hover:bg-indigo-700 text-sm font-medium"
+            >
+              I&apos;ve read this - continue
+            </button>
+          </div>
+        ) : (
+          <p className="text-sm text-green-700 font-medium">
+            ✓ Guidance read - the rest of the tool is unlocked.
+          </p>
+        )}
       </div>
     </div>
   );
@@ -2171,22 +2295,40 @@ function GuidanceTab(): JSX.Element {
 export interface StakeholderAnalysisAppProps {
   embedded?: boolean;
   onBack?: () => void;
+  trustName?: string;
+  projectName?: string;
+  teamMembers?: TeamMember[];
+  components?: AssessmentComponent[];
+  objectives?: Record<string, ComponentObjective[]>;
+  getEntry?: (componentId: string, lens: string) => DraftEntry;
+  onEntryUpdate?: (componentId: string, lens: string, entry: DraftEntry) => void;
+  onObjectivesUpdate?: (componentId: string, objectives: ComponentObjective[]) => void;
 }
 
 type Tab =
-  'dashboard' | 'stakeholders' | 'engagement' | 'map' | 'activities' | 'reference' | 'guidance';
+  'guidance' | 'reference' | 'stakeholders' | 'activities' | 'dashboard' | 'engagement' | 'map';
 
 export default function StakeholderAnalysisApp({
   embedded = false,
   onBack,
+  trustName = '',
+  projectName = '',
+  teamMembers = [],
+  components = [],
+  getEntry,
+  onEntryUpdate,
 }: StakeholderAnalysisAppProps = {}): JSX.Element {
   const [state, setState] = useState<StakeholderAnalysisState>(
     () => load<StakeholderAnalysisState>(STORAGE_KEY) || freshState()
   );
-  const [activeTab, setActiveTab] = useState<Tab>('dashboard');
+  const [activeTab, setActiveTab] = useState<Tab>(
+    () => (load<StakeholderAnalysisState>(STORAGE_KEY)?.guidanceRead ? 'dashboard' : 'guidance')
+  );
   const [stakeholderModal, setStakeholderModal] = useState<Stakeholder | null>(null);
   const [engagementModal, setEngagementModal] = useState<EngagementLog | null>(null);
   const [activityModal, setActivityModal] = useState<Activity | null>(null);
+  const [applyModal, setApplyModal] = useState<EngagementLog | null>(null);
+  const canApply = Boolean(getEntry && onEntryUpdate && components.length);
 
   useEffect(() => {
     save(STORAGE_KEY, state);
@@ -2195,6 +2337,11 @@ export default function StakeholderAnalysisApp({
   const groupColors = useMemo(
     () => assignGroupColors(state.referenceData.groups),
     [state.referenceData.groups]
+  );
+
+  const stakeholderMap = useMemo(
+    () => Object.fromEntries(state.stakeholders.map((s) => [s.id, s.name])),
+    [state.stakeholders]
   );
 
   const updateState = (updates: Partial<StakeholderAnalysisState>) => {
@@ -2407,14 +2554,14 @@ export default function StakeholderAnalysisApp({
     ? state.engagementLog.some((log) => log.stakeholderId === stakeholderModal.id)
     : false;
 
-  const tabs: { key: Tab; label: string }[] = [
-    { key: 'dashboard', label: 'Dashboard' },
+  const tabs: { key: Tab; label: string; gapBefore?: boolean }[] = [
+    { key: 'guidance', label: 'Guidance' },
+    { key: 'reference', label: 'Reference Data' },
     { key: 'stakeholders', label: 'Stakeholders' },
+    { key: 'activities', label: 'Activities' },
+    { key: 'dashboard', label: 'Dashboard', gapBefore: true },
     { key: 'engagement', label: 'Engagement Plan' },
     { key: 'map', label: 'Analysis Map' },
-    { key: 'activities', label: 'Activities' },
-    { key: 'reference', label: 'Reference Data' },
-    { key: 'guidance', label: 'Guidance' },
   ];
 
   return (
@@ -2447,27 +2594,43 @@ export default function StakeholderAnalysisApp({
 
       <div className="mb-6 border-b border-gray-200">
         <nav className="flex flex-wrap -mb-px">
-          {tabs.map((tab) => (
-            <button
-              key={tab.key}
-              type="button"
-              onClick={() => setActiveTab(tab.key)}
-              className={`whitespace-nowrap py-3 px-5 border-b-2 font-medium text-sm ${
-                activeTab === tab.key
-                  ? 'border-indigo-600 text-indigo-600 bg-indigo-50'
-                  : 'border-transparent text-gray-500 hover:text-indigo-600 hover:border-indigo-300'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+          {tabs.map((tab) => {
+            const locked = !state.guidanceRead && tab.key !== 'guidance';
+            return (
+              <button
+                key={tab.key}
+                type="button"
+                onClick={() => {
+                  if (!locked) {
+                    setActiveTab(tab.key);
+                  }
+                }}
+                disabled={locked}
+                aria-disabled={locked}
+                title={locked ? 'Read the Guidance tab first to unlock' : undefined}
+                className={`whitespace-nowrap py-3 px-5 border-b-2 font-medium text-sm flex items-center gap-1.5 ${
+                  tab.gapBefore ? 'ml-4' : ''
+                } ${
+                  locked
+                    ? 'border-transparent text-gray-300 cursor-not-allowed'
+                    : activeTab === tab.key
+                      ? 'border-indigo-600 text-indigo-600 bg-indigo-50'
+                      : 'border-transparent text-gray-500 hover:text-indigo-600 hover:border-indigo-300'
+                }`}
+              >
+                {locked ? <LockIcon /> : null}
+                {tab.label}
+              </button>
+            );
+          })}
         </nav>
       </div>
 
       {activeTab === 'dashboard' ? (
         <DashboardTab
           state={state}
-          onUpdateProjectDetails={updateState}
+          trustName={trustName}
+          projectName={projectName}
           onChartConfigChange={(chartId, key) =>
             updateState({ dashboardChartConfig: { ...state.dashboardChartConfig, [chartId]: key } })
           }
@@ -2493,8 +2656,11 @@ export default function StakeholderAnalysisApp({
       {activeTab === 'engagement' ? (
         <EngagementTab
           state={state}
+          stakeholderMap={stakeholderMap}
+          canApply={canApply}
           onOpen={openEngagementModal}
           onDelete={deleteEngagementLog}
+          onApply={setApplyModal}
           onSortChange={updateEngagementSort}
           onFilterChange={updateEngagementFilter}
           onResetFilters={() =>
@@ -2543,7 +2709,12 @@ export default function StakeholderAnalysisApp({
           }
         />
       ) : null}
-      {activeTab === 'guidance' ? <GuidanceTab /> : null}
+      {activeTab === 'guidance' ? (
+        <GuidanceTab
+          guidanceRead={state.guidanceRead}
+          onMarkRead={() => updateState({ guidanceRead: true })}
+        />
+      ) : null}
 
       {stakeholderModal ? (
         <StakeholderModal
@@ -2569,6 +2740,7 @@ export default function StakeholderAnalysisApp({
           log={engagementModal}
           stakeholders={state.stakeholders}
           activities={state.referenceData.engagementActivities}
+          teamMembers={teamMembers}
           onSave={saveEngagementLog}
           onCancel={() => setEngagementModal(null)}
         />
@@ -2578,6 +2750,21 @@ export default function StakeholderAnalysisApp({
           activity={activityModal}
           onSave={saveActivity}
           onCancel={() => setActivityModal(null)}
+        />
+      ) : null}
+      {applyModal && getEntry && onEntryUpdate ? (
+        <ApplyToProjectModal
+          log={applyModal}
+          stakeholderName={stakeholderMap[applyModal.stakeholderId] || 'Unknown'}
+          components={components}
+          teamMembers={teamMembers}
+          getEntry={getEntry}
+          onConfirm={(componentId, lens, action) => {
+            const entry = getEntry(componentId, lens);
+            onEntryUpdate(componentId, lens, { ...entry, actions: [...entry.actions, action] });
+            setApplyModal(null);
+          }}
+          onCancel={() => setApplyModal(null)}
         />
       ) : null}
     </div>

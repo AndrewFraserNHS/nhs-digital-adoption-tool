@@ -22,7 +22,7 @@ describe('ChangeImpactAssessmentApp', () => {
     fireEvent.click(screen.getByRole('button', { name: '+ New Assessment' }));
 
     // act
-    fireEvent.change(screen.getByPlaceholderText('e.g. HR, Finance'), {
+    fireEvent.change(screen.getByLabelText('Business Function'), {
       target: { value: 'Finance' },
     });
     fireEvent.change(screen.getByPlaceholderText('e.g. Payroll Run'), {
@@ -32,8 +32,8 @@ describe('ChangeImpactAssessmentApp', () => {
 
     // assert - row appears with default 1/1/1/2/2/2/1/1 scores:
     // change = (1+1+2*1)/16*100 = 25%, readiness = (2+2+2+1+1)/20*100 = 40%
-    expect(screen.getByText('Finance')).toBeInTheDocument();
-    expect(screen.getByText('Year End Close')).toBeInTheDocument();
+    expect(screen.getByRole('cell', { name: 'Finance' })).toBeInTheDocument();
+    expect(screen.getByRole('cell', { name: 'Year End Close' })).toBeInTheDocument();
     expect(screen.getByText('25%')).toBeInTheDocument();
     expect(screen.getByText('40%')).toBeInTheDocument();
   });
@@ -72,7 +72,9 @@ describe('ChangeImpactAssessmentApp', () => {
     // arrange
     render(<ChangeImpactAssessmentApp embedded />);
     fireEvent.click(screen.getByRole('button', { name: '+ New Assessment' }));
-    fireEvent.change(screen.getByPlaceholderText('e.g. HR, Finance'), { target: { value: 'IT' } });
+    fireEvent.change(screen.getByLabelText('Business Function'), {
+      target: { value: 'IT & Digital' },
+    });
     fireEvent.change(screen.getByPlaceholderText('e.g. Payroll Run'), {
       target: { value: 'Cloud Migration' },
     });
@@ -83,6 +85,6 @@ describe('ChangeImpactAssessmentApp', () => {
     // assert
     const stored = JSON.parse(localStorage.getItem('nhs-change-impact-assessment') || '[]');
     expect(stored).toHaveLength(1);
-    expect(stored[0].function).toBe('IT');
+    expect(stored[0].function).toBe('IT & Digital');
   });
 });

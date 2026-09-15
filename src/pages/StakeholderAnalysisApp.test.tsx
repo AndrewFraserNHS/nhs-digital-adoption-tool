@@ -3,7 +3,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import StakeholderAnalysisApp from './StakeholderAnalysisApp';
 
+function unlockGuidance() {
+  fireEvent.click(screen.getByRole('button', { name: "I've read this - continue" }));
+}
+
 function addStakeholder(name: string) {
+  unlockGuidance();
   fireEvent.click(screen.getByRole('button', { name: 'Stakeholders' }));
   fireEvent.click(screen.getByRole('button', { name: 'Add Stakeholder' }));
   fireEvent.change(screen.getByLabelText('Name'), { target: { value: name } });
@@ -14,11 +19,21 @@ describe('StakeholderAnalysisApp', () => {
     localStorage.clear();
   });
 
-  it('SHOULD show the Dashboard tab by default with zero stakeholders', () => {
+  it('SHOULD show the Guidance tab by default and lock the other tabs until it is read', () => {
     // arrange
     render(<StakeholderAnalysisApp embedded />);
 
-    // assert
+    // assert - locked
+    expect(
+      screen.getByText('Guidance for Using the Stakeholder Analysis Tool')
+    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Dashboard/ })).toBeDisabled();
+
+    // act
+    unlockGuidance();
+    fireEvent.click(screen.getByRole('button', { name: 'Dashboard' }));
+
+    // assert - unlocked
     expect(screen.getByText('Dashboard Overview')).toBeInTheDocument();
     const totalCard = screen.getByText('Total Stakeholders').closest('div') as HTMLElement;
     expect(totalCard).toHaveTextContent('0');
@@ -45,6 +60,7 @@ describe('StakeholderAnalysisApp', () => {
     // arrange
     const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {});
     render(<StakeholderAnalysisApp embedded />);
+    unlockGuidance();
     fireEvent.click(screen.getByRole('button', { name: 'Stakeholders' }));
     fireEvent.click(screen.getByRole('button', { name: 'Add Stakeholder' }));
 
@@ -69,23 +85,48 @@ describe('StakeholderAnalysisApp', () => {
       target: { value: 'Supporting' },
     });
 
-    // assert - the modal's own "Commitment Gap" label is the last match (table column header is the other)
-    const gapLabels = screen.getAllByText('Commitment Gap');
-    const gapContainer = gapLabels[gapLabels.length - 1].parentElement as HTMLElement;
+    // assert
+    const gapContainer = screen.getByText('Commitment Gap').parentElement as HTMLElement;
     expect(gapContainer).toHaveTextContent('4');
   });
 
-  it('SHOULD switch between tabs', () => {
+  it('SHOULD offer the Owner field as a dropdown of team members on an engagement log', () => {
     // arrange
-    render(<StakeholderAnalysisApp embedded />);
+    render(
+      <StakeholderAnalysisApp
+        embedded
+        teamMembers={[
+          { id: 'member-1', name: 'Alex Morgan', role: 'Change Lead' },
+          { id: 'member-2', name: 'Sam Patel', role: 'SRO' },
+        ]}
+      />
+    );
+    unlockGuidance();
+    fireEvent.click(screen.getByRole('button', { name: 'Stakeholders' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Add Stakeholder' }));
+    fireEvent.change(screen.getByLabelText('Name'), { target: { value: 'Jane Smith' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save Stakeholder' }));
 
-    // act
-    fireEvent.click(screen.getByRole('button', { name: 'Guidance' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Engagement Plan' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Add Engagement Log' }));
 
     // assert
-    expect(
-      screen.getByText('Guidance for Using the Stakeholder Analysis Tool')
-    ).toBeInTheDocument();
+    const ownerSelect = screen.getByLabelText('Owner') as HTMLSelectElement;
+    expect(ownerSelect.tagName).toBe('SELECT');
+    expect(screen.getByText('Alex Morgan')).toBeInTheDocument();
+    expect(screen.getByText('Sam Patel')).toBeInTheDocument();
+  });
+
+  it('SHOULD switch between tabs once unlocked', () => {
+    // arrange
+    render(<StakeholderAnalysisApp embedded />);
+    unlockGuidance();
+
+    // act
+    fireEvent.click(screen.getByRole('button', { name: 'Dashboard' }));
+
+    // assert
+    expect(screen.getByText('Dashboard Overview')).toBeInTheDocument();
   });
 
   it('SHOULD persist stakeholders to localStorage', () => {

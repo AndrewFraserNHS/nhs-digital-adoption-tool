@@ -74,6 +74,7 @@ import { downloadFile, escapeHtml } from '@lib/utils';
 import ChangeImpactAssessmentApp from '@pages/ChangeImpactAssessmentApp';
 import CompareApp from '@pages/CompareApp';
 import ForceFieldAnalysisApp from '@pages/ForceFieldAnalysisApp';
+import RaidLogApp from '@pages/RaidLogApp';
 import StakeholderAnalysisApp from '@pages/StakeholderAnalysisApp';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -405,6 +406,7 @@ export function AdoptionApp() {
       compare: 'tools',
       'change-impact-assessment': 'tools',
       'stakeholder-analysis': 'tools',
+      'raid-log': 'tools',
       'audit-log': 'tools',
     };
     const section = sectionByView[view];
@@ -1530,6 +1532,7 @@ export function AdoptionApp() {
                       'compare',
                       'change-impact-assessment',
                       'stakeholder-analysis',
+                      'raid-log',
                       'audit-log',
                     ] as View[]
                   ).map((v) => (
@@ -1555,7 +1558,9 @@ export function AdoptionApp() {
                               ? 'Change Impact Assessment'
                               : v === 'stakeholder-analysis'
                                 ? 'Stakeholder Analysis'
-                                : 'Audit Log'}
+                                : v === 'raid-log'
+                                  ? 'RAID Log'
+                                  : 'Audit Log'}
                     </button>
                   ))}
                 </nav>
@@ -2041,7 +2046,25 @@ export function AdoptionApp() {
             <ChangeImpactAssessmentApp embedded onBack={() => handleViewChange('dashboard')} />
           )}
           {view === 'stakeholder-analysis' && (
-            <StakeholderAnalysisApp embedded onBack={() => handleViewChange('dashboard')} />
+            <StakeholderAnalysisApp
+              embedded
+              onBack={() => handleViewChange('dashboard')}
+              trustName={store.orgProfile.trustName}
+              projectName={store.orgProfile.projectName}
+              teamMembers={store.orgProfile.teamMembers || []}
+              components={COMPONENTS}
+              getEntry={getEntry}
+              onEntryUpdate={updateEntry}
+            />
+          )}
+          {view === 'raid-log' && (
+            <RaidLogApp
+              embedded
+              onBack={() => handleViewChange('dashboard')}
+              trustName={store.orgProfile.trustName}
+              projectName={store.orgProfile.projectName}
+              teamMembers={store.orgProfile.teamMembers || []}
+            />
           )}
           {view === 'audit-log' && (
             <AuditLogPage events={store.auditLog} darkMode={Boolean(userSettings.darkMode)} />

@@ -4,6 +4,7 @@ export const IN_APP_TOOLS = [
   'compare',
   'change-impact-assessment',
   'stakeholder-analysis',
+  'raid-log',
 ] as const;
 export type InAppTool = (typeof IN_APP_TOOLS)[number];
 
@@ -17,6 +18,7 @@ export const DEFAULT_TOOL_LINK_TEXT: Record<InAppTool, { label: string; matchTex
     matchText: 'Change Impact Assessment',
   },
   'stakeholder-analysis': { label: 'Stakeholder Analysis', matchText: 'Stakeholder Analysis' },
+  'raid-log': { label: 'RAID Log', matchText: 'RAID Log' },
 };
 
 export interface ToolLinkEntry {

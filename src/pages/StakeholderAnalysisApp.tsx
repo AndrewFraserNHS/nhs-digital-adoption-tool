@@ -23,6 +23,8 @@ import { load, save } from '@lib/storage';
 import { downloadFile } from '@lib/utils';
 import { type ChangeEvent, JSX, useEffect, useMemo, useRef, useState } from 'react';
 
+import { nhsButtonSecondary } from '../styles/nhsTheme';
+
 type Rating = 'Low' | 'Medium' | 'High' | 'Very High' | '';
 type Commitment =
   'Resistant' | 'Opposed' | 'Ambivalent' | 'Complying' | 'Supporting' | 'Leading' | '';
@@ -1345,21 +1347,17 @@ function DashboardTab({
           <button
             type="button"
             onClick={onClearData}
-            className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 text-sm"
+            className="rounded-md border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-100"
           >
             Clear Data
           </button>
-          <button
-            type="button"
-            onClick={onSaveToFile}
-            className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 text-sm"
-          >
+          <button type="button" onClick={onSaveToFile} className={nhsButtonSecondary}>
             Save to File
           </button>
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm"
+            className={nhsButtonSecondary}
           >
             Load from File
           </button>
@@ -2132,7 +2130,7 @@ function EngagementTab({
                         >
                           <PencilIcon />
                         </IconActionButton>
-                        {canApply ? (
+                        {canApply && !log.linkedActionId ? (
                           <IconActionButton
                             onClick={() => onApply(log)}
                             title="Add to project plan"

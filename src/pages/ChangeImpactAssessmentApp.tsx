@@ -546,6 +546,26 @@ function AssessmentsTab({
     return result;
   }, [items, sortKey, sortDirection, functionFilter, processFilter]);
 
+  /** Ranks # Impacted within the currently filtered list: the most populous top 10% (or top 5,
+   * whichever is more) are flagged red, the least populous bottom slice the same size is green,
+   * everything else is amber. */
+  const peopleImpactedStatusById = useMemo(() => {
+    const n = sortedAndFiltered.length;
+    const result: Record<string, 'red' | 'amber' | 'green'> = {};
+    if (n === 0) {
+      return result;
+    }
+    const thresholdCount =
+      n > 2 ? Math.min(Math.max(Math.ceil(n * 0.1), 5), Math.floor(n / 2)) : 0;
+    const byImpact = [...sortedAndFiltered].sort((a, b) => b.peopleImpacted - a.peopleImpacted);
+    const redIds = new Set(byImpact.slice(0, thresholdCount).map((item) => item.id));
+    const greenIds = new Set(byImpact.slice(n - thresholdCount).map((item) => item.id));
+    sortedAndFiltered.forEach((item) => {
+      result[item.id] = redIds.has(item.id) ? 'red' : greenIds.has(item.id) ? 'green' : 'amber';
+    });
+    return result;
+  }, [sortedAndFiltered]);
+
   const uniqueFunctions = useMemo(
     () =>
       Array.from(new Set(items.map((item) => item.function)))
@@ -904,7 +924,7 @@ function AssessmentsTab({
               sortedAndFiltered.map((item) => {
                 const scores = calculateScores(item);
                 const benefitStatus = getBragStatus(scores.readinessScore - scores.changeScore, {
-                  blue: 30,
+                  blue: Infinity,
                   green: 10,
                   amber: -10,
                 });
@@ -945,7 +965,13 @@ function AssessmentsTab({
                         )}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-slate-600">{item.peopleImpacted}</td>
+                    <td className="px-4 py-3">
+                      <span
+                        className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-bold ${bragBadgeClass(peopleImpactedStatusById[item.id] || 'amber')}`}
+                      >
+                        {item.peopleImpacted}
+                      </span>
+                    </td>
                     <td className="px-4 py-3 text-slate-600">{item.impactDate}</td>
                     <td className="px-4 py-3 text-center">
                       <ScoreBadge score={scores.changeScore} type="change" />

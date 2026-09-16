@@ -63,6 +63,37 @@ describe('RaidLogApp', () => {
     expect(screen.getByText('Sam Patel')).toBeInTheDocument();
   });
 
+  it('SHOULD link a RAID item to a component/lens action and show it as linked in the table', () => {
+    // arrange
+    const components = [
+      { id: 'vision', label: 'Vision', lenses: ['Lens A', 'Lens B'], phase: 1, target: 4 },
+    ];
+    const entry = {
+      score: 3,
+      rationale: '',
+      evidence: '',
+      actions: [
+        { id: 'action-1', text: 'Mitigate vendor risk', owner: '', timescale: '', status: 'Planned' as const },
+      ],
+    };
+    render(<RaidLogApp embedded components={components} getEntry={() => entry} />);
+    fireEvent.click(screen.getByRole('button', { name: '+ New Item' }));
+    fireEvent.change(screen.getByLabelText('Title'), { target: { value: 'Vendor risk' } });
+
+    // act
+    fireEvent.change(screen.getByLabelText('Component'), { target: { value: 'vision' } });
+    fireEvent.change(screen.getByLabelText('Lens'), { target: { value: 'Lens A' } });
+    fireEvent.change(screen.getByLabelText('Action'), { target: { value: 'action-1' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save Item' }));
+
+    // assert
+    const stored = JSON.parse(localStorage.getItem('nhs-raid-log') || '[]');
+    expect(stored[0].linkedComponentId).toBe('vision');
+    expect(stored[0].linkedLens).toBe('Lens A');
+    expect(stored[0].linkedActionId).toBe('action-1');
+    expect(screen.getByRole('cell', { name: 'Vision' })).toBeInTheDocument();
+  });
+
   it('SHOULD persist RAID items to localStorage', () => {
     // arrange
     render(<RaidLogApp embedded />);

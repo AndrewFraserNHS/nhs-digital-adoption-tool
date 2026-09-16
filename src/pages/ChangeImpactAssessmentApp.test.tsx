@@ -68,6 +68,23 @@ describe('ChangeImpactAssessmentApp', () => {
     confirmSpy.mockRestore();
   });
 
+  it('SHOULD never show Blue on the Benefits column and should RAG-rank # Impacted by percentile', () => {
+    // arrange
+    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
+    render(<ChangeImpactAssessmentApp embedded />);
+    fireEvent.click(screen.getByRole('button', { name: 'Load Demo Data' }));
+
+    // assert - highest impact (Shift Scheduling, 300) is red; lowest (GDPR Audit, 5) is green
+    const highImpactCell = screen.getByRole('cell', { name: '300' });
+    expect(highImpactCell.querySelector('span')).toHaveClass('bg-red-100');
+    const lowImpactCell = screen.getByRole('cell', { name: '5' });
+    expect(lowImpactCell.querySelector('span')).toHaveClass('bg-green-100');
+
+    // assert - the Benefits (Ben #) badges never use the Blue BRAG tier
+    expect(document.querySelector('.bg-blue-100.text-blue-800')).not.toBeInTheDocument();
+    confirmSpy.mockRestore();
+  });
+
   it('SHOULD persist assessments to localStorage', () => {
     // arrange
     render(<ChangeImpactAssessmentApp embedded />);

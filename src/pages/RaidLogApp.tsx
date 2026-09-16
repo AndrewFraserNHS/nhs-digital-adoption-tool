@@ -1,7 +1,9 @@
 import { BinIcon, IconActionButton, PencilIcon } from '@components/common/IconButtons';
 import { FilterBar } from '@components/common/FilterBar';
-import type { TeamMember } from '@lib/adoptionState';
+import type { AssessmentComponent } from '@data/components';
+import type { DraftEntry, TeamMember } from '@lib/adoptionState';
 import { bragBadgeClass, getBragStatus } from '@lib/brag';
+import { getReadinessBand, READINESS_BANDS } from '@lib/readinessBands';
 import { load, save } from '@lib/storage';
 import { JSX, useEffect, useMemo, useState } from 'react';
 
@@ -21,6 +23,10 @@ interface RaidItem {
   likelihood?: RatingValue;
   impact?: RatingValue;
   notes: string;
+  /** Optional tie to a real project action - lets this RAID item track alongside its delivery work. */
+  linkedComponentId?: string;
+  linkedLens?: string;
+  linkedActionId?: string;
 }
 
 type RaidFormState = Omit<RaidItem, 'id'> & { id: string | null };
@@ -85,6 +91,8 @@ export interface RaidLogAppProps {
   trustName?: string;
   projectName?: string;
   teamMembers?: TeamMember[];
+  components?: AssessmentComponent[];
+  getEntry?: (componentId: string, lens: string) => DraftEntry;
 }
 
 export default function RaidLogApp({
@@ -92,6 +100,8 @@ export default function RaidLogApp({
   trustName = '',
   projectName = '',
   teamMembers = [],
+  components = [],
+  getEntry,
 }: RaidLogAppProps = {}): JSX.Element {
   const [items, setItems] = useState<RaidItem[]>(() => load<RaidItem[]>(STORAGE_KEY) || []);
   const [showForm, setShowForm] = useState(false);
@@ -99,6 +109,27 @@ export default function RaidLogApp({
   const [typeFilter, setTypeFilter] = useState('');
   const [ownerFilter, setOwnerFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const [linkReadinessFilter, setLinkReadinessFilter] = useState('');
+
+  const componentById = useMemo(
+    () => Object.fromEntries(components.map((c) => [c.id, c])),
+    [components]
+  );
+  const selectedLinkComponent = formData.linkedComponentId
+    ? componentById[formData.linkedComponentId]
+    : undefined;
+  const linkableActions = useMemo(() => {
+    if (!getEntry || !formData.linkedComponentId || !formData.linkedLens) {
+      return [];
+    }
+    const actions = getEntry(formData.linkedComponentId, formData.linkedLens).actions;
+    if (!linkReadinessFilter) {
+      return actions;
+    }
+    return actions.filter(
+      (action) => getReadinessBand(action.readinessScore ?? 0).label === linkReadinessFilter
+    );
+  }, [getEntry, formData.linkedComponentId, formData.linkedLens, linkReadinessFilter]);
 
   useEffect(() => {
     save(STORAGE_KEY, items);
@@ -365,6 +396,115 @@ export default function RaidLogApp({
                   </div>
                 </>
               ) : null}
+              {components.length > 0 ? (
+                <div className="lg:col-span-3 rounded-md border border-slate-200 bg-white p-3">
+                  <p className="text-sm font-medium text-slate-700 mb-2">
+                    Link to Action <span className="font-normal text-slate-400">(optional)</span>
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                    <div>
+                      <label
+                        htmlFor="raid-link-component"
+                        className="block text-xs font-medium text-slate-600 mb-1"
+                      >
+                        Component
+                      </label>
+                      <select
+                        id="raid-link-component"
+                        value={formData.linkedComponentId || ''}
+                        onChange={(event) => {
+                          const nextComponent = componentById[event.target.value];
+                          updateFormData({
+                            linkedComponentId: event.target.value || undefined,
+                            linkedLens: nextComponent?.lenses[0],
+                            linkedActionId: undefined,
+                          });
+                        }}
+                        className="w-full p-2 border border-slate-300 rounded outline-none"
+                      >
+                        <option value="">None</option>
+                        {components.map((component) => (
+                          <option key={component.id} value={component.id}>
+                            {component.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="raid-link-lens"
+                        className="block text-xs font-medium text-slate-600 mb-1"
+                      >
+                        Lens
+                      </label>
+                      <select
+                        id="raid-link-lens"
+                        value={formData.linkedLens || ''}
+                        disabled={!selectedLinkComponent}
+                        onChange={(event) =>
+                          updateFormData({
+                            linkedLens: event.target.value,
+                            linkedActionId: undefined,
+                          })
+                        }
+                        className="w-full p-2 border border-slate-300 rounded outline-none disabled:bg-slate-100"
+                      >
+                        {(selectedLinkComponent?.lenses || []).map((lens) => (
+                          <option key={lens} value={lens}>
+                            {lens}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="raid-link-readiness"
+                        className="block text-xs font-medium text-slate-600 mb-1"
+                      >
+                        Filter by readiness
+                      </label>
+                      <select
+                        id="raid-link-readiness"
+                        value={linkReadinessFilter}
+                        disabled={!selectedLinkComponent}
+                        onChange={(event) => setLinkReadinessFilter(event.target.value)}
+                        className="w-full p-2 border border-slate-300 rounded outline-none disabled:bg-slate-100"
+                      >
+                        <option value="">Any</option>
+                        {READINESS_BANDS.map((band) => (
+                          <option key={band.label} value={band.label}>
+                            {band.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="raid-link-action"
+                        className="block text-xs font-medium text-slate-600 mb-1"
+                      >
+                        Action
+                      </label>
+                      <select
+                        id="raid-link-action"
+                        value={formData.linkedActionId || ''}
+                        disabled={!selectedLinkComponent}
+                        onChange={(event) =>
+                          updateFormData({ linkedActionId: event.target.value || undefined })
+                        }
+                        className="w-full p-2 border border-slate-300 rounded outline-none disabled:bg-slate-100"
+                      >
+                        <option value="">None</option>
+                        {linkableActions.map((action) => (
+                          <option key={action.id} value={action.id}>
+                            {action.text || '(untitled action)'}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              ) : null}
               <div className="lg:col-span-3">
                 <label
                   htmlFor="raid-notes"
@@ -440,13 +580,14 @@ export default function RaidLogApp({
                 <th className="px-4 py-3">Status</th>
                 <th className="px-4 py-3">Target Date</th>
                 <th className="px-4 py-3 text-center">Severity</th>
+                <th className="px-4 py-3">Linked Action</th>
                 <th className="px-4 py-3 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-8 text-center text-slate-500 italic">
+                  <td colSpan={8} className="px-4 py-8 text-center text-slate-500 italic">
                     {items.length === 0
                       ? 'No RAID items added yet. Click "New Item" to begin.'
                       : 'No matching records found.'}
@@ -476,6 +617,16 @@ export default function RaidLogApp({
                       <td className="px-4 py-3 text-slate-600">{item.targetDate}</td>
                       <td className="px-4 py-3 text-center">
                         {severity !== null ? <SeverityBadge severity={severity} /> : null}
+                      </td>
+                      <td className="px-4 py-3 text-slate-600 text-xs">
+                        {item.linkedActionId && item.linkedComponentId ? (
+                          <span title={item.linkedLens}>
+                            {componentById[item.linkedComponentId]?.label ||
+                              item.linkedComponentId}
+                          </span>
+                        ) : (
+                          <span className="text-slate-400">-</span>
+                        )}
                       </td>
                       <td className="px-4 py-3 text-right">
                         <div className="flex justify-end gap-2">

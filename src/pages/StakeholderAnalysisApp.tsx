@@ -18,6 +18,7 @@ import {
   type TeamMember,
 } from '@lib/adoptionState';
 import { createDoughnutChart } from '@lib/charts';
+import { getReadinessBand, READINESS_BANDS } from '@lib/readinessBands';
 import { load, save } from '@lib/storage';
 import { downloadFile } from '@lib/utils';
 import { type ChangeEvent, JSX, useEffect, useMemo, useRef, useState } from 'react';
@@ -58,6 +59,10 @@ interface EngagementLog {
   dueDate: string;
   status: EngagementStatus;
   notes: string;
+  /** Set once this log is tied to a real project action (either pre-populated from an Engagement-type action, or pushed there via "Add to project"). Absent = "needs linking". */
+  linkedComponentId?: string;
+  linkedLens?: string;
+  linkedActionId?: string;
 }
 
 interface Activity {
@@ -531,6 +536,7 @@ const EMPTY_ACTIVITY: Omit<Activity, 'id'> = {
 /** ---------- Stakeholder add/edit modal ---------- */
 function StakeholderModal({
   stakeholder,
+  stakeholders,
   referenceData,
   hasEngagementLogs,
   onSave,
@@ -539,6 +545,7 @@ function StakeholderModal({
   onViewEngagements,
 }: {
   stakeholder: Stakeholder;
+  stakeholders: Stakeholder[];
   referenceData: ReferenceData;
   hasEngagementLogs: boolean;
   onSave: (s: Stakeholder) => void;
@@ -547,10 +554,37 @@ function StakeholderModal({
   onViewEngagements: () => void;
 }): JSX.Element {
   const [draft, setDraft] = useState<Stakeholder>(stakeholder);
+  const [copyFromId, setCopyFromId] = useState('');
   const isEdit = Boolean(stakeholder.id);
 
   const update = (updates: Partial<Stakeholder>) =>
     setDraft((current) => ({ ...current, ...updates }));
+
+  const copyableStakeholders = stakeholders
+    .filter((s) => s.id !== draft.id)
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  const copyFromStakeholder = () => {
+    const source = stakeholders.find((s) => s.id === copyFromId);
+    if (!source) {
+      return;
+    }
+    update({
+      groupSize: source.groupSize,
+      group: source.group,
+      subGroup: source.subGroup,
+      department: source.department,
+      relationship: source.relationship,
+      interest: source.interest,
+      impact: source.impact,
+      power: source.power,
+      influence: source.influence,
+      currentCommitment: source.currentCommitment,
+      targetCommitment: source.targetCommitment,
+      capabilityCurrent: source.capabilityCurrent,
+      capabilityTarget: source.capabilityTarget,
+    });
+  };
 
   const commitmentGap = getGap(draft.currentCommitment, draft.targetCommitment, 'commitments');
   const capabilityGap = getGap(draft.capabilityCurrent, draft.capabilityTarget, 'capabilities');
@@ -633,7 +667,7 @@ function StakeholderModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="w-full max-w-3xl max-h-[calc(100vh-2rem)] overflow-y-auto rounded-lg bg-white shadow-xl p-6">
+      <div className="w-full max-w-xl max-h-[calc(100vh-2rem)] overflow-y-auto rounded-lg bg-white shadow-xl p-6">
         <div className="flex justify-between items-start">
           <div className="flex items-center gap-3">
             <h3 className="text-xl font-semibold text-gray-900">
@@ -652,13 +686,47 @@ function StakeholderModal({
           <button
             type="button"
             onClick={onCancel}
-            className="text-gray-400 hover:text-gray-900 rounded-lg text-sm p-1.5"
+            className="text-gray-700 hover:text-gray-900 rounded-lg text-sm p-1.5"
           >
             Close
           </button>
         </div>
 
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-4 gap-4">
+        {copyableStakeholders.length > 0 ? (
+          <div className="mt-4 flex items-end gap-2 rounded-lg border border-gray-200 bg-gray-50 p-3">
+            <div className="flex-1">
+              <label
+                htmlFor="sh-copy-from"
+                className="block mb-2 text-sm font-medium text-gray-900"
+              >
+                Copy fields from another stakeholder
+              </label>
+              <select
+                id="sh-copy-from"
+                value={copyFromId}
+                onChange={(event) => setCopyFromId(event.target.value)}
+                className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+              >
+                <option value="">Select a stakeholder...</option>
+                {copyableStakeholders.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <button
+              type="button"
+              onClick={copyFromStakeholder}
+              disabled={!copyFromId}
+              className="text-white bg-slate-600 hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed font-medium rounded-lg text-sm px-4 py-2.5"
+            >
+              Copy
+            </button>
+          </div>
+        ) : null}
+
+        <div className="mt-4 grid grid-cols-1 gap-4">
           <div>
             <label htmlFor="sh-name" className="block mb-2 text-sm font-medium text-gray-900">
               Name
@@ -762,7 +830,7 @@ function StakeholderModal({
             <button
               type="button"
               onClick={onCancel}
-              className="text-gray-500 bg-white hover:bg-gray-100 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5"
+              className="text-gray-700 bg-white hover:bg-gray-100 rounded-lg border border-gray-300 text-sm font-medium px-5 py-2.5"
             >
               Cancel
             </button>
@@ -1794,6 +1862,8 @@ function EngagementTab({
   state,
   stakeholderMap,
   canApply,
+  components,
+  getEntry,
   onOpen,
   onDelete,
   onApply,
@@ -1804,6 +1874,8 @@ function EngagementTab({
   state: StakeholderAnalysisState;
   stakeholderMap: Record<string, string>;
   canApply: boolean;
+  components: AssessmentComponent[];
+  getEntry?: (componentId: string, lens: string) => DraftEntry;
   onOpen: (id: string | null) => void;
   onDelete: (id: string) => void;
   onApply: (log: EngagementLog) => void;
@@ -1811,6 +1883,10 @@ function EngagementTab({
   onFilterChange: (key: string, value: string) => void;
   onResetFilters: () => void;
 }): JSX.Element {
+  const [componentFilter, setComponentFilter] = useState('');
+  const [phaseFilter, setPhaseFilter] = useState('');
+  const [readinessFilter, setReadinessFilter] = useState('');
+
   const columns = [
     { key: 'stakeholderId', label: 'Stakeholder' },
     { key: 'engagementActivity', label: 'Engagement Activity' },
@@ -1820,6 +1896,18 @@ function EngagementTab({
     { key: 'status', label: 'Status' },
     { key: 'notes', label: 'Notes' },
   ];
+
+  const componentById = useMemo(
+    () => Object.fromEntries(components.map((c) => [c.id, c])),
+    [components]
+  );
+
+  const readinessLabelForLog = (log: EngagementLog): string | null => {
+    if (!log.linkedComponentId || !log.linkedLens || !getEntry) {
+      return null;
+    }
+    return getReadinessBand(getEntry(log.linkedComponentId, log.linkedLens).score).label;
+  };
 
   const filtered = useMemo(() => {
     let result = [...state.engagementLog];
@@ -1836,6 +1924,21 @@ function EngagementTab({
         return val.toString().toLowerCase().includes(filterValue);
       });
     });
+    if (componentFilter) {
+      result = result.filter(
+        (log) => log.linkedComponentId && componentById[log.linkedComponentId]?.label === componentFilter
+      );
+    }
+    if (phaseFilter) {
+      result = result.filter(
+        (log) =>
+          log.linkedComponentId &&
+          String(componentById[log.linkedComponentId]?.phase) === phaseFilter
+      );
+    }
+    if (readinessFilter) {
+      result = result.filter((log) => readinessLabelForLog(log) === readinessFilter);
+    }
     const { key, direction } = state.engagementSortConfig;
     result.sort((a, b) => {
       const valA =
@@ -1855,11 +1958,16 @@ function EngagementTab({
       return 0;
     });
     return result;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     state.engagementLog,
     state.engagementFilterConfig,
     state.engagementSortConfig,
     stakeholderMap,
+    componentFilter,
+    phaseFilter,
+    readinessFilter,
+    componentById,
   ]);
 
   const uniqueStakeholderNames = useMemo(
@@ -1870,6 +1978,11 @@ function EngagementTab({
         ),
       ].sort(),
     [state.engagementLog, stakeholderMap]
+  );
+
+  const uniquePhases = useMemo(
+    () => [...new Set(components.map((c) => c.phase))].sort((a, b) => a - b).map(String),
+    [components]
   );
 
   return (
@@ -1900,8 +2013,34 @@ function EngagementTab({
             options: ['Planned', 'In Progress', 'Completed'],
             onChange: (v) => onFilterChange('status', v),
           },
+          {
+            key: 'component',
+            label: 'Component',
+            value: componentFilter,
+            options: components.map((c) => c.label),
+            onChange: setComponentFilter,
+          },
+          {
+            key: 'phase',
+            label: 'Phase',
+            value: phaseFilter,
+            options: uniquePhases,
+            onChange: setPhaseFilter,
+          },
+          {
+            key: 'readiness',
+            label: 'Readiness Score',
+            value: readinessFilter,
+            options: READINESS_BANDS.map((band) => band.label),
+            onChange: setReadinessFilter,
+          },
         ]}
-        onReset={onResetFilters}
+        onReset={() => {
+          onResetFilters();
+          setComponentFilter('');
+          setPhaseFilter('');
+          setReadinessFilter('');
+        }}
       />
       <div className="overflow-auto" style={{ maxHeight: '70vh' }}>
         <table className="w-full text-sm text-left text-gray-500 border-collapse">
@@ -1924,13 +2063,14 @@ function EngagementTab({
                   </th>
                 );
               })}
+              <th className="px-4 py-3 align-top">Link</th>
               <th className="px-4 py-3 align-top">Actions</th>
             </tr>
           </thead>
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={8} className="text-center py-4 text-gray-500">
+                <td colSpan={9} className="text-center py-4 text-gray-500">
                   No engagement logs match the current filters.
                 </td>
               </tr>
@@ -1956,6 +2096,31 @@ function EngagementTab({
                     </td>
                     <td className="px-4 py-3">{log.status}</td>
                     <td className="px-4 py-3 whitespace-pre-wrap">{log.notes}</td>
+                    <td className="px-4 py-3">
+                      <div className="flex flex-col gap-1">
+                        {!log.linkedActionId ? (
+                          <span className="w-fit rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">
+                            Needs linking
+                          </span>
+                        ) : (
+                          <span
+                            className="w-fit rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800"
+                            title={
+                              log.linkedComponentId
+                                ? `Linked to ${componentById[log.linkedComponentId]?.label || log.linkedComponentId} · ${log.linkedLens}`
+                                : undefined
+                            }
+                          >
+                            Linked
+                          </span>
+                        )}
+                        {!log.stakeholderId ? (
+                          <span className="w-fit rounded-full bg-slate-200 px-2 py-0.5 text-xs font-medium text-slate-700">
+                            Needs stakeholder
+                          </span>
+                        ) : null}
+                      </div>
+                    </td>
                     <td className="px-4 py-3">
                       <div
                         className="flex items-center gap-2"
@@ -2350,16 +2515,61 @@ function ScaleReferenceTable({
   );
 }
 
-function ReferenceTab(): JSX.Element {
+function ReferenceListDisplay({ title, values }: { title: string; values: string[] }): JSX.Element {
+  return (
+    <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+      <h3 className="font-semibold mb-2 text-gray-800">{title}</h3>
+      {values.length > 0 ? (
+        <ul className="flex flex-wrap gap-1.5">
+          {values.map((value) => (
+            <li
+              key={value}
+              className="rounded-full border border-gray-300 bg-white px-2.5 py-0.5 text-xs text-gray-700"
+            >
+              {value}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="text-sm text-gray-400 italic">None added yet.</p>
+      )}
+    </div>
+  );
+}
+
+function ReferenceTab({
+  referenceLists,
+  onGoToProjectDetails,
+}: {
+  referenceLists: StakeholderReferenceLists;
+  onGoToProjectDetails?: () => void;
+}): JSX.Element {
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 space-y-6">
       <div>
-        <h2 className="text-xl font-semibold mb-2">Reference Data</h2>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-xl font-semibold mb-2">Reference Data</h2>
+          {onGoToProjectDetails ? (
+            <button
+              type="button"
+              onClick={onGoToProjectDetails}
+              className="text-sm font-medium text-indigo-600 hover:text-indigo-800 hover:underline"
+            >
+              Manage in Project Details →
+            </button>
+          ) : null}
+        </div>
         <p className="text-sm text-gray-600">
-          Groups, Sub-Groups, Locations and Relationships are shared across the Adoption Engine and
-          are now managed from <strong>Project Details</strong>. The commitment and capability
+          Groups, Sub-Groups, Departments and Relationships are shared across the Adoption Engine
+          and are managed from <strong>Project Details</strong>. The commitment and capability
           scales below are fixed and shown here for reference.
         </p>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <ReferenceListDisplay title="Groups" values={referenceLists.groups} />
+        <ReferenceListDisplay title="Sub-Groups" values={referenceLists.subGroups} />
+        <ReferenceListDisplay title="Departments" values={referenceLists.departments} />
+        <ReferenceListDisplay title="Relationships" values={referenceLists.relationships} />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <ScaleReferenceTable
@@ -2424,7 +2634,7 @@ function GuidanceTab({
 
         <h4 className="font-semibold">Step 2: Check Your Terms (Reference Data Tab)</h4>
         <p>
-          Groups, Sub-Groups, Locations and Relationships are set up once from Project Details and
+          Groups, Sub-Groups, Departments and Relationships are set up once from Project Details and
           shared across the Adoption Engine. The Reference Data tab also shows what each Commitment
           and Capability level means.
         </p>
@@ -2508,6 +2718,7 @@ export interface StakeholderAnalysisAppProps {
   teamMembers?: TeamMember[];
   /** Groups/Sub-Groups/Departments/Relationships - now managed centrally on Project Details. */
   referenceLists?: StakeholderReferenceLists;
+  onGoToProjectDetails?: () => void;
   components?: AssessmentComponent[];
   objectives?: Record<string, ComponentObjective[]>;
   getEntry?: (componentId: string, lens: string) => DraftEntry;
@@ -2524,6 +2735,7 @@ export default function StakeholderAnalysisApp({
   projectName = '',
   teamMembers = [],
   referenceLists = DEFAULT_STAKEHOLDER_REFERENCE_LISTS,
+  onGoToProjectDetails,
   components = [],
   getEntry,
   onEntryUpdate,
@@ -2543,6 +2755,54 @@ export default function StakeholderAnalysisApp({
   useEffect(() => {
     save(STORAGE_KEY, state);
   }, [state]);
+
+  // Pre-populate the Engagement Plan with every real "Engagement" type action across every
+  // component/lens, so the log starts seeded from the project's own action plan rather than
+  // empty. These rows are already linked (they came from a component) - only their stakeholder
+  // still needs assigning. Runs once per newly-discovered action; already-imported ones are never
+  // re-synced, so edits made here afterwards are this tool's own.
+  useEffect(() => {
+    if (!getEntry || !components.length) {
+      return;
+    }
+    const existingActionIds = new Set(
+      state.engagementLog.map((log) => log.linkedActionId).filter(Boolean)
+    );
+    const newLogs: EngagementLog[] = [];
+    components.forEach((component) => {
+      component.lenses.forEach((lens) => {
+        getEntry(component.id, lens).actions.forEach((action) => {
+          if (action.actionType !== 'Engagement' || existingActionIds.has(action.id)) {
+            return;
+          }
+          newLogs.push({
+            id: createId('eng-'),
+            stakeholderId: '',
+            engagementActivity: '',
+            activity: action.text,
+            owner: action.owner,
+            dueDate: action.dueDate || '',
+            status:
+              action.status === 'Completed'
+                ? 'Completed'
+                : action.status === 'Planned'
+                  ? 'Planned'
+                  : 'In Progress',
+            notes: '',
+            linkedComponentId: component.id,
+            linkedLens: lens,
+            linkedActionId: action.id,
+          });
+        });
+      });
+    });
+    if (newLogs.length > 0) {
+      setState((current) => ({
+        ...current,
+        engagementLog: [...current.engagementLog, ...newLogs],
+      }));
+    }
+  }, [components, getEntry, state.engagementLog]);
 
   const groupColors = useMemo(
     () => assignGroupColors(referenceLists.groups),
@@ -2879,6 +3139,8 @@ export default function StakeholderAnalysisApp({
           state={state}
           stakeholderMap={stakeholderMap}
           canApply={canApply}
+          components={components}
+          getEntry={getEntry}
           onOpen={openEngagementModal}
           onDelete={deleteEngagementLog}
           onApply={setApplyModal}
@@ -2923,7 +3185,9 @@ export default function StakeholderAnalysisApp({
           onDelete={deleteActivity}
         />
       ) : null}
-      {activeTab === 'reference' ? <ReferenceTab /> : null}
+      {activeTab === 'reference' ? (
+        <ReferenceTab referenceLists={referenceLists} onGoToProjectDetails={onGoToProjectDetails} />
+      ) : null}
       {activeTab === 'guidance' ? (
         <GuidanceTab
           guidanceRead={state.guidanceRead}
@@ -2934,6 +3198,7 @@ export default function StakeholderAnalysisApp({
       {stakeholderModal ? (
         <StakeholderModal
           stakeholder={stakeholderModal}
+          stakeholders={state.stakeholders}
           referenceData={effectiveReferenceData}
           hasEngagementLogs={stakeholderHasLogs}
           onSave={saveStakeholder}
@@ -2977,6 +3242,19 @@ export default function StakeholderAnalysisApp({
           onConfirm={(componentId, lens, action) => {
             const entry = getEntry(componentId, lens);
             onEntryUpdate(componentId, lens, { ...entry, actions: [...entry.actions, action] });
+            setState((current) => ({
+              ...current,
+              engagementLog: current.engagementLog.map((log) =>
+                log.id === applyModal.id
+                  ? {
+                      ...log,
+                      linkedComponentId: componentId,
+                      linkedLens: lens,
+                      linkedActionId: action.id,
+                    }
+                  : log
+              ),
+            }));
             setApplyModal(null);
           }}
           onCancel={() => setApplyModal(null)}

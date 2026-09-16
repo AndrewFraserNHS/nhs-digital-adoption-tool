@@ -2064,6 +2064,7 @@ export function AdoptionApp() {
               referenceLists={
                 store.orgProfile.stakeholderReferenceLists || DEFAULT_STAKEHOLDER_REFERENCE_LISTS
               }
+              onGoToProjectDetails={() => handleViewChange('project-details')}
               components={COMPONENTS}
               getEntry={getEntry}
               onEntryUpdate={updateEntry}
@@ -2076,6 +2077,8 @@ export function AdoptionApp() {
               trustName={store.orgProfile.trustName}
               projectName={store.orgProfile.projectName}
               teamMembers={store.orgProfile.teamMembers || []}
+              components={COMPONENTS}
+              getEntry={getEntry}
             />
           )}
           {view === 'audit-log' && (

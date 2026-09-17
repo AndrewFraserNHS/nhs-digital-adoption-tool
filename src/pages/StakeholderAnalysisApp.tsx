@@ -2769,7 +2769,7 @@ export default function StakeholderAnalysisApp({
     const newLogs: EngagementLog[] = [];
     components.forEach((component) => {
       component.lenses.forEach((lens) => {
-        getEntry(component.id, lens).actions.forEach((action) => {
+        (getEntry(component.id, lens)?.actions || []).forEach((action) => {
           if (action.actionType !== 'Engagement' || existingActionIds.has(action.id)) {
             return;
           }

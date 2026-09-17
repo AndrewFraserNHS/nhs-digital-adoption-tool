@@ -4,7 +4,7 @@ import { AssessmentPanel } from './AssessmentPanel';
 import { EVIDENCE_WARNING_DISMISSED_KEY } from '@components/common/EvidenceWarningModal';
 
 const ASSESSMENT_PAGE_INTRO_SEEN_KEY = 'nhs-digital-adoption-page-intro-seen:assessment';
-import type { DraftEntry, OrgProfile } from '@lib/adoptionState';
+import type { DraftEntry, OrgProfile, RaidItem } from '@lib/adoptionState';
 import type { AssessmentComponent } from '@data/components';
 
 const components: AssessmentComponent[] = [
@@ -80,6 +80,7 @@ function createProps(overrides?: {
       history: [],
       phaseOverrides: {},
       pathwayChecks: {},
+      raidItems: [] as RaidItem[],
       suppressedAutoActions: {},
       auditLog: [],
     },
@@ -203,6 +204,67 @@ describe('AssessmentPanel', () => {
 
     // assert 4
     expect(props.onActionRemove).toHaveBeenCalledWith('vision', 'Strategic Direction', 'action-1');
+  });
+
+  it('SHOULD block completing an action linked to an open RAID item with no other action linked to it', () => {
+    // arrange
+    const props = createProps();
+    props.store.raidItems = [
+      {
+        id: 'raid-1',
+        type: 'Risk',
+        title: 'Vendor delay risk',
+        description: '',
+        owner: '',
+        status: 'Open',
+        dateRaised: '',
+        targetDate: '',
+        notes: '',
+      },
+    ];
+    const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {});
+    localStorage.setItem(EVIDENCE_WARNING_DISMISSED_KEY, 'true');
+
+    // act
+    render(<AssessmentPanel {...props} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Edit Run workshop' }));
+    fireEvent.change(screen.getByLabelText('RAID item'), { target: { value: 'raid-1' } });
+    fireEvent.change(screen.getByLabelText('Status'), { target: { value: 'Completed' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save Action' }));
+
+    // assert - blocked, with an explanatory message, and no save went through
+    expect(alertSpy).toHaveBeenCalledWith(expect.stringContaining('Vendor delay risk'));
+    expect(props.onEntryUpdate).not.toHaveBeenCalled();
+    alertSpy.mockRestore();
+  });
+
+  it('SHOULD allow completing an action linked to a Closed RAID item', () => {
+    // arrange
+    const props = createProps();
+    props.store.raidItems = [
+      {
+        id: 'raid-1',
+        type: 'Risk',
+        title: 'Vendor delay risk',
+        description: '',
+        owner: '',
+        status: 'Closed',
+        dateRaised: '',
+        targetDate: '',
+        notes: '',
+      },
+    ];
+    localStorage.setItem(EVIDENCE_WARNING_DISMISSED_KEY, 'true');
+
+    // act
+    render(<AssessmentPanel {...props} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Edit Run workshop' }));
+    fireEvent.change(screen.getByLabelText('RAID item'), { target: { value: 'raid-1' } });
+    fireEvent.change(screen.getByLabelText('Status'), { target: { value: 'Completed' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save Action' }));
+
+    // assert - allowed through since the RAID item is already Closed
+    expect(props.onEntryUpdate).toHaveBeenCalled();
   });
 
   it('SHOULD filter lens actions by action type', () => {

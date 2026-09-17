@@ -55,6 +55,7 @@ const store: AdoptionStore = {
   auditLog: [],
   phaseOverrides: {},
   pathwayChecks: {},
+  raidItems: [],
   history: [],
 };
 

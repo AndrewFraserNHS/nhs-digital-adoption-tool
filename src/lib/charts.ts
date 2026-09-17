@@ -172,6 +172,7 @@ export function createRadarChart(
         backgroundColor: darkMode ? 'rgba(15,23,42,0.98)' : 'rgba(11,18,32,0.95)',
         titleColor: '#fff',
         bodyColor: '#fff',
+        callbacks: {} as Record<string, (...args: never[]) => unknown>,
       },
       centerText: '',
     },
@@ -200,6 +201,18 @@ export function createRadarChart(
     ...defaultOpts,
     ...options,
     layout: { padding: 56, ...(options.layout || {}) },
+    plugins: {
+      ...(defaultOpts.plugins || {}),
+      ...(options.plugins || {}),
+      tooltip: {
+        ...(defaultOpts.plugins?.tooltip || {}),
+        ...(options.plugins?.tooltip || {}),
+        callbacks: {
+          ...(defaultOpts.plugins?.tooltip?.callbacks || {}),
+          ...(options.plugins?.tooltip?.callbacks || {}),
+        },
+      },
+    },
     scales: {
       ...(defaultOpts.scales || {}),
       ...(options.scales || {}),

@@ -84,6 +84,7 @@ export function DailyCheckIn({
           guidanceTarget={guidanceTarget}
           linkOverrides={linkOverrides}
           showAdditionalGuidanceLinks={showAdditionalGuidanceLinks}
+          phaseLinks={store.orgProfile.phaseLinks}
           darkMode={darkMode}
         />
 

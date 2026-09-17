@@ -33,6 +33,31 @@ export interface BaseAction {
   priority?: 'must' | 'should' | 'could';
   /** True when the source content was flagged (via an authored "*" marker) as still needing rework. */
   needsRework?: boolean;
+  /**
+   * The RAID log item (Risk/Assumption/Issue/Dependency) this action is resolving, if any. Lives
+   * on the action (not the RAID item) so several actions can each resolve the same RAID item -
+   * both the Action editor's "Affected RAID Log Items" picker and the RAID Log tool's own
+   * "Link to Action" picker read/write this same field.
+   */
+  raidItemId?: string;
+}
+
+export type RaidType = 'Risk' | 'Assumption' | 'Issue' | 'Dependency';
+export type RaidStatus = 'Open' | 'In Progress' | 'Closed';
+
+/** A RAID log entry - shared project-wide (not just local to the RAID Log tool) so an action anywhere in the assessment can link to it via its own raidItemId, and its close-validation can check that link. */
+export interface RaidItem {
+  id: string;
+  type: RaidType;
+  title: string;
+  description: string;
+  owner: string;
+  status: RaidStatus;
+  dateRaised: string;
+  targetDate: string;
+  likelihood?: 1 | 2 | 3 | 4;
+  impact?: 1 | 2 | 3 | 4;
+  notes: string;
 }
 
 export interface DraftAction extends BaseAction {
@@ -183,6 +208,8 @@ export interface OrgProfile {
   customComponentLinks?: Record<string, GuidanceLink[]>;
   /** Text-matched links to in-app tools (Highlight Builder, Force Field Analysis, Assess & Compare). */
   toolLinks?: ToolLinkEntry[];
+  /** Landing-page URL per phase number (1-5), shown as "Visit phase page" on the Daily Phase Overview. */
+  phaseLinks?: Record<number, string>;
   /**
    * Once set, the Project Profile page's External Links section collapses by default -
    * links are a one-time project-setup concern. Travels with export/import. Overridden locally
@@ -246,6 +273,7 @@ export interface AdoptionStore {
   history: HistorySnapshot[];
   phaseOverrides: Record<string, string>;
   pathwayChecks: PathwayChecklistState;
+  raidItems: RaidItem[];
 }
 
 /** The CST: the single persisted document describing this program/project/initiative. */
@@ -312,7 +340,12 @@ export function initializeStore(persisted?: Partial<AdoptionStore>): AdoptionSto
     history: persisted?.history || [],
     phaseOverrides: persisted?.phaseOverrides || {},
     pathwayChecks: clonePathwayChecks(persisted?.pathwayChecks),
+    raidItems: cloneRaidItems(persisted?.raidItems),
   };
+}
+
+function cloneRaidItems(items?: RaidItem[]): RaidItem[] {
+  return (items || []).map((item) => ({ ...item }));
 }
 
 function cloneSuppressedAutoActions(map?: Record<string, string[]>): Record<string, string[]> {

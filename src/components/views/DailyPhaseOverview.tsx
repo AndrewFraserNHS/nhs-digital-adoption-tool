@@ -5,6 +5,7 @@ import {
   type MaturityGuidanceTarget,
   type LinkOverrides,
 } from '@data/maturity-guidance-links';
+import { toAbsoluteUrl } from '@lib/utils';
 
 interface PhaseOverview {
   phase: number;
@@ -126,6 +127,8 @@ export interface DailyPhaseOverviewProps {
   guidanceTarget?: MaturityGuidanceTarget;
   linkOverrides?: LinkOverrides;
   showAdditionalGuidanceLinks?: boolean;
+  /** Optional landing-page URL per phase number, set up on Project Details ("Phase linking"). */
+  phaseLinks?: Record<number, string>;
   darkMode?: boolean;
 }
 
@@ -135,6 +138,7 @@ export function DailyPhaseOverview({
   headingsOnly = false,
   guidanceTarget = 'Default',
   linkOverrides,
+  phaseLinks,
   showAdditionalGuidanceLinks = true,
   darkMode = false,
 }: DailyPhaseOverviewProps): JSX.Element {
@@ -304,6 +308,16 @@ export function DailyPhaseOverview({
                     );
                   })}
                 </ul>
+                {phaseLinks?.[phase.phase] ? (
+                  <a
+                    href={toAbsoluteUrl(phaseLinks[phase.phase])}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`mt-3 inline-flex items-center gap-1 text-sm font-semibold underline underline-offset-2 ${darkMode ? 'text-blue-300 hover:text-blue-200' : 'text-[#005eb8] hover:text-[#003087]'}`}
+                  >
+                    Visit phase page ↗
+                  </a>
+                ) : null}
               </div>
             </details>
           );

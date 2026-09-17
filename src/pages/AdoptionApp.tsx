@@ -56,6 +56,7 @@ import type {
   DraftAction,
   DraftEntry,
   OrgProfile,
+  RaidItem,
   View,
 } from '@lib/adoptionState';
 import {
@@ -256,6 +257,7 @@ export function AdoptionApp() {
       history: persisted?.history,
       phaseOverrides: persisted?.phaseOverrides,
       pathwayChecks: persisted?.pathwayChecks,
+      raidItems: persisted?.raidItems,
     }) as AdoptionStore;
 
     // Backfill a stable programme identity for the app's own working document (never for an
@@ -482,6 +484,20 @@ export function AdoptionApp() {
             componentRadarData,
             {
               maintainAspectRatio: false,
+              plugins: {
+                tooltip: {
+                  callbacks: {
+                    label: (context: { dataset?: { label?: string }; raw?: unknown }) => {
+                      const label = context.dataset?.label || '';
+                      if (label.startsWith('Exemplar') || label === 'Target Average') {
+                        return label;
+                      }
+                      const value = Number(context.raw);
+                      return `${label}: ${getReadinessBand(value).label}`;
+                    },
+                  },
+                },
+              },
               scales: {
                 r: {
                   min: -1,
@@ -865,6 +881,20 @@ export function AdoptionApp() {
       });
     },
     [appendAuditEvents]
+  );
+
+  const updateRaidItems = useCallback((nextItems: RaidItem[]) => {
+    setStore((prev) => ({ ...prev, raidItems: nextItems }));
+  }, []);
+
+  const [focusRaidItemId, setFocusRaidItemId] = useState<string | null>(null);
+
+  const openRaidItem = useCallback(
+    (raidItemId: string) => {
+      setFocusRaidItemId(raidItemId);
+      handleViewChange('raid-log');
+    },
+    [handleViewChange]
   );
 
   const confirmIfCstWarnings = useCallback(
@@ -1987,6 +2017,7 @@ export function AdoptionApp() {
               darkMode={Boolean(userSettings.darkMode)}
               focusAction={focusAction}
               onFocusActionHandled={() => setFocusAction(null)}
+              onNavigateToRaidItem={openRaidItem}
             />
           )}
           {view === 'action-plan' && (
@@ -2079,6 +2110,12 @@ export function AdoptionApp() {
               teamMembers={store.orgProfile.teamMembers || []}
               components={COMPONENTS}
               getEntry={getEntry}
+              onEntryUpdate={updateEntry}
+              items={store.raidItems}
+              onItemsChange={updateRaidItems}
+              focusItemId={focusRaidItemId}
+              onFocusItemHandled={() => setFocusRaidItemId(null)}
+              onNavigateToAction={openActionView}
             />
           )}
           {view === 'audit-log' && (

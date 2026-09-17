@@ -1,21 +1,25 @@
+import { useState } from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
-import RaidLogApp from './RaidLogApp';
+import RaidLogApp, { type RaidLogAppProps } from './RaidLogApp';
 
 const TEAM_MEMBERS = [
   { id: 'member-1', name: 'Alex Morgan', role: 'Change Lead' },
   { id: 'member-2', name: 'Sam Patel', role: 'SRO' },
 ];
 
-describe('RaidLogApp', () => {
-  beforeEach(() => {
-    localStorage.clear();
-  });
+/** RaidLogApp is a controlled component - this wrapper mimics AdoptionApp holding the items in
+ * its own state, so tests can exercise Save/Delete/Link the same way the real app does. */
+function ControlledRaidLog(props: Omit<RaidLogAppProps, 'items' | 'onItemsChange'>) {
+  const [items, setItems] = useState<RaidLogAppProps['items']>([]);
+  return <RaidLogApp {...props} embedded items={items} onItemsChange={setItems} />;
+}
 
+describe('RaidLogApp', () => {
   it('SHOULD show the empty state by default', () => {
     // arrange
-    render(<RaidLogApp embedded />);
+    render(<ControlledRaidLog />);
 
     // assert
     expect(screen.getByText(/No RAID items added yet/)).toBeInTheDocument();
@@ -23,7 +27,7 @@ describe('RaidLogApp', () => {
 
   it('SHOULD add a new Risk and compute its severity from likelihood x impact', () => {
     // arrange
-    render(<RaidLogApp embedded />);
+    render(<ControlledRaidLog />);
     fireEvent.click(screen.getByRole('button', { name: '+ New Item' }));
 
     // act
@@ -40,7 +44,7 @@ describe('RaidLogApp', () => {
   it('SHOULD require a title before saving', () => {
     // arrange
     const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {});
-    render(<RaidLogApp embedded />);
+    render(<ControlledRaidLog />);
     fireEvent.click(screen.getByRole('button', { name: '+ New Item' }));
 
     // act
@@ -53,7 +57,7 @@ describe('RaidLogApp', () => {
 
   it('SHOULD offer the Owner field as a dropdown of team members', () => {
     // arrange
-    render(<RaidLogApp embedded teamMembers={TEAM_MEMBERS} />);
+    render(<ControlledRaidLog teamMembers={TEAM_MEMBERS} />);
     fireEvent.click(screen.getByRole('button', { name: '+ New Item' }));
 
     // assert
@@ -63,7 +67,7 @@ describe('RaidLogApp', () => {
     expect(screen.getByText('Sam Patel')).toBeInTheDocument();
   });
 
-  it('SHOULD link a RAID item to a component/lens action and show it as linked in the table', () => {
+  it('SHOULD link a saved RAID item to a component/lens action and show it as linked in the table', () => {
     // arrange
     const components = [
       { id: 'vision', label: 'Vision', lenses: ['Lens A', 'Lens B'], phase: 1, target: 4 },
@@ -73,30 +77,45 @@ describe('RaidLogApp', () => {
       rationale: '',
       evidence: '',
       actions: [
-        { id: 'action-1', text: 'Mitigate vendor risk', owner: '', timescale: '', status: 'Planned' as const },
+        {
+          id: 'action-1',
+          text: 'Mitigate vendor risk',
+          owner: '',
+          timescale: '',
+          status: 'Planned' as const,
+        },
       ],
     };
-    render(<RaidLogApp embedded components={components} getEntry={() => entry} />);
+    const onEntryUpdate = vi.fn();
+    render(
+      <ControlledRaidLog components={components} getEntry={() => entry} onEntryUpdate={onEntryUpdate} />
+    );
+
+    // act - save the item first (linking only shows once an item has been saved once)
     fireEvent.click(screen.getByRole('button', { name: '+ New Item' }));
     fireEvent.change(screen.getByLabelText('Title'), { target: { value: 'Vendor risk' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save Item' }));
 
-    // act
+    // act - reopen it for editing and link it to the action
+    fireEvent.click(screen.getByRole('button', { name: 'Edit item' }));
     fireEvent.change(screen.getByLabelText('Component'), { target: { value: 'vision' } });
     fireEvent.change(screen.getByLabelText('Lens'), { target: { value: 'Lens A' } });
     fireEvent.change(screen.getByLabelText('Action'), { target: { value: 'action-1' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Save Item' }));
 
-    // assert
-    const stored = JSON.parse(localStorage.getItem('nhs-raid-log') || '[]');
-    expect(stored[0].linkedComponentId).toBe('vision');
-    expect(stored[0].linkedLens).toBe('Lens A');
-    expect(stored[0].linkedActionId).toBe('action-1');
-    expect(screen.getByRole('cell', { name: 'Vision' })).toBeInTheDocument();
+    // assert - the link is written onto the action (via onEntryUpdate), not the RAID item
+    expect(onEntryUpdate).toHaveBeenCalledWith(
+      'vision',
+      'Lens A',
+      expect.objectContaining({
+        actions: [expect.objectContaining({ id: 'action-1', raidItemId: expect.any(String) })],
+      })
+    );
   });
 
-  it('SHOULD persist RAID items to localStorage', () => {
+  it('SHOULD notify the parent of every change via onItemsChange (the parent owns persistence)', () => {
     // arrange
-    render(<RaidLogApp embedded />);
+    const onItemsChange = vi.fn();
+    render(<RaidLogApp embedded items={[]} onItemsChange={onItemsChange} />);
     fireEvent.click(screen.getByRole('button', { name: '+ New Item' }));
     fireEvent.change(screen.getByLabelText('Title'), { target: { value: 'Missing sign-off' } });
     fireEvent.change(screen.getByLabelText('Type'), { target: { value: 'Issue' } });
@@ -105,9 +124,8 @@ describe('RaidLogApp', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Save Item' }));
 
     // assert
-    const stored = JSON.parse(localStorage.getItem('nhs-raid-log') || '[]');
-    expect(stored).toHaveLength(1);
-    expect(stored[0].title).toBe('Missing sign-off');
-    expect(stored[0].type).toBe('Issue');
+    expect(onItemsChange).toHaveBeenCalledWith([
+      expect.objectContaining({ title: 'Missing sign-off', type: 'Issue' }),
+    ]);
   });
 });

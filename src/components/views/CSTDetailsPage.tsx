@@ -35,6 +35,7 @@ import {
 } from '@data/toolLinks';
 import { PATHWAY_LABELS, PATHWAY_OPTIONS, type CstPathwayKey } from '@data/cst';
 import { TOOLKIT_OPTIONS, type ToolkitOptionKey } from '@data/toolkits';
+import { PHASE_NAMES } from '../../types/constants';
 
 function sanitizeFileNamePart(value: string): string {
   return (
@@ -742,6 +743,17 @@ export function ProjectDetailsPage({
       onProfileUpdate(updated);
     },
     [profile, toolLinks, onProfileUpdate]
+  );
+
+  const phaseLinks = profile.phaseLinks || {};
+
+  const handleUpdatePhaseLink = useCallback(
+    (phase: number, url: string) => {
+      const updated = { ...profile, phaseLinks: { ...phaseLinks, [phase]: url } };
+      setProfile(updated);
+      onProfileUpdate(updated);
+    },
+    [profile, phaseLinks, onProfileUpdate]
   );
 
   const handleExternalLinksInitiatedChange = useCallback(
@@ -1501,6 +1513,49 @@ export function ProjectDetailsPage({
                 <button type="button" onClick={handleAddToolLink} className={nhsButtonSecondary}>
                   + Add Tool Link
                 </button>
+              </div>
+
+              {/* Phase linking - a landing-page URL per phase, shown on the Daily Phase Overview */}
+              <div
+                className={`mt-4 rounded-md border p-4 space-y-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
+              >
+                <div>
+                  <p
+                    className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+                  >
+                    Phase linking
+                  </p>
+                  <p className={`text-xs mt-0.5 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
+                    Set a landing page URL for each phase - shown as a "Visit phase page" link when
+                    that phase is expanded on the Daily Phase Overview.
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  {Object.entries(PHASE_NAMES).map(([phaseKey, phaseName]) => {
+                    const phase = Number(phaseKey);
+                    return (
+                      <div
+                        key={phase}
+                        className="grid grid-cols-1 md:grid-cols-[1fr,2fr] gap-2 items-center"
+                      >
+                        <label
+                          htmlFor={`phase-link-${phase}`}
+                          className={`text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+                        >
+                          Phase {phase}: {phaseName}
+                        </label>
+                        <input
+                          id={`phase-link-${phase}`}
+                          type="url"
+                          placeholder="https://..."
+                          value={phaseLinks[phase] || ''}
+                          onChange={(e) => handleUpdatePhaseLink(phase, e.target.value)}
+                          className={`rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
 
               {/* Per-component links: further reading + per-link overrides, grouped by component */}

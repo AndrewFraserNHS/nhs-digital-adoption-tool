@@ -7,6 +7,7 @@ import {
   deriveObjectiveStatus,
   type ActionTargetLink,
   type ObjectiveStatus,
+  type RaidItem,
 } from '@lib/adoptionState';
 import { ASSESSMENT_COMPONENTS, AssessmentComponent } from '@data/components';
 import { PATHWAY_LABELS } from '@data/cst';
@@ -113,6 +114,8 @@ export interface AssessmentPanelProps {
   focusAction?: { lens: string; actionId: string } | null;
   /** Called once the requested focusAction has been opened, so the caller can clear it. */
   onFocusActionHandled?: () => void;
+  /** Navigates to the RAID Log tool with the given item opened, e.g. from the action editor. */
+  onNavigateToRaidItem?: (raidItemId: string) => void;
 }
 
 const STATUS_OPTIONS = UNIFIED_ACTION_STATUSES.filter(
@@ -908,6 +911,37 @@ function BinIcon(): JSX.Element {
   );
 }
 
+/**
+ * Blocks completing an action that's the only thing resolving an open RAID item: returns a
+ * user-facing message when the action's linked RAID item is neither Closed nor backed by another
+ * action also linked to it, or null when it's fine to complete.
+ */
+function findRaidCompletionBlockReason(
+  action: DraftAction,
+  raidItems: RaidItem[],
+  components: AssessmentComponent[],
+  getEntry: (componentId: string, lens: string) => DraftEntry
+): string | null {
+  if (!action.raidItemId) {
+    return null;
+  }
+  const raidItem = raidItems.find((item) => item.id === action.raidItemId);
+  if (!raidItem || raidItem.status === 'Closed') {
+    return null;
+  }
+  const hasOtherLinkedAction = components.some((c) =>
+    c.lenses.some((lens) =>
+      (getEntry(c.id, lens)?.actions || []).some(
+        (a) => a.id !== action.id && a.raidItemId === action.raidItemId
+      )
+    )
+  );
+  if (hasOtherLinkedAction) {
+    return null;
+  }
+  return `This action resolves the RAID item "${raidItem.title}", which is not yet Closed and has no other action linked to it. Close the RAID item first (or link another action to it) before completing this one.`;
+}
+
 /** Bumps a lens's readiness score while every action at its current band is Completed and a higher band exists. */
 function advanceScoreWhileActionsComplete(currentScore: number, actions: DraftAction[]): number {
   let score = currentScore;
@@ -981,6 +1015,7 @@ export function AssessmentPanel({
   darkMode = false,
   focusAction,
   onFocusActionHandled,
+  onNavigateToRaidItem,
 }: AssessmentPanelProps): JSX.Element {
   const component = components.find((c) => c.id === activeComponentId) || components[0];
   const pathway = store.orgProfile?.cst?.pathway;
@@ -1061,6 +1096,7 @@ export function AssessmentPanel({
     [component.label]
   );
   const [showEvidenceWarning, setShowEvidenceWarning] = useState(false);
+  const [raidTypeFilter, setRaidTypeFilter] = useState<RaidItem['type']>('Risk');
   const pendingActionSaveRef = useRef<(() => void) | null>(null);
   const [objectiveViewer, setObjectiveViewer] = useState<ObjectiveViewerState | null>(null);
   const [objectiveEditor, setObjectiveEditor] = useState<ObjectiveEditorState | null>(null);
@@ -1468,8 +1504,22 @@ export function AssessmentPanel({
       return;
     }
 
+    const normalizedStatus = normalizeActionStatus(actionEditor.action.status);
+    if (normalizedStatus === 'Completed') {
+      const blockReason = findRaidCompletionBlockReason(
+        actionEditor.action,
+        store.raidItems || [],
+        components,
+        getEntry
+      );
+      if (blockReason) {
+        window.alert(blockReason);
+        return;
+      }
+    }
+
     const isCompletingWithoutEvidence =
-      normalizeActionStatus(actionEditor.action.status) === 'Completed' &&
+      normalizedStatus === 'Completed' &&
       actionEditor.evidenceItems.length === 0 &&
       !load<boolean>(EVIDENCE_WARNING_DISMISSED_KEY);
 
@@ -1513,6 +1563,19 @@ export function AssessmentPanel({
         "You are trying to mark what we have classified as a MUST action as Cancelled, and it shouldn't be cancelled. Please re-review."
       );
       return;
+    }
+
+    if (normalizedStatus === 'Completed') {
+      const blockReason = findRaidCompletionBlockReason(
+        action,
+        store.raidItems || [],
+        components,
+        getEntry
+      );
+      if (blockReason) {
+        window.alert(blockReason);
+        return;
+      }
     }
 
     const hasEvidence = parseEvidenceItems(action.evidence || '').length > 0;
@@ -1773,13 +1836,18 @@ export function AssessmentPanel({
             tracked below.
           </p>
           {componentDetail && (
-            <button
-              type="button"
-              onClick={() => setShowComponentOverviewModal(true)}
-              className={`mt-2 text-sm font-semibold underline ${darkMode ? 'text-blue-300 hover:text-blue-200' : 'text-[#005eb8] hover:text-blue-800'}`}
+            <div
+              className={`mt-3 flex flex-wrap items-center justify-between gap-3 rounded-lg border px-4 py-3 ${darkMode ? 'border-blue-800 bg-blue-950/40 text-slate-200' : 'border-blue-200 bg-blue-50 text-slate-700'}`}
             >
-              What is this?
-            </button>
+              <p className="text-sm">Want to understand what {component.label} covers?</p>
+              <button
+                type="button"
+                onClick={() => setShowComponentOverviewModal(true)}
+                className="font-semibold text-[#005eb8] underline underline-offset-2 hover:text-[#003087]"
+              >
+                What is this?
+              </button>
+            </div>
           )}
         </div>
       </div>
@@ -2739,6 +2807,79 @@ export function AssessmentPanel({
                     </p>
                   )}
                 </div>
+              </div>
+
+              <div
+                className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'} rounded-lg border p-3`}
+              >
+                <p
+                  className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+                >
+                  Affected RAID Log Items
+                </p>
+                <p className={`mt-1 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
+                  Choose the Risk, Assumption, Issue or Dependency this action is resolving. A
+                  Completed action can't be closed against an open RAID item unless another action
+                  is also linked to it.
+                </p>
+                {(() => {
+                  const currentRaidItem = (store.raidItems || []).find(
+                    (item) => item.id === actionEditor.action.raidItemId
+                  );
+                  const itemsOfType = (store.raidItems || []).filter(
+                    (item) => item.type === raidTypeFilter
+                  );
+                  return (
+                    <div className="mt-2 grid grid-cols-1 sm:grid-cols-[auto,1fr] gap-2">
+                      <label className="sr-only" htmlFor="action-raid-type-filter">
+                        RAID item type
+                      </label>
+                      <select
+                        id="action-raid-type-filter"
+                        aria-label="RAID item type"
+                        value={raidTypeFilter}
+                        onChange={(event) =>
+                          setRaidTypeFilter(event.target.value as RaidItem['type'])
+                        }
+                        className={`rounded-md border px-2 py-1.5 text-sm ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
+                      >
+                        {(['Risk', 'Assumption', 'Issue', 'Dependency'] as const).map((type) => (
+                          <option key={type} value={type}>
+                            {type}
+                          </option>
+                        ))}
+                      </select>
+                      <label className="sr-only" htmlFor="action-raid-item">
+                        RAID item
+                      </label>
+                      <select
+                        id="action-raid-item"
+                        aria-label="RAID item"
+                        value={actionEditor.action.raidItemId || ''}
+                        onChange={(event) =>
+                          updateActionEditor({ raidItemId: event.target.value || undefined })
+                        }
+                        className={`rounded-md border px-2 py-1.5 text-sm ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
+                      >
+                        <option value="">None</option>
+                        {itemsOfType.map((item) => (
+                          <option key={item.id} value={item.id}>
+                            {item.title || 'Untitled RAID item'}
+                          </option>
+                        ))}
+                      </select>
+                      {currentRaidItem ? (
+                        <button
+                          type="button"
+                          onClick={() => onNavigateToRaidItem?.(currentRaidItem.id)}
+                          className={`sm:col-span-2 justify-self-start text-sm font-semibold underline underline-offset-2 ${darkMode ? 'text-blue-300 hover:text-blue-200' : 'text-[#005eb8] hover:text-[#003087]'}`}
+                        >
+                          Go to RAID item →
+                        </button>
+                      ) : null}
+                    </div>
+                  );
+                })()}
               </div>
 
               <div

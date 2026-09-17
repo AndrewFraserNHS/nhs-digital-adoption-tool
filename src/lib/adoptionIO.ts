@@ -8,6 +8,7 @@ import type {
   HistorySnapshot,
   OrgProfile,
   PathwayChecklistState,
+  RaidItem,
   RemovedActionAuditEntry,
 } from './adoptionState';
 import {
@@ -34,6 +35,7 @@ export interface SavedAdoptionAssessment {
   history: HistorySnapshot[];
   phaseOverrides: Record<string, string>;
   pathwayChecks: PathwayChecklistState;
+  raidItems?: RaidItem[];
 }
 
 const VALID_PATHWAYS = new Set(['pathway-1', 'pathway-2', 'pathway-3']);
@@ -357,6 +359,7 @@ export function buildAdoptionExportPayload(store: AdoptionStore): SavedAdoptionA
     })),
     phaseOverrides: { ...store.phaseOverrides },
     pathwayChecks: clonePathwayChecks(store.pathwayChecks),
+    raidItems: (store.raidItems || []).map((item) => ({ ...item })),
   };
 }
 
@@ -500,6 +503,7 @@ export function mergeImportedAdoptionState(
     })),
     phaseOverrides: migrated.phaseOverrides || fallbackStore.phaseOverrides,
     pathwayChecks: migrated.pathwayChecks || fallbackStore.pathwayChecks,
+    raidItems: migrated.raidItems || fallbackStore.raidItems,
   });
 }
 

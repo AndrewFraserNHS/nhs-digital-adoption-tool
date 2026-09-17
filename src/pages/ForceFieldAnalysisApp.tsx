@@ -159,21 +159,6 @@ function deriveMitigatedScore(force: Force, actions: ForceAction[]): number {
   return Math.max(0, Math.min(10, force.score + completedImpact));
 }
 
-/**
- * A read-only preview of what a force's mitigated score would become if the given action were
- * Completed right now, regardless of its actual current status - lets a reviewer see an action's
- * effect before it's actually marked Completed. The real mitigated score (deriveMitigatedScore)
- * is unaffected by this - it still only counts actions that are genuinely Completed.
- */
-function previewMitigatedScore(force: Force, actions: ForceAction[], action: ForceAction): number {
-  const hypothetical = actions.map((candidate) =>
-    candidate.id === action.id
-      ? { ...candidate, status: 'Completed' as ForceActionStatus }
-      : candidate
-  );
-  return deriveMitigatedScore(force, hypothetical);
-}
-
 function sumMitigatedScores(forces: Force[], actions: ForceAction[], side: ForceSide): number {
   return forces
     .filter((force) => force.side === side)
@@ -508,15 +493,16 @@ function ActionsScreen({
                 <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
                   Score Impact
                 </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                  Force's Mitigated Score
+                </th>
                 <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {state.actions.map((action) => {
                 const force = state.forces.find((candidate) => candidate.id === action.forceId);
-                const previewScore = force
-                  ? previewMitigatedScore(force, state.actions, action)
-                  : null;
+                const mitigatedScore = force ? deriveMitigatedScore(force, state.actions) : null;
                 return (
                   <tr key={action.id}>
                     <td className="w-[20%] px-3 py-2">
@@ -603,13 +589,15 @@ function ActionsScreen({
                         }
                         className="w-16 rounded-md border border-slate-300 px-2 py-1 text-sm"
                       />
-                      {previewScore !== null ? (
-                        <p
-                          className="mt-1 text-xs text-slate-500"
-                          title="Force's mitigated score if this action were Completed"
+                    </td>
+                    <td className="px-3 py-2">
+                      {force && mitigatedScore !== null ? (
+                        <span
+                          className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-bold ${scoreBadgeClass(mitigatedScore, force.side)}`}
+                          title="Force's current mitigated score (reflects its Completed actions)"
                         >
-                          → {previewScore}
-                        </p>
+                          {mitigatedScore}
+                        </span>
                       ) : null}
                     </td>
                     <td className="px-3 py-2">
@@ -626,7 +614,7 @@ function ActionsScreen({
               })}
               {!state.actions.length ? (
                 <tr>
-                  <td className="px-3 py-2 text-sm text-slate-500" colSpan={7}>
+                  <td className="px-3 py-2 text-sm text-slate-500" colSpan={8}>
                     No actions yet.
                   </td>
                 </tr>

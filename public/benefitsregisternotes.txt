@@ -1,0 +1,34 @@
+Need a new benefits register with columns and appropriate drop-down in single column modal
+
+Benefit No.[unique ID]
+Created [date created] *Should not be blank
+Reviewed [Date last reviewed] *Should not be blank
+Benefit Title/Name (Describe ‘elevator pitch’ and include enabler)
+Benefit Details (Describe current and future state)
+Outcome Details Benefit Status (Please Choose)
+Disbenefit? (Yes/No) (Please Choose)
+Benefit Type (Please Choose)
+Speciality (Please Choose)
+Beneficiary Groups (Please Choose)
+Strategic Owner (Type name and role)
+Operational Owner (Type name and role)
+Trust Objective(s)
+Change Enablers (Precursor to delivery of Benefit)
+Benefit measurement(s) used (Make specific to process/location/team)
+Unit of Measure *List is dynamic based off Benefit Type (Please choose)
+Baseline Value (Align with unit of measure/benefit type)
+Benefit/Outcome Calculations (Include; Breakdown of calculation and sources of
+information (for both Baseline & Forecast), Activity
+Year/Time period, Confidence & Attribution %’s, Ramp up
+rationale)
+Assumptions
+
+Benefits tracker
+
+Benefit No.[unique ID]
+Benefit Title/Name (Describe ‘elevator pitch’ and include enabler)
+Baseline Value
+Reason for variance between forecast and actual (detail as appropriate)
+
+Then followed by yearly/quarterly forecast vs actual
+e.g Y0, Apr-Jun Forecast, y0 Apri-Jun Actual, July-sep, oct-dec jan-mar etc.

@@ -142,15 +142,15 @@ function emptyTrackerEntry(benefitId: string): BenefitTrackerEntry {
 }
 
 const QUARTER_ORDER = QUARTERS.map((quarter) => quarter.key);
+const VARIANCE_THRESHOLDS = { blue: 10, green: -5, amber: -20 };
 
-/** The periods that have at least a forecast or actual value entered, in chronological order, capped to `limit`. */
-function filledPeriods(entry: BenefitTrackerEntry, limit = 6): BenefitTrackerPeriod[] {
+/** The periods that have at least a forecast or actual value entered, in chronological order. */
+function chronologicalFilledPeriods(entry: BenefitTrackerEntry): BenefitTrackerPeriod[] {
   return [...entry.periods]
     .filter((period) => period.forecast !== '' || period.actual !== '')
     .sort(
       (a, b) => a.year - b.year || QUARTER_ORDER.indexOf(a.quarterKey) - QUARTER_ORDER.indexOf(b.quarterKey)
-    )
-    .slice(0, limit);
+    );
 }
 
 function quarterLabel(quarterKey: string): string {
@@ -167,10 +167,91 @@ function computeVariance(
     return null;
   }
   const percentDelta = ((a - f) / Math.abs(f)) * 100;
-  return { status: getBragStatus(percentDelta, { blue: 10, green: -5, amber: -20 }), percentDelta };
+  return { status: getBragStatus(percentDelta, VARIANCE_THRESHOLDS), percentDelta };
 }
 
-function TrendChip({ period }: { period: BenefitTrackerPeriod }): JSX.Element {
+/** Average of that year's per-quarter % variances (quarters missing forecast or actual are skipped). */
+function yearAverageVariance(
+  entry: BenefitTrackerEntry,
+  year: number
+): { status: ReturnType<typeof getBragStatus>; percentDelta: number } | null {
+  const variances = entry.periods
+    .filter((period) => period.year === year)
+    .map((period) => computeVariance(period.forecast, period.actual))
+    .filter((v): v is { status: ReturnType<typeof getBragStatus>; percentDelta: number } => v !== null);
+  if (variances.length === 0) {
+    return null;
+  }
+  const percentDelta = variances.reduce((sum, v) => sum + v.percentDelta, 0) / variances.length;
+  return { status: getBragStatus(percentDelta, VARIANCE_THRESHOLDS), percentDelta };
+}
+
+type TrendDisplayItem =
+  | { kind: 'period'; period: BenefitTrackerPeriod }
+  | { kind: 'yearAverage'; year: number; variance: { status: ReturnType<typeof getBragStatus>; percentDelta: number } };
+
+/**
+ * Builds the row of trend chips shown on the collapsed tracker row:
+ * - every quarter fully filled in -> one average-variance chip per year.
+ * - otherwise, once more than 8 (2 years) or 12 (3 years) quarters are filled, the oldest
+ *   complete year(s) collapse into an average-variance chip so the row stays scannable, while
+ *   every filled quarter in the remaining year(s) is still shown individually.
+ * - below that, simply the latest 6 filled quarters.
+ */
+function buildTrendDisplay(entry: BenefitTrackerEntry): TrendDisplayItem[] {
+  const allFilled = entry.periods.every((period) => period.forecast !== '' && period.actual !== '');
+  if (allFilled) {
+    return Array.from({ length: TRACKER_YEARS }, (_, year) => year)
+      .map((year) => {
+        const variance = yearAverageVariance(entry, year);
+        return variance ? ({ kind: 'yearAverage', year, variance } as TrendDisplayItem) : null;
+      })
+      .filter((item): item is TrendDisplayItem => item !== null);
+  }
+
+  const filled = chronologicalFilledPeriods(entry);
+  const collapseYears = filled.length > 12 ? 2 : filled.length > 8 ? 1 : 0;
+
+  if (collapseYears === 0) {
+    return filled.slice(-6).map((period) => ({ kind: 'period', period }));
+  }
+
+  const items: TrendDisplayItem[] = [];
+  for (let year = 0; year < collapseYears; year += 1) {
+    const variance = yearAverageVariance(entry, year);
+    if (variance) {
+      items.push({ kind: 'yearAverage', year, variance });
+    }
+  }
+  filled
+    .filter((period) => period.year >= collapseYears)
+    .forEach((period) => items.push({ kind: 'period', period }));
+  return items;
+}
+
+function VarianceValue({
+  variance,
+}: {
+  variance: { status: ReturnType<typeof getBragStatus>; percentDelta: number };
+}): JSX.Element {
+  return (
+    <span className={`mt-0.5 rounded-full border px-1.5 font-bold ${bragBadgeClass(variance.status)}`}>
+      {variance.percentDelta > 0 ? '+' : ''}
+      {variance.percentDelta.toFixed(0)}%
+    </span>
+  );
+}
+
+function TrendChip({ item }: { item: TrendDisplayItem }): JSX.Element {
+  if (item.kind === 'yearAverage') {
+    return (
+      <span className="inline-flex flex-col items-center rounded border border-slate-200 bg-white px-1.5 py-1 text-[10px] leading-tight whitespace-nowrap">
+        <span className="font-medium text-slate-500">Y{item.year} Avg</span>
+        <VarianceValue variance={item.variance} />
+      </span>
+    );
+  }
+  const { period } = item;
   const variance = computeVariance(period.forecast, period.actual);
   return (
     <span className="inline-flex flex-col items-center rounded border border-slate-200 bg-white px-1.5 py-1 text-[10px] leading-tight whitespace-nowrap">
@@ -178,12 +259,7 @@ function TrendChip({ period }: { period: BenefitTrackerPeriod }): JSX.Element {
         Y{period.year} {quarterLabel(period.quarterKey)}
       </span>
       {variance ? (
-        <span
-          className={`mt-0.5 rounded-full border px-1.5 font-bold ${bragBadgeClass(variance.status)}`}
-        >
-          {variance.percentDelta > 0 ? '+' : ''}
-          {variance.percentDelta.toFixed(0)}%
-        </span>
+        <VarianceValue variance={variance} />
       ) : (
         <span className="mt-0.5 text-slate-400">
           {period.forecast ? `F ${period.forecast}` : period.actual ? `A ${period.actual}` : '—'}
@@ -944,15 +1020,26 @@ export default function BenefitsApp({
                             <td className="px-4 py-3 text-slate-600">{item.title}</td>
                             <td className="px-4 py-3 text-slate-600">{item.baselineValue || '—'}</td>
                             <td className="px-4 py-3">
-                              {filledPeriods(entry).length === 0 ? (
-                                <span className="text-slate-400 text-xs">No data yet</span>
-                              ) : (
-                                <div className="flex flex-wrap gap-1">
-                                  {filledPeriods(entry).map((period) => (
-                                    <TrendChip key={`${period.year}-${period.quarterKey}`} period={period} />
-                                  ))}
-                                </div>
-                              )}
+                              {(() => {
+                                const trend = buildTrendDisplay(entry);
+                                if (trend.length === 0) {
+                                  return <span className="text-slate-400 text-xs">No data yet</span>;
+                                }
+                                return (
+                                  <div className="flex flex-wrap gap-1">
+                                    {trend.map((trendItem) => (
+                                      <TrendChip
+                                        key={
+                                          trendItem.kind === 'yearAverage'
+                                            ? `avg-${trendItem.year}`
+                                            : `${trendItem.period.year}-${trendItem.period.quarterKey}`
+                                        }
+                                        item={trendItem}
+                                      />
+                                    ))}
+                                  </div>
+                                );
+                              })()}
                             </td>
                             <td className="px-4 py-3 text-slate-500 text-xs truncate max-w-xs">
                               {entry.varianceReason || '—'}

@@ -52,6 +52,8 @@ import {
 } from '@lib/adoptionMetrics';
 import type {
   AdoptionStore,
+  BenefitItem,
+  BenefitTrackerEntry,
   ComponentObjective,
   DraftAction,
   DraftEntry,
@@ -895,6 +897,27 @@ export function AdoptionApp() {
     (raidItemId: string) => {
       setFocusRaidItemId(raidItemId);
       handleViewChange('raid-log');
+    },
+    [handleViewChange]
+  );
+
+  const updateBenefits = useCallback((nextBenefits: BenefitItem[]) => {
+    setStore((prev) => ({ ...prev, benefits: nextBenefits }));
+  }, []);
+
+  const updateBenefitTracker = useCallback(
+    (nextTracker: Record<string, BenefitTrackerEntry>) => {
+      setStore((prev) => ({ ...prev, benefitTracker: nextTracker }));
+    },
+    []
+  );
+
+  const [focusBenefitId, setFocusBenefitId] = useState<string | null>(null);
+
+  const openBenefit = useCallback(
+    (benefitId: string) => {
+      setFocusBenefitId(benefitId);
+      handleViewChange('benefits');
     },
     [handleViewChange]
   );
@@ -2088,7 +2111,12 @@ export function AdoptionApp() {
             <CompareApp embedded onBack={() => handleViewChange('dashboard')} />
           )}
           {view === 'change-impact-assessment' && (
-            <ChangeImpactAssessmentApp embedded onBack={() => handleViewChange('dashboard')} />
+            <ChangeImpactAssessmentApp
+              embedded
+              onBack={() => handleViewChange('dashboard')}
+              benefits={store.benefits}
+              onNavigateToBenefit={openBenefit}
+            />
           )}
           {view === 'stakeholder-analysis' && (
             <StakeholderAnalysisApp
@@ -2129,6 +2157,12 @@ export function AdoptionApp() {
               onBack={() => handleViewChange('dashboard')}
               trustName={store.orgProfile.trustName}
               projectName={store.orgProfile.projectName}
+              benefits={store.benefits}
+              onBenefitsChange={updateBenefits}
+              tracker={store.benefitTracker}
+              onTrackerChange={updateBenefitTracker}
+              focusBenefitId={focusBenefitId}
+              onFocusHandled={() => setFocusBenefitId(null)}
             />
           )}
           {view === 'audit-log' && (

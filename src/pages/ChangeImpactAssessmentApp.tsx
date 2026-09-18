@@ -1,5 +1,6 @@
 import { FilterBar } from '@components/common/FilterBar';
 import { BinIcon, IconActionButton, PencilIcon } from '@components/common/IconButtons';
+import type { BenefitItem } from '@lib/adoptionState';
 import { bragBadgeClass, getBragStatus } from '@lib/brag';
 import { load, save } from '@lib/storage';
 import { downloadFile, toAbsoluteUrl } from '@lib/utils';
@@ -94,7 +95,8 @@ interface ChangeImpactAssessment {
   processRef: string;
   processRefUrl?: string;
   benefitsRef: string;
-  benefitsRefUrl?: string;
+  /** FK into the shared Benefits Register (AdoptionStore.benefits). When set, the Ben # cell links in-app to that benefit instead of showing plain text. */
+  benefitId?: string;
   peopleImpacted: number;
   impactDate: string;
   timestamp: string;
@@ -119,7 +121,7 @@ const INITIAL_FORM_STATE: AssessmentFormState = {
   processRef: '',
   processRefUrl: '',
   benefitsRef: '',
-  benefitsRefUrl: '',
+  benefitId: undefined,
   peopleImpacted: 0,
   impactDate: '',
   complexity: 1,
@@ -480,6 +482,8 @@ function AssessmentsTab({
   onExport,
   onLoadDemo,
   fileInputRef,
+  benefits,
+  onNavigateToBenefit,
 }: {
   items: ChangeImpactAssessment[];
   formData: AssessmentFormState;
@@ -494,6 +498,8 @@ function AssessmentsTab({
   onExport: () => void;
   onLoadDemo: () => void;
   fileInputRef: RefObject<HTMLInputElement | null>;
+  benefits: BenefitItem[];
+  onNavigateToBenefit?: (benefitId: string) => void;
 }): JSX.Element {
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<'ascending' | 'descending'>('ascending');
@@ -711,24 +717,37 @@ function AssessmentsTab({
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">
-                    Benefit Ref #{' '}
+                  <label
+                    htmlFor="assessment-linked-benefit"
+                    className="block text-sm font-medium text-slate-700 mb-1"
+                  >
+                    Linked Benefit{' '}
                     <span className="text-xs text-slate-400 font-normal">(Optional)</span>
                   </label>
-                  <input
-                    type="text"
-                    placeholder="e.g. B-05"
-                    value={formData.benefitsRef}
-                    onChange={(event) => onFormDataChange({ benefitsRef: event.target.value })}
+                  <select
+                    id="assessment-linked-benefit"
+                    value={formData.benefitId || ''}
+                    onChange={(event) => {
+                      const benefit = benefits.find((b) => b.id === event.target.value);
+                      onFormDataChange({
+                        benefitId: benefit?.id,
+                        benefitsRef: benefit?.benefitNo || '',
+                      });
+                    }}
                     className="w-full p-2 border border-slate-300 rounded outline-none"
-                  />
-                  <input
-                    type="url"
-                    placeholder="Link URL (optional)"
-                    value={formData.benefitsRefUrl || ''}
-                    onChange={(event) => onFormDataChange({ benefitsRefUrl: event.target.value })}
-                    className="w-full mt-1 p-2 border border-slate-300 rounded outline-none text-xs"
-                  />
+                  >
+                    <option value="">None</option>
+                    {benefits.map((benefit) => (
+                      <option key={benefit.id} value={benefit.id}>
+                        {benefit.benefitNo} — {benefit.title || '(untitled benefit)'}
+                      </option>
+                    ))}
+                  </select>
+                  {benefits.length === 0 ? (
+                    <p className="mt-1 text-xs text-slate-400">
+                      No benefits in the register yet - add one in the Benefits tool first.
+                    </p>
+                  ) : null}
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-2">
@@ -951,15 +970,14 @@ function AssessmentsTab({
                         className={`inline-flex rounded-full border px-2 py-0.5 ${bragBadgeClass(benefitStatus)}`}
                         title="Benefit status: readiness vs. change demand"
                       >
-                        {item.benefitsRefUrl ? (
-                          <a
-                            href={toAbsoluteUrl(item.benefitsRefUrl)}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="underline"
+                        {item.benefitId && onNavigateToBenefit ? (
+                          <button
+                            type="button"
+                            onClick={() => onNavigateToBenefit(item.benefitId as string)}
+                            className="underline hover:no-underline"
                           >
                             {item.benefitsRef || '-'}
-                          </a>
+                          </button>
                         ) : (
                           item.benefitsRef || '-'
                         )}
@@ -1487,6 +1505,8 @@ function GuideTab(): JSX.Element {
 export interface ChangeImpactAssessmentAppProps {
   embedded?: boolean;
   onBack?: () => void;
+  benefits?: BenefitItem[];
+  onNavigateToBenefit?: (benefitId: string) => void;
 }
 
 function parseCsvLine(line: string): string[] {
@@ -1520,6 +1540,8 @@ function parseCsvLine(line: string): string[] {
 
 export default function ChangeImpactAssessmentApp({
   embedded = false,
+  benefits = [],
+  onNavigateToBenefit,
 }: ChangeImpactAssessmentAppProps = {}): JSX.Element {
   const [items, setItems] = useState<ChangeImpactAssessment[]>(
     () => load<ChangeImpactAssessment[]>(STORAGE_KEY) || []
@@ -1762,6 +1784,8 @@ export default function ChangeImpactAssessmentApp({
           onExport={handleExportCsv}
           onLoadDemo={handleLoadDemo}
           fileInputRef={fileInputRef}
+          benefits={benefits}
+          onNavigateToBenefit={onNavigateToBenefit}
         />
       ) : null}
       {activeTab === 'dashboard' ? <DashboardTab items={items} /> : null}

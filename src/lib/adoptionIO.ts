@@ -3,6 +3,8 @@ import { isToolkitOptionKey } from '@data/toolkits';
 import { normalizeActionStatus } from './actionModel';
 import type {
   AdoptionStore,
+  BenefitItem,
+  BenefitTrackerEntry,
   ComponentObjective,
   DraftEntry,
   HistorySnapshot,
@@ -36,6 +38,8 @@ export interface SavedAdoptionAssessment {
   phaseOverrides: Record<string, string>;
   pathwayChecks: PathwayChecklistState;
   raidItems?: RaidItem[];
+  benefits?: BenefitItem[];
+  benefitTracker?: Record<string, BenefitTrackerEntry>;
 }
 
 const VALID_PATHWAYS = new Set(['pathway-1', 'pathway-2', 'pathway-3']);
@@ -360,6 +364,17 @@ export function buildAdoptionExportPayload(store: AdoptionStore): SavedAdoptionA
     phaseOverrides: { ...store.phaseOverrides },
     pathwayChecks: clonePathwayChecks(store.pathwayChecks),
     raidItems: (store.raidItems || []).map((item) => ({ ...item })),
+    benefits: (store.benefits || []).map((item) => ({
+      ...item,
+      beneficiaryGroups: [...item.beneficiaryGroups],
+    })),
+    benefitTracker: Object.keys(store.benefitTracker || {}).reduce<
+      Record<string, BenefitTrackerEntry>
+    >((next, id) => {
+      const entry = (store.benefitTracker || {})[id];
+      next[id] = { ...entry, periods: entry.periods.map((period) => ({ ...period })) };
+      return next;
+    }, {}),
   };
 }
 
@@ -504,6 +519,8 @@ export function mergeImportedAdoptionState(
     phaseOverrides: migrated.phaseOverrides || fallbackStore.phaseOverrides,
     pathwayChecks: migrated.pathwayChecks || fallbackStore.pathwayChecks,
     raidItems: migrated.raidItems || fallbackStore.raidItems,
+    benefits: migrated.benefits || fallbackStore.benefits,
+    benefitTracker: migrated.benefitTracker || fallbackStore.benefitTracker,
   });
 }
 

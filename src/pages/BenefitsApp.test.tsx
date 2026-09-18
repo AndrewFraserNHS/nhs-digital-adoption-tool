@@ -1,16 +1,37 @@
+import { useState } from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
-import BenefitsApp from './BenefitsApp';
+import type { BenefitItem, BenefitTrackerEntry } from '@lib/adoptionState';
+
+import BenefitsApp, { type BenefitsAppProps } from './BenefitsApp';
+
+/** BenefitsApp is a controlled component - this wrapper mimics AdoptionApp holding the benefits
+ * and tracker in its own state, so tests can exercise Save/Delete/Expand the same way the real app does. */
+function ControlledBenefits(
+  props: Omit<
+    BenefitsAppProps,
+    'benefits' | 'onBenefitsChange' | 'tracker' | 'onTrackerChange'
+  >
+) {
+  const [benefits, setBenefits] = useState<BenefitItem[]>([]);
+  const [tracker, setTracker] = useState<Record<string, BenefitTrackerEntry>>({});
+  return (
+    <BenefitsApp
+      {...props}
+      embedded
+      benefits={benefits}
+      onBenefitsChange={setBenefits}
+      tracker={tracker}
+      onTrackerChange={setTracker}
+    />
+  );
+}
 
 describe('BenefitsApp', () => {
-  beforeEach(() => {
-    window.localStorage.clear();
-  });
-
   it('SHOULD show the empty state by default', () => {
     // arrange
-    render(<BenefitsApp />);
+    render(<ControlledBenefits />);
 
     // assert
     expect(screen.getByText(/No benefits added yet/)).toBeInTheDocument();
@@ -18,7 +39,7 @@ describe('BenefitsApp', () => {
 
   it('SHOULD auto-generate the next Benefit No. when starting a new benefit', () => {
     // arrange
-    render(<BenefitsApp />);
+    render(<ControlledBenefits />);
 
     // act
     fireEvent.click(screen.getByRole('button', { name: '+ New Benefit' }));
@@ -30,7 +51,7 @@ describe('BenefitsApp', () => {
   it('SHOULD require a title before saving', () => {
     // arrange
     const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {});
-    render(<BenefitsApp />);
+    render(<ControlledBenefits />);
     fireEvent.click(screen.getByRole('button', { name: '+ New Benefit' }));
 
     // act
@@ -43,7 +64,7 @@ describe('BenefitsApp', () => {
 
   it('SHOULD add a new benefit and list it in the register table', () => {
     // arrange
-    render(<BenefitsApp />);
+    render(<ControlledBenefits />);
     fireEvent.click(screen.getByRole('button', { name: '+ New Benefit' }));
 
     // act
@@ -58,7 +79,7 @@ describe('BenefitsApp', () => {
 
   it('SHOULD offer a Unit of Measure list that depends on the selected Benefit Type', () => {
     // arrange
-    render(<BenefitsApp />);
+    render(<ControlledBenefits />);
     fireEvent.click(screen.getByRole('button', { name: '+ New Benefit' }));
 
     // act
@@ -72,9 +93,18 @@ describe('BenefitsApp', () => {
     expect(screen.getByText('Compliance rate (%)')).toBeInTheDocument();
   });
 
-  it('SHOULD persist benefits to localStorage', () => {
+  it('SHOULD notify the parent of every change via onBenefitsChange (the parent owns persistence)', () => {
     // arrange
-    render(<BenefitsApp />);
+    const onBenefitsChange = vi.fn();
+    render(
+      <BenefitsApp
+        embedded
+        benefits={[]}
+        onBenefitsChange={onBenefitsChange}
+        tracker={{}}
+        onTrackerChange={vi.fn()}
+      />
+    );
     fireEvent.click(screen.getByRole('button', { name: '+ New Benefit' }));
     fireEvent.change(screen.getByLabelText('Benefit Title/Name'), {
       target: { value: 'Faster triage' },
@@ -84,23 +114,42 @@ describe('BenefitsApp', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Save Benefit' }));
 
     // assert
-    const stored = JSON.parse(window.localStorage.getItem('nhs-benefits-register') || '{}');
-    expect(stored.benefits).toHaveLength(1);
-    expect(stored.benefits[0].title).toBe('Faster triage');
+    expect(onBenefitsChange).toHaveBeenCalledWith([
+      expect.objectContaining({ title: 'Faster triage' }),
+    ]);
   });
 
-  it('SHOULD show saved benefits in the Tracker tab with an editable periods grid', () => {
+  it('SHOULD expand a register row to reveal the remaining fields inline', () => {
     // arrange
-    render(<BenefitsApp />);
+    render(<ControlledBenefits />);
+    fireEvent.click(screen.getByRole('button', { name: '+ New Benefit' }));
+    fireEvent.change(screen.getByLabelText('Benefit Title/Name'), {
+      target: { value: 'Shorter length of stay' },
+    });
+    fireEvent.change(screen.getByLabelText('Assumptions'), {
+      target: { value: 'Staffing levels remain stable' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Save Benefit' }));
+
+    // act
+    fireEvent.click(screen.getByRole('button', { name: 'Expand details' }));
+
+    // assert
+    expect(screen.getByText('Staffing levels remain stable')).toBeInTheDocument();
+  });
+
+  it('SHOULD expand a tracker row to reveal an editable Y0-Y3 quarterly periods grid', () => {
+    // arrange
+    render(<ControlledBenefits />);
     fireEvent.click(screen.getByRole('button', { name: '+ New Benefit' }));
     fireEvent.change(screen.getByLabelText('Benefit Title/Name'), {
       target: { value: 'Shorter length of stay' },
     });
     fireEvent.click(screen.getByRole('button', { name: 'Save Benefit' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Benefits Tracker' }));
 
     // act
-    fireEvent.click(screen.getByRole('button', { name: 'Benefits Tracker' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Edit tracker periods' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Expand periods' }));
 
     // assert - Y0-Y3 quarterly periods are auto-generated
     expect(screen.getByText('Y0')).toBeInTheDocument();

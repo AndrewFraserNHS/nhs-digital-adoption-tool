@@ -1,7 +1,32 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import type { BenefitItem } from '@lib/adoptionState';
+
 import ChangeImpactAssessmentApp from './ChangeImpactAssessmentApp';
+
+const SAMPLE_BENEFIT: BenefitItem = {
+  id: 'benefit-1',
+  benefitNo: 'BEN-001',
+  dateCreated: '2026-01-01',
+  dateReviewed: '2026-01-01',
+  title: 'Reduced discharge delays',
+  details: '',
+  status: 'Delivering',
+  disbenefit: 'No',
+  benefitType: 'Efficiency / Productivity',
+  speciality: 'Trust-wide',
+  beneficiaryGroups: [],
+  strategicOwner: '',
+  operationalOwner: '',
+  trustObjectives: '',
+  changeEnablers: '',
+  measurementsUsed: '',
+  unitOfMeasure: '',
+  baselineValue: '',
+  calculations: '',
+  assumptions: '',
+};
 
 describe('ChangeImpactAssessmentApp', () => {
   beforeEach(() => {
@@ -103,5 +128,35 @@ describe('ChangeImpactAssessmentApp', () => {
     const stored = JSON.parse(localStorage.getItem('nhs-change-impact-assessment') || '[]');
     expect(stored).toHaveLength(1);
     expect(stored[0].function).toBe('IT & Digital');
+  });
+
+  it('SHOULD offer a Linked Benefit dropdown populated from the Benefits Register and show it as an in-app link', () => {
+    // arrange
+    const onNavigateToBenefit = vi.fn();
+    render(
+      <ChangeImpactAssessmentApp
+        embedded
+        benefits={[SAMPLE_BENEFIT]}
+        onNavigateToBenefit={onNavigateToBenefit}
+      />
+    );
+    fireEvent.click(screen.getByRole('button', { name: '+ New Assessment' }));
+    fireEvent.change(screen.getByLabelText('Business Function'), {
+      target: { value: 'Clinical' },
+    });
+    fireEvent.change(screen.getByPlaceholderText('e.g. Payroll Run'), {
+      target: { value: 'Ward Discharge Process' },
+    });
+
+    // act
+    fireEvent.change(screen.getByLabelText('Linked Benefit', { exact: false }), {
+      target: { value: 'benefit-1' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Save Assessment' }));
+
+    // assert - the Ben # cell is a button (in-app link), not a plain external href
+    const benefitLink = screen.getByRole('button', { name: 'BEN-001' });
+    fireEvent.click(benefitLink);
+    expect(onNavigateToBenefit).toHaveBeenCalledWith('benefit-1');
   });
 });

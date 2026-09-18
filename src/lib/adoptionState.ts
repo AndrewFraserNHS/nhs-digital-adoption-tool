@@ -60,6 +60,45 @@ export interface RaidItem {
   notes: string;
 }
 
+export type BenefitDisbenefitFlag = 'Yes' | 'No';
+
+/** A Benefits Register entry - shared project-wide so other tools (e.g. Change Impact Assessment) can link to it by id and deep-link into the Benefits tool. */
+export interface BenefitItem {
+  id: string;
+  benefitNo: string;
+  dateCreated: string;
+  dateReviewed: string;
+  title: string;
+  details: string;
+  status: string;
+  disbenefit: BenefitDisbenefitFlag;
+  benefitType: string;
+  speciality: string;
+  beneficiaryGroups: string[];
+  strategicOwner: string;
+  operationalOwner: string;
+  trustObjectives: string;
+  changeEnablers: string;
+  measurementsUsed: string;
+  unitOfMeasure: string;
+  baselineValue: string;
+  calculations: string;
+  assumptions: string;
+}
+
+export interface BenefitTrackerPeriod {
+  year: number;
+  quarterKey: string;
+  forecast: string;
+  actual: string;
+}
+
+export interface BenefitTrackerEntry {
+  benefitId: string;
+  varianceReason: string;
+  periods: BenefitTrackerPeriod[];
+}
+
 export interface DraftAction extends BaseAction {
   linkedTargets?: ActionTargetLink[];
   readinessScore?: number; // The readiness score band (0-5) this action targets
@@ -275,6 +314,8 @@ export interface AdoptionStore {
   phaseOverrides: Record<string, string>;
   pathwayChecks: PathwayChecklistState;
   raidItems: RaidItem[];
+  benefits: BenefitItem[];
+  benefitTracker: Record<string, BenefitTrackerEntry>;
 }
 
 /** The CST: the single persisted document describing this program/project/initiative. */
@@ -342,11 +383,30 @@ export function initializeStore(persisted?: Partial<AdoptionStore>): AdoptionSto
     phaseOverrides: persisted?.phaseOverrides || {},
     pathwayChecks: clonePathwayChecks(persisted?.pathwayChecks),
     raidItems: cloneRaidItems(persisted?.raidItems),
+    benefits: cloneBenefits(persisted?.benefits),
+    benefitTracker: cloneBenefitTracker(persisted?.benefitTracker),
   };
 }
 
 function cloneRaidItems(items?: RaidItem[]): RaidItem[] {
   return (items || []).map((item) => ({ ...item }));
+}
+
+function cloneBenefits(items?: BenefitItem[]): BenefitItem[] {
+  return (items || []).map((item) => ({ ...item, beneficiaryGroups: [...item.beneficiaryGroups] }));
+}
+
+function cloneBenefitTracker(
+  tracker?: Record<string, BenefitTrackerEntry>
+): Record<string, BenefitTrackerEntry> {
+  if (!tracker) {
+    return {};
+  }
+  return Object.keys(tracker).reduce<Record<string, BenefitTrackerEntry>>((next, id) => {
+    const entry = tracker[id];
+    next[id] = { ...entry, periods: entry.periods.map((period) => ({ ...period })) };
+    return next;
+  }, {});
 }
 
 function cloneSuppressedAutoActions(map?: Record<string, string[]>): Record<string, string[]> {

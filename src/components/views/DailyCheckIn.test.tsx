@@ -56,6 +56,8 @@ const store: AdoptionStore = {
   phaseOverrides: {},
   pathwayChecks: {},
   raidItems: [],
+  benefits: [],
+  benefitTracker: {},
   history: [],
 };
 

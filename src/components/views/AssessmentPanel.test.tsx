@@ -81,6 +81,8 @@ function createProps(overrides?: {
       phaseOverrides: {},
       pathwayChecks: {},
       raidItems: [] as RaidItem[],
+      benefits: [],
+      benefitTracker: {},
       suppressedAutoActions: {},
       auditLog: [],
     },

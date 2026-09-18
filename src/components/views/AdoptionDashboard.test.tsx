@@ -62,6 +62,8 @@ const store: AdoptionStore = {
   phaseOverrides: {},
   pathwayChecks: {},
   raidItems: [],
+  benefits: [],
+  benefitTracker: {},
   history: [
     {
       monthLabel: 'Jul 2026',

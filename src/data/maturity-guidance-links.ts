@@ -1,4 +1,5 @@
 import { toAbsoluteUrl } from '@lib/utils';
+
 import type { PhaseCapabilityProfile } from './cst';
 
 export const MATURITY_GUIDANCE_TARGETS = ['Default', 'Product', 'EPR'] as const;
@@ -102,12 +103,13 @@ const futureNhsLink = (
   objectId: string,
   label: string,
   type: GuidanceLinkType,
-  description?: string
+  description?: string,
+  area: 'CMN' | 'NationalBenefitsManagement' = 'CMN'
 ): GuidanceLink => {
   return {
     key: `fnhs_${objectId}`,
     label,
-    url: `https://future.nhs.uk/CMN/view?objectId=${objectId}`,
+    url: `https://future.nhs.uk/${area}/view?objectId=${objectId}`,
     type,
     ...(description ? { description } : {}),
   };
@@ -117,12 +119,13 @@ export const futureNhsLinkTbc = (
   key: string,
   label: string,
   type: GuidanceLinkType,
-  description?: string
+  description?: string,
+  area: 'CMN' | 'NationalBenefitsManagement' = 'CMN'
 ): GuidanceLink => {
   return {
     key: `fnhs_TBC_${key}`,
     label,
-    url: 'https://future.nhs.uk/CMN/view?objectId=TBC',
+    url: `https://future.nhs.uk/${area}/view?objectId=TBC`,
     type,
     ...(description ? { description } : {}),
   };
@@ -420,6 +423,13 @@ export const DEFAULT_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
         "What's in it for me? Benefits",
         'core',
         'Translates organisational benefits into relevant stakeholder benefits.'
+      ),
+      futureNhsLink(
+        '179918149',
+        "What's in a name?",
+        'additional',
+        'The art of writing an appropriate benefit name and description',
+        'NationalBenefitsManagement'
       ),
       futureNhsLink(
         '69511824',

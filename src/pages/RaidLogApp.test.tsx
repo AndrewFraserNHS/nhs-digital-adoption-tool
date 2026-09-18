@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
+import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 import RaidLogApp, { type RaidLogAppProps } from './RaidLogApp';
@@ -32,8 +32,8 @@ describe('RaidLogApp', () => {
 
     // act
     fireEvent.change(screen.getByLabelText('Title'), { target: { value: 'Vendor delay' } });
-    fireEvent.change(screen.getByLabelText('Likelihood (1-4)'), { target: { value: '3' } });
-    fireEvent.change(screen.getByLabelText('Impact (1-4)'), { target: { value: '4' } });
+    fireEvent.change(screen.getByLabelText('Likelihood (1-5)'), { target: { value: '3' } });
+    fireEvent.change(screen.getByLabelText('Impact (1-5)'), { target: { value: '4' } });
     fireEvent.click(screen.getByRole('button', { name: 'Save Item' }));
 
     // assert - severity = 3 * 4 = 12

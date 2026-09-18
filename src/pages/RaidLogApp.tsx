@@ -1,5 +1,5 @@
-import { BinIcon, IconActionButton, PencilIcon } from '@components/common/IconButtons';
 import { FilterBar } from '@components/common/FilterBar';
+import { BinIcon, IconActionButton, PencilIcon } from '@components/common/IconButtons';
 import type { AssessmentComponent } from '@data/components';
 import type { DraftAction, DraftEntry, RaidItem, RaidStatus, RaidType, TeamMember } from '@lib/adoptionState';
 import { bragBadgeClass, getBragStatus } from '@lib/brag';
@@ -187,7 +187,6 @@ export default function RaidLogApp({
       setShowForm(true);
     }
     onFocusItemHandled?.();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [focusItemId]);
 
   const updateFormData = (updates: Partial<RaidFormState>) =>
@@ -410,7 +409,7 @@ export default function RaidLogApp({
                       htmlFor="raid-likelihood"
                       className="block text-sm font-medium text-slate-700 mb-1"
                     >
-                      Likelihood (1-4)
+                      Likelihood (1-5)
                     </label>
                     <select
                       id="raid-likelihood"
@@ -420,7 +419,7 @@ export default function RaidLogApp({
                       }
                       className="w-full p-2 border border-slate-300 rounded outline-none"
                     >
-                      {[1, 2, 3, 4].map((value) => (
+                      {[1, 2, 3, 4, 5].map((value) => (
                         <option key={value} value={value}>
                           {value}
                         </option>
@@ -432,7 +431,7 @@ export default function RaidLogApp({
                       htmlFor="raid-impact"
                       className="block text-sm font-medium text-slate-700 mb-1"
                     >
-                      Impact (1-4)
+                      Impact (1-5)
                     </label>
                     <select
                       id="raid-impact"
@@ -442,7 +441,7 @@ export default function RaidLogApp({
                       }
                       className="w-full p-2 border border-slate-300 rounded outline-none"
                     >
-                      {[1, 2, 3, 4].map((value) => (
+                      {[1, 2, 3, 4, 5].map((value) => (
                         <option key={value} value={value}>
                           {value}
                         </option>

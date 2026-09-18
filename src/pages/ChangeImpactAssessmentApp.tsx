@@ -1262,7 +1262,7 @@ function DashboardTab({ items }: { items: ChangeImpactAssessment[] }): JSX.Eleme
           {heatmapOverlay === 'readinessScore' &&
             'Visualizing average readiness scores (Higher % = More Ready).'}
           {heatmapOverlay === 'capability' &&
-            'Visualizing team capability scores on a 1-4 scale (Higher = More Capable).'}
+            'Visualizing team capability scores on a 1-5 scale (Higher = More Capable).'}
         </p>
         <div className="overflow-x-auto">
           <div className="min-w-[800px]">

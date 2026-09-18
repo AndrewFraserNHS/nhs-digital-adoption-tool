@@ -1,0 +1,940 @@
+import { BinIcon, IconActionButton, PencilIcon } from '@components/common/IconButtons';
+import { FilterBar } from '@components/common/FilterBar';
+import { bragBadgeClass, getBragStatus } from '@lib/brag';
+import { load, save } from '@lib/storage';
+import { JSX, useMemo, useState } from 'react';
+
+type DisbenefitFlag = 'Yes' | 'No';
+
+interface BenefitItem {
+  id: string;
+  benefitNo: string;
+  dateCreated: string;
+  dateReviewed: string;
+  title: string;
+  details: string;
+  status: string;
+  disbenefit: DisbenefitFlag;
+  benefitType: string;
+  speciality: string;
+  beneficiaryGroups: string[];
+  strategicOwner: string;
+  operationalOwner: string;
+  trustObjectives: string;
+  changeEnablers: string;
+  measurementsUsed: string;
+  unitOfMeasure: string;
+  baselineValue: string;
+  calculations: string;
+  assumptions: string;
+}
+
+interface TrackerPeriod {
+  year: number;
+  quarterKey: string;
+  forecast: string;
+  actual: string;
+}
+
+interface BenefitTrackerEntry {
+  benefitId: string;
+  varianceReason: string;
+  periods: TrackerPeriod[];
+}
+
+interface BenefitsData {
+  benefits: BenefitItem[];
+  tracker: Record<string, BenefitTrackerEntry>;
+}
+
+const STORAGE_KEY = 'nhs-benefits-register';
+
+const BENEFIT_STATUS_OPTIONS = [
+  'Identified',
+  'Validating',
+  'Planning',
+  'Delivering',
+  'Realised',
+  'Partially Realised',
+  'Not Realised',
+];
+
+const BENEFIT_TYPE_OPTIONS = [
+  'Cashable Financial',
+  'Non-Cashable Financial',
+  'Efficiency / Productivity',
+  'Quality & Safety',
+  'Patient Experience',
+  'Staff Experience / Workforce',
+  'Operational Performance',
+  'Compliance / Risk Reduction',
+];
+
+const SPECIALITY_OPTIONS = [
+  'Trust-wide',
+  'Emergency Medicine',
+  'Surgery',
+  'Medicine',
+  'Diagnostics & Imaging',
+  'Maternity',
+  'Mental Health',
+  'Community Services',
+  'Outpatients',
+  'Pharmacy',
+  'Corporate / Back Office',
+  'Other',
+];
+
+const BENEFICIARY_GROUP_OPTIONS = [
+  'Patients',
+  'Carers / Families',
+  'Clinical Staff',
+  'Nursing Staff',
+  'Administrative Staff',
+  'Management',
+  'Trust (Organisation-wide)',
+  'Wider Health System / ICS',
+  'Commissioners',
+  'Regulators',
+];
+
+const UNIT_OF_MEASURE_BY_TYPE: Record<string, string[]> = {
+  'Cashable Financial': ['£ (GBP)', '£ per patient', '£ per episode', 'Cost per WTE'],
+  'Non-Cashable Financial': [
+    '£ (notional/GBP equivalent)',
+    'Staff hours released',
+    'WTE equivalent',
+  ],
+  'Efficiency / Productivity': [
+    'Minutes/hours saved',
+    'Number of process steps removed',
+    'Throughput (activity per period)',
+    'Length of stay (days)',
+  ],
+  'Quality & Safety': [
+    'Incidents per 1,000 admissions',
+    'Compliance rate (%)',
+    'Number of harm events avoided',
+  ],
+  'Patient Experience': [
+    'FFT score (%)',
+    'Patient satisfaction score',
+    'Complaints per 1,000 contacts',
+  ],
+  'Staff Experience / Workforce': [
+    'Staff survey score (%)',
+    'Turnover rate (%)',
+    'Vacancy rate (%)',
+    'Sickness/absence rate (%)',
+  ],
+  'Operational Performance': [
+    'Waiting time (days/weeks)',
+    'DNA rate (%)',
+    'Utilisation rate (%)',
+    'Activity volume',
+  ],
+  'Compliance / Risk Reduction': [
+    'Audit compliance score (%)',
+    'Number of risks mitigated',
+    'CQC rating movement',
+  ],
+};
+
+const TRACKER_YEARS = 4;
+const QUARTERS: { key: string; label: string }[] = [
+  { key: 'Q1', label: 'Apr-Jun' },
+  { key: 'Q2', label: 'Jul-Sep' },
+  { key: 'Q3', label: 'Oct-Dec' },
+  { key: 'Q4', label: 'Jan-Mar' },
+];
+
+const STATUS_BADGE_CLASS: Record<string, string> = {
+  Identified: 'bg-slate-100 text-slate-700 border-slate-300',
+  Validating: 'bg-purple-100 text-purple-800 border-purple-300',
+  Planning: 'bg-blue-100 text-blue-800 border-blue-300',
+  Delivering: 'bg-amber-100 text-amber-800 border-amber-300',
+  Realised: 'bg-green-100 text-green-800 border-green-300',
+  'Partially Realised': 'bg-amber-100 text-amber-800 border-amber-300',
+  'Not Realised': 'bg-red-100 text-red-800 border-red-300',
+};
+
+function createId(): string {
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function nextBenefitNo(benefits: BenefitItem[]): string {
+  const max = benefits.reduce((highest, item) => {
+    const match = /^BEN-(\d+)$/.exec(item.benefitNo);
+    return match ? Math.max(highest, Number(match[1])) : highest;
+  }, 0);
+  return `BEN-${String(max + 1).padStart(3, '0')}`;
+}
+
+function generatePeriods(): TrackerPeriod[] {
+  const periods: TrackerPeriod[] = [];
+  for (let year = 0; year < TRACKER_YEARS; year += 1) {
+    QUARTERS.forEach((quarter) => {
+      periods.push({ year, quarterKey: quarter.key, forecast: '', actual: '' });
+    });
+  }
+  return periods;
+}
+
+function emptyTrackerEntry(benefitId: string): BenefitTrackerEntry {
+  return { benefitId, varianceReason: '', periods: generatePeriods() };
+}
+
+const EMPTY_BENEFIT: Omit<BenefitItem, 'id' | 'benefitNo'> = {
+  dateCreated: new Date().toISOString().slice(0, 10),
+  dateReviewed: new Date().toISOString().slice(0, 10),
+  title: '',
+  details: '',
+  status: BENEFIT_STATUS_OPTIONS[0],
+  disbenefit: 'No',
+  benefitType: BENEFIT_TYPE_OPTIONS[0],
+  speciality: SPECIALITY_OPTIONS[0],
+  beneficiaryGroups: [],
+  strategicOwner: '',
+  operationalOwner: '',
+  trustObjectives: '',
+  changeEnablers: '',
+  measurementsUsed: '',
+  unitOfMeasure: '',
+  baselineValue: '',
+  calculations: '',
+  assumptions: '',
+};
+
+type BenefitFormState = Omit<BenefitItem, 'id'> & { id: string | null };
+
+function loadData(): BenefitsData {
+  const stored = load<BenefitsData>(STORAGE_KEY);
+  return stored || { benefits: [], tracker: {} };
+}
+
+function FieldLabel({ htmlFor, children }: { htmlFor: string; children: string }): JSX.Element {
+  return (
+    <label htmlFor={htmlFor} className="block text-sm font-medium text-slate-700 mb-1">
+      {children}
+    </label>
+  );
+}
+
+export interface BenefitsAppProps {
+  embedded?: boolean;
+  onBack?: () => void;
+  trustName?: string;
+  projectName?: string;
+}
+
+export default function BenefitsApp({
+  embedded = false,
+  trustName = '',
+  projectName = '',
+}: BenefitsAppProps = {}): JSX.Element {
+  const [data, setData] = useState<BenefitsData>(() => loadData());
+  const [activeTab, setActiveTab] = useState<'register' | 'tracker'>('register');
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState<BenefitFormState>({
+    id: null,
+    benefitNo: '',
+    ...EMPTY_BENEFIT,
+  });
+  const [statusFilter, setStatusFilter] = useState('');
+  const [typeFilter, setTypeFilter] = useState('');
+  const [specialityFilter, setSpecialityFilter] = useState('');
+  const [trackerBenefitId, setTrackerBenefitId] = useState<string | null>(null);
+
+  const persist = (next: BenefitsData) => {
+    setData(next);
+    save(STORAGE_KEY, next);
+  };
+
+  const updateFormData = (updates: Partial<BenefitFormState>) =>
+    setFormData((current) => ({ ...current, ...updates }));
+
+  const filteredBenefits = useMemo(() => {
+    let result = [...data.benefits];
+    if (statusFilter) {
+      result = result.filter((item) => item.status === statusFilter);
+    }
+    if (typeFilter) {
+      result = result.filter((item) => item.benefitType === typeFilter);
+    }
+    if (specialityFilter) {
+      result = result.filter((item) => item.speciality === specialityFilter);
+    }
+    return result;
+  }, [data.benefits, statusFilter, typeFilter, specialityFilter]);
+
+  const openNewForm = () => {
+    setFormData({ id: null, benefitNo: nextBenefitNo(data.benefits), ...EMPTY_BENEFIT });
+    setShowForm(true);
+  };
+
+  const handleEdit = (item: BenefitItem) => {
+    setFormData({ ...item });
+    setShowForm(true);
+  };
+
+  const handleDelete = (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this benefit?')) {
+      return;
+    }
+    const { [id]: _removed, ...restTracker } = data.tracker;
+    persist({
+      benefits: data.benefits.filter((item) => item.id !== id),
+      tracker: restTracker,
+    });
+  };
+
+  const handleSave = () => {
+    if (!formData.title.trim()) {
+      window.alert('Please enter a benefit title.');
+      return;
+    }
+    if (!formData.dateCreated || !formData.dateReviewed) {
+      window.alert('Created and Reviewed dates must not be blank.');
+      return;
+    }
+    const id = formData.id || createId();
+    const newItem: BenefitItem = { ...formData, id };
+    const benefits = formData.id
+      ? data.benefits.map((item) => (item.id === id ? newItem : item))
+      : [...data.benefits, newItem];
+    const tracker = data.tracker[id]
+      ? data.tracker
+      : { ...data.tracker, [id]: emptyTrackerEntry(id) };
+    persist({ benefits, tracker });
+    setShowForm(false);
+    setFormData({ id: null, benefitNo: '', ...EMPTY_BENEFIT });
+  };
+
+  const toggleBeneficiaryGroup = (group: string) => {
+    updateFormData({
+      beneficiaryGroups: formData.beneficiaryGroups.includes(group)
+        ? formData.beneficiaryGroups.filter((g) => g !== group)
+        : [...formData.beneficiaryGroups, group],
+    });
+  };
+
+  const trackerBenefit = trackerBenefitId
+    ? data.benefits.find((item) => item.id === trackerBenefitId)
+    : null;
+  const trackerEntry = trackerBenefitId
+    ? data.tracker[trackerBenefitId] || emptyTrackerEntry(trackerBenefitId)
+    : null;
+
+  const updateTrackerEntry = (updates: Partial<BenefitTrackerEntry>) => {
+    if (!trackerBenefitId || !trackerEntry) {
+      return;
+    }
+    persist({
+      ...data,
+      tracker: {
+        ...data.tracker,
+        [trackerBenefitId]: { ...trackerEntry, ...updates },
+      },
+    });
+  };
+
+  const updateTrackerPeriod = (year: number, quarterKey: string, field: 'forecast' | 'actual', value: string) => {
+    if (!trackerEntry) {
+      return;
+    }
+    updateTrackerEntry({
+      periods: trackerEntry.periods.map((period) =>
+        period.year === year && period.quarterKey === quarterKey
+          ? { ...period, [field]: value }
+          : period
+      ),
+    });
+  };
+
+  const varianceStatus = (forecast: string, actual: string) => {
+    const f = Number(forecast);
+    const a = Number(actual);
+    if (!forecast || !actual || Number.isNaN(f) || Number.isNaN(a) || f === 0) {
+      return null;
+    }
+    const percentDelta = ((a - f) / Math.abs(f)) * 100;
+    return getBragStatus(percentDelta, { blue: 10, green: -5, amber: -20 });
+  };
+
+  return (
+    <div>
+      <header
+        className={
+          embedded
+            ? 'flex flex-wrap items-center justify-between gap-3 pb-4'
+            : 'bg-white border-b border-slate-200 shadow-sm px-6 py-4 flex flex-wrap items-center justify-between gap-3'
+        }
+      >
+        <div>
+          <h1 className="text-lg font-bold text-slate-800">Benefits Register &amp; Tracker</h1>
+          <p className="text-xs text-slate-500">
+            Capture, quantify and track realisation of programme benefits
+            {trustName || projectName
+              ? ` — ${trustName || 'Your Organisation'} / ${projectName || 'Your Project/Programme'}`
+              : ''}
+          </p>
+        </div>
+      </header>
+
+      <div className="space-y-6">
+        <div className="flex gap-2 border-b border-slate-200">
+          <button
+            type="button"
+            onClick={() => setActiveTab('register')}
+            className={`px-4 py-2 text-sm font-semibold border-b-2 ${
+              activeTab === 'register'
+                ? 'border-[#005eb8] text-[#005eb8]'
+                : 'border-transparent text-slate-500 hover:text-slate-700'
+            }`}
+          >
+            Benefits Register
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('tracker')}
+            className={`px-4 py-2 text-sm font-semibold border-b-2 ${
+              activeTab === 'tracker'
+                ? 'border-[#005eb8] text-[#005eb8]'
+                : 'border-transparent text-slate-500 hover:text-slate-700'
+            }`}
+          >
+            Benefits Tracker
+          </button>
+        </div>
+
+        {activeTab === 'register' ? (
+          <div className="space-y-6">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <h2 className="text-xl font-semibold text-slate-800">Benefits</h2>
+              <button
+                type="button"
+                onClick={() => (showForm ? setShowForm(false) : openNewForm())}
+                className="rounded-md bg-[#005eb8] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
+              >
+                {showForm ? 'Cancel' : '+ New Benefit'}
+              </button>
+            </div>
+
+            {showForm ? (
+              <div className="rounded-lg border border-blue-100 bg-blue-50 p-6">
+                <h3 className="text-lg font-medium text-blue-900 mb-4">
+                  {formData.id ? 'Edit Benefit' : 'New Benefit'}
+                </h3>
+                <div className="grid grid-cols-1 gap-4 max-w-2xl">
+                  <div>
+                    <FieldLabel htmlFor="benefit-no">Benefit No.</FieldLabel>
+                    <input
+                      id="benefit-no"
+                      type="text"
+                      value={formData.benefitNo}
+                      onChange={(e) => updateFormData({ benefitNo: e.target.value })}
+                      className="w-full p-2 border border-slate-300 rounded outline-none"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <FieldLabel htmlFor="benefit-created">Created *</FieldLabel>
+                      <input
+                        id="benefit-created"
+                        type="date"
+                        value={formData.dateCreated}
+                        onChange={(e) => updateFormData({ dateCreated: e.target.value })}
+                        className="w-full p-2 border border-slate-300 rounded outline-none"
+                      />
+                    </div>
+                    <div>
+                      <FieldLabel htmlFor="benefit-reviewed">Reviewed *</FieldLabel>
+                      <input
+                        id="benefit-reviewed"
+                        type="date"
+                        value={formData.dateReviewed}
+                        onChange={(e) => updateFormData({ dateReviewed: e.target.value })}
+                        className="w-full p-2 border border-slate-300 rounded outline-none"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <FieldLabel htmlFor="benefit-title">Benefit Title/Name</FieldLabel>
+                    <input
+                      id="benefit-title"
+                      type="text"
+                      value={formData.title}
+                      onChange={(e) => updateFormData({ title: e.target.value })}
+                      placeholder="Elevator pitch, including enabler"
+                      className="w-full p-2 border border-slate-300 rounded outline-none"
+                    />
+                  </div>
+                  <div>
+                    <FieldLabel htmlFor="benefit-details">Benefit Details</FieldLabel>
+                    <textarea
+                      id="benefit-details"
+                      value={formData.details}
+                      onChange={(e) => updateFormData({ details: e.target.value })}
+                      placeholder="Describe current and future state"
+                      className="w-full p-2 border border-slate-300 rounded outline-none h-20"
+                    />
+                  </div>
+                  <div>
+                    <FieldLabel htmlFor="benefit-status">Outcome Details Benefit Status</FieldLabel>
+                    <select
+                      id="benefit-status"
+                      value={formData.status}
+                      onChange={(e) => updateFormData({ status: e.target.value })}
+                      className="w-full p-2 border border-slate-300 rounded outline-none"
+                    >
+                      {BENEFIT_STATUS_OPTIONS.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <FieldLabel htmlFor="benefit-disbenefit">Disbenefit?</FieldLabel>
+                    <select
+                      id="benefit-disbenefit"
+                      value={formData.disbenefit}
+                      onChange={(e) =>
+                        updateFormData({ disbenefit: e.target.value as DisbenefitFlag })
+                      }
+                      className="w-full p-2 border border-slate-300 rounded outline-none"
+                    >
+                      <option value="No">No</option>
+                      <option value="Yes">Yes</option>
+                    </select>
+                  </div>
+                  <div>
+                    <FieldLabel htmlFor="benefit-type">Benefit Type</FieldLabel>
+                    <select
+                      id="benefit-type"
+                      value={formData.benefitType}
+                      onChange={(e) =>
+                        updateFormData({ benefitType: e.target.value, unitOfMeasure: '' })
+                      }
+                      className="w-full p-2 border border-slate-300 rounded outline-none"
+                    >
+                      {BENEFIT_TYPE_OPTIONS.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <FieldLabel htmlFor="benefit-speciality">Speciality</FieldLabel>
+                    <select
+                      id="benefit-speciality"
+                      value={formData.speciality}
+                      onChange={(e) => updateFormData({ speciality: e.target.value })}
+                      className="w-full p-2 border border-slate-300 rounded outline-none"
+                    >
+                      {SPECIALITY_OPTIONS.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <span className="block text-sm font-medium text-slate-700 mb-1">
+                      Beneficiary Groups
+                    </span>
+                    <div className="grid grid-cols-2 gap-1 rounded border border-slate-300 bg-white p-3">
+                      {BENEFICIARY_GROUP_OPTIONS.map((group) => {
+                        const inputId = `benefit-group-${group.replace(/[^a-zA-Z0-9]/g, '-')}`;
+                        return (
+                          <label
+                            key={group}
+                            htmlFor={inputId}
+                            className="flex items-center gap-2 text-sm text-slate-700"
+                          >
+                            <input
+                              id={inputId}
+                              type="checkbox"
+                              checked={formData.beneficiaryGroups.includes(group)}
+                              onChange={() => toggleBeneficiaryGroup(group)}
+                            />
+                            {group}
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  <div>
+                    <FieldLabel htmlFor="benefit-strategic-owner">Strategic Owner</FieldLabel>
+                    <input
+                      id="benefit-strategic-owner"
+                      type="text"
+                      value={formData.strategicOwner}
+                      onChange={(e) => updateFormData({ strategicOwner: e.target.value })}
+                      placeholder="Name and role"
+                      className="w-full p-2 border border-slate-300 rounded outline-none"
+                    />
+                  </div>
+                  <div>
+                    <FieldLabel htmlFor="benefit-operational-owner">Operational Owner</FieldLabel>
+                    <input
+                      id="benefit-operational-owner"
+                      type="text"
+                      value={formData.operationalOwner}
+                      onChange={(e) => updateFormData({ operationalOwner: e.target.value })}
+                      placeholder="Name and role"
+                      className="w-full p-2 border border-slate-300 rounded outline-none"
+                    />
+                  </div>
+                  <div>
+                    <FieldLabel htmlFor="benefit-objectives">Trust Objective(s)</FieldLabel>
+                    <textarea
+                      id="benefit-objectives"
+                      value={formData.trustObjectives}
+                      onChange={(e) => updateFormData({ trustObjectives: e.target.value })}
+                      className="w-full p-2 border border-slate-300 rounded outline-none h-16"
+                    />
+                  </div>
+                  <div>
+                    <FieldLabel htmlFor="benefit-enablers">Change Enablers</FieldLabel>
+                    <textarea
+                      id="benefit-enablers"
+                      value={formData.changeEnablers}
+                      onChange={(e) => updateFormData({ changeEnablers: e.target.value })}
+                      placeholder="Precursor to delivery of benefit"
+                      className="w-full p-2 border border-slate-300 rounded outline-none h-16"
+                    />
+                  </div>
+                  <div>
+                    <FieldLabel htmlFor="benefit-measurements">Benefit measurement(s) used</FieldLabel>
+                    <textarea
+                      id="benefit-measurements"
+                      value={formData.measurementsUsed}
+                      onChange={(e) => updateFormData({ measurementsUsed: e.target.value })}
+                      placeholder="Make specific to process/location/team"
+                      className="w-full p-2 border border-slate-300 rounded outline-none h-16"
+                    />
+                  </div>
+                  <div>
+                    <FieldLabel htmlFor="benefit-unit">Unit of Measure</FieldLabel>
+                    <select
+                      id="benefit-unit"
+                      value={formData.unitOfMeasure}
+                      onChange={(e) => updateFormData({ unitOfMeasure: e.target.value })}
+                      className="w-full p-2 border border-slate-300 rounded outline-none"
+                    >
+                      <option value="">Please choose</option>
+                      {(UNIT_OF_MEASURE_BY_TYPE[formData.benefitType] || []).map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <FieldLabel htmlFor="benefit-baseline">Baseline Value</FieldLabel>
+                    <input
+                      id="benefit-baseline"
+                      type="text"
+                      value={formData.baselineValue}
+                      onChange={(e) => updateFormData({ baselineValue: e.target.value })}
+                      placeholder="Align with unit of measure/benefit type"
+                      className="w-full p-2 border border-slate-300 rounded outline-none"
+                    />
+                  </div>
+                  <div>
+                    <FieldLabel htmlFor="benefit-calculations">
+                      Benefit/Outcome Calculations
+                    </FieldLabel>
+                    <textarea
+                      id="benefit-calculations"
+                      value={formData.calculations}
+                      onChange={(e) => updateFormData({ calculations: e.target.value })}
+                      placeholder="Breakdown of calculation and sources, activity year/time period, confidence & attribution %'s, ramp up rationale"
+                      className="w-full p-2 border border-slate-300 rounded outline-none h-24"
+                    />
+                  </div>
+                  <div>
+                    <FieldLabel htmlFor="benefit-assumptions">Assumptions</FieldLabel>
+                    <textarea
+                      id="benefit-assumptions"
+                      value={formData.assumptions}
+                      onChange={(e) => updateFormData({ assumptions: e.target.value })}
+                      className="w-full p-2 border border-slate-300 rounded outline-none h-16"
+                    />
+                  </div>
+                </div>
+                <div className="mt-6 flex justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowForm(false)}
+                    className="rounded-md bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-200"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleSave}
+                    className="rounded-md bg-[#005eb8] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
+                  >
+                    Save Benefit
+                  </button>
+                </div>
+              </div>
+            ) : null}
+
+            <FilterBar
+              selects={[
+                {
+                  key: 'status',
+                  label: 'Filter by status',
+                  value: statusFilter,
+                  options: BENEFIT_STATUS_OPTIONS,
+                  onChange: setStatusFilter,
+                },
+                {
+                  key: 'type',
+                  label: 'Filter by type',
+                  value: typeFilter,
+                  options: BENEFIT_TYPE_OPTIONS,
+                  onChange: setTypeFilter,
+                },
+                {
+                  key: 'speciality',
+                  label: 'Filter by speciality',
+                  value: specialityFilter,
+                  options: SPECIALITY_OPTIONS,
+                  onChange: setSpecialityFilter,
+                },
+              ]}
+              onReset={() => {
+                setStatusFilter('');
+                setTypeFilter('');
+                setSpecialityFilter('');
+              }}
+            />
+
+            <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white">
+              <table className="min-w-full text-sm text-left border-collapse">
+                <thead className="bg-slate-50 text-slate-600 font-medium border-b border-slate-200">
+                  <tr>
+                    <th className="px-4 py-3">Benefit No.</th>
+                    <th className="px-4 py-3">Title</th>
+                    <th className="px-4 py-3">Type</th>
+                    <th className="px-4 py-3">Status</th>
+                    <th className="px-4 py-3">Reviewed</th>
+                    <th className="px-4 py-3 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {filteredBenefits.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="px-4 py-8 text-center text-slate-500 italic">
+                        {data.benefits.length === 0
+                          ? 'No benefits added yet. Click "New Benefit" to begin.'
+                          : 'No matching records found.'}
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredBenefits.map((item) => (
+                      <tr key={item.id} className="hover:bg-slate-50">
+                        <td className="px-4 py-3 font-medium text-slate-800">{item.benefitNo}</td>
+                        <td className="px-4 py-3 text-slate-600">{item.title}</td>
+                        <td className="px-4 py-3 text-slate-600">{item.benefitType}</td>
+                        <td className="px-4 py-3">
+                          <span
+                            className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-bold ${
+                              STATUS_BADGE_CLASS[item.status] ||
+                              'bg-slate-100 text-slate-700 border-slate-300'
+                            }`}
+                          >
+                            {item.status}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-slate-600">{item.dateReviewed}</td>
+                        <td className="px-4 py-3 text-right">
+                          <div className="flex justify-end gap-2">
+                            <IconActionButton onClick={() => handleEdit(item)} title="Edit benefit">
+                              <PencilIcon />
+                            </IconActionButton>
+                            <IconActionButton
+                              onClick={() => handleDelete(item.id)}
+                              title="Delete benefit"
+                              variant="danger"
+                            >
+                              <BinIcon />
+                            </IconActionButton>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            <h2 className="text-xl font-semibold text-slate-800">Benefits Tracker</h2>
+            {trackerBenefitId && trackerBenefit && trackerEntry ? (
+              <div className="rounded-lg border border-blue-100 bg-blue-50 p-6 space-y-4">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <h3 className="text-lg font-medium text-blue-900">{trackerBenefit.title}</h3>
+                    <p className="text-xs text-slate-500">
+                      {trackerBenefit.benefitNo} · Baseline Value: {trackerBenefit.baselineValue || '—'}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setTrackerBenefitId(null)}
+                    className="rounded-md bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-200"
+                  >
+                    Close
+                  </button>
+                </div>
+
+                <div>
+                  <FieldLabel htmlFor="tracker-variance-reason">
+                    Reason for variance between forecast and actual
+                  </FieldLabel>
+                  <textarea
+                    id="tracker-variance-reason"
+                    value={trackerEntry.varianceReason}
+                    onChange={(e) => updateTrackerEntry({ varianceReason: e.target.value })}
+                    className="w-full p-2 border border-slate-300 rounded outline-none h-16"
+                  />
+                </div>
+
+                <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white">
+                  <table className="min-w-full text-sm text-left border-collapse">
+                    <thead className="bg-slate-50 text-slate-600 font-medium border-b border-slate-200">
+                      <tr>
+                        <th className="px-3 py-2">Year</th>
+                        <th className="px-3 py-2">Period</th>
+                        <th className="px-3 py-2">Forecast</th>
+                        <th className="px-3 py-2">Actual</th>
+                        <th className="px-3 py-2 text-center">Variance</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {Array.from({ length: TRACKER_YEARS }).map((_, year) =>
+                        QUARTERS.map((quarter, quarterIndex) => {
+                          const period = trackerEntry.periods.find(
+                            (p) => p.year === year && p.quarterKey === quarter.key
+                          ) || { year, quarterKey: quarter.key, forecast: '', actual: '' };
+                          const status = varianceStatus(period.forecast, period.actual);
+                          return (
+                            <tr key={`${year}-${quarter.key}`}>
+                              {quarterIndex === 0 ? (
+                                <td
+                                  className="px-3 py-2 font-medium text-slate-700 align-top"
+                                  rowSpan={QUARTERS.length}
+                                >
+                                  Y{year}
+                                </td>
+                              ) : null}
+                              <td className="px-3 py-2 text-slate-600">{quarter.label}</td>
+                              <td className="px-3 py-2">
+                                <label
+                                  htmlFor={`forecast-${year}-${quarter.key}`}
+                                  className="sr-only"
+                                >
+                                  Forecast for Y{year} {quarter.label}
+                                </label>
+                                <input
+                                  id={`forecast-${year}-${quarter.key}`}
+                                  type="number"
+                                  value={period.forecast}
+                                  onChange={(e) =>
+                                    updateTrackerPeriod(year, quarter.key, 'forecast', e.target.value)
+                                  }
+                                  className="w-28 p-1.5 border border-slate-300 rounded outline-none"
+                                />
+                              </td>
+                              <td className="px-3 py-2">
+                                <label htmlFor={`actual-${year}-${quarter.key}`} className="sr-only">
+                                  Actual for Y{year} {quarter.label}
+                                </label>
+                                <input
+                                  id={`actual-${year}-${quarter.key}`}
+                                  type="number"
+                                  value={period.actual}
+                                  onChange={(e) =>
+                                    updateTrackerPeriod(year, quarter.key, 'actual', e.target.value)
+                                  }
+                                  className="w-28 p-1.5 border border-slate-300 rounded outline-none"
+                                />
+                              </td>
+                              <td className="px-3 py-2 text-center">
+                                {status ? (
+                                  <span
+                                    className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-bold ${bragBadgeClass(status)}`}
+                                  >
+                                    {status.toUpperCase()}
+                                  </span>
+                                ) : (
+                                  <span className="text-slate-300">—</span>
+                                )}
+                              </td>
+                            </tr>
+                          );
+                        })
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            ) : (
+              <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white">
+                <table className="min-w-full text-sm text-left border-collapse">
+                  <thead className="bg-slate-50 text-slate-600 font-medium border-b border-slate-200">
+                    <tr>
+                      <th className="px-4 py-3">Benefit No.</th>
+                      <th className="px-4 py-3">Title</th>
+                      <th className="px-4 py-3">Baseline Value</th>
+                      <th className="px-4 py-3">Variance Reason</th>
+                      <th className="px-4 py-3 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {data.benefits.length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className="px-4 py-8 text-center text-slate-500 italic">
+                          Add a benefit in the Register tab to begin tracking it.
+                        </td>
+                      </tr>
+                    ) : (
+                      data.benefits.map((item) => {
+                        const entry = data.tracker[item.id] || emptyTrackerEntry(item.id);
+                        return (
+                          <tr key={item.id} className="hover:bg-slate-50">
+                            <td className="px-4 py-3 font-medium text-slate-800">{item.benefitNo}</td>
+                            <td className="px-4 py-3 text-slate-600">{item.title}</td>
+                            <td className="px-4 py-3 text-slate-600">{item.baselineValue || '—'}</td>
+                            <td className="px-4 py-3 text-slate-500 text-xs truncate max-w-xs">
+                              {entry.varianceReason || '—'}
+                            </td>
+                            <td className="px-4 py-3 text-right">
+                              <IconActionButton
+                                onClick={() => setTrackerBenefitId(item.id)}
+                                title="Edit tracker periods"
+                              >
+                                <PencilIcon />
+                              </IconActionButton>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

@@ -258,6 +258,7 @@ export type View =
   | 'change-impact-assessment'
   | 'stakeholder-analysis'
   | 'raid-log'
+  | 'benefits'
   | 'audit-log'
   | 'project-details'
   | 'settings'

@@ -83,6 +83,7 @@ import ChangeImpactAssessmentApp from '@pages/ChangeImpactAssessmentApp';
 import CompareApp from '@pages/CompareApp';
 import ForceFieldAnalysisApp from '@pages/ForceFieldAnalysisApp';
 import RaidLogApp from '@pages/RaidLogApp';
+import BenefitsApp from '@pages/BenefitsApp';
 import StakeholderAnalysisApp from '@pages/StakeholderAnalysisApp';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -416,6 +417,7 @@ export function AdoptionApp() {
       'change-impact-assessment': 'tools',
       'stakeholder-analysis': 'tools',
       'raid-log': 'tools',
+      benefits: 'tools',
       'audit-log': 'tools',
     };
     const section = sectionByView[view];
@@ -1572,6 +1574,7 @@ export function AdoptionApp() {
                       'change-impact-assessment',
                       'stakeholder-analysis',
                       'raid-log',
+                      'benefits',
                       'audit-log',
                     ] as View[]
                   ).map((v) => (
@@ -1599,7 +1602,9 @@ export function AdoptionApp() {
                                 ? 'Stakeholder Analysis'
                                 : v === 'raid-log'
                                   ? 'RAID Log'
-                                  : 'Audit Log'}
+                                  : v === 'benefits'
+                                    ? 'Benefits Register & Tracker'
+                                    : 'Audit Log'}
                     </button>
                   ))}
                 </nav>
@@ -2116,6 +2121,14 @@ export function AdoptionApp() {
               focusItemId={focusRaidItemId}
               onFocusItemHandled={() => setFocusRaidItemId(null)}
               onNavigateToAction={openActionView}
+            />
+          )}
+          {view === 'benefits' && (
+            <BenefitsApp
+              embedded
+              onBack={() => handleViewChange('dashboard')}
+              trustName={store.orgProfile.trustName}
+              projectName={store.orgProfile.projectName}
             />
           )}
           {view === 'audit-log' && (

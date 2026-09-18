@@ -156,4 +156,33 @@ describe('BenefitsApp', () => {
     expect(screen.getByText('Y3')).toBeInTheDocument();
     expect(screen.getAllByText('Apr-Jun')).toHaveLength(4);
   });
+
+  it('SHOULD show a Variance Trend chip on the collapsed tracker row for each filled-in period', () => {
+    // arrange
+    render(<ControlledBenefits />);
+    fireEvent.click(screen.getByRole('button', { name: '+ New Benefit' }));
+    fireEvent.change(screen.getByLabelText('Benefit Title/Name'), {
+      target: { value: 'Shorter length of stay' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Save Benefit' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Benefits Tracker' }));
+
+    // assert - nothing filled in yet
+    expect(screen.getByText('No data yet')).toBeInTheDocument();
+
+    // act - fill in one period's forecast and actual
+    fireEvent.click(screen.getByRole('button', { name: 'Expand periods' }));
+    fireEvent.change(screen.getByLabelText('Forecast for Y0 Apr-Jun'), {
+      target: { value: '100' },
+    });
+    fireEvent.change(screen.getByLabelText('Actual for Y0 Apr-Jun'), {
+      target: { value: '90' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Collapse periods' }));
+
+    // assert - the collapsed row now shows a trend chip labelled with the date range and % variance
+    expect(screen.queryByText('No data yet')).not.toBeInTheDocument();
+    expect(screen.getAllByText(/Y0 Apr-Jun/).length).toBeGreaterThan(0);
+    expect(screen.getByText('-10%')).toBeInTheDocument();
+  });
 });

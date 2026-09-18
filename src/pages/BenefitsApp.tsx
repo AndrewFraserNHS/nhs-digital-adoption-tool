@@ -141,6 +141,58 @@ function emptyTrackerEntry(benefitId: string): BenefitTrackerEntry {
   return { benefitId, varianceReason: '', periods: generatePeriods() };
 }
 
+const QUARTER_ORDER = QUARTERS.map((quarter) => quarter.key);
+
+/** The periods that have at least a forecast or actual value entered, in chronological order, capped to `limit`. */
+function filledPeriods(entry: BenefitTrackerEntry, limit = 6): BenefitTrackerPeriod[] {
+  return [...entry.periods]
+    .filter((period) => period.forecast !== '' || period.actual !== '')
+    .sort(
+      (a, b) => a.year - b.year || QUARTER_ORDER.indexOf(a.quarterKey) - QUARTER_ORDER.indexOf(b.quarterKey)
+    )
+    .slice(0, limit);
+}
+
+function quarterLabel(quarterKey: string): string {
+  return QUARTERS.find((quarter) => quarter.key === quarterKey)?.label || quarterKey;
+}
+
+function computeVariance(
+  forecast: string,
+  actual: string
+): { status: ReturnType<typeof getBragStatus>; percentDelta: number } | null {
+  const f = Number(forecast);
+  const a = Number(actual);
+  if (!forecast || !actual || Number.isNaN(f) || Number.isNaN(a) || f === 0) {
+    return null;
+  }
+  const percentDelta = ((a - f) / Math.abs(f)) * 100;
+  return { status: getBragStatus(percentDelta, { blue: 10, green: -5, amber: -20 }), percentDelta };
+}
+
+function TrendChip({ period }: { period: BenefitTrackerPeriod }): JSX.Element {
+  const variance = computeVariance(period.forecast, period.actual);
+  return (
+    <span className="inline-flex flex-col items-center rounded border border-slate-200 bg-white px-1.5 py-1 text-[10px] leading-tight whitespace-nowrap">
+      <span className="font-medium text-slate-500">
+        Y{period.year} {quarterLabel(period.quarterKey)}
+      </span>
+      {variance ? (
+        <span
+          className={`mt-0.5 rounded-full border px-1.5 font-bold ${bragBadgeClass(variance.status)}`}
+        >
+          {variance.percentDelta > 0 ? '+' : ''}
+          {variance.percentDelta.toFixed(0)}%
+        </span>
+      ) : (
+        <span className="mt-0.5 text-slate-400">
+          {period.forecast ? `F ${period.forecast}` : period.actual ? `A ${period.actual}` : '—'}
+        </span>
+      )}
+    </span>
+  );
+}
+
 const EMPTY_BENEFIT: Omit<BenefitItem, 'id' | 'benefitNo'> = {
   dateCreated: new Date().toISOString().slice(0, 10),
   dateReviewed: new Date().toISOString().slice(0, 10),
@@ -361,15 +413,7 @@ export default function BenefitsApp({
     });
   };
 
-  const varianceStatus = (forecast: string, actual: string) => {
-    const f = Number(forecast);
-    const a = Number(actual);
-    if (!forecast || !actual || Number.isNaN(f) || Number.isNaN(a) || f === 0) {
-      return null;
-    }
-    const percentDelta = ((a - f) / Math.abs(f)) * 100;
-    return getBragStatus(percentDelta, { blue: 10, green: -5, amber: -20 });
-  };
+  const varianceStatus = (forecast: string, actual: string) => computeVariance(forecast, actual)?.status ?? null;
 
   return (
     <div>
@@ -865,13 +909,14 @@ export default function BenefitsApp({
                     <th className="px-4 py-3">Benefit No.</th>
                     <th className="px-4 py-3">Title</th>
                     <th className="px-4 py-3">Baseline Value</th>
+                    <th className="px-4 py-3">Variance Trend</th>
                     <th className="px-4 py-3">Variance Reason</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {benefits.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-4 py-8 text-center text-slate-500 italic">
+                      <td colSpan={6} className="px-4 py-8 text-center text-slate-500 italic">
                         Add a benefit in the Register tab to begin tracking it.
                       </td>
                     </tr>
@@ -898,6 +943,17 @@ export default function BenefitsApp({
                             </td>
                             <td className="px-4 py-3 text-slate-600">{item.title}</td>
                             <td className="px-4 py-3 text-slate-600">{item.baselineValue || '—'}</td>
+                            <td className="px-4 py-3">
+                              {filledPeriods(entry).length === 0 ? (
+                                <span className="text-slate-400 text-xs">No data yet</span>
+                              ) : (
+                                <div className="flex flex-wrap gap-1">
+                                  {filledPeriods(entry).map((period) => (
+                                    <TrendChip key={`${period.year}-${period.quarterKey}`} period={period} />
+                                  ))}
+                                </div>
+                              )}
+                            </td>
                             <td className="px-4 py-3 text-slate-500 text-xs truncate max-w-xs">
                               {entry.varianceReason || '—'}
                             </td>
@@ -905,7 +961,7 @@ export default function BenefitsApp({
                           {expanded ? (
                             <tr className="bg-slate-50">
                               <td />
-                              <td colSpan={4} className="px-4 py-4 space-y-4">
+                              <td colSpan={5} className="px-4 py-4 space-y-4">
                                 <div>
                                   <FieldLabel htmlFor={`tracker-variance-${item.id}`}>
                                     Reason for variance between forecast and actual

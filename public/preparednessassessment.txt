@@ -1,0 +1,84 @@
+Page 1: 
+AVT Preparedness Assessment	
+	
+Trust Details	
+	
+Trust name	(Auto populate)
+ICB / Region	
+Completed by (name and role)	(team members)
+Date completed	(date picker)
+Executive sponsor / SRO	(Stakeholder)
+Programme / transformation lead	
+Contact email	
+
+Leadership and Governance	1	Our organisation has identified an executive sponsor or Senior Responsible Owner (eg a board member or clinical director) who will be accountable for the AVT deployment.
+Leadership and Governance	2	We have identified an appropriate governance or oversight group that would oversee AVT deployment, adoption and benefits once started.
+Leadership and Governance	3	We have an early view on how AVT adoption and progress would be reviewed by senior leaders once implementation begins.
+Leadership and Governance	4	There is an emerging case for change and vision for AVT that can be articulated to impacted staff.
+Leadership and Governance	5	Please briefly describe your emerging AVT case for change.
+Leadership and Governance	6	Which role would be responsible for coordinating AVT adoption and benefits realisation once the programme begins?
+Leadership and Governance	7	Please briefly describe the main adoption risks you are already aware of at this early stage.
+Stakeholder Engagement	8	We have identified the key stakeholder groups that would need to be involved as AVT planning progresses.
+Stakeholder Engagement	9	We have an initial view on which clinical or operational staff could act as local champions during AVT rollout.
+Stakeholder Engagement	10	We recognise that staff may have concerns about AVT use and have considered how these would be explored and addressed.
+Stakeholder Engagement	11	What behaviours or ways of working do you expect may need to change over time for AVT to deliver benefits?
+Stakeholder Engagement	12	How do you anticipate involving staff in shaping how AVT would be used in day-to-day practice?
+Stakeholder Engagement	13	How do you anticipate involving or engaging patients as AVT planning develops?
+Stakeholder Engagement	14	We expect to put in place a communications approach to keep staff informed as AVT planning and deployment progress.
+Stakeholder Engagement	15	We recognise the importance of feedback and learning once AVT use begins and have considered how this could be supported.
+Workflow Integration and Processes	16	We have considered which existing workflows are likely to be impacted by AVT and would need to be reviewed.
+Workflow Integration and Processes	17	We have an initial view on how some workflows or roles may need to change when AVT is introduced.
+Workflow Integration and Processes	18	What is your early thinking on how AVT use might be encouraged or embedded into routine practice over time?
+Workflow Integration and Processes	19	We have considered how learning from early AVT use could inform ongoing improvement.
+Workflow Integration and Processes	20	We recognise that variation in AVT use may occur and have considered how this might be identified or reviewed.
+Workflow Integration and Processes	21	We have considered the need for business continuity arrangements if AVT is unavailable or unsuitable.
+Training and User Support	22	We have access to an appropriate training and support approach for AVT adoption, and can make time/capacity available for staff to use it
+Training and User Support	23	We have considered how staff time and capacity could be supported to learn and adapt when AVT is introduced.
+Training and User Support	24	We have an initial view on how local peer support (eg champions) could be provided during early rollout.
+Training and User Support	25	We recognise that post-go-live support will be important and have considered what this might look like.
+Adoption Planning and Improvement	26	We have an outline view of how AVT rollout and adoption could be approached (eg phased, piloted, incremental).
+Adoption Planning and Improvement	27	We have considered how learning from early AVT use could be reviewed and acted on as adoption progresses.
+Adoption Planning and Improvement	28	How will change and adoption activity for AVT primarily be resourced?
+Benefits and Outcome Realisation	29	We have identified the priority outcomes AVT is expected to improve in our context (eg clinic flow, documentation timeliness, clinician workload or experience), grounded in local service pressures.
+Benefits and Outcome Realisation	30	Which best describes the current state of outpatient clinics and clinician workload in areas likely to use AVT? (Select one)
+Benefits and Outcome Realisation	31	We recognise the need to understand whether AVT contributes to improvements and have considered what might be measured
+Benefits and Outcome Realisation	32	We recognise AVT benefits may be realised in different ways (eg time savings, staff wellbeing, patient experience) and have considered how we would review and adapt if expected benefits are not realised
+Benefits and Outcome Realisation	33	If AVT reduces administrative time, how is that time most likely to be used in practice? (Select one)
+Benefits and Outcome Realisation	34	Briefly describe your expected benefits from AVT (including whether you expect direct productivity, pressure relief, and/or wellbeing benefits) and any early measures you would consider
+General	35	Any additional comments on your readiness to begin the AVT journey or areas where early support may be helpful?
+
+1) 1. No sponsor identified 2. Potential sponsor identified but not agreed / not engaged 3. Sponsor agreed but limited capacity or visibility 4. Sponsor agreed, active, with authority and capacity
+2) 1. No governance group identified 2. Governance group identified informally; membership or cadence unclear 3. Governance group agreed; meetings planned or starting 4. Governance group active with clear decision rights and regular cadence
+3) 1. No approach identified 2. Idea only 3. Proposed forums or metrics discussed 4. Review approach defined 5. Reporting being set up 6. Review cadence and measures agreed and owned
+4) 1. No case for change 2. Early intent only 3. Draft narrative 4. Tested with some stakeholders 5. Clear and consistent 6. Clear and tailored by audience
+5) Freetext
+6) Freetext
+7) Freetext
+8) 1. Not identified 2. Partial list 3. Most groups identified 4. Stakeholders mapped 5. Engagement plan agreed 6. Engagement started
+9) 1. None identified 2. Idea only 3. Some names identified 4. Named per area 5. Time / backfill considered 6. Champions agreed and enabled
+10) 1. Not considered 2. Acknowledged only 3. Common concerns listed 4. Plan to address drafted 5. Engagement underway 6. Feedback loop active
+11) Freetext
+12) Freetext
+13) Freetext
+14) 1. No communications planned 2. Intent only 3. Messages drafted 4. Channels and audiences defined 5. Comms plan scheduled and owned 6. Communications started
+15) 1. Not considered 2. Intent only 3. Ideas identified (e.g. huddles, surveys) 4. Mechanism defined 5. Mechanism being set up 6. Mechanism active and acted on
+16) 1. Not considered 2. Early awareness 3. Some workflows listed 4. Key workflows mapped 5. Changes being designed 6. Future‑state agreed and documented
+17) 1. No view 2. Early assumptions made 3. Some impacts identified 4. Role changes drafted 5. Changes tested with teams 6. Changes agreed and communicated
+18) Freetext
+19) 1. No approach 2. Intent only 3. Improvement ideas listed 4. Review process defined 5. Review cycles planned 6. Continuous improvement embedded
+20) 1. Not considered 2. Aware only 3. Likely variation described 4. Measures defined 5. Monitoring defined 6. Monitoring and actions in place
+21) 1. Not considered 2. Aware only 3. Informal fallbacks known 4. Contingency drafted 5. Contingency agreed 6. Tested and communicated
+22) 1. No agreed training/support approach and no access 2. Training/support discussed; access or time unclear 3. Approach agreed but limited capacity / time / backfill 4. Approach agreed and deliverable with access and time/capacity confirmed
+23) 1. No plan to protect time or provide backfill 2. Acknowledged; informal or local arrangements only 3. Protected time/backfill agreed for pilot areas 4. Protected time/backfill confirmed and scheduled across rollout
+24) 1. Not planned 2. Idea only 3. Some support identified 4. Support model defined 5. Support being mobilised 6. Support active and sustained
+25) 1. Not planned 2. Intent only 3. Ideas listed 4. Support model defined 5. Support being set up 6. Support model active and measured
+26) 1. No approach 2. Intent only 3. Approach chosen 4. Phases defined 5. Timeline/resources drafted 6. Plan agreed and mobilisation started
+27) 1. No learning loop 2. Intent only 3. Proposed reviews 4. Review cadence defined 5. Reviews scheduled 6. Reviews happening and actions tracked
+28) 1. No resource identified 2. Resource expected but not defined 3. External delivery partner leading 4. Internal staff alongside substantive roles 5. Int and ext resource with internal ownership 6. Fully resourced internal team
+29) 1. No priority outcomes identified 2. Broad or generic outcomes identified 3. Priority outcomes identified but not yet agreed or tested locally 4. Clear, agreed priority outcomes grounded in local service pressures
+30) 1. Current position not understood 2. Significant workforce pressure limits additional activity 3. Most Clinics routinely overbooked 4. Admin outside contracted hours 5. Most Clinics full but potential to increase activity
+31) 1. No measures identified 2. Ideas only 3. Draft measures 4. Measures and data sources identified 5. Baseline / collection plan drafted 6. Baseline and review plan agreed)
+32) 1. Not considered 2. Intent only 3. Triggers discussed 4. Review approach defined 5. Review cadence planned 6. Review and adaptation mechanism active)
+33) 1. Seeing additional patients 2. Reducing backlog/overbooking and stabilising clinics 3. Completing work within contracted hours (well-being/sustainability) 4. Improving quality/safety/patient interaction 5. Other (please describe)
+34) Freetext
+35) Freetext

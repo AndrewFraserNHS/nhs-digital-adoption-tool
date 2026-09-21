@@ -296,7 +296,7 @@ export function ActionPlanTracker({
           showAdvancedControls={showAdvancedControls}
           onToggleAdvanced={() => setShowAdvancedControls((current) => !current)}
           onReset={resetFilters}
-          resultText={`Showing ${filteredActions.length} actions`}
+          resultText={`Showing ${filteredActions.length > 100 ?  ">100" : filteredActions.length} actions`}
           activeFilters={activeFilters}
           activeFiltersAriaLabel="Active action tracker filters"
           darkMode={darkMode}

@@ -1169,11 +1169,28 @@ export function ProjectDetailsPage({
       </div>
 
       <div
+        className={`flex flex-wrap items-center justify-between gap-3 rounded-lg border p-5 ${darkMode ? 'border-blue-500/30 bg-blue-500/10' : 'border-blue-200 bg-blue-50'}`}
+      >
+        <div>
+          <p className={`text-sm font-semibold ${darkMode ? 'text-blue-100' : 'text-blue-900'}`}>
+            What phase are you currently in?
+          </p>
+          <p className={`mt-1 text-xs ${darkMode ? 'text-blue-200' : 'text-blue-800'}`}>
+            Answer a few quick questions and see your readiness by component to figure out where you
+            really are in the change journey.
+          </p>
+        </div>
+        <button type="button" onClick={onGoToWhereAmINow} className={nhsButtonPrimary}>
+          Where am I now?
+        </button>
+      </div>
+
+            <div
         className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-4`}
       >
         <div>
           <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
-            Stakeholder Reference Data
+            Step 4: Stakeholder Reference Data
           </h3>
           <p className={`text-sm mt-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
             Groups, Sub-Groups, Departments and Relationships used by the Stakeholder Analysis tool -
@@ -1213,23 +1230,6 @@ export function ProjectDetailsPage({
         </div>
       </div>
 
-      <div
-        className={`flex flex-wrap items-center justify-between gap-3 rounded-lg border p-5 ${darkMode ? 'border-blue-500/30 bg-blue-500/10' : 'border-blue-200 bg-blue-50'}`}
-      >
-        <div>
-          <p className={`text-sm font-semibold ${darkMode ? 'text-blue-100' : 'text-blue-900'}`}>
-            What phase are you currently in?
-          </p>
-          <p className={`mt-1 text-xs ${darkMode ? 'text-blue-200' : 'text-blue-800'}`}>
-            Answer a few quick questions and see your readiness by component to figure out where you
-            really are in the change journey.
-          </p>
-        </div>
-        <button type="button" onClick={onGoToWhereAmINow} className={nhsButtonPrimary}>
-          Where am I now?
-        </button>
-      </div>
-
       {/* Step 4: External link overrides */}
       <div
         className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-4`}
@@ -1239,7 +1239,7 @@ export function ProjectDetailsPage({
             <h3
               className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
             >
-              Step 4: External links
+              Step 5: External links
             </h3>
             <label
               className={`flex items-center gap-2 text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}

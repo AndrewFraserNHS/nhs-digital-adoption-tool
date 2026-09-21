@@ -3,7 +3,6 @@ import {
   EvidenceWarningModal,
 } from '@components/common/EvidenceWarningModal';
 import { usePageIntroSeen } from '@components/onboarding/PageIntroModal';
-import { VisionGetStartedModal } from '@components/onboarding/VisionGetStartedModal';
 import { ToolkitChatbot } from '@components/ui/ToolkitChatbot';
 import { ActionPlanTracker } from '@components/views/ActionPlanTracker';
 import { AdoptionDashboard, type ComponentRadarSize } from '@components/views/AdoptionDashboard';
@@ -81,11 +80,11 @@ import { regenerateContentForPathway, syncDerivedContent } from '@lib/derivedCon
 import { getReadinessBand } from '@lib/readinessBands';
 import { load, save } from '@lib/storage';
 import { downloadFile, escapeHtml } from '@lib/utils';
+import BenefitsApp from '@pages/BenefitsApp';
 import ChangeImpactAssessmentApp from '@pages/ChangeImpactAssessmentApp';
 import CompareApp from '@pages/CompareApp';
 import ForceFieldAnalysisApp from '@pages/ForceFieldAnalysisApp';
 import RaidLogApp from '@pages/RaidLogApp';
-import BenefitsApp from '@pages/BenefitsApp';
 import StakeholderAnalysisApp from '@pages/StakeholderAnalysisApp';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -2216,12 +2215,6 @@ export function AdoptionApp() {
 
         <ToolkitChatbot
           toolkitChoice={store.orgProfile.cst.toolkitChoice}
-          darkMode={Boolean(userSettings.darkMode)}
-        />
-
-        <VisionGetStartedModal
-          open={view === 'assessment' && activeComponentId === 'vision' && visionGetStarted.isOpen}
-          onClose={visionGetStarted.close}
           darkMode={Boolean(userSettings.darkMode)}
         />
 

@@ -256,11 +256,11 @@ describe('StakeholderAnalysisApp', () => {
   });
 
   it('SHOULD migrate stakeholders saved by an earlier version into the shared store once', () => {
-    // arrange - legacy local-only data
-    localStorage.setItem(
-      'nhs-stakeholder-analysis',
-      JSON.stringify({ stakeholders: [{ id: 'legacy-1', name: 'Legacy Person' }], guidanceRead: true })
-    );
+    // arrange - legacy local-only data, saved by the tool running on its own
+    const legacy = render(<StakeholderAnalysisApp embedded />);
+    addStakeholder('Legacy Person');
+    fireEvent.click(screen.getByRole('button', { name: 'Save Stakeholder' }));
+    legacy.unmount();
     const onStakeholdersChange = vi.fn();
 
     // act
@@ -274,7 +274,7 @@ describe('StakeholderAnalysisApp', () => {
 
     // assert
     expect(onStakeholdersChange).toHaveBeenCalledWith([
-      expect.objectContaining({ id: 'legacy-1', name: 'Legacy Person' }),
+      expect.objectContaining({ name: 'Legacy Person' }),
     ]);
   });
 });

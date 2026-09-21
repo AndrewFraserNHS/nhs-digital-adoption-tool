@@ -82,6 +82,7 @@ import { getReadinessBand } from '@lib/readinessBands';
 import { load, save } from '@lib/storage';
 import { downloadFile, escapeHtml } from '@lib/utils';
 import BenefitsApp from '@pages/BenefitsApp';
+import PreparednessAssessmentApp from '@pages/PreparednessAssessmentApp';
 import ChangeImpactAssessmentApp from '@pages/ChangeImpactAssessmentApp';
 import CompareApp from '@pages/CompareApp';
 import ForceFieldAnalysisApp from '@pages/ForceFieldAnalysisApp';
@@ -420,6 +421,7 @@ export function AdoptionApp() {
       'stakeholder-analysis': 'tools',
       'raid-log': 'tools',
       benefits: 'tools',
+      'preparedness-assessment': 'tools',
       'audit-log': 'tools',
     };
     const section = sectionByView[view];
@@ -1602,6 +1604,7 @@ export function AdoptionApp() {
                       'stakeholder-analysis',
                       'raid-log',
                       'benefits',
+                      'preparedness-assessment',
                       'audit-log',
                     ] as View[]
                   ).map((v) => (
@@ -1631,7 +1634,9 @@ export function AdoptionApp() {
                                   ? 'RAID Log'
                                   : v === 'benefits'
                                     ? 'Benefits Register & Tracker'
-                                    : 'Audit Log'}
+                                    : v === 'preparedness-assessment'
+                                      ? 'AVT Preparedness Assessment'
+                                      : 'Audit Log'}
                     </button>
                   ))}
                 </nav>
@@ -2169,6 +2174,22 @@ export function AdoptionApp() {
               onTrackerChange={updateBenefitTracker}
               focusBenefitId={focusBenefitId}
               onFocusHandled={() => setFocusBenefitId(null)}
+              stakeholders={store.stakeholders}
+              onStakeholdersChange={updateStakeholders}
+              departments={
+                (store.orgProfile.stakeholderReferenceLists || DEFAULT_STAKEHOLDER_REFERENCE_LISTS)
+                  .departments
+              }
+            />
+          )}
+          {view === 'preparedness-assessment' && (
+            <PreparednessAssessmentApp
+              embedded
+              onBack={() => handleViewChange('dashboard')}
+              trustName={store.orgProfile.trustName}
+              region={store.orgProfile.region}
+              leadName={store.orgProfile.leadName}
+              teamMembers={store.orgProfile.teamMembers || []}
               stakeholders={store.stakeholders}
               onStakeholdersChange={updateStakeholders}
               departments={

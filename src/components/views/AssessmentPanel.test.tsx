@@ -83,6 +83,7 @@ function createProps(overrides?: {
       raidItems: [] as RaidItem[],
       benefits: [],
       benefitTracker: {},
+      stakeholders: [],
       suppressedAutoActions: {},
       auditLog: [],
     },

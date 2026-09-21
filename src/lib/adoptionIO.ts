@@ -12,6 +12,7 @@ import type {
   PathwayChecklistState,
   RaidItem,
   RemovedActionAuditEntry,
+  Stakeholder,
 } from './adoptionState';
 import {
   cloneDraft,
@@ -40,6 +41,7 @@ export interface SavedAdoptionAssessment {
   raidItems?: RaidItem[];
   benefits?: BenefitItem[];
   benefitTracker?: Record<string, BenefitTrackerEntry>;
+  stakeholders?: Stakeholder[];
 }
 
 const VALID_PATHWAYS = new Set(['pathway-1', 'pathway-2', 'pathway-3']);
@@ -375,6 +377,7 @@ export function buildAdoptionExportPayload(store: AdoptionStore): SavedAdoptionA
       next[id] = { ...entry, periods: entry.periods.map((period) => ({ ...period })) };
       return next;
     }, {}),
+    stakeholders: (store.stakeholders || []).map((s) => ({ ...s })),
   };
 }
 
@@ -521,6 +524,7 @@ export function mergeImportedAdoptionState(
     raidItems: migrated.raidItems || fallbackStore.raidItems,
     benefits: migrated.benefits || fallbackStore.benefits,
     benefitTracker: migrated.benefitTracker || fallbackStore.benefitTracker,
+    stakeholders: migrated.stakeholders || fallbackStore.stakeholders,
   });
 }
 

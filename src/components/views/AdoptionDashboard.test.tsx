@@ -64,6 +64,7 @@ const store: AdoptionStore = {
   raidItems: [],
   benefits: [],
   benefitTracker: {},
+  stakeholders: [],
   history: [
     {
       monthLabel: 'Jul 2026',

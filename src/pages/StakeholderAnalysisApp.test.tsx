@@ -232,4 +232,49 @@ describe('StakeholderAnalysisApp', () => {
     // assert - already linked, so the "Add to project plan" button should not be offered
     expect(screen.queryByTitle('Add to project plan')).not.toBeInTheDocument();
   });
+
+  it('SHOULD read and write the shared project stakeholders (including Role) when they are provided', () => {
+    // arrange
+    const onStakeholdersChange = vi.fn();
+    render(
+      <StakeholderAnalysisApp
+        embedded
+        stakeholders={[]}
+        onStakeholdersChange={onStakeholdersChange}
+      />
+    );
+    addStakeholder('Jane Smith');
+    fireEvent.change(screen.getByLabelText('Role'), { target: { value: 'Chief Nurse' } });
+
+    // act
+    fireEvent.click(screen.getByRole('button', { name: 'Save Stakeholder' }));
+
+    // assert - the new stakeholder is handed to the shared store rather than kept locally
+    expect(onStakeholdersChange).toHaveBeenCalledWith([
+      expect.objectContaining({ name: 'Jane Smith', role: 'Chief Nurse' }),
+    ]);
+  });
+
+  it('SHOULD migrate stakeholders saved by an earlier version into the shared store once', () => {
+    // arrange - legacy local-only data
+    localStorage.setItem(
+      'nhs-stakeholder-analysis',
+      JSON.stringify({ stakeholders: [{ id: 'legacy-1', name: 'Legacy Person' }], guidanceRead: true })
+    );
+    const onStakeholdersChange = vi.fn();
+
+    // act
+    render(
+      <StakeholderAnalysisApp
+        embedded
+        stakeholders={[]}
+        onStakeholdersChange={onStakeholdersChange}
+      />
+    );
+
+    // assert
+    expect(onStakeholdersChange).toHaveBeenCalledWith([
+      expect.objectContaining({ id: 'legacy-1', name: 'Legacy Person' }),
+    ]);
+  });
 });

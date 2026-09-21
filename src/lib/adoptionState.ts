@@ -75,8 +75,9 @@ export interface BenefitItem {
   benefitType: string;
   speciality: string;
   beneficiaryGroups: string[];
-  strategicOwner: string;
-  operationalOwner: string;
+  /** Stakeholder ids (AdoptionStore.stakeholders) - the same people managed in Stakeholder Analysis. */
+  strategicOwnerId: string;
+  operationalOwnerId: string;
   trustObjectives: string;
   changeEnablers: string;
   measurementsUsed: string;
@@ -98,6 +99,52 @@ export interface BenefitTrackerEntry {
   varianceReason: string;
   periods: BenefitTrackerPeriod[];
 }
+
+export type StakeholderRating = 'Low' | 'Medium' | 'High' | 'Very High' | '';
+export type StakeholderCommitment =
+  'Resistant' | 'Opposed' | 'Ambivalent' | 'Complying' | 'Supporting' | 'Leading' | '';
+export type StakeholderCapability =
+  'Unaware' | 'Aware' | 'Informed' | 'Equipped' | 'Practised' | 'Exemplary' | '';
+
+/** A stakeholder - shared project-wide so Stakeholder Analysis and other tools (e.g. Benefits Register owners) work from the same people. */
+export interface Stakeholder {
+  id: string;
+  name: string;
+  role?: string;
+  groupSize: string;
+  group: string;
+  subGroup: string;
+  department: string;
+  relationship: string;
+  interest: StakeholderRating;
+  impact: StakeholderRating;
+  power: StakeholderRating;
+  influence: StakeholderRating;
+  currentCommitment: StakeholderCommitment;
+  targetCommitment: StakeholderCommitment;
+  capabilityCurrent: StakeholderCapability;
+  capabilityTarget: StakeholderCapability;
+  targetDate: string;
+}
+
+export const EMPTY_STAKEHOLDER: Omit<Stakeholder, 'id'> = {
+  name: '',
+  role: '',
+  groupSize: '',
+  group: '',
+  subGroup: '',
+  department: '',
+  relationship: '',
+  interest: '',
+  impact: '',
+  power: '',
+  influence: '',
+  currentCommitment: '',
+  targetCommitment: '',
+  capabilityCurrent: '',
+  capabilityTarget: '',
+  targetDate: '',
+};
 
 export interface DraftAction extends BaseAction {
   linkedTargets?: ActionTargetLink[];
@@ -316,6 +363,7 @@ export interface AdoptionStore {
   raidItems: RaidItem[];
   benefits: BenefitItem[];
   benefitTracker: Record<string, BenefitTrackerEntry>;
+  stakeholders: Stakeholder[];
 }
 
 /** The CST: the single persisted document describing this program/project/initiative. */
@@ -385,6 +433,7 @@ export function initializeStore(persisted?: Partial<AdoptionStore>): AdoptionSto
     raidItems: cloneRaidItems(persisted?.raidItems),
     benefits: cloneBenefits(persisted?.benefits),
     benefitTracker: cloneBenefitTracker(persisted?.benefitTracker),
+    stakeholders: (persisted?.stakeholders || []).map((s) => ({ ...s })),
   };
 }
 

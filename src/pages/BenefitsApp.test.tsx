@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import type { BenefitItem, BenefitTrackerEntry } from '@lib/adoptionState';
+import { EMPTY_STAKEHOLDER, type BenefitItem, type BenefitTrackerEntry, type Stakeholder } from '@lib/adoptionState';
 
 import BenefitsApp, { type BenefitsAppProps } from './BenefitsApp';
 
@@ -11,14 +11,18 @@ import BenefitsApp, { type BenefitsAppProps } from './BenefitsApp';
 function ControlledBenefits(
   props: Omit<
     BenefitsAppProps,
-    'benefits' | 'onBenefitsChange' | 'tracker' | 'onTrackerChange'
-  >
+    'benefits' | 'onBenefitsChange' | 'tracker' | 'onTrackerChange' | 'stakeholders' | 'onStakeholdersChange'
+  > & { initialStakeholders?: Stakeholder[] }
 ) {
+  const { initialStakeholders = [], ...rest } = props;
   const [benefits, setBenefits] = useState<BenefitItem[]>([]);
   const [tracker, setTracker] = useState<Record<string, BenefitTrackerEntry>>({});
+  const [stakeholders, setStakeholders] = useState<Stakeholder[]>(initialStakeholders);
   return (
     <BenefitsApp
-      {...props}
+      {...rest}
+      stakeholders={stakeholders}
+      onStakeholdersChange={setStakeholders}
       embedded
       benefits={benefits}
       onBenefitsChange={setBenefits}
@@ -280,5 +284,56 @@ describe('BenefitsApp', () => {
     expect(screen.getByText('Y2 Avg')).toBeInTheDocument();
     expect(screen.getByText('Y3 Avg')).toBeInTheDocument();
     expect(screen.queryByText(/Apr-Jun/)).not.toBeInTheDocument();
+  });
+
+  it('SHOULD let a Strategic Owner be picked from the shared stakeholders and show their name and role in the table', () => {
+    // arrange
+    const stakeholder: Stakeholder = {
+      ...EMPTY_STAKEHOLDER,
+      id: 'sh-1',
+      name: 'Alex Morgan',
+      role: 'Chief Nurse',
+      department: 'Nursing',
+    };
+    render(<ControlledBenefits initialStakeholders={[stakeholder]} departments={['Nursing']} />);
+    fireEvent.click(screen.getByRole('button', { name: '+ New Benefit' }));
+    fireEvent.change(screen.getByLabelText('Benefit Title/Name'), {
+      target: { value: 'Faster triage' },
+    });
+
+    // act
+    fireEvent.change(screen.getByLabelText('Strategic Owner'), { target: { value: 'sh-1' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save Benefit' }));
+
+    // assert
+    expect(screen.getByText(/Alex Morgan \(Chief Nurse\)/)).toBeInTheDocument();
+  });
+
+  it('SHOULD add a new stakeholder (name, role, department dropdown) from an owner field and select them', () => {
+    // arrange
+    render(<ControlledBenefits departments={['Nursing', 'Finance']} />);
+    fireEvent.click(screen.getByRole('button', { name: '+ New Benefit' }));
+    fireEvent.change(screen.getByLabelText('Benefit Title/Name'), {
+      target: { value: 'Faster triage' },
+    });
+
+    // act
+    fireEvent.change(screen.getByLabelText('Operational Owner'), {
+      target: { value: '__add-new-stakeholder__' },
+    });
+    fireEvent.change(screen.getByLabelText('New stakeholder name'), {
+      target: { value: 'Sam Patel' },
+    });
+    fireEvent.change(screen.getByLabelText('New stakeholder role'), {
+      target: { value: 'Ward Manager' },
+    });
+    const department = screen.getByLabelText('New stakeholder department') as HTMLSelectElement;
+    expect(department.tagName).toBe('SELECT');
+    fireEvent.change(department, { target: { value: 'Nursing' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Add stakeholder' }));
+
+    // assert - the new stakeholder is now the selected option in the dropdown
+    const owner = screen.getByLabelText('Operational Owner') as HTMLSelectElement;
+    expect(owner.selectedOptions[0].textContent).toBe('Sam Patel — Ward Manager (Nursing)');
   });
 });

@@ -58,6 +58,7 @@ const store: AdoptionStore = {
   raidItems: [],
   benefits: [],
   benefitTracker: {},
+  stakeholders: [],
   history: [],
 };
 

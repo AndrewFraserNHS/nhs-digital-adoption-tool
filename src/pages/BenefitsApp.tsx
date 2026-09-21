@@ -1,6 +1,12 @@
 import { BinIcon, IconActionButton, PencilIcon } from '@components/common/IconButtons';
 import { FilterBar } from '@components/common/FilterBar';
-import type { BenefitItem, BenefitTrackerEntry, BenefitTrackerPeriod } from '@lib/adoptionState';
+import { StakeholderPicker } from '@components/common/StakeholderPicker';
+import type {
+  BenefitItem,
+  BenefitTrackerEntry,
+  BenefitTrackerPeriod,
+  Stakeholder,
+} from '@lib/adoptionState';
 import { bragBadgeClass, getBragStatus } from '@lib/brag';
 import { Fragment, JSX, useEffect, useMemo, useState } from 'react';
 
@@ -279,8 +285,8 @@ const EMPTY_BENEFIT: Omit<BenefitItem, 'id' | 'benefitNo'> = {
   benefitType: BENEFIT_TYPE_OPTIONS[0],
   speciality: SPECIALITY_OPTIONS[0],
   beneficiaryGroups: [],
-  strategicOwner: '',
-  operationalOwner: '',
+  strategicOwnerId: '',
+  operationalOwnerId: '',
   trustObjectives: '',
   changeEnablers: '',
   measurementsUsed: '',
@@ -335,6 +341,11 @@ export interface BenefitsAppProps {
   /** Deep-link into a specific benefit's edit form (e.g. navigated here from Change Impact Assessment). */
   focusBenefitId?: string | null;
   onFocusHandled?: () => void;
+  /** Shared project stakeholders - Strategic/Operational owners are picked from (or added to) this list. */
+  stakeholders?: Stakeholder[];
+  onStakeholdersChange?: (stakeholders: Stakeholder[]) => void;
+  /** Department dropdown options for newly-added stakeholders (from Project Details). */
+  departments?: string[];
 }
 
 export default function BenefitsApp({
@@ -347,6 +358,9 @@ export default function BenefitsApp({
   onTrackerChange,
   focusBenefitId,
   onFocusHandled,
+  stakeholders = [],
+  onStakeholdersChange,
+  departments = [],
 }: BenefitsAppProps = {}): JSX.Element {
   const [activeTab, setActiveTab] = useState<'register' | 'tracker'>('register');
   const [showForm, setShowForm] = useState(false);
@@ -375,6 +389,21 @@ export default function BenefitsApp({
     onFocusHandled?.();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [focusBenefitId]);
+
+  const stakeholderById = useMemo(
+    () => Object.fromEntries(stakeholders.map((s) => [s.id, s])),
+    [stakeholders]
+  );
+  const ownerLabel = (stakeholderId: string) => {
+    const stakeholder = stakeholderById[stakeholderId];
+    if (!stakeholder) {
+      return '—';
+    }
+    return stakeholder.role ? `${stakeholder.name} (${stakeholder.role})` : stakeholder.name;
+  };
+  const addStakeholder = (stakeholder: Stakeholder) => {
+    onStakeholdersChange?.([...stakeholders, stakeholder]);
+  };
 
   const updateFormData = (updates: Partial<BenefitFormState>) =>
     setFormData((current) => ({ ...current, ...updates }));
@@ -695,28 +724,24 @@ export default function BenefitsApp({
                       })}
                     </div>
                   </div>
-                  <div>
-                    <FieldLabel htmlFor="benefit-strategic-owner">Strategic Owner</FieldLabel>
-                    <input
-                      id="benefit-strategic-owner"
-                      type="text"
-                      value={formData.strategicOwner}
-                      onChange={(e) => updateFormData({ strategicOwner: e.target.value })}
-                      placeholder="Name and role"
-                      className="w-full p-2 border border-slate-300 rounded outline-none"
-                    />
-                  </div>
-                  <div>
-                    <FieldLabel htmlFor="benefit-operational-owner">Operational Owner</FieldLabel>
-                    <input
-                      id="benefit-operational-owner"
-                      type="text"
-                      value={formData.operationalOwner}
-                      onChange={(e) => updateFormData({ operationalOwner: e.target.value })}
-                      placeholder="Name and role"
-                      className="w-full p-2 border border-slate-300 rounded outline-none"
-                    />
-                  </div>
+                  <StakeholderPicker
+                    id="benefit-strategic-owner"
+                    label="Strategic Owner"
+                    stakeholders={stakeholders}
+                    departments={departments}
+                    value={formData.strategicOwnerId}
+                    onChange={(strategicOwnerId) => updateFormData({ strategicOwnerId })}
+                    onAddStakeholder={addStakeholder}
+                  />
+                  <StakeholderPicker
+                    id="benefit-operational-owner"
+                    label="Operational Owner"
+                    stakeholders={stakeholders}
+                    departments={departments}
+                    value={formData.operationalOwnerId}
+                    onChange={(operationalOwnerId) => updateFormData({ operationalOwnerId })}
+                    onAddStakeholder={addStakeholder}
+                  />
                   <div>
                     <FieldLabel htmlFor="benefit-objectives">Trust Objective(s)</FieldLabel>
                     <textarea
@@ -906,7 +931,7 @@ export default function BenefitsApp({
                             </td>
                             <td className="px-4 py-3 text-slate-600">{item.speciality}</td>
                             <td className="px-4 py-3 text-slate-600 text-xs">
-                              {item.strategicOwner || '—'} / {item.operationalOwner || '—'}
+                              {ownerLabel(item.strategicOwnerId)} / {ownerLabel(item.operationalOwnerId)}
                             </td>
                             <td className="px-4 py-3 text-slate-600">{item.unitOfMeasure || '—'}</td>
                             <td className="px-4 py-3 text-slate-600">{item.baselineValue || '—'}</td>

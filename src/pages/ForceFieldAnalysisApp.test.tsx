@@ -78,23 +78,25 @@ describe('ForceFieldAnalysisApp', () => {
     expect(within(ownerSelect).getByText(/Sam Patel/)).toBeInTheDocument();
   });
 
-  it('SHOULD show the force\'s real (not hypothetical) mitigated score on the mitigation action row', () => {
+  it('SHOULD update the force\'s mitigated score as soon as an action is given a score, whatever its status', () => {
     // arrange
     renderApp();
     addForceAndAction();
+    const mitigatedBadge = () =>
+      screen.getByTitle("Force's current mitigated score (reflects all its scored actions)");
 
-    // act - status stays at the default (not Completed), so the force's mitigated score should
-    // still equal its original score - the action's impact hasn't taken effect yet
-    const statusSelects = screen.getAllByRole('combobox');
-    const statusSelect = statusSelects.find(
-      (select) => (select as HTMLSelectElement).value === 'Planned'
-    ) as HTMLSelectElement;
+    // assert - before any impact is set, the mitigated score equals the original (default 5)
+    expect(mitigatedBadge()).toHaveTextContent('5');
+
+    // act - give the action a +2 impact while its status is still the default (Planned)
+    const statusSelect = screen
+      .getAllByRole('combobox')
+      .find((select) => (select as HTMLSelectElement).value === 'Planned') as HTMLSelectElement;
     expect(statusSelect.value).toBe('Planned');
+    fireEvent.change(screen.getByRole('spinbutton'), { target: { value: '2' } });
 
-    // assert - the row shows the force's real mitigated score (default force score is 5)
-    expect(
-      screen.getByTitle("Force's current mitigated score (reflects its Completed actions)")
-    ).toHaveTextContent('5');
+    // assert - the mitigated score reflects the impact immediately, without needing Completed
+    expect(mitigatedBadge()).toHaveTextContent('7');
   });
 
   it('SHOULD add a mitigation action to a real component/lens via the Apply screen', () => {

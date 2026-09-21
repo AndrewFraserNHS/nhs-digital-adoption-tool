@@ -14,6 +14,8 @@ import {
   DEFAULT_STAKEHOLDER_REFERENCE_LISTS,
   type DraftAction,
   type DraftEntry,
+  EMPTY_STAKEHOLDER,
+  type Stakeholder,
   type StakeholderReferenceLists,
   type TeamMember,
 } from '@lib/adoptionState';
@@ -25,32 +27,9 @@ import { type ChangeEvent, JSX, useEffect, useMemo, useRef, useState } from 'rea
 
 import { nhsButtonSecondary } from '../styles/nhsTheme';
 
-type Rating = 'Low' | 'Medium' | 'High' | 'Very High' | '';
-type Commitment =
-  'Resistant' | 'Opposed' | 'Ambivalent' | 'Complying' | 'Supporting' | 'Leading' | '';
-type Capability = 'Unaware' | 'Aware' | 'Informed' | 'Equipped' | 'Practised' | 'Exemplary' | '';
 type EngagementStatus = 'Planned' | 'In Progress' | 'Completed';
 type ActivityRating = 'Low' | 'Medium' | 'High' | '';
 type MapAxisKey = 'power' | 'influence' | 'interest' | 'impact';
-
-interface Stakeholder {
-  id: string;
-  name: string;
-  groupSize: string;
-  group: string;
-  subGroup: string;
-  department: string;
-  relationship: string;
-  interest: Rating;
-  impact: Rating;
-  power: Rating;
-  influence: Rating;
-  currentCommitment: Commitment;
-  targetCommitment: Commitment;
-  capabilityCurrent: Capability;
-  capabilityTarget: Capability;
-  targetDate: string;
-}
 
 interface EngagementLog {
   id: string;
@@ -498,24 +477,6 @@ function assignGroupColors(groups: string[]): Record<string, string> {
   );
 }
 
-const EMPTY_STAKEHOLDER: Omit<Stakeholder, 'id'> = {
-  name: '',
-  groupSize: '',
-  group: '',
-  subGroup: '',
-  department: '',
-  relationship: '',
-  interest: '',
-  impact: '',
-  power: '',
-  influence: '',
-  currentCommitment: '',
-  targetCommitment: '',
-  capabilityCurrent: '',
-  capabilityTarget: '',
-  targetDate: '',
-};
-
 const EMPTY_ENGAGEMENT: Omit<EngagementLog, 'id'> = {
   stakeholderId: '',
   engagementActivity: '',
@@ -739,6 +700,18 @@ function StakeholderModal({
               required
               value={draft.name}
               onChange={(event) => update({ name: event.target.value })}
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+            />
+          </div>
+          <div>
+            <label htmlFor="sh-role" className="block mb-2 text-sm font-medium text-gray-900">
+              Role
+            </label>
+            <input
+              id="sh-role"
+              type="text"
+              value={draft.role || ''}
+              onChange={(event) => update({ role: event.target.value })}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
             />
           </div>
@@ -2722,6 +2695,9 @@ export interface StakeholderAnalysisAppProps {
   getEntry?: (componentId: string, lens: string) => DraftEntry;
   onEntryUpdate?: (componentId: string, lens: string, entry: DraftEntry) => void;
   onObjectivesUpdate?: (componentId: string, objectives: ComponentObjective[]) => void;
+  /** Shared project-wide stakeholders (AdoptionStore.stakeholders). When provided, this tool reads/writes them here instead of its own storage, so other tools (e.g. Benefits owners) see the same people. */
+  stakeholders?: Stakeholder[];
+  onStakeholdersChange?: (stakeholders: Stakeholder[]) => void;
 }
 
 type Tab =
@@ -2737,10 +2713,32 @@ export default function StakeholderAnalysisApp({
   components = [],
   getEntry,
   onEntryUpdate,
+  stakeholders: sharedStakeholders,
+  onStakeholdersChange,
 }: StakeholderAnalysisAppProps = {}): JSX.Element {
-  const [state, setState] = useState<StakeholderAnalysisState>(
+  const [localState, setLocalState] = useState<StakeholderAnalysisState>(
     () => load<StakeholderAnalysisState>(STORAGE_KEY) || freshState()
   );
+  const isControlled = sharedStakeholders !== undefined;
+  const state: StakeholderAnalysisState = useMemo(
+    () => (isControlled ? { ...localState, stakeholders: sharedStakeholders } : localState),
+    [isControlled, localState, sharedStakeholders]
+  );
+  const stateRef = useRef(state);
+  stateRef.current = state;
+  const setState = (
+    updater:
+      | StakeholderAnalysisState
+      | ((current: StakeholderAnalysisState) => StakeholderAnalysisState)
+  ) => {
+    const previous = stateRef.current;
+    const next = typeof updater === 'function' ? updater(previous) : updater;
+    stateRef.current = next;
+    if (isControlled && next.stakeholders !== previous.stakeholders) {
+      onStakeholdersChange?.(next.stakeholders);
+    }
+    setLocalState(next);
+  };
   const [activeTab, setActiveTab] = useState<Tab>(() =>
     load<StakeholderAnalysisState>(STORAGE_KEY)?.guidanceRead ? 'dashboard' : 'guidance'
   );
@@ -2751,8 +2749,18 @@ export default function StakeholderAnalysisApp({
   const canApply = Boolean(getEntry && onEntryUpdate && components.length);
 
   useEffect(() => {
-    save(STORAGE_KEY, state);
-  }, [state]);
+    save(STORAGE_KEY, isControlled ? { ...localState, stakeholders: [] } : localState);
+  }, [isControlled, localState]);
+
+  // One-off migration: stakeholders saved by an earlier version of this tool (in its own storage)
+  // move into the shared project store the first time it is empty.
+  useEffect(() => {
+    if (isControlled && sharedStakeholders.length === 0 && localState.stakeholders.length > 0) {
+      onStakeholdersChange?.(localState.stakeholders);
+      setLocalState((current) => ({ ...current, stakeholders: [] }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Pre-populate the Engagement Plan with every real "Engagement" type action across every
   // component/lens, so the log starts seeded from the project's own action plan rather than

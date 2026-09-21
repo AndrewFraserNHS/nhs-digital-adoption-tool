@@ -150,7 +150,7 @@ function buildSteps(darkMode: boolean): Step[] {
             of change.
           </p>
           <img
-            src="/assets/The%20Change%20Onion.png"
+            src={`${import.meta.env.BASE_URL}assets/The%20Change%20Onion.png`}
             alt="The Change Onion diagram"
             className="w-full max-w-xl mx-auto rounded-md border border-slate-200"
           />

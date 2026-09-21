@@ -58,6 +58,7 @@ import type {
   DraftEntry,
   OrgProfile,
   RaidItem,
+  Stakeholder,
   View,
 } from '@lib/adoptionState';
 import {
@@ -910,6 +911,10 @@ export function AdoptionApp() {
     },
     []
   );
+
+  const updateStakeholders = useCallback((nextStakeholders: Stakeholder[]) => {
+    setStore((prev) => ({ ...prev, stakeholders: nextStakeholders }));
+  }, []);
 
   const [focusBenefitId, setFocusBenefitId] = useState<string | null>(null);
 
@@ -2131,6 +2136,8 @@ export function AdoptionApp() {
               components={COMPONENTS}
               getEntry={getEntry}
               onEntryUpdate={updateEntry}
+              stakeholders={store.stakeholders}
+              onStakeholdersChange={updateStakeholders}
             />
           )}
           {view === 'raid-log' && (
@@ -2162,6 +2169,12 @@ export function AdoptionApp() {
               onTrackerChange={updateBenefitTracker}
               focusBenefitId={focusBenefitId}
               onFocusHandled={() => setFocusBenefitId(null)}
+              stakeholders={store.stakeholders}
+              onStakeholdersChange={updateStakeholders}
+              departments={
+                (store.orgProfile.stakeholderReferenceLists || DEFAULT_STAKEHOLDER_REFERENCE_LISTS)
+                  .departments
+              }
             />
           )}
           {view === 'audit-log' && (

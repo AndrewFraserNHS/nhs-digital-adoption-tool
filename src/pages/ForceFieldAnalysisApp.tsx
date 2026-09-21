@@ -24,7 +24,7 @@ interface ForceAction {
   owner: string;
   dueDate: string;
   status: ForceActionStatus;
-  /** Points this action shifts its force's score by once marked Completed. */
+  /** Points this action shifts its force's score by, as soon as it is set (regardless of status). */
   impact: number;
 }
 
@@ -150,13 +150,14 @@ function sumOriginalScores(forces: Force[], side: ForceSide): number {
 
 /**
  * A force's mitigated score is derived, not set directly: its original score adjusted by the
- * impact of every action linked to it that's currently marked Completed.
+ * impact of every action linked to it, as soon as the action is given an impact - regardless
+ * of its status.
  */
 function deriveMitigatedScore(force: Force, actions: ForceAction[]): number {
-  const completedImpact = actions
-    .filter((action) => action.forceId === force.id && action.status === 'Completed')
+  const totalImpact = actions
+    .filter((action) => action.forceId === force.id)
     .reduce((total, action) => total + action.impact, 0);
-  return Math.max(0, Math.min(10, force.score + completedImpact));
+  return Math.max(0, Math.min(10, force.score + totalImpact));
 }
 
 function sumMitigatedScores(forces: Force[], actions: ForceAction[], side: ForceSide): number {
@@ -372,7 +373,7 @@ function ActionsScreen({
           <p className="text-sm text-slate-600 mt-0.5">
             Driving mitigated total ({drivingMitigated}) minus restraining mitigated total (
             {restrainingMitigated}). A force's mitigated score is its original score plus the impact
-            of its Completed actions.
+            of its actions, whatever their status.
           </p>
         </div>
         <p
@@ -386,8 +387,8 @@ function ActionsScreen({
       <div className="rounded-lg border border-slate-200 bg-white p-5">
         <h3 className="text-lg font-semibold text-slate-800 mb-1">Force Mitigation</h3>
         <p className="text-sm text-slate-500 mb-4">
-          Each force's mitigated score is derived automatically from its Completed actions below -
-          it can't be set directly.
+          Each force's mitigated score is derived automatically from the impact set on its actions
+          below - it can't be set directly.
         </p>
         <div className="overflow-x-auto rounded-md border border-slate-200">
           <table className="min-w-full divide-y divide-slate-200 bg-white">
@@ -467,8 +468,8 @@ function ActionsScreen({
         </div>
         <p className="text-sm text-slate-500 mb-4">
           Actions to strengthen driving forces or weaken restraining forces, each owned and dated.
-          Set how many points an action shifts its force by once Completed - positive to strengthen,
-          negative to weaken.
+          Set how many points an action shifts its force by - positive to strengthen, negative to
+          weaken. The force's mitigated score updates as soon as an action is given a score.
         </p>
 
         <div className="overflow-x-auto rounded-md border border-slate-200">
@@ -594,7 +595,7 @@ function ActionsScreen({
                       {force && mitigatedScore !== null ? (
                         <span
                           className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-bold ${scoreBadgeClass(mitigatedScore, force.side)}`}
-                          title="Force's current mitigated score (reflects its Completed actions)"
+                          title="Force's current mitigated score (reflects all its scored actions)"
                         >
                           {mitigatedScore}
                         </span>

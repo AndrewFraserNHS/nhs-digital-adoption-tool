@@ -1929,7 +1929,6 @@ function EngagementTab({
       return 0;
     });
     return result;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     state.engagementLog,
     state.engagementFilterConfig,
@@ -2759,7 +2758,6 @@ export default function StakeholderAnalysisApp({
       onStakeholdersChange?.(localState.stakeholders);
       setLocalState((current) => ({ ...current, stakeholders: [] }));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Pre-populate the Engagement Plan with every real "Engagement" type action across every

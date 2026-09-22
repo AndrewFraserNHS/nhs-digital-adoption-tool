@@ -1,7 +1,6 @@
+import type { BenefitItem } from '@lib/adoptionState';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-
-import type { BenefitItem } from '@lib/adoptionState';
 
 import ChangeImpactAssessmentApp from './ChangeImpactAssessmentApp';
 

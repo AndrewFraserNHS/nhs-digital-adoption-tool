@@ -90,11 +90,11 @@ export const ADOPTION_COMPONENT_TO_GUIDANCE_KEYS: Record<string, string[]> = {
   resistance: ['Resistance Management'],
   skills_learning: ['Skills/Learning'],
   capability: ['Change Management Capability'],
-  change_adoption: ['Reinforcement'],
-  process_change: ['Process change'],
+  change_adoption: ['Change Adoption'],
+  process_change: ['Process Change'],
   reinforcement: ['Reinforcement'],
-  org_maturity: ['Change Management Capability'],
-  transfer_bau: ['Reinforcement'],
+  org_maturity: ['Organisation Maturity'],
+  transfer_bau: ['Transfer to BAU'],
 };
 
 export type GuidanceLinkType = 'core' | 'additional';
@@ -199,7 +199,6 @@ export const DEFAULT_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
       ),
     ],
   },
-
   'Case for Change': {
     inputs: [
       futureNhsLink(
@@ -291,7 +290,6 @@ export const DEFAULT_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
       futureNhsLink('44287088', 'A clear case for change communicated to all stakeholders', 'core'),
     ],
   },
-
   'Senior Sponsorship & Governance': {
     inputs: [
       futureNhsLink(
@@ -344,7 +342,6 @@ export const DEFAULT_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
       ),
     ],
   },
-
   'Change Network': {
     inputs: [
       futureNhsLink(
@@ -397,7 +394,6 @@ export const DEFAULT_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
       ),
     ],
   },
-
   Benefits: {
     inputs: [
       futureNhsLink(
@@ -425,17 +421,17 @@ export const DEFAULT_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
         'Translates organisational benefits into relevant stakeholder benefits.'
       ),
       futureNhsLink(
+        '69511824',
+        'Measuring Digital Adoption',
+        'core',
+        'Supports definition of adoption measures linked to intended benefits.'
+      ),
+            futureNhsLink(
         '179918149',
         "What's in a name?",
         'additional',
         'The art of writing an appropriate benefit name and description',
         'NationalBenefitsManagement'
-      ),
-      futureNhsLink(
-        '69511824',
-        'Measuring Digital Adoption',
-        'core',
-        'Supports definition of adoption measures linked to intended benefits.'
       ),
       futureNhsLink(
         '44287088',
@@ -469,7 +465,6 @@ export const DEFAULT_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
       ),
     ],
   },
-
   'Change Impact': {
     inputs: [
       futureNhsLink(
@@ -528,7 +523,6 @@ export const DEFAULT_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
       ),
     ],
   },
-
   'Risk Management': {
     inputs: [
       futureNhsLink(
@@ -549,6 +543,7 @@ export const DEFAULT_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
         'core',
         'Provides evidence about impact-related risks and mitigation needs.'
       ),
+      futureNhsLink('34040240', 'RACI/RASCI Matrix', 'core', 'RACI/RASCI Matrix'),
       futureNhsLink(
         '34037360',
         'Force Field Analysis',
@@ -618,6 +613,257 @@ export const DEFAULT_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
         'Go Live Business Readiness Assessment',
         'core',
         'Assesses people, process and support readiness before go-live.'
+      ),
+    ],
+  },
+  'Stakeholder Engagement & Comms': {
+    inputs: [
+      futureNhsLink(
+        '34018288',
+        'Stakeholder Analysis Tool',
+        'core',
+        'Stakeholder Analysis Tool identifies the stakeholders who should help shape and validate the vision.'
+      ),
+      futureNhsLink(
+        '34037008',
+        'Engagement and Comms Strategy',
+        'core',
+        'Engagement and Comms Strategy defines the approach for engaging stakeholders and communicating the change.'
+      ),
+      futureNhsLink(
+        '34037616',
+        'Engagement and Comms Plan',
+        'core',
+        'Engagement and Comms Plan defines the specific activities, channels and responsibilities for engaging stakeholders and communicating the change.'
+      ),
+      futureNhsLink(
+        '34039056',
+        'Mind Mapping',
+        'core',
+        'Mind Mapping helps visualise and organise stakeholder relationships and communication strategies.'
+      ),
+      futureNhsLink(
+        '34038064',
+        'Communication Survey',
+        'core',
+        'Communication Survey gathers feedback from stakeholders about their communication needs and preferences.'
+      ),
+      futureNhsLink(
+        '34039408',
+        'Feedback Loop',
+        'core',
+        'Feedback Loop provides a mechanism for gathering and acting on feedback from stakeholders.'
+      ),
+      futureNhsLink(
+        '34037552',
+        'Change Network',
+        'core',
+        'Change Network connects senior sponsorship with change agents and champions to facilitate stakeholder engagement.'
+      ),
+      futureNhsLink(
+        '34039088',
+        'Rich Picture and Story Telling',
+        'core',
+        'Rich Picture and Story Telling helps communicate the change and its impacts to stakeholders in a compelling way.'
+      ),
+      futureNhsLink(
+        '34038672',
+        'User Survey',
+        'core',
+        'User Survey gathers feedback from users about their needs and experiences.'
+      ),
+    ],
+  },
+  'Change Adoption': {
+    inputs: [
+      futureNhsLink('74023728', 'Change Adoption', 'core', 'Change Adoption'),
+      futureNhsLink(
+        '34037616',
+        'Stakeholder Engagement & Comms Plan',
+        'core',
+        'Stakeholder Engagement & Comms Plan'
+      ),
+
+      futureNhsLink(
+        '34038640',
+        'Sustainability Risk Assessment',
+        'core',
+        'Sustainability Risk Assessment'
+      ),
+      futureNhsLink('34030736', 'Benefits Realisation Plan', 'core', 'Benefits Realisation Plan'),
+      futureNhsLink('34037552', 'Change Network', 'core', 'Change Network'),
+      futureNhsLink('34038672', 'User Survey', 'core', 'User Survey'),
+      futureNhsLink('34038736', 'Post Implementation Review', 'core', 'Post Implementation Review'),
+      futureNhsLink('34038768', 'Lessons Learnt', 'core', 'Lessons Learnt'),
+      futureNhsLink('34038800', 'Adoption Checklist', 'core', 'Adoption Checklist'),
+      futureNhsLink('34038256', 'Business Transition Plan', 'core', 'Business Transition Plan'),
+      futureNhsLink('34038032', 'Change Management Plan', 'core', 'Change Management Plan'),
+            futureNhsLink(
+        '45932336',
+        'Schein Model of Organisational Culture',
+        'additional',
+        'Schein Model of Organisational Culture'
+      ),
+      futureNhsLink(
+        '34039376',
+        'Tipping Point and Critical Mass',
+        'additional',
+        'Tipping Point and Critical Mass'
+      ),
+      futureNhsLink(
+        '34308272',
+        'Virtuous and Vicious Cycles',
+        'additional',
+        'Virtuous and Vicious Cycles'
+      ),
+    ],
+  },
+  'Transfer to BAU': {
+    inputs: [
+      futureNhsLink('34039344', 'Impact Analysis', 'core', 'Impact Analysis'),
+      futureNhsLink('34037424', 'Change Impact Assessment', 'core', 'Change Impact Assessment'),
+      futureNhsLink('34038256', 'Business Transition Plan', 'core', 'Business Transition Plan'),
+      futureNhsLink('34038032', 'Change Management Plan', 'core', 'Change Management Plan'),
+    ],
+  },
+  'Resistance Management': {
+    inputs: [
+      futureNhsLink('34307760', 'Resistance Management Plan', 'core', 'Resistance Management Plan'),
+      futureNhsLink('34307792', 'Attitudes to Change', 'core', 'Attitudes to Change'),
+      futureNhsLink('34037552', 'Change Network', 'core', 'Change Network'),
+      futureNhsLink(
+        '42608592',
+        "Beckhard and Harris' Change Formula",
+        'core',
+        "Beckhard and Harris' Change Formula"
+      ),
+      futureNhsLink(
+        '45000208',
+        "What's In It For Me? (WIIFM?) Benefits",
+        'core',
+        "What's In It For Me? (WIIFM?) Benefits"
+      ),
+      futureNhsLink('34037424', 'Change Impact Assessment', 'core', 'Change Impact Assessment'),
+      futureNhsLink('34038416', 'Ways of Working (WoW)', 'core', 'Ways of Working (WoW)'),
+            futureNhsLink(
+        '34038128',
+        'Kubler Ross Change Curve',
+        'additional',
+        'Kubler Ross Change Curve'
+      ),
+      futureNhsLink(
+        '34038096',
+        'Managing Emotional States',
+        'additional',
+        'Managing Emotional States'
+      ),
+    ],
+  },
+  'Process Change': {
+    inputs: [
+      futureNhsLink('34037840', 'Process Mapping', 'core', 'Process Mapping'),
+      futureNhsLink('71268464', 'Stop/Start/Continue', 'core', 'Stop/Start/Continue'),
+      futureNhsLink('34038416', 'Ways of Working (WoW)', 'core', 'Ways of Working (WoW)'),
+      futureNhsLink('34037040', 'Gap Analysis', 'core', 'Gap Analysis'),
+      futureNhsLink(
+        '34038320',
+        'Business Process Validation',
+        'core',
+        'Business Process Validation'
+      ),
+    ],
+  },
+  'Skills/Learning': {
+    inputs: [
+      futureNhsLink('34037456', 'Learning Needs Analysis', 'core', 'Learning Needs Analysis'),
+      futureNhsLink('34037488', 'Training Impact Assessment', 'core', 'Training Impact Assessment'),
+      futureNhsLink('34038384', 'Training Plan', 'core', 'Training Plan'),
+      futureNhsLink(
+        '34038448',
+        'Design a Training Programme',
+        'core',
+        'Design a Training Programme'
+      ),
+      futureNhsLink(
+        '34038416',
+        'Developing and Delivering WoW Events',
+        'core',
+        'Developing and Delivering WoW Events'
+      ),
+      futureNhsLink(
+        '34037872',
+        'Why Training Matters Toolkit',
+        'core',
+        'Why Training Matters Toolkit'
+      ),
+      futureNhsLink('69501968', 'Psychological Safety', 'core', 'Psychological Safety'),
+      futureNhsLink('34038832', 'ADKAR Model', 'core', 'ADKAR Model'),
+    ],
+  },
+    Reinforcement: {
+      inputs: [
+        futureNhsLink('34038800', 'Adoption Checklist', 'core', 'Adoption Checklist'),
+        futureNhsLink('34039408', 'Feedback Cycle', 'core', 'Feedback Cycle'),
+        futureNhsLink('34038672', 'User Surveys', 'core', 'User Surveys'),
+        futureNhsLink('34038768', 'Lessons Learnt', 'core', 'Lessons Learnt'),
+        futureNhsLink('34030736', 'Benefits Realisation Plan', 'core', 'Benefits Realisation Plan'),
+        futureNhsLink('34038864', 'Celebrate Successes', 'core', 'Celebrate Successes'),
+        futureNhsLink('34037552', 'Change Network', 'core', 'Change Network'),
+        futureNhsLink(
+          '34038640',
+          'Sustainability Risk Assessment',
+          'additional',
+          'Sustainability Risk Assessment'
+        ),
+        futureNhsLink('34038832', 'ADKAR Model', 'additional', 'ADKAR Model'),
+      ],
+    },
+  'Organisation Maturity': {
+    inputs: [
+      futureNhsLink('34037776', 'Risk Assessment', 'core', 'Risk Assessment'),
+      futureNhsLink('34038256', 'Business Transition Plan', 'core', 'Business Transition Plan'),
+      futureNhsLink('34038832', 'ADKAR Model', 'core', 'ADKAR Model'),
+    ],
+  },
+  'Change Management Capability': {
+    inputs: [
+      futureNhsLink('34037456', 'Learning Needs Analysis', 'core', 'Learning Needs Analysis'),
+      futureNhsLink('34037488', 'Training Impact Assessment', 'core', 'Training Impact Assessment'),
+      futureNhsLink('34038384', 'Training Plan', 'core', 'Training Plan'),
+      futureNhsLink(
+        '34037872',
+        'Why Training Matters Toolkit',
+        'core',
+        'Why Training Matters Toolkit'
+      ),
+      futureNhsLink('34038416', 'Ways of Working', 'core', 'Ways of Working'),
+      futureNhsLink(
+        '34037392',
+        'Capability Analysis Tool (KOPE)',
+        'core',
+        'Capability Analysis Tool (KOPE)'
+      ),
+      futureNhsLink('34037552', 'Change Network', 'core', 'Change Network'),
+      futureNhsLink('34018288', 'Stakeholder Analysis Tool', 'core', 'Stakeholder Analysis Tool'),
+      futureNhsLink('34038832', 'ADKAR model', 'additional', 'ADKAR model'),
+    ],
+  },
+  'Org Maturity': {
+    inputs: [
+      futureNhsLink('36276080', 'Change Maturity Assessment', 'core', 'Change Maturity Assessment'),
+      futureNhsLink(
+        '34037392',
+        'Capability Analysis Tool (KOPE)',
+        'core',
+        'Capability Analysis Tool (KOPE)'
+      ),
+      futureNhsLink('34037424', 'Change Impact Assessment', 'core', 'Change Impact Assessment'),
+      futureNhsLink('34030736', 'Benefits Realisation Plan', 'core', 'Benefits Realisation Plan'),
+      futureNhsLink(
+        '34038640',
+        'Sustainability Risk Assessment',
+        'core',
+        'Sustainability Risk Assessment'
       ),
     ],
   },

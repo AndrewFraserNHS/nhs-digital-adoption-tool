@@ -1,5 +1,5 @@
-import { BinIcon, IconActionButton, PencilIcon } from '@components/common/IconButtons';
 import { FilterBar } from '@components/common/FilterBar';
+import { BinIcon, IconActionButton, PencilIcon } from '@components/common/IconButtons';
 import { StakeholderPicker } from '@components/common/StakeholderPicker';
 import type {
   BenefitItem,

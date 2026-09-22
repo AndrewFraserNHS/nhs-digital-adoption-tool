@@ -1193,8 +1193,7 @@ export function ProjectDetailsPage({
             Step 4: Stakeholder Reference Data
           </h3>
           <p className={`text-sm mt-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-            Groups, Sub-Groups, Departments and Relationships used by the Stakeholder Analysis tool -
-            defined once here so every stakeholder record uses the same options.
+            Define your Stakeholder Groups, Sub-Groups, Departments and Relationships here for use in the Stakeholder Analysis Tool and for consistency of stakeholder records throughout the Adoption Engine
           </p>
         </div>
 

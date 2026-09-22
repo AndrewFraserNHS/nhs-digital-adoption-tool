@@ -1,8 +1,7 @@
-import { useState } from 'react';
+import { type BenefitItem, type BenefitTrackerEntry, EMPTY_STAKEHOLDER, type Stakeholder } from '@lib/adoptionState';
 import { fireEvent, render, screen } from '@testing-library/react';
+import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
-
-import { EMPTY_STAKEHOLDER, type BenefitItem, type BenefitTrackerEntry, type Stakeholder } from '@lib/adoptionState';
 
 import BenefitsApp, { type BenefitsAppProps } from './BenefitsApp';
 

@@ -156,9 +156,6 @@ export function DailyPhaseOverview({
         <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
           The Five Change Phases
         </h3>
-        <p className={`mt-1 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-          Select a phase to see the key deliverables expected at that stage.
-        </p>
       </div>
       <div className="space-y-3 p-4">
         {PHASES.map((phase) => {

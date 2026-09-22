@@ -777,7 +777,7 @@ export function EngineExplainedPage({
               lens automatically moves up to the next readiness level.
             </p>
             <p className={`mt-4 text-sm font-semibold ${textClass}`}>
-              To give you some practise, try assigning these actions and then marking them as complete.
+              To give you some practice, try assigning these actions and then marking them as complete.
             </p>
             <div
               className={`mt-3 overflow-x-auto rounded-md border ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}

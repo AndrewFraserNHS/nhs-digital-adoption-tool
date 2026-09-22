@@ -7,7 +7,7 @@ import { AssessmentComponent } from '@data/components';
 import type { ChartData } from 'chart.js';
 
 import { PHASE_NAMES } from '../types/constants';
-import { isCompletedActionStatus } from './actionModel';
+import { isCompletedActionStatus, isNonOutstandingActionStatus, isSkippedActionStatus } from './actionModel';
 import { AdoptionStore, deriveObjectiveStatus, DraftEntry } from './adoptionState';
 import { type BragStatus, getTimelineBragStatus } from './bragStatus';
 
@@ -191,7 +191,7 @@ export function getOutstandingActionsForComponent(
     const effectiveScore = getEffectiveLensScore(entry);
     (entry?.actions || []).forEach((action) => {
       const actionScore = action.readinessScore ?? effectiveScore;
-      if (actionScore === effectiveScore && !isCompletedActionStatus(action.status)) {
+      if (actionScore === effectiveScore && !isNonOutstandingActionStatus(action.status)) {
         outstanding.push({
           id: action.id,
           text: action.text,
@@ -304,7 +304,9 @@ export function getMetrics(store: AdoptionStore, components: AssessmentComponent
         phaseBucket.assessedLenses += 1;
       }
 
-      const actions = entry?.actions || [];
+      // Skipped actions count neither as outstanding nor as completed - they're excluded from
+      // this percentage entirely, so a skipped phase never drags the RAG down or is inflated up.
+      const actions = (entry?.actions || []).filter((action) => !isSkippedActionStatus(action.status));
       actions.forEach((action) => {
         totalActions += 1;
         phaseBucket.totalActions += 1;

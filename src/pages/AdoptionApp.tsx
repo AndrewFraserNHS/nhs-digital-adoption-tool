@@ -106,6 +106,7 @@ const DEFAULT_AUDIT_ACTOR = 'Unknown user';
 const ALLOWED_VIEWS_WHEN_UNCONFIGURED: View[] = [
   'introduction',
   'engine-explained',
+  'preparedness-assessment',
   'project-details',
   'profile',
 ];
@@ -421,7 +422,7 @@ export function AdoptionApp() {
       'stakeholder-analysis': 'tools',
       'raid-log': 'tools',
       benefits: 'tools',
-      'preparedness-assessment': 'tools',
+      'preparedness-assessment': 'intro',
       'audit-log': 'tools',
     };
     const section = sectionByView[view];
@@ -917,6 +918,24 @@ export function AdoptionApp() {
   const updateStakeholders = useCallback((nextStakeholders: Stakeholder[]) => {
     setStore((prev) => ({ ...prev, stakeholders: nextStakeholders }));
   }, []);
+
+  const handleReadinessEvaluated = useCallback(
+    (details: { skipToPhase: number | null; accepted: boolean }) => {
+      setStore((prev) => ({
+        ...prev,
+        auditLog: appendAuditEvents(prev, [
+          {
+            eventType: 'readiness-evaluated',
+            entityType: 'readiness',
+            summary: 'Readiness Evaluation',
+            after: { skipToPhase: details.skipToPhase, accepted: details.accepted },
+            source: 'local',
+          },
+        ]),
+      }));
+    },
+    [appendAuditEvents]
+  );
 
   const [focusBenefitId, setFocusBenefitId] = useState<string | null>(null);
 
@@ -1451,7 +1470,13 @@ export function AdoptionApp() {
           {expandedNavSections.intro ? (
             <nav className="space-y-1 mb-4">
               {(
-                ['introduction', 'engine-explained', 'project-details', 'where-am-i-now'] as View[]
+                [
+                  'introduction',
+                  'engine-explained',
+                  'preparedness-assessment',
+                  'project-details',
+                  'where-am-i-now',
+                ] as View[]
               ).map((v) => (
                 <button
                   key={v}
@@ -1469,9 +1494,11 @@ export function AdoptionApp() {
                     ? 'Introduction'
                     : v === 'engine-explained'
                       ? 'Engine Explained'
-                      : v === 'project-details'
-                        ? 'Project Profile'
-                        : 'Where Am I Now?'}
+                      : v === 'preparedness-assessment'
+                        ? 'Preparedness Assessment'
+                        : v === 'project-details'
+                          ? 'Project Profile'
+                          : 'Where Am I Now?'}
                 </button>
               ))}
             </nav>
@@ -1604,7 +1631,6 @@ export function AdoptionApp() {
                       'stakeholder-analysis',
                       'raid-log',
                       'benefits',
-                      'preparedness-assessment',
                       'audit-log',
                     ] as View[]
                   ).map((v) => (
@@ -1634,9 +1660,7 @@ export function AdoptionApp() {
                                   ? 'RAID Log'
                                   : v === 'benefits'
                                     ? 'Benefits Register & Tracker'
-                                    : v === 'preparedness-assessment'
-                                      ? 'AVT Preparedness Assessment'
-                                      : 'Audit Log'}
+                                    : 'Audit Log'}
                     </button>
                   ))}
                 </nav>
@@ -2196,6 +2220,10 @@ export function AdoptionApp() {
                 (store.orgProfile.stakeholderReferenceLists || DEFAULT_STAKEHOLDER_REFERENCE_LISTS)
                   .departments
               }
+              components={COMPONENTS}
+              getEntry={getEntry}
+              onEntryUpdate={updateEntry}
+              onReadinessEvaluated={handleReadinessEvaluated}
             />
           )}
           {view === 'audit-log' && (

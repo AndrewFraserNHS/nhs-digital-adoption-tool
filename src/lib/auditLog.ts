@@ -1,4 +1,11 @@
-export type AuditEntityType = 'entry' | 'action' | 'objective' | 'profile' | 'history' | 'system';
+export type AuditEntityType =
+  | 'entry'
+  | 'action'
+  | 'objective'
+  | 'profile'
+  | 'history'
+  | 'system'
+  | 'readiness';
 
 export type AuditEventType =
   | 'entry-score-updated'
@@ -14,7 +21,8 @@ export type AuditEventType =
   | 'prior-month-finalized'
   | 'data-imported'
   | 'example-data-loaded'
-  | 'data-reset';
+  | 'data-reset'
+  | 'readiness-evaluated';
 
 export type AuditEventSource = 'local' | 'imported';
 

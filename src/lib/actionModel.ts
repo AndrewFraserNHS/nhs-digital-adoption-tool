@@ -6,6 +6,7 @@ export const UNIFIED_ACTION_STATUSES = [
   'Cancelled',
   'Overdue start',
   'Overdue completion',
+  'Skipped',
 ] as const;
 
 export const ACTION_TYPES = [
@@ -34,6 +35,7 @@ export const ACTION_STATUS_BADGE_STYLES: Record<UnifiedActionStatus, string> = {
   Cancelled: 'bg-slate-200 text-slate-700 border-slate-300',
   'Overdue start': 'bg-rose-100 text-rose-800 border-rose-200',
   'Overdue completion': 'bg-red-100 text-red-800 border-red-200',
+  Skipped: 'bg-slate-100 text-slate-500 border-slate-300 border-dashed',
 };
 
 export function normalizeActionStatus(status: string | undefined): UnifiedActionStatus {
@@ -72,6 +74,10 @@ export function normalizeActionStatus(status: string | undefined): UnifiedAction
     return 'Overdue completion';
   }
 
+  if (value === 'skipped') {
+    return 'Skipped';
+  }
+
   return 'Planned';
 }
 
@@ -82,7 +88,7 @@ export function deriveTemporalActionStatus(
   now = new Date()
 ): UnifiedActionStatus {
   const normalized = normalizeActionStatus(status);
-  if (normalized === 'Completed' || normalized === 'Cancelled') {
+  if (normalized === 'Completed' || normalized === 'Cancelled' || normalized === 'Skipped') {
     return normalized;
   }
 
@@ -123,4 +129,17 @@ export function isCompletedActionStatus(status: string | undefined): boolean {
 export function isResolvedActionStatus(status: string | undefined): boolean {
   const normalized = normalizeActionStatus(status);
   return normalized === 'Completed' || normalized === 'Cancelled';
+}
+
+/**
+ * True for a Completed or Skipped action - both mean the action shouldn't count against
+ * readiness/RAG metrics (unlike Cancelled, which still counts as outstanding today).
+ */
+export function isNonOutstandingActionStatus(status: string | undefined): boolean {
+  const normalized = normalizeActionStatus(status);
+  return normalized === 'Completed' || normalized === 'Skipped';
+}
+
+export function isSkippedActionStatus(status: string | undefined): boolean {
+  return normalizeActionStatus(status) === 'Skipped';
 }

@@ -119,7 +119,7 @@ export interface AssessmentPanelProps {
 }
 
 const STATUS_OPTIONS = UNIFIED_ACTION_STATUSES.filter(
-  (status) => status !== 'Overdue start' && status !== 'Overdue completion'
+  (status) => status !== 'Overdue start' && status !== 'Overdue completion' && status !== 'Skipped'
 );
 const SCORE_LEVELS = READINESS_BANDS.map((band) => band.score);
 const SCORE_LABELS: Record<number, string> = Object.fromEntries(

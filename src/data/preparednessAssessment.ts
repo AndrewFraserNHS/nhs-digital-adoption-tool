@@ -1,309 +1,726 @@
-export type PreparednessQuestionKind = 'scale' | 'select' | 'text';
+import type { AssessmentComponent } from '@data/components';
 
-export interface PreparednessQuestion {
-  number: number;
-  category: string;
-  text: string;
-  /** scale = a maturity scale (scored); select = pick-one context question (not scored); text = free text (not scored). */
-  kind: PreparednessQuestionKind;
-  /** Numbered answers: option n is at index n - 1. */
-  options?: string[];
-  /** 1-based option number that asks the user to describe "Other". */
-  otherOption?: number;
+export interface PreparednessAssessment {
+  nu: number;
+  id: string;
+  label: string;
+  lens: string;
+  question: string;
+  answers: [string, string, string, string, string];
+  progress: [number, number, number, number, number];
+  phase: number;
+  target: number;
 }
 
-const q = (
-  number: number,
-  category: string,
-  kind: PreparednessQuestionKind,
-  text: string,
-  options?: string[],
-  otherOption?: number
-): PreparednessQuestion => ({ number, category, kind, text, options, otherOption });
-
-const LG = 'Leadership and Governance';
-const SE = 'Stakeholder Engagement';
-const WF = 'Workflow Integration and Processes';
-const TS = 'Training and User Support';
-const AP = 'Adoption Planning and Improvement';
-const BO = 'Benefits and Outcome Realisation';
-const GN = 'General';
-
-export const PREPAREDNESS_QUESTIONS: PreparednessQuestion[] = [
-  q(1, LG, 'scale', 'Our organisation has identified an executive sponsor or Senior Responsible Owner (eg a board member or clinical director) who will be accountable for the AVT deployment.', [
-    'No sponsor identified',
-    'Potential sponsor identified but not agreed / not engaged',
-    'Sponsor agreed but limited capacity or visibility',
-    'Sponsor agreed, active, with authority and capacity',
-  ]),
-  q(2, LG, 'scale', 'We have identified an appropriate governance or oversight group that would oversee AVT deployment, adoption and benefits once started.', [
-    'No governance group identified',
-    'Governance group identified informally; membership or cadence unclear',
-    'Governance group agreed; meetings planned or starting',
-    'Governance group active with clear decision rights and regular cadence',
-  ]),
-  q(3, LG, 'scale', 'We have an early view on how AVT adoption and progress would be reviewed by senior leaders once implementation begins.', [
-    'No approach identified',
-    'Idea only',
-    'Proposed forums or metrics discussed',
-    'Review approach defined',
-    'Reporting being set up',
-    'Review cadence and measures agreed and owned',
-  ]),
-  q(4, LG, 'scale', 'There is an emerging case for change and vision for AVT that can be articulated to impacted staff.', [
-    'No case for change',
-    'Early intent only',
-    'Draft narrative',
-    'Tested with some stakeholders',
-    'Clear and consistent',
-    'Clear and tailored by audience',
-  ]),
-  q(5, LG, 'text', 'Please briefly describe your emerging AVT case for change.'),
-  q(6, LG, 'text', 'Which role would be responsible for coordinating AVT adoption and benefits realisation once the programme begins?'),
-  q(7, LG, 'text', 'Please briefly describe the main adoption risks you are already aware of at this early stage.'),
-
-  q(8, SE, 'scale', 'We have identified the key stakeholder groups that would need to be involved as AVT planning progresses.', [
-    'Not identified',
-    'Partial list',
-    'Most groups identified',
-    'Stakeholders mapped',
-    'Engagement plan agreed',
-    'Engagement started',
-  ]),
-  q(9, SE, 'scale', 'We have an initial view on which clinical or operational staff could act as local champions during AVT rollout.', [
-    'None identified',
-    'Idea only',
-    'Some names identified',
-    'Named per area',
-    'Time / backfill considered',
-    'Champions agreed and enabled',
-  ]),
-  q(10, SE, 'scale', 'We recognise that staff may have concerns about AVT use and have considered how these would be explored and addressed.', [
-    'Not considered',
-    'Acknowledged only',
-    'Common concerns listed',
-    'Plan to address drafted',
-    'Engagement underway',
-    'Feedback loop active',
-  ]),
-  q(11, SE, 'text', 'What behaviours or ways of working do you expect may need to change over time for AVT to deliver benefits?'),
-  q(12, SE, 'text', 'How do you anticipate involving staff in shaping how AVT would be used in day-to-day practice?'),
-  q(13, SE, 'text', 'How do you anticipate involving or engaging patients as AVT planning develops?'),
-  q(14, SE, 'scale', 'We expect to put in place a communications approach to keep staff informed as AVT planning and deployment progress.', [
-    'No communications planned',
-    'Intent only',
-    'Messages drafted',
-    'Channels and audiences defined',
-    'Comms plan scheduled and owned',
-    'Communications started',
-  ]),
-  q(15, SE, 'scale', 'We recognise the importance of feedback and learning once AVT use begins and have considered how this could be supported.', [
-    'Not considered',
-    'Intent only',
-    'Ideas identified (e.g. huddles, surveys)',
-    'Mechanism defined',
-    'Mechanism being set up',
-    'Mechanism active and acted on',
-  ]),
-
-  q(16, WF, 'scale', 'We have considered which existing workflows are likely to be impacted by AVT and would need to be reviewed.', [
-    'Not considered',
-    'Early awareness',
-    'Some workflows listed',
-    'Key workflows mapped',
-    'Changes being designed',
-    'Future-state agreed and documented',
-  ]),
-  q(17, WF, 'scale', 'We have an initial view on how some workflows or roles may need to change when AVT is introduced.', [
-    'No view',
-    'Early assumptions made',
-    'Some impacts identified',
-    'Role changes drafted',
-    'Changes tested with teams',
-    'Changes agreed and communicated',
-  ]),
-  q(18, WF, 'text', 'What is your early thinking on how AVT use might be encouraged or embedded into routine practice over time?'),
-  q(19, WF, 'scale', 'We have considered how learning from early AVT use could inform ongoing improvement.', [
-    'No approach',
-    'Intent only',
-    'Improvement ideas listed',
-    'Review process defined',
-    'Review cycles planned',
-    'Continuous improvement embedded',
-  ]),
-  q(20, WF, 'scale', 'We recognise that variation in AVT use may occur and have considered how this might be identified or reviewed.', [
-    'Not considered',
-    'Aware only',
-    'Likely variation described',
-    'Measures defined',
-    'Monitoring defined',
-    'Monitoring and actions in place',
-  ]),
-  q(21, WF, 'scale', 'We have considered the need for business continuity arrangements if AVT is unavailable or unsuitable.', [
-    'Not considered',
-    'Aware only',
-    'Informal fallbacks known',
-    'Contingency drafted',
-    'Contingency agreed',
-    'Tested and communicated',
-  ]),
-
-  q(22, TS, 'scale', 'We have access to an appropriate training and support approach for AVT adoption, and can make time/capacity available for staff to use it', [
-    'No agreed training/support approach and no access',
-    'Training/support discussed; access or time unclear',
-    'Approach agreed but limited capacity / time / backfill',
-    'Approach agreed and deliverable with access and time/capacity confirmed',
-  ]),
-  q(23, TS, 'scale', 'We have considered how staff time and capacity could be supported to learn and adapt when AVT is introduced.', [
-    'No plan to protect time or provide backfill',
-    'Acknowledged; informal or local arrangements only',
-    'Protected time/backfill agreed for pilot areas',
-    'Protected time/backfill confirmed and scheduled across rollout',
-  ]),
-  q(24, TS, 'scale', 'We have an initial view on how local peer support (eg champions) could be provided during early rollout.', [
-    'Not planned',
-    'Idea only',
-    'Some support identified',
-    'Support model defined',
-    'Support being mobilised',
-    'Support active and sustained',
-  ]),
-  q(25, TS, 'scale', 'We recognise that post-go-live support will be important and have considered what this might look like.', [
-    'Not planned',
-    'Intent only',
-    'Ideas listed',
-    'Support model defined',
-    'Support being set up',
-    'Support model active and measured',
-  ]),
-
-  q(26, AP, 'scale', 'We have an outline view of how AVT rollout and adoption could be approached (eg phased, piloted, incremental).', [
-    'No approach',
-    'Intent only',
-    'Approach chosen',
-    'Phases defined',
-    'Timeline/resources drafted',
-    'Plan agreed and mobilisation started',
-  ]),
-  q(27, AP, 'scale', 'We have considered how learning from early AVT use could be reviewed and acted on as adoption progresses.', [
-    'No learning loop',
-    'Intent only',
-    'Proposed reviews',
-    'Review cadence defined',
-    'Reviews scheduled',
-    'Reviews happening and actions tracked',
-  ]),
-  q(28, AP, 'scale', 'How will change and adoption activity for AVT primarily be resourced?', [
-    'No resource identified',
-    'Resource expected but not defined',
-    'External delivery partner leading',
-    'Internal staff alongside substantive roles',
-    'Int and ext resource with internal ownership',
-    'Fully resourced internal team',
-  ]),
-
-  q(29, BO, 'scale', 'We have identified the priority outcomes AVT is expected to improve in our context (eg clinic flow, documentation timeliness, clinician workload or experience), grounded in local service pressures.', [
-    'No priority outcomes identified',
-    'Broad or generic outcomes identified',
-    'Priority outcomes identified but not yet agreed or tested locally',
-    'Clear, agreed priority outcomes grounded in local service pressures',
-  ]),
-  q(30, BO, 'select', 'Which best describes the current state of outpatient clinics and clinician workload in areas likely to use AVT? (Select one)', [
-    'Current position not understood',
-    'Significant workforce pressure limits additional activity',
-    'Most Clinics routinely overbooked',
-    'Admin outside contracted hours',
-    'Most Clinics full but potential to increase activity',
-  ]),
-  q(31, BO, 'scale', 'We recognise the need to understand whether AVT contributes to improvements and have considered what might be measured', [
-    'No measures identified',
-    'Ideas only',
-    'Draft measures',
-    'Measures and data sources identified',
-    'Baseline / collection plan drafted',
-    'Baseline and review plan agreed',
-  ]),
-  q(32, BO, 'scale', 'We recognise AVT benefits may be realised in different ways (eg time savings, staff wellbeing, patient experience) and have considered how we would review and adapt if expected benefits are not realised', [
-    'Not considered',
-    'Intent only',
-    'Triggers discussed',
-    'Review approach defined',
-    'Review cadence planned',
-    'Review and adaptation mechanism active',
-  ]),
-  q(33, BO, 'select', 'If AVT reduces administrative time, how is that time most likely to be used in practice? (Select one)', [
-    'Seeing additional patients',
-    'Reducing backlog/overbooking and stabilising clinics',
-    'Completing work within contracted hours (well-being/sustainability)',
-    'Improving quality/safety/patient interaction',
-    'Other (please describe)',
-  ], 5),
-  q(34, BO, 'text', 'Briefly describe your expected benefits from AVT (including whether you expect direct productivity, pressure relief, and/or wellbeing benefits) and any early measures you would consider'),
-
-  q(35, GN, 'text', 'Any additional comments on your readiness to begin the AVT journey or areas where early support may be helpful?'),
+const answers = (
+  one: string,
+  two: string,
+  three: string,
+  four: string,
+  five: string
+): [string, string, string, string, string] => [
+  `1. ${one}`,
+  `2. ${two}`,
+  `3. ${three}`,
+  `4. ${four}`,
+  `5. ${five}`,
 ];
 
-export const PREPAREDNESS_CATEGORIES: string[] = Array.from(
-  new Set(PREPAREDNESS_QUESTIONS.map((question) => question.category))
-);
-
-export type PreparednessGrade = 'A*' | 'A' | 'B' | 'C' | 'D';
-
-/** Minimum overall percentage for each grade (notional, highest first). Anything below the last is a D. */
-export const PREPAREDNESS_GRADE_THRESHOLDS: { grade: PreparednessGrade; min: number }[] = [
-  { grade: 'A*', min: 90 },
-  { grade: 'A', min: 75 },
-  { grade: 'B', min: 60 },
-  { grade: 'C', min: 40 },
-  { grade: 'D', min: 0 },
+export const PREPAREDNESS_ASSESSMENT: PreparednessAssessment[] = [
+  {
+    nu: 1,
+    id: 'vision',
+    label: 'Vision',
+    lens: 'Strategic Direction and Leadership',
+    question:
+      'Has a vision been developed by strategic leaders, with measures and regular accountability in place?',
+    answers: answers(
+      'No agreed vision',
+      'An initial idea exists',
+      'A draft vision is defined',
+      'The vision is agreed and communicated',
+      'The vision is owned, embedded and continuously measured'
+    ),
+    progress: [0, 0, 1, 1, 2],
+    phase: 1,
+    target: 5,
+  },
+  {
+    nu: 2,
+    id: 'vision',
+    label: 'Vision',
+    lens: 'People Experience and Culture',
+    question: 'Is there a vision that can be articulated to impacted staff?',
+    answers: answers(
+      'People are unaware of the vision',
+      'The vision has been shared with limited understanding',
+      'Some staff understand the vision',
+      'Most affected staff understand and support it',
+      'The vision is widely embraced and reflected in behaviour'
+    ),
+    progress: [0, 0, 1, 1, 2],
+    phase: 1,
+    target: 5,
+  },
+  {
+    nu: 3,
+    id: 'case_for_change',
+    label: 'Case for Change',
+    lens: 'Strategic Direction and Leadership',
+    question:
+      'How clearly does the case for change set out the strategic need, outcomes and urgency?',
+    answers: answers(
+      'No case for change',
+      'The need is recognised but unclear',
+      'A draft case is being developed',
+      'The case is agreed and supported by evidence',
+      'The case is compelling, sponsored and drives action'
+    ),
+    progress: [0, 0, 1, 1, 2],
+    phase: 1,
+    target: 5,
+  },
+  {
+    nu: 4,
+    id: 'case_for_change',
+    label: 'Case for Change',
+    lens: 'People Experience and Culture',
+    question:
+      'How well does the case for change explain why the change matters to staff and service users?',
+    answers: answers(
+      'The personal impact is not understood',
+      'Some benefits are described',
+      'The impact is understood by some groups',
+      'The case has been tested with affected people',
+      'The case is meaningful, trusted and motivating'
+    ),
+    progress: [0, 0, 1, 1, 2],
+    phase: 1,
+    target: 5,
+  },
+  {
+    nu: 5,
+    id: 'sponsorship',
+    label: 'Senior Sponsorship & Governance',
+    lens: 'Strategic Direction and Leadership',
+    question: 'How effective are senior sponsorship and governance in directing the change?',
+    answers: answers(
+      'No sponsor or governance',
+      'Potential sponsors are being identified',
+      'Sponsors and governance are defined',
+      'Sponsors are active and governance is operating',
+      'Leadership is visible, aligned and accountable'
+    ),
+    progress: [0, 0, 1, 1, 2],
+    phase: 2,
+    target: 4,
+  },
+  {
+    nu: 6,
+    id: 'sponsorship',
+    label: 'Senior Sponsorship & Governance',
+    lens: 'People Experience and Culture',
+    question:
+      'How visibly do senior sponsors listen to and support the people affected by the change?',
+    answers: answers(
+      'No visible sponsorship',
+      'Sponsorship is mostly private or occasional',
+      'Some engagement with affected groups exists',
+      'Sponsors regularly communicate and listen',
+      'Sponsors model the desired culture and build trust'
+    ),
+    progress: [0, 0, 1, 1, 2],
+    phase: 2,
+    target: 4,
+  },
+  {
+    nu: 7,
+    id: 'sponsorship',
+    label: 'Senior Sponsorship & Governance',
+    lens: 'Planning and Risk',
+    question: 'How well do governance arrangements identify, monitor and act on delivery risks?',
+    answers: answers(
+      'Risks have no governance route',
+      'Risks are raised informally',
+      'A governance route and risk log exist',
+      'Risks are reviewed with clear decisions',
+      'Governance anticipates risks and removes blockers quickly'
+    ),
+    progress: [0, 0, 1, 1, 2],
+    phase: 2,
+    target: 4,
+  },
+  {
+    nu: 8,
+    id: 'change_network',
+    label: 'Change Network',
+    lens: 'Strategic Direction and Leadership',
+    question:
+      'How effectively does the change network connect strategic intent with local delivery?',
+    answers: answers(
+      'No change network',
+      'Potential members are being considered',
+      'A network exists but is inconsistent',
+      'The network meets regularly with clear roles',
+      'The network actively influences and accelerates delivery'
+    ),
+    progress: [0, 0, 1, 1, 2],
+    phase: 2,
+    target: 4,
+  },
+  {
+    nu: 9,
+    id: 'change_network',
+    label: 'Change Network',
+    lens: 'People Experience and Culture',
+    question:
+      'How well does the change network represent and support the experience of affected people?',
+    answers: answers(
+      'Affected people are not represented',
+      'Representation is limited',
+      'Some key groups are represented',
+      'The network shares feedback and supports local teams',
+      'The network is trusted, inclusive and influential'
+    ),
+    progress: [0, 0, 1, 1, 2],
+    phase: 2,
+    target: 4,
+  },
+  {
+    nu: 10,
+    id: 'benefits',
+    label: 'Benefits',
+    lens: 'Process and Sustainment',
+    question:
+      'How well are benefits translated into measurable changes to processes and sustained practice?',
+    answers: answers(
+      'Benefits are not defined',
+      'Potential benefits are listed',
+      'Benefits and measures are baselined',
+      'Benefits are tracked through regular reviews',
+      'Benefits are sustained, evidenced and improved'
+    ),
+    progress: [0, 0, 1, 1, 2],
+    phase: 2,
+    target: 3,
+  },
+  {
+    nu: 11,
+    id: 'benefits',
+    label: 'Benefits',
+    lens: 'Planning and Risk',
+    question: 'How confidently are benefits, dependencies and risks planned and managed?',
+    answers: answers(
+      'No benefits plan',
+      'Benefits are assumed but untested',
+      'Owners and dependencies are being defined',
+      'Benefits have owners, measures and review points',
+      'Benefits risks are actively managed and outcomes are on track'
+    ),
+    progress: [0, 0, 1, 1, 2],
+    phase: 2,
+    target: 3,
+  },
+  {
+    nu: 12,
+    id: 'change_impact',
+    label: 'Change Impact',
+    lens: 'People Experience and Culture',
+    question: 'How well is the impact of the change on people, roles and culture understood?',
+    answers: answers(
+      'Impact is unknown',
+      'Broad impacts are suspected',
+      'Key impacts are documented',
+      'Impacts are validated with affected groups',
+      'Impacts are actively addressed and monitored'
+    ),
+    progress: [0, 0, 1, 1, 2],
+    phase: 2,
+    target: 4,
+  },
+  {
+    nu: 13,
+    id: 'change_impact',
+    label: 'Change Impact',
+    lens: 'Planning and Risk',
+    question:
+      'How well are change impacts used to plan resources, mitigations and delivery activity?',
+    answers: answers(
+      'Impacts are not part of planning',
+      'Impacts are recorded informally',
+      'Impacts inform an initial plan',
+      'Plans address priority impacts and dependencies',
+      'Impact data continuously shapes delivery decisions'
+    ),
+    progress: [0, 0, 1, 1, 2],
+    phase: 2,
+    target: 4,
+  },
+  {
+    nu: 14,
+    id: 'risk_management',
+    label: 'Risk Management',
+    lens: 'Planning and Risk',
+    question: 'How effectively are change risks identified, owned, mitigated and reviewed?',
+    answers: answers(
+      'Risks are not understood',
+      'Some risks are known but unmanaged',
+      'A risk log and owners exist',
+      'Mitigations are active and reviewed',
+      'Risks are anticipated and managed before they affect delivery'
+    ),
+    progress: [0, 0, 1, 1, 2],
+    phase: 3,
+    target: 5,
+  },
+  {
+    nu: 15,
+    id: 'risk_management',
+    label: 'Risk Management',
+    lens: 'Process and Sustainment',
+    question: 'How well are risks to process adoption and long-term sustainment managed?',
+    answers: answers(
+      'Sustainment risks are unknown',
+      'Known risks have no clear response',
+      'Process risks and mitigations are documented',
+      'Mitigations are tested and reviewed',
+      'Sustainment risks are continuously monitored and addressed'
+    ),
+    progress: [0, 0, 1, 1, 2],
+    phase: 3,
+    target: 5,
+  },
+  {
+    nu: 16,
+    id: 'cm_readiness',
+    label: 'CM Readiness & Planning',
+    lens: 'Strategic Direction and Leadership',
+    question:
+      'How ready is the leadership team to direct and sponsor the change management approach?',
+    answers: answers(
+      'No change management approach',
+      'Planning is just beginning',
+      'A plan exists with leadership input',
+      'Leaders are ready and actively supporting delivery',
+      'Leadership is consistently directing and adapting the approach'
+    ),
+    progress: [0, 0, 1, 1, 2],
+    phase: 3,
+    target: 4,
+  },
+  {
+    nu: 17,
+    id: 'cm_readiness',
+    label: 'CM Readiness & Planning',
+    lens: 'Planning and Risk',
+    question:
+      'How complete and practical is the change management plan for managing delivery risks?',
+    answers: answers(
+      'No plan',
+      'An outline is being prepared',
+      'A plan covers the main activities',
+      'The plan has owners, timing and risk controls',
+      'The plan is resourced, active and regularly adapted'
+    ),
+    progress: [0, 0, 1, 1, 2],
+    phase: 3,
+    target: 4,
+  },
+  {
+    nu: 18,
+    id: 'stakeholder',
+    label: 'Stakeholder Engagement & Comms',
+    lens: 'Strategic Direction and Leadership',
+    question:
+      'How effectively are senior and strategic stakeholders engaged in decisions about the change?',
+    answers: answers(
+      'Stakeholders are not identified',
+      'Stakeholders are listed but not engaged',
+      'Priority stakeholders are mapped',
+      'Engagement is planned and influencing decisions',
+      'Stakeholders are aligned, active and accountable'
+    ),
+    progress: [0, 0, 1, 1, 2],
+    phase: 3,
+    target: 5,
+  },
+  {
+    nu: 19,
+    id: 'stakeholder',
+    label: 'Stakeholder Engagement & Comms',
+    lens: 'People Experience and Culture',
+    question: 'How well are affected people engaged through clear, two-way communication?',
+    answers: answers(
+      'No engagement approach',
+      'One-way messages are occasional',
+      'Audiences and messages are identified',
+      'Engagement is regular and feedback is acted on',
+      'Communication is inclusive, trusted and embedded'
+    ),
+    progress: [0, 0, 1, 1, 2],
+    phase: 3,
+    target: 5,
+  },
+  {
+    nu: 20,
+    id: 'resistance',
+    label: 'Resistance Management',
+    lens: 'People Experience and Culture',
+    question: 'How well are concerns and resistance from affected people understood and addressed?',
+    answers: answers(
+      'Resistance is not understood',
+      'Concerns are known but unmanaged',
+      'Sources of resistance are mapped',
+      'Responses are agreed and actively delivered',
+      'Resistance is anticipated and converted into learning'
+    ),
+    progress: [0, 0, 1, 1, 2],
+    phase: 3,
+    target: 4,
+  },
+  {
+    nu: 21,
+    id: 'resistance',
+    label: 'Resistance Management',
+    lens: 'Skills and Behaviour',
+    question: 'How effectively are barriers to new skills and behaviours identified and removed?',
+    answers: answers(
+      'Barriers are unknown',
+      'Barriers are discussed informally',
+      'Key behaviour barriers are documented',
+      'Targeted support is in place',
+      'Support is measured and continuously improved'
+    ),
+    progress: [0, 0, 1, 1, 2],
+    phase: 3,
+    target: 4,
+  },
+  {
+    nu: 22,
+    id: 'skills_learning',
+    label: 'Skills/Learning',
+    lens: 'People Experience and Culture',
+    question:
+      'How well does learning support people to feel confident and supported through the change?',
+    answers: answers(
+      'Learning needs are unknown',
+      'Learning needs are being explored',
+      'A learning approach is drafted',
+      'Learning is available and tailored to affected groups',
+      'Learning is embedded, evaluated and improved'
+    ),
+    progress: [0, 0, 1, 1, 2],
+    phase: 3,
+    target: 4,
+  },
+  {
+    nu: 23,
+    id: 'skills_learning',
+    label: 'Skills/Learning',
+    lens: 'Skills and Behaviour',
+    question:
+      'How effectively does the learning approach build the skills and behaviours required for adoption?',
+    answers: answers(
+      'Required skills are unknown',
+      'Skills are identified informally',
+      'A skills and learning plan exists',
+      'People practise and demonstrate the new behaviours',
+      'Capability is sustained through coaching and reinforcement'
+    ),
+    progress: [0, 0, 1, 1, 2],
+    phase: 3,
+    target: 4,
+  },
+  {
+    nu: 24,
+    id: 'capability',
+    label: 'Capability & Confidence',
+    lens: 'People Experience and Culture',
+    question: 'How confident are people that they can perform effectively after the change?',
+    answers: answers(
+      'Very low confidence',
+      'Confidence is uneven and support is limited',
+      'Most capability gaps are understood',
+      'People are supported and increasingly confident',
+      'People are confident and able to support others'
+    ),
+    progress: [0, 0, 1, 1, 2],
+    phase: 4,
+    target: 4,
+  },
+  {
+    nu: 25,
+    id: 'capability',
+    label: 'Capability & Confidence',
+    lens: 'Skills and Behaviour',
+    question: 'How consistently are the required skills and behaviours demonstrated in practice?',
+    answers: answers(
+      'New behaviours are not demonstrated',
+      'A few individuals demonstrate them',
+      'Behaviour is developing inconsistently',
+      'Most teams demonstrate the required capability',
+      'Capability is consistent, resilient and self-sustaining'
+    ),
+    progress: [0, 0, 1, 1, 2],
+    phase: 4,
+    target: 4,
+  },
+  {
+    nu: 26,
+    id: 'change_adoption',
+    label: 'Change Adoption',
+    lens: 'Process and Sustainment',
+    question:
+      'How consistently is the changed process being used and sustained in day-to-day work?',
+    answers: answers(
+      'The changed process is not used',
+      'Use is isolated or experimental',
+      'Use is growing but inconsistent',
+      'The process is routinely used and monitored',
+      'The process is standard practice and continuously improved'
+    ),
+    progress: [0, 0, 1, 1, 2],
+    phase: 4,
+    target: 2,
+  },
+  {
+    nu: 27,
+    id: 'change_adoption',
+    label: 'Change Adoption',
+    lens: 'Skills and Behaviour',
+    question:
+      'How consistently are people demonstrating the behaviours needed to adopt the change?',
+    answers: answers(
+      'The new behaviours are not present',
+      'A small number of people demonstrate them',
+      'Behaviours are emerging unevenly',
+      'Most people demonstrate the behaviours',
+      'The behaviours are normalised and reinforced'
+    ),
+    progress: [0, 0, 1, 1, 2],
+    phase: 4,
+    target: 2,
+  },
+  {
+    nu: 28,
+    id: 'change_adoption',
+    label: 'Change Adoption',
+    lens: 'Planning and Risk',
+    question: 'How well are adoption progress, gaps and risks measured and acted on?',
+    answers: answers(
+      'Adoption is not measured',
+      'Anecdotal progress is reported',
+      'Measures and gaps are being defined',
+      'Progress is reviewed and interventions are active',
+      'Adoption data drives timely, targeted decisions'
+    ),
+    progress: [0, 0, 1, 1, 2],
+    phase: 4,
+    target: 2,
+  },
+  {
+    nu: 29,
+    id: 'process_change',
+    label: 'Process Change',
+    lens: 'Process and Sustainment',
+    question: 'How well has the changed process been integrated into routine operations?',
+    answers: answers(
+      'The process has not changed',
+      'The change is being piloted',
+      'The process is partly adopted',
+      'The process is embedded with ownership and measures',
+      'The process is optimised and sustained as business as usual'
+    ),
+    progress: [0, 0, 1, 1, 2],
+    phase: 4,
+    target: 5,
+  },
+  {
+    nu: 30,
+    id: 'process_change',
+    label: 'Process Change',
+    lens: 'Skills and Behaviour',
+    question: 'How well do people apply the changed process and associated behaviours?',
+    answers: answers(
+      'People cannot apply the changed process',
+      'Application depends on individual support',
+      'Application is developing inconsistently',
+      'People apply the process reliably',
+      'People improve the process through shared learning'
+    ),
+    progress: [0, 0, 1, 1, 2],
+    phase: 4,
+    target: 5,
+  },
+  {
+    nu: 31,
+    id: 'reinforcement',
+    label: 'Reinforcement',
+    lens: 'People Experience and Culture',
+    question: 'How well are people recognised, supported and encouraged to sustain the change?',
+    answers: answers(
+      'There is no reinforcement',
+      'Reinforcement is informal and inconsistent',
+      'Some support and recognition exists',
+      'Reinforcement is planned and regular',
+      'The culture consistently rewards and sustains the change'
+    ),
+    progress: [0, 0, 1, 1, 2],
+    phase: 5,
+    target: 2,
+  },
+  {
+    nu: 32,
+    id: 'reinforcement',
+    label: 'Reinforcement',
+    lens: 'Process and Sustainment',
+    question:
+      'How effectively are measures, feedback and governance used to sustain the changed process?',
+    answers: answers(
+      'Sustainment is not monitored',
+      'Monitoring is occasional',
+      'Measures and owners are defined',
+      'Performance is reviewed and corrective action is taken',
+      'Sustainment is embedded in continuous improvement'
+    ),
+    progress: [0, 0, 1, 1, 2],
+    phase: 5,
+    target: 2,
+  },
+  {
+    nu: 33,
+    id: 'org_maturity',
+    label: 'Org Change Readiness',
+    lens: 'Strategic Direction and Leadership',
+    question: "How capable is the organisation's leadership of delivering and sustaining change?",
+    answers: answers(
+      'Change capability is very limited',
+      'Capability depends on a few individuals',
+      'Some repeatable leadership practices exist',
+      'Leaders consistently apply change practices',
+      'Change leadership is mature and part of normal governance'
+    ),
+    progress: [0, 0, 1, 1, 2],
+    phase: 5,
+    target: 4,
+  },
+  {
+    nu: 34,
+    id: 'org_maturity',
+    label: 'Org Change Readiness',
+    lens: 'Skills and Behaviour',
+    question: 'How capable is the organisation of learning, adapting and embedding new behaviours?',
+    answers: answers(
+      'The organisation struggles to adapt',
+      'Adaptation is mostly reactive',
+      'Some teams have repeatable capability',
+      'Learning and adaptation are supported across teams',
+      'The organisation continuously learns and adapts'
+    ),
+    progress: [0, 0, 1, 1, 2],
+    phase: 5,
+    target: 4,
+  },
+  {
+    nu: 35,
+    id: 'transfer_bau',
+    label: 'Transfer to BAU',
+    lens: 'Strategic Direction and Leadership',
+    question: 'How ready is leadership to transfer ownership of the change into business as usual?',
+    answers: answers(
+      'Ownership remains entirely with the project',
+      'A transfer plan is being considered',
+      'Future owners and responsibilities are identified',
+      'Ownership transfer is underway with leadership oversight',
+      'BAU ownership is complete and leadership monitors outcomes'
+    ),
+    progress: [0, 0, 1, 1, 2],
+    phase: 5,
+    target: 4,
+  },
+  {
+    nu: 36,
+    id: 'transfer_bau',
+    label: 'Transfer to BAU',
+    lens: 'Process and Sustainment',
+    question: 'How fully has the changed process transferred into business as usual?',
+    answers: answers(
+      'The process is still new and project-led',
+      'A plan exists to transfer the process',
+      'Parts of the process are becoming BAU',
+      'Only final transfer activities remain',
+      'The process is fully owned and sustained in BAU'
+    ),
+    progress: [0, 0, 1, 1, 2],
+    phase: 5,
+    target: 4,
+  },
 ];
 
-export const PREPAREDNESS_GRADE_DESCRIPTIONS: Record<PreparednessGrade, string> = {
-  'A*': 'Excellent preparedness - governance, engagement, workflows, support, planning and benefits are all well developed. You are well placed to begin.',
-  A: 'Strong preparedness - most of the foundations are in place, with a few areas still to firm up before or during early rollout.',
-  B: 'Good foundations - clear progress in several areas, but some gaps that should be closed as planning progresses.',
-  C: 'Developing - some areas are underway but significant gaps remain. Targeted early support would help.',
-  D: 'Early stage - most preparation is still to do. Focus on sponsorship, governance and a clear case for change first, and seek early support.',
-};
-
-export function gradeForPercentage(percentage: number): PreparednessGrade {
-  return (
-    PREPAREDNESS_GRADE_THRESHOLDS.find((threshold) => percentage >= threshold.min)?.grade || 'D'
-  );
-}
-
-export interface PreparednessScore {
-  percentage: number;
-  grade: PreparednessGrade;
-  answered: number;
-  total: number;
+export interface ReadinessOutcome {
+  /** The phase the user could skip straight to, or null if phase 1 itself isn't fully ready yet (or they're already ready for everything). */
+  skipToPhase: number | null;
+  /** Component ids found to be at/above their target score, based on the quiz answers. */
+  readyComponentIds: string[];
 }
 
 /**
- * Scores the maturity-scale questions only (free-text and the two pick-one context questions are
- * excluded). Each answer is normalised to 0-1 across its own scale ((n - 1) / (max - 1)) so 4- and
- * 6-point scales carry equal weight, and the percentage is the mean over the answered questions.
+ * Works out which phases the user's answers suggest they're already ready for, using the same
+ * component target scores shown on the readiness radar (`AssessmentComponent.target`).
+ *
+ * Each question's answer implies a score for that (component, lens) pair via `progress[answer-1]`.
+ * A component's implied score is the minimum across its lens questions (its weakest lens gates it,
+ * same convention as the component radar). A phase counts as "ready" only once every component in
+ * it meets or exceeds its target. Phases are walked from 1 upward and the streak stops at the first
+ * phase that isn't fully ready, so the offer is always to skip a contiguous run starting at phase 1.
  */
-export function scorePreparedness(
-  answers: Record<number, number | undefined>,
-  questions: PreparednessQuestion[] = PREPAREDNESS_QUESTIONS
-): PreparednessScore {
-  const scored = questions.filter((question) => question.kind === 'scale' && question.options);
-  const normalised = scored
-    .map((question) => {
-      const answer = answers[question.number];
-      const max = question.options?.length || 0;
-      return answer && max > 1 ? (answer - 1) / (max - 1) : null;
-    })
-    .filter((value): value is number => value !== null);
-  const percentage =
-    normalised.length === 0
-      ? 0
-      : (normalised.reduce((total, value) => total + value, 0) / normalised.length) * 100;
-  return {
-    percentage,
-    grade: gradeForPercentage(percentage),
-    answered: normalised.length,
-    total: scored.length,
-  };
+export function computeReadinessOutcome(
+  answers: Record<number, number>,
+  components: AssessmentComponent[],
+  questions: PreparednessAssessment[] = PREPAREDNESS_ASSESSMENT
+): ReadinessOutcome {
+  const impliedScoresByComponent = new Map<string, number[]>();
+  questions.forEach((question) => {
+    const answer = answers[question.nu];
+    if (!answer) {
+      return;
+    }
+    const impliedScore = question.progress[answer - 1];
+    const existing = impliedScoresByComponent.get(question.id) || [];
+    existing.push(impliedScore);
+    impliedScoresByComponent.set(question.id, existing);
+  });
+
+  const readyComponentIds: string[] = [];
+  components.forEach((component) => {
+    const scores = impliedScoresByComponent.get(component.id);
+    if (!scores || scores.length === 0) {
+      return;
+    }
+    const componentScore = Math.min(...scores);
+    if (componentScore >= component.target) {
+      readyComponentIds.push(component.id);
+    }
+  });
+  const readySet = new Set(readyComponentIds);
+
+  const phases = Array.from(new Set(components.map((component) => component.phase))).sort(
+    (a, b) => a - b
+  );
+
+  let lastReadyPhase = 0;
+  for (const phase of phases) {
+    const phaseComponents = components.filter((component) => component.phase === phase);
+    const phaseFullyReady = phaseComponents.every((component) => readySet.has(component.id));
+    if (!phaseFullyReady) {
+      break;
+    }
+    lastReadyPhase = phase;
+  }
+
+  const maxPhase = phases.length ? Math.max(...phases) : 0;
+  const skipToPhase =
+    lastReadyPhase === 0 || lastReadyPhase >= maxPhase ? null : lastReadyPhase + 1;
+
+  return { skipToPhase, readyComponentIds };
 }

@@ -1,64 +1,90 @@
+import type { AssessmentComponent } from '@data/components';
+import { ASSESSMENT_COMPONENTS } from '@data/components';
 import { describe, expect, it } from 'vitest';
 
-import {
-  gradeForPercentage,
-  PREPAREDNESS_CATEGORIES,
-  PREPAREDNESS_QUESTIONS,
-  scorePreparedness,
-} from './preparednessAssessment';
-
-const scaleQuestions = PREPAREDNESS_QUESTIONS.filter((question) => question.kind === 'scale');
-
-function answersAt(pick: (max: number) => number): Record<number, number> {
-  return Object.fromEntries(
-    scaleQuestions.map((question) => [question.number, pick(question.options?.length || 0)])
-  );
-}
+import { computeReadinessOutcome, PREPAREDNESS_ASSESSMENT } from './preparednessAssessment';
 
 describe('preparednessAssessment', () => {
-  it('SHOULD define the 35 numbered questions across 7 categories', () => {
+  it('SHOULD define 36 questions, one per (component, lens) pair, matching components.ts', () => {
     // assert
-    expect(PREPAREDNESS_QUESTIONS.map((question) => question.number)).toEqual(
-      Array.from({ length: 35 }, (_, index) => index + 1)
+    expect(PREPAREDNESS_ASSESSMENT).toHaveLength(36);
+    expect(PREPAREDNESS_ASSESSMENT.map((q) => q.nu)).toEqual(
+      Array.from({ length: 36 }, (_, index) => index + 1)
     );
-    expect(PREPAREDNESS_CATEGORIES).toHaveLength(7);
+    PREPAREDNESS_ASSESSMENT.forEach((question) => {
+      const component = ASSESSMENT_COMPONENTS.find((c) => c.id === question.id);
+      expect(component, `no component for id ${question.id}`).toBeDefined();
+      expect(component?.lenses).toContain(question.lens);
+      expect(question.phase).toBe(component?.phase);
+      expect(question.target).toBe(component?.target);
+      expect(question.answers).toHaveLength(5);
+      expect(question.progress).toHaveLength(5);
+    });
   });
 
-  it('SHOULD score only the maturity-scale questions (not free text or the select-one context questions)', () => {
-    // assert
-    expect(scaleQuestions).toHaveLength(24);
-    expect(
-      PREPAREDNESS_QUESTIONS.filter((question) => question.kind === 'select').map((q) => q.number)
-    ).toEqual([30, 33]);
-    expect(PREPAREDNESS_QUESTIONS.filter((question) => question.kind === 'text')).toHaveLength(9);
-  });
-
-  it('SHOULD grade every top answer A* (100%) and every bottom answer D (0%)', () => {
+  it('SHOULD offer no skip when nothing is answered', () => {
     // act
-    const best = scorePreparedness(answersAt((max) => max));
-    const worst = scorePreparedness(answersAt(() => 1));
+    const outcome = computeReadinessOutcome({}, ASSESSMENT_COMPONENTS);
 
     // assert
-    expect(best).toMatchObject({ percentage: 100, grade: 'A*', answered: 24, total: 24 });
-    expect(worst).toMatchObject({ percentage: 0, grade: 'D', answered: 24, total: 24 });
+    expect(outcome.skipToPhase).toBeNull();
+    expect(outcome.readyComponentIds).toEqual([]);
+  });
+});
+
+describe('computeReadinessOutcome (synthetic fixture)', () => {
+  // Two phases, two components each, one lens question per component - independent of the real
+  // target calibration so this test doesn't depend on how the live content is scored.
+  const COMPONENTS: AssessmentComponent[] = [
+    { id: 'a1', label: 'A1', lenses: ['Lens'], phase: 1, target: 2 },
+    { id: 'a2', label: 'A2', lenses: ['Lens'], phase: 1, target: 2 },
+    { id: 'b1', label: 'B1', lenses: ['Lens'], phase: 2, target: 2 },
+    { id: 'b2', label: 'B2', lenses: ['Lens'], phase: 2, target: 2 },
+  ];
+  const QUESTIONS = [
+    { nu: 1, id: 'a1', label: 'A1', lens: 'Lens', question: 'Q1', phase: 1, target: 2 },
+    { nu: 2, id: 'a2', label: 'A2', lens: 'Lens', question: 'Q2', phase: 1, target: 2 },
+    { nu: 3, id: 'b1', label: 'B1', lens: 'Lens', question: 'Q3', phase: 2, target: 2 },
+    { nu: 4, id: 'b2', label: 'B2', lens: 'Lens', question: 'Q4', phase: 2, target: 2 },
+  ].map((q) => ({
+    ...q,
+    answers: ['1. a', '2. b', '3. c', '4. d', '5. e'] as [
+      string,
+      string,
+      string,
+      string,
+      string,
+    ],
+    progress: [0, 0, 1, 1, 2] as [number, number, number, number, number],
+  }));
+
+  it('SHOULD offer to skip to phase 2 WHEN every phase-1 component meets its target', () => {
+    // act - answer 5 on both phase-1 questions (implied score 2, meets target 2); leave phase 2 unanswered
+    const outcome = computeReadinessOutcome({ 1: 5, 2: 5 }, COMPONENTS, QUESTIONS);
+
+    // assert
+    expect(outcome.skipToPhase).toBe(2);
+    expect(outcome.readyComponentIds.sort()).toEqual(['a1', 'a2']);
   });
 
-  it('SHOULD weight 4-point and 6-point scales equally', () => {
-    // arrange - Q1 is a 4-point scale (option 4 = 100%), Q3 a 6-point scale (option 6 = 100%)
+  it('SHOULD offer nothing WHEN phase 1 is not fully ready, even if phase 2 answers are strong', () => {
+    // act - a1 falls short (answer 1 -> implied score 0), b1/b2 answered strongly
+    const outcome = computeReadinessOutcome({ 1: 1, 2: 5, 3: 5, 4: 5 }, COMPONENTS, QUESTIONS);
+
+    // assert
+    expect(outcome.skipToPhase).toBeNull();
+  });
+
+  it('SHOULD offer nothing WHEN every phase is fully ready (nothing left to skip)', () => {
     // act
-    const score = scorePreparedness({ 1: 4, 3: 6 });
+    const outcome = computeReadinessOutcome(
+      { 1: 5, 2: 5, 3: 5, 4: 5 },
+      COMPONENTS,
+      QUESTIONS
+    );
 
     // assert
-    expect(score.percentage).toBe(100);
-  });
-
-  it('SHOULD map percentages to A*-D grades at the notional thresholds', () => {
-    // assert
-    expect(gradeForPercentage(90)).toBe('A*');
-    expect(gradeForPercentage(89.9)).toBe('A');
-    expect(gradeForPercentage(75)).toBe('A');
-    expect(gradeForPercentage(60)).toBe('B');
-    expect(gradeForPercentage(40)).toBe('C');
-    expect(gradeForPercentage(39.9)).toBe('D');
+    expect(outcome.skipToPhase).toBeNull();
+    expect(outcome.readyComponentIds.sort()).toEqual(['a1', 'a2', 'b1', 'b2']);
   });
 });

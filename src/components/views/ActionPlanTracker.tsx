@@ -15,6 +15,9 @@ import {
   usePageIntroSeen,
 } from '@components/onboarding/PageIntroModal';
 
+/** Skipped is set by the Preparedness Assessment's readiness skip, not manually chosen here. */
+const STATUS_SELECT_OPTIONS = UNIFIED_ACTION_STATUSES.filter((status) => status !== 'Skipped');
+
 export interface ActionPlanTrackerProps {
   actions: ActionRow[];
   onComponentClick: (componentId: string) => void;
@@ -482,7 +485,7 @@ export function ActionPlanTracker({
                         }
                         className={`w-full rounded-md border px-2 py-1 text-xs font-semibold focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] ${ACTION_STATUS_BADGE_STYLES[normalizeActionStatus(action.status)]} ${darkMode ? 'bg-slate-900' : 'bg-white'}`}
                       >
-                        {UNIFIED_ACTION_STATUSES.map((status) => (
+                        {STATUS_SELECT_OPTIONS.map((status) => (
                           <option key={status} value={status}>
                             {status}
                           </option>

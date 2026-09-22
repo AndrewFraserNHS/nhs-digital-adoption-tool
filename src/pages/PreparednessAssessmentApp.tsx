@@ -1,15 +1,16 @@
-import { StakeholderPicker } from '@components/common/StakeholderPicker';
+import type { AssessmentComponent } from '@data/components';
 import {
-  gradeForPercentage,
-  PREPAREDNESS_CATEGORIES,
-  PREPAREDNESS_GRADE_DESCRIPTIONS,
-  PREPAREDNESS_QUESTIONS,
-  type PreparednessGrade,
-  scorePreparedness,
+  computeReadinessOutcome,
+  PREPAREDNESS_ASSESSMENT,
+  type ReadinessOutcome,
 } from '@data/preparednessAssessment';
-import type { Stakeholder, TeamMember } from '@lib/adoptionState';
+import { isResolvedActionStatus } from '@lib/actionModel';
+import type { DraftEntry, Stakeholder, TeamMember } from '@lib/adoptionState';
 import { load, save } from '@lib/storage';
-import { JSX, useEffect, useMemo, useState } from 'react';
+import { JSX, useState } from 'react';
+
+import { ReadinessOutcomeModal } from '@components/common/ReadinessOutcomeModal';
+import { StakeholderPicker } from '@components/common/StakeholderPicker';
 
 interface PreparednessState {
   icbRegion: string;
@@ -18,13 +19,14 @@ interface PreparednessState {
   sponsorId: string;
   programmeLead: string;
   contactEmail: string;
-  /** Chosen option number per scale/select question. */
+  /** Chosen option number (1-5), keyed by question `nu`. */
   answers: Record<number, number>;
-  /** Free-text answers (and the "Other" description on select questions), by question number. */
-  texts: Record<number, string>;
+  currentIndex: number;
+  completed: boolean;
 }
 
 const STORAGE_KEY = 'nhs-avt-preparedness-assessment';
+const QUESTIONS = [...PREPAREDNESS_ASSESSMENT].sort((a, b) => a.nu - b.nu);
 
 function freshState(region: string, leadName: string): PreparednessState {
   return {
@@ -35,19 +37,10 @@ function freshState(region: string, leadName: string): PreparednessState {
     programmeLead: leadName,
     contactEmail: '',
     answers: {},
-    texts: {},
+    currentIndex: 0,
+    completed: false,
   };
 }
-
-const GRADE_BADGE_CLASS: Record<PreparednessGrade, string> = {
-  'A*': 'bg-blue-100 text-blue-800 border-blue-300',
-  A: 'bg-green-100 text-green-800 border-green-300',
-  B: 'bg-lime-100 text-lime-800 border-lime-300',
-  C: 'bg-amber-100 text-amber-800 border-amber-300',
-  D: 'bg-red-100 text-red-800 border-red-300',
-};
-
-const SCORED_COUNT = PREPAREDNESS_QUESTIONS.filter((question) => question.kind === 'scale').length;
 
 export interface PreparednessAssessmentAppProps {
   embedded?: boolean;
@@ -60,6 +53,10 @@ export interface PreparednessAssessmentAppProps {
   stakeholders?: Stakeholder[];
   onStakeholdersChange?: (stakeholders: Stakeholder[]) => void;
   departments?: string[];
+  components?: AssessmentComponent[];
+  getEntry?: (componentId: string, lens: string) => DraftEntry;
+  onEntryUpdate?: (componentId: string, lens: string, entry: DraftEntry) => void;
+  onReadinessEvaluated?: (details: { skipToPhase: number | null; accepted: boolean }) => void;
 }
 
 export default function PreparednessAssessmentApp({
@@ -71,47 +68,87 @@ export default function PreparednessAssessmentApp({
   stakeholders = [],
   onStakeholdersChange,
   departments = [],
+  components = [],
+  getEntry,
+  onEntryUpdate,
+  onReadinessEvaluated,
 }: PreparednessAssessmentAppProps = {}): JSX.Element {
   const [state, setState] = useState<PreparednessState>(
     () => load<PreparednessState>(STORAGE_KEY) || freshState(region, leadName)
   );
   const [page, setPage] = useState<1 | 2>(1);
+  const [outcome, setOutcome] = useState<ReadinessOutcome | null>(null);
+  const [showModal, setShowModal] = useState(false);
+  const [outcomeHandled, setOutcomeHandled] = useState(false);
 
-  useEffect(() => {
-    save(STORAGE_KEY, state);
-  }, [state]);
+  const persist = (next: PreparednessState) => {
+    setState(next);
+    save(STORAGE_KEY, next);
+  };
 
-  const update = (updates: Partial<PreparednessState>) =>
-    setState((current) => ({ ...current, ...updates }));
-  const setAnswer = (number: number, option: number) =>
-    setState((current) => ({ ...current, answers: { ...current.answers, [number]: option } }));
-  const setText = (number: number, text: string) =>
-    setState((current) => ({ ...current, texts: { ...current.texts, [number]: text } }));
-
-  const score = useMemo(() => scorePreparedness(state.answers), [state.answers]);
-  const complete = score.answered === score.total;
-
-  const categoryScores = useMemo(
-    () =>
-      PREPAREDNESS_CATEGORIES.map((category) => {
-        const questions = PREPAREDNESS_QUESTIONS.filter(
-          (question) => question.category === category
-        );
-        const categoryScore = scorePreparedness(state.answers, questions);
-        return { category, ...categoryScore };
-      }).filter((entry) => entry.total > 0),
-    [state.answers]
-  );
+  const update = (updates: Partial<PreparednessState>) => persist({ ...state, ...updates });
+  const setAnswer = (nu: number, option: number) =>
+    persist({ ...state, answers: { ...state.answers, [nu]: option } });
 
   const handleReset = () => {
     if (window.confirm('This will clear every answer and start a new assessment. Continue?')) {
-      setState(freshState(region, leadName));
+      persist(freshState(region, leadName));
       setPage(1);
+      setOutcome(null);
+      setShowModal(false);
+      setOutcomeHandled(false);
     }
+  };
+
+  const currentQuestion = QUESTIONS[state.currentIndex];
+  const isLastQuestion = state.currentIndex === QUESTIONS.length - 1;
+  const currentAnswer = currentQuestion ? state.answers[currentQuestion.nu] : undefined;
+
+  const handleFinish = () => {
+    const result = computeReadinessOutcome(state.answers, components);
+    setOutcome(result);
+    setShowModal(true);
+    update({ completed: true });
+  };
+
+  const applySkip = (skipToPhase: number) => {
+    if (!getEntry || !onEntryUpdate) {
+      return;
+    }
+    components
+      .filter((component) => component.phase < skipToPhase)
+      .forEach((component) => {
+        component.lenses.forEach((lens) => {
+          const entry = getEntry(component.id, lens);
+          onEntryUpdate(component.id, lens, {
+            ...entry,
+            score: component.target,
+            actions: entry.actions.map((action) =>
+              isResolvedActionStatus(action.status) ? action : { ...action, status: 'Skipped' }
+            ),
+          });
+        });
+      });
+  };
+
+  const handleAccept = () => {
+    if (outcome?.skipToPhase) {
+      applySkip(outcome.skipToPhase);
+    }
+    onReadinessEvaluated?.({ skipToPhase: outcome?.skipToPhase ?? null, accepted: true });
+    setShowModal(false);
+    setOutcomeHandled(true);
+  };
+
+  const handleDecline = () => {
+    onReadinessEvaluated?.({ skipToPhase: outcome?.skipToPhase ?? null, accepted: false });
+    setShowModal(false);
+    setOutcomeHandled(true);
   };
 
   const inputClass = 'w-full p-2 border border-slate-300 rounded outline-none';
   const labelClass = 'block text-sm font-medium text-slate-700 mb-1';
+  const progressPct = ((state.currentIndex + 1) / QUESTIONS.length) * 100;
 
   return (
     <div>
@@ -239,156 +276,119 @@ export default function PreparednessAssessmentApp({
           </div>
         </section>
       ) : (
-        <section className="space-y-8" aria-label="Questions">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="text-xl font-semibold text-slate-800">Questions</h2>
-            <p className="text-sm text-slate-500">
-              {score.answered} of {SCORED_COUNT} scored questions answered
-            </p>
-          </div>
-
-          {PREPAREDNESS_CATEGORIES.map((category) => (
-            <div key={category} className="space-y-4">
-              <h3 className="text-lg font-semibold text-blue-900 border-b border-blue-200 pb-1">
-                {category}
-              </h3>
-              {PREPAREDNESS_QUESTIONS.filter((question) => question.category === category).map(
-                (question) =>
-                  question.kind === 'text' ? (
-                    <div key={question.number}>
-                      <label htmlFor={`prep-q-${question.number}`} className={labelClass}>
-                        <span className="text-slate-400">Q{question.number}.</span> {question.text}
-                      </label>
-                      <textarea
-                        id={`prep-q-${question.number}`}
-                        value={state.texts[question.number] || ''}
-                        onChange={(event) => setText(question.number, event.target.value)}
-                        className={`${inputClass} h-20`}
-                      />
-                    </div>
-                  ) : (
-                    <fieldset key={question.number} className="rounded-md border border-slate-200 p-3">
-                      <legend className="px-1 text-sm font-medium text-slate-700">
-                        <span className="text-slate-400">Q{question.number}.</span> {question.text}
-                      </legend>
-                      <div className="mt-1 space-y-1">
-                        {(question.options || []).map((option, index) => {
-                          const optionNumber = index + 1;
-                          const inputId = `prep-q-${question.number}-${optionNumber}`;
-                          return (
-                            <label
-                              key={optionNumber}
-                              htmlFor={inputId}
-                              className="flex items-start gap-2 text-sm text-slate-700"
-                            >
-                              <input
-                                id={inputId}
-                                type="radio"
-                                name={`prep-q-${question.number}`}
-                                checked={state.answers[question.number] === optionNumber}
-                                onChange={() => setAnswer(question.number, optionNumber)}
-                                className="mt-1"
-                              />
-                              <span>
-                                {optionNumber}. {option}
-                              </span>
-                            </label>
-                          );
-                        })}
-                      </div>
-                      {question.otherOption &&
-                      state.answers[question.number] === question.otherOption ? (
-                        <div className="mt-2">
-                          <label
-                            htmlFor={`prep-q-${question.number}-other`}
-                            className="block text-xs font-medium text-slate-600 mb-1"
-                          >
-                            Q{question.number} other - please describe
-                          </label>
-                          <input
-                            id={`prep-q-${question.number}-other`}
-                            type="text"
-                            value={state.texts[question.number] || ''}
-                            onChange={(event) => setText(question.number, event.target.value)}
-                            className={inputClass}
-                          />
-                        </div>
-                      ) : null}
-                    </fieldset>
-                  )
-              )}
-            </div>
-          ))}
-
-          <div
-            className="rounded-lg border border-slate-200 bg-white p-5 space-y-4"
-            aria-label="Preparedness outcome"
-          >
-            <h3 className="text-lg font-semibold text-slate-800">Your Outcome</h3>
-            {complete ? (
-              <>
-                <div className="flex flex-wrap items-center gap-4">
-                  <span
-                    className={`inline-flex items-center justify-center rounded-lg border-2 px-5 py-2 text-3xl font-bold ${GRADE_BADGE_CLASS[score.grade]}`}
-                    aria-label={`Grade ${score.grade}`}
-                  >
-                    {score.grade}
-                  </span>
-                  <div>
-                    <p className="text-lg font-semibold text-slate-800">
-                      You are a grade {score.grade} ({score.percentage.toFixed(0)}%)
-                    </p>
-                    <p className="text-sm text-slate-600">
-                      {PREPAREDNESS_GRADE_DESCRIPTIONS[score.grade]}
-                    </p>
-                  </div>
-                </div>
-                <p className="text-xs text-slate-400">
-                  A notional, indicative outcome from the {SCORED_COUNT} scored maturity questions
-                  only - free-text answers and the two &quot;select one&quot; context questions
-                  (Q30, Q33) are not scored.
-                </p>
-              </>
-            ) : (
-              <p className="text-sm text-slate-500">
-                Answer all {SCORED_COUNT} scored questions to see your grade (
-                {SCORED_COUNT - score.answered} to go).
+        <section className="space-y-6 max-w-2xl" aria-label="Questions">
+          {state.completed && outcomeHandled ? (
+            <div className="rounded-lg border border-green-200 bg-green-50 p-6 space-y-4">
+              <h2 className="text-lg font-semibold text-green-900">Assessment complete</h2>
+              <p className="text-sm text-green-800">
+                Thanks for completing the AVT Preparedness Assessment. Use the sidebar to continue
+                setting up your project, or retake the assessment below.
               </p>
-            )}
-            <div>
-              <h4 className="text-sm font-semibold text-slate-700 mb-2">By area</h4>
-              <ul className="space-y-1">
-                {categoryScores.map((entry) => (
-                  <li key={entry.category} className="flex items-center justify-between text-sm">
-                    <span className="text-slate-600">{entry.category}</span>
-                    <span className="text-slate-500">
-                      {entry.answered === entry.total ? (
-                        <span
-                          className={`ml-2 inline-flex rounded-full border px-2 py-0.5 text-xs font-bold ${GRADE_BADGE_CLASS[gradeForPercentage(entry.percentage)]}`}
-                        >
-                          {gradeForPercentage(entry.percentage)}
-                        </span>
-                      ) : (
-                        `${entry.answered}/${entry.total} answered`
-                      )}
-                    </span>
-                  </li>
-                ))}
-              </ul>
+              <button
+                type="button"
+                onClick={handleReset}
+                className="rounded-md bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-200"
+              >
+                Retake assessment
+              </button>
             </div>
-          </div>
+          ) : (
+            <>
+              <div>
+                <div className="flex items-center justify-between text-sm text-slate-500 mb-1">
+                  <span>
+                    Question {state.currentIndex + 1} of {QUESTIONS.length}
+                  </span>
+                  <span>{Math.round(progressPct)}%</span>
+                </div>
+                <div
+                  role="progressbar"
+                  aria-valuenow={state.currentIndex + 1}
+                  aria-valuemin={1}
+                  aria-valuemax={QUESTIONS.length}
+                  className="h-2 w-full rounded-full bg-slate-200 overflow-hidden"
+                >
+                  <div
+                    className="h-full rounded-full bg-[#005eb8] transition-all"
+                    style={{ width: `${progressPct}%` }}
+                  />
+                </div>
+              </div>
 
-          <div className="flex justify-start">
-            <button
-              type="button"
-              onClick={() => setPage(1)}
-              className="rounded-md bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-200"
-            >
-              Back to Trust Details
-            </button>
-          </div>
+              {currentQuestion ? (
+                <fieldset className="rounded-lg border border-blue-100 bg-blue-50 p-6">
+                  <legend className="px-1">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-blue-600">
+                      {currentQuestion.label} &middot; {currentQuestion.lens}
+                    </p>
+                    <p className="mt-1 text-base font-medium text-slate-800">
+                      {currentQuestion.question}
+                    </p>
+                  </legend>
+                  <div className="mt-4 space-y-2">
+                    {currentQuestion.answers.map((option, index) => {
+                      const optionNumber = index + 1;
+                      const inputId = `prep-q-${currentQuestion.nu}-${optionNumber}`;
+                      return (
+                        <label
+                          key={optionNumber}
+                          htmlFor={inputId}
+                          className="flex items-start gap-2 rounded-md border border-slate-200 bg-white p-3 text-sm text-slate-700 hover:border-blue-300"
+                        >
+                          <input
+                            id={inputId}
+                            type="radio"
+                            name={`prep-q-${currentQuestion.nu}`}
+                            checked={currentAnswer === optionNumber}
+                            onChange={() => setAnswer(currentQuestion.nu, optionNumber)}
+                            className="mt-1"
+                          />
+                          <span>{option}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </fieldset>
+              ) : null}
+
+              <div className="flex justify-between">
+                <button
+                  type="button"
+                  onClick={() =>
+                    state.currentIndex === 0
+                      ? setPage(1)
+                      : update({ currentIndex: state.currentIndex - 1 })
+                  }
+                  className="rounded-md bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-200"
+                >
+                  Back
+                </button>
+                <button
+                  type="button"
+                  disabled={!currentAnswer}
+                  onClick={() =>
+                    isLastQuestion
+                      ? handleFinish()
+                      : update({ currentIndex: state.currentIndex + 1 })
+                  }
+                  className="rounded-md bg-[#005eb8] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isLastQuestion ? 'Finish assessment' : 'Next'}
+                </button>
+              </div>
+            </>
+          )}
         </section>
       )}
+
+      {outcome ? (
+        <ReadinessOutcomeModal
+          open={showModal}
+          outcome={outcome}
+          onAccept={handleAccept}
+          onDecline={handleDecline}
+        />
+      ) : null}
     </div>
   );
 }

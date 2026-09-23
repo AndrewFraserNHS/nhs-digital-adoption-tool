@@ -138,15 +138,18 @@ export function clearDerivedContent(store: AdoptionStore): AdoptionStore {
 }
 
 /**
- * Called when the user changes CST pathway. Pathway 1 is the only pathway with real
- * objectives/actions content today, so switching to it (re)seeds that content; switching to
- * Pathway 2/3 clears the Pathway-1 stand-in content instead of leaving it misleadingly in place,
- * since no Pathway-2/3-specific content exists yet. User-authored objectives/actions are never
- * touched either way.
+ * Called when the user changes CST pathway. Every pathway now has its own bundled
+ * objectives/actions content, keyed by the same action/outcome ids across pathway files (only one
+ * pathway's content is ever active at once) - so the previous pathway's auto-generated items are
+ * cleared first, then the new pathway's are seeded fresh. Without the clear, `syncDerivedContent`'s
+ * normal idempotent "add if not already present" behaviour would see the old pathway's ids as
+ * already-synced and just backfill scores onto its old wording rather than replacing it.
+ * `store.orgProfile.cst.pathway` (already updated to `newPathway` by the caller before this runs)
+ * decides which pathway's content gets seeded. User-authored objectives/actions are never touched.
  */
 export function regenerateContentForPathway(
   store: AdoptionStore,
-  newPathway: CstPathwayKey
+  _newPathway: CstPathwayKey
 ): AdoptionStore {
-  return newPathway === 'pathway-1' ? syncDerivedContent(store) : clearDerivedContent(store);
+  return syncDerivedContent(clearDerivedContent(store));
 }

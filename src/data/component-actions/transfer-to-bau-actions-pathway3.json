@@ -1,117 +1,539 @@
 {
   "component": {
     "id": "TRANSFER_TO_BAU",
-    "name": "transfer to bau"
+    "name": "Transfer to BAU"
   },
   "outcomes": [
     {
-      "id": "BAU_P3_O1",
-      "name": "Understanding of the transition to business as usual has been assessed across all live sites/teams"
+      "id": "BAU_O1",
+      "name": "Adoption has been re-engaged so that operational ownership and accountability have been established"
     },
     {
-      "id": "BAU_P3_O2",
-      "name": "The transition to business as usual is consistently applied everywhere the change has gone live"
+      "id": "BAU_O2",
+      "name": "Adoption has been re-engaged so that business-as-usual capabilities and support arrangements are in place"
+    },
+    {
+      "id": "BAU_O3",
+      "name": "Adoption has been re-engaged so that the change is fully embedded within normal operational management"
     }
   ],
   "actions": [
     {
-      "id": "BAU_P3_001",
+      "id": "transfer_bau-0",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
-      "action": "Recognise that Strategic Direction & Leadership is inconsistent across teams/sites since go-live and gather evidence of where the gaps are in the transition to business as usual.",
-      "outcomeIds": ["BAU_P3_O1"],
+      "action": "M Re-engage teams to address: recognise that ownership of the change will need to transfer from the programme into business-as-usual operations.",
+      "outcomeIds": [
+        "BAU_O1"
+      ],
       "readinessScore": 0
     },
     {
-      "id": "BAU_P3_002",
-      "fromStatus": "Emerging",
-      "toStatus": "Developing",
-      "lens": "Strategic Direction & Leadership",
-      "category": "Analysis & Insight",
-      "action": "Identify why the transition to business as usual hasn't landed consistently for Strategic Direction & Leadership in specific teams/sites and agree a plan to address it.",
-      "outcomeIds": ["BAU_P3_O1"],
-      "readinessScore": 1
-    },
-    {
-      "id": "BAU_P3_003",
-      "fromStatus": "Developing",
-      "toStatus": "Embedding",
+      "id": "transfer_bau-1",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
       "lens": "Strategic Direction & Leadership",
       "category": "Engagement",
-      "action": "Re-engage leaders in lagging teams/sites to re-establish the transition to business as usual for Strategic Direction & Leadership.",
-      "outcomeIds": ["BAU_P3_O1"],
-      "readinessScore": 2
+      "action": "M Re-open discussions with operational leaders regarding future ownership and sustainment responsibilities.",
+      "outcomeIds": [
+        "BAU_O1"
+      ],
+      "readinessScore": 0
     },
     {
-      "id": "BAU_P3_004",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
+      "id": "transfer_bau-2",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
       "lens": "Strategic Direction & Leadership",
-      "category": "Measurement & Evaluation",
-      "action": "Confirm the transition to business as usual for Strategic Direction & Leadership is being applied consistently across previously inconsistent areas.",
-      "outcomeIds": ["BAU_P3_O2"],
-      "readinessScore": 3
+      "category": "Analysis & Insight",
+      "action": "M Diagnose areas of the change that will require ongoing operational management after implementation.",
+      "outcomeIds": [
+        "BAU_O1"
+      ],
+      "readinessScore": 0
     },
     {
-      "id": "BAU_P3_005",
-      "fromStatus": "Adopted",
-      "toStatus": "Thriving",
-      "lens": "Strategic Direction & Leadership",
-      "category": "Reinforcement",
-      "action": "Monitor Strategic Direction & Leadership regularly to ensure the transition to business as usual stays consistently reinforced everywhere.",
-      "outcomeIds": ["BAU_P3_O2"],
-      "readinessScore": 4
-    },
-    {
-      "id": "BAU_P3_006",
+      "id": "transfer_bau-3",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "Process & Sustainment",
       "category": "Analysis & Insight",
-      "action": "Survey teams/sites to understand how Process & Sustainment has been affected by inconsistent transition to business as usual since go-live.",
-      "outcomeIds": ["BAU_P3_O1"],
+      "action": "M Diagnose operational stakeholder views regarding long-term ownership and support requirements.",
+      "outcomeIds": [
+        "BAU_O1"
+      ],
       "readinessScore": 0
     },
     {
-      "id": "BAU_P3_007",
+      "id": "transfer_bau-4",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "M Re-secure initial agreement that transition-to-BAU planning should form part of the change approach.",
+      "outcomeIds": [
+        "BAU_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "transfer_bau-5",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Communication",
+      "action": "M Re-engage teams to address: begin raising awareness of future operational ownership and sustainment expectations.",
+      "outcomeIds": [
+        "BAU_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "transfer_bau-6",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Analysis & Insight",
+      "action": "M Diagnose potential capability, resource and support requirements needed after programme closure.",
+      "outcomeIds": [
+        "BAU_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "transfer_bau-7",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Analysis & Insight",
+      "action": "S Diagnose gaps in lessons learned from previous transitions to business-as-usual arrangements.",
+      "outcomeIds": [
+        "BAU_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "transfer_bau-8",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "M Diagnose potential future operational owners for the change, associated processes and ongoing outcomes.",
+      "outcomeIds": [
+        "BAU_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "transfer_bau-9",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Analysis & Insight",
+      "action": "M Revisit the documentation of activities, responsibilities, controls and measures requiring transition into business-as-usual management.",
+      "outcomeIds": [
+        "BAU_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "transfer_bau-10",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Process & Sustainment",
+      "category": "Analysis & Insight",
+      "action": "M Diagnose operational readiness and capability to assume ownership of the change.",
+      "outcomeIds": [
+        "BAU_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "transfer_bau-11",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Process & Sustainment",
+      "category": "Dependency Management",
+      "action": "S Diagnose dependencies, assumptions and constraints that could affect transition to BAU.",
+      "outcomeIds": [
+        "BAU_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "transfer_bau-12",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Process & Sustainment",
       "category": "Design",
-      "action": "Develop a targeted plan to address the specific Process & Sustainment-related gaps identified in lagging areas.",
-      "outcomeIds": ["BAU_P3_O1"],
+      "action": "M Rebuild a structured transition and BAU transfer approach.",
+      "outcomeIds": [
+        "BAU_O1"
+      ],
       "readinessScore": 1
     },
     {
-      "id": "BAU_P3_008",
-      "fromStatus": "Developing",
-      "toStatus": "Embedding",
+      "id": "transfer_bau-13",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Process & Sustainment",
+      "category": "Engagement",
+      "action": "M Re-engage teams to address: engage potential operational owners to validate expectations, responsibilities and support requirements.",
+      "outcomeIds": [
+        "BAU_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "transfer_bau-14",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Process & Sustainment",
+      "category": "Analysis & Insight",
+      "action": "S Diagnose capability, resource, knowledge and support gaps affecting transition readiness.",
+      "outcomeIds": [
+        "BAU_O1",
+        "BAU_O2"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "transfer_bau-15",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
       "lens": "Process & Sustainment",
       "category": "Communication",
-      "action": "Deliver targeted support to strengthen Process & Sustainment in teams/sites where the transition to business as usual is weakest.",
-      "outcomeIds": ["BAU_P3_O1"],
+      "action": "S re-communicate proposed ownership, accountability and sustainment expectations.",
+      "outcomeIds": [
+        "BAU_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "transfer_bau-16",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "M Re-engage teams to address: design future governance arrangements for post-implementation operational management.",
+      "outcomeIds": [
+        "BAU_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "transfer_bau-17",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Process & Sustainment",
+      "category": "Measurement & Evaluation",
+      "action": "M Revisit and clarify operational measures, performance indicators and reporting requirements for post-transition management.",
+      "outcomeIds": [
+        "BAU_O2"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "transfer_bau-18",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "M Re-engage teams to address: formally assign ownership for processes, benefits, measures and sustainment activities.",
+      "outcomeIds": [
+        "BAU_O1"
+      ],
       "readinessScore": 2
     },
     {
-      "id": "BAU_P3_009",
+      "id": "transfer_bau-19",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Process & Sustainment",
+      "category": "Design",
+      "action": "M Rebuild a detailed transition-to-BAU plan.",
+      "outcomeIds": [
+        "BAU_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "transfer_bau-20",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Process & Sustainment",
+      "category": "Dependency Management",
+      "action": "M Course-correct the plan for completion of outstanding dependencies required for transition.",
+      "outcomeIds": [
+        "BAU_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "transfer_bau-21",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Process & Sustainment",
+      "category": "Risk Management",
+      "action": "M Diagnose and manage risks associated with operational handover and programme closure.",
+      "outcomeIds": [
+        "BAU_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "transfer_bau-22",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "M Revisit and clarify exit criteria and readiness criteria for transition to BAU.",
+      "outcomeIds": [
+        "BAU_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "transfer_bau-23",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Process & Sustainment",
+      "category": "Training & Learning",
+      "action": "M Re-engage teams to address: prepare operational teams to manage and support the change without programme intervention.",
+      "outcomeIds": [
+        "BAU_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "transfer_bau-24",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Process & Sustainment",
+      "category": "Training & Learning",
+      "action": "M Re-engage teams to address: transfer operational knowledge, guidance and support resources to BAU teams.",
+      "outcomeIds": [
+        "BAU_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "transfer_bau-25",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Process & Sustainment",
+      "category": "Implementation",
+      "action": "M Re-engage teams to address: integrate new processes, measures and responsibilities into operational procedures.",
+      "outcomeIds": [
+        "BAU_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "transfer_bau-26",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Process & Sustainment",
+      "category": "Testing & Validation",
+      "action": "S Re-validate that operational teams can manage and support the change independently.",
+      "outcomeIds": [
+        "BAU_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "transfer_bau-27",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "M Diagnose gaps in transition progress through governance and assurance processes.",
+      "outcomeIds": [
+        "BAU_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "transfer_bau-28",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "M Re-engage teams to address: transfer operational governance responsibilities from programme structures to BAU structures.",
+      "outcomeIds": [
+        "BAU_O2",
+        "BAU_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "transfer_bau-29",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Process & Sustainment",
+      "category": "Implementation",
+      "action": "M Re-engage teams to address: complete formal handover of ownership, controls and reporting arrangements.",
+      "outcomeIds": [
+        "BAU_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "transfer_bau-30",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Process & Sustainment",
       "category": "Measurement & Evaluation",
-      "action": "Confirm Process & Sustainment has improved in previously lagging teams/sites.",
-      "outcomeIds": ["BAU_P3_O2"],
+      "action": "S Re-establish monitoring of operational ownership and effectiveness following handover.",
+      "outcomeIds": [
+        "BAU_O3"
+      ],
       "readinessScore": 3
     },
     {
-      "id": "BAU_P3_010",
+      "id": "transfer_bau-31",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Process & Sustainment",
+      "category": "Risk Management",
+      "action": "S Re-establish monitoring of transition risks and address issues emerging after handover.",
+      "outcomeIds": [
+        "BAU_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "transfer_bau-32",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Process & Sustainment",
+      "category": "Engagement",
+      "action": "S Gather fresh evidence on feedback from operational owners regarding transition effectiveness.",
+      "outcomeIds": [
+        "BAU_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "transfer_bau-33",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Process & Sustainment",
+      "category": "Implementation",
+      "action": "M Re-engage teams to address: operate new governance, support and reporting arrangements through BAU structures.",
+      "outcomeIds": [
+        "BAU_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "transfer_bau-34",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Process & Sustainment",
+      "category": "Measurement & Evaluation",
+      "action": "M Diagnose gaps in benefits, adoption and performance measures under operational ownership.",
+      "outcomeIds": [
+        "BAU_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "transfer_bau-35",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Process & Sustainment",
+      "category": "Design",
+      "action": "S Re-engage teams to address: refine BAU operating arrangements using post-handover experience.",
+      "outcomeIds": [
+        "BAU_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "transfer_bau-36",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Process & Sustainment",
+      "category": "Dependency Management",
+      "action": "M Re-engage teams to address: close, transfer or manage remaining programme dependencies.",
+      "outcomeIds": [
+        "BAU_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "transfer_bau-37",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Process & Sustainment",
+      "category": "Reinforcement",
+      "action": "S Re-engage support for operational leaders in sustaining desired behaviours and outcomes.",
+      "outcomeIds": [
+        "BAU_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "transfer_bau-38",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "M Re-embed ownership of change outcomes within routine operational governance.",
+      "outcomeIds": [
+        "BAU_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "transfer_bau-40",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Process & Sustainment",
+      "category": "Implementation",
+      "action": "M Re-engage teams to address: ensure the change is managed entirely through business-as-usual operational processes.",
+      "outcomeIds": [
+        "BAU_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "transfer_bau-39",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Process & Sustainment",
+      "category": "Measurement & Evaluation",
+      "action": "S Re-establish monitoring of long-term operational performance, benefits and sustainment outcomes.",
+      "outcomeIds": [
+        "BAU_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "transfer_bau-41",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Process & Sustainment",
+      "category": "Design",
+      "action": "S Re-engage teams to address: use operational learning to improve future transition-to-BAU approaches.",
+      "outcomeIds": [
+        "BAU_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "transfer_bau-42",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Process & Sustainment",
       "category": "Reinforcement",
-      "action": "Embed regular pulse-checks on Process & Sustainment so gaps in the transition to business as usual are caught early in future.",
-      "outcomeIds": ["BAU_P3_O2"],
+      "action": "S Re-promote a culture where change ownership naturally transitions into operational management.",
+      "outcomeIds": [
+        "BAU_O3"
+      ],
       "readinessScore": 4
     }
   ]

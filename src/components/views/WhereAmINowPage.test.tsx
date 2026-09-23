@@ -13,32 +13,24 @@ function getEntry(): DraftEntry {
 }
 
 describe('WhereAmINowPage', () => {
-  it('SHOULD suggest the furthest checked phase and auto-apply it as soon as something is checked', () => {
+  it('SHOULD show the Readiness Review as the top section instead of a phase picker', () => {
     // arrange
-    const onSetManualPhase = vi.fn();
     render(
       <WhereAmINowPage
         components={components}
         getEntry={getEntry}
+        onEntryUpdate={vi.fn()}
         effectivePhaseFocus={1}
         phaseFocusMode="auto"
         onComponentClick={vi.fn()}
-        onSetManualPhase={onSetManualPhase}
         onResetToAuto={vi.fn()}
       />
     );
 
-    // act - check phase 1 and phase 3 statements
-    const checkboxes = screen.getAllByRole('checkbox');
-    fireEvent.click(checkboxes[0]);
-    fireEvent.click(checkboxes[2]);
-
-    // assert - applied automatically, no button needed
-    expect(screen.getAllByText(/Phase 3: Development/).length).toBeGreaterThan(0);
-    expect(
-      screen.queryByRole('button', { name: 'Set this as our current phase' })
-    ).not.toBeInTheDocument();
-    expect(onSetManualPhase).toHaveBeenLastCalledWith(3);
+    // assert
+    expect(screen.getByText('Readiness Review')).toBeInTheDocument();
+    expect(screen.queryByText('Which of these is true for you?')).not.toBeInTheDocument();
+    expect(screen.getByText('Trust Details')).toBeInTheDocument();
   });
 
   it('SHOULD show the Vision CTA and hint text', () => {
@@ -48,10 +40,10 @@ describe('WhereAmINowPage', () => {
       <WhereAmINowPage
         components={components}
         getEntry={getEntry}
+        onEntryUpdate={vi.fn()}
         effectivePhaseFocus={1}
         phaseFocusMode="auto"
         onComponentClick={onComponentClick}
-        onSetManualPhase={vi.fn()}
         onResetToAuto={vi.fn()}
       />
     );
@@ -82,10 +74,10 @@ describe('WhereAmINowPage', () => {
           evidence: '',
           actions: [],
         })}
+        onEntryUpdate={vi.fn()}
         effectivePhaseFocus={1}
         phaseFocusMode="auto"
         onComponentClick={onComponentClick}
-        onSetManualPhase={vi.fn()}
         onResetToAuto={vi.fn()}
       />
     );
@@ -111,10 +103,10 @@ describe('WhereAmINowPage', () => {
       <WhereAmINowPage
         components={components}
         getEntry={getEntry}
+        onEntryUpdate={vi.fn()}
         effectivePhaseFocus={2}
         phaseFocusMode="manual"
         onComponentClick={vi.fn()}
-        onSetManualPhase={vi.fn()}
         onResetToAuto={onResetToAuto}
       />
     );

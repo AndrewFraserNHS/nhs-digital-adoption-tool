@@ -1,117 +1,544 @@
 {
   "component": {
     "id": "ORG_CHANGE_READINESS",
-    "name": "org change readiness"
+    "name": "Org Change Readiness"
   },
   "outcomes": [
     {
-      "id": "OCR_P3_O1",
-      "name": "Understanding of the organisational change readiness has been assessed across all live sites/teams"
+      "id": "OCR_O1",
+      "name": "Adoption has been re-engaged so that organisational readiness factors are understood"
     },
     {
-      "id": "OCR_P3_O2",
-      "name": "The organisational change readiness is consistently applied everywhere the change has gone live"
+      "id": "OCR_O2",
+      "name": "Adoption has been re-engaged so that readiness gaps are addressed and readiness is improved"
+    },
+    {
+      "id": "OCR_O3",
+      "name": "Adoption has been re-engaged so that organisational readiness supports successful and sustainable change"
     }
   ],
   "actions": [
     {
-      "id": "OCR_P3_001",
+      "id": "org_maturity-0",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
-      "action": "Recognise that Strategic Direction & Leadership is inconsistent across teams/sites since go-live and gather evidence of where the gaps are in the organisational change readiness.",
-      "outcomeIds": ["OCR_P3_O1"],
+      "action": "M Re-engage teams to address: recognise that organisational readiness will influence the success of the change.",
+      "outcomeIds": [
+        "OCR_O1"
+      ],
       "readinessScore": 0
     },
     {
-      "id": "OCR_P3_002",
+      "id": "org_maturity-1",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Engagement",
+      "action": "M Re-open discussions with leaders regarding the organisation's ability to absorb and support the change.",
+      "outcomeIds": [
+        "OCR_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "org_maturity-2",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Skills & Behaviour",
+      "category": "Engagement",
+      "action": "M Diagnose stakeholder perceptions of preparedness, capacity and support requirements.",
+      "outcomeIds": [
+        "OCR_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "org_maturity-3",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Analysis & Insight",
+      "action": "M Diagnose high-level organisational factors that may support or hinder the change.",
+      "outcomeIds": [
+        "OCR_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "org_maturity-4",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "M Re-secure initial agreement that organisational readiness will be assessed and managed throughout the change lifecycle.",
+      "outcomeIds": [
+        "OCR_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "org_maturity-5",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Communication",
+      "action": "S Re-engage teams to address: begin raising awareness of organisational readiness considerations and expectations.",
+      "outcomeIds": [
+        "OCR_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "org_maturity-6",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Analysis & Insight",
+      "action": "S Diagnose gaps in lessons learned from previous organisational changes relating to readiness and preparedness.",
+      "outcomeIds": [
+        "OCR_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "org_maturity-7",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Analysis & Insight",
+      "action": "M Diagnose potential readiness risks, constraints and competing organisational priorities.",
+      "outcomeIds": [
+        "OCR_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "org_maturity-8",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
-      "action": "Identify why the organisational change readiness hasn't landed consistently for Strategic Direction & Leadership in specific teams/sites and agree a plan to address it.",
-      "outcomeIds": ["OCR_P3_O1"],
+      "action": "M Re-engage teams to address: conduct a structured organisational readiness assessment.",
+      "outcomeIds": [
+        "OCR_O1"
+      ],
       "readinessScore": 1
     },
     {
-      "id": "OCR_P3_003",
+      "id": "org_maturity-9",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Analysis & Insight",
+      "action": "M Diagnose organisational capacity, workload pressures and competing priorities.",
+      "outcomeIds": [
+        "OCR_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "org_maturity-13",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Skills & Behaviour",
+      "category": "Engagement",
+      "action": "M Re-validate readiness findings with stakeholders, leaders and operational teams.",
+      "outcomeIds": [
+        "OCR_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "org_maturity-11",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "M Revisit and clarify readiness indicators, measures and assessment criteria.",
+      "outcomeIds": [
+        "OCR_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "org_maturity-12",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Analysis & Insight",
+      "action": "S Diagnose organisational readiness strengths, weaknesses, risks and barriers.",
+      "outcomeIds": [
+        "OCR_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "org_maturity-10",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Skills & Behaviour",
+      "category": "Analysis & Insight",
+      "action": "S Diagnose organisational attitudes towards change, confidence levels and change fatigue.",
+      "outcomeIds": [
+        "OCR_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "org_maturity-14",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Dependency Management",
+      "action": "S Diagnose dependencies affecting organisational readiness across programmes, services and operational activities.",
+      "outcomeIds": [
+        "OCR_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "org_maturity-15",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "M Rebuild a readiness improvement approach to address identified gaps and barriers.",
+      "outcomeIds": [
+        "OCR_O2"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "org_maturity-16",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "M Revisit and clarify ownership and accountability for organisational readiness improvement activities.",
+      "outcomeIds": [
+        "OCR_O2"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "org_maturity-17",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Communication",
+      "action": "S re-communicate organisational readiness findings and improvement priorities.",
+      "outcomeIds": [
+        "OCR_O2"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "org_maturity-18",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "M Rebuild and implement readiness improvement plans to address identified organisational readiness gaps.",
+      "outcomeIds": [
+        "OCR_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "org_maturity-19",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Risk Management",
+      "action": "S Recover implementation of actions to address organisational capacity constraints that could affect successful change delivery.",
+      "outcomeIds": [
+        "OCR_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "org_maturity-21",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
       "category": "Engagement",
-      "action": "Re-engage leaders in lagging teams/sites to re-establish the organisational change readiness for Strategic Direction & Leadership.",
-      "outcomeIds": ["OCR_P3_O1"],
+      "action": "S Re-engage teams to address: strengthen leadership readiness by upskilling senior leaders in Change Management to support and champion the change effectively.",
+      "outcomeIds": [
+        "OCR_O2"
+      ],
       "readinessScore": 2
     },
     {
-      "id": "OCR_P3_004",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
-      "lens": "Strategic Direction & Leadership",
-      "category": "Measurement & Evaluation",
-      "action": "Confirm the organisational change readiness for Strategic Direction & Leadership is being applied consistently across previously inconsistent areas.",
-      "outcomeIds": ["OCR_P3_O2"],
-      "readinessScore": 3
-    },
-    {
-      "id": "OCR_P3_005",
-      "fromStatus": "Adopted",
-      "toStatus": "Thriving",
-      "lens": "Strategic Direction & Leadership",
-      "category": "Reinforcement",
-      "action": "Monitor Strategic Direction & Leadership regularly to ensure the organisational change readiness stays consistently reinforced everywhere.",
-      "outcomeIds": ["OCR_P3_O2"],
-      "readinessScore": 4
-    },
-    {
-      "id": "OCR_P3_006",
-      "fromStatus": "Not Started",
-      "toStatus": "Emerging",
-      "lens": "Skills & Behaviour",
-      "category": "Analysis & Insight",
-      "action": "Survey teams/sites to understand how Skills & Behaviour has been affected by inconsistent organisational change readiness since go-live.",
-      "outcomeIds": ["OCR_P3_O1"],
-      "readinessScore": 0
-    },
-    {
-      "id": "OCR_P3_007",
-      "fromStatus": "Emerging",
-      "toStatus": "Developing",
-      "lens": "Skills & Behaviour",
-      "category": "Design",
-      "action": "Develop a targeted plan to address the specific Skills & Behaviour-related gaps identified in lagging areas.",
-      "outcomeIds": ["OCR_P3_O1"],
-      "readinessScore": 1
-    },
-    {
-      "id": "OCR_P3_008",
+      "id": "org_maturity-22",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Skills & Behaviour",
-      "category": "Communication",
-      "action": "Deliver targeted support to strengthen Skills & Behaviour in teams/sites where the organisational change readiness is weakest.",
-      "outcomeIds": ["OCR_P3_O1"],
+      "category": "Training & Learning",
+      "action": "M Rebuild operational manager readiness to coach, support and guide teams through the change.",
+      "outcomeIds": [
+        "OCR_O2"
+      ],
       "readinessScore": 2
     },
     {
-      "id": "OCR_P3_009",
+      "id": "org_maturity-23",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Skills & Behaviour",
+      "category": "Engagement",
+      "action": "S Re-engage teams to address: improve local team preparedness through targeted support, engagement and readiness interventions.",
+      "outcomeIds": [
+        "OCR_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "org_maturity-24",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "S Re-establish monitoring of organisational readiness indicators and assess progress against readiness objectives.",
+      "outcomeIds": [
+        "OCR_O2",
+        "OCR_O3"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "org_maturity-25",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "M Diagnose gaps in organisational readiness performance and improvement actions through governance processes.",
+      "outcomeIds": [
+        "OCR_O2",
+        "OCR_O3"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "org_maturity-26",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Dependency Management",
+      "action": "M Re-engage teams to address: align readiness improvement activities with implementation milestones, programme dependencies and delivery schedules.",
+      "outcomeIds": [
+        "OCR_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "org_maturity-27",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Testing & Validation",
+      "action": "M Re-engage teams to address: reassess organisational readiness before key implementation events and delivery milestones.",
+      "outcomeIds": [
+        "OCR_O2",
+        "OCR_O3"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "org_maturity-28",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
-      "lens": "Skills & Behaviour",
+      "lens": "Strategic Direction & Leadership",
       "category": "Measurement & Evaluation",
-      "action": "Confirm Skills & Behaviour has improved in previously lagging teams/sites.",
-      "outcomeIds": ["OCR_P3_O2"],
+      "action": "M Re-measure organisational readiness performance across impacted areas and stakeholder groups.",
+      "outcomeIds": [
+        "OCR_O3"
+      ],
       "readinessScore": 3
     },
     {
-      "id": "OCR_P3_010",
+      "id": "org_maturity-29",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Testing & Validation",
+      "action": "M Re-validate organisational readiness before go-live activities and major implementation events.",
+      "outcomeIds": [
+        "OCR_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "org_maturity-30",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Risk Management",
+      "action": "S Directly address remaining readiness gaps that could affect implementation success.",
+      "outcomeIds": [
+        "OCR_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "org_maturity-31",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Reinforcement",
+      "action": "M Re-embed organisational readiness assessment into organisational change governance, assurance and decision-making processes.",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "org_maturity-32",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "M Re-establish organisational accountability for maintaining readiness standards across change portfolios and programmes.",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "org_maturity-33",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "S Re-engage teams to address: benchmark organisational readiness maturity across programmes, projects and transformation initiatives.",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "org_maturity-34",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Training & Learning",
+      "action": "S Re-engage teams to address: continuously improve organisational readiness methodologies, frameworks and assessment approaches using organisational learning.",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "org_maturity-35",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Reinforcement",
+      "action": "M Re-embed readiness metrics and reporting within organisational governance, portfolio management and assurance arrangements.",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "org_maturity-36",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Skills & Behaviour",
+      "category": "Analysis & Insight",
+      "action": "M Diagnose emerging workforce capability requirements that could influence future organisational readiness levels.",
+      "outcomeIds": [],
+      "readinessScore": 3
+    },
+    {
+      "id": "org_maturity-37",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Skills & Behaviour",
+      "category": "Training & Learning",
+      "action": "S Re-engage teams to address: ensure managers and local leaders have the skills and confidence required to support implementation activities.",
+      "outcomeIds": [],
+      "readinessScore": 3
+    },
+    {
+      "id": "org_maturity-38",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Skills & Behaviour",
+      "category": "Reinforcement",
+      "action": "S Re-engage teams to address: reinforce behaviours and practices that demonstrate organisational preparedness and readiness for change.",
+      "outcomeIds": [],
+      "readinessScore": 3
+    },
+    {
+      "id": "org_maturity-39",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Skills & Behaviour",
+      "category": "Testing & Validation",
+      "action": "S Re-engage teams to address: verify that capability-building activities have improved organisational readiness and preparedness.",
+      "outcomeIds": [],
+      "readinessScore": 3
+    },
+    {
+      "id": "org_maturity-40",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Skills & Behaviour",
+      "category": "Reinforcement",
+      "action": "S Re-engage teams to address: recognise and reinforce behaviours that demonstrate proactive preparedness, adaptability and readiness for change.",
+      "outcomeIds": [],
+      "readinessScore": 3
+    },
+    {
+      "id": "org_maturity-41",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Skills & Behaviour",
       "category": "Reinforcement",
-      "action": "Embed regular pulse-checks on Skills & Behaviour so gaps in the organisational change readiness are caught early in future.",
-      "outcomeIds": ["OCR_P3_O2"],
+      "action": "S Re-embed organisational readiness capability development into ongoing learning, development and workforce planning activities.",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "org_maturity-42",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Skills & Behaviour",
+      "category": "Measurement & Evaluation",
+      "action": "S Re-establish monitoring of long-term organisational preparedness, workforce capability and readiness competency across the organisation.",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "org_maturity-43",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Skills & Behaviour",
+      "category": "Measurement & Evaluation",
+      "action": "S Re-engage teams to address: benchmark organisational readiness capability and preparedness maturity across programmes, teams and organisational functions.",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "org_maturity-44",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Skills & Behaviour",
+      "category": "Training & Learning",
+      "action": "S Re-engage teams to address: capture and apply organisational learning relating to capability, preparedness and readiness outcomes.",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "org_maturity-45",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Skills & Behaviour",
+      "category": "Measurement & Evaluation",
+      "action": "S Diagnose the effectiveness of organisational readiness capability-building activities in supporting future change initiatives.",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "org_maturity-46",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Skills & Behaviour",
+      "category": "Reinforcement",
+      "action": "M Re-promote a culture of continuous capability development, preparedness and readiness for change.",
+      "outcomeIds": [],
       "readinessScore": 4
     }
   ]

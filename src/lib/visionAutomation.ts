@@ -1,7 +1,11 @@
 import visionActionsText from '../data/component-actions/vision-actions.json?raw';
+import visionActionsTextPathway2 from '../data/component-actions/vision-actions-pathway2.json?raw';
+import visionActionsTextPathway3 from '../data/component-actions/vision-actions-pathway3.json?raw';
+import type { CstPathwayKey } from '@data/cst';
 import type { AdoptionStore } from './adoptionState';
 import {
   clearDerivedComponentContent,
+  type DerivedComponentSource,
   type DerivedComponentConfig,
   parseDerivedComponentSource,
   syncDerivedComponentContent,
@@ -18,10 +22,15 @@ export const VISION_CONFIG: DerivedComponentConfig = {
   ],
 };
 
-const VISION_SOURCE = parseDerivedComponentSource(visionActionsText, VISION_CONFIG);
+const VISION_SOURCE_BY_PATHWAY: Record<CstPathwayKey, DerivedComponentSource> = {
+  'pathway-1': parseDerivedComponentSource(visionActionsText, VISION_CONFIG),
+  'pathway-2': parseDerivedComponentSource(visionActionsTextPathway2, VISION_CONFIG),
+  'pathway-3': parseDerivedComponentSource(visionActionsTextPathway3, VISION_CONFIG),
+};
 
 export function syncVisionDerivedContent(store: AdoptionStore): AdoptionStore {
-  return syncDerivedComponentContent(store, VISION_CONFIG, VISION_SOURCE);
+  const pathway = store.orgProfile.cst.pathway || 'pathway-1';
+  return syncDerivedComponentContent(store, VISION_CONFIG, VISION_SOURCE_BY_PATHWAY[pathway]);
 }
 
 export function clearVisionDerivedContent(store: AdoptionStore): AdoptionStore {

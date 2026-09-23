@@ -1,7 +1,11 @@
 import reinforcementActionsText from '../data/component-actions/reinforcement-actions.json?raw';
+import reinforcementActionsTextPathway2 from '../data/component-actions/reinforcement-actions-pathway2.json?raw';
+import reinforcementActionsTextPathway3 from '../data/component-actions/reinforcement-actions-pathway3.json?raw';
+import type { CstPathwayKey } from '@data/cst';
 import type { AdoptionStore } from './adoptionState';
 import {
   clearDerivedComponentContent,
+  type DerivedComponentSource,
   type DerivedComponentConfig,
   parseDerivedComponentSource,
   syncDerivedComponentContent,
@@ -36,13 +40,15 @@ export const REINFORCEMENT_CONFIG: DerivedComponentConfig = {
   },
 };
 
-const REINFORCEMENT_SOURCE = parseDerivedComponentSource(
-  reinforcementActionsText,
-  REINFORCEMENT_CONFIG
-);
+const REINFORCEMENT_SOURCE_BY_PATHWAY: Record<CstPathwayKey, DerivedComponentSource> = {
+  'pathway-1': parseDerivedComponentSource(reinforcementActionsText, REINFORCEMENT_CONFIG),
+  'pathway-2': parseDerivedComponentSource(reinforcementActionsTextPathway2, REINFORCEMENT_CONFIG),
+  'pathway-3': parseDerivedComponentSource(reinforcementActionsTextPathway3, REINFORCEMENT_CONFIG),
+};
 
 export function syncReinforcementDerivedContent(store: AdoptionStore): AdoptionStore {
-  return syncDerivedComponentContent(store, REINFORCEMENT_CONFIG, REINFORCEMENT_SOURCE);
+  const pathway = store.orgProfile.cst.pathway || 'pathway-1';
+  return syncDerivedComponentContent(store, REINFORCEMENT_CONFIG, REINFORCEMENT_SOURCE_BY_PATHWAY[pathway]);
 }
 
 export function clearReinforcementDerivedContent(store: AdoptionStore): AdoptionStore {

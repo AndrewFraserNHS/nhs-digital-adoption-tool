@@ -1,117 +1,410 @@
 {
   "component": {
     "id": "CHANGE_IMPACT",
-    "name": "change impact"
+    "name": "Change Impact"
   },
   "outcomes": [
     {
-      "id": "CI_P2_O1",
-      "name": "The change impact assessment has been refined based on pilot learnings"
+      "id": "CI_O1",
+      "name": "The pilot has validated that the impact of the change has been identified and understood"
     },
     {
-      "id": "CI_P2_O2",
-      "name": "The change impact assessment is understood across every site/team joining the scaled rollout"
+      "id": "CI_O2",
+      "name": "The pilot has validated that impacts have been assessed, validated and prioritised"
+    },
+    {
+      "id": "CI_O3",
+      "name": "The pilot has validated that change impacts are actively managed through plans, governance and support"
     }
   ],
   "actions": [
     {
-      "id": "CI_P2_001",
+      "id": "change_impact-0",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
-      "action": "Review pilot feedback on Planning & Risk to identify what needs to change in the change impact assessment before scaling.",
-      "outcomeIds": ["CI_P2_O1"],
+      "action": "S Review and refine: recognise that the change is likely to affect people, processes, services, roles and ways of working.",
+      "outcomeIds": [
+        "CI_O1"
+      ],
       "readinessScore": 0
     },
     {
-      "id": "CI_P2_002",
+      "id": "change_impact-1",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Planning & Risk",
+      "category": "Engagement",
+      "action": "M Continue discussions from the pilot with leaders and stakeholders regarding who or what may be affected by the change.",
+      "outcomeIds": [
+        "CI_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "change_impact-2",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "M Confirm high-level business areas, services, teams and stakeholder groups likely to experience change impacts.",
+      "outcomeIds": [
+        "CI_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "change_impact-3",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "M Confirm stakeholder perceptions of where change may affect their roles, activities or responsibilities.",
+      "outcomeIds": [
+        "CI_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "change_impact-4",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "M Confirm potential areas of disruption, opportunity or uncertainty associated with the change.",
+      "outcomeIds": [
+        "CI_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "change_impact-5",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Planning & Risk",
+      "category": "Governance",
+      "action": "S Review and refine: gain agreement that change impact assessment activities will be required.",
+      "outcomeIds": [
+        "CI_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "change_impact-6",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "M Review and refine: begin raising awareness that different stakeholder groups may be affected in different ways.",
+      "outcomeIds": [
+        "CI_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "change_impact-7",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "S Review pilot learnings on previous change initiatives to identify common impact themes, challenges and lessons learned.",
+      "outcomeIds": [
+        "CI_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "change_impact-8",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Planning & Risk",
-      "category": "Design",
-      "action": "Refine the change impact assessment to Planning & Risk based on lessons learned from the pilot.",
-      "outcomeIds": ["CI_P2_O1"],
+      "category": "Analysis & Insight",
+      "action": "M Confirm and document the areas, services, teams, roles, processes and stakeholder groups affected by the change (Stakeholder Analysis)",
+      "outcomeIds": [
+        "CI_O1"
+      ],
       "readinessScore": 1
     },
     {
-      "id": "CI_P2_003",
+      "id": "change_impact-9",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "M Review and refine: undertake a draft structured Change Impact Assessment covering people, process, technology, information, governance and ways of working.",
+      "outcomeIds": [
+        "CI_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "change_impact-10",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Risk",
+      "category": "Risk Management",
+      "action": "S Re-assess risks arising from identified change impacts (RAID log).",
+      "outcomeIds": [
+        "CI_O2",
+        "CI_O3"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "change_impact-11",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "M Review and refine: engage affected stakeholder groups to understand current ways of working and expected impacts.",
+      "outcomeIds": [
+        "CI_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "change_impact-12",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "M Re-assess stakeholder concerns, support requirements, perceived disruption and areas of uncertainty (Change Impact Assessment).",
+      "outcomeIds": [
+        "CI_O1",
+        "CI_O2"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "change_impact-13",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "M Re-assess existing pain points, bottlenecks, duplication, workarounds and service pressures that may influence the scale of impact (Current State Process Mapping/Heat Map/Change Impact Assessment)",
+      "outcomeIds": [
+        "CI_O1",
+        "CI_O2"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "change_impact-14",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Risk",
+      "category": "Measurement & Evaluation",
+      "action": "S Confirm the pilot-tested and establish baseline measures that will enable comparison between current and future states.",
+      "outcomeIds": [
+        "CI_O2",
+        "CI_O3"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "change_impact-15",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "M Review and refine: complete a detailed change impact assessment across affected business areas, services, teams and roles.",
+      "outcomeIds": [
+        "CI_O1",
+        "CI_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "change_impact-16",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Risk",
+      "category": "Measurement & Evaluation",
+      "action": "M Re-assess the scale of impact using agreed criteria such as complexity, frequency, number of people affected and degree of difference from current ways of working.",
+      "outcomeIds": [
+        "CI_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "change_impact-17",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Risk",
+      "category": "Risk Management",
+      "action": "M Review and refine: translate significant change impacts into change risks, issues or mitigations where appropriate (RAID log).",
+      "outcomeIds": [
+        "CI_O2",
+        "CI_O3"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "change_impact-18",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
       "category": "Governance",
-      "action": "Secure sign-off for the refined change impact assessment covering Planning & Risk ahead of wider rollout.",
-      "outcomeIds": ["CI_P2_O1"],
+      "action": "M Review pilot learnings on assessed impacts and associated risks, through appropriate governance routes so that decisions are informed by change impact evidence (RAID log).",
+      "outcomeIds": [
+        "CI_O3"
+      ],
       "readinessScore": 2
     },
     {
-      "id": "CI_P2_004",
+      "id": "change_impact-19",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Risk",
+      "category": "Dependency Management",
+      "action": "S Confirm dependencies that could affect impact management, including process, workforce, system, policy, operational or external dependencies (RAID log).",
+      "outcomeIds": [
+        "CI_O2",
+        "CI_O3"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "change_impact-20",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "M Re-validate identified impacts with affected stakeholders and subject matter experts (Change Impact Assessment/Change Agent).",
+      "outcomeIds": [
+        "CI_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "change_impact-21",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Planning & Risk",
-      "category": "Communication",
-      "action": "Ensure the refined change impact assessment for Planning & Risk is consistently communicated to new sites/teams joining the rollout.",
-      "outcomeIds": ["CI_P2_O2"],
+      "category": "Measurement & Evaluation",
+      "action": "M Re-measure the effectiveness of change impact management activities across impacted stakeholder groups, services and business areas",
+      "outcomeIds": [],
       "readinessScore": 3
     },
     {
-      "id": "CI_P2_005",
+      "id": "change_impact-22",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "S Review pilot learnings on impact assessment findings to identify remaining high-impact areas requiring support or intervention.",
+      "outcomeIds": [],
+      "readinessScore": 3
+    },
+    {
+      "id": "change_impact-23",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "S Consolidate stakeholder feedback regarding actual impacts experienced during implementation.",
+      "outcomeIds": [],
+      "readinessScore": 3
+    },
+    {
+      "id": "change_impact-24",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Testing & Validation",
+      "action": "M Re-validate that identified impacts, mitigations and support activities remain relevant and effective",
+      "outcomeIds": [],
+      "readinessScore": 3
+    },
+    {
+      "id": "change_impact-25",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "Implementation",
+      "action": "S Review and refine: adjust impact management interventions using implementation experience, stakeholder feedback and operational insight.",
+      "outcomeIds": [],
+      "readinessScore": 3
+    },
+    {
+      "id": "change_impact-26",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "Measurement & Evaluation",
+      "action": "S Re-assess whether anticipated impacts have occurred and whether mitigation activities achieved the desired outcome.",
+      "outcomeIds": [],
+      "readinessScore": 3
+    },
+    {
+      "id": "change_impact-27",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Planning & Risk",
+      "category": "Risk Management",
+      "action": "M Review and refine: continuously review future impact-related risks, dependencies and emerging organisational pressures",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "change_impact-28",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Planning & Risk",
       "category": "Measurement & Evaluation",
-      "action": "Continuously validate that the change impact assessment for Planning & Risk remains effective as the change scales further.",
-      "outcomeIds": ["CI_P2_O2"],
+      "action": "S Continue monitoring long-term impact trends, outcomes and organisational consequences of change initiatives",
+      "outcomeIds": [],
       "readinessScore": 4
     },
     {
-      "id": "CI_P2_006",
-      "fromStatus": "Not Started",
-      "toStatus": "Emerging",
-      "lens": "People Experience & Culture",
-      "category": "Analysis & Insight",
-      "action": "Gather feedback from pilot participants on how the change impact assessment affected People Experience & Culture.",
-      "outcomeIds": ["CI_P2_O1"],
-      "readinessScore": 0
-    },
-    {
-      "id": "CI_P2_007",
-      "fromStatus": "Emerging",
-      "toStatus": "Developing",
-      "lens": "People Experience & Culture",
-      "category": "Design",
-      "action": "Adapt the change impact assessment relating to People Experience & Culture for a wider, more diverse audience.",
-      "outcomeIds": ["CI_P2_O1"],
-      "readinessScore": 1
-    },
-    {
-      "id": "CI_P2_008",
-      "fromStatus": "Developing",
-      "toStatus": "Embedding",
-      "lens": "People Experience & Culture",
-      "category": "Communication",
-      "action": "Roll out the change impact assessment covering People Experience & Culture to stakeholders in newly onboarding sites/teams.",
-      "outcomeIds": ["CI_P2_O1"],
-      "readinessScore": 2
-    },
-    {
-      "id": "CI_P2_009",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
-      "lens": "People Experience & Culture",
-      "category": "Measurement & Evaluation",
-      "action": "Monitor People Experience & Culture among stakeholders in the wider rollout and address any gaps.",
-      "outcomeIds": ["CI_P2_O2"],
-      "readinessScore": 3
-    },
-    {
-      "id": "CI_P2_010",
+      "id": "change_impact-29",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
-      "action": "Use champions from the pilot to help new sites/teams connect with the change impact assessment for People Experience & Culture.",
-      "outcomeIds": ["CI_P2_O2"],
+      "action": "M Promote at scale a culture where change impacts are proactively assessed, managed and used to inform organisational improvement",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "change_impact-30",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "S Sustain organisation-wide insight mechanisms to identify emerging or cumulative impacts from ongoing change activity",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "change_impact-31",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Planning & Risk",
+      "category": "Measurement & Evaluation",
+      "action": "S Review and refine: benchmark change impact management performance and maturity across programmes and change initiatives.",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "change_impact-32",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Planning & Risk",
+      "category": "Training & Learning",
+      "action": "S Review and refine: capture and apply organisational learning from change impact successes, challenges and implementation experience",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "change_impact-33",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "S Review and refine: recognise and reinforce good practice in identifying, managing and mitigating change impacts",
+      "outcomeIds": [],
       "readinessScore": 4
     }
   ]

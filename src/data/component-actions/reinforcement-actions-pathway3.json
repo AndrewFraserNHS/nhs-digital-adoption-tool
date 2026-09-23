@@ -1,117 +1,527 @@
 {
   "component": {
     "id": "REINFORCEMENT",
-    "name": "reinforcement"
+    "name": "Reinforcement"
   },
   "outcomes": [
     {
-      "id": "REINF_P3_O1",
-      "name": "Understanding of the reinforcement approach has been assessed across all live sites/teams"
+      "id": "REINF_O1",
+      "name": "Adoption has been re-engaged so that reinforcement strategy and sustainment measures are defined"
     },
     {
-      "id": "REINF_P3_O2",
-      "name": "The reinforcement approach is consistently applied everywhere the change has gone live"
+      "id": "REINF_O2",
+      "name": "Adoption has been re-engaged so that reinforcement activities support sustained adoption and behaviour change"
+    },
+    {
+      "id": "REINF_O3",
+      "name": "Adoption has been re-engaged so that sustained change outcomes are embedded and continuously improved"
     }
   ],
   "actions": [
     {
-      "id": "REINF_P3_001",
+      "id": "reinforcement-0",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "Process & Sustainment",
       "category": "Analysis & Insight",
-      "action": "Recognise that Process & Sustainment is inconsistent across teams/sites since go-live and gather evidence of where the gaps are in the reinforcement approach.",
-      "outcomeIds": ["REINF_P3_O1"],
+      "action": "M Re-engage teams to address: recognise the need to sustain change outcomes beyond implementation and initial adoption.",
+      "outcomeIds": [
+        "REINF_O1"
+      ],
       "readinessScore": 0
     },
     {
-      "id": "REINF_P3_002",
+      "id": "reinforcement-1",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Process & Sustainment",
+      "category": "Engagement",
+      "action": "M Re-engage teams to address: discuss with sponsors and leaders how the change will need to be sustained after go-live.",
+      "outcomeIds": [
+        "REINF_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "reinforcement-2",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Process & Sustainment",
+      "category": "Analysis & Insight",
+      "action": "M Diagnose behaviours, processes and outcomes that will require ongoing reinforcement.",
+      "outcomeIds": [
+        "REINF_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "reinforcement-4",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "M Diagnose areas where adoption may decline without ongoing support.",
+      "outcomeIds": [
+        "REINF_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "reinforcement-3",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "S Diagnose stakeholder perceptions of what will help or hinder long-term sustainment.",
+      "outcomeIds": [
+        "REINF_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "reinforcement-5",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Process & Sustainment",
+      "category": "Governance",
+      "action": "M Re-engage teams to address: gain initial sponsor commitment to support reinforcement and sustainment activities.",
+      "outcomeIds": [
+        "REINF_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "reinforcement-6",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "S Re-engage teams to address: begin raising awareness that reinforcement activities will be available if required where adoption is low.",
+      "outcomeIds": [
+        "REINF_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "reinforcement-7",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Process & Sustainment",
+      "category": "Analysis & Insight",
+      "action": "S Diagnose gaps in previous change initiatives to identify sustainment risks and lessons learned.",
+      "outcomeIds": [
+        "REINF_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "reinforcement-8",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Process & Sustainment",
-      "category": "Analysis & Insight",
-      "action": "Identify why the reinforcement approach hasn't landed consistently for Process & Sustainment in specific teams/sites and agree a plan to address it.",
-      "outcomeIds": ["REINF_P3_O1"],
+      "category": "Design",
+      "action": "M Revisit and clarify and document what successful long-term adoption and sustainment will look like.",
+      "outcomeIds": [
+        "REINF_O1"
+      ],
       "readinessScore": 1
     },
     {
-      "id": "REINF_P3_003",
+      "id": "reinforcement-9",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Process & Sustainment",
+      "category": "Measurement & Evaluation",
+      "action": "M Rebuild agreed sustainment indicators and reinforcement measures.",
+      "outcomeIds": [
+        "REINF_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "reinforcement-10",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Process & Sustainment",
+      "category": "Governance",
+      "action": "M Revisit and clarify ownership, accountabilities and responsibilities for reinforcement activities.",
+      "outcomeIds": [
+        "REINF_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "reinforcement-11",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Process & Sustainment",
+      "category": "Dependency Management",
+      "action": "S Diagnose dependencies between reinforcement, adoption, benefits, sponsorship and operational ownership.",
+      "outcomeIds": [
+        "REINF_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "reinforcement-12",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Process & Sustainment",
+      "category": "Design",
+      "action": "M Re-engage teams to address: ensure a structured reinforcement and sustainment approach is documented in the adoption plan. ",
+      "outcomeIds": [
+        "REINF_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "reinforcement-13",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "M Diagnose sustainment drivers and barriers across stakeholder groups and business areas.",
+      "outcomeIds": [
+        "REINF_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "reinforcement-14",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "S Re-validate stakeholder sustainment needs and ongoing support requirements.",
+      "outcomeIds": [
+        "REINF_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "reinforcement-15",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "S Diagnose priority stakeholder groups requiring targeted reinforcement support.",
+      "outcomeIds": [
+        "REINF_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "reinforcement-16",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "M re-communicate expected future-state behaviours and sustainment expectations.",
+      "outcomeIds": [
+        "REINF_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "reinforcement-17",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "M Re-establish baseline reinforcement and sustainment measures.",
+      "outcomeIds": [
+        "REINF_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "reinforcement-18",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Process & Sustainment",
-      "category": "Engagement",
-      "action": "Re-engage leaders in lagging teams/sites to re-establish the reinforcement approach for Process & Sustainment.",
-      "outcomeIds": ["REINF_P3_O1"],
+      "category": "Reinforcement",
+      "action": "M Re-engage teams to address: ensure leaders and managers visibly reinforce desired behaviours and new ways of working.",
+      "outcomeIds": [
+        "REINF_O2"
+      ],
       "readinessScore": 2
     },
     {
-      "id": "REINF_P3_004",
+      "id": "reinforcement-19",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Process & Sustainment",
+      "category": "Communication",
+      "action": "M re-communicate adoption successes, improvements and positive outcomes.",
+      "outcomeIds": [
+        "REINF_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "reinforcement-20",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Process & Sustainment",
+      "category": "Governance",
+      "action": "M Diagnose gaps in reinforcement indicators and sustainment risks through governance mechanisms.",
+      "outcomeIds": [
+        "REINF_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "reinforcement-21",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Process & Sustainment",
+      "category": "Measurement & Evaluation",
+      "action": "S Re-establish monitoring of adoption, behaviour and performance indicators linked to sustained change.",
+      "outcomeIds": [
+        "REINF_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "reinforcement-22",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Process & Sustainment",
+      "category": "Design",
+      "action": "S Re-engage teams to address: refine reinforcement plans using sustainment data and stakeholder feedback.",
+      "outcomeIds": [
+        "REINF_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "reinforcement-23",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "M Re-engage teams to address: recognise and celebrate examples of successful adoption, positive behavioural change and improvements to ways of working.",
+      "outcomeIds": [
+        "REINF_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "reinforcement-24",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "M Re-engage teams to address: use change networks, champions and managers to reinforce desired behaviours locally.",
+      "outcomeIds": [
+        "REINF_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "reinforcement-25",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Training & Learning",
+      "action": "M Re-engage teams to address: provide refresher support where adoption or confidence levels begin to decline.",
+      "outcomeIds": [
+        "REINF_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "reinforcement-26",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "S Gather fresh evidence on feedback regarding sustainment challenges and support needs.",
+      "outcomeIds": [
+        "REINF_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "reinforcement-27",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Process & Sustainment",
       "category": "Measurement & Evaluation",
-      "action": "Confirm the reinforcement approach for Process & Sustainment is being applied consistently across previously inconsistent areas.",
-      "outcomeIds": ["REINF_P3_O2"],
+      "action": "M Re-establish monitoring of sustainment indicators and identify areas where adoption is weakening.",
+      "outcomeIds": [
+        "REINF_O2",
+        "REINF_O3"
+      ],
       "readinessScore": 3
     },
     {
-      "id": "REINF_P3_005",
+      "id": "reinforcement-28",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "M Re-engage teams to address: target reinforcement activity towards groups showing reductions in adoption or compliance.",
+      "outcomeIds": [
+        "REINF_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "reinforcement-29",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Process & Sustainment",
+      "category": "Reinforcement",
+      "action": "M Re-engage teams to address: ensure leaders consistently model desired behaviours and reinforce expectations.",
+      "outcomeIds": [
+        "REINF_O2",
+        "REINF_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "reinforcement-30",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Process & Sustainment",
+      "category": "Governance",
+      "action": "S Diagnose gaps in sustainment performance and improvement actions through governance processes.",
+      "outcomeIds": [
+        "REINF_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "reinforcement-31",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Process & Sustainment",
+      "category": "Analysis & Insight",
+      "action": "S Re-engage teams to address: analyse performance, adoption and benefits data to identify sustainment opportunities.",
+      "outcomeIds": [
+        "REINF_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "reinforcement-32",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "S Re-engage teams to address: demonstrate the ongoing value of the change through evidence and success stories.",
+      "outcomeIds": [
+        "REINF_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "reinforcement-33",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "S Re-engage teams to address: recognise teams and individuals who consistently demonstrate future-state behaviours.",
+      "outcomeIds": [
+        "REINF_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "reinforcement-34",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "S Re-engage teams to address: use stakeholder feedback to improve sustainment and reinforcement activities.",
+      "outcomeIds": [
+        "REINF_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "reinforcement-35",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Process & Sustainment",
+      "category": "Risk Management",
+      "action": "S Diagnose risks that may cause reversion to previous behaviours or ways of working.",
+      "outcomeIds": [
+        "REINF_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "reinforcement-36",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Process & Sustainment",
+      "category": "Design",
+      "action": "S Re-engage teams to address: update reinforcement approaches using sustainment insight and lessons learned.",
+      "outcomeIds": [
+        "REINF_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "reinforcement-37",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Process & Sustainment",
-      "category": "Reinforcement",
-      "action": "Monitor Process & Sustainment regularly to ensure the reinforcement approach stays consistently reinforced everywhere.",
-      "outcomeIds": ["REINF_P3_O2"],
+      "category": "Governance",
+      "action": "M Re-embed reinforcement measures into operational management and performance processes.",
+      "outcomeIds": [
+        "REINF_O3"
+      ],
       "readinessScore": 4
     },
     {
-      "id": "REINF_P3_006",
-      "fromStatus": "Not Started",
-      "toStatus": "Emerging",
-      "lens": "People Experience & Culture",
-      "category": "Analysis & Insight",
-      "action": "Survey teams/sites to understand how People Experience & Culture has been affected by inconsistent reinforcement approach since go-live.",
-      "outcomeIds": ["REINF_P3_O1"],
-      "readinessScore": 0
-    },
-    {
-      "id": "REINF_P3_007",
-      "fromStatus": "Emerging",
-      "toStatus": "Developing",
-      "lens": "People Experience & Culture",
-      "category": "Design",
-      "action": "Develop a targeted plan to address the specific People Experience & Culture-related gaps identified in lagging areas.",
-      "outcomeIds": ["REINF_P3_O1"],
-      "readinessScore": 1
-    },
-    {
-      "id": "REINF_P3_008",
-      "fromStatus": "Developing",
-      "toStatus": "Embedding",
-      "lens": "People Experience & Culture",
-      "category": "Communication",
-      "action": "Deliver targeted support to strengthen People Experience & Culture in teams/sites where the reinforcement approach is weakest.",
-      "outcomeIds": ["REINF_P3_O1"],
-      "readinessScore": 2
-    },
-    {
-      "id": "REINF_P3_009",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
-      "lens": "People Experience & Culture",
+      "id": "reinforcement-38",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Process & Sustainment",
       "category": "Measurement & Evaluation",
-      "action": "Confirm People Experience & Culture has improved in previously lagging teams/sites.",
-      "outcomeIds": ["REINF_P3_O2"],
-      "readinessScore": 3
+      "action": "S Re-establish monitoring of long-term behavioural sustainment and continuous improvement outcomes.",
+      "outcomeIds": [
+        "REINF_O3"
+      ],
+      "readinessScore": 4
     },
     {
-      "id": "REINF_P3_010",
+      "id": "reinforcement-39",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Process & Sustainment",
+      "category": "Design",
+      "action": "S Re-engage teams to address: use organisational learning to improve future reinforcement strategies.",
+      "outcomeIds": [
+        "REINF_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "reinforcement-40",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
-      "action": "Embed regular pulse-checks on People Experience & Culture so gaps in the reinforcement approach are caught early in future.",
-      "outcomeIds": ["REINF_P3_O2"],
+      "action": "M Re-embed recognition, feedback and reinforcement practices into organisational culture.",
+      "outcomeIds": [
+        "REINF_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "reinforcement-41",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "S Re-promote continuous improvement and ongoing enhancement of adopted ways of working.",
+      "outcomeIds": [
+        "REINF_O3"
+      ],
       "readinessScore": 4
     }
   ]

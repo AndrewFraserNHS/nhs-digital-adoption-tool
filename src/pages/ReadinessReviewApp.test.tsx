@@ -1,10 +1,10 @@
 import type { AssessmentComponent } from '@data/components';
-import { PREPAREDNESS_ASSESSMENT } from '@data/preparednessAssessment';
+import { PREPAREDNESS_ASSESSMENT } from '@data/readinessReview';
 import type { DraftEntry } from '@lib/adoptionState';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import PreparednessAssessmentApp from './PreparednessAssessmentApp';
+import ReadinessReviewApp from './ReadinessReviewApp';
 
 const TEAM_MEMBERS = [{ id: 'm1', name: 'Alex Morgan', role: 'Change Lead' }];
 
@@ -48,7 +48,7 @@ function answerQuestion(nu: number, optionNumber: number) {
   fireEvent.click(screen.getByLabelText(question.answers[optionNumber - 1]));
 }
 
-describe('PreparednessAssessmentApp', () => {
+describe('ReadinessReviewApp', () => {
   beforeEach(() => {
     localStorage.clear();
   });
@@ -56,8 +56,7 @@ describe('PreparednessAssessmentApp', () => {
   it('SHOULD show the trust details page first, with the trust name auto-populated', () => {
     // arrange
     render(
-      <PreparednessAssessmentApp
-        embedded
+      <ReadinessReviewApp
         trustName="Test Trust"
         region="North West ICB"
         teamMembers={TEAM_MEMBERS}
@@ -65,7 +64,7 @@ describe('PreparednessAssessmentApp', () => {
     );
 
     // assert
-    expect(screen.getByText('Page 1 of 2')).toBeInTheDocument();
+    expect(screen.getByText('Step 1 of 2')).toBeInTheDocument();
     expect(screen.getByText('Test Trust')).toBeInTheDocument();
     expect(screen.getByLabelText('ICB / Region')).toHaveValue('North West ICB');
     expect(screen.getByLabelText('Date completed')).toHaveAttribute('type', 'date');
@@ -77,11 +76,11 @@ describe('PreparednessAssessmentApp', () => {
 
   it('SHOULD show one question at a time with a progress bar, and require an answer before Next', () => {
     // arrange
-    render(<PreparednessAssessmentApp embedded />);
+    render(<ReadinessReviewApp />);
     goToQuestions();
 
     // assert - first question shown with a progress indicator
-    expect(screen.getByText('Page 2 of 2')).toBeInTheDocument();
+    expect(screen.getByText('Step 2 of 2')).toBeInTheDocument();
     expect(screen.getByText(`Question 1 of ${PREPAREDNESS_ASSESSMENT.length}`)).toBeInTheDocument();
     expect(screen.getByText(PREPAREDNESS_ASSESSMENT[0].question)).toBeInTheDocument();
     expect(screen.queryByText(PREPAREDNESS_ASSESSMENT[1].question)).not.toBeInTheDocument();
@@ -98,7 +97,7 @@ describe('PreparednessAssessmentApp', () => {
 
   it('SHOULD reach the last question and show a Finish assessment button', () => {
     // arrange
-    render(<PreparednessAssessmentApp embedded />);
+    render(<ReadinessReviewApp />);
     goToQuestions();
 
     // act - answer every question
@@ -120,7 +119,7 @@ describe('PreparednessAssessmentApp', () => {
     // arrange
     const onReadinessEvaluated = vi.fn();
     render(
-      <PreparednessAssessmentApp embedded components={[]} onReadinessEvaluated={onReadinessEvaluated} />
+      <ReadinessReviewApp components={[]} onReadinessEvaluated={onReadinessEvaluated} />
     );
     goToQuestions();
     PREPAREDNESS_ASSESSMENT.forEach((question, index) => {
@@ -175,8 +174,7 @@ describe('PreparednessAssessmentApp', () => {
     const onReadinessEvaluated = vi.fn();
 
     render(
-      <PreparednessAssessmentApp
-        embedded
+      <ReadinessReviewApp
         components={COMPONENTS}
         getEntry={getEntry}
         onEntryUpdate={onEntryUpdate}
@@ -239,8 +237,7 @@ describe('PreparednessAssessmentApp', () => {
     const onReadinessEvaluated = vi.fn();
 
     render(
-      <PreparednessAssessmentApp
-        embedded
+      <ReadinessReviewApp
         components={COMPONENTS}
         getEntry={getEntry}
         onEntryUpdate={onEntryUpdate}
@@ -275,8 +272,7 @@ describe('PreparednessAssessmentApp', () => {
     // arrange
     const onStakeholdersChange = vi.fn();
     render(
-      <PreparednessAssessmentApp
-        embedded
+      <ReadinessReviewApp
         stakeholders={[]}
         departments={['Nursing']}
         onStakeholdersChange={onStakeholdersChange}

@@ -1,7 +1,11 @@
 import changeNetworkActionsText from '../data/component-actions/change-network-actions.json?raw';
+import changeNetworkActionsTextPathway2 from '../data/component-actions/change-network-actions-pathway2.json?raw';
+import changeNetworkActionsTextPathway3 from '../data/component-actions/change-network-actions-pathway3.json?raw';
+import type { CstPathwayKey } from '@data/cst';
 import type { AdoptionStore } from './adoptionState';
 import {
   clearDerivedComponentContent,
+  type DerivedComponentSource,
   type DerivedComponentConfig,
   parseDerivedComponentSource,
   syncDerivedComponentContent,
@@ -33,13 +37,15 @@ export const CHANGE_NETWORK_CONFIG: DerivedComponentConfig = {
   },
 };
 
-const CHANGE_NETWORK_SOURCE = parseDerivedComponentSource(
-  changeNetworkActionsText,
-  CHANGE_NETWORK_CONFIG
-);
+const CHANGE_NETWORK_SOURCE_BY_PATHWAY: Record<CstPathwayKey, DerivedComponentSource> = {
+  'pathway-1': parseDerivedComponentSource(changeNetworkActionsText, CHANGE_NETWORK_CONFIG),
+  'pathway-2': parseDerivedComponentSource(changeNetworkActionsTextPathway2, CHANGE_NETWORK_CONFIG),
+  'pathway-3': parseDerivedComponentSource(changeNetworkActionsTextPathway3, CHANGE_NETWORK_CONFIG),
+};
 
 export function syncChangeNetworkDerivedContent(store: AdoptionStore): AdoptionStore {
-  return syncDerivedComponentContent(store, CHANGE_NETWORK_CONFIG, CHANGE_NETWORK_SOURCE);
+  const pathway = store.orgProfile.cst.pathway || 'pathway-1';
+  return syncDerivedComponentContent(store, CHANGE_NETWORK_CONFIG, CHANGE_NETWORK_SOURCE_BY_PATHWAY[pathway]);
 }
 
 export function clearChangeNetworkDerivedContent(store: AdoptionStore): AdoptionStore {

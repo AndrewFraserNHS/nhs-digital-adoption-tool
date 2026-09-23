@@ -1,7 +1,11 @@
 import stakeholderActionsText from '../data/component-actions/stakeholder-engagement-and-outcomes-actions.json?raw';
+import stakeholderActionsTextPathway2 from '../data/component-actions/stakeholder-engagement-and-outcomes-actions-pathway2.json?raw';
+import stakeholderActionsTextPathway3 from '../data/component-actions/stakeholder-engagement-and-outcomes-actions-pathway3.json?raw';
+import type { CstPathwayKey } from '@data/cst';
 import type { AdoptionStore } from './adoptionState';
 import {
   clearDerivedComponentContent,
+  type DerivedComponentSource,
   type DerivedComponentConfig,
   parseDerivedComponentSource,
   syncDerivedComponentContent,
@@ -32,10 +36,15 @@ export const STAKEHOLDER_CONFIG: DerivedComponentConfig = {
   },
 };
 
-const STAKEHOLDER_SOURCE = parseDerivedComponentSource(stakeholderActionsText, STAKEHOLDER_CONFIG);
+const STAKEHOLDER_SOURCE_BY_PATHWAY: Record<CstPathwayKey, DerivedComponentSource> = {
+  'pathway-1': parseDerivedComponentSource(stakeholderActionsText, STAKEHOLDER_CONFIG),
+  'pathway-2': parseDerivedComponentSource(stakeholderActionsTextPathway2, STAKEHOLDER_CONFIG),
+  'pathway-3': parseDerivedComponentSource(stakeholderActionsTextPathway3, STAKEHOLDER_CONFIG),
+};
 
 export function syncStakeholderDerivedContent(store: AdoptionStore): AdoptionStore {
-  return syncDerivedComponentContent(store, STAKEHOLDER_CONFIG, STAKEHOLDER_SOURCE);
+  const pathway = store.orgProfile.cst.pathway || 'pathway-1';
+  return syncDerivedComponentContent(store, STAKEHOLDER_CONFIG, STAKEHOLDER_SOURCE_BY_PATHWAY[pathway]);
 }
 
 export function clearStakeholderDerivedContent(store: AdoptionStore): AdoptionStore {

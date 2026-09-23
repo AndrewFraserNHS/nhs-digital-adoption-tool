@@ -4,7 +4,7 @@ import {
   PREPAREDNESS_ASSESSMENT,
   type ReadinessOutcome,
   type ReadinessSuggestion,
-} from '@data/preparednessAssessment';
+} from '@data/readinessReview';
 import { isResolvedActionStatus } from '@lib/actionModel';
 import type { DraftEntry, Stakeholder, TeamMember } from '@lib/adoptionState';
 import { load, save } from '@lib/storage';
@@ -26,7 +26,7 @@ interface PreparednessState {
   completed: boolean;
 }
 
-const STORAGE_KEY = 'nhs-avt-preparedness-assessment';
+const STORAGE_KEY = 'nhs-readiness-review';
 const QUESTIONS = [...PREPAREDNESS_ASSESSMENT].sort((a, b) => a.nu - b.nu);
 
 function freshState(region: string, leadName: string): PreparednessState {
@@ -43,9 +43,7 @@ function freshState(region: string, leadName: string): PreparednessState {
   };
 }
 
-export interface PreparednessAssessmentAppProps {
-  embedded?: boolean;
-  onBack?: () => void;
+export interface ReadinessReviewAppProps {
   trustName?: string;
   /** Pre-fills ICB / Region and Programme lead on a brand-new assessment. */
   region?: string;
@@ -64,8 +62,7 @@ export interface PreparednessAssessmentAppProps {
   }) => void;
 }
 
-export default function PreparednessAssessmentApp({
-  embedded = false,
+export default function ReadinessReviewApp({
   trustName = '',
   region = '',
   leadName = '',
@@ -77,7 +74,7 @@ export default function PreparednessAssessmentApp({
   getEntry,
   onEntryUpdate,
   onReadinessEvaluated,
-}: PreparednessAssessmentAppProps = {}): JSX.Element {
+}: ReadinessReviewAppProps = {}): JSX.Element {
   const [state, setState] = useState<PreparednessState>(
     () => load<PreparednessState>(STORAGE_KEY) || freshState(region, leadName)
   );
@@ -180,31 +177,24 @@ export default function PreparednessAssessmentApp({
   const progressPct = ((state.currentIndex + 1) / QUESTIONS.length) * 100;
 
   return (
-    <div>
-      <header
-        className={
-          embedded
-            ? 'flex flex-wrap items-center justify-between gap-3 pb-4'
-            : 'bg-white border-b border-slate-200 shadow-sm px-6 py-4 flex flex-wrap items-center justify-between gap-3'
-        }
-      >
-        <div>
-          <h1 className="text-lg font-bold text-slate-800">AVT Preparedness Assessment</h1>
-          <p className="text-xs text-slate-500">Page {page} of 2</p>
-        </div>
+    <div className="max-w-2xl mx-auto">
+      <div className="flex items-center justify-between mb-4">
+        <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+          Step {page} of 2
+        </p>
         <button
           type="button"
           onClick={handleReset}
-          className="text-sm px-3 py-1.5 rounded-md font-medium text-slate-600 hover:bg-slate-100"
+          className="text-xs font-medium text-slate-500 hover:text-slate-700 hover:underline"
         >
           Start again
         </button>
-      </header>
+      </div>
 
       {page === 1 ? (
-        <section className="space-y-6" aria-label="Trust details">
+        <section className="space-y-6 text-center" aria-label="Trust details">
           <h2 className="text-xl font-semibold text-slate-800">Trust Details</h2>
-          <div className="grid grid-cols-1 gap-4 max-w-2xl">
+          <div className="grid grid-cols-1 gap-4 text-left">
             <div>
               <span className={labelClass}>Trust name</span>
               <p className="p-2 rounded border border-slate-200 bg-slate-50 text-slate-700">
@@ -294,7 +284,7 @@ export default function PreparednessAssessmentApp({
               />
             </div>
           </div>
-          <div className="flex justify-end max-w-2xl">
+          <div className="flex justify-center">
             <button
               type="button"
               onClick={() => setPage(2)}
@@ -305,13 +295,13 @@ export default function PreparednessAssessmentApp({
           </div>
         </section>
       ) : (
-        <section className="space-y-6 max-w-2xl" aria-label="Questions">
+        <section className="space-y-6" aria-label="Questions">
           {state.completed && outcomeHandled ? (
-            <div className="rounded-lg border border-green-200 bg-green-50 p-6 space-y-4">
+            <div className="rounded-lg border border-green-200 bg-green-50 p-6 space-y-4 text-center">
               <h2 className="text-lg font-semibold text-green-900">Assessment complete</h2>
               <p className="text-sm text-green-800">
-                Thanks for completing the AVT Preparedness Assessment. Use the sidebar to continue
-                setting up your project, or retake the assessment below.
+                Thanks for completing the Readiness Review. See your updated readiness in
+                &quot;Readiness by component&quot; below, or retake the review any time.
               </p>
               <button
                 type="button"

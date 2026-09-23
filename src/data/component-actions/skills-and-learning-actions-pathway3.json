@@ -1,117 +1,560 @@
 {
   "component": {
     "id": "SKILLS_LEARNING",
-    "name": "skills and learning"
+    "name": "Skills & Learning"
   },
   "outcomes": [
     {
-      "id": "SL_P3_O1",
-      "name": "Understanding of the skills and learning approach has been assessed across all live sites/teams"
+      "id": "SL_O1",
+      "name": "Adoption has been re-engaged so that future learning and capability requirements have been identified"
     },
     {
-      "id": "SL_P3_O2",
-      "name": "The skills and learning approach is consistently applied everywhere the change has gone live"
+      "id": "SL_O2",
+      "name": "Adoption has been re-engaged so that learning interventions have been designed and delivered"
+    },
+    {
+      "id": "SL_O3",
+      "name": "Adoption has been re-engaged so that learning outcomes are achieved and sustained"
     }
   ],
   "actions": [
     {
-      "id": "SL_P3_001",
+      "id": "skills_learning-0",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "Skills & Behaviour",
       "category": "Analysis & Insight",
-      "action": "Recognise that Skills & Behaviour is inconsistent across teams/sites since go-live and gather evidence of where the gaps are in the skills and learning approach.",
-      "outcomeIds": ["SL_P3_O1"],
+      "action": "M Re-engage teams to address: recognise that stakeholders will need appropriate knowledge, skills and learning support to operate successfully in the future state.",
+      "outcomeIds": [
+        "SL_O1"
+      ],
       "readinessScore": 0
     },
     {
-      "id": "SL_P3_002",
+      "id": "skills_learning-1",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Skills & Behaviour",
+      "category": "Engagement",
+      "action": "M Re-open discussions with leaders, managers and stakeholders about likely learning and development needs.",
+      "outcomeIds": [
+        "SL_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "skills_learning-5",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Skills & Behaviour",
+      "category": "Governance",
+      "action": "M Re-engage teams to address: gain initial agreement that learning and development activities will be required as part of the change approach.",
+      "outcomeIds": [
+        "SL_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "skills_learning-3",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "M Diagnose stakeholder views on likely learning preferences, barriers and support needs to ensure inclusivity.",
+      "outcomeIds": [
+        "SL_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "skills_learning-2",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Skills & Behaviour",
+      "category": "Analysis & Insight",
+      "action": "M Diagnose impacted stakeholder groups likely to require learning or development.",
+      "outcomeIds": [
+        "SL_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "skills_learning-4",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Skills & Behaviour",
+      "category": "Analysis & Insight",
+      "action": "S Diagnose high-level learning risks that could affect successful implementation or adoption.",
+      "outcomeIds": [
+        "SL_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "skills_learning-6",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "S Re-engage teams to address: begin raising awareness that learning support will be provided to help stakeholders prepare for the change.",
+      "outcomeIds": [
+        "SL_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "skills_learning-7",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Skills & Behaviour",
+      "category": "Analysis & Insight",
+      "action": "S Diagnose gaps in lessons learned from previous changes relating to learning needs, training delivery and user support.",
+      "outcomeIds": [
+        "SL_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "skills_learning-8",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Skills & Behaviour",
       "category": "Analysis & Insight",
-      "action": "Identify why the skills and learning approach hasn't landed consistently for Skills & Behaviour in specific teams/sites and agree a plan to address it.",
-      "outcomeIds": ["SL_P3_O1"],
+      "action": "M Revisit and clarify and document the knowledge, skills and behaviours required to operate successfully in the future state.",
+      "outcomeIds": [
+        "SL_O1"
+      ],
       "readinessScore": 1
     },
     {
-      "id": "SL_P3_003",
+      "id": "skills_learning-9",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Skills & Behaviour",
+      "category": "Analysis & Insight",
+      "action": "M Diagnose current capability levels across impacted stakeholder groups.",
+      "outcomeIds": [
+        "SL_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "skills_learning-10",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Skills & Behaviour",
+      "category": "Analysis & Insight",
+      "action": "M Re-engage teams to address: conduct a structured learning needs and skills gap assessment.",
+      "outcomeIds": [
+        "SL_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "skills_learning-11",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Skills & Behaviour",
+      "category": "Analysis & Insight",
+      "action": "M Diagnose the scale, complexity and impact of learning requirements across the organisation.",
+      "outcomeIds": [
+        "SL_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "skills_learning-12",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "M Re-validate learning preferences, barriers and support requirements with impacted stakeholders.",
+      "outcomeIds": [
+        "SL_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "skills_learning-13",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Skills & Behaviour",
+      "category": "Design",
+      "action": "M Rebuild a structured learning and capability development approach aligned to change objectives.",
+      "outcomeIds": [
+        "SL_O2"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "skills_learning-14",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Skills & Behaviour",
+      "category": "Design",
+      "action": "M Revisit and clarify learning objectives, target audiences, learning outcomes and delivery principles.",
+      "outcomeIds": [
+        "SL_O2"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "skills_learning-15",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Skills & Behaviour",
+      "category": "Dependency Management",
+      "action": "S Diagnose dependencies between learning activities and engagement and communications, readiness, process and implementation plans.",
+      "outcomeIds": [
+        "SL_O2"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "skills_learning-16",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Skills & Behaviour",
+      "category": "Governance",
+      "action": "M Revisit and clarify accountability for learning design, delivery, evaluation and ongoing support.",
+      "outcomeIds": [
+        "SL_O2"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "skills_learning-17",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Skills & Behaviour",
+      "category": "Design",
+      "action": "M Revisit and clarify a training plan to include the learning methods, channels and support mechanisms that will be used to deliver learning and development activities.",
+      "outcomeIds": [
+        "SL_O2"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "skills_learning-18",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Skills & Behaviour",
-      "category": "Engagement",
-      "action": "Re-engage leaders in lagging teams/sites to re-establish the skills and learning approach for Skills & Behaviour.",
-      "outcomeIds": ["SL_P3_O1"],
+      "category": "Design",
+      "action": "M Rebuild learning materials, guidance, resources and support content.",
+      "outcomeIds": [
+        "SL_O2"
+      ],
       "readinessScore": 2
     },
     {
-      "id": "SL_P3_004",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
+      "id": "skills_learning-19",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Skills & Behaviour",
+      "category": "Training & Learning",
+      "action": "M Recover delivery of learning activities to impacted stakeholder groups.",
+      "outcomeIds": [
+        "SL_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "skills_learning-20",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Skills & Behaviour",
+      "category": "Training & Learning",
+      "action": "M Re-engage teams to address: provide role-specific learning interventions where different groups have different learning requirements.",
+      "outcomeIds": [
+        "SL_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "skills_learning-21",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Skills & Behaviour",
+      "category": "Training & Learning",
+      "action": "M Rebuild and support local learning champions, coaches or trainers.",
+      "outcomeIds": [
+        "SL_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "skills_learning-22",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
       "lens": "Skills & Behaviour",
       "category": "Measurement & Evaluation",
-      "action": "Confirm the skills and learning approach for Skills & Behaviour is being applied consistently across previously inconsistent areas.",
-      "outcomeIds": ["SL_P3_O2"],
-      "readinessScore": 3
+      "action": "M Recover implementation of mechanisms to assess attendance, participation and learning completion.",
+      "outcomeIds": [
+        "SL_O2",
+        "SL_O3"
+      ],
+      "readinessScore": 2
     },
     {
-      "id": "SL_P3_005",
-      "fromStatus": "Adopted",
-      "toStatus": "Thriving",
-      "lens": "Skills & Behaviour",
-      "category": "Reinforcement",
-      "action": "Monitor Skills & Behaviour regularly to ensure the skills and learning approach stays consistently reinforced everywhere.",
-      "outcomeIds": ["SL_P3_O2"],
-      "readinessScore": 4
-    },
-    {
-      "id": "SL_P3_006",
-      "fromStatus": "Not Started",
-      "toStatus": "Emerging",
-      "lens": "People Experience & Culture",
-      "category": "Analysis & Insight",
-      "action": "Survey teams/sites to understand how People Experience & Culture has been affected by inconsistent skills and learning approach since go-live.",
-      "outcomeIds": ["SL_P3_O1"],
-      "readinessScore": 0
-    },
-    {
-      "id": "SL_P3_007",
-      "fromStatus": "Emerging",
-      "toStatus": "Developing",
-      "lens": "People Experience & Culture",
-      "category": "Design",
-      "action": "Develop a targeted plan to address the specific People Experience & Culture-related gaps identified in lagging areas.",
-      "outcomeIds": ["SL_P3_O1"],
-      "readinessScore": 1
-    },
-    {
-      "id": "SL_P3_008",
+      "id": "skills_learning-23",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Communication",
-      "action": "Deliver targeted support to strengthen People Experience & Culture in teams/sites where the skills and learning approach is weakest.",
-      "outcomeIds": ["SL_P3_O1"],
+      "action": "M re-communicate learning opportunities, schedules and expectations to stakeholders.",
+      "outcomeIds": [
+        "SL_O2"
+      ],
       "readinessScore": 2
     },
     {
-      "id": "SL_P3_009",
+      "id": "skills_learning-24",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Skills & Behaviour",
+      "category": "Dependency Management",
+      "action": "S Re-coordinate training activities with implementation milestones and readiness requirements.",
+      "outcomeIds": [
+        "SL_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "skills_learning-25",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Skills & Behaviour",
+      "category": "Risk Management",
+      "action": "M Diagnose and manage risks associated with learning delivery and learner readiness.",
+      "outcomeIds": [
+        "SL_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "skills_learning-26",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Skills & Behaviour",
+      "category": "Governance",
+      "action": "M Re-establish monitoring of learning delivery through governance and reporting processes.",
+      "outcomeIds": [
+        "SL_O2",
+        "SL_O3"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "skills_learning-27",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
-      "lens": "People Experience & Culture",
+      "lens": "Skills & Behaviour",
       "category": "Measurement & Evaluation",
-      "action": "Confirm People Experience & Culture has improved in previously lagging teams/sites.",
-      "outcomeIds": ["SL_P3_O2"],
+      "action": "M Re-evaluate whether learning objectives have been achieved.",
+      "outcomeIds": [
+        "SL_O3"
+      ],
       "readinessScore": 3
     },
     {
-      "id": "SL_P3_010",
+      "id": "skills_learning-28",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Skills & Behaviour",
+      "category": "Testing & Validation",
+      "action": "S Diagnose whether participants can demonstrate required knowledge and skills.",
+      "outcomeIds": [
+        "SL_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "skills_learning-29",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Skills & Behaviour",
+      "category": "Measurement & Evaluation",
+      "action": "S Re-establish tracking of learning performance data and identify continuing capability gaps.",
+      "outcomeIds": [
+        "SL_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "skills_learning-30",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Skills & Behaviour",
+      "category": "Training & Learning",
+      "action": "S Re-engage teams to address: provide refresher learning and targeted support where capability gaps remain.",
+      "outcomeIds": [
+        "SL_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "skills_learning-31",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Skills & Behaviour",
+      "category": "Training & Learning",
+      "action": "S Re-engage teams to address: offer ongoing coaching and support to reinforce learning transfer.",
+      "outcomeIds": [
+        "SL_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "skills_learning-32",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "M Gather fresh evidence on learner feedback and use to improve learning content and delivery.",
+      "outcomeIds": [
+        "SL_O2",
+        "SL_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "skills_learning-33",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "M Gather fresh evidence on feedback about learning effectiveness, confidence and practical application.",
+      "outcomeIds": [
+        "SL_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "skills_learning-34",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Skills & Behaviour",
+      "category": "Governance",
+      "action": "M Diagnose gaps in learning outcomes and capability measures through governance processes.",
+      "outcomeIds": [
+        "SL_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "skills_learning-35",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Skills & Behaviour",
+      "category": "Design",
+      "action": "S Re-engage teams to address: refine learning approaches using evaluation findings and implementation experience.",
+      "outcomeIds": [
+        "SL_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "skills_learning-36",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "S Re-engage teams to address: recognise achievement and application of learning within teams and stakeholder groups.",
+      "outcomeIds": [
+        "SL_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "skills_learning-37",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "S Re-share learning successes, progress and achievement milestones.",
+      "outcomeIds": [
+        "SL_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "skills_learning-38",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Skills & Behaviour",
+      "category": "Training & Learning",
+      "action": "S Recover continuous learning opportunities to support evolving organisational needs.",
+      "outcomeIds": [
+        "SL_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "skills_learning-39",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Skills & Behaviour",
+      "category": "Measurement & Evaluation",
+      "action": "S Re-establish monitoring of long-term capability development and learning effectiveness.",
+      "outcomeIds": [
+        "SL_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "skills_learning-40",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Skills & Behaviour",
+      "category": "Design",
+      "action": "S Re-engage teams to address: use organisational learning and insight to improve future learning approaches.",
+      "outcomeIds": [
+        "SL_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "skills_learning-41",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Skills & Behaviour",
+      "category": "Governance",
+      "action": "M Re-embed learning and capability development into organisational improvement and change delivery practices.",
+      "outcomeIds": [
+        "SL_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "skills_learning-42",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
-      "action": "Embed regular pulse-checks on People Experience & Culture so gaps in the skills and learning approach are caught early in future.",
-      "outcomeIds": ["SL_P3_O2"],
+      "action": "M Re-promote a culture of continuous learning and development across the organisation.",
+      "outcomeIds": [
+        "SL_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "skills_learning-43",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Skills & Behaviour",
+      "category": "Reinforcement",
+      "action": "S Re-engage teams to address: recognise achievement and application of learning within teams and stakeholder groups.",
+      "outcomeIds": [],
+      "readinessScore": 3
+    },
+    {
+      "id": "skills_learning-44",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Skills & Behaviour",
+      "category": "Reinforcement",
+      "action": "S Re-promote a culture of continuous learning and development across the organisation.",
+      "outcomeIds": [],
       "readinessScore": 4
     }
   ]

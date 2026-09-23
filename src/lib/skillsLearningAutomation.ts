@@ -1,7 +1,11 @@
 import skillsLearningActionsText from '../data/component-actions/skills-and-learning-actions.json?raw';
+import skillsLearningActionsTextPathway2 from '../data/component-actions/skills-and-learning-actions-pathway2.json?raw';
+import skillsLearningActionsTextPathway3 from '../data/component-actions/skills-and-learning-actions-pathway3.json?raw';
+import type { CstPathwayKey } from '@data/cst';
 import type { AdoptionStore } from './adoptionState';
 import {
   clearDerivedComponentContent,
+  type DerivedComponentSource,
   type DerivedComponentConfig,
   parseDerivedComponentSource,
   syncDerivedComponentContent,
@@ -41,13 +45,15 @@ export const SKILLS_LEARNING_CONFIG: DerivedComponentConfig = {
   },
 };
 
-const SKILLS_LEARNING_SOURCE = parseDerivedComponentSource(
-  skillsLearningActionsText,
-  SKILLS_LEARNING_CONFIG
-);
+const SKILLS_LEARNING_SOURCE_BY_PATHWAY: Record<CstPathwayKey, DerivedComponentSource> = {
+  'pathway-1': parseDerivedComponentSource(skillsLearningActionsText, SKILLS_LEARNING_CONFIG),
+  'pathway-2': parseDerivedComponentSource(skillsLearningActionsTextPathway2, SKILLS_LEARNING_CONFIG),
+  'pathway-3': parseDerivedComponentSource(skillsLearningActionsTextPathway3, SKILLS_LEARNING_CONFIG),
+};
 
 export function syncSkillsLearningDerivedContent(store: AdoptionStore): AdoptionStore {
-  return syncDerivedComponentContent(store, SKILLS_LEARNING_CONFIG, SKILLS_LEARNING_SOURCE);
+  const pathway = store.orgProfile.cst.pathway || 'pathway-1';
+  return syncDerivedComponentContent(store, SKILLS_LEARNING_CONFIG, SKILLS_LEARNING_SOURCE_BY_PATHWAY[pathway]);
 }
 
 export function clearSkillsLearningDerivedContent(store: AdoptionStore): AdoptionStore {

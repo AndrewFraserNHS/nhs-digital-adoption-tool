@@ -1,117 +1,581 @@
 {
   "component": {
     "id": "STAKEHOLDER_ENGAGEMENT_COMMS",
-    "name": "stakeholder engagement and outcomes"
+    "name": "Stakeholder Engagement & Comms"
   },
   "outcomes": [
     {
-      "id": "SEC_P3_O1",
-      "name": "Understanding of the stakeholder engagement approach has been assessed across all live sites/teams"
+      "id": "SEC_O1",
+      "name": "Adoption has been re-engaged so that stakeholders have been identified, analysed and prioritised"
     },
     {
-      "id": "SEC_P3_O2",
-      "name": "The stakeholder engagement approach is consistently applied everywhere the change has gone live"
+      "id": "SEC_O2",
+      "name": "Adoption has been re-engaged so that stakeholders are actively engaged and informed"
+    },
+    {
+      "id": "SEC_O3",
+      "name": "Adoption has been re-engaged so that engagement and communications support successful adoption"
     }
   ],
   "actions": [
     {
-      "id": "SEC_P3_001",
+      "id": "stakeholder-0",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
-      "action": "Recognise that People Experience & Culture is inconsistent across teams/sites since go-live and gather evidence of where the gaps are in the stakeholder engagement approach.",
-      "outcomeIds": ["SEC_P3_O1"],
+      "action": "M Re-establish the importance of stakeholder engagement and communication in achieving successful change outcomes.",
+      "outcomeIds": [
+        "SEC_O1"
+      ],
       "readinessScore": 0
     },
     {
-      "id": "SEC_P3_002",
+      "id": "stakeholder-1",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "M Re-open discussions with leaders and teams about who may be affected by or interested in the change.",
+      "outcomeIds": [
+        "SEC_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "stakeholder-2",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "M Diagnose high-level stakeholder groups that may influence, support or be impacted by the change.",
+      "outcomeIds": [
+        "SEC_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "stakeholder-3",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "S Diagnose initial stakeholder perspectives, expectations and concerns relating to the change.",
+      "outcomeIds": [
+        "SEC_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "stakeholder-4",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "M Re-engage teams to address: begin communicating the reason for the change and the importance of stakeholder involvement.",
+      "outcomeIds": [
+        "SEC_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "stakeholder-5",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "M Re-engage teams to address: gain initial agreement that stakeholder engagement and communication activities will be required.",
+      "outcomeIds": [
+        "SEC_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "stakeholder-6",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "S Diagnose potential communication challenges, risks and opportunities.",
+      "outcomeIds": [
+        "SEC_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "stakeholder-7",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "S Diagnose gaps in lessons learned from previous stakeholder engagement and communication activities.",
+      "outcomeIds": [
+        "SEC_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "stakeholder-8",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
-      "action": "Identify why the stakeholder engagement approach hasn't landed consistently for People Experience & Culture in specific teams/sites and agree a plan to address it.",
-      "outcomeIds": ["SEC_P3_O1"],
+      "action": "M Diagnose and document stakeholders likely to influence, support, be affected by or be impacted by the change.",
+      "outcomeIds": [
+        "SEC_O1"
+      ],
       "readinessScore": 1
     },
     {
-      "id": "SEC_P3_003",
-      "fromStatus": "Developing",
-      "toStatus": "Embedding",
+      "id": "stakeholder-9",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "S Diagnose stakeholder influence, interest, commitment, capability and degree of impact.",
+      "outcomeIds": [
+        "SEC_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "stakeholder-10",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "S Re-engage teams to address: segment stakeholders into defined groups with common characteristics, needs and engagement requirements.",
+      "outcomeIds": [
+        "SEC_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "stakeholder-11",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
       "lens": "People Experience & Culture",
       "category": "Engagement",
-      "action": "Re-engage leaders in lagging teams/sites to re-establish the stakeholder engagement approach for People Experience & Culture.",
-      "outcomeIds": ["SEC_P3_O1"],
-      "readinessScore": 2
+      "action": "S Re-engage teams to address: conduct structured engagement activities to understand stakeholder perspectives, expectations and concerns.",
+      "outcomeIds": [
+        "SEC_O1",
+        "SEC_O2"
+      ],
+      "readinessScore": 1
     },
     {
-      "id": "SEC_P3_004",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
+      "id": "stakeholder-12",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
       "lens": "People Experience & Culture",
-      "category": "Measurement & Evaluation",
-      "action": "Confirm the stakeholder engagement approach for People Experience & Culture is being applied consistently across previously inconsistent areas.",
-      "outcomeIds": ["SEC_P3_O2"],
-      "readinessScore": 3
-    },
-    {
-      "id": "SEC_P3_005",
-      "fromStatus": "Adopted",
-      "toStatus": "Thriving",
-      "lens": "People Experience & Culture",
-      "category": "Reinforcement",
-      "action": "Monitor People Experience & Culture regularly to ensure the stakeholder engagement approach stays consistently reinforced everywhere.",
-      "outcomeIds": ["SEC_P3_O2"],
-      "readinessScore": 4
-    },
-    {
-      "id": "SEC_P3_006",
-      "fromStatus": "Not Started",
-      "toStatus": "Emerging",
-      "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
-      "action": "Survey teams/sites to understand how Strategic Direction & Leadership has been affected by inconsistent stakeholder engagement approach since go-live.",
-      "outcomeIds": ["SEC_P3_O1"],
-      "readinessScore": 0
+      "action": "S Revisit the documentation of stakeholder concerns, opportunities, communication preferences and support needs.",
+      "outcomeIds": [
+        "SEC_O1",
+        "SEC_O2"
+      ],
+      "readinessScore": 1
     },
     {
-      "id": "SEC_P3_007",
+      "id": "stakeholder-13",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
       "category": "Design",
-      "action": "Develop a targeted plan to address the specific Strategic Direction & Leadership-related gaps identified in lagging areas.",
-      "outcomeIds": ["SEC_P3_O1"],
+      "action": "M Rebuild a structured stakeholder engagement and communications approach.",
+      "outcomeIds": [
+        "SEC_O2"
+      ],
       "readinessScore": 1
     },
     {
-      "id": "SEC_P3_008",
+      "id": "stakeholder-14",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "M Revisit and clarify stakeholder engagement objectives, communication objectives and desired outcomes.",
+      "outcomeIds": [
+        "SEC_O2"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "stakeholder-15",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Communication",
+      "action": "M Rebuild stakeholder-focused messages that explain the change consistently and appropriately.",
+      "outcomeIds": [
+        "SEC_O2"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "stakeholder-16",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Dependency Management",
+      "action": "S Diagnose dependencies between engagement activities and other change workstreams.",
+      "outcomeIds": [
+        "SEC_O2"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "stakeholder-17",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "M Revisit and clarify sponsorship, accountability and governance arrangements for stakeholder engagement and communications.",
+      "outcomeIds": [
+        "SEC_O2"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "stakeholder-18",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "M Recover implementation of stakeholder engagement activities using appropriate channels and methods.",
+      "outcomeIds": [
+        "SEC_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "stakeholder-19",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "S Recover implementation of targeted communications tailored to different stakeholder groups.",
+      "outcomeIds": [
+        "SEC_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "stakeholder-20",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "S Re-engage teams to address: provide opportunities for stakeholders to participate, contribute and influence aspects of the change.",
+      "outcomeIds": [
+        "SEC_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "stakeholder-21",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "S Re-engage teams to address: ensure communications remain timely, relevant and aligned to programme developments.",
+      "outcomeIds": [
+        "SEC_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "stakeholder-22",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "M Re-establish mechanisms for gathering stakeholder feedback and engagement insight.",
+      "outcomeIds": [
+        "SEC_O2",
+        "SEC_O3"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "stakeholder-23",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "M Diagnose gaps in stakeholder engagement progress through governance mechanisms.",
+      "outcomeIds": [
+        "SEC_O3"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "stakeholder-24",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "S Revisit and clarify measures to assess communication reach, engagement levels and stakeholder understanding.",
+      "outcomeIds": [
+        "SEC_O3"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "stakeholder-25",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Dependency Management",
+      "action": "S Re-coordinate engagement activities with communications, learning, readiness and adoption activities.",
+      "outcomeIds": [
+        "SEC_O3"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "stakeholder-26",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "M Rebuild a detailed stakeholder engagement and communications strategy and plan.",
+      "outcomeIds": [
+        "SEC_O2",
+        "SEC_O3"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "stakeholder-27",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
       "category": "Communication",
-      "action": "Deliver targeted support to strengthen Strategic Direction & Leadership in teams/sites where the stakeholder engagement approach is weakest.",
-      "outcomeIds": ["SEC_P3_O1"],
+      "action": "S Re-engage teams to address: equip sponsors, managers and change agents and change champions with communication materials and engagement guidance.",
+      "outcomeIds": [
+        "SEC_O2"
+      ],
       "readinessScore": 2
     },
     {
-      "id": "SEC_P3_009",
+      "id": "stakeholder-28",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "M Re-establish monitoring of stakeholder engagement levels, sentiment and communication effectiveness.",
+      "outcomeIds": [
+        "SEC_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "stakeholder-29",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "S Re-engage teams to address: respond to stakeholder concerns, questions and emerging issues in a timely manner.",
+      "outcomeIds": [
+        "SEC_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "stakeholder-30",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "S Re-engage teams to address: adapt communications using stakeholder feedback and implementation experience.",
+      "outcomeIds": [
+        "SEC_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "stakeholder-31",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "S Re-engage teams to address: use stakeholder representatives, change agents and change champions and other networks to strengthen engagement activity.",
+      "outcomeIds": [
+        "SEC_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "stakeholder-32",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "S Diagnose stakeholder understanding, involvement and support for the change.",
+      "outcomeIds": [
+        "SEC_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "stakeholder-33",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "M Diagnose gaps in engagement effectiveness and communication performance through governance forums.",
+      "outcomeIds": [
+        "SEC_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "stakeholder-34",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "S Re-engage teams to address: use feedback to refine engagement and communication approaches using evidence, insight and lessons learned.",
+      "outcomeIds": [
+        "SEC_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "stakeholder-35",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Dependency Management",
+      "action": "S Re-engage teams to address: align engagement activities with implementation, adoption and readiness priorities.",
+      "outcomeIds": [
+        "SEC_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "stakeholder-36",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
       "category": "Measurement & Evaluation",
-      "action": "Confirm Strategic Direction & Leadership has improved in previously lagging teams/sites.",
-      "outcomeIds": ["SEC_P3_O2"],
+      "action": "S Re-engage teams to address: use engagement and communication metrics to inform planning and decision-making.",
+      "outcomeIds": [
+        "SEC_O3"
+      ],
       "readinessScore": 3
     },
     {
-      "id": "SEC_P3_010",
+      "id": "stakeholder-37",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Communication",
+      "action": "S Re-promote key successes, achievements and progress through communication channels.",
+      "outcomeIds": [
+        "SEC_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "stakeholder-38",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "M Recover continuous engagement with stakeholders beyond implementation.",
+      "outcomeIds": [
+        "SEC_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "stakeholder-39",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "S Re-engage teams to address: ensure communications continue to support adoption, optimisation and continuous improvement.",
+      "outcomeIds": [
+        "SEC_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "stakeholder-40",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "S Re-measure long-term stakeholder confidence, advocacy and engagement.",
+      "outcomeIds": [
+        "SEC_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "stakeholder-41",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
       "category": "Reinforcement",
-      "action": "Embed regular pulse-checks on Strategic Direction & Leadership so gaps in the stakeholder engagement approach are caught early in future.",
-      "outcomeIds": ["SEC_P3_O2"],
+      "action": "M Re-embed effective engagement and communication practices into organisational change standards.",
+      "outcomeIds": [
+        "SEC_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "stakeholder-42",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "S Re-engage teams to address: use organisational learning to continuously improve engagement and communication approaches.",
+      "outcomeIds": [
+        "SEC_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "stakeholder-43",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Communication",
+      "action": "M Re-engage teams to address: engagement and communication strategy and plans to be approved and shared across the organisation",
+      "outcomeIds": [],
+      "readinessScore": 2
+    },
+    {
+      "id": "stakeholder-44",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "S Diagnose potential change network members to support engagement and communication activities",
+      "outcomeIds": [],
+      "readinessScore": 1
+    },
+    {
+      "id": "stakeholder-45",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "S Re-engage teams to address: change Network continues to act as a 2-way conduit between the programme and stakeholders and monitors engagement impact and effectiveness",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "stakeholder-46",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "S Re-share success stories around the change and adoption to inspire others",
+      "outcomeIds": [],
       "readinessScore": 4
     }
   ]

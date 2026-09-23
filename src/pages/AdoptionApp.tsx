@@ -85,7 +85,6 @@ import BenefitsApp from '@pages/BenefitsApp';
 import ChangeImpactAssessmentApp from '@pages/ChangeImpactAssessmentApp';
 import CompareApp from '@pages/CompareApp';
 import ForceFieldAnalysisApp from '@pages/ForceFieldAnalysisApp';
-import PreparednessAssessmentApp from '@pages/PreparednessAssessmentApp';
 import RaidLogApp from '@pages/RaidLogApp';
 import StakeholderAnalysisApp from '@pages/StakeholderAnalysisApp';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -106,7 +105,6 @@ const DEFAULT_AUDIT_ACTOR = 'Unknown user';
 const ALLOWED_VIEWS_WHEN_UNCONFIGURED: View[] = [
   'introduction',
   'engine-explained',
-  'preparedness-assessment',
   'project-details',
   'profile',
 ];
@@ -422,7 +420,6 @@ export function AdoptionApp() {
       'stakeholder-analysis': 'tools',
       'raid-log': 'tools',
       benefits: 'tools',
-      'preparedness-assessment': 'intro',
       'audit-log': 'tools',
     };
     const section = sectionByView[view];
@@ -1477,7 +1474,6 @@ export function AdoptionApp() {
                 [
                   'introduction',
                   'engine-explained',
-                  'preparedness-assessment',
                   'project-details',
                   'where-am-i-now',
                 ] as View[]
@@ -1498,11 +1494,9 @@ export function AdoptionApp() {
                     ? 'Introduction'
                     : v === 'engine-explained'
                       ? 'Engine Explained'
-                      : v === 'preparedness-assessment'
-                        ? 'Preparedness Assessment'
-                        : v === 'project-details'
-                          ? 'Project Profile'
-                          : 'Where Am I Now?'}
+                      : v === 'project-details'
+                        ? 'Project Profile'
+                        : 'Where Am I Now?'}
                 </button>
               ))}
             </nav>
@@ -1931,16 +1925,10 @@ export function AdoptionApp() {
             <WhereAmINowPage
               components={COMPONENTS}
               getEntry={getEntry}
+              onEntryUpdate={updateEntry}
               effectivePhaseFocus={effectivePhaseFocus}
               phaseFocusMode={userSettings.phaseFocusMode || 'auto'}
               onComponentClick={openComponentAssessment}
-              onSetManualPhase={(phase) =>
-                setUserSettings((prev) => ({
-                  ...prev,
-                  phaseFocusMode: 'manual',
-                  manualPhaseFocus: phase,
-                }))
-              }
               onResetToAuto={() =>
                 setUserSettings((prev) => ({
                   ...prev,
@@ -1949,6 +1937,17 @@ export function AdoptionApp() {
                 }))
               }
               darkMode={Boolean(userSettings.darkMode)}
+              trustName={store.orgProfile.trustName}
+              region={store.orgProfile.region}
+              leadName={store.orgProfile.leadName}
+              teamMembers={store.orgProfile.teamMembers || []}
+              stakeholders={store.stakeholders}
+              onStakeholdersChange={updateStakeholders}
+              departments={
+                (store.orgProfile.stakeholderReferenceLists || DEFAULT_STAKEHOLDER_REFERENCE_LISTS)
+                  .departments
+              }
+              onReadinessEvaluated={handleReadinessEvaluated}
             />
           )}
           {view === 'daily-checkin' && (
@@ -2208,26 +2207,6 @@ export function AdoptionApp() {
                 (store.orgProfile.stakeholderReferenceLists || DEFAULT_STAKEHOLDER_REFERENCE_LISTS)
                   .departments
               }
-            />
-          )}
-          {view === 'preparedness-assessment' && (
-            <PreparednessAssessmentApp
-              embedded
-              onBack={() => handleViewChange('dashboard')}
-              trustName={store.orgProfile.trustName}
-              region={store.orgProfile.region}
-              leadName={store.orgProfile.leadName}
-              teamMembers={store.orgProfile.teamMembers || []}
-              stakeholders={store.stakeholders}
-              onStakeholdersChange={updateStakeholders}
-              departments={
-                (store.orgProfile.stakeholderReferenceLists || DEFAULT_STAKEHOLDER_REFERENCE_LISTS)
-                  .departments
-              }
-              components={COMPONENTS}
-              getEntry={getEntry}
-              onEntryUpdate={updateEntry}
-              onReadinessEvaluated={handleReadinessEvaluated}
             />
           )}
           {view === 'audit-log' && (

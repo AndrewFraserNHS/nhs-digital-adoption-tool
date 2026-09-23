@@ -1,111 +1,650 @@
 {
-  "component": { "id": "VISION", "name": "Vision" },
+  "component": {
+    "id": "VISION",
+    "name": "Vision"
+  },
+  "categories": [
+    "Analysis & Insight",
+    "Design",
+    "Governance",
+    "Engagement",
+    "Communication",
+    "Training & Learning",
+    "Implementation",
+    "Testing & Validation",
+    "Measurement & Evaluation",
+    "Risk Management",
+    "Dependency Management",
+    "Reinforcement"
+  ],
   "outcomes": [
-    { "id": "VISION_P2_O1", "name": "The vision has been refined based on pilot learnings" },
     {
-      "id": "VISION_P2_O2",
-      "name": "The vision is understood across every site/team joining the scaled rollout"
+      "id": "VISION_O1",
+      "name": "The pilot has validated that a compelling future state has been defined"
+    },
+    {
+      "id": "VISION_O2",
+      "name": "The pilot has validated that the vision is shared and understood"
+    },
+    {
+      "id": "VISION_O3",
+      "name": "The pilot has validated that the vision is visible and guides the change"
     }
   ],
   "actions": [
     {
-      "id": "VISION_P2_001",
+      "id": "vision-0",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
-      "action": "Review feedback from the pilot to identify what worked well and what needs to change in the vision before scaling.",
-      "outcomeIds": ["VISION_P2_O1"],
+      "action": "M Consolidate information on organisational priorities, programme objectives and expected outcomes to inform vision development.",
+      "outcomeIds": [
+        "VISION_O1"
+      ],
       "readinessScore": 0
     },
     {
-      "id": "VISION_P2_002",
+      "id": "vision-1",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "S Confirm key leaders who need to contribute to and endorse the vision.",
+      "outcomeIds": [
+        "VISION_O1",
+        "VISION_O3"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "vision-2",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Engagement",
+      "action": "S Continue facilitating an initial vision workshop with the SRO, sponsors and key programme stakeholders to explore the future state.",
+      "outcomeIds": [
+        "VISION_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "vision-3",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "S Formalise the documentation of initial themes describing why the change is needed and what success may look like.",
+      "outcomeIds": [
+        "VISION_O1",
+        "VISION_O2"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "vision-4",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "S Formalise a process and timeline for drafting the vision statement.",
+      "outcomeIds": [
+        "VISION_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "vision-5",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "C Standardise simple awareness messages explaining that a vision is being developed.",
+      "outcomeIds": [
+        "VISION_O2"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "vision-6",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "M Confirm key stakeholder groups that need to be involved in early vision discussions.",
+      "outcomeIds": [
+        "VISION_O1",
+        "VISION_O2"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "vision-7",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "M Review and refine: conduct stakeholder listening sessions to understand current challenges and expectations.",
+      "outcomeIds": [
+        "VISION_O1",
+        "VISION_O2"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "vision-8",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "S Consolidate feedback on stakeholders' perceptions of the proposed change.",
+      "outcomeIds": [
+        "VISION_O1",
+        "VISION_O2"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "vision-9",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "S Confirm common concerns, aspirations and opportunities that should influence the vision.",
+      "outcomeIds": [
+        "VISION_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "vision-10",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
       "category": "Design",
-      "action": "Refine the vision statement to reflect lessons learned from the pilot and the needs of the wider rollout.",
-      "outcomeIds": ["VISION_P2_O1"],
+      "action": "M Finalise a formal vision statement describing the future state and intended outcomes.",
+      "outcomeIds": [
+        "VISION_O1"
+      ],
       "readinessScore": 1
     },
     {
-      "id": "VISION_P2_003",
+      "id": "vision-11",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Testing & Validation",
+      "action": "M Validate at scale the draft vision with senior leaders to ensure strategic alignment.",
+      "outcomeIds": [
+        "VISION_O1",
+        "VISION_O3"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "vision-12",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "M Review and refine: refine the vision using feedback from sponsors and governance groups.",
+      "outcomeIds": [
+        "VISION_O1",
+        "VISION_O3"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "vision-13",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Testing & Validation",
+      "action": "S Re-validate how the vision aligns with organisational objectives and programme benefits.",
+      "outcomeIds": [
+        "VISION_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "vision-14",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "M Refine a high-level vision narrative that can be used consistently across the programme.",
+      "outcomeIds": [
+        "VISION_O2",
+        "VISION_O3"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "vision-15",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "S Review and refine: run workshops with stakeholder groups to test understanding of the draft vision.",
+      "outcomeIds": [
+        "VISION_O2"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "vision-16",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "S Review and refine: collect structured feedback on whether the vision feels relevant and meaningful.",
+      "outcomeIds": [
+        "VISION_O1",
+        "VISION_O2"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "vision-17",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "S Confirm gaps or ambiguities in the vision from a stakeholder perspective.",
+      "outcomeIds": [
+        "VISION_O1",
+        "VISION_O2"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "vision-18",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Design",
+      "action": "S Review and refine: update the vision to reflect stakeholder insights and concerns.",
+      "outcomeIds": [
+        "VISION_O1",
+        "VISION_O2"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "vision-19",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "M Review and refine: begin developing people-centred messaging explaining why the vision matters to different stakeholder groups.",
+      "outcomeIds": [
+        "VISION_O2"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "vision-20",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
-      "action": "Secure sponsor endorsement of the refined vision for the scaled rollout.",
-      "outcomeIds": ["VISION_P2_O1"],
+      "action": "M Reconfirm formal approval of the vision through programme governance.",
+      "outcomeIds": [
+        "VISION_O1",
+        "VISION_O3"
+      ],
       "readinessScore": 2
     },
     {
-      "id": "VISION_P2_004",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
+      "id": "vision-21",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "M Refine a leadership communication plan to support vision rollout.",
+      "outcomeIds": [
+        "VISION_O2",
+        "VISION_O3"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "vision-22",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
       "category": "Communication",
-      "action": "Ensure the refined vision is consistently communicated to leaders as new sites/teams join the rollout.",
-      "outcomeIds": ["VISION_P2_O2"],
-      "readinessScore": 3
+      "action": "M Review and refine: equip sponsors with key messages, presentations and briefing materials.",
+      "outcomeIds": [
+        "VISION_O2",
+        "VISION_O3"
+      ],
+      "readinessScore": 2
     },
     {
-      "id": "VISION_P2_005",
-      "fromStatus": "Adopted",
-      "toStatus": "Thriving",
+      "id": "vision-23",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
-      "category": "Measurement & Evaluation",
-      "action": "Continuously validate that the vision remains relevant as the change scales across the organisation.",
-      "outcomeIds": ["VISION_P2_O2"],
-      "readinessScore": 4
+      "category": "Governance",
+      "action": "M Review and refine: integrate the vision into programme governance documentation and reporting.",
+      "outcomeIds": [
+        "VISION_O3"
+      ],
+      "readinessScore": 2
     },
     {
-      "id": "VISION_P2_006",
-      "fromStatus": "Not Started",
-      "toStatus": "Emerging",
-      "lens": "People Experience & Culture",
-      "category": "Analysis & Insight",
-      "action": "Gather feedback from pilot participants on how well the vision resonated with them.",
-      "outcomeIds": ["VISION_P2_O1"],
-      "readinessScore": 0
+      "id": "vision-24",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Communication",
+      "action": "M Review and refine: ensure leadership communications consistently reference the agreed vision.",
+      "outcomeIds": [
+        "VISION_O2",
+        "VISION_O3"
+      ],
+      "readinessScore": 2
     },
     {
-      "id": "VISION_P2_007",
-      "fromStatus": "Emerging",
-      "toStatus": "Developing",
-      "lens": "People Experience & Culture",
-      "category": "Design",
-      "action": "Adapt the communication approaches that worked in the pilot for a wider, more diverse audience.",
-      "outcomeIds": ["VISION_P2_O2"],
-      "readinessScore": 1
-    },
-    {
-      "id": "VISION_P2_008",
+      "id": "vision-25",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Communication",
-      "action": "Deliver vision communications to stakeholders in newly onboarding sites/teams.",
-      "outcomeIds": ["VISION_P2_O2"],
+      "action": "M Refine audience-specific communications describing the purpose, value and future-state ambition of the vision.",
+      "outcomeIds": [
+        "VISION_O2"
+      ],
       "readinessScore": 2
     },
     {
-      "id": "VISION_P2_009",
+      "id": "vision-26",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "M Scale delivery of engagement sessions to build understanding and awareness of the vision.",
+      "outcomeIds": [
+        "VISION_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "vision-27",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "M Formalise feedback channels to assess comprehension and acceptance of the vision.",
+      "outcomeIds": [
+        "VISION_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "vision-28",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "M Review and refine: use change agents and sponsors to reinforce the vision locally.",
+      "outcomeIds": [
+        "VISION_O2",
+        "VISION_O3"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "vision-29",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "M Continue monitoring stakeholder understanding through surveys, workshops or feedback sessions.",
+      "outcomeIds": [
+        "VISION_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "vision-30",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Reinforcement",
+      "action": "S Review and refine: ensure sponsors consistently communicate the vision during governance and operational meetings.",
+      "outcomeIds": [
+        "VISION_O2",
+        "VISION_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "vision-31",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "S Reinforce the vision into organisational planning, governance and decision-making processes.",
+      "outcomeIds": [
+        "VISION_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "vision-32",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "S Review pilot learnings on leadership communications regularly for alignment and consistency.",
+      "outcomeIds": [
+        "VISION_O2",
+        "VISION_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "vision-33",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "S Continue monitoring leadership engagement in promoting the vision.",
+      "outcomeIds": [
+        "VISION_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "vision-34",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "M Review and refine: deploy a formal vision communication campaign across all stakeholder groups.",
+      "outcomeIds": [
+        "VISION_O2",
+        "VISION_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "vision-35",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
       "category": "Measurement & Evaluation",
-      "action": "Monitor understanding of the vision among stakeholders in the wider rollout and address gaps.",
-      "outcomeIds": ["VISION_P2_O2"],
+      "action": "S Formalise regular feedback loops to assess understanding and engagement with the vision.",
+      "outcomeIds": [
+        "VISION_O2"
+      ],
       "readinessScore": 3
     },
     {
-      "id": "VISION_P2_010",
+      "id": "vision-36",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "S Continue monitoring stakeholder awareness and adjust communications where necessary.",
+      "outcomeIds": [
+        "VISION_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "vision-37",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "S Review and refine: use case studies and practical examples to demonstrate the vision in action.",
+      "outcomeIds": [
+        "VISION_O2",
+        "VISION_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "vision-38",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "S Review and refine: reinforce the vision through team meetings, departmental briefings and change network activities.",
+      "outcomeIds": [
+        "VISION_O2",
+        "VISION_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "vision-39",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Reinforcement",
+      "action": "S Review and refine: ensure leaders consistently reference the vision during planning, governance and decision-making processes",
+      "outcomeIds": [
+        "VISION_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "vision-40",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "M Review pilot learnings on organisational priorities regularly to ensure continued alignment with the vision.",
+      "outcomeIds": [
+        "VISION_O1",
+        "VISION_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "vision-41",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "S Review and refine: use adoption and performance data to refine and strengthen how the vision is communicated.",
+      "outcomeIds": [
+        "VISION_O2",
+        "VISION_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "vision-42",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "S Formalise mechanisms to continuously evaluate whether organisational behaviours remain aligned to the vision.",
+      "outcomeIds": [
+        "VISION_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "vision-43",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "S Re-measure how well staff understand and can articulate the vision.",
+      "outcomeIds": [
+        "VISION_O2"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "vision-44",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
-      "action": "Use champions from the pilot to help new sites/teams connect with the vision.",
-      "outcomeIds": ["VISION_P2_O2"],
+      "action": "S Review and refine: capture and share success stories demonstrating delivery of the vision.",
+      "outcomeIds": [
+        "VISION_O2",
+        "VISION_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "vision-45",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "S Reinforce teams to identify local improvements that support achievement of the vision.",
+      "outcomeIds": [
+        "VISION_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "vision-46",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "S Sustain continuous engagement and listening activities to keep the vision relevant.",
+      "outcomeIds": [
+        "VISION_O1",
+        "VISION_O2"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "vision-47",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "S Review and refine: reinforce the vision through recognition programmes and celebration of achievements.",
+      "outcomeIds": [
+        "VISION_O2",
+        "VISION_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "vision-48",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "S Review and refine: ensure the vision becomes part of everyday conversations, team objectives and organisational culture.",
+      "outcomeIds": [
+        "VISION_O2",
+        "VISION_O3"
+      ],
       "readinessScore": 4
     }
   ]

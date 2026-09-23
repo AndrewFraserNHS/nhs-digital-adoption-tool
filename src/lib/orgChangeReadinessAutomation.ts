@@ -1,8 +1,12 @@
 import orgChangeReadinessActionsText from '../data/component-actions/org-change-readiness-actions.json?raw';
+import orgChangeReadinessActionsPathway2 from '../data/component-actions/org-change-readiness-actions-pathway2.json?raw';
+import orgChangeReadinessActionsPathway3 from '../data/component-actions/org-change-readiness-actions-pathway3.json?raw';
+import type { CstPathwayKey } from '@data/cst';
 import type { AdoptionStore } from './adoptionState';
 import {
   clearDerivedComponentContent,
   type DerivedComponentConfig,
+  type DerivedComponentSource,
   parseDerivedComponentSource,
   syncDerivedComponentContent,
 } from './componentDerivedAutomation';
@@ -36,16 +40,24 @@ export const ORG_CHANGE_READINESS_CONFIG: DerivedComponentConfig = {
   },
 };
 
-const ORG_CHANGE_READINESS_SOURCE = parseDerivedComponentSource(
-  orgChangeReadinessActionsText,
-  ORG_CHANGE_READINESS_CONFIG
-);
+const ORG_CHANGE_READINESS_SOURCE_BY_PATHWAY: Record<CstPathwayKey, DerivedComponentSource> = {
+  'pathway-1': parseDerivedComponentSource(orgChangeReadinessActionsText, ORG_CHANGE_READINESS_CONFIG),
+  'pathway-2': parseDerivedComponentSource(
+    orgChangeReadinessActionsPathway2,
+    ORG_CHANGE_READINESS_CONFIG
+  ),
+  'pathway-3': parseDerivedComponentSource(
+    orgChangeReadinessActionsPathway3,
+    ORG_CHANGE_READINESS_CONFIG
+  ),
+};
 
 export function syncOrgChangeReadinessDerivedContent(store: AdoptionStore): AdoptionStore {
+  const pathway = store.orgProfile.cst.pathway || 'pathway-1';
   return syncDerivedComponentContent(
     store,
     ORG_CHANGE_READINESS_CONFIG,
-    ORG_CHANGE_READINESS_SOURCE
+    ORG_CHANGE_READINESS_SOURCE_BY_PATHWAY[pathway]
   );
 }
 

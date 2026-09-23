@@ -1,7 +1,11 @@
 import sponsorshipActionsText from '../data/component-actions/senior-sponsorship-and-governance-actions.json?raw';
+import sponsorshipActionsTextPathway2 from '../data/component-actions/senior-sponsorship-and-governance-actions-pathway2.json?raw';
+import sponsorshipActionsTextPathway3 from '../data/component-actions/senior-sponsorship-and-governance-actions-pathway3.json?raw';
+import type { CstPathwayKey } from '@data/cst';
 import type { AdoptionStore } from './adoptionState';
 import {
   clearDerivedComponentContent,
+  type DerivedComponentSource,
   type DerivedComponentConfig,
   parseDerivedComponentSource,
   syncDerivedComponentContent,
@@ -27,10 +31,15 @@ export const SPONSORSHIP_CONFIG: DerivedComponentConfig = {
   ],
 };
 
-const SPONSORSHIP_SOURCE = parseDerivedComponentSource(sponsorshipActionsText, SPONSORSHIP_CONFIG);
+const SPONSORSHIP_SOURCE_BY_PATHWAY: Record<CstPathwayKey, DerivedComponentSource> = {
+  'pathway-1': parseDerivedComponentSource(sponsorshipActionsText, SPONSORSHIP_CONFIG),
+  'pathway-2': parseDerivedComponentSource(sponsorshipActionsTextPathway2, SPONSORSHIP_CONFIG),
+  'pathway-3': parseDerivedComponentSource(sponsorshipActionsTextPathway3, SPONSORSHIP_CONFIG),
+};
 
 export function syncSponsorshipDerivedContent(store: AdoptionStore): AdoptionStore {
-  return syncDerivedComponentContent(store, SPONSORSHIP_CONFIG, SPONSORSHIP_SOURCE);
+  const pathway = store.orgProfile.cst.pathway || 'pathway-1';
+  return syncDerivedComponentContent(store, SPONSORSHIP_CONFIG, SPONSORSHIP_SOURCE_BY_PATHWAY[pathway]);
 }
 
 export function clearSponsorshipDerivedContent(store: AdoptionStore): AdoptionStore {

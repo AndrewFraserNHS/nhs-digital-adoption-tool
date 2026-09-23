@@ -1,7 +1,11 @@
 import benefitsActionsText from '../data/component-actions/benefits-actions.json?raw';
+import benefitsActionsTextPathway2 from '../data/component-actions/benefits-actions-pathway2.json?raw';
+import benefitsActionsTextPathway3 from '../data/component-actions/benefits-actions-pathway3.json?raw';
+import type { CstPathwayKey } from '@data/cst';
 import type { AdoptionStore } from './adoptionState';
 import {
   clearDerivedComponentContent,
+  type DerivedComponentSource,
   type DerivedComponentConfig,
   parseDerivedComponentSource,
   syncDerivedComponentContent,
@@ -28,10 +32,15 @@ export const BENEFITS_CONFIG: DerivedComponentConfig = {
   },
 };
 
-const BENEFITS_SOURCE = parseDerivedComponentSource(benefitsActionsText, BENEFITS_CONFIG);
+const BENEFITS_SOURCE_BY_PATHWAY: Record<CstPathwayKey, DerivedComponentSource> = {
+  'pathway-1': parseDerivedComponentSource(benefitsActionsText, BENEFITS_CONFIG),
+  'pathway-2': parseDerivedComponentSource(benefitsActionsTextPathway2, BENEFITS_CONFIG),
+  'pathway-3': parseDerivedComponentSource(benefitsActionsTextPathway3, BENEFITS_CONFIG),
+};
 
 export function syncBenefitsDerivedContent(store: AdoptionStore): AdoptionStore {
-  return syncDerivedComponentContent(store, BENEFITS_CONFIG, BENEFITS_SOURCE);
+  const pathway = store.orgProfile.cst.pathway || 'pathway-1';
+  return syncDerivedComponentContent(store, BENEFITS_CONFIG, BENEFITS_SOURCE_BY_PATHWAY[pathway]);
 }
 
 export function clearBenefitsDerivedContent(store: AdoptionStore): AdoptionStore {

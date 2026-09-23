@@ -1,117 +1,631 @@
 {
   "component": {
     "id": "READINESS_PLANNING",
-    "name": "cm readiness and planning"
+    "name": "Change Management Readiness & Planning"
   },
   "outcomes": [
     {
-      "id": "RP_P2_O1",
-      "name": "The readiness and planning approach has been refined based on pilot learnings"
+      "id": "RP_O1",
+      "name": "The pilot has validated that organisational readiness has been assessed"
     },
     {
-      "id": "RP_P2_O2",
-      "name": "The readiness and planning approach is understood across every site/team joining the scaled rollout"
+      "id": "RP_O2",
+      "name": "The pilot has validated that a robust change management plan has been developed"
+    },
+    {
+      "id": "RP_O3",
+      "name": "The pilot has validated that readiness and planning activities actively support successful implementation"
     }
   ],
   "actions": [
     {
-      "id": "RP_P2_001",
+      "id": "cm_readiness-0",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
-      "action": "Review pilot feedback on Planning & Risk to identify what needs to change in the readiness and planning approach before scaling.",
-      "outcomeIds": ["RP_P2_O1"],
+      "action": "M Review and refine: recognise the need for structured change management planning and readiness assessment to support successful implementation.",
+      "outcomeIds": [
+        "RP_O1"
+      ],
       "readinessScore": 0
     },
     {
-      "id": "RP_P2_002",
+      "id": "cm_readiness-1",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Planning & Risk",
+      "category": "Engagement",
+      "action": "M Continue discussions from the pilot with sponsors, leaders and stakeholders about organisational preparedness for the change.",
+      "outcomeIds": [
+        "RP_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "cm_readiness-2",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "S Confirm high-level areas where readiness, planning or implementation challenges may occur.",
+      "outcomeIds": [
+        "RP_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "cm_readiness-3",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Planning & Risk",
+      "category": "Engagement",
+      "action": "S Confirm stakeholder perceptions regarding readiness, change capacity and support needs.",
+      "outcomeIds": [
+        "RP_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "cm_readiness-4",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "S Confirm initial organisational constraints, assumptions and factors that could influence delivery.",
+      "outcomeIds": [
+        "RP_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "cm_readiness-5",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "M Review and refine: gain initial agreement that change readiness needs to be assessed and change management planning activities will be required.",
+      "outcomeIds": [
+        "RP_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "cm_readiness-6",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Communication",
+      "action": "S Review and refine: begin raising awareness of the need for implementation planning, readiness activities and organisational preparation.",
+      "outcomeIds": [
+        "RP_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "cm_readiness-7",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "S Review pilot learnings on lessons learned from previous change initiatives relating to readiness and planning.",
+      "outcomeIds": [
+        "RP_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "cm_readiness-8",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Planning & Risk",
-      "category": "Design",
-      "action": "Refine the readiness and planning approach to Planning & Risk based on lessons learned from the pilot.",
-      "outcomeIds": ["RP_P2_O1"],
+      "category": "Analysis & Insight",
+      "action": "M Review and refine: conduct a structured readiness assessment to understand organisational preparedness for change.",
+      "outcomeIds": [
+        "RP_O1"
+      ],
       "readinessScore": 1
     },
     {
-      "id": "RP_P2_003",
+      "id": "cm_readiness-9",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Risk",
+      "category": "Measurement & Evaluation",
+      "action": "M Confirm the pilot-tested and establish baseline readiness measures and indicators.",
+      "outcomeIds": [
+        "RP_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "cm_readiness-10",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "M Re-assess organisational capability, capacity and resource availability required to support implementation.",
+      "outcomeIds": [
+        "RP_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "cm_readiness-11",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "M Confirm and document readiness gaps between the current state and desired future state.",
+      "outcomeIds": [
+        "RP_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "cm_readiness-12",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Risk",
+      "category": "Risk Management",
+      "action": "S Re-assess readiness-related risks that may affect successful implementation.",
+      "outcomeIds": [
+        "RP_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "cm_readiness-13",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Risk",
+      "category": "Dependency Management",
+      "action": "S Re-assess organisational, programme and operational dependencies affecting readiness.",
+      "outcomeIds": [
+        "RP_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "cm_readiness-14",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Risk",
+      "category": "Engagement",
+      "action": "S Review and refine: engage stakeholders to validate readiness levels, concerns, confidence and support requirements.",
+      "outcomeIds": [
+        "RP_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "cm_readiness-15",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "S Re-assess organisational attitudes, competing priorities, change fatigue and change capacity.",
+      "outcomeIds": [
+        "RP_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "cm_readiness-16",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "M Refine a structured change management approach informed by readiness findings.",
+      "outcomeIds": [
+        "RP_O2"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "cm_readiness-17",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "M Confirm the pilot-tested change management workstreams, priorities, activities, milestones and delivery approach.",
+      "outcomeIds": [
+        "RP_O2"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "cm_readiness-18",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
-      "category": "Governance",
-      "action": "Secure sign-off for the refined readiness and planning approach covering Planning & Risk ahead of wider rollout.",
-      "outcomeIds": ["RP_P2_O1"],
+      "category": "Design",
+      "action": "M Refine a detailed change management plan informed by readiness, impact, risk and stakeholder analysis findings.",
+      "outcomeIds": [
+        "RP_O2"
+      ],
       "readinessScore": 2
     },
     {
-      "id": "RP_P2_004",
+      "id": "cm_readiness-19",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Risk",
+      "category": "Dependency Management",
+      "action": "S Review and refine: map dependencies, assumptions, constraints and critical path activities within the change plan.",
+      "outcomeIds": [
+        "RP_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "cm_readiness-20",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Risk",
+      "category": "Measurement & Evaluation",
+      "action": "S Confirm the pilot-tested readiness indicators, implementation checkpoints and progress measures.",
+      "outcomeIds": [
+        "RP_O2",
+        "RP_O3"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "cm_readiness-21",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Risk",
+      "category": "Risk Management",
+      "action": "S Review and refine: integrate readiness and planning risks into the wider change risk management approach.",
+      "outcomeIds": [
+        "RP_O2",
+        "RP_O3"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "cm_readiness-22",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Risk",
+      "category": "Engagement",
+      "action": "S Re-validate planning assumptions and readiness findings with affected stakeholder groups.",
+      "outcomeIds": [
+        "RP_O1",
+        "RP_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "cm_readiness-23",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Risk",
+      "category": "Dependency Management",
+      "action": "S Review and refine: align learning, communications, engagement and support activities with implementation milestones.",
+      "outcomeIds": [
+        "RP_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "cm_readiness-24",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "M Formalise ownership and accountability for delivery of change management activities.",
+      "outcomeIds": [
+        "RP_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "cm_readiness-25",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Risk",
+      "category": "Measurement & Evaluation",
+      "action": "S Confirm the pilot-tested how readiness will be monitored and reassessed throughout delivery.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "cm_readiness-26",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "Governance",
+      "action": "M Review and refine: obtain approval of the change management plan through appropriate governance routes.",
+      "outcomeIds": [
+        "RP_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "cm_readiness-27",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Planning & Risk",
       "category": "Communication",
-      "action": "Ensure the refined readiness and planning approach for Planning & Risk is consistently communicated to new sites/teams joining the rollout.",
-      "outcomeIds": ["RP_P2_O2"],
+      "action": "M Communicate at scale implementation timelines, expected activities and preparation requirements.",
+      "outcomeIds": [
+        "RP_O2"
+      ],
       "readinessScore": 3
     },
     {
-      "id": "RP_P2_005",
+      "id": "cm_readiness-28",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "Measurement & Evaluation",
+      "action": "S Continue monitoring delivery of the change management plan against agreed milestones and success measures.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "cm_readiness-29",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "Measurement & Evaluation",
+      "action": "S Review pilot learnings on readiness levels at key implementation checkpoints.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "cm_readiness-30",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "Risk Management",
+      "action": "S Resolve remaining readiness gaps, issues and barriers that emerge during implementation.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "cm_readiness-31",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "Governance",
+      "action": "M Review pilot learnings on progress, readiness and delivery issues through governance forums.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "cm_readiness-32",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "Design",
+      "action": "S Review and refine: adjust and refine plans in response to delivery experience, feedback and changing priorities.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "cm_readiness-33",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "Engagement",
+      "action": "S Consolidate stakeholder feedback on implementation preparedness and support requirements.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "cm_readiness-34",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "Communication",
+      "action": "S Review and refine: provide regular updates on implementation plans, readiness progress and key milestones.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "cm_readiness-35",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "Dependency Management",
+      "action": "S Coordinate at scale readiness activities across communications, engagement, learning and support workstreams.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "cm_readiness-36",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Testing & Validation",
+      "action": "M Re-validate organisational readiness and acceptance criteria before key implementation events and go-live activities start.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "cm_readiness-37",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "S Re-assess whether planned change management activities are supporting successful implementation.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "cm_readiness-38",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Planning & Risk",
       "category": "Measurement & Evaluation",
-      "action": "Continuously validate that the readiness and planning approach for Planning & Risk remains effective as the change scales further.",
-      "outcomeIds": ["RP_P2_O2"],
+      "action": "M Review and refine: use implementation and adoption data to evaluate the effectiveness of readiness and planning approaches.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
       "readinessScore": 4
     },
     {
-      "id": "RP_P2_006",
-      "fromStatus": "Not Started",
-      "toStatus": "Emerging",
-      "lens": "Strategic Direction & Leadership",
-      "category": "Analysis & Insight",
-      "action": "Gather feedback from pilot participants on how the readiness and planning approach affected Strategic Direction & Leadership.",
-      "outcomeIds": ["RP_P2_O1"],
-      "readinessScore": 0
-    },
-    {
-      "id": "RP_P2_007",
-      "fromStatus": "Emerging",
-      "toStatus": "Developing",
-      "lens": "Strategic Direction & Leadership",
+      "id": "cm_readiness-39",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Planning & Risk",
       "category": "Design",
-      "action": "Adapt the readiness and planning approach relating to Strategic Direction & Leadership for a wider, more diverse audience.",
-      "outcomeIds": ["RP_P2_O1"],
-      "readinessScore": 1
+      "action": "S Review and refine: incorporate lessons learned into future change planning methodologies.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 4
     },
     {
-      "id": "RP_P2_008",
-      "fromStatus": "Developing",
-      "toStatus": "Embedding",
+      "id": "cm_readiness-40",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
-      "category": "Communication",
-      "action": "Roll out the readiness and planning approach covering Strategic Direction & Leadership to stakeholders in newly onboarding sites/teams.",
-      "outcomeIds": ["RP_P2_O1"],
-      "readinessScore": 2
+      "category": "Governance",
+      "action": "S Review and refine: senior leaders should have visibility of areas in the organisation where readiness is low and impact of the change is high",
+      "outcomeIds": [],
+      "readinessScore": 4
     },
     {
-      "id": "RP_P2_009",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
+      "id": "cm_readiness-41",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Planning & Risk",
+      "category": "Measurement & Evaluation",
+      "action": "S Review and refine: continuously review organisational readiness for future changes and transformation activity.",
+      "outcomeIds": [
+        "RP_O1",
+        "RP_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "cm_readiness-42",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Planning & Risk",
+      "category": "Dependency Management",
+      "action": "S Sustain visibility and management of strategic programme dependencies affecting future readiness.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "cm_readiness-43",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Planning & Risk",
+      "category": "Engagement",
+      "action": "S Sustain mechanisms for gathering ongoing readiness insight from across the organisation.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "cm_readiness-44",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
       "category": "Measurement & Evaluation",
-      "action": "Monitor Strategic Direction & Leadership among stakeholders in the wider rollout and address any gaps.",
-      "outcomeIds": ["RP_P2_O2"],
-      "readinessScore": 3
+      "action": "M Review pilot learnings on progress against readiness acceptance criteria to inform go live decision",
+      "outcomeIds": [],
+      "readinessScore": 4
     },
     {
-      "id": "RP_P2_010",
+      "id": "cm_readiness-45",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Planning & Risk",
+      "category": "Measurement & Evaluation",
+      "action": "S Review and refine: benchmark readiness and planning performance against previous programmes and organisational standards.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "cm_readiness-46",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "S Reinforce readiness reviews and change planning disciplines into organisational change delivery standards.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "cm_readiness-47",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
       "category": "Reinforcement",
-      "action": "Use champions from the pilot to help new sites/teams connect with the readiness and planning approach for Strategic Direction & Leadership.",
-      "outcomeIds": ["RP_P2_O2"],
+      "action": "S Review and refine: recognise teams and leaders that consistently demonstrate strong change preparedness and planning discipline.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "cm_readiness-48",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "S Review and refine: continuously improve change planning templates, standards and guidance using organisational learning.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "cm_readiness-49",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "M Reconfirm readiness acceptance criteria to support go live decisions",
+      "outcomeIds": [],
+      "readinessScore": 2
+    },
+    {
+      "id": "cm_readiness-50",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Reinforcement",
+      "action": "S Reinforce proactive readiness assessment and planning as a routine part of organisational change delivery.",
+      "outcomeIds": [
+        "RP_O3"
+      ],
       "readinessScore": 4
     }
   ]

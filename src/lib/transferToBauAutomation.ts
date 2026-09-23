@@ -1,7 +1,11 @@
 import transferToBauActionsText from '../data/component-actions/transfer-to-bau-actions.json?raw';
+import transferToBauActionsTextPathway2 from '../data/component-actions/transfer-to-bau-actions-pathway2.json?raw';
+import transferToBauActionsTextPathway3 from '../data/component-actions/transfer-to-bau-actions-pathway3.json?raw';
+import type { CstPathwayKey } from '@data/cst';
 import type { AdoptionStore } from './adoptionState';
 import {
   clearDerivedComponentContent,
+  type DerivedComponentSource,
   type DerivedComponentConfig,
   parseDerivedComponentSource,
   syncDerivedComponentContent,
@@ -41,13 +45,15 @@ export const TRANSFER_TO_BAU_CONFIG: DerivedComponentConfig = {
   },
 };
 
-const TRANSFER_TO_BAU_SOURCE = parseDerivedComponentSource(
-  transferToBauActionsText,
-  TRANSFER_TO_BAU_CONFIG
-);
+const TRANSFER_TO_BAU_SOURCE_BY_PATHWAY: Record<CstPathwayKey, DerivedComponentSource> = {
+  'pathway-1': parseDerivedComponentSource(transferToBauActionsText, TRANSFER_TO_BAU_CONFIG),
+  'pathway-2': parseDerivedComponentSource(transferToBauActionsTextPathway2, TRANSFER_TO_BAU_CONFIG),
+  'pathway-3': parseDerivedComponentSource(transferToBauActionsTextPathway3, TRANSFER_TO_BAU_CONFIG),
+};
 
 export function syncTransferToBauDerivedContent(store: AdoptionStore): AdoptionStore {
-  return syncDerivedComponentContent(store, TRANSFER_TO_BAU_CONFIG, TRANSFER_TO_BAU_SOURCE);
+  const pathway = store.orgProfile.cst.pathway || 'pathway-1';
+  return syncDerivedComponentContent(store, TRANSFER_TO_BAU_CONFIG, TRANSFER_TO_BAU_SOURCE_BY_PATHWAY[pathway]);
 }
 
 export function clearTransferToBauDerivedContent(store: AdoptionStore): AdoptionStore {

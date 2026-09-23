@@ -1,4 +1,4 @@
-import type { ReadinessOutcome, ReadinessSuggestion } from '@data/preparednessAssessment';
+import type { ReadinessOutcome, ReadinessSuggestion } from '@data/readinessReview';
 import { JSX, useState } from 'react';
 
 import { nhsButtonPrimary, nhsButtonSecondary } from '../../styles/nhsTheme';

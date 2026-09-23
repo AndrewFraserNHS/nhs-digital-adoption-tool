@@ -1,7 +1,11 @@
 import cmReadinessActionsText from '../data/component-actions/cm-readiness-and-planning-actions.json?raw';
+import cmReadinessActionsTextPathway2 from '../data/component-actions/cm-readiness-and-planning-actions-pathway2.json?raw';
+import cmReadinessActionsTextPathway3 from '../data/component-actions/cm-readiness-and-planning-actions-pathway3.json?raw';
+import type { CstPathwayKey } from '@data/cst';
 import type { AdoptionStore } from './adoptionState';
 import {
   clearDerivedComponentContent,
+  type DerivedComponentSource,
   type DerivedComponentConfig,
   parseDerivedComponentSource,
   syncDerivedComponentContent,
@@ -36,13 +40,15 @@ export const CM_READINESS_CONFIG: DerivedComponentConfig = {
   },
 };
 
-const CM_READINESS_SOURCE = parseDerivedComponentSource(
-  cmReadinessActionsText,
-  CM_READINESS_CONFIG
-);
+const CM_READINESS_SOURCE_BY_PATHWAY: Record<CstPathwayKey, DerivedComponentSource> = {
+  'pathway-1': parseDerivedComponentSource(cmReadinessActionsText, CM_READINESS_CONFIG),
+  'pathway-2': parseDerivedComponentSource(cmReadinessActionsTextPathway2, CM_READINESS_CONFIG),
+  'pathway-3': parseDerivedComponentSource(cmReadinessActionsTextPathway3, CM_READINESS_CONFIG),
+};
 
 export function syncCmReadinessDerivedContent(store: AdoptionStore): AdoptionStore {
-  return syncDerivedComponentContent(store, CM_READINESS_CONFIG, CM_READINESS_SOURCE);
+  const pathway = store.orgProfile.cst.pathway || 'pathway-1';
+  return syncDerivedComponentContent(store, CM_READINESS_CONFIG, CM_READINESS_SOURCE_BY_PATHWAY[pathway]);
 }
 
 export function clearCmReadinessDerivedContent(store: AdoptionStore): AdoptionStore {

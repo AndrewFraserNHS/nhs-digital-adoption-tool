@@ -1,7 +1,11 @@
 import riskManagementActionsText from '../data/component-actions/risk-management-actions.json?raw';
+import riskManagementActionsTextPathway2 from '../data/component-actions/risk-management-actions-pathway2.json?raw';
+import riskManagementActionsTextPathway3 from '../data/component-actions/risk-management-actions-pathway3.json?raw';
+import type { CstPathwayKey } from '@data/cst';
 import type { AdoptionStore } from './adoptionState';
 import {
   clearDerivedComponentContent,
+  type DerivedComponentSource,
   type DerivedComponentConfig,
   parseDerivedComponentSource,
   syncDerivedComponentContent,
@@ -36,13 +40,15 @@ export const RISK_MANAGEMENT_CONFIG: DerivedComponentConfig = {
   },
 };
 
-const RISK_MANAGEMENT_SOURCE = parseDerivedComponentSource(
-  riskManagementActionsText,
-  RISK_MANAGEMENT_CONFIG
-);
+const RISK_MANAGEMENT_SOURCE_BY_PATHWAY: Record<CstPathwayKey, DerivedComponentSource> = {
+  'pathway-1': parseDerivedComponentSource(riskManagementActionsText, RISK_MANAGEMENT_CONFIG),
+  'pathway-2': parseDerivedComponentSource(riskManagementActionsTextPathway2, RISK_MANAGEMENT_CONFIG),
+  'pathway-3': parseDerivedComponentSource(riskManagementActionsTextPathway3, RISK_MANAGEMENT_CONFIG),
+};
 
 export function syncRiskManagementDerivedContent(store: AdoptionStore): AdoptionStore {
-  return syncDerivedComponentContent(store, RISK_MANAGEMENT_CONFIG, RISK_MANAGEMENT_SOURCE);
+  const pathway = store.orgProfile.cst.pathway || 'pathway-1';
+  return syncDerivedComponentContent(store, RISK_MANAGEMENT_CONFIG, RISK_MANAGEMENT_SOURCE_BY_PATHWAY[pathway]);
 }
 
 export function clearRiskManagementDerivedContent(store: AdoptionStore): AdoptionStore {

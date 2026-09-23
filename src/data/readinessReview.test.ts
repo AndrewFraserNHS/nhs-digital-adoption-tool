@@ -2,11 +2,11 @@ import type { AssessmentComponent } from '@data/components';
 import { ASSESSMENT_COMPONENTS } from '@data/components';
 import { describe, expect, it } from 'vitest';
 
-import { computeReadinessOutcome, PREPAREDNESS_ASSESSMENT } from './preparednessAssessment';
+import { computeReadinessOutcome, PREPAREDNESS_ASSESSMENT } from './readinessReview';
 
 const noExistingScores = () => undefined;
 
-describe('preparednessAssessment', () => {
+describe('readinessReview', () => {
   it('SHOULD define 36 questions, one per (component, lens) pair, matching components.ts', () => {
     // assert
     expect(PREPAREDNESS_ASSESSMENT).toHaveLength(36);

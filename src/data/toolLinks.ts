@@ -6,7 +6,6 @@ export const IN_APP_TOOLS = [
   'stakeholder-analysis',
   'raid-log',
   'benefits',
-  'preparedness-assessment',
 ] as const;
 export type InAppTool = (typeof IN_APP_TOOLS)[number];
 
@@ -22,10 +21,6 @@ export const DEFAULT_TOOL_LINK_TEXT: Record<InAppTool, { label: string; matchTex
   'stakeholder-analysis': { label: 'Stakeholder Analysis', matchText: 'Stakeholder Analysis' },
   'raid-log': { label: 'RAID Log', matchText: 'RAID Log' },
   benefits: { label: 'Benefits Register & Tracker', matchText: 'Benefits Register' },
-  'preparedness-assessment': {
-    label: 'AVT Preparedness Assessment',
-    matchText: 'Preparedness Assessment',
-  },
 };
 
 export interface ToolLinkEntry {

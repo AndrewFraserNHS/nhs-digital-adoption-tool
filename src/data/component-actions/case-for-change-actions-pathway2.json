@@ -1,115 +1,630 @@
 {
-  "component": { "id": "CASE_FOR_CHANGE", "name": "Case for Change" },
+  "component": {
+    "id": "CASE_FOR_CHANGE",
+    "name": "Case for Change"
+  },
   "outcomes": [
     {
-      "id": "CFC_P2_O1",
-      "name": "Pilot evidence has been used to strengthen the case for scaling up"
+      "id": "CFC_O1",
+      "name": "The pilot has validated that the need for change has been clearly defined and evidenced"
     },
     {
-      "id": "CFC_P2_O2",
-      "name": "The case for change is understood and accepted in every site/team joining the rollout"
+      "id": "CFC_O2",
+      "name": "The pilot has validated that the case for change is understood and accepted"
+    },
+    {
+      "id": "CFC_O3",
+      "name": "The pilot has validated that the case for change remains credible and relevant"
     }
   ],
   "actions": [
     {
-      "id": "CFC_P2_001",
+      "id": "case_for_change-0",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
-      "action": "Gather outcome and benefits evidence from the pilot to strengthen the rationale for scaling.",
-      "outcomeIds": ["CFC_P2_O1"],
+      "action": "M Review and refine: recognise that a clear rationale and evidence base will be required to explain why change is necessary.",
+      "outcomeIds": [
+        "CFC_O1"
+      ],
       "readinessScore": 0
     },
     {
-      "id": "CFC_P2_002",
+      "id": "case_for_change-1",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Engagement",
+      "action": "S Continue discussions from the pilot with leaders and stakeholders regarding the problems, opportunities or drivers prompting change.",
+      "outcomeIds": [
+        "CFC_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "case_for_change-2",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Analysis & Insight",
+      "action": "M Confirm high-level issues, challenges, opportunities or risks that may justify change.",
+      "outcomeIds": [
+        "CFC_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "case_for_change-3",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "M Review and refine: begin raising awareness that change may be required.",
+      "outcomeIds": [
+        "CFC_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "case_for_change-4",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Analysis & Insight",
+      "action": "M Confirm strategic, operational, regulatory or service drivers that may support the need for change.",
+      "outcomeIds": [
+        "CFC_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "case_for_change-5",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "M Review and refine: gain initial sponsorship for a case for change.",
+      "outcomeIds": [
+        "CFC_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "case_for_change-6",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "M Consolidate evidence of stakeholder perceptions of current challenges, opportunities and improvement needs.",
+      "outcomeIds": [
+        "CFC_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "case_for_change-7",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Analysis & Insight",
+      "action": "S Review pilot learnings on previous organisational experience, lessons learned and available evidence relevant to the proposed change.",
+      "outcomeIds": [
+        "CFC_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "case_for_change-8",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Analysis & Insight",
+      "action": "M Confirm the pilot-tested and document the problem, opportunity, risk or requirement driving the need for change.",
+      "outcomeIds": [
+        "CFC_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "case_for_change-9",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Analysis & Insight",
+      "action": "M Consolidate quantitative and qualitative evidence demonstrating the impact the change will have on the current situation.",
+      "outcomeIds": [
+        "CFC_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "case_for_change-10",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Analysis & Insight",
+      "action": "M Re-assess alignment between the proposed change and organisational objectives, strategies and priorities.",
+      "outcomeIds": [
+        "CFC_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "case_for_change-11",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Risk Management",
+      "action": "M Confirm potential strategic and operational barriers to the proposed change",
+      "outcomeIds": [],
+      "readinessScore": 1
+    },
+    {
+      "id": "case_for_change-12",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
       "category": "Design",
-      "action": "Refresh the case for change document with pilot evidence and a rationale specific to scaling.",
-      "outcomeIds": ["CFC_P2_O1"],
+      "action": "M Refine a draft case for change explaining why change is required, why action is needed now and the potential benefits associated with the change.",
+      "outcomeIds": [
+        "CFC_O1",
+        "CFC_O2"
+      ],
       "readinessScore": 1
     },
     {
-      "id": "CFC_P2_003",
+      "id": "case_for_change-13",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "S Review and refine: conduct structured engagement activities to understand stakeholder experiences of current challenges and opportunities.",
+      "outcomeIds": [
+        "CFC_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "case_for_change-14",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Testing & Validation",
+      "action": "S Re-validate whether stakeholders recognise, understand and agree with the need for change.",
+      "outcomeIds": [
+        "CFC_O2"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "case_for_change-15",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "M Consolidate local examples and supporting evidence that illustrate the impact of maintaining the current state.",
+      "outcomeIds": [
+        "CFC_O1",
+        "CFC_O2"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "case_for_change-16",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Analysis & Insight",
+      "action": "S Re-assess misconceptions, assumptions and conflicting perceptions relating to the need for change.",
+      "outcomeIds": [
+        "CFC_O2"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "case_for_change-17",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Design",
+      "action": "S Review and refine: refine the draft case for change using evidence, stakeholder insight and feedback",
+      "outcomeIds": [
+        "CFC_O1",
+        "CFC_O2"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "case_for_change-18",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
-      "action": "Present the refreshed case for change to governance for sign-off ahead of wider rollout.",
-      "outcomeIds": ["CFC_P2_O1"],
+      "action": "S Review and refine: obtain approval and formal leadership and governance endorsement of the draft case for change.",
+      "outcomeIds": [
+        "CFC_O1",
+        "CFC_O3"
+      ],
       "readinessScore": 2
     },
     {
-      "id": "CFC_P2_004",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
+      "id": "case_for_change-19",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
       "category": "Communication",
-      "action": "Ensure leaders in each new site/team can articulate the case for change using pilot evidence.",
-      "outcomeIds": ["CFC_P2_O2"],
-      "readinessScore": 3
+      "action": "M Refine clear and consistent messaging explaining why change is necessary.",
+      "outcomeIds": [
+        "CFC_O2"
+      ],
+      "readinessScore": 2
     },
     {
-      "id": "CFC_P2_005",
-      "fromStatus": "Adopted",
-      "toStatus": "Thriving",
+      "id": "case_for_change-20",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
       "category": "Measurement & Evaluation",
-      "action": "Keep the case for change current by folding in results from each newly scaled site/team.",
-      "outcomeIds": ["CFC_P2_O2"],
-      "readinessScore": 4
+      "action": "S Confirm the pilot-tested how evidence supporting the case for change will be reviewed and maintained throughout the change lifecycle.",
+      "outcomeIds": [
+        "CFC_O3"
+      ],
+      "readinessScore": 2
     },
     {
-      "id": "CFC_P2_006",
-      "fromStatus": "Not Started",
-      "toStatus": "Emerging",
-      "lens": "People Experience & Culture",
-      "category": "Analysis & Insight",
-      "action": "Collect testimonials from pilot participants describing why the change mattered to them.",
-      "outcomeIds": ["CFC_P2_O1"],
-      "readinessScore": 0
-    },
-    {
-      "id": "CFC_P2_007",
-      "fromStatus": "Emerging",
-      "toStatus": "Developing",
-      "lens": "People Experience & Culture",
-      "category": "Design",
-      "action": "Turn pilot testimonials into relatable stories that explain the case for change to new audiences.",
-      "outcomeIds": ["CFC_P2_O2"],
-      "readinessScore": 1
-    },
-    {
-      "id": "CFC_P2_008",
+      "id": "case_for_change-21",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Communication",
-      "action": "Share pilot stories with stakeholders in newly onboarding sites/teams to build buy-in.",
-      "outcomeIds": ["CFC_P2_O2"],
+      "action": "M Communicate at scale through engagement and communication activities why the change is necessary",
+      "outcomeIds": [
+        "CFC_O2"
+      ],
       "readinessScore": 2
     },
     {
-      "id": "CFC_P2_009",
+      "id": "case_for_change-22",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Testing & Validation",
+      "action": "S Re-validate stakeholder understanding of the rationale for change.",
+      "outcomeIds": [
+        "CFC_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "case_for_change-23",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "S Resolve remaining concerns, challenges and areas of misunderstanding relating to the need for change.",
+      "outcomeIds": [
+        "CFC_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "case_for_change-24",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "S Review and refine: illustrate the importance of the change using local examples and evidence.",
+      "outcomeIds": [
+        "CFC_O1",
+        "CFC_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "case_for_change-25",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "S Continue monitoring stakeholder sentiment regarding the case for change.",
+      "outcomeIds": [
+        "CFC_O2",
+        "CFC_O3"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "case_for_change-26",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "M Review and refine: approve case for change via governance routes",
+      "outcomeIds": [],
+      "readinessScore": 3
+    },
+    {
+      "id": "case_for_change-27",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Reinforcement",
+      "action": "S Review and refine: ensure leaders consistently reinforce the rationale for change.",
+      "outcomeIds": [
+        "CFC_O2",
+        "CFC_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "case_for_change-28",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "S Review and refine: use governance forums to review whether the original drivers for change remain valid.",
+      "outcomeIds": [
+        "CFC_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "case_for_change-29",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "S Review and refine: use organisational performance, service and outcome measures to support the case for change.",
+      "outcomeIds": [
+        "CFC_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "case_for_change-30",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "S Review and refine: use the case for change to inform programme decisions, priorities and resource allocation.",
+      "outcomeIds": [
+        "CFC_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "case_for_change-31",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Risk Management",
+      "action": "M Review pilot learnings on assumptions, emerging risks and external influences (RAID log) that may affect the credibility of the case for change.",
+      "outcomeIds": [
+        "CFC_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "case_for_change-32",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "S Share more widely evidence and examples demonstrating the impact of addressing the original problem or opportunity.",
+      "outcomeIds": [
+        "CFC_O2",
+        "CFC_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "case_for_change-33",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
       "category": "Measurement & Evaluation",
-      "action": "Check whether stakeholders in the wider rollout find the case for change credible and relevant.",
-      "outcomeIds": ["CFC_P2_O2"],
+      "action": "M Re-evaluate stakeholder acceptance of the ongoing need for change.",
+      "outcomeIds": [
+        "CFC_O2"
+      ],
       "readinessScore": 3
     },
     {
-      "id": "CFC_P2_010",
+      "id": "case_for_change-34",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "S Review and refine: target engagement and communications activity where understanding remains low.",
+      "outcomeIds": [
+        "CFC_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "case_for_change-35",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Design",
+      "action": "S Review and refine: refine case for change messaging using stakeholder feedback and insight.",
+      "outcomeIds": [
+        "CFC_O2",
+        "CFC_O3"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "case_for_change-36",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "M Review and refine: ensure change champions can confidently explain and reinforce the case for change.",
+      "outcomeIds": [
+        "CFC_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "case_for_change-37",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "S Review pilot learnings on the case for change periodically against organisational priorities and external drivers.",
+      "outcomeIds": [
+        "CFC_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "case_for_change-38",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "S Review and refine: use benefits and outcomes data to validate the continued relevance of the case for change.",
+      "outcomeIds": [
+        "CFC_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "case_for_change-39",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "S Reinforce the rationale for change into organisational planning and continuous improvement activities.",
+      "outcomeIds": [
+        "CFC_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "case_for_change-40",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Design",
+      "action": "S Review and refine: use organisational learning and evidence to evolve the case for change where appropriate.",
+      "outcomeIds": [
+        "CFC_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "case_for_change-41",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Reinforcement",
+      "action": "M Review and refine: ensure leaders continue to communicate and reinforce the rationale for change during routine business activity.",
+      "outcomeIds": [
+        "CFC_O2",
+        "CFC_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "case_for_change-42",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
-      "action": "Use champions from the pilot to reinforce the case for change as it scales further.",
-      "outcomeIds": ["CFC_P2_O2"],
+      "action": "S Review and refine: capture and share success stories that validate the original need for change.",
+      "outcomeIds": [
+        "CFC_O2",
+        "CFC_O3"
+      ],
       "readinessScore": 4
+    },
+    {
+      "id": "case_for_change-43",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "S Re-measure stakeholder belief that the change remains necessary and valuable.",
+      "outcomeIds": [
+        "CFC_O2"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "case_for_change-44",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "S Review and refine: reflect emerging evidence, learning and organisational priorities by refreshing messaging.",
+      "outcomeIds": [
+        "CFC_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "case_for_change-45",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "M Sustain ongoing engagement activities to sustain awareness of the reasons for change.",
+      "outcomeIds": [
+        "CFC_O2"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "case_for_change-46",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "S Reinforce teams to identify opportunities to build on the original case for change.",
+      "outcomeIds": [
+        "CFC_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "case_for_change-47",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Measurement & Evaluation",
+      "action": "M Formalise baseline measures that evidence the current problem or opportunity.",
+      "outcomeIds": [
+        "CFC_O1",
+        "CFC_O3"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "case_for_change-48",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "S Confirm and secure sponsors and senior leaders who will champion the case for change.",
+      "outcomeIds": [
+        "CFC_O2"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "case_for_change-49",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Strategic Direction & Leadership",
+      "category": "Governance",
+      "action": "M Reinforce the case for change in programme governance, reporting and decision-making processes.",
+      "outcomeIds": [
+        "CFC_O3"
+      ],
+      "readinessScore": 3
     }
   ]
 }

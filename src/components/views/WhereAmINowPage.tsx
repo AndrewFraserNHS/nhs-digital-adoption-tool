@@ -1,53 +1,45 @@
 import { JSX, useEffect, useMemo, useRef, useState } from 'react';
 import { getComponentsByPhase, type AssessmentComponent } from '@data/components';
 import { ASSESSMENT_LENSES } from '@data/lenses';
-import type { DraftEntry } from '@lib/adoptionState';
+import type { DraftEntry, Stakeholder, TeamMember } from '@lib/adoptionState';
 import { buildComponentRadarChartData, getComponentExemplarScore } from '@lib/adoptionMetrics';
 import { createBarChart, createRadarChart } from '@lib/charts';
 import { getReadinessBand } from '@lib/readinessBands';
 import { PHASE_NAMES } from '../../types/constants';
 
+import ReadinessReviewApp from '@pages/ReadinessReviewApp';
+
 export interface WhereAmINowPageProps {
   components: AssessmentComponent[];
   getEntry: (componentId: string, lens: string) => DraftEntry;
+  onEntryUpdate: (componentId: string, lens: string, entry: DraftEntry) => void;
   effectivePhaseFocus: number;
   phaseFocusMode: 'auto' | 'manual';
   onComponentClick: (componentId: string) => void;
-  onSetManualPhase: (phase: number) => void;
   onResetToAuto: () => void;
   darkMode?: boolean;
+  trustName?: string;
+  region?: string;
+  leadName?: string;
+  teamMembers?: TeamMember[];
+  stakeholders?: Stakeholder[];
+  onStakeholdersChange?: (stakeholders: Stakeholder[]) => void;
+  departments?: string[];
+  onReadinessEvaluated?: (details: {
+    skipToPhase: number | null;
+    accepted: boolean;
+    updatedCount: number;
+  }) => void;
 }
 
-interface PhaseStatement {
-  phase: number;
-  statement: string;
+/** Tooltip formatter shared with the Dashboard radar - suppresses the score suffix on the Exemplar/Target line, since that line is a reference marker, not a real per-lens value. */
+function radarTooltipLabel(context: { dataset?: { label?: string }; raw?: unknown }): string {
+  const label = context.dataset?.label || '';
+  if (label.startsWith('Exemplar') || label === 'Target Average') {
+    return label;
+  }
+  return `${label}: ${getReadinessBand(Number(context.raw)).label}`;
 }
-
-const PHASE_STATEMENTS: PhaseStatement[] = [
-  {
-    phase: 1,
-    statement: "We've defined our vision for this change and have a case for why it's needed.",
-  },
-  {
-    phase: 2,
-    statement:
-      "We've analysed the impact of the change and planned our engagement and communications approach.",
-  },
-  {
-    phase: 3,
-    statement: 'We have a full change management plan in place, ready to execute.',
-  },
-  {
-    phase: 4,
-    statement:
-      "We're actively delivering the change - communicating, training, and rolling out new ways of working.",
-  },
-  {
-    phase: 5,
-    statement:
-      "The change has gone live and we're now focused on reinforcing it and making it stick.",
-  },
-];
 
 /** One small bar chart for a single component: a bar per lens plus a dashed target bar at that phase's expected score. */
 function ComponentLensBarChart({
@@ -132,14 +124,21 @@ function ComponentLensBarChart({
 export function WhereAmINowPage({
   components,
   getEntry,
+  onEntryUpdate,
   effectivePhaseFocus,
   phaseFocusMode,
   onComponentClick,
-  onSetManualPhase,
   onResetToAuto,
   darkMode = false,
+  trustName = '',
+  region = '',
+  leadName = '',
+  teamMembers = [],
+  stakeholders = [],
+  onStakeholdersChange,
+  departments = [],
+  onReadinessEvaluated,
 }: WhereAmINowPageProps): JSX.Element {
-  const [checkedPhases, setCheckedPhases] = useState<Record<number, boolean>>({});
   const [readinessTab, setReadinessTab] = useState<'by-component' | 'by-lens' | 'by-phases'>(
     'by-component'
   );
@@ -174,6 +173,7 @@ export function WhereAmINowPage({
             pointLabels: { padding: 28 },
           },
         },
+        plugins: { tooltip: { callbacks: { label: radarTooltipLabel } } },
       },
       (index) => {
         const targetComponent = components[index];
@@ -214,6 +214,7 @@ export function WhereAmINowPage({
             pointLabels: { padding: 28 },
           },
         },
+        plugins: { tooltip: { callbacks: { label: radarTooltipLabel } } },
       },
       (index) => {
         const targetComponent = componentsWithLens[index];
@@ -230,13 +231,6 @@ export function WhereAmINowPage({
     [effectivePhaseFocus]
   );
 
-  const suggestedPhase = useMemo(() => {
-    const checked = PHASE_STATEMENTS.filter((item) => checkedPhases[item.phase]).map(
-      (item) => item.phase
-    );
-    return checked.length ? Math.max(...checked) : 1;
-  }, [checkedPhases]);
-
   /** First component (in phase order) whose weakest lens hasn't yet reached full readiness - i.e. where to pick up next. */
   const nextUnderdevelopedComponent = useMemo(() => {
     return (
@@ -250,15 +244,7 @@ export function WhereAmINowPage({
     );
   }, [components, getEntry]);
 
-  const hasAnsweredAnything = Object.values(checkedPhases).some(Boolean);
   const textClass = darkMode ? 'text-slate-300' : 'text-slate-600';
-
-  useEffect(() => {
-    if (hasAnsweredAnything) {
-      onSetManualPhase(suggestedPhase);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasAnsweredAnything, suggestedPhase]);
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
@@ -267,8 +253,8 @@ export function WhereAmINowPage({
           Where am I now?
         </h2>
         <p className={`mt-2 text-sm ${textClass}`}>
-          Tick every statement that's true for your programme today, and see your readiness by
-          component - both feed into which of the 5 change phases you're really in.
+          Take the Readiness Review to see your readiness by component - both feed into which of
+          the 5 change phases you're really in.
         </p>
       </div>
 
@@ -276,57 +262,35 @@ export function WhereAmINowPage({
         className={`rounded-lg border shadow-sm ${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'}`}
       >
         <div className="p-6">
-          <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>
-            Which of these is true for you?
-          </h3>
-          <div className="mt-4 space-y-3">
-            {PHASE_STATEMENTS.map((item) => (
-              <label
-                key={item.phase}
-                className={`flex items-start gap-3 rounded-md border p-3 cursor-pointer ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
-              >
-                <input
-                  type="checkbox"
-                  checked={Boolean(checkedPhases[item.phase])}
-                  onChange={(event) =>
-                    setCheckedPhases((current) => ({
-                      ...current,
-                      [item.phase]: event.target.checked,
-                    }))
-                  }
-                  className="mt-1 h-4 w-4"
-                />
-                <span>
-                  <span
-                    className={`block text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-blue-300' : 'text-blue-700'}`}
-                  >
-                    Phase {item.phase}: {PHASE_NAMES[item.phase]}
-                  </span>
-                  <span
-                    className={`block text-sm ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
-                  >
-                    {item.statement}
-                  </span>
-                </span>
-              </label>
-            ))}
+          <div className="text-center mb-4">
+            <h3
+              className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
+            >
+              Readiness Review
+            </h3>
+            <p className={`mt-1 text-sm ${textClass}`}>
+              Answer a short set of questions about your programme - your answers can update your
+              readiness scores and suggest phases you're already ready to skip.
+            </p>
           </div>
 
-          {hasAnsweredAnything ? (
-            <div
-              className={`mt-5 rounded-md border p-4 ${darkMode ? 'border-blue-500/30 bg-blue-500/10' : 'border-blue-200 bg-blue-50'}`}
-            >
-              <p className={`text-sm ${darkMode ? 'text-blue-100' : 'text-blue-900'}`}>
-                Based on your answers, we've set your phase as{' '}
-                <strong>
-                  Phase {suggestedPhase}: {PHASE_NAMES[suggestedPhase]}
-                </strong>
-                . Please look below for where we expect each component at this phase level.
-              </p>
-            </div>
-          ) : null}
+          <ReadinessReviewApp
+            trustName={trustName}
+            region={region}
+            leadName={leadName}
+            teamMembers={teamMembers}
+            stakeholders={stakeholders}
+            onStakeholdersChange={onStakeholdersChange}
+            departments={departments}
+            components={components}
+            getEntry={getEntry}
+            onEntryUpdate={onEntryUpdate}
+            onReadinessEvaluated={onReadinessEvaluated}
+          />
 
-          <p className={`mt-3 text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+          <p
+            className={`mt-6 text-center text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
+          >
             Currently tracking{' '}
             <strong>
               Phase {effectivePhaseFocus}: {PHASE_NAMES[effectivePhaseFocus]}

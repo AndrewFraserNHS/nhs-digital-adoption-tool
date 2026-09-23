@@ -1,7 +1,11 @@
 import processChangeActionsText from '../data/component-actions/process-change-actions.json?raw';
+import processChangeActionsTextPathway2 from '../data/component-actions/process-change-actions-pathway2.json?raw';
+import processChangeActionsTextPathway3 from '../data/component-actions/process-change-actions-pathway3.json?raw';
+import type { CstPathwayKey } from '@data/cst';
 import type { AdoptionStore } from './adoptionState';
 import {
   clearDerivedComponentContent,
+  type DerivedComponentSource,
   type DerivedComponentConfig,
   parseDerivedComponentSource,
   syncDerivedComponentContent,
@@ -38,13 +42,15 @@ export const PROCESS_CHANGE_CONFIG: DerivedComponentConfig = {
   },
 };
 
-const PROCESS_CHANGE_SOURCE = parseDerivedComponentSource(
-  processChangeActionsText,
-  PROCESS_CHANGE_CONFIG
-);
+const PROCESS_CHANGE_SOURCE_BY_PATHWAY: Record<CstPathwayKey, DerivedComponentSource> = {
+  'pathway-1': parseDerivedComponentSource(processChangeActionsText, PROCESS_CHANGE_CONFIG),
+  'pathway-2': parseDerivedComponentSource(processChangeActionsTextPathway2, PROCESS_CHANGE_CONFIG),
+  'pathway-3': parseDerivedComponentSource(processChangeActionsTextPathway3, PROCESS_CHANGE_CONFIG),
+};
 
 export function syncProcessChangeDerivedContent(store: AdoptionStore): AdoptionStore {
-  return syncDerivedComponentContent(store, PROCESS_CHANGE_CONFIG, PROCESS_CHANGE_SOURCE);
+  const pathway = store.orgProfile.cst.pathway || 'pathway-1';
+  return syncDerivedComponentContent(store, PROCESS_CHANGE_CONFIG, PROCESS_CHANGE_SOURCE_BY_PATHWAY[pathway]);
 }
 
 export function clearProcessChangeDerivedContent(store: AdoptionStore): AdoptionStore {

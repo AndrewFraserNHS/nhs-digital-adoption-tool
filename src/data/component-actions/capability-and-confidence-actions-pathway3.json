@@ -1,117 +1,427 @@
 {
   "component": {
     "id": "CAPABILITY_CONFIDENCE",
-    "name": "capability and confidence"
+    "name": "Capability & Confidence"
   },
   "outcomes": [
     {
-      "id": "CC_P3_O1",
-      "name": "Understanding of the capability and confidence has been assessed across all live sites/teams"
+      "id": "CC_O1",
+      "name": "Adoption has been re-engaged so that required capability levels have been defined and assessed"
     },
     {
-      "id": "CC_P3_O2",
-      "name": "The capability and confidence is consistently applied everywhere the change has gone live"
+      "id": "CC_O2",
+      "name": "Adoption has been re-engaged so that people can perform confidently in the future state"
+    },
+    {
+      "id": "CC_O3",
+      "name": "Adoption has been re-engaged so that capability and confidence are sustained and continuously improved"
     }
   ],
   "actions": [
     {
-      "id": "CC_P3_001",
+      "id": "capability-0",
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "Skills & Behaviour",
       "category": "Analysis & Insight",
-      "action": "Recognise that Skills & Behaviour is inconsistent across teams/sites since go-live and gather evidence of where the gaps are in the capability and confidence.",
-      "outcomeIds": ["CC_P3_O1"],
+      "action": "M Re-engage teams to address: recognise that people will require new capabilities and confidence to operate successfully in the future state.",
+      "outcomeIds": [
+        "CC_O1"
+      ],
       "readinessScore": 0
     },
     {
-      "id": "CC_P3_002",
+      "id": "capability-1",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Skills & Behaviour",
+      "category": "Engagement",
+      "action": "M Re-open discussions with leaders, managers and stakeholders about future capability requirements.",
+      "outcomeIds": [
+        "CC_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "capability-2",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Skills & Behaviour",
+      "category": "Analysis & Insight",
+      "action": "M Diagnose areas where new skills, behaviours or ways of working may be required.",
+      "outcomeIds": [
+        "CC_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "capability-6",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "M Re-engage teams to address: begin raising awareness of future capability expectations and support requirements.",
+      "outcomeIds": [
+        "CC_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "capability-4",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Skills & Behaviour",
+      "category": "Analysis & Insight",
+      "action": "S Diagnose potential capability and confidence challenges that may affect successful adoption.",
+      "outcomeIds": [
+        "CC_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "capability-5",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Skills & Behaviour",
+      "category": "Governance",
+      "action": "M Re-engage teams to address: gain initial agreement that capability development and confidence building will be required as part of the change.",
+      "outcomeIds": [
+        "CC_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "capability-3",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "S Diagnose stakeholder perceptions regarding confidence, preparedness and future capability needs.",
+      "outcomeIds": [
+        "CC_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "capability-7",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Skills & Behaviour",
+      "category": "Analysis & Insight",
+      "action": "S Diagnose gaps in lessons learned from previous changes relating to capability gaps and confidence challenges.",
+      "outcomeIds": [
+        "CC_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "capability-8",
       "fromStatus": "Emerging",
       "toStatus": "Developing",
       "lens": "Skills & Behaviour",
       "category": "Analysis & Insight",
-      "action": "Identify why the capability and confidence hasn't landed consistently for Skills & Behaviour in specific teams/sites and agree a plan to address it.",
-      "outcomeIds": ["CC_P3_O1"],
+      "action": "M Revisit and clarify and document the future-state capabilities required for successful adoption.",
+      "outcomeIds": [
+        "CC_O1"
+      ],
       "readinessScore": 1
     },
     {
-      "id": "CC_P3_003",
+      "id": "capability-9",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Skills & Behaviour",
+      "category": "Analysis & Insight",
+      "action": "M Re-engage teams to address: conduct structured capability analysis to identify gaps between current and future-state requirements.",
+      "outcomeIds": [
+        "CC_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "capability-10",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Skills & Behaviour",
+      "category": "Analysis & Insight",
+      "action": "S Diagnose current confidence levels across impacted stakeholder groups.",
+      "outcomeIds": [
+        "CC_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "capability-11",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "M Diagnose factors that may increase or reduce stakeholder confidence during the transition.",
+      "outcomeIds": [
+        "CC_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "capability-12",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Skills & Behaviour",
+      "category": "Analysis & Insight",
+      "action": "S Diagnose capability and confidence risks that could affect successful adoption and performance.",
+      "outcomeIds": [
+        "CC_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "capability-13",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Skills & Behaviour",
-      "category": "Engagement",
-      "action": "Re-engage leaders in lagging teams/sites to re-establish the capability and confidence for Skills & Behaviour.",
-      "outcomeIds": ["CC_P3_O1"],
+      "category": "Design",
+      "action": "M Rebuild capability-building interventions to address identified capability gaps.",
+      "outcomeIds": [
+        "CC_O2"
+      ],
       "readinessScore": 2
     },
     {
-      "id": "CC_P3_004",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
+      "id": "capability-14",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
       "lens": "Skills & Behaviour",
-      "category": "Measurement & Evaluation",
-      "action": "Confirm the capability and confidence for Skills & Behaviour is being applied consistently across previously inconsistent areas.",
-      "outcomeIds": ["CC_P3_O2"],
-      "readinessScore": 3
+      "category": "Training & Learning",
+      "action": "S Re-engage teams to address: provide opportunities for practical application of learning in real or simulated environments.",
+      "outcomeIds": [
+        "CC_O2"
+      ],
+      "readinessScore": 2
     },
     {
-      "id": "CC_P3_005",
-      "fromStatus": "Adopted",
-      "toStatus": "Thriving",
+      "id": "capability-15",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
       "lens": "Skills & Behaviour",
-      "category": "Reinforcement",
-      "action": "Monitor Skills & Behaviour regularly to ensure the capability and confidence stays consistently reinforced everywhere.",
-      "outcomeIds": ["CC_P3_O2"],
-      "readinessScore": 4
+      "category": "Training & Learning",
+      "action": "S Re-engage teams to address: provide coaching, mentoring and peer support opportunities for individuals applying new skills.",
+      "outcomeIds": [
+        "CC_O2"
+      ],
+      "readinessScore": 2
     },
     {
-      "id": "CC_P3_006",
-      "fromStatus": "Not Started",
-      "toStatus": "Emerging",
-      "lens": "People Experience & Culture",
-      "category": "Analysis & Insight",
-      "action": "Survey teams/sites to understand how People Experience & Culture has been affected by inconsistent capability and confidence since go-live.",
-      "outcomeIds": ["CC_P3_O1"],
-      "readinessScore": 0
-    },
-    {
-      "id": "CC_P3_007",
-      "fromStatus": "Emerging",
-      "toStatus": "Developing",
-      "lens": "People Experience & Culture",
-      "category": "Design",
-      "action": "Develop a targeted plan to address the specific People Experience & Culture-related gaps identified in lagging areas.",
-      "outcomeIds": ["CC_P3_O1"],
-      "readinessScore": 1
-    },
-    {
-      "id": "CC_P3_008",
+      "id": "capability-16",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Communication",
-      "action": "Deliver targeted support to strengthen People Experience & Culture in teams/sites where the capability and confidence is weakest.",
-      "outcomeIds": ["CC_P3_O1"],
+      "action": "M re-communicate expectations regarding performance, proficiency and future-state behaviours.",
+      "outcomeIds": [
+        "CC_O2"
+      ],
       "readinessScore": 2
     },
     {
-      "id": "CC_P3_009",
+      "id": "capability-17",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Skills & Behaviour",
+      "category": "Measurement & Evaluation",
+      "action": "S Re-establish measures to assess capability development and confidence growth.",
+      "outcomeIds": [
+        "CC_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "capability-18",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "S Gather fresh evidence on feedback about confidence levels and practical challenges experienced by users.",
+      "outcomeIds": [
+        "CC_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "capability-19",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Skills & Behaviour",
+      "category": "Testing & Validation",
+      "action": "S Re-engage teams to address: ensure practical capability is assessed through observation, walkthroughs or structured validation activities.",
+      "outcomeIds": [
+        "CC_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "capability-20",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Skills & Behaviour",
+      "category": "Training & Learning",
+      "action": "S Re-engage teams to address: target additional support towards individuals or groups with lower confidence levels.",
+      "outcomeIds": [
+        "CC_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "capability-21",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Skills & Behaviour",
+      "category": "Risk Management",
+      "action": "S Re-establish monitoring of capability and confidence risks during implementation.",
+      "outcomeIds": [
+        "CC_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "capability-22",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Skills & Behaviour",
+      "category": "Governance",
+      "action": "S Diagnose gaps in capability and confidence measures through programme governance.",
+      "outcomeIds": [
+        "CC_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "capability-24",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
-      "lens": "People Experience & Culture",
-      "category": "Measurement & Evaluation",
-      "action": "Confirm People Experience & Culture has improved in previously lagging teams/sites.",
-      "outcomeIds": ["CC_P3_O2"],
+      "lens": "Skills & Behaviour",
+      "category": "Testing & Validation",
+      "action": "M Re-engage teams to address: ensure there are processes in place to validate that individuals can successfully perform required activities within the future-state environment.",
+      "outcomeIds": [],
       "readinessScore": 3
     },
     {
-      "id": "CC_P3_010",
+      "id": "capability-23",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Skills & Behaviour",
+      "category": "Measurement & Evaluation",
+      "action": "S Re-measure capability attainment and confidence levels across impacted stakeholder groups.",
+      "outcomeIds": [],
+      "readinessScore": 3
+    },
+    {
+      "id": "capability-25",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "M Re-engage teams to address: ensure effective application of new skills, behaviours and capabilities are recognised and reinforced.",
+      "outcomeIds": [],
+      "readinessScore": 3
+    },
+    {
+      "id": "capability-26",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Skills & Behaviour",
+      "category": "Training & Learning",
+      "action": "S Re-engage teams to address: provide targeted capability development and confidence-building interventions where gaps remain.",
+      "outcomeIds": [],
+      "readinessScore": 3
+    },
+    {
+      "id": "capability-27",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Skills & Behaviour",
+      "category": "Testing & Validation",
+      "action": "S Re-validate that capability and confidence levels are sufficient to support sustainable performance improvement.",
+      "outcomeIds": [],
+      "readinessScore": 3
+    },
+    {
+      "id": "capability-28",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Engagement",
+      "action": "S Gather fresh evidence on stakeholder feedback regarding confidence, performance and practical application of learning.",
+      "outcomeIds": [],
+      "readinessScore": 3
+    },
+    {
+      "id": "capability-29",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "People Experience & Culture",
+      "category": "Communication",
+      "action": "S re-communicate capability achievements, confidence improvements and examples of successful application.",
+      "outcomeIds": [],
+      "readinessScore": 3
+    },
+    {
+      "id": "capability-30",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Skills & Behaviour",
+      "category": "Training & Learning",
+      "action": "M Re-embed and continuously improve capability development into organisational learning and development practices.",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "capability-31",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Skills & Behaviour",
+      "category": "Measurement & Evaluation",
+      "action": "S Re-establish monitoring of long-term capability, proficiency and confidence trends across the organisation.",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "capability-32",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Skills & Behaviour",
+      "category": "Measurement & Evaluation",
+      "action": "S Re-engage teams to address: benchmark capability and confidence maturity across programmes, teams and organisational areas.",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "capability-34",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Measurement & Evaluation",
+      "action": "M Recover mechanisms that monitor workforce confidence, development needs and emerging capability requirements.",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "capability-35",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
-      "action": "Embed regular pulse-checks on People Experience & Culture so gaps in the capability and confidence are caught early in future.",
-      "outcomeIds": ["CC_P3_O2"],
+      "action": "S Re-engage teams to address: recognise and reward sustained demonstration of future-state capabilities and behaviours.",
+      "outcomeIds": [],
+      "readinessScore": 4
+    },
+    {
+      "id": "capability-36",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "People Experience & Culture",
+      "category": "Reinforcement",
+      "action": "S Re-promote a culture of continuous learning, confidence building and professional growth.",
+      "outcomeIds": [],
       "readinessScore": 4
     }
   ]

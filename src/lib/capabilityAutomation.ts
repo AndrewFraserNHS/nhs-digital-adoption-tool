@@ -1,7 +1,11 @@
 import capabilityActionsText from '../data/component-actions/capability-and-confidence-actions.json?raw';
+import capabilityActionsTextPathway2 from '../data/component-actions/capability-and-confidence-actions-pathway2.json?raw';
+import capabilityActionsTextPathway3 from '../data/component-actions/capability-and-confidence-actions-pathway3.json?raw';
+import type { CstPathwayKey } from '@data/cst';
 import type { AdoptionStore } from './adoptionState';
 import {
   clearDerivedComponentContent,
+  type DerivedComponentSource,
   type DerivedComponentConfig,
   parseDerivedComponentSource,
   syncDerivedComponentContent,
@@ -37,10 +41,15 @@ export const CAPABILITY_CONFIG: DerivedComponentConfig = {
   },
 };
 
-const CAPABILITY_SOURCE = parseDerivedComponentSource(capabilityActionsText, CAPABILITY_CONFIG);
+const CAPABILITY_SOURCE_BY_PATHWAY: Record<CstPathwayKey, DerivedComponentSource> = {
+  'pathway-1': parseDerivedComponentSource(capabilityActionsText, CAPABILITY_CONFIG),
+  'pathway-2': parseDerivedComponentSource(capabilityActionsTextPathway2, CAPABILITY_CONFIG),
+  'pathway-3': parseDerivedComponentSource(capabilityActionsTextPathway3, CAPABILITY_CONFIG),
+};
 
 export function syncCapabilityDerivedContent(store: AdoptionStore): AdoptionStore {
-  return syncDerivedComponentContent(store, CAPABILITY_CONFIG, CAPABILITY_SOURCE);
+  const pathway = store.orgProfile.cst.pathway || 'pathway-1';
+  return syncDerivedComponentContent(store, CAPABILITY_CONFIG, CAPABILITY_SOURCE_BY_PATHWAY[pathway]);
 }
 
 export function clearCapabilityDerivedContent(store: AdoptionStore): AdoptionStore {

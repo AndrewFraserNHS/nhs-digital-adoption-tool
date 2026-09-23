@@ -920,22 +920,28 @@ export function AdoptionApp() {
     (details: { skipToPhase: number | null; accepted: boolean; updatedCount: number }) => {
       setStore((prev) => ({
         ...prev,
-        auditLog: appendAuditEvents(prev, [
-          {
+        // Attributed to the tool itself, not the signed-in user - this is a bulk, semi-automated
+        // outcome of the quiz, not a manual edit, so it shouldn't fall back to "Unknown user".
+        auditLog: trimAuditEvents([
+          ...(prev.auditLog || []),
+          createAuditEvent({
+            actor: 'Readiness Review',
             eventType: 'readiness-evaluated',
             entityType: 'readiness',
             summary: 'Readiness Evaluation',
+            trustName: prev.orgProfile.trustName,
+            projectName: prev.orgProfile.projectName,
             after: {
               skipToPhase: details.skipToPhase,
               accepted: details.accepted,
               updatedCount: details.updatedCount,
             },
             source: 'local',
-          },
+          }),
         ]),
       }));
     },
-    [appendAuditEvents]
+    []
   );
 
   const [focusBenefitId, setFocusBenefitId] = useState<string | null>(null);

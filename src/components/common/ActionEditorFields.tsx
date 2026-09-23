@@ -3,7 +3,7 @@ import type { DraftAction, TeamMember } from '@lib/adoptionState';
 import { ACTION_TYPES, UNIFIED_ACTION_STATUSES, normalizeActionStatus } from '@lib/actionModel';
 
 const STATUS_OPTIONS = UNIFIED_ACTION_STATUSES.filter(
-  (status) => status !== 'Overdue start' && status !== 'Overdue completion' && status !== 'Skipped'
+  (status) => status !== 'Overdue start' && status !== 'Overdue completion'
 );
 
 export interface ActionEditorFieldsProps {

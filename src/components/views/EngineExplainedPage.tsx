@@ -14,9 +14,6 @@ import { DailyPhaseOverview } from '@components/views/DailyPhaseOverview';
 import { OwnerAvatar } from '@components/ui/OwnerAvatar';
 import { Toast } from '@components/ui/Toast';
 
-/** Skipped is set by the Preparedness Assessment's readiness skip, not manually chosen in this demo. */
-const DEMO_STATUS_OPTIONS = UNIFIED_ACTION_STATUSES.filter((status) => status !== 'Skipped');
-
 export interface EngineExplainedPageProps {
   darkMode?: boolean;
   onGetStarted: () => void;
@@ -851,7 +848,7 @@ export function EngineExplainedPage({
                           }
                           className={`rounded-md border px-2 py-1 text-xs font-semibold ${ACTION_STATUS_BADGE_STYLES[action.status]}`}
                         >
-                          {DEMO_STATUS_OPTIONS.map((status) => (
+                          {UNIFIED_ACTION_STATUSES.map((status) => (
                             <option key={status} value={status}>
                               {status}
                             </option>

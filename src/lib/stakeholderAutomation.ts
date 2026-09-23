@@ -1,12 +1,13 @@
+import type { CstPathwayKey } from '@data/cst';
+
 import stakeholderActionsText from '../data/component-actions/stakeholder-engagement-and-outcomes-actions.json?raw';
 import stakeholderActionsTextPathway2 from '../data/component-actions/stakeholder-engagement-and-outcomes-actions-pathway2.json?raw';
 import stakeholderActionsTextPathway3 from '../data/component-actions/stakeholder-engagement-and-outcomes-actions-pathway3.json?raw';
-import type { CstPathwayKey } from '@data/cst';
 import type { AdoptionStore } from './adoptionState';
 import {
   clearDerivedComponentContent,
-  type DerivedComponentSource,
   type DerivedComponentConfig,
+  type DerivedComponentSource,
   parseDerivedComponentSource,
   syncDerivedComponentContent,
 } from './componentDerivedAutomation';

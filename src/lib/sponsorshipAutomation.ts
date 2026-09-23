@@ -1,12 +1,13 @@
+import type { CstPathwayKey } from '@data/cst';
+
 import sponsorshipActionsText from '../data/component-actions/senior-sponsorship-and-governance-actions.json?raw';
 import sponsorshipActionsTextPathway2 from '../data/component-actions/senior-sponsorship-and-governance-actions-pathway2.json?raw';
 import sponsorshipActionsTextPathway3 from '../data/component-actions/senior-sponsorship-and-governance-actions-pathway3.json?raw';
-import type { CstPathwayKey } from '@data/cst';
 import type { AdoptionStore } from './adoptionState';
 import {
   clearDerivedComponentContent,
-  type DerivedComponentSource,
   type DerivedComponentConfig,
+  type DerivedComponentSource,
   parseDerivedComponentSource,
   syncDerivedComponentContent,
 } from './componentDerivedAutomation';

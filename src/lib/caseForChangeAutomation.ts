@@ -1,12 +1,13 @@
+import type { CstPathwayKey } from '@data/cst';
+
 import caseForChangeActionsText from '../data/component-actions/case-for-change-actions.json?raw';
 import caseForChangeActionsTextPathway2 from '../data/component-actions/case-for-change-actions-pathway2.json?raw';
 import caseForChangeActionsTextPathway3 from '../data/component-actions/case-for-change-actions-pathway3.json?raw';
-import type { CstPathwayKey } from '@data/cst';
 import type { AdoptionStore } from './adoptionState';
 import {
   clearDerivedComponentContent,
-  type DerivedComponentSource,
   type DerivedComponentConfig,
+  type DerivedComponentSource,
   parseDerivedComponentSource,
   syncDerivedComponentContent,
 } from './componentDerivedAutomation';

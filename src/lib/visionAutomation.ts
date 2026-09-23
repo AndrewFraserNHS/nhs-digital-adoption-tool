@@ -1,12 +1,13 @@
+import type { CstPathwayKey } from '@data/cst';
+
 import visionActionsText from '../data/component-actions/vision-actions.json?raw';
 import visionActionsTextPathway2 from '../data/component-actions/vision-actions-pathway2.json?raw';
 import visionActionsTextPathway3 from '../data/component-actions/vision-actions-pathway3.json?raw';
-import type { CstPathwayKey } from '@data/cst';
 import type { AdoptionStore } from './adoptionState';
 import {
   clearDerivedComponentContent,
-  type DerivedComponentSource,
   type DerivedComponentConfig,
+  type DerivedComponentSource,
   parseDerivedComponentSource,
   syncDerivedComponentContent,
 } from './componentDerivedAutomation';

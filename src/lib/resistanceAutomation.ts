@@ -1,12 +1,13 @@
+import type { CstPathwayKey } from '@data/cst';
+
 import resistanceActionsText from '../data/component-actions/resistance-management-actions.json?raw';
 import resistanceActionsTextPathway2 from '../data/component-actions/resistance-management-actions-pathway2.json?raw';
 import resistanceActionsTextPathway3 from '../data/component-actions/resistance-management-actions-pathway3.json?raw';
-import type { CstPathwayKey } from '@data/cst';
 import type { AdoptionStore } from './adoptionState';
 import {
   clearDerivedComponentContent,
-  type DerivedComponentSource,
   type DerivedComponentConfig,
+  type DerivedComponentSource,
   parseDerivedComponentSource,
   syncDerivedComponentContent,
 } from './componentDerivedAutomation';

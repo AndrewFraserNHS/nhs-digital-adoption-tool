@@ -1,7 +1,8 @@
+import type { CstPathwayKey } from '@data/cst';
+
 import orgChangeReadinessActionsText from '../data/component-actions/org-change-readiness-actions.json?raw';
 import orgChangeReadinessActionsPathway2 from '../data/component-actions/org-change-readiness-actions-pathway2.json?raw';
 import orgChangeReadinessActionsPathway3 from '../data/component-actions/org-change-readiness-actions-pathway3.json?raw';
-import type { CstPathwayKey } from '@data/cst';
 import type { AdoptionStore } from './adoptionState';
 import {
   clearDerivedComponentContent,

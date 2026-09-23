@@ -1,3 +1,5 @@
+import { ReadinessOutcomeModal } from '@components/common/ReadinessOutcomeModal';
+import { StakeholderPicker } from '@components/common/StakeholderPicker';
 import type { AssessmentComponent } from '@data/components';
 import {
   computeReadinessOutcome,
@@ -9,9 +11,6 @@ import { isResolvedActionStatus } from '@lib/actionModel';
 import type { DraftEntry, Stakeholder, TeamMember } from '@lib/adoptionState';
 import { load, save } from '@lib/storage';
 import { JSX, useState } from 'react';
-
-import { ReadinessOutcomeModal } from '@components/common/ReadinessOutcomeModal';
-import { StakeholderPicker } from '@components/common/StakeholderPicker';
 
 interface PreparednessState {
   icbRegion: string;

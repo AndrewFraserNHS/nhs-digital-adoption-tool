@@ -387,7 +387,6 @@ export default function BenefitsApp({
       setExpandedRegisterIds((current) => new Set(current).add(target.id));
     }
     onFocusHandled?.();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [focusBenefitId]);
 
   const stakeholderById = useMemo(

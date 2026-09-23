@@ -1,12 +1,13 @@
+import type { CstPathwayKey } from '@data/cst';
+
 import reinforcementActionsText from '../data/component-actions/reinforcement-actions.json?raw';
 import reinforcementActionsTextPathway2 from '../data/component-actions/reinforcement-actions-pathway2.json?raw';
 import reinforcementActionsTextPathway3 from '../data/component-actions/reinforcement-actions-pathway3.json?raw';
-import type { CstPathwayKey } from '@data/cst';
 import type { AdoptionStore } from './adoptionState';
 import {
   clearDerivedComponentContent,
-  type DerivedComponentSource,
   type DerivedComponentConfig,
+  type DerivedComponentSource,
   parseDerivedComponentSource,
   syncDerivedComponentContent,
 } from './componentDerivedAutomation';

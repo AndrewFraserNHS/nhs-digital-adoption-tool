@@ -1,12 +1,13 @@
+import type { CstPathwayKey } from '@data/cst';
+
 import cmReadinessActionsText from '../data/component-actions/cm-readiness-and-planning-actions.json?raw';
 import cmReadinessActionsTextPathway2 from '../data/component-actions/cm-readiness-and-planning-actions-pathway2.json?raw';
 import cmReadinessActionsTextPathway3 from '../data/component-actions/cm-readiness-and-planning-actions-pathway3.json?raw';
-import type { CstPathwayKey } from '@data/cst';
 import type { AdoptionStore } from './adoptionState';
 import {
   clearDerivedComponentContent,
-  type DerivedComponentSource,
   type DerivedComponentConfig,
+  type DerivedComponentSource,
   parseDerivedComponentSource,
   syncDerivedComponentContent,
 } from './componentDerivedAutomation';

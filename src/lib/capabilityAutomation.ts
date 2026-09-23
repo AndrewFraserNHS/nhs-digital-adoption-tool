@@ -1,12 +1,13 @@
+import type { CstPathwayKey } from '@data/cst';
+
 import capabilityActionsText from '../data/component-actions/capability-and-confidence-actions.json?raw';
 import capabilityActionsTextPathway2 from '../data/component-actions/capability-and-confidence-actions-pathway2.json?raw';
 import capabilityActionsTextPathway3 from '../data/component-actions/capability-and-confidence-actions-pathway3.json?raw';
-import type { CstPathwayKey } from '@data/cst';
 import type { AdoptionStore } from './adoptionState';
 import {
   clearDerivedComponentContent,
-  type DerivedComponentSource,
   type DerivedComponentConfig,
+  type DerivedComponentSource,
   parseDerivedComponentSource,
   syncDerivedComponentContent,
 } from './componentDerivedAutomation';

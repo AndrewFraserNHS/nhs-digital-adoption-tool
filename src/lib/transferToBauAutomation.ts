@@ -1,12 +1,13 @@
+import type { CstPathwayKey } from '@data/cst';
+
 import transferToBauActionsText from '../data/component-actions/transfer-to-bau-actions.json?raw';
 import transferToBauActionsTextPathway2 from '../data/component-actions/transfer-to-bau-actions-pathway2.json?raw';
 import transferToBauActionsTextPathway3 from '../data/component-actions/transfer-to-bau-actions-pathway3.json?raw';
-import type { CstPathwayKey } from '@data/cst';
 import type { AdoptionStore } from './adoptionState';
 import {
   clearDerivedComponentContent,
-  type DerivedComponentSource,
   type DerivedComponentConfig,
+  type DerivedComponentSource,
   parseDerivedComponentSource,
   syncDerivedComponentContent,
 } from './componentDerivedAutomation';

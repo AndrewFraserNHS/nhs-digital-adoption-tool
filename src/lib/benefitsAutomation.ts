@@ -1,12 +1,13 @@
+import type { CstPathwayKey } from '@data/cst';
+
 import benefitsActionsText from '../data/component-actions/benefits-actions.json?raw';
 import benefitsActionsTextPathway2 from '../data/component-actions/benefits-actions-pathway2.json?raw';
 import benefitsActionsTextPathway3 from '../data/component-actions/benefits-actions-pathway3.json?raw';
-import type { CstPathwayKey } from '@data/cst';
 import type { AdoptionStore } from './adoptionState';
 import {
   clearDerivedComponentContent,
-  type DerivedComponentSource,
   type DerivedComponentConfig,
+  type DerivedComponentSource,
   parseDerivedComponentSource,
   syncDerivedComponentContent,
 } from './componentDerivedAutomation';

@@ -1,12 +1,13 @@
+import type { CstPathwayKey } from '@data/cst';
+
 import riskManagementActionsText from '../data/component-actions/risk-management-actions.json?raw';
 import riskManagementActionsTextPathway2 from '../data/component-actions/risk-management-actions-pathway2.json?raw';
 import riskManagementActionsTextPathway3 from '../data/component-actions/risk-management-actions-pathway3.json?raw';
-import type { CstPathwayKey } from '@data/cst';
 import type { AdoptionStore } from './adoptionState';
 import {
   clearDerivedComponentContent,
-  type DerivedComponentSource,
   type DerivedComponentConfig,
+  type DerivedComponentSource,
   parseDerivedComponentSource,
   syncDerivedComponentContent,
 } from './componentDerivedAutomation';

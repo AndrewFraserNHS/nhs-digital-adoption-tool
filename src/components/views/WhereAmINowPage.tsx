@@ -2,7 +2,11 @@ import { JSX, useEffect, useMemo, useRef, useState } from 'react';
 import { getComponentsByPhase, type AssessmentComponent } from '@data/components';
 import { ASSESSMENT_LENSES } from '@data/lenses';
 import type { DraftEntry, Stakeholder, TeamMember } from '@lib/adoptionState';
-import { buildComponentRadarChartData, getComponentExemplarScore } from '@lib/adoptionMetrics';
+import {
+  buildComponentRadarChartData,
+  getComponentExemplarScore,
+  radarTooltipLabel,
+} from '@lib/adoptionMetrics';
 import { createBarChart, createRadarChart } from '@lib/charts';
 import { getReadinessBand } from '@lib/readinessBands';
 import { PHASE_NAMES } from '../../types/constants';
@@ -30,15 +34,6 @@ export interface WhereAmINowPageProps {
     accepted: boolean;
     updatedCount: number;
   }) => void;
-}
-
-/** Tooltip formatter shared with the Dashboard radar - suppresses the score suffix on the Exemplar/Target line, since that line is a reference marker, not a real per-lens value. */
-function radarTooltipLabel(context: { dataset?: { label?: string }; raw?: unknown }): string {
-  const label = context.dataset?.label || '';
-  if (label.startsWith('Exemplar') || label === 'Target Average') {
-    return label;
-  }
-  return `${label}: ${getReadinessBand(Number(context.raw)).label}`;
 }
 
 /** A small "?" icon that shows an explanation of the radar's grey exemplar/blue current shading on hover or focus. */

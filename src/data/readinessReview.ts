@@ -1,4 +1,5 @@
 import type { AssessmentComponent } from '@data/components';
+import type { DraftEntry } from '@lib/adoptionState';
 
 export interface PreparednessAssessment {
   nu: number;
@@ -762,4 +763,97 @@ export function computeReadinessOutcome(
     lastReadyPhase === 0 || lastReadyPhase >= maxPhase ? null : lastReadyPhase + 1;
 
   return { suggestions, skipToPhase, readyComponentIds };
+}
+
+/** Where the last completed Readiness Review's frozen report snapshot is saved - shared between `ReadinessReviewApp` (writes it on Finish) and `ReadinessReviewAnalysisApp` (reads it for "My Answers"). */
+export const READINESS_REVIEW_REPORT_STORAGE_KEY = 'nhs-readiness-review-report';
+
+/** One answered question, frozen into a report: everything needed to display or re-derive a radar from it later, independent of the live question bank or CST. */
+export interface ReadinessReviewAnswer {
+  nu: number;
+  componentId: string;
+  componentLabel: string;
+  lens: string;
+  question: string;
+  optionNumber: number;
+  optionText: string;
+  impliedScore: number;
+}
+
+export interface ReadinessReviewTrustDetails {
+  trustName: string;
+  icbRegion: string;
+  completedBy: string;
+  dateCompleted: string;
+  programmeLead: string;
+  contactEmail: string;
+}
+
+/**
+ * A full, frozen snapshot of one completed Readiness Review - every answered question plus the
+ * outcome computed from them at the time. Used both for the emailed JSON attachment and for the
+ * "Readiness Review Analysis" tool's "My Answers" view, and is exactly the shape an "Import
+ * External Answers" file is expected to be in, so both views can share one renderer.
+ */
+export interface ReadinessReviewReport extends ReadinessReviewTrustDetails {
+  generatedAt: string;
+  answers: ReadinessReviewAnswer[];
+  outcome: { skipToPhase: number | null; readyComponentIds: string[] };
+}
+
+export function buildReadinessReviewReport(
+  trustDetails: ReadinessReviewTrustDetails,
+  answers: Record<number, number>,
+  components: AssessmentComponent[],
+  questions: PreparednessAssessment[] = PREPAREDNESS_ASSESSMENT
+): ReadinessReviewReport {
+  const componentById = new Map(components.map((component) => [component.id, component]));
+
+  const reportAnswers: ReadinessReviewAnswer[] = questions
+    .filter((question) => answers[question.nu])
+    .map((question) => {
+      const optionNumber = answers[question.nu];
+      const component = componentById.get(question.id);
+      return {
+        nu: question.nu,
+        componentId: question.id,
+        componentLabel: component?.label || question.label,
+        lens: question.lens,
+        question: question.question,
+        optionNumber,
+        optionText: question.answers[optionNumber - 1],
+        impliedScore: question.progress[optionNumber - 1],
+      };
+    });
+
+  // No existing scores to compare against for a frozen report - every answered question's implied
+  // score is treated as "current" already, so the outcome reflects the answers alone.
+  const outcome = computeReadinessOutcome(answers, components, () => undefined, questions);
+
+  return {
+    ...trustDetails,
+    generatedAt: new Date().toISOString(),
+    answers: reportAnswers,
+    outcome: { skipToPhase: outcome.skipToPhase, readyComponentIds: outcome.readyComponentIds },
+  };
+}
+
+/**
+ * A read-only `getEntry`-shaped lookup over a frozen report's answers, for feeding the existing
+ * radar builder (`buildComponentRadarChartData`) the same way the live CST does. Any (component,
+ * lens) the report's questions don't cover defaults to score 0, same convention as an unassessed
+ * lens elsewhere in the app.
+ */
+export function buildReportScoreLookup(
+  report: ReadinessReviewReport
+): (componentId: string, lens: string) => DraftEntry {
+  const scoreByKey = new Map(
+    report.answers.map((answer) => [`${answer.componentId}:${answer.lens}`, answer.impliedScore])
+  );
+  return (componentId, lens) => ({
+    score: scoreByKey.get(`${componentId}:${lens}`) ?? 0,
+    rationale: '',
+    evidence: '',
+    actions: [],
+  });
 }

@@ -2,14 +2,19 @@ import { ReadinessOutcomeModal } from '@components/common/ReadinessOutcomeModal'
 import { StakeholderPicker } from '@components/common/StakeholderPicker';
 import type { AssessmentComponent } from '@data/components';
 import {
+  buildReadinessReviewReport,
   computeReadinessOutcome,
   PREPAREDNESS_ASSESSMENT,
+  READINESS_REVIEW_REPORT_STORAGE_KEY,
   type ReadinessOutcome,
+  type ReadinessReviewReport,
   type ReadinessSuggestion,
 } from '@data/readinessReview';
 import { isResolvedActionStatus } from '@lib/actionModel';
 import type { DraftEntry, Stakeholder, TeamMember } from '@lib/adoptionState';
+import { buildEmlWithJsonAttachment } from '@lib/eml';
 import { load, save } from '@lib/storage';
+import { downloadFile } from '@lib/utils';
 import { JSX, useState } from 'react';
 
 interface PreparednessState {
@@ -111,6 +116,40 @@ export default function ReadinessReviewApp({
     setOutcome(result);
     setShowModal(true);
     update({ completed: true });
+
+    // A frozen snapshot of everything answered, for the emailed attachment and for the
+    // "Readiness Review Analysis" tool's "My Answers" view - overwritten on every completion.
+    save(
+      READINESS_REVIEW_REPORT_STORAGE_KEY,
+      buildReadinessReviewReport(
+        {
+          trustName,
+          icbRegion: state.icbRegion,
+          completedBy: state.completedBy,
+          dateCompleted: state.dateCompleted,
+          programmeLead: state.programmeLead,
+          contactEmail: state.contactEmail,
+        },
+        state.answers,
+        components
+      )
+    );
+  };
+
+  const handleSendReport = () => {
+    const report = load<ReadinessReviewReport>(READINESS_REVIEW_REPORT_STORAGE_KEY);
+    if (!report) {
+      return;
+    }
+    const filenameSafeTrust = (trustName || 'assessment').replace(/[^a-z0-9]+/gi, '-').toLowerCase();
+    const eml = buildEmlWithJsonAttachment({
+      to: 'england.da@test.net',
+      subject: `${trustName} - Assessment outcomes`,
+      body: 'Please find our AVT Readiness Review outcomes attached.',
+      attachmentFilename: `${filenameSafeTrust}-readiness-review.json`,
+      attachmentJson: report,
+    });
+    downloadFile(`${filenameSafeTrust}-readiness-review.eml`, eml, 'message/rfc822');
   };
 
   const applySkip = (skipToPhase: number): Set<string> => {
@@ -311,13 +350,14 @@ export default function ReadinessReviewApp({
                 &quot;Readiness by component&quot; below, or retake the review any time.
               </p>
               <div className="flex flex-wrap justify-center gap-3">
-                <a
-                  href={`mailto:england.da@test.net?subject=${encodeURIComponent(`${trustName} - Assessment outcomes`)}`}
+                <button
+                  type="button"
+                  onClick={handleSendReport}
                   className="rounded-md bg-[#005eb8] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
                 >
                   Now please send across your assessment scores to the Digital Adoption AVT
                   mailbox
-                </a>
+                </button>
                 <button
                   type="button"
                   onClick={handleReset}

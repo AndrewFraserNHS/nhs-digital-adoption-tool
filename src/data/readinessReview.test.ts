@@ -2,7 +2,12 @@ import type { AssessmentComponent } from '@data/components';
 import { ASSESSMENT_COMPONENTS } from '@data/components';
 import { describe, expect, it } from 'vitest';
 
-import { computeReadinessOutcome, PREPAREDNESS_ASSESSMENT } from './readinessReview';
+import {
+  buildReadinessReviewReport,
+  buildReportScoreLookup,
+  computeReadinessOutcome,
+  PREPAREDNESS_ASSESSMENT,
+} from './readinessReview';
 
 const noExistingScores = () => undefined;
 
@@ -115,5 +120,63 @@ describe('computeReadinessOutcome (synthetic fixture)', () => {
         impliedScore: 2,
       },
     ]);
+  });
+
+  const TRUST_DETAILS = {
+    trustName: 'Test Trust',
+    icbRegion: 'North West ICB',
+    completedBy: 'Alex Morgan (Change Lead)',
+    dateCompleted: '2026-01-01',
+    programmeLead: 'Sam Patel',
+    contactEmail: 'sam@example.nhs.uk',
+  };
+
+  it('SHOULD build a frozen report with one answer per answered question and a matching outcome', () => {
+    // act - phase 1 fully at the top answer (skips to phase 2), phase 2 left unanswered
+    const report = buildReadinessReviewReport(TRUST_DETAILS, { 1: 5, 2: 5 }, COMPONENTS, QUESTIONS);
+
+    // assert - trust details carried through unchanged, plus a generated timestamp
+    expect(report).toMatchObject(TRUST_DETAILS);
+    expect(report.generatedAt).toEqual(expect.any(String));
+
+    // assert - one answer per answered question, with its option text and implied score
+    expect(report.answers).toEqual([
+      {
+        nu: 1,
+        componentId: 'a1',
+        componentLabel: 'A1',
+        lens: 'Lens',
+        question: 'Q1',
+        optionNumber: 5,
+        optionText: '5. e',
+        impliedScore: 2,
+      },
+      {
+        nu: 2,
+        componentId: 'a2',
+        componentLabel: 'A2',
+        lens: 'Lens',
+        question: 'Q2',
+        optionNumber: 5,
+        optionText: '5. e',
+        impliedScore: 2,
+      },
+    ]);
+
+    // assert - the frozen outcome matches computeReadinessOutcome given the same answers
+    expect(report.outcome).toEqual({ skipToPhase: 2, readyComponentIds: ['a1', 'a2'] });
+  });
+
+  it('SHOULD build a radar-ready score lookup from a report, defaulting uncovered lenses to 0', () => {
+    // arrange
+    const report = buildReadinessReviewReport(TRUST_DETAILS, { 1: 5 }, COMPONENTS, QUESTIONS);
+
+    // act
+    const getEntry = buildReportScoreLookup(report);
+
+    // assert
+    expect(getEntry('a1', 'Lens').score).toBe(2);
+    expect(getEntry('a2', 'Lens').score).toBe(0);
+    expect(getEntry('a1', 'Some other lens').score).toBe(0);
   });
 });

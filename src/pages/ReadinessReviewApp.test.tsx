@@ -150,15 +150,84 @@ describe('ReadinessReviewApp', () => {
       updatedCount: 0,
     });
     expect(screen.getByText('Assessment complete')).toBeInTheDocument();
+  });
 
-    // assert - a mailto link is offered, addressed and subject-lined for this trust
-    const mailLink = screen.getByRole('link', {
-      name: /Now please send across your assessment scores/,
+  it('SHOULD download a .eml with the full report JSON genuinely attached when sending', async () => {
+    // arrange
+    render(<ReadinessReviewApp trustName="Test Trust" components={[]} />);
+    goToQuestions();
+    PREPAREDNESS_ASSESSMENT.forEach((question, index) => {
+      answerQuestion(question.nu, 1);
+      if (index < PREPAREDNESS_ASSESSMENT.length - 1) {
+        fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+      }
     });
-    expect(mailLink).toHaveAttribute(
-      'href',
-      'mailto:england.da@test.net?subject=Test%20Trust%20-%20Assessment%20outcomes'
+    fireEvent.click(screen.getByRole('button', { name: 'Finish assessment' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
+
+    const captured: { blob: Blob | null; anchor: HTMLAnchorElement | null } = {
+      blob: null,
+      anchor: null,
+    };
+    (URL as unknown as { createObjectURL: (blob: Blob) => string }).createObjectURL = vi.fn(
+      () => 'blob:mock'
     );
+    (URL as unknown as { revokeObjectURL: (url: string) => void }).revokeObjectURL = vi.fn();
+    const createObjectURLSpy = vi
+      .spyOn(
+        URL as unknown as { createObjectURL: (blob: Blob) => string },
+        'createObjectURL'
+      )
+      .mockImplementation((blob: Blob) => {
+        captured.blob = blob;
+        return 'blob:mock';
+      });
+    const revokeObjectURLSpy = vi.spyOn(
+      URL as unknown as { revokeObjectURL: (url: string) => void },
+      'revokeObjectURL'
+    );
+    const clickSpy = vi
+      .spyOn(HTMLAnchorElement.prototype, 'click')
+      .mockImplementation(() => {});
+    const originalCreateElement = document.createElement.bind(document);
+    const createElementSpy = vi
+      .spyOn(document, 'createElement')
+      .mockImplementation((tagName: string) => {
+        const element = originalCreateElement(tagName);
+        if (tagName === 'a') {
+          captured.anchor = element as HTMLAnchorElement;
+        }
+        return element;
+      });
+
+    // act
+    fireEvent.click(
+      screen.getByRole('button', { name: /Now please send across your assessment scores/ })
+    );
+
+    // assert - downloads a .eml named for the trust
+    expect(captured.anchor?.download).toBe('test-trust-readiness-review.eml');
+    expect(clickSpy).toHaveBeenCalled();
+
+    // assert - the .eml is addressed, subject-lined, and carries the report as a real base64 attachment
+    const emlText = await captured.blob!.text();
+    expect(emlText).toContain('To: england.da@test.net');
+    expect(emlText).toContain('Subject: Test Trust - Assessment outcomes');
+    expect(emlText).toContain('Content-Disposition: attachment; filename="test-trust-readiness-review.json"');
+    const attachmentMatch = emlText.match(
+      /Content-Disposition: attachment;[^\r\n]*\r\n\r\n([\s\S]*?)\r\n--/
+    );
+    const base64Payload = (attachmentMatch?.[1] || '').replace(/\r\n/g, '');
+    const binary = atob(base64Payload);
+    const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
+    const decodedAttachment = JSON.parse(new TextDecoder().decode(bytes));
+    expect(decodedAttachment.trustName).toBe('Test Trust');
+    expect(decodedAttachment.answers.length).toBe(PREPAREDNESS_ASSESSMENT.length);
+
+    createObjectURLSpy.mockRestore();
+    revokeObjectURLSpy.mockRestore();
+    clickSpy.mockRestore();
+    createElementSpy.mockRestore();
   });
 
   const DEFAULT_ENTRY: DraftEntry = { score: 5, rationale: '', evidence: '', actions: [] };

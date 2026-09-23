@@ -10,6 +10,7 @@ import { PHASE_NAMES } from '../types/constants';
 import { isCompletedActionStatus, isNonOutstandingActionStatus, isSkippedActionStatus } from './actionModel';
 import { AdoptionStore, deriveObjectiveStatus, DraftEntry } from './adoptionState';
 import { type BragStatus, getTimelineBragStatus } from './bragStatus';
+import { getReadinessBand } from './readinessBands';
 
 const COMPONENT_PHASE_EXEMPLARS: Record<number, Record<string, number>> = {
   1: {
@@ -555,6 +556,15 @@ export function buildComponentRadarChartData(
       },
     ],
   };
+}
+
+/** Tooltip formatter for a `buildComponentRadarChartData` chart - suppresses the score suffix on the Exemplar/Target line, since that line is a reference marker, not a real per-lens value. */
+export function radarTooltipLabel(context: { dataset?: { label?: string }; raw?: unknown }): string {
+  const label = context.dataset?.label || '';
+  if (label.startsWith('Exemplar') || label === 'Target Average') {
+    return label;
+  }
+  return `${label}: ${getReadinessBand(Number(context.raw)).label}`;
 }
 
 /**

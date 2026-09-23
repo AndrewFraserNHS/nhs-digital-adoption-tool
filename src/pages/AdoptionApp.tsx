@@ -86,6 +86,7 @@ import ChangeImpactAssessmentApp from '@pages/ChangeImpactAssessmentApp';
 import CompareApp from '@pages/CompareApp';
 import ForceFieldAnalysisApp from '@pages/ForceFieldAnalysisApp';
 import RaidLogApp from '@pages/RaidLogApp';
+import ReadinessReviewAnalysisApp from '@pages/ReadinessReviewAnalysisApp';
 import StakeholderAnalysisApp from '@pages/StakeholderAnalysisApp';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -420,6 +421,7 @@ export function AdoptionApp() {
       'stakeholder-analysis': 'tools',
       'raid-log': 'tools',
       benefits: 'tools',
+      'readiness-review-analysis': 'tools',
       'audit-log': 'tools',
     };
     const section = sectionByView[view];
@@ -1635,6 +1637,7 @@ export function AdoptionApp() {
                       'stakeholder-analysis',
                       'raid-log',
                       'benefits',
+                      'readiness-review-analysis',
                       'audit-log',
                     ] as View[]
                   ).map((v) => (
@@ -1664,7 +1667,9 @@ export function AdoptionApp() {
                                   ? 'RAID Log'
                                   : v === 'benefits'
                                     ? 'Benefits Register & Tracker'
-                                    : 'Audit Log'}
+                                    : v === 'readiness-review-analysis'
+                                      ? 'Readiness Review Analysis'
+                                      : 'Audit Log'}
                     </button>
                   ))}
                 </nav>
@@ -2214,6 +2219,9 @@ export function AdoptionApp() {
                   .departments
               }
             />
+          )}
+          {view === 'readiness-review-analysis' && (
+            <ReadinessReviewAnalysisApp components={COMPONENTS} />
           )}
           {view === 'audit-log' && (
             <AuditLogPage events={store.auditLog} darkMode={Boolean(userSettings.darkMode)} />

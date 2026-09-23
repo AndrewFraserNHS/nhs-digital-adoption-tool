@@ -345,6 +345,7 @@ export type View =
   | 'stakeholder-analysis'
   | 'raid-log'
   | 'benefits'
+  | 'readiness-review-analysis'
   | 'audit-log'
   | 'project-details'
   | 'settings'

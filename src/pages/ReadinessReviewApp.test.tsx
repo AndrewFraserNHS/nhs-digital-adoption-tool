@@ -121,7 +121,11 @@ describe('ReadinessReviewApp', () => {
     // arrange
     const onReadinessEvaluated = vi.fn();
     render(
-      <ReadinessReviewApp components={[]} onReadinessEvaluated={onReadinessEvaluated} />
+      <ReadinessReviewApp
+        trustName="Test Trust"
+        components={[]}
+        onReadinessEvaluated={onReadinessEvaluated}
+      />
     );
     goToQuestions();
     PREPAREDNESS_ASSESSMENT.forEach((question, index) => {
@@ -146,6 +150,15 @@ describe('ReadinessReviewApp', () => {
       updatedCount: 0,
     });
     expect(screen.getByText('Assessment complete')).toBeInTheDocument();
+
+    // assert - a mailto link is offered, addressed and subject-lined for this trust
+    const mailLink = screen.getByRole('link', {
+      name: /Now please send across your assessment scores/,
+    });
+    expect(mailLink).toHaveAttribute(
+      'href',
+      'mailto:england.da@test.net?subject=Test%20Trust%20-%20Assessment%20outcomes'
+    );
   });
 
   const DEFAULT_ENTRY: DraftEntry = { score: 5, rationale: '', evidence: '', actions: [] };

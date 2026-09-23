@@ -152,6 +152,14 @@ export default function ReadinessReviewApp({
         onEntryUpdate(suggestion.componentId, suggestion.lens, {
           ...entry,
           score: suggestion.impliedScore,
+          // The answer says this lens is already past every readiness level below its new score,
+          // so any action still sitting at one of those earlier levels is no longer needed.
+          actions: entry.actions.map((action) =>
+            (action.readinessScore ?? 0) < suggestion.impliedScore &&
+            !isResolvedActionStatus(action.status)
+              ? { ...action, status: 'Skipped' }
+              : action
+          ),
         });
       });
     }
@@ -196,7 +204,7 @@ export default function ReadinessReviewApp({
           <div className="grid grid-cols-1 gap-4 text-left">
             <div>
               <span className={labelClass}>Trust name</span>
-              <p className="p-2 rounded border border-slate-200 bg-slate-50 text-slate-700">
+              <p className="p-2 rounded border border-slate-200 bg-white text-slate-700">
                 {trustName || 'Not set - add your trust name in Project Details'}
               </p>
             </div>

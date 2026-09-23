@@ -681,6 +681,12 @@ export interface ReadinessOutcome {
  * recorded, plus - using the same component target scores shown on the readiness radar
  * (`AssessmentComponent.target`) - whether whole phases are already fully ready to skip past.
  *
+ * `progress[answer-1]` is a real score on the same 0-5 scale as `DraftEntry.score` - not a
+ * separate band that needs converting. Today's questions only ever imply as high as 2 (by design -
+ * they only cover the earliest part of the journey so far), so most components won't reach their
+ * target from this quiz alone and a full phase skip will rarely be offered yet; that's expected,
+ * not a bug - later questions can imply higher scores once written.
+ *
  * A component's implied score (for the phase-skip calculation only) is the minimum across its lens
  * questions - its weakest lens gates it, same convention as the component radar. A phase counts as
  * "ready" only once every component in it meets or exceeds its target. Phases are walked from 1

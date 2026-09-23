@@ -41,6 +41,74 @@ function radarTooltipLabel(context: { dataset?: { label?: string }; raw?: unknow
   return `${label}: ${getReadinessBand(Number(context.raw)).label}`;
 }
 
+/** A small "?" icon that shows an explanation of the radar's grey exemplar/blue current shading on hover or focus. */
+function RadarHelpIcon({ darkMode }: { darkMode: boolean }): JSX.Element {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        onMouseEnter={() => setOpen(true)}
+        onMouseLeave={() => setOpen(false)}
+        onFocus={() => setOpen(true)}
+        onBlur={() => setOpen(false)}
+        aria-label="Understanding this radar"
+        aria-describedby="radar-help-tooltip"
+        className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border text-xs font-bold transition-colors ${
+          darkMode
+            ? 'border-slate-500 text-slate-300 hover:bg-slate-700'
+            : 'border-slate-400 text-slate-500 hover:bg-slate-100'
+        }`}
+      >
+        ?
+      </button>
+      {open ? (
+        <div
+          id="radar-help-tooltip"
+          role="tooltip"
+          className={`absolute right-0 top-full z-20 mt-2 w-80 rounded-lg border p-4 text-xs shadow-lg ${
+            darkMode
+              ? 'border-slate-600 bg-slate-800 text-slate-200'
+              : 'border-slate-200 bg-white text-slate-700'
+          }`}
+        >
+          <p className="font-semibold">Understanding this radar</p>
+          <p className="mt-1.5">
+            The grey area is where we would ideally be at this phase, and the blue area is where
+            you are currently tracking. Areas where you&apos;re not meeting the grey exemplar data
+            can be areas of focus. Areas where you&apos;re exceeding the plan may be areas that
+            have been progressed ahead of where they need to be at this current point.
+          </p>
+          <ul className="mt-2.5 space-y-1.5">
+            <li className="flex gap-1.5">
+              <span className="mt-0.5 h-2 w-2 flex-shrink-0 rounded-full bg-green-500" />
+              <span>
+                <strong>On track:</strong> blue closely follows the grey shape across every axis.
+              </span>
+            </li>
+            <li className="flex gap-1.5">
+              <span className="mt-0.5 h-2 w-2 flex-shrink-0 rounded-full bg-amber-500" />
+              <span>
+                <strong>Ahead in the wrong areas:</strong> blue is well past grey on one or two
+                axes but lagging on the rest - effort may be focused on the wrong priorities for
+                this phase.
+              </span>
+            </li>
+            <li className="flex gap-1.5">
+              <span className="mt-0.5 h-2 w-2 flex-shrink-0 rounded-full bg-red-500" />
+              <span>
+                <strong>Behind:</strong> blue sits inside grey on most axes - these are the areas
+                to focus on next.
+              </span>
+            </li>
+          </ul>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 /** One small bar chart for a single component: a bar per lens plus a dashed target bar at that phase's expected score. */
 function ComponentLensBarChart({
   component,
@@ -274,19 +342,23 @@ export function WhereAmINowPage({
             </p>
           </div>
 
-          <ReadinessReviewApp
-            trustName={trustName}
-            region={region}
-            leadName={leadName}
-            teamMembers={teamMembers}
-            stakeholders={stakeholders}
-            onStakeholdersChange={onStakeholdersChange}
-            departments={departments}
-            components={components}
-            getEntry={getEntry}
-            onEntryUpdate={onEntryUpdate}
-            onReadinessEvaluated={onReadinessEvaluated}
-          />
+          <div
+            className={`rounded-lg border p-6 ${darkMode ? 'border-slate-600 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
+          >
+            <ReadinessReviewApp
+              trustName={trustName}
+              region={region}
+              leadName={leadName}
+              teamMembers={teamMembers}
+              stakeholders={stakeholders}
+              onStakeholdersChange={onStakeholdersChange}
+              departments={departments}
+              components={components}
+              getEntry={getEntry}
+              onEntryUpdate={onEntryUpdate}
+              onReadinessEvaluated={onReadinessEvaluated}
+            />
+          </div>
 
           <p
             className={`mt-6 text-center text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
@@ -314,9 +386,14 @@ export function WhereAmINowPage({
         className={`rounded-lg border shadow-sm ${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'}`}
       >
         <div className="p-6">
-          <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>
-            Readiness by component
-          </h3>
+          <div className="flex items-center justify-between gap-2">
+            <h3
+              className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
+            >
+              Readiness by component
+            </h3>
+            <RadarHelpIcon darkMode={darkMode} />
+          </div>
 
           <div
             className={`mt-3 flex gap-1 rounded-md border p-1 text-sm font-semibold ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}

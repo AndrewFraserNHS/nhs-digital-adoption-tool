@@ -8,9 +8,11 @@ import ReadinessReviewApp from './ReadinessReviewApp';
 
 const TEAM_MEMBERS = [{ id: 'm1', name: 'Alex Morgan', role: 'Change Lead' }];
 
-// Low phase-1 targets (2, matching the sample data's max implied score) so answering everything at
-// its top option makes phase 1 "ready"; the phase-2 placeholder keeps a high target so it never is,
-// which pins the offered skip to exactly phase 2.
+// Today's questions only ever imply as high as 2 (progress[4], the top answer) - by design, they
+// only cover the earliest part of the journey so far. Low phase-1 targets (2) are reachable at
+// that top answer, so answering everything at its top option makes phase 1 "ready"; the phase-2
+// placeholder's target (5) is above the maximum implied score so it never is, which pins the
+// offered skip to exactly phase 2.
 const COMPONENTS: AssessmentComponent[] = [
   {
     id: 'vision',
@@ -257,7 +259,8 @@ describe('ReadinessReviewApp', () => {
     fireEvent.click(screen.getByLabelText(/Skip straight to Phase 2/));
     fireEvent.click(screen.getByRole('button', { name: 'Apply selected' }));
 
-    // assert - vision's first lens gets its own suggested score (2), not the skip's target-based mutation
+    // assert - vision's first lens gets its own suggested score (2, the top answer's implied
+    // score), not the skip's target-based mutation
     expect(onEntryUpdate).toHaveBeenCalledWith(
       'vision',
       'Strategic Direction and Leadership',
@@ -265,6 +268,69 @@ describe('ReadinessReviewApp', () => {
     );
     expect(onReadinessEvaluated).toHaveBeenCalledWith(
       expect.objectContaining({ skipToPhase: null, accepted: true })
+    );
+  });
+
+  it("SHOULD mark a lens's below-threshold actions as Skipped when its own suggestion is applied (declining the phase skip)", () => {
+    // arrange - vision's first lens starts at 0 with three actions at readiness levels 0, 1 and 2
+    const entries: Record<string, Record<string, DraftEntry>> = {
+      vision: {
+        'Strategic Direction and Leadership': {
+          score: 0,
+          rationale: '',
+          evidence: '',
+          actions: [
+            { id: 'below', text: 'Below the new score', owner: '', timescale: '', status: 'Planned', readinessScore: 1 },
+            { id: 'at', text: 'At the new score', owner: '', timescale: '', status: 'Planned', readinessScore: 2 },
+            {
+              id: 'already-completed',
+              text: 'Already done',
+              owner: '',
+              timescale: '',
+              status: 'Completed',
+              readinessScore: 0,
+            },
+          ],
+        },
+        'People Experience and Culture': { score: 0, rationale: '', evidence: '', actions: [] },
+      },
+      case_for_change: {
+        'Strategic Direction and Leadership': { score: 0, rationale: '', evidence: '', actions: [] },
+        'People Experience and Culture': { score: 0, rationale: '', evidence: '', actions: [] },
+      },
+    };
+    const getEntry = (componentId: string, lens: string) => entries[componentId]?.[lens] || DEFAULT_ENTRY;
+    const onEntryUpdate = vi.fn();
+
+    render(
+      <ReadinessReviewApp components={COMPONENTS} getEntry={getEntry} onEntryUpdate={onEntryUpdate} />
+    );
+    goToQuestions();
+    PREPAREDNESS_ASSESSMENT.forEach((question, index) => {
+      answerQuestion(question.nu, 5);
+      if (index < PREPAREDNESS_ASSESSMENT.length - 1) {
+        fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+      }
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Finish assessment' }));
+
+    // act - decline the phase skip, keep the individual suggestions checked
+    fireEvent.click(screen.getByLabelText(/Skip straight to Phase 2/));
+    fireEvent.click(screen.getByRole('button', { name: 'Apply selected' }));
+
+    // assert - only the action below the new score (2) is marked Skipped; the one already at that
+    // level and the already-Completed one are left alone
+    expect(onEntryUpdate).toHaveBeenCalledWith(
+      'vision',
+      'Strategic Direction and Leadership',
+      expect.objectContaining({
+        score: 2,
+        actions: [
+          expect.objectContaining({ id: 'below', status: 'Skipped' }),
+          expect.objectContaining({ id: 'at', status: 'Planned' }),
+          expect.objectContaining({ id: 'already-completed', status: 'Completed' }),
+        ],
+      })
     );
   });
 

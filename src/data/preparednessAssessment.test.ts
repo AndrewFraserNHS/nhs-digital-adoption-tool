@@ -4,6 +4,8 @@ import { describe, expect, it } from 'vitest';
 
 import { computeReadinessOutcome, PREPAREDNESS_ASSESSMENT } from './preparednessAssessment';
 
+const noExistingScores = () => undefined;
+
 describe('preparednessAssessment', () => {
   it('SHOULD define 36 questions, one per (component, lens) pair, matching components.ts', () => {
     // assert
@@ -22,13 +24,14 @@ describe('preparednessAssessment', () => {
     });
   });
 
-  it('SHOULD offer no skip when nothing is answered', () => {
+  it('SHOULD offer no skip and no suggestions when nothing is answered', () => {
     // act
-    const outcome = computeReadinessOutcome({}, ASSESSMENT_COMPONENTS);
+    const outcome = computeReadinessOutcome({}, ASSESSMENT_COMPONENTS, noExistingScores);
 
     // assert
     expect(outcome.skipToPhase).toBeNull();
     expect(outcome.readyComponentIds).toEqual([]);
+    expect(outcome.suggestions).toEqual([]);
   });
 });
 
@@ -60,7 +63,7 @@ describe('computeReadinessOutcome (synthetic fixture)', () => {
 
   it('SHOULD offer to skip to phase 2 WHEN every phase-1 component meets its target', () => {
     // act - answer 5 on both phase-1 questions (implied score 2, meets target 2); leave phase 2 unanswered
-    const outcome = computeReadinessOutcome({ 1: 5, 2: 5 }, COMPONENTS, QUESTIONS);
+    const outcome = computeReadinessOutcome({ 1: 5, 2: 5 }, COMPONENTS, noExistingScores, QUESTIONS);
 
     // assert
     expect(outcome.skipToPhase).toBe(2);
@@ -69,7 +72,12 @@ describe('computeReadinessOutcome (synthetic fixture)', () => {
 
   it('SHOULD offer nothing WHEN phase 1 is not fully ready, even if phase 2 answers are strong', () => {
     // act - a1 falls short (answer 1 -> implied score 0), b1/b2 answered strongly
-    const outcome = computeReadinessOutcome({ 1: 1, 2: 5, 3: 5, 4: 5 }, COMPONENTS, QUESTIONS);
+    const outcome = computeReadinessOutcome(
+      { 1: 1, 2: 5, 3: 5, 4: 5 },
+      COMPONENTS,
+      noExistingScores,
+      QUESTIONS
+    );
 
     // assert
     expect(outcome.skipToPhase).toBeNull();
@@ -80,11 +88,32 @@ describe('computeReadinessOutcome (synthetic fixture)', () => {
     const outcome = computeReadinessOutcome(
       { 1: 5, 2: 5, 3: 5, 4: 5 },
       COMPONENTS,
+      noExistingScores,
       QUESTIONS
     );
 
     // assert
     expect(outcome.skipToPhase).toBeNull();
     expect(outcome.readyComponentIds.sort()).toEqual(['a1', 'a2', 'b1', 'b2']);
+  });
+
+  it('SHOULD only suggest a readiness-level update WHEN the implied score beats what is already recorded', () => {
+    // arrange - a1 already recorded at 2 (== implied score for answer 5), a2 recorded at 0
+    const getEntry = (componentId: string) =>
+      componentId === 'a1' ? { score: 2 } : { score: 0 };
+
+    // act
+    const outcome = computeReadinessOutcome({ 1: 5, 2: 5 }, COMPONENTS, getEntry, QUESTIONS);
+
+    // assert - only a2 is an improvement; a1's implied score doesn't beat its current score
+    expect(outcome.suggestions).toEqual([
+      {
+        componentId: 'a2',
+        componentLabel: 'A2',
+        lens: 'Lens',
+        currentScore: 0,
+        impliedScore: 2,
+      },
+    ]);
   });
 });

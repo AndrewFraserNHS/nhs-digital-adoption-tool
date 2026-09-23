@@ -657,7 +657,18 @@ export const PREPAREDNESS_ASSESSMENT: PreparednessAssessment[] = [
   },
 ];
 
+/** A suggested readiness-level update for a single (component, lens) pair, implied by one question's answer. */
+export interface ReadinessSuggestion {
+  componentId: string;
+  componentLabel: string;
+  lens: string;
+  currentScore: number;
+  impliedScore: number;
+}
+
 export interface ReadinessOutcome {
+  /** Per (component, lens) readiness-level updates worth offering - only where the answer implies a higher score than what's currently recorded. */
+  suggestions: ReadinessSuggestion[];
   /** The phase the user could skip straight to, or null if phase 1 itself isn't fully ready yet (or they're already ready for everything). */
   skipToPhase: number | null;
   /** Component ids found to be at/above their target score, based on the quiz answers. */
@@ -665,30 +676,52 @@ export interface ReadinessOutcome {
 }
 
 /**
- * Works out which phases the user's answers suggest they're already ready for, using the same
- * component target scores shown on the readiness radar (`AssessmentComponent.target`).
+ * Works out what the user's answers suggest updating: a per (component, lens) readiness-level
+ * suggestion for every question whose implied score (`progress[answer-1]`) beats what's currently
+ * recorded, plus - using the same component target scores shown on the readiness radar
+ * (`AssessmentComponent.target`) - whether whole phases are already fully ready to skip past.
  *
- * Each question's answer implies a score for that (component, lens) pair via `progress[answer-1]`.
- * A component's implied score is the minimum across its lens questions (its weakest lens gates it,
- * same convention as the component radar). A phase counts as "ready" only once every component in
- * it meets or exceeds its target. Phases are walked from 1 upward and the streak stops at the first
- * phase that isn't fully ready, so the offer is always to skip a contiguous run starting at phase 1.
+ * A component's implied score (for the phase-skip calculation only) is the minimum across its lens
+ * questions - its weakest lens gates it, same convention as the component radar. A phase counts as
+ * "ready" only once every component in it meets or exceeds its target. Phases are walked from 1
+ * upward and the streak stops at the first phase that isn't fully ready, so the offer is always to
+ * skip a contiguous run starting at phase 1.
  */
 export function computeReadinessOutcome(
   answers: Record<number, number>,
   components: AssessmentComponent[],
+  getEntry: (componentId: string, lens: string) => { score: number } | undefined,
   questions: PreparednessAssessment[] = PREPAREDNESS_ASSESSMENT
 ): ReadinessOutcome {
+  const componentById = new Map(components.map((component) => [component.id, component]));
   const impliedScoresByComponent = new Map<string, number[]>();
+  const suggestions: ReadinessSuggestion[] = [];
+
   questions.forEach((question) => {
     const answer = answers[question.nu];
     if (!answer) {
       return;
     }
     const impliedScore = question.progress[answer - 1];
+    const component = componentById.get(question.id);
+    if (!component) {
+      return;
+    }
+
     const existing = impliedScoresByComponent.get(question.id) || [];
     existing.push(impliedScore);
     impliedScoresByComponent.set(question.id, existing);
+
+    const currentScore = Number(getEntry(question.id, question.lens)?.score || 0);
+    if (impliedScore > currentScore) {
+      suggestions.push({
+        componentId: question.id,
+        componentLabel: component.label,
+        lens: question.lens,
+        currentScore,
+        impliedScore,
+      });
+    }
   });
 
   const readyComponentIds: string[] = [];
@@ -722,5 +755,5 @@ export function computeReadinessOutcome(
   const skipToPhase =
     lastReadyPhase === 0 || lastReadyPhase >= maxPhase ? null : lastReadyPhase + 1;
 
-  return { skipToPhase, readyComponentIds };
+  return { suggestions, skipToPhase, readyComponentIds };
 }

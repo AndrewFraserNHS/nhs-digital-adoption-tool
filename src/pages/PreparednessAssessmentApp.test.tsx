@@ -133,16 +133,25 @@ describe('PreparednessAssessmentApp', () => {
     // act
     fireEvent.click(screen.getByRole('button', { name: 'Finish assessment' }));
 
-    // assert - no components passed in, so nothing to skip
+    // assert - no components passed in, so nothing to suggest or skip
     expect(screen.getByRole('dialog')).toBeInTheDocument();
-    expect(screen.getByText(/we'd recommend starting at the beginning/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Nothing to update yet/)
+    ).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
-    expect(onReadinessEvaluated).toHaveBeenCalledWith({ skipToPhase: null, accepted: false });
+    expect(onReadinessEvaluated).toHaveBeenCalledWith({
+      skipToPhase: null,
+      accepted: false,
+      updatedCount: 0,
+    });
     expect(screen.getByText('Assessment complete')).toBeInTheDocument();
   });
 
-  it('SHOULD accept a skip offer by updating component scores and marking their actions Skipped', () => {
-    // arrange
+  const DEFAULT_ENTRY: DraftEntry = { score: 5, rationale: '', evidence: '', actions: [] };
+
+  it('SHOULD apply the phase skip when accepted, without double-applying its own components\' suggestions', () => {
+    // arrange - vision/case_for_change lag behind (score 1); everything else already maxed (score 5)
+    // so no other suggestions surface and sponsorship (target 5) never counts as ready.
     const entries: Record<string, Record<string, DraftEntry>> = {
       vision: {
         'Strategic Direction and Leadership': {
@@ -161,7 +170,7 @@ describe('PreparednessAssessmentApp', () => {
         'People Experience and Culture': { score: 1, rationale: '', evidence: '', actions: [] },
       },
     };
-    const getEntry = (componentId: string, lens: string) => entries[componentId][lens];
+    const getEntry = (componentId: string, lens: string) => entries[componentId]?.[lens] || DEFAULT_ENTRY;
     const onEntryUpdate = vi.fn();
     const onReadinessEvaluated = vi.fn();
 
@@ -176,8 +185,7 @@ describe('PreparednessAssessmentApp', () => {
     );
     goToQuestions();
 
-    // act - answer every question with the top option (implied score 2, meeting the fixture's
-    // phase-1 targets but not the deliberately-high phase-2 one)
+    // act - answer every question with the top option
     PREPAREDNESS_ASSESSMENT.forEach((question, index) => {
       answerQuestion(question.nu, 5);
       if (index < PREPAREDNESS_ASSESSMENT.length - 1) {
@@ -186,9 +194,12 @@ describe('PreparednessAssessmentApp', () => {
     });
     fireEvent.click(screen.getByRole('button', { name: 'Finish assessment' }));
 
-    // assert - the modal offers to skip to phase 2
-    expect(screen.getByText(/skip straight to Phase 2/)).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'Skip ahead' }));
+    // assert - the modal offers to skip to phase 2, and lists the vision/case_for_change suggestions
+    expect(screen.getByLabelText(/Skip straight to Phase 2/)).toBeInTheDocument();
+    expect(screen.getAllByText('Vision').length).toBeGreaterThan(0);
+
+    // act - accept everything as pre-checked
+    fireEvent.click(screen.getByRole('button', { name: 'Apply selected' }));
 
     // assert - vision's first lens: score raised to its target (2), Planned action Skipped, Completed left alone
     expect(onEntryUpdate).toHaveBeenCalledWith(
@@ -202,7 +213,62 @@ describe('PreparednessAssessmentApp', () => {
         ],
       })
     );
-    expect(onReadinessEvaluated).toHaveBeenCalledWith({ skipToPhase: 2, accepted: true });
+    // assert - only the two phase-1 components (4 lenses total) were updated, not sponsorship
+    expect(onEntryUpdate).toHaveBeenCalledTimes(4);
+    expect(onReadinessEvaluated).toHaveBeenCalledWith({
+      skipToPhase: 2,
+      accepted: true,
+      updatedCount: 2,
+    });
+  });
+
+  it('SHOULD apply an unchecked-phase-skip scenario as individual suggestions only', () => {
+    // arrange - same lagging vision/case_for_change scores, but the user declines the phase skip
+    const entries: Record<string, Record<string, DraftEntry>> = {
+      vision: {
+        'Strategic Direction and Leadership': { score: 1, rationale: '', evidence: '', actions: [] },
+        'People Experience and Culture': { score: 1, rationale: '', evidence: '', actions: [] },
+      },
+      case_for_change: {
+        'Strategic Direction and Leadership': { score: 1, rationale: '', evidence: '', actions: [] },
+        'People Experience and Culture': { score: 1, rationale: '', evidence: '', actions: [] },
+      },
+    };
+    const getEntry = (componentId: string, lens: string) => entries[componentId]?.[lens] || DEFAULT_ENTRY;
+    const onEntryUpdate = vi.fn();
+    const onReadinessEvaluated = vi.fn();
+
+    render(
+      <PreparednessAssessmentApp
+        embedded
+        components={COMPONENTS}
+        getEntry={getEntry}
+        onEntryUpdate={onEntryUpdate}
+        onReadinessEvaluated={onReadinessEvaluated}
+      />
+    );
+    goToQuestions();
+    PREPAREDNESS_ASSESSMENT.forEach((question, index) => {
+      answerQuestion(question.nu, 5);
+      if (index < PREPAREDNESS_ASSESSMENT.length - 1) {
+        fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+      }
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Finish assessment' }));
+
+    // act - uncheck only the phase-skip checkbox, keep the individual suggestions checked
+    fireEvent.click(screen.getByLabelText(/Skip straight to Phase 2/));
+    fireEvent.click(screen.getByRole('button', { name: 'Apply selected' }));
+
+    // assert - vision's first lens gets its own suggested score (2), not the skip's target-based mutation
+    expect(onEntryUpdate).toHaveBeenCalledWith(
+      'vision',
+      'Strategic Direction and Leadership',
+      expect.objectContaining({ score: 2 })
+    );
+    expect(onReadinessEvaluated).toHaveBeenCalledWith(
+      expect.objectContaining({ skipToPhase: null, accepted: true })
+    );
   });
 
   it('SHOULD add a new stakeholder as the executive sponsor via the shared stakeholder list', () => {

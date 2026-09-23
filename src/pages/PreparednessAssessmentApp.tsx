@@ -3,6 +3,7 @@ import {
   computeReadinessOutcome,
   PREPAREDNESS_ASSESSMENT,
   type ReadinessOutcome,
+  type ReadinessSuggestion,
 } from '@data/preparednessAssessment';
 import { isResolvedActionStatus } from '@lib/actionModel';
 import type { DraftEntry, Stakeholder, TeamMember } from '@lib/adoptionState';
@@ -56,7 +57,11 @@ export interface PreparednessAssessmentAppProps {
   components?: AssessmentComponent[];
   getEntry?: (componentId: string, lens: string) => DraftEntry;
   onEntryUpdate?: (componentId: string, lens: string, entry: DraftEntry) => void;
-  onReadinessEvaluated?: (details: { skipToPhase: number | null; accepted: boolean }) => void;
+  onReadinessEvaluated?: (details: {
+    skipToPhase: number | null;
+    accepted: boolean;
+    updatedCount: number;
+  }) => void;
 }
 
 export default function PreparednessAssessmentApp({
@@ -105,18 +110,22 @@ export default function PreparednessAssessmentApp({
   const currentAnswer = currentQuestion ? state.answers[currentQuestion.nu] : undefined;
 
   const handleFinish = () => {
-    const result = computeReadinessOutcome(state.answers, components);
+    const scoreLookup = (componentId: string, lens: string) => getEntry?.(componentId, lens);
+    const result = computeReadinessOutcome(state.answers, components, scoreLookup);
     setOutcome(result);
     setShowModal(true);
     update({ completed: true });
   };
 
-  const applySkip = (skipToPhase: number) => {
+  const applySkip = (skipToPhase: number): Set<string> => {
+    const skippedComponentIds = new Set(
+      components.filter((component) => component.phase < skipToPhase).map((component) => component.id)
+    );
     if (!getEntry || !onEntryUpdate) {
-      return;
+      return skippedComponentIds;
     }
     components
-      .filter((component) => component.phase < skipToPhase)
+      .filter((component) => skippedComponentIds.has(component.id))
       .forEach((component) => {
         component.lenses.forEach((lens) => {
           const entry = getEntry(component.id, lens);
@@ -129,19 +138,39 @@ export default function PreparednessAssessmentApp({
           });
         });
       });
+    return skippedComponentIds;
   };
 
-  const handleAccept = () => {
-    if (outcome?.skipToPhase) {
-      applySkip(outcome.skipToPhase);
+  const handleApply = (selectedSuggestions: ReadinessSuggestion[], applyPhaseSkip: boolean) => {
+    const skipToPhase = applyPhaseSkip ? (outcome?.skipToPhase ?? null) : null;
+    const skippedComponentIds = skipToPhase ? applySkip(skipToPhase) : new Set<string>();
+
+    // A component already covered by the phase skip (raised to its target) doesn't need its
+    // individual suggestion applied on top - that would just overwrite the skip's own score.
+    const suggestionsToApply = selectedSuggestions.filter(
+      (suggestion) => !skippedComponentIds.has(suggestion.componentId)
+    );
+    if (getEntry && onEntryUpdate) {
+      suggestionsToApply.forEach((suggestion) => {
+        const entry = getEntry(suggestion.componentId, suggestion.lens);
+        onEntryUpdate(suggestion.componentId, suggestion.lens, {
+          ...entry,
+          score: suggestion.impliedScore,
+        });
+      });
     }
-    onReadinessEvaluated?.({ skipToPhase: outcome?.skipToPhase ?? null, accepted: true });
+
+    onReadinessEvaluated?.({
+      skipToPhase,
+      accepted: Boolean(skipToPhase) || suggestionsToApply.length > 0,
+      updatedCount: suggestionsToApply.length + (skipToPhase ? skippedComponentIds.size : 0),
+    });
     setShowModal(false);
     setOutcomeHandled(true);
   };
 
   const handleDecline = () => {
-    onReadinessEvaluated?.({ skipToPhase: outcome?.skipToPhase ?? null, accepted: false });
+    onReadinessEvaluated?.({ skipToPhase: null, accepted: false, updatedCount: 0 });
     setShowModal(false);
     setOutcomeHandled(true);
   };
@@ -316,15 +345,19 @@ export default function PreparednessAssessmentApp({
               </div>
 
               {currentQuestion ? (
-                <fieldset className="rounded-lg border border-blue-100 bg-blue-50 p-6">
-                  <legend className="px-1">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-blue-600">
+                <div
+                  role="group"
+                  aria-label={currentQuestion.question}
+                  className="rounded-lg border border-blue-100 bg-blue-50 p-6"
+                >
+                  <div className="text-center">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-blue-600 break-words">
                       {currentQuestion.label} &middot; {currentQuestion.lens}
                     </p>
-                    <p className="mt-1 text-base font-medium text-slate-800">
+                    <p className="mt-1 text-base font-medium text-slate-800 break-words">
                       {currentQuestion.question}
                     </p>
-                  </legend>
+                  </div>
                   <div className="mt-4 space-y-2">
                     {currentQuestion.answers.map((option, index) => {
                       const optionNumber = index + 1;
@@ -348,7 +381,7 @@ export default function PreparednessAssessmentApp({
                       );
                     })}
                   </div>
-                </fieldset>
+                </div>
               ) : null}
 
               <div className="flex justify-between">
@@ -385,7 +418,7 @@ export default function PreparednessAssessmentApp({
         <ReadinessOutcomeModal
           open={showModal}
           outcome={outcome}
-          onAccept={handleAccept}
+          onApply={handleApply}
           onDecline={handleDecline}
         />
       ) : null}

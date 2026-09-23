@@ -920,7 +920,7 @@ export function AdoptionApp() {
   }, []);
 
   const handleReadinessEvaluated = useCallback(
-    (details: { skipToPhase: number | null; accepted: boolean }) => {
+    (details: { skipToPhase: number | null; accepted: boolean; updatedCount: number }) => {
       setStore((prev) => ({
         ...prev,
         auditLog: appendAuditEvents(prev, [
@@ -928,7 +928,11 @@ export function AdoptionApp() {
             eventType: 'readiness-evaluated',
             entityType: 'readiness',
             summary: 'Readiness Evaluation',
-            after: { skipToPhase: details.skipToPhase, accepted: details.accepted },
+            after: {
+              skipToPhase: details.skipToPhase,
+              accepted: details.accepted,
+              updatedCount: details.updatedCount,
+            },
             source: 'local',
           },
         ]),

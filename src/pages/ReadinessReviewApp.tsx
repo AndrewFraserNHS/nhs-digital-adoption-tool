@@ -312,7 +312,7 @@ export default function ReadinessReviewApp({
               </p>
               <div className="flex flex-wrap justify-center gap-3">
                 <a
-                  href={`mailto:england.da@test.net?subject=${encodeURIComponent(`${trustName} - Assessment outcomes`)}`}
+                  href={`mailto:england.digitaladoptionavt@nhs.net?subject=${encodeURIComponent(`${trustName} - Assessment outcomes`)}`}
                   className="rounded-md bg-[#005eb8] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
                 >
                   Now please send across your assessment scores to the Digital Adoption AVT

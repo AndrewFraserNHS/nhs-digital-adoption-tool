@@ -157,7 +157,7 @@ describe('ReadinessReviewApp', () => {
     });
     expect(mailLink).toHaveAttribute(
       'href',
-      'mailto:england.da@test.net?subject=Test%20Trust%20-%20Assessment%20outcomes'
+      'mailto:england.digitaladoptionavt@nhs.net?subject=Test%20Trust%20-%20Assessment%20outcomes'
     );
   });
 

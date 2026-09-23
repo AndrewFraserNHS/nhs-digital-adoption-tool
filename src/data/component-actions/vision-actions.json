@@ -88,7 +88,7 @@
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
       "category": "Communication",
-      "action": "C Create simple awareness messages explaining that a vision is being developed.",
+      "action": "S Create simple awareness messages explaining that a vision is being developed.",
       "outcomeIds": ["VISION_O2"],
       "readinessScore": 0
     },

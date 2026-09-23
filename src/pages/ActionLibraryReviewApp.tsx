@@ -586,7 +586,7 @@ function ActionRow({
             <option value="">-</option>
             <option value="must">Must</option>
             <option value="should">Should</option>
-            <option value="could">Could</option>
+            {/* <option value="could">Could</option> */}
           </select>
           {action.needsRework ? (
             <span

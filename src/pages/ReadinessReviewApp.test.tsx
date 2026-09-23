@@ -162,7 +162,6 @@ describe('ReadinessReviewApp', () => {
         fireEvent.click(screen.getByRole('button', { name: 'Next' }));
       }
     });
-<<<<<<< HEAD
     fireEvent.click(screen.getByRole('button', { name: 'Finish assessment' }));
     fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
 
@@ -172,11 +171,6 @@ describe('ReadinessReviewApp', () => {
     };
     (URL as unknown as { createObjectURL: (blob: Blob) => string }).createObjectURL = vi.fn(
       () => 'blob:mock'
-=======
-    expect(mailLink).toHaveAttribute(
-      'href',
-      'mailto:england.digitaladoptionavt@nhs.net?subject=Test%20Trust%20-%20Assessment%20outcomes'
->>>>>>> 3224e545130f867ffcff922dc5bd21e89de852f8
     );
     (URL as unknown as { revokeObjectURL: (url: string) => void }).revokeObjectURL = vi.fn();
     const createObjectURLSpy = vi

@@ -1504,7 +1504,7 @@ export function AdoptionApp() {
                       ? 'Engine Explained'
                       : v === 'project-details'
                         ? 'Project Profile'
-                        : 'Where Am I Now?'}
+                        : 'Adoption Baseline'}
                 </button>
               ))}
             </nav>

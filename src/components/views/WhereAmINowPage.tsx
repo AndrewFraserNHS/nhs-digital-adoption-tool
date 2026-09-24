@@ -313,7 +313,7 @@ export function WhereAmINowPage({
     <div className="max-w-6xl mx-auto space-y-6">
       <div>
         <h2 className={`text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
-          Where am I now?
+          Change Adoption Baseline (Where are we now?)
         </h2>
         <p className={`mt-2 text-sm ${textClass}`}>
           Take the Readiness Review to see your readiness by component - both feed into which of

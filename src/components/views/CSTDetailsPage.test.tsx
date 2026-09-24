@@ -105,7 +105,7 @@ describe('ProjectDetailsPage', () => {
     );
 
     // act
-    fireEvent.click(screen.getByRole('button', { name: 'Where am I now?' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Adoption Baseline' }));
 
     // assert
     expect(onGoToWhereAmINow).toHaveBeenCalled();

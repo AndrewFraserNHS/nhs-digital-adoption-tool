@@ -1,6 +1,8 @@
 import { JSX, useEffect, useMemo, useRef, useState } from 'react';
 import { getComponentsByPhase, type AssessmentComponent } from '@data/components';
+import type { CstPathwayKey } from '@data/cst';
 import { ASSESSMENT_LENSES } from '@data/lenses';
+import type { PreparednessAssessment } from '@data/readinessReview';
 import type { DraftEntry, Stakeholder, TeamMember } from '@lib/adoptionState';
 import {
   buildComponentRadarChartData,
@@ -34,6 +36,9 @@ export interface WhereAmINowPageProps {
     accepted: boolean;
     updatedCount: number;
   }) => void;
+  readinessQuestions?: PreparednessAssessment[];
+  currentPathway?: CstPathwayKey;
+  onPathwayChosen?: (pathway: CstPathwayKey) => void;
 }
 
 /** A small "?" icon that shows an explanation of the radar's grey exemplar/blue current shading on hover or focus. */
@@ -201,6 +206,9 @@ export function WhereAmINowPage({
   onStakeholdersChange,
   departments = [],
   onReadinessEvaluated,
+  readinessQuestions,
+  currentPathway,
+  onPathwayChosen,
 }: WhereAmINowPageProps): JSX.Element {
   const [readinessTab, setReadinessTab] = useState<'by-component' | 'by-lens' | 'by-phases'>(
     'by-component'
@@ -352,6 +360,9 @@ export function WhereAmINowPage({
               getEntry={getEntry}
               onEntryUpdate={onEntryUpdate}
               onReadinessEvaluated={onReadinessEvaluated}
+              questions={readinessQuestions}
+              currentPathway={currentPathway}
+              onPathwayChosen={onPathwayChosen}
             />
           </div>
 

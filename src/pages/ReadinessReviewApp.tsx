@@ -1,20 +1,24 @@
 import { ReadinessOutcomeModal } from '@components/common/ReadinessOutcomeModal';
 import { StakeholderPicker } from '@components/common/StakeholderPicker';
 import type { AssessmentComponent } from '@data/components';
+import type { CstPathwayKey } from '@data/cst';
 import {
   buildReadinessReviewReport,
   computeReadinessOutcome,
-  PREPAREDNESS_ASSESSMENT,
+  DEFAULT_READINESS_QUESTIONS,
+  getMissingLensCoverage,
+  pathwayFromAnswer,
   READINESS_REVIEW_REPORT_STORAGE_KEY,
+  type MissingLens,
+  type PreparednessAssessment,
   type ReadinessOutcome,
   type ReadinessReviewReport,
   type ReadinessSuggestion,
 } from '@data/readinessReview';
 import { isResolvedActionStatus } from '@lib/actionModel';
 import type { DraftEntry, Stakeholder, TeamMember } from '@lib/adoptionState';
-import { buildEmlWithJsonAttachment } from '@lib/eml';
+import { downloadReportEml, sendReportBundle } from '@lib/readinessExport';
 import { load, save } from '@lib/storage';
-import { downloadFile } from '@lib/utils';
 import { JSX, useState } from 'react';
 
 interface PreparednessState {
@@ -26,12 +30,13 @@ interface PreparednessState {
   contactEmail: string;
   /** Chosen option number (1-5), keyed by question `nu`. */
   answers: Record<number, number>;
+  /** Free-text answers, keyed by question `nu`. Absent in state saved before text questions existed. */
+  textAnswers?: Record<number, string>;
   currentIndex: number;
   completed: boolean;
 }
 
 const STORAGE_KEY = 'nhs-readiness-review';
-const QUESTIONS = [...PREPAREDNESS_ASSESSMENT].sort((a, b) => a.nu - b.nu);
 
 function freshState(region: string, leadName: string): PreparednessState {
   return {
@@ -57,6 +62,11 @@ export interface ReadinessReviewAppProps {
   onStakeholdersChange?: (stakeholders: Stakeholder[]) => void;
   departments?: string[];
   components?: AssessmentComponent[];
+  /** The project's question list, in display order. Defaults to the built-in questions. */
+  questions?: PreparednessAssessment[];
+  /** The project's current pathway, so a different Q1 answer can be offered as a switch. */
+  currentPathway?: CstPathwayKey;
+  onPathwayChosen?: (pathway: CstPathwayKey) => void;
   getEntry?: (componentId: string, lens: string) => DraftEntry;
   onEntryUpdate?: (componentId: string, lens: string, entry: DraftEntry) => void;
   onReadinessEvaluated?: (details: {
@@ -75,6 +85,9 @@ export default function ReadinessReviewApp({
   onStakeholdersChange,
   departments = [],
   components = [],
+  questions: QUESTIONS = DEFAULT_READINESS_QUESTIONS,
+  currentPathway,
+  onPathwayChosen,
   getEntry,
   onEntryUpdate,
   onReadinessEvaluated,
@@ -86,6 +99,7 @@ export default function ReadinessReviewApp({
   const [outcome, setOutcome] = useState<ReadinessOutcome | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [outcomeHandled, setOutcomeHandled] = useState(false);
+  const [missingLenses, setMissingLenses] = useState<MissingLens[]>([]);
 
   const persist = (next: PreparednessState) => {
     setState(next);
@@ -106,13 +120,27 @@ export default function ReadinessReviewApp({
     }
   };
 
-  const currentQuestion = QUESTIONS[state.currentIndex];
-  const isLastQuestion = state.currentIndex === QUESTIONS.length - 1;
+  const setTextAnswer = (nu: number, text: string) =>
+    persist({ ...state, textAnswers: { ...state.textAnswers, [nu]: text } });
+
+  const currentIndex = Math.min(state.currentIndex, Math.max(QUESTIONS.length - 1, 0));
+  const currentQuestion = QUESTIONS[currentIndex];
+  const isLastQuestion = currentIndex === QUESTIONS.length - 1;
   const currentAnswer = currentQuestion ? state.answers[currentQuestion.nu] : undefined;
+  const currentIsText = currentQuestion?.kind === 'text';
+  const chosenPathway = pathwayFromAnswer(
+    state.answers[QUESTIONS.find((question) => question.kind === 'pathway')?.nu ?? -1]
+  );
 
   const handleFinish = () => {
+    // Every component lens needs a scored answer, otherwise the readiness radar shows gaps.
+    const missing = getMissingLensCoverage(components, QUESTIONS, state.answers);
+    setMissingLenses(missing);
+    if (missing.length > 0) {
+      return;
+    }
     const scoreLookup = (componentId: string, lens: string) => getEntry?.(componentId, lens);
-    const result = computeReadinessOutcome(state.answers, components, scoreLookup);
+    const result = computeReadinessOutcome(state.answers, components, scoreLookup, QUESTIONS);
     setOutcome(result);
     setShowModal(true);
     update({ completed: true });
@@ -131,25 +159,27 @@ export default function ReadinessReviewApp({
           contactEmail: state.contactEmail,
         },
         state.answers,
-        components
+        components,
+        QUESTIONS,
+        state.textAnswers
       )
     );
   };
 
+  const loadReport = () => load<ReadinessReviewReport>(READINESS_REVIEW_REPORT_STORAGE_KEY);
+
   const handleSendReport = () => {
-    const report = load<ReadinessReviewReport>(READINESS_REVIEW_REPORT_STORAGE_KEY);
-    if (!report) {
-      return;
+    const report = loadReport();
+    if (report) {
+      sendReportBundle(report, components);
     }
-    const filenameSafeTrust = (trustName || 'assessment').replace(/[^a-z0-9]+/gi, '-').toLowerCase();
-    const eml = buildEmlWithJsonAttachment({
-      to: 'england.digitaladoptionavt@nhs.net',
-      subject: `${trustName} - Assessment outcomes`,
-      body: 'Please find our AVT Readiness Review outcomes attached.',
-      attachmentFilename: `${filenameSafeTrust}-readiness-review.json`,
-      attachmentJson: report,
-    });
-    downloadFile(`${filenameSafeTrust}-readiness-review.eml`, eml, 'message/rfc822');
+  };
+
+  const handleDownloadEml = () => {
+    const report = loadReport();
+    if (report) {
+      void downloadReportEml(report, components);
+    }
   };
 
   const applySkip = (skipToPhase: number): Set<string> => {
@@ -176,7 +206,11 @@ export default function ReadinessReviewApp({
     return skippedComponentIds;
   };
 
-  const handleApply = (selectedSuggestions: ReadinessSuggestion[], applyPhaseSkip: boolean) => {
+  const handleApply = (
+    selectedSuggestions: ReadinessSuggestion[],
+    applyPhaseSkip: boolean,
+    applyPathway: boolean
+  ) => {
     const skipToPhase = applyPhaseSkip ? (outcome?.skipToPhase ?? null) : null;
     const skippedComponentIds = skipToPhase ? applySkip(skipToPhase) : new Set<string>();
 
@@ -203,6 +237,12 @@ export default function ReadinessReviewApp({
       });
     }
 
+    // Switching pathway regenerates the project's action content, so it goes last - the scores
+    // applied above are kept, but action statuses are rebuilt for the new pathway.
+    if (applyPathway && chosenPathway) {
+      onPathwayChosen?.(chosenPathway);
+    }
+
     onReadinessEvaluated?.({
       skipToPhase,
       accepted: Boolean(skipToPhase) || suggestionsToApply.length > 0,
@@ -220,7 +260,7 @@ export default function ReadinessReviewApp({
 
   const inputClass = 'w-full p-2 border border-slate-300 rounded outline-none';
   const labelClass = 'block text-sm font-medium text-slate-700 mb-1';
-  const progressPct = ((state.currentIndex + 1) / QUESTIONS.length) * 100;
+  const progressPct = ((currentIndex + 1) / Math.max(QUESTIONS.length, 1)) * 100;
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -359,6 +399,13 @@ export default function ReadinessReviewApp({
                 </button>
                 <button
                   type="button"
+                  onClick={handleDownloadEml}
+                  className="rounded-md bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-200"
+                >
+                  Download as Outlook draft (.eml)
+                </button>
+                <button
+                  type="button"
                   onClick={handleReset}
                   className="rounded-md bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-200"
                 >
@@ -371,13 +418,13 @@ export default function ReadinessReviewApp({
               <div>
                 <div className="flex items-center justify-between text-sm text-slate-500 mb-1">
                   <span>
-                    Question {state.currentIndex + 1} of {QUESTIONS.length}
+                    Question {currentIndex + 1} of {QUESTIONS.length}
                   </span>
                   <span>{Math.round(progressPct)}%</span>
                 </div>
                 <div
                   role="progressbar"
-                  aria-valuenow={state.currentIndex + 1}
+                  aria-valuenow={currentIndex + 1}
                   aria-valuemin={1}
                   aria-valuemax={QUESTIONS.length}
                   className="h-2 w-full rounded-full bg-slate-200 overflow-hidden"
@@ -397,14 +444,23 @@ export default function ReadinessReviewApp({
                 >
                   <div className="text-center">
                     <p className="text-xs font-semibold uppercase tracking-wide text-blue-600 break-words">
-                      {currentQuestion.label} &middot; {currentQuestion.lens}
+                      {[currentQuestion.label, currentQuestion.lens].filter(Boolean).join(' · ')}
                     </p>
                     <p className="mt-1 text-base font-medium text-slate-800 break-words">
                       {currentQuestion.question}
                     </p>
                   </div>
                   <div className="mt-4 space-y-2">
-                    {currentQuestion.answers.map((option, index) => {
+                    {currentIsText ? (
+                      <textarea
+                        aria-label={currentQuestion.question}
+                        value={state.textAnswers?.[currentQuestion.nu] || ''}
+                        onChange={(event) => setTextAnswer(currentQuestion.nu, event.target.value)}
+                        rows={5}
+                        className={inputClass}
+                      />
+                    ) : null}
+                    {(currentIsText ? [] : currentQuestion.answers).map((option, index) => {
                       const optionNumber = index + 1;
                       const inputId = `prep-q-${currentQuestion.nu}-${optionNumber}`;
                       return (
@@ -429,13 +485,29 @@ export default function ReadinessReviewApp({
                 </div>
               ) : null}
 
+              {missingLenses.length > 0 ? (
+                <div
+                  role="alert"
+                  className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900"
+                >
+                  <p className="font-semibold">
+                    Every component lens needs a scored answer before you can finish.
+                  </p>
+                  <ul className="mt-1 list-disc pl-5">
+                    {missingLenses.map((item) => (
+                      <li key={`${item.componentId}:${item.lens}`}>
+                        {item.componentLabel} &middot; {item.lens}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+
               <div className="flex justify-between">
                 <button
                   type="button"
                   onClick={() =>
-                    state.currentIndex === 0
-                      ? setPage(1)
-                      : update({ currentIndex: state.currentIndex - 1 })
+                    currentIndex === 0 ? setPage(1) : update({ currentIndex: currentIndex - 1 })
                   }
                   className="rounded-md bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-200"
                 >
@@ -443,11 +515,11 @@ export default function ReadinessReviewApp({
                 </button>
                 <button
                   type="button"
-                  disabled={!currentAnswer}
+                  disabled={!currentIsText && !currentAnswer}
                   onClick={() =>
                     isLastQuestion
                       ? handleFinish()
-                      : update({ currentIndex: state.currentIndex + 1 })
+                      : update({ currentIndex: currentIndex + 1 })
                   }
                   className="rounded-md bg-[#005eb8] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
@@ -463,6 +535,7 @@ export default function ReadinessReviewApp({
         <ReadinessOutcomeModal
           open={showModal}
           outcome={outcome}
+          suggestedPathway={chosenPathway && chosenPathway !== currentPathway ? chosenPathway : null}
           onApply={handleApply}
           onDecline={handleDecline}
         />

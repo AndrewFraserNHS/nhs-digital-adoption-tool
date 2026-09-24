@@ -6,6 +6,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import ReadinessReviewApp from './ReadinessReviewApp';
 
+const { sendReportBundle } = vi.hoisted(() => ({ sendReportBundle: vi.fn() }));
+vi.mock('@lib/readinessExport', () => ({
+  sendReportBundle,
+  downloadReportEml: vi.fn(),
+}));
+
 const TEAM_MEMBERS = [{ id: 'm1', name: 'Alex Morgan', role: 'Change Lead' }];
 
 // Today's questions only ever imply as high as 2 (progress[4], the top answer) - by design, they
@@ -59,6 +65,7 @@ describe('ReadinessReviewApp', () => {
     // arrange
     render(
       <ReadinessReviewApp
+        questions={PREPAREDNESS_ASSESSMENT}
         trustName="Test Trust"
         region="North West ICB"
         teamMembers={TEAM_MEMBERS}
@@ -78,7 +85,7 @@ describe('ReadinessReviewApp', () => {
 
   it('SHOULD show one question at a time with a progress bar, and require an answer before Next', () => {
     // arrange
-    render(<ReadinessReviewApp />);
+    render(<ReadinessReviewApp questions={PREPAREDNESS_ASSESSMENT} />);
     goToQuestions();
 
     // assert - first question shown with a progress indicator
@@ -99,7 +106,7 @@ describe('ReadinessReviewApp', () => {
 
   it('SHOULD reach the last question and show a Finish assessment button', () => {
     // arrange
-    render(<ReadinessReviewApp />);
+    render(<ReadinessReviewApp questions={PREPAREDNESS_ASSESSMENT} />);
     goToQuestions();
 
     // act - answer every question
@@ -122,6 +129,7 @@ describe('ReadinessReviewApp', () => {
     const onReadinessEvaluated = vi.fn();
     render(
       <ReadinessReviewApp
+        questions={PREPAREDNESS_ASSESSMENT}
         trustName="Test Trust"
         components={[]}
         onReadinessEvaluated={onReadinessEvaluated}
@@ -152,9 +160,16 @@ describe('ReadinessReviewApp', () => {
     expect(screen.getByText('Assessment complete')).toBeInTheDocument();
   });
 
-  it('SHOULD download a .eml with the full report JSON genuinely attached when sending', async () => {
+  it('SHOULD send the report bundle (JSON + PDF + mailto) with every answer in the report', () => {
     // arrange
-    render(<ReadinessReviewApp trustName="Test Trust" components={[]} />);
+    sendReportBundle.mockClear();
+    render(
+      <ReadinessReviewApp
+        trustName="Test Trust"
+        components={[]}
+        questions={PREPAREDNESS_ASSESSMENT}
+      />
+    );
     goToQuestions();
     PREPAREDNESS_ASSESSMENT.forEach((question, index) => {
       answerQuestion(question.nu, 1);
@@ -165,69 +180,82 @@ describe('ReadinessReviewApp', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Finish assessment' }));
     fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
 
-    const captured: { blob: Blob | null; anchor: HTMLAnchorElement | null } = {
-      blob: null,
-      anchor: null,
-    };
-    (URL as unknown as { createObjectURL: (blob: Blob) => string }).createObjectURL = vi.fn(
-      () => 'blob:mock'
-    );
-    (URL as unknown as { revokeObjectURL: (url: string) => void }).revokeObjectURL = vi.fn();
-    const createObjectURLSpy = vi
-      .spyOn(
-        URL as unknown as { createObjectURL: (blob: Blob) => string },
-        'createObjectURL'
-      )
-      .mockImplementation((blob: Blob) => {
-        captured.blob = blob;
-        return 'blob:mock';
-      });
-    const revokeObjectURLSpy = vi.spyOn(
-      URL as unknown as { revokeObjectURL: (url: string) => void },
-      'revokeObjectURL'
-    );
-    const clickSpy = vi
-      .spyOn(HTMLAnchorElement.prototype, 'click')
-      .mockImplementation(() => {});
-    const originalCreateElement = document.createElement.bind(document);
-    const createElementSpy = vi
-      .spyOn(document, 'createElement')
-      .mockImplementation((tagName: string) => {
-        const element = originalCreateElement(tagName);
-        if (tagName === 'a') {
-          captured.anchor = element as HTMLAnchorElement;
-        }
-        return element;
-      });
-
     // act
     fireEvent.click(
       screen.getByRole('button', { name: /Now please send across your assessment scores/ })
     );
 
-    // assert - downloads a .eml named for the trust
-    expect(captured.anchor?.download).toBe('test-trust-readiness-review.eml');
-    expect(clickSpy).toHaveBeenCalled();
+    // assert
+    expect(sendReportBundle).toHaveBeenCalledTimes(1);
+    const report = sendReportBundle.mock.calls[0][0];
+    expect(report.trustName).toBe('Test Trust');
+    expect(report.answers.length).toBe(PREPAREDNESS_ASSESSMENT.length);
+  });
 
-    // assert - the .eml is addressed, subject-lined, and carries the report as a real base64 attachment
-    const emlText = await captured.blob!.text();
-    expect(emlText).toContain('To: england.digitaladoptionavt@nhs.net');
-    expect(emlText).toContain('Subject: Test Trust - Assessment outcomes');
-    expect(emlText).toContain('Content-Disposition: attachment; filename="test-trust-readiness-review.json"');
-    const attachmentMatch = emlText.match(
-      /Content-Disposition: attachment;[^\r\n]*\r\n\r\n([\s\S]*?)\r\n--/
+  it('SHOULD block finishing until every component lens has a scored answer', () => {
+    // arrange - a component whose lens no question covers
+    const uncovered: AssessmentComponent[] = [
+      { id: 'ghost', label: 'Ghost', lenses: ['Made Up Lens'], phase: 1, target: 2 },
+    ];
+    render(
+      <ReadinessReviewApp
+        trustName="Test Trust"
+        components={uncovered}
+        questions={PREPAREDNESS_ASSESSMENT.slice(0, 1)}
+      />
     );
-    const base64Payload = (attachmentMatch?.[1] || '').replace(/\r\n/g, '');
-    const binary = atob(base64Payload);
-    const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
-    const decodedAttachment = JSON.parse(new TextDecoder().decode(bytes));
-    expect(decodedAttachment.trustName).toBe('Test Trust');
-    expect(decodedAttachment.answers.length).toBe(PREPAREDNESS_ASSESSMENT.length);
+    goToQuestions();
+    answerQuestion(PREPAREDNESS_ASSESSMENT[0].nu, 1);
 
-    createObjectURLSpy.mockRestore();
-    revokeObjectURLSpy.mockRestore();
-    clickSpy.mockRestore();
-    createElementSpy.mockRestore();
+    // act
+    fireEvent.click(screen.getByRole('button', { name: 'Finish assessment' }));
+
+    // assert
+    expect(screen.getByRole('alert')).toHaveTextContent('Ghost');
+    expect(screen.queryByText('Assessment complete')).not.toBeInTheDocument();
+  });
+
+  it('SHOULD take a free-text answer without requiring one, and include it in the report', () => {
+    // arrange
+    sendReportBundle.mockClear();
+    const questions = [
+      { ...PREPAREDNESS_ASSESSMENT[0] },
+      {
+        nu: 1001,
+        id: '',
+        label: 'Custom',
+        lens: '',
+        question: 'Anything else to tell us?',
+        answers: [],
+        progress: [],
+        phase: 0,
+        target: 0,
+        kind: 'text' as const,
+        custom: true,
+      },
+    ];
+    render(<ReadinessReviewApp trustName="Test Trust" components={[]} questions={questions} />);
+    goToQuestions();
+    answerQuestion(PREPAREDNESS_ASSESSMENT[0].nu, 1);
+    fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+
+    // act - the free-text step is optional, so Finish is enabled straight away
+    fireEvent.change(screen.getByRole('textbox'), {
+      target: { value: 'We are mid-pilot' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Finish assessment' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
+    fireEvent.click(
+      screen.getByRole('button', { name: /Now please send across your assessment scores/ })
+    );
+
+    // assert
+    const report = sendReportBundle.mock.calls[0][0];
+    expect(report.answers.find((a: { nu: number }) => a.nu === 1001)).toMatchObject({
+      kind: 'text',
+      optionText: 'We are mid-pilot',
+      impliedScore: null,
+    });
   });
 
   const DEFAULT_ENTRY: DraftEntry = { score: 5, rationale: '', evidence: '', actions: [] };
@@ -259,6 +287,7 @@ describe('ReadinessReviewApp', () => {
 
     render(
       <ReadinessReviewApp
+        questions={PREPAREDNESS_ASSESSMENT}
         components={COMPONENTS}
         getEntry={getEntry}
         onEntryUpdate={onEntryUpdate}
@@ -322,6 +351,7 @@ describe('ReadinessReviewApp', () => {
 
     render(
       <ReadinessReviewApp
+        questions={PREPAREDNESS_ASSESSMENT}
         components={COMPONENTS}
         getEntry={getEntry}
         onEntryUpdate={onEntryUpdate}
@@ -385,7 +415,7 @@ describe('ReadinessReviewApp', () => {
     const onEntryUpdate = vi.fn();
 
     render(
-      <ReadinessReviewApp components={COMPONENTS} getEntry={getEntry} onEntryUpdate={onEntryUpdate} />
+      <ReadinessReviewApp questions={PREPAREDNESS_ASSESSMENT} components={COMPONENTS} getEntry={getEntry} onEntryUpdate={onEntryUpdate} />
     );
     goToQuestions();
     PREPAREDNESS_ASSESSMENT.forEach((question, index) => {
@@ -421,6 +451,7 @@ describe('ReadinessReviewApp', () => {
     const onStakeholdersChange = vi.fn();
     render(
       <ReadinessReviewApp
+        questions={PREPAREDNESS_ASSESSMENT}
         stakeholders={[]}
         departments={['Nursing']}
         onStakeholdersChange={onStakeholdersChange}

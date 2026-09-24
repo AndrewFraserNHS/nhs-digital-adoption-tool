@@ -564,6 +564,9 @@ export function radarTooltipLabel(context: { dataset?: { label?: string }; raw?:
   if (label.startsWith('Exemplar') || label === 'Target Average') {
     return label;
   }
+  if (context.raw === null || context.raw === undefined) {
+    return `${label}: Not answered`;
+  }
   return `${label}: ${getReadinessBand(Number(context.raw)).label}`;
 }
 

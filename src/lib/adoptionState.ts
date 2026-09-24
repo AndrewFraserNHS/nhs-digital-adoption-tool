@@ -5,6 +5,7 @@
 
 import { type CstPathwayKey, type CstProfile, DEFAULT_CST_PROFILE } from '@data/cst';
 import type { GuidanceLink, LinkOverrides } from '@data/maturity-guidance-links';
+import type { PreparednessAssessment } from '@data/readinessReview';
 import { DEFAULT_TOOL_LINK_TEXT, IN_APP_TOOLS, type ToolLinkEntry } from '@data/toolLinks';
 
 import type { ActionType, UnifiedActionStatus } from './actionModel';
@@ -305,6 +306,8 @@ export interface OrgProfile {
   teamMembers?: TeamMember[];
   /** Groups/Sub-Groups/Locations/Relationships used by the Stakeholder Analysis tool - shared here so every project only defines them once. */
   stakeholderReferenceLists?: StakeholderReferenceLists;
+  /** This project's Readiness Review questions, in display order. Unset means the built-in defaults. */
+  readinessQuestions?: PreparednessAssessment[];
   /**
    * Stable identity for this CST, assigned once and carried through every export so two
    * copies of the same programme can be recognised as such after diverging. Never invented
@@ -397,6 +400,7 @@ export function normalizeOrgProfile(profile?: Partial<OrgProfile>): OrgProfile {
     teamMembers: profile?.teamMembers || [],
     stakeholderReferenceLists:
       profile?.stakeholderReferenceLists || DEFAULT_STAKEHOLDER_REFERENCE_LISTS,
+    readinessQuestions: profile?.readinessQuestions,
     cstId: profile?.cstId,
   };
 }

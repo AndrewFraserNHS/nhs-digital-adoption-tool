@@ -23,11 +23,13 @@ import { ProfilePage } from '@components/views/ProfilePage';
 import { type AdoptionUserSettings, SettingsPanel } from '@components/views/SettingsPanel';
 import { WhereAmINowPage } from '@components/views/WhereAmINowPage';
 import { ASSESSMENT_COMPONENTS, getComponentById } from '@data/components';
+import type { CstPathwayKey } from '@data/cst';
 import { ASSESSMENT_LENSES as LENSES } from '@data/lenses';
 import {
   type MaturityGuidanceTarget,
   resolveGuidanceLinksForAdoptionComponent,
 } from '@data/maturity-guidance-links';
+import { DEFAULT_READINESS_QUESTIONS } from '@data/readinessReview';
 import { GENERIC_RUBRIC } from '@data/rubrics';
 import {
   isCompletedActionStatus,
@@ -1368,6 +1370,16 @@ export function AdoptionApp() {
     });
   }, []);
 
+  const handlePathwayChosen = useCallback(
+    (pathway: CstPathwayKey) => {
+      handleProfileUpdate({
+        ...store.orgProfile,
+        cst: { ...store.orgProfile.cst, pathway },
+      });
+    },
+    [handleProfileUpdate, store.orgProfile]
+  );
+
   const getComponentStatus = (comp: (typeof COMPONENTS)[0]) => {
     let scoredCount = 0;
     let justifiedCount = 0;
@@ -1959,6 +1971,9 @@ export function AdoptionApp() {
                   .departments
               }
               onReadinessEvaluated={handleReadinessEvaluated}
+              readinessQuestions={store.orgProfile.readinessQuestions || DEFAULT_READINESS_QUESTIONS}
+              currentPathway={store.orgProfile.cst.pathway}
+              onPathwayChosen={handlePathwayChosen}
             />
           )}
           {view === 'daily-checkin' && (

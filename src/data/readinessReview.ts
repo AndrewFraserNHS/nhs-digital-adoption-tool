@@ -1,16 +1,48 @@
 import type { AssessmentComponent } from '@data/components';
+import { PATHWAY_OPTIONS, type CstPathwayKey } from '@data/cst';
 import type { DraftEntry } from '@lib/adoptionState';
 
+export type ReadinessQuestionKind = 'choice' | 'text' | 'pathway';
+
 export interface PreparednessAssessment {
+  /** Stable answer key - never reused or renumbered, so reordering questions is safe. */
   nu: number;
+  /** The assessment component this question scores; empty for unscored (custom / pathway) questions. */
   id: string;
   label: string;
   lens: string;
   question: string;
-  answers: [string, string, string, string, string];
-  progress: [number, number, number, number, number];
+  answers: string[];
+  /** Implied 0-5 score per answer; empty for questions that don't score anything. */
+  progress: number[];
   phase: number;
   target: number;
+  /** Defaults to 'choice'. Text questions take a free-text answer; 'pathway' picks a CST pathway. */
+  kind?: ReadinessQuestionKind;
+  custom?: boolean;
+}
+
+export function isScoredQuestion(question: PreparednessAssessment): boolean {
+  return Boolean(question.id) && question.progress.length > 0;
+}
+
+export const PATHWAY_QUESTION_NU = 100;
+
+export const PATHWAY_QUESTION: PreparednessAssessment = {
+  nu: PATHWAY_QUESTION_NU,
+  id: '',
+  label: 'Pathway',
+  lens: '',
+  question: 'Which pathway do you think you should be on?',
+  answers: PATHWAY_OPTIONS.map((option) => option.label),
+  progress: [],
+  phase: 0,
+  target: 0,
+  kind: 'pathway',
+};
+
+export function pathwayFromAnswer(optionNumber: number | undefined): CstPathwayKey | null {
+  return (optionNumber && PATHWAY_OPTIONS[optionNumber - 1]?.value) || null;
 }
 
 const answers = (
@@ -658,6 +690,11 @@ export const PREPAREDNESS_ASSESSMENT: PreparednessAssessment[] = [
   },
 ];
 
+export const DEFAULT_READINESS_QUESTIONS: PreparednessAssessment[] = [
+  PATHWAY_QUESTION,
+  ...PREPAREDNESS_ASSESSMENT,
+];
+
 /** A suggested readiness-level update for a single (component, lens) pair, implied by one question's answer. */
 export interface ReadinessSuggestion {
   componentId: string;
@@ -711,7 +748,7 @@ export function computeReadinessOutcome(
     }
     const impliedScore = question.progress[answer - 1];
     const component = componentById.get(question.id);
-    if (!component) {
+    if (!component || impliedScore === undefined) {
       return;
     }
 
@@ -776,8 +813,12 @@ export interface ReadinessReviewAnswer {
   lens: string;
   question: string;
   optionNumber: number;
+  /** The chosen option's text, or the typed answer for a free-text question. */
   optionText: string;
-  impliedScore: number;
+  /** Null for questions that don't score a component lens (free-text, custom, pathway). */
+  impliedScore: number | null;
+  /** Absent in older reports, which only had scored choice questions. */
+  kind?: ReadinessQuestionKind;
 }
 
 export interface ReadinessReviewTrustDetails {
@@ -798,6 +839,8 @@ export interface ReadinessReviewTrustDetails {
 export interface ReadinessReviewReport extends ReadinessReviewTrustDetails {
   generatedAt: string;
   answers: ReadinessReviewAnswer[];
+  /** The pathway the team said they should be on (question 1), if answered. */
+  pathway?: CstPathwayKey | null;
   outcome: { skipToPhase: number | null; readyComponentIds: string[] };
 }
 
@@ -805,26 +848,42 @@ export function buildReadinessReviewReport(
   trustDetails: ReadinessReviewTrustDetails,
   answers: Record<number, number>,
   components: AssessmentComponent[],
-  questions: PreparednessAssessment[] = PREPAREDNESS_ASSESSMENT
+  questions: PreparednessAssessment[] = PREPAREDNESS_ASSESSMENT,
+  textAnswers: Record<number, string> = {}
 ): ReadinessReviewReport {
   const componentById = new Map(components.map((component) => [component.id, component]));
 
-  const reportAnswers: ReadinessReviewAnswer[] = questions
-    .filter((question) => answers[question.nu])
-    .map((question) => {
-      const optionNumber = answers[question.nu];
-      const component = componentById.get(question.id);
-      return {
-        nu: question.nu,
-        componentId: question.id,
-        componentLabel: component?.label || question.label,
-        lens: question.lens,
-        question: question.question,
-        optionNumber,
-        optionText: question.answers[optionNumber - 1],
-        impliedScore: question.progress[optionNumber - 1],
-      };
+  const reportAnswers: ReadinessReviewAnswer[] = [];
+  questions.forEach((question) => {
+    const kind = question.kind ?? 'choice';
+    const base = {
+      nu: question.nu,
+      componentId: question.id,
+      componentLabel: componentById.get(question.id)?.label || question.label,
+      lens: question.lens,
+      question: question.question,
+      kind,
+    };
+    if (kind === 'text') {
+      const text = (textAnswers[question.nu] || '').trim();
+      if (text) {
+        reportAnswers.push({ ...base, optionNumber: 0, optionText: text, impliedScore: null });
+      }
+      return;
+    }
+    const optionNumber = answers[question.nu];
+    if (!optionNumber) {
+      return;
+    }
+    reportAnswers.push({
+      ...base,
+      optionNumber,
+      optionText: question.answers[optionNumber - 1],
+      impliedScore: question.progress[optionNumber - 1] ?? null,
     });
+  });
+
+  const pathwayQuestion = questions.find((question) => question.kind === 'pathway');
 
   // No existing scores to compare against for a frozen report - every answered question's implied
   // score is treated as "current" already, so the outcome reflects the answers alone.
@@ -834,6 +893,7 @@ export function buildReadinessReviewReport(
     ...trustDetails,
     generatedAt: new Date().toISOString(),
     answers: reportAnswers,
+    pathway: pathwayQuestion ? pathwayFromAnswer(answers[pathwayQuestion.nu]) : null,
     outcome: { skipToPhase: outcome.skipToPhase, readyComponentIds: outcome.readyComponentIds },
   };
 }
@@ -847,13 +907,69 @@ export function buildReadinessReviewReport(
 export function buildReportScoreLookup(
   report: ReadinessReviewReport
 ): (componentId: string, lens: string) => DraftEntry {
-  const scoreByKey = new Map(
-    report.answers.map((answer) => [`${answer.componentId}:${answer.lens}`, answer.impliedScore])
-  );
+  const scoreByKey = new Map<string, number>();
+  report.answers.forEach((answer) => {
+    if (answer.impliedScore !== null && answer.impliedScore !== undefined) {
+      scoreByKey.set(`${answer.componentId}:${answer.lens}`, answer.impliedScore);
+    }
+  });
   return (componentId, lens) => ({
     score: scoreByKey.get(`${componentId}:${lens}`) ?? 0,
     rationale: '',
     evidence: '',
     actions: [],
   });
+}
+
+export interface MissingLens {
+  componentId: string;
+  componentLabel: string;
+  lens: string;
+}
+
+function findMissingLenses(components: AssessmentComponent[], covered: Set<string>): MissingLens[] {
+  return components.flatMap((component) =>
+    component.lenses
+      .filter((lens) => !covered.has(`${component.id}:${lens}`))
+      .map((lens) => ({ componentId: component.id, componentLabel: component.label, lens }))
+  );
+}
+
+/** Every component lens needs a scored answer, otherwise the radar shows a gap for that component. */
+export function getMissingLensCoverage(
+  components: AssessmentComponent[],
+  questions: PreparednessAssessment[],
+  answers: Record<number, number>
+): MissingLens[] {
+  const covered = new Set(
+    questions
+      .filter(
+        (question) =>
+          isScoredQuestion(question) && question.progress[(answers[question.nu] || 0) - 1] !== undefined
+      )
+      .map((question) => `${question.id}:${question.lens}`)
+  );
+  return findMissingLenses(components, covered);
+}
+
+export function getReportMissingLenses(
+  components: AssessmentComponent[],
+  report: ReadinessReviewReport
+): MissingLens[] {
+  const covered = new Set(
+    report.answers
+      .filter((answer) => answer.impliedScore !== null && answer.impliedScore !== undefined)
+      .map((answer) => `${answer.componentId}:${answer.lens}`)
+  );
+  return findMissingLenses(components, covered);
+}
+
+/** The implied score column is only informative if some answer maps outside the plain 0-4 levels. */
+export function shouldShowImpliedScore(answers: ReadinessReviewAnswer[]): boolean {
+  return answers.some(
+    (answer) =>
+      answer.impliedScore !== null &&
+      answer.impliedScore !== undefined &&
+      ![0, 1, 2, 3, 4].includes(answer.impliedScore)
+  );
 }

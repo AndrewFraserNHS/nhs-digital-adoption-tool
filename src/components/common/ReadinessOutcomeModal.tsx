@@ -1,3 +1,4 @@
+import { PATHWAY_LABELS, type CstPathwayKey } from '@data/cst';
 import type { ReadinessOutcome, ReadinessSuggestion } from '@data/readinessReview';
 import { JSX, useState } from 'react';
 
@@ -7,13 +8,20 @@ import { PHASE_NAMES } from '../../types/constants';
 export interface ReadinessOutcomeModalProps {
   open: boolean;
   outcome: ReadinessOutcome;
-  onApply: (selectedSuggestions: ReadinessSuggestion[], applyPhaseSkip: boolean) => void;
+  /** The pathway chosen in question 1, when it differs from the project's current pathway. */
+  suggestedPathway?: CstPathwayKey | null;
+  onApply: (
+    selectedSuggestions: ReadinessSuggestion[],
+    applyPhaseSkip: boolean,
+    applyPathway: boolean
+  ) => void;
   onDecline: () => void;
 }
 
 export function ReadinessOutcomeModal({
   open,
   outcome,
+  suggestedPathway = null,
   onApply,
   onDecline,
 }: ReadinessOutcomeModalProps): JSX.Element | null {
@@ -21,6 +29,7 @@ export function ReadinessOutcomeModal({
     outcome.suggestions.map(() => true)
   );
   const [phaseSkipChecked, setPhaseSkipChecked] = useState(true);
+  const [pathwayChecked, setPathwayChecked] = useState(true);
 
   if (!open) {
     return null;
@@ -28,7 +37,8 @@ export function ReadinessOutcomeModal({
 
   const hasSuggestions = outcome.suggestions.length > 0;
   const hasPhaseSkip = outcome.skipToPhase !== null;
-  const hasNothing = !hasSuggestions && !hasPhaseSkip;
+  const hasPathway = suggestedPathway !== null;
+  const hasNothing = !hasSuggestions && !hasPhaseSkip && !hasPathway;
   const phaseName = outcome.skipToPhase ? PHASE_NAMES[outcome.skipToPhase] : null;
 
   const toggleSuggestion = (index: number) => {
@@ -39,7 +49,7 @@ export function ReadinessOutcomeModal({
 
   const handleApply = () => {
     const selected = outcome.suggestions.filter((_, index) => checkedSuggestions[index]);
-    onApply(selected, hasPhaseSkip && phaseSkipChecked);
+    onApply(selected, hasPhaseSkip && phaseSkipChecked, hasPathway && pathwayChecked);
   };
 
   return (
@@ -106,6 +116,28 @@ export function ReadinessOutcomeModal({
                     );
                   })}
                 </ul>
+              </div>
+            ) : null}
+
+            {suggestedPathway ? (
+              <div className="mt-4">
+                <h3 className="text-sm font-semibold text-slate-700 mb-2">Suggested pathway</h3>
+                <label
+                  htmlFor="readiness-pathway"
+                  className="flex items-start gap-2 rounded-md border border-slate-200 p-2.5 text-sm text-slate-700"
+                >
+                  <input
+                    id="readiness-pathway"
+                    type="checkbox"
+                    checked={pathwayChecked}
+                    onChange={(event) => setPathwayChecked(event.target.checked)}
+                    className="mt-0.5"
+                  />
+                  <span>
+                    Switch this project to {PATHWAY_LABELS[suggestedPathway]}. This rebuilds the
+                    project&apos;s generated actions for that pathway.
+                  </span>
+                </label>
               </div>
             ) : null}
 

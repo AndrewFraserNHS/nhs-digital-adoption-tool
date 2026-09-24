@@ -35,6 +35,8 @@ import {
 } from '@data/toolLinks';
 import { PATHWAY_LABELS, PATHWAY_OPTIONS, type CstPathwayKey } from '@data/cst';
 import { TOOLKIT_OPTIONS, type ToolkitOptionKey } from '@data/toolkits';
+import { ReadinessQuestionEditor } from '@components/common/ReadinessQuestionEditor';
+import { DEFAULT_READINESS_QUESTIONS, type PreparednessAssessment } from '@data/readinessReview';
 import { PHASE_NAMES } from '../../types/constants';
 
 function sanitizeFileNamePart(value: string): string {
@@ -624,6 +626,15 @@ export function ProjectDetailsPage({
 
   const effectiveStakeholderReferenceLists =
     profile.stakeholderReferenceLists || DEFAULT_STAKEHOLDER_REFERENCE_LISTS;
+
+  const handleReadinessQuestionsChange = useCallback(
+    (questions: PreparednessAssessment[] | undefined) => {
+      const updated = { ...profile, readinessQuestions: questions };
+      setProfile(updated);
+      onProfileUpdate(updated);
+    },
+    [profile, onProfileUpdate]
+  );
 
   const handleUpdateStakeholderReferenceList = useCallback(
     (key: keyof StakeholderReferenceLists, values: string[]) => {
@@ -1227,6 +1238,27 @@ export function ProjectDetailsPage({
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Readiness Review questions */}
+      <div
+        className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-4`}
+      >
+        <div>
+          <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
+            Readiness Review questions
+          </h3>
+          <p className={`text-sm mt-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+            Reword, reorder or add questions to the Readiness Review. Added questions can be
+            multiple choice or free text and are recorded in the exported report without affecting
+            any readiness score.
+          </p>
+        </div>
+        <ReadinessQuestionEditor
+          questions={profile.readinessQuestions || DEFAULT_READINESS_QUESTIONS}
+          onChange={handleReadinessQuestionsChange}
+          darkMode={darkMode}
+        />
       </div>
 
       {/* Step 4: External link overrides */}

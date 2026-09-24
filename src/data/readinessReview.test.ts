@@ -6,7 +6,13 @@ import {
   buildReadinessReviewReport,
   buildReportScoreLookup,
   computeReadinessOutcome,
+  DEFAULT_READINESS_QUESTIONS,
+  getMissingLensCoverage,
+  getReportMissingLenses,
+  PATHWAY_QUESTION,
   PREPAREDNESS_ASSESSMENT,
+  shouldShowImpliedScore,
+  type PreparednessAssessment,
 } from './readinessReview';
 
 const noExistingScores = () => undefined;
@@ -150,6 +156,7 @@ describe('computeReadinessOutcome (synthetic fixture)', () => {
         optionNumber: 5,
         optionText: '5. e',
         impliedScore: 2,
+        kind: 'choice',
       },
       {
         nu: 2,
@@ -160,6 +167,7 @@ describe('computeReadinessOutcome (synthetic fixture)', () => {
         optionNumber: 5,
         optionText: '5. e',
         impliedScore: 2,
+        kind: 'choice',
       },
     ]);
 
@@ -178,5 +186,98 @@ describe('computeReadinessOutcome (synthetic fixture)', () => {
     expect(getEntry('a1', 'Lens').score).toBe(2);
     expect(getEntry('a2', 'Lens').score).toBe(0);
     expect(getEntry('a1', 'Some other lens').score).toBe(0);
+  });
+});
+
+describe('unscored, pathway and coverage handling', () => {
+  const COMPONENTS: AssessmentComponent[] = [
+    { id: 'a1', label: 'A1', lenses: ['L1', 'L2'], phase: 1, target: 2 },
+  ];
+  const scored = (nu: number, lens: string): PreparednessAssessment => ({
+    nu,
+    id: 'a1',
+    label: 'A1',
+    lens,
+    question: `Q${nu}`,
+    answers: ['1', '2', '3', '4', '5'],
+    progress: [0, 0, 1, 1, 2],
+    phase: 1,
+    target: 2,
+  });
+  const textQuestion: PreparednessAssessment = {
+    nu: 1001,
+    id: '',
+    label: 'Custom',
+    lens: '',
+    question: 'Anything else?',
+    answers: [],
+    progress: [],
+    phase: 0,
+    target: 0,
+    kind: 'text',
+    custom: true,
+  };
+  const TRUST = {
+    trustName: 'T',
+    icbRegion: '',
+    completedBy: '',
+    dateCompleted: '',
+    programmeLead: '',
+    contactEmail: '',
+  };
+
+  it('SHOULD start the default questions with the pathway question', () => {
+    expect(DEFAULT_READINESS_QUESTIONS[0]).toBe(PATHWAY_QUESTION);
+    expect(DEFAULT_READINESS_QUESTIONS.length).toBe(PREPAREDNESS_ASSESSMENT.length + 1);
+  });
+
+  it('SHOULD carry text and pathway answers without scoring them', () => {
+    const questions = [PATHWAY_QUESTION, scored(1, 'L1'), textQuestion];
+    const report = buildReadinessReviewReport(
+      TRUST,
+      { [PATHWAY_QUESTION.nu]: 2, 1: 5 },
+      COMPONENTS,
+      questions,
+      { 1001: ' mid-pilot ' }
+    );
+
+    expect(report.pathway).toBe('pathway-2');
+    expect(report.answers.map((a) => [a.nu, a.impliedScore])).toEqual([
+      [100, null],
+      [1, 2],
+      [1001, null],
+    ]);
+    expect(report.answers[2].optionText).toBe('mid-pilot');
+  });
+
+  it('SHOULD report component lenses that have no scored answer', () => {
+    const questions = [scored(1, 'L1'), textQuestion];
+
+    expect(getMissingLensCoverage(COMPONENTS, questions, { 1: 3 })).toEqual([
+      { componentId: 'a1', componentLabel: 'A1', lens: 'L2' },
+    ]);
+    expect(
+      getMissingLensCoverage(COMPONENTS, [scored(1, 'L1'), scored(2, 'L2')], { 1: 3, 2: 1 })
+    ).toEqual([]);
+
+    const report = buildReadinessReviewReport(TRUST, { 1: 3 }, COMPONENTS, questions);
+    expect(getReportMissingLenses(COMPONENTS, report)).toHaveLength(1);
+  });
+
+  it('SHOULD only show the implied score column when a mapping falls outside 0-4', () => {
+    const answer = (impliedScore: number | null) => ({
+      nu: 1,
+      componentId: 'a1',
+      componentLabel: 'A1',
+      lens: 'L1',
+      question: 'Q',
+      optionNumber: 1,
+      optionText: 'x',
+      impliedScore,
+    });
+
+    expect(shouldShowImpliedScore([answer(0), answer(2), answer(4), answer(null)])).toBe(false);
+    expect(shouldShowImpliedScore([answer(1), answer(5)])).toBe(true);
+    expect(shouldShowImpliedScore([answer(2.5)])).toBe(true);
   });
 });

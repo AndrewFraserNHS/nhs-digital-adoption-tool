@@ -1,5 +1,6 @@
 import type { AssessmentComponent } from '@data/components';
 import { READINESS_REVIEW_REPORT_STORAGE_KEY, type ReadinessReviewReport } from '@data/readinessReview';
+import { buildEml } from '@lib/eml';
 import { save } from '@lib/storage';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
@@ -84,5 +85,52 @@ describe('ReadinessReviewAnalysisApp', () => {
     await waitFor(() =>
       expect(screen.getByText(/does not look like a Readiness Review report/)).toBeInTheDocument()
     );
+  });
+
+  it('SHOULD import a report straight from a saved .eml attachment', async () => {
+    render(<ReadinessReviewAnalysisApp components={COMPONENTS} />);
+    fireEvent.click(screen.getByRole('tab', { name: 'Import External Answers' }));
+    const eml = buildEml({
+      to: 'a@b.c',
+      subject: 'S',
+      body: 'B',
+      attachments: [
+        { filename: 'r.json', contentType: 'application/json', data: JSON.stringify(REPORT) },
+      ],
+    });
+
+    const input = screen.getByLabelText(/Import a Readiness Review report/) as HTMLInputElement;
+    fireEvent.change(input, {
+      target: { files: [new File([eml], 'report.eml', { type: 'message/rfc822' })] },
+    });
+
+    await waitFor(() => expect(screen.getByText('Test Trust')).toBeInTheDocument());
+  });
+
+  it('SHOULD warn about component lenses with no scored answer', () => {
+    save(READINESS_REVIEW_REPORT_STORAGE_KEY, REPORT);
+    const two: AssessmentComponent[] = [
+      ...COMPONENTS,
+      { id: 'case', label: 'Case for Change', lenses: ['Strategic Direction and Leadership'], phase: 1, target: 2 },
+    ];
+
+    render(<ReadinessReviewAnalysisApp components={two} />);
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Case for Change');
+  });
+
+  it('SHOULD hide the implied score column unless a mapping falls outside 0-4', () => {
+    save(READINESS_REVIEW_REPORT_STORAGE_KEY, REPORT);
+    const { unmount } = render(<ReadinessReviewAnalysisApp components={COMPONENTS} />);
+    expect(screen.queryByText('Implied score')).not.toBeInTheDocument();
+    unmount();
+
+    save(READINESS_REVIEW_REPORT_STORAGE_KEY, {
+      ...REPORT,
+      answers: [{ ...REPORT.answers[0], impliedScore: 5 }],
+    });
+    render(<ReadinessReviewAnalysisApp components={COMPONENTS} />);
+
+    expect(screen.getByText('Implied score')).toBeInTheDocument();
   });
 });

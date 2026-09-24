@@ -1,5 +1,4 @@
-function toBase64Utf8(value: string): string {
-  const bytes = new TextEncoder().encode(value);
+function bytesToBase64(bytes: Uint8Array): string {
   let binary = '';
   bytes.forEach((byte) => {
     binary += String.fromCharCode(byte);
@@ -15,6 +14,96 @@ function wrapBase64Lines(value: string, lineLength = 76): string {
   return chunks.join('\r\n');
 }
 
+/** RFC 2047 encoded-word so non-ASCII trust names survive in the Subject header. */
+function encodeHeader(value: string): string {
+  // eslint-disable-next-line no-control-regex
+  return /^[\x00-\x7F]*$/.test(value)
+    ? value
+    : `=?UTF-8?B?${bytesToBase64(new TextEncoder().encode(value))}?=`;
+}
+
+export interface EmlAttachment {
+  filename: string;
+  contentType: string;
+  /** Text is UTF-8 encoded; bytes are attached as-is. */
+  data: string | Uint8Array;
+}
+
+export interface EmlOptions {
+  to: string;
+  subject: string;
+  body: string;
+  attachments: EmlAttachment[];
+}
+
+/**
+ * Builds an RFC 822 draft. `X-Unsent: 1` makes Outlook open it as an editable draft (ready to send)
+ * rather than as a received message.
+ */
+export function buildEml({ to, subject, body, attachments }: EmlOptions): string {
+  const boundary = `----nhs-adoption-${Date.now()}`;
+  const parts = attachments.flatMap((attachment) => {
+    const bytes =
+      typeof attachment.data === 'string' ? new TextEncoder().encode(attachment.data) : attachment.data;
+    return [
+      `--${boundary}`,
+      `Content-Type: ${attachment.contentType}; name="${attachment.filename}"`,
+      'Content-Transfer-Encoding: base64',
+      `Content-Disposition: attachment; filename="${attachment.filename}"`,
+      '',
+      wrapBase64Lines(bytesToBase64(bytes)),
+    ];
+  });
+
+  return [
+    'X-Unsent: 1',
+    `To: ${to}`,
+    `Subject: ${encodeHeader(subject)}`,
+    `Date: ${new Date().toUTCString()}`,
+    'MIME-Version: 1.0',
+    `Content-Type: multipart/mixed; boundary="${boundary}"`,
+    '',
+    `--${boundary}`,
+    'Content-Type: text/plain; charset="UTF-8"',
+    'Content-Transfer-Encoding: base64',
+    '',
+    wrapBase64Lines(bytesToBase64(new TextEncoder().encode(body.replace(/\r?\n/g, '\r\n')))),
+    ...parts,
+    `--${boundary}--`,
+    '',
+  ].join('\r\n');
+}
+
+/**
+ * Extracts every base64 attachment from an .eml built by `buildEml` (or saved from a mail client),
+ * so an emailed report can be imported straight from the message file.
+ */
+export function extractEmlAttachments(eml: string): Array<{ filename: string; bytes: Uint8Array }> {
+  const normalised = eml.replace(/\r?\n/g, '\n');
+  const results: Array<{ filename: string; bytes: Uint8Array }> = [];
+  const pattern =
+    /Content-Disposition:\s*attachment;[^\n]*filename="?([^"\n;]+)"?[^\n]*\n(?:[A-Za-z-]+:[^\n]*\n)*\n([\s\S]*?)(?=\n--)/gi;
+  const partPattern = /Content-Transfer-Encoding:\s*base64/i;
+  let match = pattern.exec(normalised);
+  while (match) {
+    const start = Math.max(0, match.index - 400);
+    const header = normalised.slice(start, match.index + match[0].length);
+    if (partPattern.test(header)) {
+      try {
+        const binary = window.atob(match[2].replace(/\s+/g, ''));
+        results.push({
+          filename: match[1],
+          bytes: Uint8Array.from(binary, (char) => char.charCodeAt(0)),
+        });
+      } catch {
+        // skip a part that isn't valid base64
+      }
+    }
+    match = pattern.exec(normalised);
+  }
+  return results;
+}
+
 export interface EmlWithJsonAttachmentOptions {
   to: string;
   subject: string;
@@ -23,12 +112,6 @@ export interface EmlWithJsonAttachmentOptions {
   attachmentJson: unknown;
 }
 
-/**
- * Builds a .eml file (RFC 822 message, multipart/mixed) with a JSON payload embedded as a real
- * base64 attachment. Downloading and opening it launches the user's default mail client with the
- * recipient, subject, body and attachment already in place - the only way to get a genuine
- * attachment out of a browser without a mailto: link, which has no attachment mechanism at all.
- */
 export function buildEmlWithJsonAttachment({
   to,
   subject,
@@ -36,30 +119,16 @@ export function buildEmlWithJsonAttachment({
   attachmentFilename,
   attachmentJson,
 }: EmlWithJsonAttachmentOptions): string {
-  const encodedAttachment = wrapBase64Lines(
-    toBase64Utf8(JSON.stringify(attachmentJson, null, 2))
-  );
-  const boundary = `----nhs-adoption-${Date.now()}`;
-
-  return [
-    `To: ${to}`,
-    `Subject: ${subject}`,
-    'MIME-Version: 1.0',
-    `Content-Type: multipart/mixed; boundary="${boundary}"`,
-    '',
-    `--${boundary}`,
-    'Content-Type: text/plain; charset="UTF-8"',
-    'Content-Transfer-Encoding: 8bit',
-    '',
+  return buildEml({
+    to,
+    subject,
     body,
-    '',
-    `--${boundary}`,
-    `Content-Type: application/json; name="${attachmentFilename}"`,
-    'Content-Transfer-Encoding: base64',
-    `Content-Disposition: attachment; filename="${attachmentFilename}"`,
-    '',
-    encodedAttachment,
-    `--${boundary}--`,
-    '',
-  ].join('\r\n');
+    attachments: [
+      {
+        filename: attachmentFilename,
+        contentType: 'application/json',
+        data: JSON.stringify(attachmentJson, null, 2),
+      },
+    ],
+  });
 }

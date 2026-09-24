@@ -33,7 +33,7 @@ describe('syncChangeImpactDerivedContent', () => {
     // assert
     expect(
       planningEntry.actions.some((action) =>
-        action.text.includes('Identify the areas, services, teams, roles')
+        action.text.includes('Recognise that the change is likely to affect people')
       )
     ).toBe(true);
     expect(nextStore.objectives.change_impact).toHaveLength(3);

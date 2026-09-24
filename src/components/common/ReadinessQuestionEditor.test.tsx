@@ -63,4 +63,38 @@ describe('ReadinessQuestionEditor', () => {
     expect(onChange.mock.calls[0][0][1].question).toBe('Reworded?');
     expect(onChange.mock.calls[1][0]).toBeUndefined();
   });
+
+  it('SHOULD let each scored answer be aligned to a readiness level and mark the question edited', () => {
+    const onChange = vi.fn();
+    render(<ReadinessQuestionEditor questions={DEFAULT_READINESS_QUESTIONS} onChange={onChange} />);
+
+    fireEvent.change(screen.getByLabelText('Question 2 answer 5 readiness level'), {
+      target: { value: '3' },
+    });
+
+    const changed = onChange.mock.calls[0][0][1];
+    expect(changed.progress).toEqual([...DEFAULT_READINESS_QUESTIONS[1].progress.slice(0, 4), 3]);
+    expect(changed.edited).toBe(true);
+  });
+
+  it('SHOULD not offer level dropdowns on custom or pathway questions', () => {
+    render(
+      <ReadinessQuestionEditor
+        questions={[
+          DEFAULT_READINESS_QUESTIONS[0],
+          {
+            ...DEFAULT_READINESS_QUESTIONS[1],
+            nu: 1001,
+            id: '',
+            progress: [],
+            custom: true,
+            answers: ['a', 'b'],
+          },
+        ]}
+        onChange={vi.fn()}
+      />
+    );
+
+    expect(screen.queryAllByLabelText(/readiness level/)).toHaveLength(0);
+  });
 });

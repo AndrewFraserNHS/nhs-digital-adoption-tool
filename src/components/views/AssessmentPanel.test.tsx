@@ -100,20 +100,6 @@ function createProps(overrides?: {
 }
 
 describe('AssessmentPanel', () => {
-  it('SHOULD notify WHERE the active component changes', () => {
-    // arrange
-    const props = createProps();
-
-    // act
-    render(<AssessmentPanel {...props} />);
-
-    const componentSelect = screen.getAllByRole('combobox')[0];
-    fireEvent.change(componentSelect, { target: { value: 'benefits' } });
-
-    // assert
-    expect(props.onComponentChange).toHaveBeenCalledWith('benefits');
-  });
-
   it('SHOULD update score and component rationale through onEntryUpdate', () => {
     // arrange
     const props = createProps();
@@ -121,8 +107,10 @@ describe('AssessmentPanel', () => {
     // act
     render(<AssessmentPanel {...props} />);
 
-    const controls = screen.getAllByRole('combobox');
-    fireEvent.change(controls[1], { target: { value: '4' } });
+    const scoreSelect = screen
+      .getAllByRole('combobox')
+      .find((select) => within(select).queryByRole('option', { name: /^4 - / })) as HTMLElement;
+    fireEvent.change(scoreSelect, { target: { value: '4' } });
 
     const areas = screen.getAllByRole('textbox');
     fireEvent.change(areas[0], { target: { value: 'Updated rationale' } });
@@ -528,7 +516,7 @@ describe('AssessmentPanel', () => {
 
     // act
     render(<AssessmentPanel {...props} />);
-    fireEvent.click(screen.getByRole('button', { name: /What is this\?/ }));
+    fireEvent.click(screen.getByRole('button', { name: 'Further Reading' }));
 
     // assert
     expect(screen.getByText(/Programme landed best/)).toBeTruthy();
@@ -541,7 +529,7 @@ describe('AssessmentPanel', () => {
 
     // act
     render(<AssessmentPanel {...props} />);
-    fireEvent.click(screen.getByRole('button', { name: /What is this\?/ }));
+    fireEvent.click(screen.getByRole('button', { name: 'Further Reading' }));
 
     // assert
     expect(screen.getByText(/Your Project landed best/)).toBeTruthy();

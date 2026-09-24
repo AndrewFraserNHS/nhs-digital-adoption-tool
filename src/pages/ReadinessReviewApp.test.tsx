@@ -258,6 +258,9 @@ describe('ReadinessReviewApp', () => {
     });
   });
 
+  // The implied score of the top answer to vision's first-lens question (the data can change).
+  const TOP_SCORE = PREPAREDNESS_ASSESSMENT[0].progress[4];
+
   const DEFAULT_ENTRY: DraftEntry = { score: 5, rationale: '', evidence: '', actions: [] };
 
   it('SHOULD apply the phase skip when accepted, without double-applying its own components\' suggestions', () => {
@@ -371,12 +374,12 @@ describe('ReadinessReviewApp', () => {
     fireEvent.click(screen.getByLabelText(/Skip straight to Phase 2/));
     fireEvent.click(screen.getByRole('button', { name: 'Apply selected' }));
 
-    // assert - vision's first lens gets its own suggested score (2, the top answer's implied
+    // assert - vision's first lens gets its own suggested score (the top answer's implied
     // score), not the skip's target-based mutation
     expect(onEntryUpdate).toHaveBeenCalledWith(
       'vision',
       'Strategic Direction and Leadership',
-      expect.objectContaining({ score: 2 })
+      expect.objectContaining({ score: TOP_SCORE })
     );
     expect(onReadinessEvaluated).toHaveBeenCalledWith(
       expect.objectContaining({ skipToPhase: null, accepted: true })
@@ -393,7 +396,7 @@ describe('ReadinessReviewApp', () => {
           evidence: '',
           actions: [
             { id: 'below', text: 'Below the new score', owner: '', timescale: '', status: 'Planned', readinessScore: 1 },
-            { id: 'at', text: 'At the new score', owner: '', timescale: '', status: 'Planned', readinessScore: 2 },
+            { id: 'at', text: 'At the new score', owner: '', timescale: '', status: 'Planned', readinessScore: TOP_SCORE },
             {
               id: 'already-completed',
               text: 'Already done',
@@ -430,13 +433,13 @@ describe('ReadinessReviewApp', () => {
     fireEvent.click(screen.getByLabelText(/Skip straight to Phase 2/));
     fireEvent.click(screen.getByRole('button', { name: 'Apply selected' }));
 
-    // assert - only the action below the new score (2) is marked Skipped; the one already at that
+    // assert - only the action below the new score is marked Skipped; the one already at that
     // level and the already-Completed one are left alone
     expect(onEntryUpdate).toHaveBeenCalledWith(
       'vision',
       'Strategic Direction and Leadership',
       expect.objectContaining({
-        score: 2,
+        score: TOP_SCORE,
         actions: [
           expect.objectContaining({ id: 'below', status: 'Skipped' }),
           expect.objectContaining({ id: 'at', status: 'Planned' }),

@@ -36,13 +36,13 @@ describe('syncCaseForChangeDerivedContent', () => {
     expect(
       strategicEntry.actions.some(
         (action) =>
-          action.text.includes('Define the problem') && action.actionType === 'Analysis & Insight'
+          action.text.includes('Recognise that a clear rationale and evidence base') && action.actionType === 'Analysis & Insight'
       )
     ).toBe(true);
     expect(
       peopleEntry.actions.some(
         (action) =>
-          action.text.includes('Engage stakeholders to understand') &&
+          action.text.includes('Gather evidence of stakeholder perceptions') &&
           action.actionType === 'Engagement'
       )
     ).toBe(true);

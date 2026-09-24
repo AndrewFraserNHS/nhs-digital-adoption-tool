@@ -69,7 +69,7 @@ describe('EngineExplainedPage', () => {
 
     // assert 3
     expect(
-      screen.getByRole('heading', { name: 'A component is a specific area of change to get right' })
+      screen.getByRole('heading', { name: 'Vision is an example of a Change Component' })
     ).toBeInTheDocument();
 
     // act 4 - move to Lens
@@ -89,7 +89,7 @@ describe('EngineExplainedPage', () => {
 
     // assert 5
     expect(
-      screen.getByRole('heading', { name: 'An example lens on our example component' })
+      screen.getByRole('heading', { name: 'An example lens for our example change component' })
     ).toBeInTheDocument();
 
     // act 6 - move to Readiness

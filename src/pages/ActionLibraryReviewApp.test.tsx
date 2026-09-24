@@ -132,21 +132,6 @@ describe('ActionLibraryReviewApp', () => {
     expect(within(row).getByText('Edited')).toBeInTheDocument();
   });
 
-  it('SHOULD parse a "C " prefix as Could, distinct from Should', () => {
-    // arrange
-    render(<ActionLibraryReviewApp />);
-    const description = screen.getByDisplayValue(
-      'Create simple awareness messages explaining that a vision is being developed.'
-    );
-    const row = description.closest('div')?.parentElement?.parentElement as HTMLElement;
-
-    // assert
-    const prioritySelect = within(row).getByRole('combobox', {
-      name: 'Priority',
-    }) as HTMLSelectElement;
-    expect(prioritySelect.value).toBe('could');
-  });
-
   it('SHOULD reset the open readiness-level accordion back to Level 0 WHEN switching components', () => {
     // arrange
     render(<ActionLibraryReviewApp />);

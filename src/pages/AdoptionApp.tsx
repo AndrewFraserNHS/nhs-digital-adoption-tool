@@ -29,7 +29,7 @@ import {
   type MaturityGuidanceTarget,
   resolveGuidanceLinksForAdoptionComponent,
 } from '@data/maturity-guidance-links';
-import { DEFAULT_READINESS_QUESTIONS } from '@data/readinessReview';
+import { resolveReadinessQuestions } from '@data/readinessReview';
 import { GENERIC_RUBRIC } from '@data/rubrics';
 import {
   isCompletedActionStatus,
@@ -1971,7 +1971,7 @@ export function AdoptionApp() {
                   .departments
               }
               onReadinessEvaluated={handleReadinessEvaluated}
-              readinessQuestions={store.orgProfile.readinessQuestions || DEFAULT_READINESS_QUESTIONS}
+              readinessQuestions={resolveReadinessQuestions(store.orgProfile.readinessQuestions)}
               currentPathway={store.orgProfile.cst.pathway}
               onPathwayChosen={handlePathwayChosen}
             />
@@ -2006,6 +2006,7 @@ export function AdoptionApp() {
               currentUserId={currentUserId}
               onCurrentUserChange={setCurrentUserId}
               showExternalLinksSection={Boolean(userSettings.showExternalLinksSection)}
+              showReviewQuestionsSection={Boolean(userSettings.showReadinessReviewQuestionsSection)}
               darkMode={Boolean(userSettings.darkMode)}
             />
           )}

@@ -1,4 +1,5 @@
-import type { PreparednessAssessment } from '@data/readinessReview';
+import { isScoredQuestion, type PreparednessAssessment } from '@data/readinessReview';
+import { READINESS_BANDS } from '@lib/readinessBands';
 import { JSX } from 'react';
 
 export interface ReadinessQuestionEditorProps {
@@ -35,7 +36,9 @@ export function ReadinessQuestionEditor({
   }`;
 
   const updateQuestion = (nu: number, updates: Partial<PreparednessAssessment>) =>
-    onChange(questions.map((q) => (q.nu === nu ? { ...q, ...updates } : q)));
+    onChange(
+      questions.map((q) => (q.nu === nu ? { ...q, ...updates, ...(q.custom ? {} : { edited: true }) } : q))
+    );
 
   const move = (index: number, direction: -1 | 1) => {
     const target = index + direction;
@@ -134,13 +137,39 @@ export function ReadinessQuestionEditor({
               {editableAnswers ? (
                 <div className="space-y-1.5">
                   {question.answers.map((answer, answerIndex) => (
-                    <div key={answerIndex} className="flex gap-2">
+                    <div
+                      key={answerIndex}
+                      className={
+                        isScoredQuestion(question) ? 'grid grid-cols-[9fr_1fr] gap-2' : 'flex gap-2'
+                      }
+                    >
                       <input
                         aria-label={`Question ${index + 1} answer ${answerIndex + 1}`}
                         value={answer}
                         onChange={(event) => updateAnswer(question, answerIndex, event.target.value)}
                         className={inputClass}
                       />
+                      {isScoredQuestion(question) ? (
+                        <select
+                          aria-label={`Question ${index + 1} answer ${answerIndex + 1} readiness level`}
+                          title="Readiness level this answer sets"
+                          value={question.progress[answerIndex] ?? 0}
+                          onChange={(event) =>
+                            updateQuestion(question.nu, {
+                              progress: question.progress.map((level, i) =>
+                                i === answerIndex ? Number(event.target.value) : level
+                              ),
+                            })
+                          }
+                          className={inputClass}
+                        >
+                          {READINESS_BANDS.map((band) => (
+                            <option key={band.score} value={band.score}>
+                              {band.label}
+                            </option>
+                          ))}
+                        </select>
+                      ) : null}
                       {isCustomChoice && question.answers.length > 2 ? (
                         <button
                           type="button"

@@ -36,7 +36,7 @@ import {
 import { PATHWAY_LABELS, PATHWAY_OPTIONS, type CstPathwayKey } from '@data/cst';
 import { TOOLKIT_OPTIONS, type ToolkitOptionKey } from '@data/toolkits';
 import { ReadinessQuestionEditor } from '@components/common/ReadinessQuestionEditor';
-import { DEFAULT_READINESS_QUESTIONS, type PreparednessAssessment } from '@data/readinessReview';
+import { resolveReadinessQuestions, type PreparednessAssessment } from '@data/readinessReview';
 import { PHASE_NAMES } from '../../types/constants';
 
 function sanitizeFileNamePart(value: string): string {
@@ -1288,7 +1288,7 @@ export function ProjectDetailsPage({
                 affecting any readiness score.
               </p>
               <ReadinessQuestionEditor
-                questions={profile.readinessQuestions || DEFAULT_READINESS_QUESTIONS}
+                questions={resolveReadinessQuestions(profile.readinessQuestions)}
                 onChange={handleReadinessQuestionsChange}
                 darkMode={darkMode}
               />

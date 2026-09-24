@@ -28,7 +28,7 @@ describe('WhereAmINowPage', () => {
     );
 
     // assert
-    expect(screen.getByText('Readiness Review')).toBeInTheDocument();
+    expect(screen.getByText('Change Adoption Baseline')).toBeInTheDocument();
     expect(screen.queryByText('Which of these is true for you?')).not.toBeInTheDocument();
     expect(screen.getByText('Trust Details')).toBeInTheDocument();
   });

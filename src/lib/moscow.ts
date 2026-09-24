@@ -1,7 +1,7 @@
-export type ActionPriority = 'must' | 'should' | 'could';
+export type ActionPriority = 'must' | 'should';
 
-const PRIORITY_BY_LETTER: Record<string, ActionPriority> = { M: 'must', S: 'should', C: 'could' };
-const LETTER_BY_PRIORITY: Record<ActionPriority, string> = { must: 'M', should: 'S', could: 'C' };
+const PRIORITY_BY_LETTER: Record<string, ActionPriority> = { M: 'must', S: 'should' };
+const LETTER_BY_PRIORITY: Record<ActionPriority, string> = { must: 'M', should: 'S' };
 
 export interface ParsedMoscowPrefix {
   priority?: ActionPriority;
@@ -10,12 +10,12 @@ export interface ParsedMoscowPrefix {
 }
 
 /**
- * Matches an authored "M "/"S "/"C " priority marker at the start of an action's text, with an
+ * Matches an authored "M "/"S " priority marker at the start of an action's text, with an
  * optional "*" (with or without a following space) flagging content that still needs reworking.
- * The whitespace after the letter is mandatory so real words that happen to start with M/S/C
- * (Monitor, Secure, Support, Coordinate, ...) are never mistaken for a prefix.
+ * The whitespace after the letter is mandatory so real words that happen to start with M/S
+ * (Monitor, Secure, Support, ...) are never mistaken for a prefix.
  */
-const PREFIX_RE = /^([MSC])\s+(\*\s*)?/;
+const PREFIX_RE = /^([MS])\s+(\*\s*)?/;
 
 /**
  * Splits an authored action description into its MoSCoW priority and the clean text with the

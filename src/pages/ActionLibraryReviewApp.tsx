@@ -432,7 +432,7 @@ function updateActionBand(
   return [...without.slice(0, insertAt), updated, ...without.slice(insertAt)];
 }
 
-/** Re-embeds the "M "/"S "/"C " marker ahead of the description on export, so re-importing the file round-trips through parseMoscowPrefix cleanly (Could must round-trip back to "C ", not drift into "S "). The "*" rework marker is intentionally dropped here - editing an action via the priority dropdown is how a reviewer resolves/confirms a flagged one. */
+/** Re-embeds the "M "/"S " marker ahead of the description on export, so re-importing the file round-trips through parseMoscowPrefix cleanly. The "*" rework marker is intentionally dropped here - editing an action via the priority dropdown is how a reviewer resolves/confirms a flagged one. */
 function toExportActionText(action: LibraryAction): string {
   if (!action.priority) {
     return action.description;
@@ -586,7 +586,6 @@ function ActionRow({
             <option value="">-</option>
             <option value="must">Must</option>
             <option value="should">Should</option>
-            {/* <option value="could">Could</option> */}
           </select>
           {action.needsRework ? (
             <span

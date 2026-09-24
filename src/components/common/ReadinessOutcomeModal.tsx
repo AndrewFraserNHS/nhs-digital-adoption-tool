@@ -1,5 +1,6 @@
 import { PATHWAY_LABELS, type CstPathwayKey } from '@data/cst';
 import type { ReadinessOutcome, ReadinessSuggestion } from '@data/readinessReview';
+import { getReadinessBand } from '@lib/readinessBands';
 import { JSX, useState } from 'react';
 
 import { nhsButtonPrimary, nhsButtonSecondary } from '../../styles/nhsTheme';
@@ -108,8 +109,9 @@ export function ReadinessOutcomeModal({
                             <span className="font-medium text-slate-800">
                               {suggestion.componentLabel}
                             </span>{' '}
-                            &middot; {suggestion.lens}: {suggestion.currentScore} &rarr;{' '}
-                            {suggestion.impliedScore}
+                            &middot; {suggestion.lens}:{' '}
+                            {getReadinessBand(suggestion.currentScore).label} &rarr;{' '}
+                            {getReadinessBand(suggestion.impliedScore).label}
                           </span>
                         </label>
                       </li>

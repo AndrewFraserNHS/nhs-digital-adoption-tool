@@ -35,13 +35,13 @@ describe('syncBenefitsDerivedContent', () => {
     expect(
       planningEntry.actions.some(
         (action) =>
-          action.text.includes('Facilitate benefit identification workshops') &&
+          action.text.includes('Facilitate structured benefits workshops') &&
           action.actionType === 'Engagement'
       )
     ).toBe(true);
     expect(
       processEntry.actions.some((action) =>
-        action.text.includes('Engage stakeholders to understand')
+        action.text.includes('Capture initial ideas regarding expected benefits')
       )
     ).toBe(true);
     expect(nextStore.objectives.benefits).toHaveLength(3);

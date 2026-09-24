@@ -62,7 +62,7 @@ describe('SettingsPanel', () => {
     expect(onLoadExampleData).toHaveBeenCalledWith('green');
   });
 
-    it('SHOULD toggle showReviewQuestionsSection', () => {
+    it('SHOULD toggle showReadinessReviewQuestionsSection', () => {
     // arrange
     const onUserSettingsUpdate = vi.fn();
 
@@ -78,13 +78,13 @@ describe('SettingsPanel', () => {
     // act
     fireEvent.click(
       screen.getByLabelText(
-        'Show review questions section (Project Profile, even after marked initiated)'
+        'Show readiness review section (Project Profile, even after marked initiated)'
       )
     );
 
     // assert
     expect(onUserSettingsUpdate).toHaveBeenLastCalledWith(
-      expect.objectContaining({ showReviewQuestionsSection: true })
+      expect.objectContaining({ showReadinessReviewQuestionsSection: true })
     );
   });
 

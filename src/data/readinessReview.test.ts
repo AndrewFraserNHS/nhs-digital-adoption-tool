@@ -11,6 +11,7 @@ import {
   getReportMissingLenses,
   PATHWAY_QUESTION,
   PREPAREDNESS_ASSESSMENT,
+  resolveReadinessQuestions,
   shouldShowImpliedScore,
   type PreparednessAssessment,
 } from './readinessReview';
@@ -279,5 +280,20 @@ describe('unscored, pathway and coverage handling', () => {
     expect(shouldShowImpliedScore([answer(0), answer(2), answer(4), answer(null)])).toBe(false);
     expect(shouldShowImpliedScore([answer(1), answer(5)])).toBe(true);
     expect(shouldShowImpliedScore([answer(2.5)])).toBe(true);
+  });
+
+  it('SHOULD refresh unedited built-in questions from the defaults but keep edited and custom ones', () => {
+    const [pathway, first, second] = DEFAULT_READINESS_QUESTIONS;
+    const staleFirst = { ...first, progress: [9, 9, 9, 9, 9] };
+    const editedSecond = { ...second, question: 'Reworded', edited: true };
+    const custom = { ...second, nu: 1001, id: '', progress: [], custom: true };
+
+    const resolved = resolveReadinessQuestions([editedSecond, custom, staleFirst, pathway]);
+
+    expect(resolved[0].question).toBe('Reworded');
+    expect(resolved[1]).toBe(custom);
+    expect(resolved[2]).toBe(first);
+    expect(resolved.length).toBe(DEFAULT_READINESS_QUESTIONS.length + 1);
+    expect(resolveReadinessQuestions(undefined)).toBe(DEFAULT_READINESS_QUESTIONS);
   });
 });

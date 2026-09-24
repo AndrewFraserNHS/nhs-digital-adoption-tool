@@ -10,7 +10,7 @@ import { PHASE_NAMES } from '../types/constants';
 import { isCompletedActionStatus, isNonOutstandingActionStatus, isSkippedActionStatus } from './actionModel';
 import { AdoptionStore, deriveObjectiveStatus, DraftEntry } from './adoptionState';
 import { type BragStatus, getTimelineBragStatus } from './bragStatus';
-import { getReadinessBand } from './readinessBands';
+import { getPhasePassScore, getReadinessBand } from './readinessBands';
 
 const COMPONENT_PHASE_EXEMPLARS: Record<number, Record<string, number>> = {
   1: {
@@ -326,7 +326,7 @@ export function getMetrics(store: AdoptionStore, components: AssessmentComponent
       component.phase,
       component.target
     );
-    if (avgScore >= phaseExpectedScore) {
+    if (avgScore >= getPhasePassScore(phaseExpectedScore)) {
       phaseBucket.onTrackComponents += 1;
     }
 

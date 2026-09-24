@@ -12,7 +12,7 @@ import {
   usePageIntroSeen,
 } from '@components/onboarding/PageIntroModal';
 import { getBragStatusFromAverage, type BragStatus } from '@lib/bragStatus';
-import { READINESS_BANDS } from '@lib/readinessBands';
+import { getPhasePassScore, READINESS_BANDS } from '@lib/readinessBands';
 
 export interface DashboardProps {
   store: AdoptionStore;
@@ -198,7 +198,7 @@ export function AdoptionDashboard({
           component.target
         );
         const status =
-          avgNum === 0 ? 'not-started' : avgNum >= exemplarTarget ? 'on-track' : 'below-target';
+          avgNum === 0 ? 'not-started' : avgNum >= getPhasePassScore(exemplarTarget) ? 'on-track' : 'below-target';
 
         // Compare to last finalised snapshot (null when no history or unchanged)
         let delta: number | null = null;
@@ -929,7 +929,7 @@ export function AdoptionDashboard({
                     const readinessArrow =
                       deliveryStatus === 'Red'
                         ? '↓'
-                        : avgNum >= exemplarTarget
+                        : avgNum >= getPhasePassScore(exemplarTarget)
                           ? '→'
                           : avgNum <= 0
                             ? '↑'
@@ -937,7 +937,7 @@ export function AdoptionDashboard({
                     const arrowToneClass =
                       deliveryStatus === 'Red'
                         ? 'text-red-500'
-                        : avgNum >= exemplarTarget
+                        : avgNum >= getPhasePassScore(exemplarTarget)
                           ? darkMode
                             ? 'text-slate-300'
                             : 'text-slate-500'
@@ -963,14 +963,14 @@ export function AdoptionDashboard({
                           <span
                             className={`text-xs font-semibold ${arrowToneClass}`}
                             title={
-                              avgNum >= exemplarTarget
+                              avgNum >= getPhasePassScore(exemplarTarget)
                                 ? 'On or above expected readiness for phase focus'
                                 : avgNum <= 0
                                   ? 'Not started: raise towards expected readiness'
                                   : 'Below expected readiness: continue improving'
                             }
                             aria-label={
-                              avgNum >= exemplarTarget
+                              avgNum >= getPhasePassScore(exemplarTarget)
                                 ? 'At expected readiness'
                                 : avgNum <= 0
                                   ? 'Not started, increase readiness'

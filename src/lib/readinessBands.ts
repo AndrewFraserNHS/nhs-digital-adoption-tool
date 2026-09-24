@@ -22,3 +22,11 @@ export const READINESS_BANDS: ReadinessBand[] = [
 export function getReadinessBand(score: number): ReadinessBand {
   return READINESS_BANDS[Math.max(0, Math.min(READINESS_BANDS.length - 1, Math.round(score)))];
 }
+
+/**
+ * The score that counts as meeting a required readiness score when deciding whether a component
+ * is ready to move past its phase. Where Thriving is required, Adopted is also good enough.
+ */
+export function getPhasePassScore(requiredScore: number): number {
+  return requiredScore >= 5 ? 4 : requiredScore;
+}

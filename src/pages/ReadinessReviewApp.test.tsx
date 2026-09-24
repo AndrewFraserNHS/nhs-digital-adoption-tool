@@ -14,11 +14,9 @@ vi.mock('@lib/readinessExport', () => ({
 
 const TEAM_MEMBERS = [{ id: 'm1', name: 'Alex Morgan', role: 'Change Lead' }];
 
-// Today's questions only ever imply as high as 2 (progress[4], the top answer) - by design, they
-// only cover the earliest part of the journey so far. Low phase-1 targets (2) are reachable at
-// that top answer, so answering everything at its top option makes phase 1 "ready"; the phase-2
-// placeholder's target (5) is above the maximum implied score so it never is, which pins the
-// offered skip to exactly phase 2.
+// Low phase-1 targets (2) are reachable at the top answer, so answering everything at its top
+// option makes phase 1 "ready". Tests answer the sponsorship (phase 2) questions at the lowest
+// option so phase 2 is never ready, which pins the offered skip to exactly phase 2.
 const COMPONENTS: AssessmentComponent[] = [
   {
     id: 'vision',
@@ -301,7 +299,7 @@ describe('ReadinessReviewApp', () => {
 
     // act - answer every question with the top option
     PREPAREDNESS_ASSESSMENT.forEach((question, index) => {
-      answerQuestion(question.nu, 5);
+      answerQuestion(question.nu, question.id === 'sponsorship' ? 1 : 5);
       if (index < PREPAREDNESS_ASSESSMENT.length - 1) {
         fireEvent.click(screen.getByRole('button', { name: 'Next' }));
       }
@@ -363,7 +361,7 @@ describe('ReadinessReviewApp', () => {
     );
     goToQuestions();
     PREPAREDNESS_ASSESSMENT.forEach((question, index) => {
-      answerQuestion(question.nu, 5);
+      answerQuestion(question.nu, question.id === 'sponsorship' ? 1 : 5);
       if (index < PREPAREDNESS_ASSESSMENT.length - 1) {
         fireEvent.click(screen.getByRole('button', { name: 'Next' }));
       }
@@ -422,7 +420,7 @@ describe('ReadinessReviewApp', () => {
     );
     goToQuestions();
     PREPAREDNESS_ASSESSMENT.forEach((question, index) => {
-      answerQuestion(question.nu, 5);
+      answerQuestion(question.nu, question.id === 'sponsorship' ? 1 : 5);
       if (index < PREPAREDNESS_ASSESSMENT.length - 1) {
         fireEvent.click(screen.getByRole('button', { name: 'Next' }));
       }

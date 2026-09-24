@@ -296,4 +296,26 @@ describe('unscored, pathway and coverage handling', () => {
     expect(resolved.length).toBe(DEFAULT_READINESS_QUESTIONS.length + 1);
     expect(resolveReadinessQuestions(undefined)).toBe(DEFAULT_READINESS_QUESTIONS);
   });
+
+  it('SHOULD treat Adopted as ready WHEN the component requires Thriving', () => {
+    const thriving: AssessmentComponent[] = [
+      { id: 'a1', label: 'A1', lenses: ['L1'], phase: 1, target: 5 },
+      { id: 'a2', label: 'A2', lenses: ['L1'], phase: 2, target: 5 },
+    ];
+    const adopted = (nu: number, id: string): PreparednessAssessment => ({
+      ...scored(nu, 'L1'),
+      id,
+      progress: [0, 1, 2, 3, 4],
+    });
+
+    const outcome = computeReadinessOutcome(
+      { 1: 5, 2: 4 },
+      thriving,
+      () => undefined,
+      [adopted(1, 'a1'), adopted(2, 'a2')]
+    );
+
+    expect(outcome.readyComponentIds).toEqual(['a1']);
+    expect(outcome.skipToPhase).toBe(2);
+  });
 });

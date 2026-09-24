@@ -1,6 +1,7 @@
 import type { AssessmentComponent } from '@data/components';
 import { PATHWAY_OPTIONS, type CstPathwayKey } from '@data/cst';
 import type { DraftEntry } from '@lib/adoptionState';
+import { getPhasePassScore } from '@lib/readinessBands';
 
 export type ReadinessQuestionKind = 'choice' | 'text' | 'pathway';
 
@@ -845,7 +846,7 @@ export function computeReadinessOutcome(
       return;
     }
     const componentScore = Math.min(...scores);
-    if (componentScore >= component.target) {
+    if (componentScore >= getPhasePassScore(component.target)) {
       readyComponentIds.push(component.id);
     }
   });

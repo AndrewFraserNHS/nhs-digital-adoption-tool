@@ -2258,7 +2258,7 @@ export function AssessmentPanel({
                       <p
                         className={`mt-1 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
                       >
-                        Hierarchy: Outcome - Action - Affected component lenses.
+                        Items that progress you through the readiness levels for this lens.
                       </p>
                     </div>
                     <div className="flex flex-wrap items-center gap-2">

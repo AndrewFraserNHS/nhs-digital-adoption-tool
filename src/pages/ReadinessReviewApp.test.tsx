@@ -211,7 +211,7 @@ describe('ReadinessReviewApp', () => {
 
     // assert - the .eml is addressed, subject-lined, and carries the report as a real base64 attachment
     const emlText = await captured.blob!.text();
-    expect(emlText).toContain('To: england.da@test.net');
+    expect(emlText).toContain('To: england.digitaladoptionavt@nhs.net');
     expect(emlText).toContain('Subject: Test Trust - Assessment outcomes');
     expect(emlText).toContain('Content-Disposition: attachment; filename="test-trust-readiness-review.json"');
     const attachmentMatch = emlText.match(

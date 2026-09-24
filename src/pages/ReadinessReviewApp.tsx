@@ -350,18 +350,12 @@ export default function ReadinessReviewApp({
                 &quot;Readiness by component&quot; below, or retake the review any time.
               </p>
               <div className="flex flex-wrap justify-center gap-3">
-<<<<<<< HEAD
                 <button
                   type="button"
                   onClick={handleSendReport}
-=======
-                <a
-                  href={`mailto:england.digitaladoptionavt@nhs.net?subject=${encodeURIComponent(`${trustName} - Assessment outcomes`)}`}
->>>>>>> 3224e545130f867ffcff922dc5bd21e89de852f8
                   className="rounded-md bg-[#005eb8] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
                 >
-                  Now please send across your assessment scores to the Digital Adoption AVT
-                  mailbox
+                  Now please send across your assessment scores to the Digital Adoption AVT mailbox
                 </button>
                 <button
                   type="button"

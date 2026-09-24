@@ -319,7 +319,7 @@ export function AdoptionApp() {
   );
   const [showEngagementCard, setShowEngagementCard] = useState<boolean>(true);
   const [viewHistory, setViewHistory] = useState<View[]>([]);
-  const [expandedNavPhases, setExpandedNavPhases] = useState<Record<number, boolean>>({ 1: true });
+  const [expandedNavPhases, setExpandedNavPhases] = useState<Record<number, boolean>>({});
   const [expandedNavSections, setExpandedNavSections] = useState<Record<string, boolean>>({
     intro: true,
     overview: true,
@@ -385,6 +385,12 @@ export function AdoptionApp() {
     userSettings.phaseFocusMode === 'manual' && userSettings.manualPhaseFocus
       ? userSettings.manualPhaseFocus
       : metrics.currentPhase;
+
+  // The phase the project is on is open by default; a group the user has toggled themselves keeps
+  // that choice, and when the tracked phase moves on its group is revealed.
+  useEffect(() => {
+    setExpandedNavPhases((current) => ({ ...current, [effectivePhaseFocus]: true }));
+  }, [effectivePhaseFocus]);
 
   // Auto-expand the phase group containing whichever component is actively being viewed, so the
   // sidebar always reveals the right one rather than being stuck on Pre-Discovery.
@@ -1570,7 +1576,7 @@ export function AdoptionApp() {
               <nav className="space-y-2 mb-8">
                 {Array.from(new Set(COMPONENTS.map((comp) => comp.phase))).map((phase) => {
                   const phaseComponents = COMPONENTS.filter((comp) => comp.phase === phase);
-                  const isExpanded = expandedNavPhases[phase] ?? false;
+                  const isExpanded = expandedNavPhases[phase] ?? phase === effectivePhaseFocus;
                   return (
                     <div
                       key={phase}

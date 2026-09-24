@@ -2645,7 +2645,7 @@ export function AssessmentPanel({
               </button>
             </div>
 
-            <div className="mt-4 max-h-[calc(100vh-15rem)] overflow-y-auto pr-1 grid gap-3">
+            <div className="mt-4 max-h-[calc(100vh-16rem)] overflow-y-auto pr-1 grid gap-3">
               <div
                 className={`${darkMode ? 'border-slate-700 bg-slate-900' : 'border-blue-100 bg-white'} sticky top-0 z-10 rounded-md border px-3 py-2 shadow-sm`}
               >

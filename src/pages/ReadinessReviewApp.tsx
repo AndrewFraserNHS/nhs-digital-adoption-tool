@@ -7,10 +7,10 @@ import {
   computeReadinessOutcome,
   DEFAULT_READINESS_QUESTIONS,
   getMissingLensCoverage,
-  pathwayFromAnswer,
-  READINESS_REVIEW_REPORT_STORAGE_KEY,
   type MissingLens,
+  pathwayFromAnswer,
   type PreparednessAssessment,
+  READINESS_REVIEW_REPORT_STORAGE_KEY,
   type ReadinessOutcome,
   type ReadinessReviewReport,
   type ReadinessSuggestion,
@@ -395,7 +395,7 @@ export default function ReadinessReviewApp({
                   onClick={handleSendReport}
                   className="rounded-md bg-[#005eb8] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
                 >
-                  Now please send across your assessment scores to the Digital Adoption AVT mailbox
+                  Send across your assessment scores
                 </button>
                 <button
                   type="button"

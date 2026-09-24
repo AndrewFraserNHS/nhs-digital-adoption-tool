@@ -182,7 +182,7 @@ describe('ReadinessReviewApp', () => {
 
     // act
     fireEvent.click(
-      screen.getByRole('button', { name: /Now please send across your assessment scores/ })
+      screen.getByRole('button', { name: /Send across your assessment scores/ })
     );
 
     // assert
@@ -246,7 +246,7 @@ describe('ReadinessReviewApp', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Finish assessment' }));
     fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
     fireEvent.click(
-      screen.getByRole('button', { name: /Now please send across your assessment scores/ })
+      screen.getByRole('button', { name: /Send across your assessment scores/ })
     );
 
     // assert

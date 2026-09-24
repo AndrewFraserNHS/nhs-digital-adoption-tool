@@ -143,7 +143,7 @@ export default function ReadinessReviewApp({
     }
     const filenameSafeTrust = (trustName || 'assessment').replace(/[^a-z0-9]+/gi, '-').toLowerCase();
     const eml = buildEmlWithJsonAttachment({
-      to: 'england.da@test.net',
+      to: 'england.digitaladoptionavt@nhs.net',
       subject: `${trustName} - Assessment outcomes`,
       body: 'Please find our AVT Readiness Review outcomes attached.',
       attachmentFilename: `${filenameSafeTrust}-readiness-review.json`,

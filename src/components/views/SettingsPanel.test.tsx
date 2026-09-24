@@ -62,6 +62,32 @@ describe('SettingsPanel', () => {
     expect(onLoadExampleData).toHaveBeenCalledWith('green');
   });
 
+    it('SHOULD toggle showReviewQuestionsSection', () => {
+    // arrange
+    const onUserSettingsUpdate = vi.fn();
+
+    render(
+      <SettingsPanel
+        userSettings={baseUserSettings}
+        onUserSettingsUpdate={onUserSettingsUpdate}
+        onLoadExampleData={vi.fn()}
+        onResetData={vi.fn()}
+      />
+    );
+
+    // act
+    fireEvent.click(
+      screen.getByLabelText(
+        'Show review questions section (Project Profile, even after marked initiated)'
+      )
+    );
+
+    // assert
+    expect(onUserSettingsUpdate).toHaveBeenLastCalledWith(
+      expect.objectContaining({ showReviewQuestionsSection: true })
+    );
+  });
+
   it('SHOULD toggle showExternalLinksSection', () => {
     // arrange
     const onUserSettingsUpdate = vi.fn();

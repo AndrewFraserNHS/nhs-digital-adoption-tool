@@ -303,6 +303,12 @@ export interface OrgProfile {
    * (per device, not exported) by AdoptionUserSettings.showExternalLinksSection.
    */
   externalLinksInitiated?: boolean;
+   /**
+   * Once set, the Project Profile page's Readiness Review Questions section collapses by default -
+   * links are a one-time project-setup concern. Travels with export/import. Overridden locally
+   * (per device, not exported) by AdoptionUserSettings.showExternalLinksSection.
+   */
+  readinessReviewQuestionsInitiated?: boolean;
   teamMembers?: TeamMember[];
   /** Groups/Sub-Groups/Locations/Relationships used by the Stakeholder Analysis tool - shared here so every project only defines them once. */
   stakeholderReferenceLists?: StakeholderReferenceLists;
@@ -397,6 +403,7 @@ export function normalizeOrgProfile(profile?: Partial<OrgProfile>): OrgProfile {
         matchText: DEFAULT_TOOL_LINK_TEXT[tool].matchText,
       })),
     externalLinksInitiated: profile?.externalLinksInitiated,
+    readinessReviewQuestionsInitiated: profile?.readinessReviewQuestionsInitiated,
     teamMembers: profile?.teamMembers || [],
     stakeholderReferenceLists:
       profile?.stakeholderReferenceLists || DEFAULT_STAKEHOLDER_REFERENCE_LISTS,

@@ -90,7 +90,7 @@ function AliasEditor({
 
   return (
     <div>
-      {aliases &&
+      {aliases && (
         <div className="flex flex-wrap gap-1.5">
           {aliases.map((alias) => (
             <span
@@ -118,7 +118,7 @@ function AliasEditor({
             </span>
           )}
         </div>
-      }
+      )}
       <div className="mt-2 flex gap-2">
         <input
           type="text"
@@ -395,6 +395,7 @@ export interface ProjectDetailsPageProps {
   onCurrentUserChange: (id: string) => void;
   /** Per-device override that force-shows the External Links section even after it's been marked initiated. */
   showExternalLinksSection?: boolean;
+  showReviewQuestionsSection?: boolean;
 }
 
 export function ProjectDetailsPage({
@@ -407,6 +408,7 @@ export function ProjectDetailsPage({
   darkMode = false,
   currentUserId,
   onCurrentUserChange,
+  showReviewQuestionsSection = false,
   showExternalLinksSection = false,
 }: ProjectDetailsPageProps): JSX.Element {
   const [profile, setProfile] = useState<OrgProfile>(orgProfile);
@@ -770,6 +772,15 @@ export function ProjectDetailsPage({
   const handleExternalLinksInitiatedChange = useCallback(
     (value: boolean) => {
       const updated = { ...profile, externalLinksInitiated: value };
+      setProfile(updated);
+      onProfileUpdate(updated);
+    },
+    [profile, onProfileUpdate]
+  );
+
+  const handleReadinessReviewInitiatedChange = useCallback(
+    (value: boolean) => {
+      const updated = { ...profile, readinessReviewQuestionsInitiated: value };
       setProfile(updated);
       onProfileUpdate(updated);
     },
@@ -1196,7 +1207,7 @@ export function ProjectDetailsPage({
         </button>
       </div>
 
-            <div
+      <div
         className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-4`}
       >
         <div>
@@ -1204,7 +1215,9 @@ export function ProjectDetailsPage({
             Step 4: Stakeholder Reference Data
           </h3>
           <p className={`text-sm mt-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-            Define your Stakeholder Groups, Sub-Groups, Departments and Relationships here for use in the Stakeholder Analysis Tool and for consistency of stakeholder records throughout the Adoption Engine
+            Define your Stakeholder Groups, Sub-Groups, Departments and Relationships here for use
+            in the Stakeholder Analysis Tool and for consistency of stakeholder records throughout
+            the Adoption Engine
           </p>
         </div>
 
@@ -1240,25 +1253,53 @@ export function ProjectDetailsPage({
         </div>
       </div>
 
-      {/* Readiness Review questions */}
       <div
         className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-4`}
       >
         <div>
-          <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
-            Readiness Review questions
-          </h3>
-          <p className={`text-sm mt-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-            Reword, reorder or add questions to the Readiness Review. Added questions can be
-            multiple choice or free text and are recorded in the exported report without affecting
-            any readiness score.
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h3
+              className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+            >
+              Step 5: Readiness Review Questions
+            </h3>
+            <label
+              className={`flex items-center gap-2 text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+            >
+              <input
+                type="checkbox"
+                checked={Boolean(profile.readinessReviewQuestionsInitiated)}
+                onChange={(e) => handleReadinessReviewInitiatedChange(e.target.checked)}
+              />
+              Questions initiated
+            </label>
+          </div>
+          <p className={`mt-2 text-sm p-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+            This is normally only set up once at the start of a project. Once you're done, tick
+            "Questions initiated" to hide this section - re-enable "Show readiness review section" in
+            Settings if you need to come back to it.
           </p>
+
+          {!profile.readinessReviewQuestionsInitiated || showReviewQuestionsSection ? (
+            <>
+              <p className={`mt-2 text-sm p-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                Reword, reorder or add questions to the Readiness Review. Added questions can be
+                multiple choice or free text and are recorded in the exported report without
+                affecting any readiness score.
+              </p>
+              <ReadinessQuestionEditor
+                questions={profile.readinessQuestions || DEFAULT_READINESS_QUESTIONS}
+                onChange={handleReadinessQuestionsChange}
+                darkMode={darkMode}
+              />
+            </>
+          ) : (
+            <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+              Readiness review questions were set up at project start. Turn on "Show readiness review section" in
+              Settings if you need to come back and edit them.
+            </p>
+          )}
         </div>
-        <ReadinessQuestionEditor
-          questions={profile.readinessQuestions || DEFAULT_READINESS_QUESTIONS}
-          onChange={handleReadinessQuestionsChange}
-          darkMode={darkMode}
-        />
       </div>
 
       {/* Step 4: External link overrides */}
@@ -1270,7 +1311,7 @@ export function ProjectDetailsPage({
             <h3
               className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
             >
-              Step 5: External links
+              Step 6: External links
             </h3>
             <label
               className={`flex items-center gap-2 text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}

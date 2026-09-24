@@ -337,7 +337,7 @@ export function WhereAmINowPage({
             <h3
               className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
             >
-              Readiness Review
+              Change Adoption Baseline
             </h3>
             <p className={`mt-1 text-sm ${textClass}`}>
               Answer a short set of questions about your programme - your answers can update your

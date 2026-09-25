@@ -1,19 +1,17 @@
 import type { AssessmentComponent } from '@data/components';
 import { PATHWAY_LABELS } from '@data/cst';
 import {
-  buildReportScoreLookup,
+  buildReportRadarData,
+  describeReportOutcome,
   shouldShowImpliedScore,
   type ReadinessReviewReport,
 } from '@data/readinessReview';
-import { buildComponentRadarChartData, radarTooltipLabel } from '@lib/adoptionMetrics';
+import { READINESS_RADAR_OPTIONS } from '@lib/adoptionMetrics';
 import { createRadarChart } from '@lib/charts';
-import { getReadinessBand } from '@lib/readinessBands';
-import { jsPDF } from 'jspdf';
+import type { jsPDF } from 'jspdf';
 
-const MARGIN = 15;
-const PAGE_WIDTH = 210;
-const PAGE_HEIGHT = 297;
-const CONTENT_WIDTH = PAGE_WIDTH - MARGIN * 2;
+import { PHASE_NAMES } from '../types/constants';
+import { createPdfWriter, PDF_CONTENT_WIDTH, PDF_MARGIN } from './pdfWriter';
 
 /**
  * Renders the maturity radar for a frozen report onto an offscreen white canvas and returns it as
@@ -31,30 +29,12 @@ export function renderReportRadarImage(
   chartCanvas.width = size;
   chartCanvas.height = size;
   try {
-    const chart = createRadarChart(
-      chartCanvas,
-      buildComponentRadarChartData(components, buildReportScoreLookup(report)),
-      {
-        animation: false,
-        responsive: false,
-        devicePixelRatio: 1,
-        scales: {
-          r: {
-            min: -1,
-            max: 5,
-            ticks: {
-              display: true,
-              stepSize: 1,
-              backdropColor: 'transparent',
-              callback: (value: string | number) =>
-                Number(value) < 0 ? '' : getReadinessBand(Number(value)).label,
-            },
-            pointLabels: { padding: 28 },
-          },
-        },
-        plugins: { tooltip: { callbacks: { label: radarTooltipLabel } } },
-      }
-    );
+    const chart = createRadarChart(chartCanvas, buildReportRadarData(report, components), {
+      ...READINESS_RADAR_OPTIONS,
+      animation: false,
+      responsive: false,
+      devicePixelRatio: 1,
+    });
     const output = document.createElement('canvas');
     output.width = size;
     output.height = size;
@@ -75,32 +55,8 @@ export function renderReportRadarImage(
 
 /** Portrait A4 write-up of a report: answers as flowing text (no tables), radar at the bottom. */
 export function buildReadinessReviewPdf(report: ReadinessReviewReport, radarImage = ''): jsPDF {
-  const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
-  let y = MARGIN;
-
-  const ensureSpace = (needed: number) => {
-    if (y + needed > PAGE_HEIGHT - MARGIN) {
-      doc.addPage();
-      y = MARGIN;
-    }
-  };
-
-  const write = (
-    text: string,
-    { size = 10, bold = false, color = 30, gap = 1.5 } = {}
-  ): void => {
-    doc.setFont('helvetica', bold ? 'bold' : 'normal');
-    doc.setFontSize(size);
-    doc.setTextColor(color);
-    const lineHeight = size * 0.5;
-    const lines: string[] = doc.splitTextToSize(text, CONTENT_WIDTH);
-    lines.forEach((line) => {
-      ensureSpace(lineHeight);
-      doc.text(line, MARGIN, y + size * 0.3);
-      y += lineHeight;
-    });
-    y += gap;
-  };
+  const writer = createPdfWriter();
+  const { doc, write, ensureSpace } = writer;
 
   write('Readiness Review', { size: 18, bold: true, gap: 3 });
   write(report.trustName || 'Trust not set', { size: 12, bold: true, gap: 3 });
@@ -111,19 +67,17 @@ export function buildReadinessReviewPdf(report: ReadinessReviewReport, radarImag
       ['Date completed', report.dateCompleted],
       ['Programme lead', report.programmeLead],
       ['Contact email', report.contactEmail],
+      ['Executive sponsor', report.executiveSponsor || ''],
     ] as [string, string][]
   ).forEach(([label, value]) => write(`${label}: ${value || '-'}`, { gap: 0.5 }));
-  y += 3;
+  writer.y += 3;
 
   if (report.pathway) {
     write(`Suggested pathway: ${PATHWAY_LABELS[report.pathway]}`, { bold: true });
   }
-  write(
-    report.outcome.skipToPhase
-      ? `Answers suggest being ready to skip to Phase ${report.outcome.skipToPhase}.`
-      : 'Answers did not suggest skipping any phase.',
-    { gap: 5 }
-  );
+  write(describeReportOutcome(report, (phase) => PHASE_NAMES[phase] || `Phase ${phase}`), {
+    gap: 5,
+  });
 
   const showImplied = shouldShowImpliedScore(report.answers);
   report.answers.forEach((answer, index) => {
@@ -140,12 +94,19 @@ export function buildReadinessReviewPdf(report: ReadinessReviewReport, radarImag
   });
 
   if (radarImage) {
-    const imageSize = Math.min(CONTENT_WIDTH, 150);
-    y += 4;
+    const imageSize = Math.min(PDF_CONTENT_WIDTH, 150);
+    writer.y += 4;
     ensureSpace(imageSize + 12);
     write('Maturity radar', { size: 12, bold: true, gap: 2 });
-    doc.addImage(radarImage, 'PNG', MARGIN + (CONTENT_WIDTH - imageSize) / 2, y, imageSize, imageSize);
-    y += imageSize;
+    doc.addImage(
+      radarImage,
+      'PNG',
+      PDF_MARGIN + (PDF_CONTENT_WIDTH - imageSize) / 2,
+      writer.y,
+      imageSize,
+      imageSize
+    );
+    writer.y += imageSize;
   }
 
   return doc;

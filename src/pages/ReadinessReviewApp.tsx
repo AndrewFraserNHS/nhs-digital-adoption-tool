@@ -1,8 +1,8 @@
 import { ReadinessOutcomeModal } from '@components/common/ReadinessOutcomeModal';
-import { StakeholderPicker } from '@components/common/StakeholderPicker';
 import type { AssessmentComponent } from '@data/components';
 import type { CstPathwayKey } from '@data/cst';
 import {
+  buildRadarSnapshot,
   buildReadinessReviewReport,
   computeReadinessOutcome,
   DEFAULT_READINESS_QUESTIONS,
@@ -12,55 +12,45 @@ import {
   type PreparednessAssessment,
   READINESS_REVIEW_REPORT_STORAGE_KEY,
   type ReadinessOutcome,
+  type ReadinessReviewDecision,
   type ReadinessReviewReport,
   type ReadinessSuggestion,
 } from '@data/readinessReview';
 import { isResolvedActionStatus } from '@lib/actionModel';
-import type { DraftEntry, Stakeholder, TeamMember } from '@lib/adoptionState';
+import { computeCurrentPhase } from '@lib/adoptionMetrics';
+import type { DraftEntry } from '@lib/adoptionState';
 import { downloadReportEml, sendReportBundle } from '@lib/readinessExport';
 import { load, save } from '@lib/storage';
 import { JSX, useState } from 'react';
 
 interface PreparednessState {
-  icbRegion: string;
-  completedBy: string;
-  dateCompleted: string;
-  sponsorId: string;
-  programmeLead: string;
-  contactEmail: string;
   /** Chosen option number (1-5), keyed by question `nu`. */
   answers: Record<number, number>;
   /** Free-text answers, keyed by question `nu`. Absent in state saved before text questions existed. */
   textAnswers?: Record<number, string>;
   currentIndex: number;
   completed: boolean;
+  /** The team chose "I'm new, skip assessment" - they start at Phase 1 with nothing changed. */
+  skipped?: boolean;
 }
 
 const STORAGE_KEY = 'nhs-readiness-review';
 
-function freshState(region: string, leadName: string): PreparednessState {
-  return {
-    icbRegion: region,
-    completedBy: '',
-    dateCompleted: new Date().toISOString().slice(0, 10),
-    sponsorId: '',
-    programmeLead: leadName,
-    contactEmail: '',
-    answers: {},
-    currentIndex: 0,
-    completed: false,
-  };
+function freshState(): PreparednessState {
+  return { answers: {}, currentIndex: 0, completed: false };
 }
 
 export interface ReadinessReviewAppProps {
+  /** Trust details for the report all come from Project Profile step 1. */
   trustName?: string;
-  /** Pre-fills ICB / Region and Programme lead on a brand-new assessment. */
   region?: string;
   leadName?: string;
-  teamMembers?: TeamMember[];
-  stakeholders?: Stakeholder[];
-  onStakeholdersChange?: (stakeholders: Stakeholder[]) => void;
-  departments?: string[];
+  contactEmail?: string;
+  executiveSponsor?: string;
+  /** The signed-in team member, recorded as who completed the review. */
+  currentUserName?: string;
+  /** The phase the project is currently tracked on, used to freeze the radar. */
+  currentPhase?: number;
   components?: AssessmentComponent[];
   /** The project's question list, in display order. Defaults to the built-in questions. */
   questions?: PreparednessAssessment[];
@@ -73,6 +63,7 @@ export interface ReadinessReviewAppProps {
     skipToPhase: number | null;
     accepted: boolean;
     updatedCount: number;
+    skipped?: boolean;
   }) => void;
 }
 
@@ -80,10 +71,10 @@ export default function ReadinessReviewApp({
   trustName = '',
   region = '',
   leadName = '',
-  teamMembers = [],
-  stakeholders = [],
-  onStakeholdersChange,
-  departments = [],
+  contactEmail = '',
+  executiveSponsor = '',
+  currentUserName = '',
+  currentPhase = 1,
   components = [],
   questions: QUESTIONS = DEFAULT_READINESS_QUESTIONS,
   currentPathway,
@@ -93,7 +84,7 @@ export default function ReadinessReviewApp({
   onReadinessEvaluated,
 }: ReadinessReviewAppProps = {}): JSX.Element {
   const [state, setState] = useState<PreparednessState>(
-    () => load<PreparednessState>(STORAGE_KEY) || freshState(region, leadName)
+    () => load<PreparednessState>(STORAGE_KEY) || freshState()
   );
   const [page, setPage] = useState<1 | 2>(1);
   const [outcome, setOutcome] = useState<ReadinessOutcome | null>(null);
@@ -112,7 +103,7 @@ export default function ReadinessReviewApp({
 
   const handleReset = () => {
     if (window.confirm('This will clear every answer and start a new assessment. Continue?')) {
-      persist(freshState(region, leadName));
+      persist(freshState());
       setPage(1);
       setOutcome(null);
       setShowModal(false);
@@ -147,23 +138,57 @@ export default function ReadinessReviewApp({
 
     // A frozen snapshot of everything answered, for the emailed attachment and for the
     // "Readiness Review Analysis" tool's "My Answers" view - overwritten on every completion.
-    save(
-      READINESS_REVIEW_REPORT_STORAGE_KEY,
-      buildReadinessReviewReport(
+    save(READINESS_REVIEW_REPORT_STORAGE_KEY, {
+      ...buildReadinessReviewReport(
         {
           trustName,
-          icbRegion: state.icbRegion,
-          completedBy: state.completedBy,
-          dateCompleted: state.dateCompleted,
-          programmeLead: state.programmeLead,
-          contactEmail: state.contactEmail,
+          icbRegion: region,
+          completedBy: currentUserName || leadName,
+          dateCompleted: new Date().toISOString().slice(0, 10),
+          programmeLead: leadName,
+          contactEmail,
+          executiveSponsor,
         },
         state.answers,
         components,
         QUESTIONS,
         state.textAnswers
-      )
-    );
+      ),
+      decision: 'pending',
+    });
+  };
+
+  /**
+   * Records what the team did with the offered outcome, and freezes the radar as the Adoption
+   * Baseline page will now show it (the store hasn't updated yet, so `overrides` carries the scores
+   * just applied). The PDF, emailed JSON and analysis tool all draw their radar from this.
+   */
+  const finalizeReport = (
+    decision: ReadinessReviewDecision,
+    appliedSkipToPhase: number | null,
+    overrides: Record<string, number>
+  ) => {
+    const report = load<ReadinessReviewReport>(READINESS_REVIEW_REPORT_STORAGE_KEY);
+    if (!report) {
+      return;
+    }
+    const liveEntry = (componentId: string, lens: string) => getEntry?.(componentId, lens);
+    const phase = getEntry
+      ? computeCurrentPhase(components, (componentId, lens) =>
+          Number(overrides[`${componentId}:${lens}`] ?? liveEntry(componentId, lens)?.score ?? 0)
+        )
+      : currentPhase;
+    save(READINESS_REVIEW_REPORT_STORAGE_KEY, {
+      ...report,
+      decision,
+      appliedSkipToPhase,
+      radar: buildRadarSnapshot(components, liveEntry, phase, overrides),
+    });
+  };
+
+  const handleSkipAssessment = () => {
+    update({ skipped: true });
+    onReadinessEvaluated?.({ skipToPhase: null, accepted: false, updatedCount: 0, skipped: true });
   };
 
   const loadReport = () => load<ReadinessReviewReport>(READINESS_REVIEW_REPORT_STORAGE_KEY);
@@ -213,12 +238,23 @@ export default function ReadinessReviewApp({
   ) => {
     const skipToPhase = applyPhaseSkip ? (outcome?.skipToPhase ?? null) : null;
     const skippedComponentIds = skipToPhase ? applySkip(skipToPhase) : new Set<string>();
+    const overrides: Record<string, number> = {};
+    components
+      .filter((component) => skippedComponentIds.has(component.id))
+      .forEach((component) =>
+        component.lenses.forEach((lens) => {
+          overrides[`${component.id}:${lens}`] = component.target;
+        })
+      );
 
     // A component already covered by the phase skip (raised to its target) doesn't need its
     // individual suggestion applied on top - that would just overwrite the skip's own score.
     const suggestionsToApply = selectedSuggestions.filter(
       (suggestion) => !skippedComponentIds.has(suggestion.componentId)
     );
+    suggestionsToApply.forEach((suggestion) => {
+      overrides[`${suggestion.componentId}:${suggestion.lens}`] = suggestion.impliedScore;
+    });
     if (getEntry && onEntryUpdate) {
       suggestionsToApply.forEach((suggestion) => {
         const entry = getEntry(suggestion.componentId, suggestion.lens);
@@ -243,6 +279,9 @@ export default function ReadinessReviewApp({
       onPathwayChosen?.(chosenPathway);
     }
 
+    const accepted = Boolean(skipToPhase) || suggestionsToApply.length > 0;
+    finalizeReport(accepted ? 'applied' : 'declined', skipToPhase, overrides);
+
     onReadinessEvaluated?.({
       skipToPhase,
       accepted: Boolean(skipToPhase) || suggestionsToApply.length > 0,
@@ -253,13 +292,13 @@ export default function ReadinessReviewApp({
   };
 
   const handleDecline = () => {
+    finalizeReport('declined', null, {});
     onReadinessEvaluated?.({ skipToPhase: null, accepted: false, updatedCount: 0 });
     setShowModal(false);
     setOutcomeHandled(true);
   };
 
   const inputClass = 'w-full p-2 border border-slate-300 rounded outline-none';
-  const labelClass = 'block text-sm font-medium text-slate-700 mb-1';
   const progressPct = ((currentIndex + 1) / Math.max(QUESTIONS.length, 1)) * 100;
 
   return (
@@ -278,106 +317,34 @@ export default function ReadinessReviewApp({
       </div>
 
       {page === 1 ? (
-        <section className="space-y-6 text-center" aria-label="Trust details">
-          <h2 className="text-xl font-semibold text-slate-800">Trust Details</h2>
-          <div className="grid grid-cols-1 gap-4 text-left">
-            <div>
-              <span className={labelClass}>Trust name</span>
-              <p className="p-2 rounded border border-slate-200 bg-white text-slate-700">
-                {trustName || 'Not set - add your trust name in Project Details'}
-              </p>
-            </div>
-            <div>
-              <label htmlFor="prep-icb" className={labelClass}>
-                ICB / Region
-              </label>
-              <input
-                id="prep-icb"
-                type="text"
-                value={state.icbRegion}
-                onChange={(event) => update({ icbRegion: event.target.value })}
-                className={inputClass}
-              />
-            </div>
-            <div>
-              <label htmlFor="prep-completed-by" className={labelClass}>
-                Completed by (name and role)
-              </label>
-              <select
-                id="prep-completed-by"
-                value={state.completedBy}
-                onChange={(event) => update({ completedBy: event.target.value })}
-                className={inputClass}
-              >
-                <option value="">Please choose</option>
-                {teamMembers.map((member) => (
-                  <option key={member.id} value={`${member.name} (${member.role})`}>
-                    {member.name} ({member.role})
-                  </option>
-                ))}
-              </select>
-              {teamMembers.length === 0 ? (
-                <p className="mt-1 text-xs text-slate-400">
-                  No team members yet - add them in Project Details.
-                </p>
-              ) : null}
-            </div>
-            <div>
-              <label htmlFor="prep-date" className={labelClass}>
-                Date completed
-              </label>
-              <input
-                id="prep-date"
-                type="date"
-                value={state.dateCompleted}
-                onChange={(event) => update({ dateCompleted: event.target.value })}
-                className={inputClass}
-              />
-            </div>
-            <StakeholderPicker
-              id="prep-sponsor"
-              label="Executive sponsor / SRO"
-              stakeholders={stakeholders}
-              departments={departments}
-              value={state.sponsorId}
-              onChange={(sponsorId) => update({ sponsorId })}
-              onAddStakeholder={(stakeholder) =>
-                onStakeholdersChange?.([...stakeholders, stakeholder])
-              }
-            />
-            <div>
-              <label htmlFor="prep-lead" className={labelClass}>
-                Programme / transformation lead
-              </label>
-              <input
-                id="prep-lead"
-                type="text"
-                value={state.programmeLead}
-                onChange={(event) => update({ programmeLead: event.target.value })}
-                className={inputClass}
-              />
-            </div>
-            <div>
-              <label htmlFor="prep-email" className={labelClass}>
-                Contact email
-              </label>
-              <input
-                id="prep-email"
-                type="email"
-                value={state.contactEmail}
-                onChange={(event) => update({ contactEmail: event.target.value })}
-                className={inputClass}
-              />
-            </div>
-          </div>
-          <div className="flex justify-center">
+        <section className="space-y-6 text-center" aria-label="Before you start">
+          <h2 className="text-xl font-semibold text-slate-800">Adoption Baseline</h2>
+          <p className="text-sm text-slate-600">
+            Please fill out the remaining details in Project Profiles before doing the assessment.
+          </p>
+          {state.skipped ? (
+            <p className="rounded-md border border-slate-200 bg-slate-50 p-3 text-sm text-slate-600">
+              You skipped the assessment, so you start at Phase 1 with nothing changed. You can
+              still take it at any time.
+            </p>
+          ) : null}
+          <div className="flex flex-wrap justify-center gap-3">
             <button
               type="button"
               onClick={() => setPage(2)}
               className="rounded-md bg-[#005eb8] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
             >
-              Next: Questions
+              Adoption Baseline Questions
             </button>
+            {!state.skipped ? (
+              <button
+                type="button"
+                onClick={handleSkipAssessment}
+                className="rounded-md bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-200"
+              >
+                I&apos;m new, skip assessment
+              </button>
+            ) : null}
           </div>
         </section>
       ) : (

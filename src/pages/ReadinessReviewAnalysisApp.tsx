@@ -1,19 +1,21 @@
 import type { AssessmentComponent } from '@data/components';
 import { PATHWAY_LABELS } from '@data/cst';
 import {
-  buildReportScoreLookup,
+  buildReportRadarData,
+  describeReportOutcome,
   getReportMissingLenses,
   READINESS_REVIEW_REPORT_STORAGE_KEY,
   type ReadinessReviewReport,
   shouldShowImpliedScore,
 } from '@data/readinessReview';
-import { buildComponentRadarChartData, radarTooltipLabel } from '@lib/adoptionMetrics';
+import { READINESS_RADAR_OPTIONS } from '@lib/adoptionMetrics';
 import { createRadarChart } from '@lib/charts';
 import { extractEmlAttachments } from '@lib/eml';
-import { getReadinessBand } from '@lib/readinessBands';
 import { downloadReportJson, downloadReportPdf } from '@lib/readinessExport';
 import { load } from '@lib/storage';
 import { JSX, useEffect, useMemo, useRef, useState } from 'react';
+
+import { PHASE_NAMES } from '../types/constants';
 
 export interface ReadinessReviewAnalysisAppProps {
   components?: AssessmentComponent[];
@@ -30,7 +32,6 @@ function ReportDetailView({
   components: AssessmentComponent[];
 }): JSX.Element {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const getEntry = useMemo(() => buildReportScoreLookup(report), [report]);
   const missingLenses = useMemo(() => getReportMissingLenses(components, report), [components, report]);
   const showImplied = shouldShowImpliedScore(report.answers);
 
@@ -38,26 +39,12 @@ function ReportDetailView({
     if (!canvasRef.current) {
       return;
     }
-    const chartData = buildComponentRadarChartData(components, getEntry);
-    createRadarChart(canvasRef.current, chartData, {
-      maintainAspectRatio: false,
-      scales: {
-        r: {
-          min: -1,
-          max: 5,
-          ticks: {
-            display: true,
-            stepSize: 1,
-            backdropColor: 'transparent',
-            callback: (value: string | number) =>
-              Number(value) < 0 ? '' : getReadinessBand(Number(value)).label,
-          },
-          pointLabels: { padding: 28 },
-        },
-      },
-      plugins: { tooltip: { callbacks: { label: radarTooltipLabel } } },
-    });
-  }, [components, getEntry]);
+    createRadarChart(
+      canvasRef.current,
+      buildReportRadarData(report, components),
+      READINESS_RADAR_OPTIONS
+    );
+  }, [components, report]);
 
   return (
     <div className="space-y-6">
@@ -108,6 +95,7 @@ function ReportDetailView({
               ['Date completed', report.dateCompleted],
               ['Programme lead', report.programmeLead],
               ['Contact email', report.contactEmail],
+              ['Executive sponsor', report.executiveSponsor || ''],
             ] as [string, string][]
           ).map(([label, value]) => (
             <div key={label}>
@@ -126,9 +114,8 @@ function ReportDetailView({
         ) : null}
         <p className="mt-3 text-xs text-slate-500">
           Generated {new Date(report.generatedAt).toLocaleString('en-GB')}
-          {report.outcome.skipToPhase
-            ? ` · At the time, answers suggested being ready to skip to Phase ${report.outcome.skipToPhase}.`
-            : ' · At the time, no phase skip was suggested.'}
+          {' · '}
+          {describeReportOutcome(report, (phase) => PHASE_NAMES[phase] || `Phase ${phase}`)}
         </p>
       </div>
 

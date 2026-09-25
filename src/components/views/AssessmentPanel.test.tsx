@@ -91,7 +91,6 @@ function createProps(overrides?: {
     activeComponentId: 'vision',
     getRubricText: (_componentId: string, _lens: string, score: number) => `Rubric for ${score}`,
     getEntry: (componentId: string, lens: string) => entryByKey[`${componentId}:${lens}`],
-    onComponentChange: vi.fn(),
     onEntryUpdate: vi.fn(),
     onOpenLensInfo: vi.fn(),
     onActionRemove: vi.fn(),

@@ -1,12 +1,16 @@
 import type { AssessmentComponent } from '@data/components';
 import { ASSESSMENT_COMPONENTS } from '@data/components';
+import { buildComponentRadarChartData } from '@lib/adoptionMetrics';
 import { describe, expect, it } from 'vitest';
 
 import {
   buildReadinessReviewReport,
   buildReportScoreLookup,
+  buildRadarSnapshot,
+  buildReportRadarData,
   computeReadinessOutcome,
   DEFAULT_READINESS_QUESTIONS,
+  describeReportOutcome,
   getMissingLensCoverage,
   getReportMissingLenses,
   PATHWAY_QUESTION,
@@ -317,5 +321,39 @@ describe('unscored, pathway and coverage handling', () => {
 
     expect(outcome.readyComponentIds).toEqual(['a1']);
     expect(outcome.skipToPhase).toBe(2);
+  });
+
+  it('SHOULD describe the outcome by what the team actually did, not just what answers implied', () => {
+    const base = buildReadinessReviewReport(TRUST, { 1: 5 }, COMPONENTS, [scored(1, 'L1')]);
+    const name = (phase: number) => `P${phase}`;
+    const offered = { ...base, outcome: { skipToPhase: 3, readyComponentIds: [] } };
+
+    expect(describeReportOutcome({ ...offered, decision: 'applied', appliedSkipToPhase: 3 }, name)).toBe(
+      'Skipped to Phase 3: P3.'
+    );
+    expect(describeReportOutcome({ ...offered, decision: 'declined' }, name)).toContain('(not applied)');
+    expect(describeReportOutcome({ ...offered, decision: 'pending' }, name)).toContain('suggest skipping');
+    expect(describeReportOutcome({ ...base, outcome: { skipToPhase: null, readyComponentIds: [] } }, name)).toBe(
+      'Answers did not suggest skipping any phase.'
+    );
+    expect(describeReportOutcome({ ...base, decision: 'skipped' }, name)).toContain('starts at Phase 1');
+  });
+
+  it('SHOULD build the same radar data from a frozen snapshot as from the live entries it captured', () => {
+    const live = (_componentId: string, lens: string) => ({
+      score: lens === 'L1' ? 3 : 0,
+      rationale: '',
+      evidence: '',
+      actions: [],
+    });
+    const report = {
+      ...buildReadinessReviewReport(TRUST, {}, COMPONENTS, []),
+      radar: buildRadarSnapshot(COMPONENTS, live, 2),
+    };
+
+    const fromSnapshot = buildReportRadarData(report, COMPONENTS);
+
+    expect(fromSnapshot).toEqual(buildComponentRadarChartData(COMPONENTS, live, 2));
+    expect(fromSnapshot.datasets[1].label).toBe('Exemplar (Phase 2)');
   });
 });

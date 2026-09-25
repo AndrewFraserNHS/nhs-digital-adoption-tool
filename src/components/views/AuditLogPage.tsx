@@ -1,4 +1,6 @@
 import type { AuditEvent } from '@lib/auditLog';
+import { buildAuditLogPdf } from '@lib/auditLogPdf';
+import { downloadBlob } from '@lib/utils';
 import { useMemo, useState, type JSX } from 'react';
 import {
   PageHelpButton,
@@ -9,6 +11,8 @@ import {
 interface AuditLogPageProps {
   events: AuditEvent[];
   darkMode?: boolean;
+  trustName?: string;
+  projectName?: string;
 }
 
 const PAGE_SIZE = 50;
@@ -27,7 +31,12 @@ function formatTimestamp(value: string): string {
   });
 }
 
-export function AuditLogPage({ events, darkMode = false }: AuditLogPageProps): JSX.Element {
+export function AuditLogPage({
+  events,
+  darkMode = false,
+  trustName,
+  projectName,
+}: AuditLogPageProps): JSX.Element {
   const pageIntro = usePageIntroSeen('audit-log');
   const [eventTypeFilter, setEventTypeFilter] = useState('all');
   const [componentFilter, setComponentFilter] = useState('all');
@@ -78,6 +87,21 @@ export function AuditLogPage({ events, darkMode = false }: AuditLogPageProps): J
   const start = (boundedPage - 1) * PAGE_SIZE;
   const paged = filtered.slice(start, start + PAGE_SIZE);
 
+  const handleExportPdf = () => {
+    const filterSummary = [
+      eventTypeFilter !== 'all' ? `Event type: ${eventTypeFilter}` : '',
+      componentFilter !== 'all' ? `Component: ${componentFilter}` : '',
+      actorFilter !== 'all' ? `Actor: ${actorFilter}` : '',
+      searchText.trim() ? `Search: ${searchText.trim()}` : '',
+    ]
+      .filter(Boolean)
+      .join('; ');
+    downloadBlob(
+      `audit-log-${new Date().toISOString().slice(0, 10)}.pdf`,
+      buildAuditLogPdf(filtered, { trustName, projectName, filterSummary }).output('blob')
+    );
+  };
+
   return (
     <section className="space-y-4">
       <div>
@@ -86,6 +110,13 @@ export function AuditLogPage({ events, darkMode = false }: AuditLogPageProps): J
             Audit Log
           </h2>
           <PageHelpButton onClick={pageIntro.reopen} darkMode={darkMode} />
+          <button
+            type="button"
+            onClick={handleExportPdf}
+            className="ml-auto rounded-md bg-[#005eb8] px-3 py-1.5 text-sm font-semibold text-white hover:bg-blue-700"
+          >
+            Export PDF
+          </button>
         </div>
         <p className={`text-sm mt-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
           Timestamped history of CST changes, including who made each change.

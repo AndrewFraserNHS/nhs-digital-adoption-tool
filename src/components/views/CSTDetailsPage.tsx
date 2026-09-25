@@ -3,6 +3,7 @@ import {
   DEFAULT_STAKEHOLDER_REFERENCE_LISTS,
   normalizeOrgProfile,
   OrgProfile,
+  type Stakeholder,
   type StakeholderReferenceLists,
   type TeamMember,
 } from '@lib/adoptionState';
@@ -36,6 +37,7 @@ import {
 import { PATHWAY_LABELS, PATHWAY_OPTIONS, type CstPathwayKey } from '@data/cst';
 import { TOOLKIT_OPTIONS, type ToolkitOptionKey } from '@data/toolkits';
 import { ReadinessQuestionEditor } from '@components/common/ReadinessQuestionEditor';
+import { StakeholderPicker } from '@components/common/StakeholderPicker';
 import { resolveReadinessQuestions, type PreparednessAssessment } from '@data/readinessReview';
 import { PHASE_NAMES } from '../../types/constants';
 
@@ -396,6 +398,10 @@ export interface ProjectDetailsPageProps {
   /** Per-device override that force-shows the External Links section even after it's been marked initiated. */
   showExternalLinksSection?: boolean;
   showReviewQuestionsSection?: boolean;
+  /** For the executive sponsor picker (shared stakeholder list). */
+  stakeholders?: Stakeholder[];
+  onStakeholdersChange?: (stakeholders: Stakeholder[]) => void;
+  departments?: string[];
 }
 
 export function ProjectDetailsPage({
@@ -410,6 +416,9 @@ export function ProjectDetailsPage({
   onCurrentUserChange,
   showReviewQuestionsSection = false,
   showExternalLinksSection = false,
+  stakeholders = [],
+  onStakeholdersChange,
+  departments = [],
 }: ProjectDetailsPageProps): JSX.Element {
   const [profile, setProfile] = useState<OrgProfile>(orgProfile);
   const [editingLink, setEditingLink] = useState<GuidanceLink | null>(null);
@@ -438,6 +447,15 @@ export function ProjectDetailsPage({
   const handleProjectChange = useCallback(
     (value: string) => {
       const updated = { ...profile, projectName: value };
+      setProfile(updated);
+      onProfileUpdate(updated);
+    },
+    [profile, onProfileUpdate]
+  );
+
+  const handleProfileFieldChange = useCallback(
+    (updates: Partial<OrgProfile>) => {
+      const updated = { ...profile, ...updates };
       setProfile(updated);
       onProfileUpdate(updated);
     },
@@ -959,6 +977,35 @@ export function ProjectDetailsPage({
             onChange={(e) => handleLeadChange(e.target.value)}
           />
         </div>
+
+        <div>
+          <label
+            htmlFor="org-contact-email"
+            className={`block text-sm font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
+          >
+            Contact email
+          </label>
+          <input
+            id="org-contact-email"
+            type="email"
+            className={`w-full rounded-md border shadow-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8] sm:text-sm p-2 ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-[#768692] bg-white text-slate-900'}`}
+            value={profile.contactEmail || ''}
+            onChange={(e) => handleProfileFieldChange({ contactEmail: e.target.value })}
+          />
+        </div>
+
+        <StakeholderPicker
+          id="org-executive-sponsor"
+          label="Executive sponsor / SRO"
+          stakeholders={stakeholders}
+          departments={departments}
+          value={profile.executiveSponsorId || ''}
+          onChange={(executiveSponsorId) => handleProfileFieldChange({ executiveSponsorId })}
+          onAddStakeholder={(stakeholder) => {
+            onStakeholdersChange?.([...stakeholders, stakeholder]);
+            handleProfileFieldChange({ executiveSponsorId: stakeholder.id });
+          }}
+        />
       </div>
 
       <div

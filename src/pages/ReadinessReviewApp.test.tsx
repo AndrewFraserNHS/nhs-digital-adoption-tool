@@ -1,6 +1,11 @@
 import type { AssessmentComponent } from '@data/components';
-import { PREPAREDNESS_ASSESSMENT } from '@data/readinessReview';
+import {
+  PREPAREDNESS_ASSESSMENT,
+  READINESS_REVIEW_REPORT_STORAGE_KEY,
+  type ReadinessReviewReport,
+} from '@data/readinessReview';
 import type { DraftEntry } from '@lib/adoptionState';
+import { load } from '@lib/storage';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -11,8 +16,6 @@ vi.mock('@lib/readinessExport', () => ({
   sendReportBundle,
   downloadReportEml: vi.fn(),
 }));
-
-const TEAM_MEMBERS = [{ id: 'm1', name: 'Alex Morgan', role: 'Change Lead' }];
 
 // Low phase-1 targets (2) are reachable at the top answer, so answering everything at its top
 // option makes phase 1 "ready". Tests answer the sponsorship (phase 2) questions at the lowest
@@ -42,7 +45,7 @@ const COMPONENTS: AssessmentComponent[] = [
 ];
 
 function goToQuestions() {
-  fireEvent.click(screen.getByRole('button', { name: 'Next: Questions' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Adoption Baseline Questions' }));
 }
 
 /** Answers a question by its 1-based option number using the radio's accessible label text. */
@@ -59,26 +62,47 @@ describe('ReadinessReviewApp', () => {
     localStorage.clear();
   });
 
-  it('SHOULD show the trust details page first, with the trust name auto-populated', () => {
+  it('SHOULD start with a message pointing at Project Profile and the two start options', () => {
     // arrange
-    render(
-      <ReadinessReviewApp
-        questions={PREPAREDNESS_ASSESSMENT}
-        trustName="Test Trust"
-        region="North West ICB"
-        teamMembers={TEAM_MEMBERS}
-      />
-    );
+    render(<ReadinessReviewApp questions={PREPAREDNESS_ASSESSMENT} trustName="Test Trust" />);
 
     // assert
     expect(screen.getByText('Step 1 of 2')).toBeInTheDocument();
-    expect(screen.getByText('Test Trust')).toBeInTheDocument();
-    expect(screen.getByLabelText('ICB / Region')).toHaveValue('North West ICB');
-    expect(screen.getByLabelText('Date completed')).toHaveAttribute('type', 'date');
-    const completedBy = screen.getByLabelText('Completed by (name and role)');
-    expect(completedBy.tagName).toBe('SELECT');
-    expect(screen.getByText('Alex Morgan (Change Lead)')).toBeInTheDocument();
-    expect(screen.getByLabelText('Executive sponsor / SRO').tagName).toBe('SELECT');
+    expect(
+      screen.getByText(
+        'Please fill out the remaining details in Project Profiles before doing the assessment.'
+      )
+    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Adoption Baseline Questions' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /I'm new, skip assessment/ })).toBeInTheDocument();
+    expect(screen.queryByLabelText('ICB / Region')).not.toBeInTheDocument();
+  });
+
+  it('SHOULD skip the assessment without changing anything, and report it as skipped', () => {
+    // arrange
+    const onReadinessEvaluated = vi.fn();
+    const onEntryUpdate = vi.fn();
+    render(
+      <ReadinessReviewApp
+        questions={PREPAREDNESS_ASSESSMENT}
+        components={COMPONENTS}
+        onEntryUpdate={onEntryUpdate}
+        onReadinessEvaluated={onReadinessEvaluated}
+      />
+    );
+
+    // act
+    fireEvent.click(screen.getByRole('button', { name: /I'm new, skip assessment/ }));
+
+    // assert
+    expect(onReadinessEvaluated).toHaveBeenCalledWith({
+      skipToPhase: null,
+      accepted: false,
+      updatedCount: 0,
+      skipped: true,
+    });
+    expect(onEntryUpdate).not.toHaveBeenCalled();
+    expect(screen.getByText(/You skipped the assessment/)).toBeInTheDocument();
   });
 
   it('SHOULD show one question at a time with a progress bar, and require an answer before Next', () => {
@@ -332,6 +356,15 @@ describe('ReadinessReviewApp', () => {
       accepted: true,
       updatedCount: 2,
     });
+
+    // assert - the stored report records the decision and freezes the radar as the page now shows it
+    const report = load<ReadinessReviewReport>(READINESS_REVIEW_REPORT_STORAGE_KEY);
+    expect(report?.decision).toBe('applied');
+    expect(report?.appliedSkipToPhase).toBe(2);
+    expect(report?.radar?.entries['vision:Strategic Direction and Leadership']).toEqual({
+      score: 2,
+      assessed: true,
+    });
   });
 
   it('SHOULD apply an unchecked-phase-skip scenario as individual suggestions only', () => {
@@ -445,32 +478,5 @@ describe('ReadinessReviewApp', () => {
         ],
       })
     );
-  });
-
-  it('SHOULD add a new stakeholder as the executive sponsor via the shared stakeholder list', () => {
-    // arrange
-    const onStakeholdersChange = vi.fn();
-    render(
-      <ReadinessReviewApp
-        questions={PREPAREDNESS_ASSESSMENT}
-        stakeholders={[]}
-        departments={['Nursing']}
-        onStakeholdersChange={onStakeholdersChange}
-      />
-    );
-
-    // act
-    fireEvent.change(screen.getByLabelText('Executive sponsor / SRO'), {
-      target: { value: '__add-new-stakeholder__' },
-    });
-    fireEvent.change(screen.getByLabelText('New stakeholder name'), {
-      target: { value: 'Sam Patel' },
-    });
-    fireEvent.click(screen.getByRole('button', { name: 'Add stakeholder' }));
-
-    // assert
-    expect(onStakeholdersChange).toHaveBeenCalledWith([
-      expect.objectContaining({ name: 'Sam Patel' }),
-    ]);
   });
 });

@@ -2,7 +2,7 @@ import {
   EVIDENCE_WARNING_DISMISSED_KEY,
   EvidenceWarningModal,
 } from '@components/common/EvidenceWarningModal';
-import { usePageIntroSeen } from '@components/onboarding/PageIntroModal';
+import { Toast } from '@components/ui/Toast';
 import { ToolkitChatbot } from '@components/ui/ToolkitChatbot';
 import { ActionPlanTracker } from '@components/views/ActionPlanTracker';
 import { AdoptionDashboard, type ComponentRadarSize } from '@components/views/AdoptionDashboard';
@@ -30,6 +30,7 @@ import {
   resolveGuidanceLinksForAdoptionComponent,
 } from '@data/maturity-guidance-links';
 import { resolveReadinessQuestions } from '@data/readinessReview';
+import { canEditProfile, SIGN_IN_REQUIRED_MESSAGE } from '@lib/signInGuard';
 import { GENERIC_RUBRIC } from '@data/rubrics';
 import {
   isCompletedActionStatus,
@@ -96,7 +97,6 @@ import { nhsButtonSecondary, nhsFocusRing } from '../styles/nhsTheme';
 import { PHASE_NAMES, SPECIFIC_RUBRICS } from '../types/constants';
 
 const ADOPTION_USER_SETTINGS_KEY = 'nhs-digital-adoption-user-settings';
-const ADOPTION_REPORT_REMINDER_DISMISS_KEY = 'nhs-digital-adoption-report-reminder-dismissed';
 const ADOPTION_ENGAGEMENT_KEY = 'nhs-digital-adoption-engagement';
 const ADOPTION_CURRENT_USER_KEY = 'nhs-digital-adoption-current-user-id';
 const DEFAULT_GUIDANCE_TARGET: MaturityGuidanceTarget = 'Default';
@@ -209,33 +209,6 @@ function getRubricText(componentId: string, lensName: string, score: number): st
   return rubricGroup?.[lensName]?.[score] || GENERIC_RUBRIC[score] || GENERIC_RUBRIC[0];
 }
 
-function getMonthStorageKey(date = new Date()): string {
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  return `${date.getFullYear()}-${month}`;
-}
-
-function getPreviousMonthLabel(date = new Date()): string {
-  const previousMonth = new Date(date.getFullYear(), date.getMonth() - 1, 1);
-  return previousMonth.toLocaleString('en-GB', { month: 'short', year: 'numeric' });
-}
-
-function toBase64Utf8(value: string): string {
-  const bytes = new TextEncoder().encode(value);
-  let binary = '';
-  bytes.forEach((byte) => {
-    binary += String.fromCharCode(byte);
-  });
-  return window.btoa(binary);
-}
-
-function wrapBase64Lines(value: string, lineLength = 76): string {
-  const chunks: string[] = [];
-  for (let index = 0; index < value.length; index += lineLength) {
-    chunks.push(value.slice(index, index + lineLength));
-  }
-  return chunks.join('\r\n');
-}
-
 function getCurrentMonthLabel(date = new Date()): string {
   return date.toLocaleString('en-GB', { month: 'short', year: 'numeric' });
 }
@@ -280,7 +253,6 @@ export function AdoptionApp() {
   const [view, setView] = useState<View>(() => (isCstEmpty(store) ? 'introduction' : 'dashboard'));
 
   const [activeLensInfo, setActiveLensInfo] = useState('');
-  const visionGetStarted = usePageIntroSeen('vision-get-started');
   const [currentUserId, setCurrentUserId] = useState<string>(
     () => load<string>(ADOPTION_CURRENT_USER_KEY) || ''
   );
@@ -309,14 +281,17 @@ export function AdoptionApp() {
   const dashboardRef = React.useRef<HTMLDivElement>(null);
   const mainContentRef = React.useRef<HTMLElement>(null);
   const [statusAnnouncement, setStatusAnnouncement] = useState('');
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
-  const currentReminderMonthKey = useMemo(() => getMonthStorageKey(), []);
-  const [dismissedReminderMonths, setDismissedReminderMonths] = useState<Record<string, boolean>>(
-    () => {
-      const persisted = load<Record<string, boolean>>(ADOPTION_REPORT_REMINDER_DISMISS_KEY);
-      return persisted || {};
+  const [signInNotice, setSignInNotice] = useState('');
+  /** Every data edit needs a chosen user (Project Profile > "You are signed in as") so the audit log always says who changed what. Reads a ref because most edit handlers are memoised. */
+  const requireSignedIn = useCallback((): boolean => {
+    if (currentUserIdRef.current) {
+      return true;
     }
-  );
+    setSignInNotice(SIGN_IN_REQUIRED_MESSAGE);
+    setStatusAnnouncement(SIGN_IN_REQUIRED_MESSAGE);
+    return false;
+  }, []);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [showEngagementCard, setShowEngagementCard] = useState<boolean>(true);
   const [viewHistory, setViewHistory] = useState<View[]>([]);
   const [expandedNavPhases, setExpandedNavPhases] = useState<Record<number, boolean>>({});
@@ -335,20 +310,6 @@ export function AdoptionApp() {
   const [componentRadarSize, setComponentRadarSize] = useState<ComponentRadarSize>('medium');
   const navItemRefs = React.useRef<Record<string, HTMLButtonElement | null>>({});
 
-  const reportReminder = useMemo(() => {
-    const today = new Date();
-    const previousMonthLabel = getPreviousMonthLabel(today);
-    const isFirstDayOfMonth = today.getDate() === 1;
-
-    return {
-      previousMonthLabel,
-      isFirstDayOfMonth,
-      shouldNotify: isFirstDayOfMonth,
-    };
-  }, [store.history]);
-  const [emailTo, setEmailTo] = useState('test@test.com');
-  const [emailSubject, setEmailSubject] = useState('');
-  const [emailBody, setEmailBody] = useState('');
   const currentMonthLabel = getCurrentMonthLabel();
 
   const getEntry = useCallback(
@@ -386,23 +347,25 @@ export function AdoptionApp() {
       ? userSettings.manualPhaseFocus
       : metrics.currentPhase;
 
-  // The phase the project is on is open by default; a group the user has toggled themselves keeps
-  // that choice, and when the tracked phase moves on its group is revealed.
+  // Only the phase the project is on is open by default. When the tracked phase moves on (e.g. the
+  // assessment skips ahead) the old groups collapse; groups the user then toggles keep that choice.
   useEffect(() => {
-    setExpandedNavPhases((current) => ({ ...current, [effectivePhaseFocus]: true }));
+    setExpandedNavPhases({ [effectivePhaseFocus]: true });
   }, [effectivePhaseFocus]);
 
-  // Auto-expand the phase group containing whichever component is actively being viewed, so the
-  // sidebar always reveals the right one rather than being stuck on Pre-Discovery.
+  // Reveal the phase group of a component the user navigates to. Skipped on first render and when
+  // only the view changes, so the default first component never re-opens Pre-Discovery.
+  const lastActiveComponentIdRef = React.useRef(activeComponentId);
   useEffect(() => {
-    if (view !== 'assessment') {
+    if (lastActiveComponentIdRef.current === activeComponentId) {
       return;
     }
+    lastActiveComponentIdRef.current = activeComponentId;
     const activePhase = COMPONENTS.find((component) => component.id === activeComponentId)?.phase;
     if (activePhase) {
       setExpandedNavPhases((current) => ({ ...current, [activePhase]: true }));
     }
-  }, [activeComponentId, view]);
+  }, [activeComponentId]);
 
   // Where Am I Now relies on the sidebar to navigate onward (e.g. clicking a radar label), so
   // reveal it automatically rather than leaving a first-time visitor to find the toggle themselves.
@@ -460,10 +423,6 @@ export function AdoptionApp() {
   useEffect(() => {
     save(ADOPTION_CURRENT_USER_KEY, currentUserId);
   }, [currentUserId]);
-
-  useEffect(() => {
-    save(ADOPTION_REPORT_REMINDER_DISMISS_KEY, dismissedReminderMonths);
-  }, [dismissedReminderMonths]);
 
   // Redirect away from views that aren't meaningful until the project has been set up.
   useEffect(() => {
@@ -693,6 +652,9 @@ export function AdoptionApp() {
 
   const updateEntry = useCallback(
     (componentId: string, lens: string, entry: DraftEntry) => {
+      if (!requireSignedIn()) {
+        return;
+      }
       setStore((prev) => {
         const previousEntry = prev.currentDraft[componentId]?.[lens] || createEmptyEntry();
         const nextStore = {
@@ -842,6 +804,9 @@ export function AdoptionApp() {
 
   const requestActionStatusChange = useCallback(
     (componentId: string, lens: string, actionId: string, status: UnifiedActionStatus) => {
+      if (!requireSignedIn()) {
+        return;
+      }
       const action = getEntry(componentId, lens).actions.find((item) => item.id === actionId);
       const shouldWarn =
         normalizeActionStatus(status) === 'Completed' &&
@@ -861,6 +826,9 @@ export function AdoptionApp() {
 
   const updateComponentObjectives = useCallback(
     (componentId: string, objectivesForComponent: ComponentObjective[]) => {
+      if (!requireSignedIn()) {
+        return;
+      }
       setStore((prev) => {
         const previousObjectives = prev.objectives[componentId] || [];
         const nextStore = {
@@ -898,6 +866,9 @@ export function AdoptionApp() {
   );
 
   const updateRaidItems = useCallback((nextItems: RaidItem[]) => {
+    if (!requireSignedIn()) {
+      return;
+    }
     setStore((prev) => ({ ...prev, raidItems: nextItems }));
   }, []);
 
@@ -912,22 +883,39 @@ export function AdoptionApp() {
   );
 
   const updateBenefits = useCallback((nextBenefits: BenefitItem[]) => {
+    if (!requireSignedIn()) {
+      return;
+    }
     setStore((prev) => ({ ...prev, benefits: nextBenefits }));
   }, []);
 
   const updateBenefitTracker = useCallback(
     (nextTracker: Record<string, BenefitTrackerEntry>) => {
+      if (!requireSignedIn()) {
+        return;
+      }
       setStore((prev) => ({ ...prev, benefitTracker: nextTracker }));
     },
     []
   );
 
   const updateStakeholders = useCallback((nextStakeholders: Stakeholder[]) => {
+    if (!requireSignedIn()) {
+      return;
+    }
     setStore((prev) => ({ ...prev, stakeholders: nextStakeholders }));
   }, []);
 
   const handleReadinessEvaluated = useCallback(
-    (details: { skipToPhase: number | null; accepted: boolean; updatedCount: number }) => {
+    (details: {
+      skipToPhase: number | null;
+      accepted: boolean;
+      updatedCount: number;
+      skipped?: boolean;
+    }) => {
+      if (!details.skipped && !requireSignedIn()) {
+        return;
+      }
       setStore((prev) => ({
         ...prev,
         // Attributed to the tool itself, not the signed-in user - this is a bulk, semi-automated
@@ -938,13 +926,16 @@ export function AdoptionApp() {
             actor: 'Readiness Review',
             eventType: 'readiness-evaluated',
             entityType: 'readiness',
-            summary: 'Readiness Evaluation',
+            summary: details.skipped
+              ? 'Adoption Baseline skipped - starting at Phase 1'
+              : 'Readiness Evaluation',
             trustName: prev.orgProfile.trustName,
             projectName: prev.orgProfile.projectName,
             after: {
               skipToPhase: details.skipToPhase,
               accepted: details.accepted,
               updatedCount: details.updatedCount,
+              skipped: Boolean(details.skipped),
             },
             source: 'local',
           }),
@@ -998,11 +989,17 @@ export function AdoptionApp() {
   }, [announceStatus, confirmIfCstWarnings, store]);
 
   const handleImportClick = useCallback(() => {
+    if (!requireSignedIn()) {
+      return;
+    }
     fileInputRef.current?.click();
   }, []);
 
   const handleImportFile = useCallback(
     async (event: React.ChangeEvent<HTMLInputElement>) => {
+      if (!requireSignedIn()) {
+        return;
+      }
       const file = event.target.files?.[0];
       if (!file) {
         return;
@@ -1167,6 +1164,9 @@ export function AdoptionApp() {
 
   const handleLoadExampleData = useCallback(
     async (profile: 'red' | 'amber' | 'green') => {
+      if (!requireSignedIn()) {
+        return;
+      }
       try {
         const response = await fetch(EXAMPLE_DATA_FILES[profile]);
         if (!response.ok) {
@@ -1203,6 +1203,9 @@ export function AdoptionApp() {
   );
 
   const handleResetData = useCallback(() => {
+    if (!requireSignedIn()) {
+      return;
+    }
     const confirmed = window.confirm(
       'Warning: this will reset all assessment data (organisation profile, scores, actions, and history) and sign you out. If you are worried, please export your data first. Continue?'
     );
@@ -1220,9 +1223,6 @@ export function AdoptionApp() {
 
     localStorage.removeItem(ADOPTION_ENGAGEMENT_KEY);
 
-    setDismissedReminderMonths({});
-    save(ADOPTION_REPORT_REMINDER_DISMISS_KEY, {});
-
     save(ADOPTION_INTRODUCTION_COMPLETE_KEY, false);
 
     setCurrentUserId('');
@@ -1239,81 +1239,6 @@ export function AdoptionApp() {
     }
   }, [announceStatus]);
 
-  const buildPointInTimePayload = useCallback(() => {
-    return {
-      generatedAt: new Date().toISOString(),
-      targetMonth: reportReminder.previousMonthLabel,
-      report: buildAdoptionExportPayload(store),
-    };
-  }, [reportReminder.previousMonthLabel, store]);
-
-  const buildPointInTimeFilename = useCallback(() => {
-    const monthSlug = reportReminder.previousMonthLabel.toLowerCase().replace(/\s+/g, '-');
-    return `adoption-point-in-time-${monthSlug}.json`;
-  }, [reportReminder.previousMonthLabel]);
-
-  const handleDownloadPointInTimeJson = useCallback(() => {
-    const filename = buildPointInTimeFilename();
-    downloadFile(filename, JSON.stringify(buildPointInTimePayload(), null, 2), 'application/json');
-  }, [buildPointInTimeFilename, buildPointInTimePayload]);
-
-  const handleOpenMailDraft = useCallback(() => {
-    const recipient = emailTo.trim() || 'test@test.com';
-    const attachmentName = buildPointInTimeFilename();
-    const body = `${emailBody}\n\nAttachment: ${attachmentName}`;
-    const mailto = `mailto:${recipient}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(body)}`;
-    window.location.href = mailto;
-  }, [buildPointInTimeFilename, emailBody, emailSubject, emailTo]);
-
-  const handleDownloadEmailDraft = useCallback(() => {
-    const recipient = emailTo.trim() || 'test@test.com';
-    const jsonFilename = buildPointInTimeFilename();
-    const payload = JSON.stringify(buildPointInTimePayload(), null, 2);
-    const encodedAttachment = wrapBase64Lines(toBase64Utf8(payload));
-    const boundary = `----nhs-adoption-reminder-${Date.now()}`;
-    const eml = [
-      `To: ${recipient}`,
-      `Subject: ${emailSubject}`,
-      'MIME-Version: 1.0',
-      `Content-Type: multipart/mixed; boundary="${boundary}"`,
-      '',
-      `--${boundary}`,
-      'Content-Type: text/plain; charset="UTF-8"',
-      'Content-Transfer-Encoding: 8bit',
-      '',
-      emailBody,
-      '',
-      `--${boundary}`,
-      `Content-Type: application/json; name="${jsonFilename}"`,
-      'Content-Transfer-Encoding: base64',
-      `Content-Disposition: attachment; filename="${jsonFilename}"`,
-      '',
-      encodedAttachment,
-      `--${boundary}--`,
-      '',
-    ].join('\r\n');
-
-    const monthSlug = reportReminder.previousMonthLabel.toLowerCase().replace(/\s+/g, '-');
-    downloadFile(`adoption-reminder-${monthSlug}.eml`, eml, 'message/rfc822');
-  }, [
-    buildPointInTimeFilename,
-    buildPointInTimePayload,
-    emailBody,
-    emailSubject,
-    emailTo,
-    reportReminder.previousMonthLabel,
-  ]);
-
-  const dismissReportReminder = useCallback(() => {
-    setDismissedReminderMonths((prev) => ({
-      ...prev,
-      [currentReminderMonthKey]: true,
-    }));
-  }, [currentReminderMonthKey]);
-
-  const shouldShowReportReminder =
-    reportReminder.shouldNotify && !dismissedReminderMonths[currentReminderMonthKey];
-
   const engagementObjectives = useMemo(
     () => computeEngagementObjectives(store, metrics, currentMonthLabel),
     [store, metrics, currentMonthLabel]
@@ -1327,7 +1252,22 @@ export function AdoptionApp() {
     setUserSettings(nextSettings);
   }, []);
 
-  const handleProfileUpdate = useCallback((updatedProfile: OrgProfile) => {
+  const orgProfileRef = React.useRef(store.orgProfile);
+  orgProfileRef.current = store.orgProfile;
+
+  const handleProfileUpdate = useCallback(
+    (updatedProfile: OrgProfile) => {
+    // Profile fields are only locked once the project is configured and nobody is signed in; the
+    // team roster is always editable so someone can add themselves and sign in.
+    if (
+      !canEditProfile(orgProfileRef.current, updatedProfile, {
+        signedIn: Boolean(currentUserIdRef.current),
+        configured: !isCstUnconfigured(orgProfileRef.current),
+      })
+    ) {
+      requireSignedIn();
+      return;
+    }
     setStore((prev) => {
       const pathwayChanged = prev.orgProfile.cst.pathway !== updatedProfile.cst.pathway;
       const mergedStore = { ...prev, orgProfile: updatedProfile };
@@ -1374,7 +1314,9 @@ export function AdoptionApp() {
         ]),
       };
     });
-  }, []);
+    },
+    [requireSignedIn]
+  );
 
   const handlePathwayChosen = useCallback(
     (pathway: CstPathwayKey) => {
@@ -1433,6 +1375,14 @@ export function AdoptionApp() {
       <div role="status" aria-live="polite" className="sr-only">
         {statusAnnouncement}
       </div>
+      {signInNotice ? (
+        <Toast
+          message={signInNotice}
+          variant="warning"
+          durationMs={6000}
+          onDismiss={() => setSignInNotice('')}
+        />
+      ) : null}
       <input
         ref={fileInputRef}
         type="file"
@@ -1842,6 +1792,24 @@ export function AdoptionApp() {
 
         {/* Main Content Area */}
         <main ref={mainContentRef} className="flex-1 overflow-y-auto px-8 pt-8 pb-28">
+          {projectConfigured && !currentUserId ? (
+            <div
+              role="alert"
+              className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900"
+            >
+              <span>
+                You&apos;re not signed in as a team member, so changes are locked. Select who you are
+                in Project Profile to make edits.
+              </span>
+              <button
+                type="button"
+                onClick={() => handleViewChange('project-details')}
+                className="font-semibold text-[#005eb8] underline underline-offset-2 hover:text-[#003087]"
+              >
+                Go to Project Profile
+              </button>
+            </div>
+          ) : null}
           {view === 'daily-checkin' && showEngagementCard ? (
             <section
               className={`${userSettings.darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'} mb-6 rounded-xl border p-4 shadow-sm`}
@@ -1969,15 +1937,18 @@ export function AdoptionApp() {
               trustName={store.orgProfile.trustName}
               region={store.orgProfile.region}
               leadName={store.orgProfile.leadName}
-              teamMembers={store.orgProfile.teamMembers || []}
-              stakeholders={store.stakeholders}
-              onStakeholdersChange={updateStakeholders}
-              departments={
-                (store.orgProfile.stakeholderReferenceLists || DEFAULT_STAKEHOLDER_REFERENCE_LISTS)
-                  .departments
-              }
               onReadinessEvaluated={handleReadinessEvaluated}
               readinessQuestions={resolveReadinessQuestions(store.orgProfile.readinessQuestions)}
+              contactEmail={store.orgProfile.contactEmail}
+              executiveSponsor={
+                store.stakeholders.find(
+                  (stakeholder) => stakeholder.id === store.orgProfile.executiveSponsorId
+                )?.name
+              }
+              currentUserName={
+                (store.orgProfile.teamMembers || []).find((member) => member.id === currentUserId)?.name
+              }
+              currentPhase={effectivePhaseFocus}
               currentPathway={store.orgProfile.cst.pathway}
               onPathwayChosen={handlePathwayChosen}
             />
@@ -2013,6 +1984,12 @@ export function AdoptionApp() {
               onCurrentUserChange={setCurrentUserId}
               showExternalLinksSection={Boolean(userSettings.showExternalLinksSection)}
               showReviewQuestionsSection={Boolean(userSettings.showReadinessReviewQuestionsSection)}
+              stakeholders={store.stakeholders}
+              onStakeholdersChange={updateStakeholders}
+              departments={
+                (store.orgProfile.stakeholderReferenceLists || DEFAULT_STAKEHOLDER_REFERENCE_LISTS)
+                  .departments
+              }
               darkMode={Boolean(userSettings.darkMode)}
             />
           )}
@@ -2023,10 +2000,12 @@ export function AdoptionApp() {
               activeComponentId={activeComponentId}
               getRubricText={getRubricText}
               getEntry={getEntry}
-              onComponentChange={openComponentAssessment}
               onEntryUpdate={updateEntry}
               onOpenLensInfo={setActiveLensInfo}
               onActionRemove={(componentId, lens, actionId) => {
+                if (!requireSignedIn()) {
+                  return;
+                }
                 const entry = getEntry(componentId, lens);
                 const actionToRemove = entry.actions.find((action) => action.id === actionId);
                 if (!actionToRemove) {
@@ -2246,7 +2225,12 @@ export function AdoptionApp() {
             <ReadinessReviewAnalysisApp components={COMPONENTS} />
           )}
           {view === 'audit-log' && (
-            <AuditLogPage events={store.auditLog} darkMode={Boolean(userSettings.darkMode)} />
+            <AuditLogPage
+              events={store.auditLog}
+              darkMode={Boolean(userSettings.darkMode)}
+              trustName={store.orgProfile.trustName}
+              projectName={store.orgProfile.projectName}
+            />
           )}
           {view === 'settings' && (
             <SettingsPanel

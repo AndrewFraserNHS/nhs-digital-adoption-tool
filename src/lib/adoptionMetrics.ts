@@ -778,3 +778,57 @@ export function computeEngagementObjectives(
 
   return objectives;
 }
+
+/** Scale and tooltip options shared by every readiness radar (baseline page, PDF, analysis tool). */
+export const READINESS_RADAR_OPTIONS = {
+  maintainAspectRatio: false,
+  scales: {
+    r: {
+      min: -1,
+      max: 5,
+      ticks: {
+        display: true,
+        stepSize: 1,
+        backdropColor: 'transparent',
+        callback: (value: string | number) =>
+          Number(value) < 0 ? '' : getReadinessBand(Number(value)).label,
+      },
+      pointLabels: { padding: 28 },
+    },
+  },
+  plugins: { tooltip: { callbacks: { label: radarTooltipLabel } } },
+};
+
+/**
+ * The phase a project is on given a per-lens score: the first phase with a component whose average
+ * has not reached its (phase exemplar) requirement. Mirrors the rule in `computeMetrics`, but takes
+ * plain scores so callers can ask "what phase would these scores put me on?" before they are saved.
+ */
+export function computeCurrentPhase(
+  components: AssessmentComponent[],
+  getScore: (componentId: string, lens: string) => number
+): number {
+  const phases = Array.from(new Set(components.map((component) => component.phase))).sort(
+    (a, b) => a - b
+  );
+  for (const phase of phases) {
+    const allOnTrack = components
+      .filter((component) => component.phase === phase)
+      .every((component) => {
+        const total = component.lenses.reduce((sum, lens) => sum + getScore(component.id, lens), 0);
+        const average = component.lenses.length
+          ? Number((total / component.lenses.length).toFixed(1))
+          : 0;
+        return (
+          average >=
+          getPhasePassScore(
+            getComponentExemplarScore(component.id, component.phase, component.target)
+          )
+        );
+      });
+    if (!allOnTrack) {
+      return phase;
+    }
+  }
+  return phases[phases.length - 1] ?? 1;
+}

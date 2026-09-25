@@ -30,7 +30,7 @@ describe('WhereAmINowPage', () => {
     // assert
     expect(screen.getByText('Change Adoption Baseline')).toBeInTheDocument();
     expect(screen.queryByText('Which of these is true for you?')).not.toBeInTheDocument();
-    expect(screen.getByText('Trust Details')).toBeInTheDocument();
+    expect(screen.getByText(/Please fill out the remaining details/)).toBeInTheDocument();
   });
 
   it('SHOULD show the Vision CTA and hint text', () => {

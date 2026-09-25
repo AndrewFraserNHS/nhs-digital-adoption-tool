@@ -2,6 +2,7 @@ import type { AssessmentComponent } from '@data/components';
 import { describe, expect, it } from 'vitest';
 
 import {
+  computeCurrentPhase,
   buildComponentRadarChartData,
   buildRadarChartData,
   computeEngagementObjectives,
@@ -457,5 +458,16 @@ describe('adoptionMetrics', () => {
     // assert
     expect(chartData.labels).toEqual(['Vision', 'Benefits']);
     expect(chartData.datasets[0].data).toEqual([0, 2]);
+  });
+
+  it('SHOULD work out the phase from plain scores, treating Adopted as passing a Thriving requirement', () => {
+    const comps: AssessmentComponent[] = [
+      { id: 'vision', label: 'Vision', lenses: ['A', 'B'], phase: 1, target: 5 },
+      { id: 'sponsorship', label: 'Sponsorship', lenses: ['A'], phase: 2, target: 5 },
+    ];
+
+    expect(computeCurrentPhase(comps, () => 0)).toBe(1);
+    expect(computeCurrentPhase(comps, (id) => (id === 'vision' ? 4 : 0))).toBe(2);
+    expect(computeCurrentPhase(comps, () => 5)).toBe(2);
   });
 });

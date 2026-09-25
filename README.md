@@ -50,3 +50,7 @@ npm run test:coverage
 
 - `npm run lint` runs ESLint.
 - `npm run format` runs Prettier.
+
+## Handover
+
+See `docs/HANDOVER.md` for architecture, data flow, the typecheck baseline and remaining work, and `CLAUDE.md` for working conventions.

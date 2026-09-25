@@ -5,7 +5,7 @@ export interface ToastProps {
   onDismiss: () => void;
   /** Auto-dismiss after this many ms. Omit (or leave undefined) to require the user to dismiss it themselves. */
   durationMs?: number;
-  variant?: 'success' | 'info';
+  variant?: 'success' | 'info' | 'warning';
   /** Fires a short confetti burst alongside the toast - for genuinely celebratory moments only. */
   celebrate?: boolean;
 }
@@ -86,7 +86,11 @@ export function Toast({
   }, [message, durationMs, onDismiss]);
 
   const variantClasses =
-    variant === 'success' ? 'bg-green-600 text-white' : 'bg-slate-800 text-white';
+    variant === 'success'
+      ? 'bg-green-600 text-white'
+      : variant === 'warning'
+        ? 'bg-amber-600 text-white'
+        : 'bg-slate-800 text-white';
 
   return (
     <>

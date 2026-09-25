@@ -94,7 +94,6 @@ export interface AssessmentPanelProps {
   activeComponentId: string;
   getRubricText: (componentId: string, lens: string, score: number) => string;
   getEntry: (componentId: string, lens: string) => DraftEntry;
-  onComponentChange: (componentId: string) => void;
   onEntryUpdate: (componentId: string, lens: string, entry: DraftEntry) => void;
   onOpenLensInfo: (lensName: string) => void;
   onActionRemove: (componentId: string, lens: string, actionId: string) => void;
@@ -1000,7 +999,6 @@ export function AssessmentPanel({
   activeComponentId,
   getRubricText,
   getEntry,
-  onComponentChange,
   onEntryUpdate,
   onOpenLensInfo,
   onActionRemove,

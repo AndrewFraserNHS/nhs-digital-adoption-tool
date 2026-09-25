@@ -3,7 +3,7 @@ import { getComponentsByPhase, type AssessmentComponent } from '@data/components
 import type { CstPathwayKey } from '@data/cst';
 import { ASSESSMENT_LENSES } from '@data/lenses';
 import type { PreparednessAssessment } from '@data/readinessReview';
-import type { DraftEntry, Stakeholder, TeamMember } from '@lib/adoptionState';
+import type { DraftEntry } from '@lib/adoptionState';
 import {
   buildComponentRadarChartData,
   getComponentExemplarScore,
@@ -27,15 +27,16 @@ export interface WhereAmINowPageProps {
   trustName?: string;
   region?: string;
   leadName?: string;
-  teamMembers?: TeamMember[];
-  stakeholders?: Stakeholder[];
-  onStakeholdersChange?: (stakeholders: Stakeholder[]) => void;
-  departments?: string[];
   onReadinessEvaluated?: (details: {
     skipToPhase: number | null;
     accepted: boolean;
     updatedCount: number;
+    skipped?: boolean;
   }) => void;
+  contactEmail?: string;
+  executiveSponsor?: string;
+  currentUserName?: string;
+  currentPhase?: number;
   readinessQuestions?: PreparednessAssessment[];
   currentPathway?: CstPathwayKey;
   onPathwayChosen?: (pathway: CstPathwayKey) => void;
@@ -201,14 +202,14 @@ export function WhereAmINowPage({
   trustName = '',
   region = '',
   leadName = '',
-  teamMembers = [],
-  stakeholders = [],
-  onStakeholdersChange,
-  departments = [],
   onReadinessEvaluated,
   readinessQuestions,
   currentPathway,
   onPathwayChosen,
+  contactEmail,
+  executiveSponsor,
+  currentUserName,
+  currentPhase,
 }: WhereAmINowPageProps): JSX.Element {
   const [readinessTab, setReadinessTab] = useState<'by-component' | 'by-lens' | 'by-phases'>(
     'by-component'
@@ -352,15 +353,15 @@ export function WhereAmINowPage({
               trustName={trustName}
               region={region}
               leadName={leadName}
-              teamMembers={teamMembers}
-              stakeholders={stakeholders}
-              onStakeholdersChange={onStakeholdersChange}
-              departments={departments}
               components={components}
               getEntry={getEntry}
               onEntryUpdate={onEntryUpdate}
               onReadinessEvaluated={onReadinessEvaluated}
               questions={readinessQuestions}
+              contactEmail={contactEmail}
+              executiveSponsor={executiveSponsor}
+              currentUserName={currentUserName}
+              currentPhase={currentPhase}
               currentPathway={currentPathway}
               onPathwayChosen={onPathwayChosen}
             />

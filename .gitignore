@@ -2,3 +2,5 @@ node_modules/
 dist/
 coverage/
 .vscode/
+.DS_Store
+.claude/scheduled_tasks.lock

@@ -314,6 +314,10 @@ export interface OrgProfile {
   stakeholderReferenceLists?: StakeholderReferenceLists;
   /** This project's Readiness Review questions, in display order. Unset means the built-in defaults. */
   readinessQuestions?: PreparednessAssessment[];
+  /** Contact email for the programme, shown on the Adoption Baseline report. */
+  contactEmail?: string;
+  /** Stakeholder id (AdoptionStore.stakeholders) of the executive sponsor / SRO. */
+  executiveSponsorId?: string;
   /**
    * Stable identity for this CST, assigned once and carried through every export so two
    * copies of the same programme can be recognised as such after diverging. Never invented
@@ -408,6 +412,8 @@ export function normalizeOrgProfile(profile?: Partial<OrgProfile>): OrgProfile {
     stakeholderReferenceLists:
       profile?.stakeholderReferenceLists || DEFAULT_STAKEHOLDER_REFERENCE_LISTS,
     readinessQuestions: profile?.readinessQuestions,
+    contactEmail: profile?.contactEmail,
+    executiveSponsorId: profile?.executiveSponsorId,
     cstId: profile?.cstId,
   };
 }

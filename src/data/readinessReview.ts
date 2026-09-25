@@ -1,7 +1,9 @@
 import type { AssessmentComponent } from '@data/components';
 import { PATHWAY_OPTIONS, type CstPathwayKey } from '@data/cst';
 import type { DraftEntry } from '@lib/adoptionState';
+import { buildComponentRadarChartData } from '@lib/adoptionMetrics';
 import { getPhasePassScore } from '@lib/readinessBands';
+import type { ChartData } from 'chart.js';
 
 export type ReadinessQuestionKind = 'choice' | 'text' | 'pathway';
 
@@ -899,6 +901,21 @@ export interface ReadinessReviewTrustDetails {
   dateCompleted: string;
   programmeLead: string;
   contactEmail: string;
+  /** Name of the executive sponsor / SRO from the project profile. */
+  executiveSponsor?: string;
+}
+
+/** What the team did with the outcome offered when the review finished. */
+export type ReadinessReviewDecision = 'pending' | 'applied' | 'declined' | 'skipped';
+
+/**
+ * The readiness radar exactly as the Adoption Baseline page showed it once the outcome was applied
+ * (or declined): one frozen entry per component lens plus the phase whose exemplar line was drawn.
+ * Every radar rendering of a report (page, PDF, analysis tool) reads this, so they can't disagree.
+ */
+export interface ReadinessReviewRadarSnapshot {
+  phase: number;
+  entries: Record<string, { score: number; assessed: boolean }>;
 }
 
 /**
@@ -912,7 +929,89 @@ export interface ReadinessReviewReport extends ReadinessReviewTrustDetails {
   answers: ReadinessReviewAnswer[];
   /** The pathway the team said they should be on (question 1), if answered. */
   pathway?: CstPathwayKey | null;
+  /** Absent in reports made before the outcome decision was recorded. */
+  decision?: ReadinessReviewDecision;
+  /** The phase the team actually skipped to when they accepted the offer. */
+  appliedSkipToPhase?: number | null;
+  /** Absent in older reports; those fall back to the answers-implied scores. */
+  radar?: ReadinessReviewRadarSnapshot;
   outcome: { skipToPhase: number | null; readyComponentIds: string[] };
+}
+
+const lensKey = (componentId: string, lens: string) => `${componentId}:${lens}`;
+
+/** Freezes the current readiness of every component lens. `overrides` carries scores that were just applied but haven't reached the store yet. */
+export function buildRadarSnapshot(
+  components: AssessmentComponent[],
+  getEntry: (componentId: string, lens: string) => DraftEntry | undefined,
+  phase: number,
+  overrides: Record<string, number> = {}
+): ReadinessReviewRadarSnapshot {
+  const entries: ReadinessReviewRadarSnapshot['entries'] = {};
+  components.forEach((component) => {
+    component.lenses.forEach((lens) => {
+      const key = lensKey(component.id, lens);
+      const entry = getEntry(component.id, lens);
+      if (key in overrides) {
+        entries[key] = { score: overrides[key], assessed: true };
+        return;
+      }
+      entries[key] = {
+        score: Number(entry?.score || 0),
+        assessed: Boolean(
+          Number(entry?.score || 0) > 0 ||
+            entry?.rationale?.trim() ||
+            entry?.evidence?.trim() ||
+            (entry?.actions || []).length > 0
+        ),
+      };
+    });
+  });
+  return { phase, entries };
+}
+
+/** The radar data for a report, built the same way as the Adoption Baseline page's radar. */
+export function buildReportRadarData(
+  report: ReadinessReviewReport,
+  components: AssessmentComponent[]
+): ChartData<'radar'> {
+  if (!report.radar) {
+    return buildComponentRadarChartData(components, buildReportScoreLookup(report));
+  }
+  const { entries, phase } = report.radar;
+  return buildComponentRadarChartData(
+    components,
+    (componentId, lens): DraftEntry => {
+      const entry = entries[lensKey(componentId, lens)];
+      return {
+        score: entry?.score ?? 0,
+        rationale: entry?.assessed ? 'assessed' : '',
+        evidence: '',
+        actions: [],
+      };
+    },
+    phase
+  );
+}
+
+/** Wording for the report/PDF outcome line, shared by the PDF and the analysis tool. */
+export function describeReportOutcome(
+  report: ReadinessReviewReport,
+  phaseName: (phase: number) => string
+): string {
+  const offered = report.outcome.skipToPhase;
+  if (report.decision === 'skipped') {
+    return 'The team skipped the assessment and starts at Phase 1.';
+  }
+  if (report.decision === 'applied' && report.appliedSkipToPhase) {
+    return `Skipped to Phase ${report.appliedSkipToPhase}: ${phaseName(report.appliedSkipToPhase)}.`;
+  }
+  if (offered) {
+    return report.decision === 'declined' || report.decision === 'applied'
+      ? `Answers suggested skipping to Phase ${offered}: ${phaseName(offered)} (not applied).`
+      : `Answers suggest skipping to Phase ${offered}: ${phaseName(offered)}.`;
+  }
+  return 'Answers did not suggest skipping any phase.';
 }
 
 export function buildReadinessReviewReport(

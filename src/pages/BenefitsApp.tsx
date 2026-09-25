@@ -268,7 +268,7 @@ function TrendChip({ item }: { item: TrendDisplayItem }): JSX.Element {
         <VarianceValue variance={variance} />
       ) : (
         <span className="mt-0.5 text-slate-400">
-          {period.forecast ? `F ${period.forecast}` : period.actual ? `A ${period.actual}` : '—'}
+          {period.forecast ? `F ${period.forecast}` : period.actual ? `A ${period.actual}` : '-'}
         </span>
       )}
     </span>
@@ -310,7 +310,7 @@ function DetailField({ label, value }: { label: string; value: string }): JSX.El
   return (
     <div>
       <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{label}</p>
-      <p className="mt-0.5 text-sm text-slate-700 whitespace-pre-wrap">{value || '—'}</p>
+      <p className="mt-0.5 text-sm text-slate-700 whitespace-pre-wrap">{value || '-'}</p>
     </div>
   );
 }
@@ -396,7 +396,7 @@ export default function BenefitsApp({
   const ownerLabel = (stakeholderId: string) => {
     const stakeholder = stakeholderById[stakeholderId];
     if (!stakeholder) {
-      return '—';
+      return '-';
     }
     return stakeholder.role ? `${stakeholder.name} (${stakeholder.role})` : stakeholder.name;
   };
@@ -533,7 +533,7 @@ export default function BenefitsApp({
           <p className="text-xs text-slate-500">
             Capture, quantify and track realisation of programme benefits
             {trustName || projectName
-              ? ` — ${trustName || 'Your Organisation'} / ${projectName || 'Your Project/Programme'}`
+              ? ` - ${trustName || 'Your Organisation'} / ${projectName || 'Your Project/Programme'}`
               : ''}
           </p>
         </div>
@@ -932,8 +932,8 @@ export default function BenefitsApp({
                             <td className="px-4 py-3 text-slate-600 text-xs">
                               {ownerLabel(item.strategicOwnerId)} / {ownerLabel(item.operationalOwnerId)}
                             </td>
-                            <td className="px-4 py-3 text-slate-600">{item.unitOfMeasure || '—'}</td>
-                            <td className="px-4 py-3 text-slate-600">{item.baselineValue || '—'}</td>
+                            <td className="px-4 py-3 text-slate-600">{item.unitOfMeasure || '-'}</td>
+                            <td className="px-4 py-3 text-slate-600">{item.baselineValue || '-'}</td>
                             <td className="px-4 py-3 text-slate-600">{item.dateCreated}</td>
                             <td className="px-4 py-3 text-slate-600">{item.dateReviewed}</td>
                             <td className="px-4 py-3 text-right">
@@ -1042,7 +1042,7 @@ export default function BenefitsApp({
                               {item.benefitNo}
                             </td>
                             <td className="px-4 py-3 text-slate-600">{item.title}</td>
-                            <td className="px-4 py-3 text-slate-600">{item.baselineValue || '—'}</td>
+                            <td className="px-4 py-3 text-slate-600">{item.baselineValue || '-'}</td>
                             <td className="px-4 py-3">
                               {(() => {
                                 const trend = buildTrendDisplay(entry);
@@ -1066,7 +1066,7 @@ export default function BenefitsApp({
                               })()}
                             </td>
                             <td className="px-4 py-3 text-slate-500 text-xs truncate max-w-xs">
-                              {entry.varianceReason || '—'}
+                              {entry.varianceReason || '-'}
                             </td>
                           </tr>
                           {expanded ? (
@@ -1169,7 +1169,7 @@ export default function BenefitsApp({
                                                     {status.toUpperCase()}
                                                   </span>
                                                 ) : (
-                                                  <span className="text-slate-300">—</span>
+                                                  <span className="text-slate-300">-</span>
                                                 )}
                                               </td>
                                             </tr>

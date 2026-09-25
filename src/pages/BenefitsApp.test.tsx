@@ -333,6 +333,6 @@ describe('BenefitsApp', () => {
 
     // assert - the new stakeholder is now the selected option in the dropdown
     const owner = screen.getByLabelText('Operational Owner') as HTMLSelectElement;
-    expect(owner.selectedOptions[0].textContent).toBe('Sam Patel — Ward Manager (Nursing)');
+    expect(owner.selectedOptions[0].textContent).toBe('Sam Patel - Ward Manager (Nursing)');
   });
 });

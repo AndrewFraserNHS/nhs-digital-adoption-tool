@@ -463,7 +463,7 @@ export function EngineExplainedPage({
         </p>
       </div>
 
-      {activeStep > 0 ? <Breadcrumb activeStep={activeStep} darkMode={darkMode} /> : null}
+      <Breadcrumb activeStep={activeStep} darkMode={darkMode} />
 
       <Card darkMode={darkMode}>
         <p

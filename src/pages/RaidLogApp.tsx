@@ -254,7 +254,7 @@ export default function RaidLogApp({
           <p className="text-xs text-slate-500">
             Risks, Assumptions, Issues and Dependencies
             {trustName || projectName
-              ? ` — ${trustName || 'Your Organisation'} / ${projectName || 'Your Project/Programme'}`
+              ? ` - ${trustName || 'Your Organisation'} / ${projectName || 'Your Project/Programme'}`
               : ''}
           </p>
         </div>

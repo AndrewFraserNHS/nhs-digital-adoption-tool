@@ -324,8 +324,7 @@ export function WhereAmINowPage({
           Change Adoption Baseline (Where are we now?)
         </h2>
         <p className={`mt-2 text-sm ${textClass}`}>
-          Take the Readiness Review to see your readiness by component - both feed into which of
-          the 5 change phases you're really in.
+          Complete the Readiness Review to assess your readiness by component and determine which of the five change phases you're currently in.
         </p>
       </div>
 
@@ -340,8 +339,7 @@ export function WhereAmINowPage({
               Change Adoption Baseline
             </h3>
             <p className={`mt-1 text-sm ${textClass}`}>
-              Answer a short set of questions about your programme - your answers can update your
-              readiness scores and suggest phases you're already ready to skip.
+              Answer a short set of questions about your programme - your answers can update your readiness scores and highlight phases you may be able to fast-track or skip.
             </p>
           </div>
 

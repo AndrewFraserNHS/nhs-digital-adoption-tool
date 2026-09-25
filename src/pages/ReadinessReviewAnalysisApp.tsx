@@ -114,7 +114,7 @@ function ReportDetailView({
               <dt className="text-xs font-semibold uppercase tracking-wide text-slate-400">
                 {label}
               </dt>
-              <dd className="text-sm text-slate-700">{value || '—'}</dd>
+              <dd className="text-sm text-slate-700">{value || '-'}</dd>
             </div>
           ))}
         </dl>
@@ -166,7 +166,7 @@ function ReportDetailView({
                   <td className="px-3 py-2 text-slate-700">{answer.optionText}</td>
                   {showImplied ? (
                     <td className="px-3 py-2 text-center font-semibold text-slate-700">
-                      {answer.impliedScore ?? '—'}
+                      {answer.impliedScore ?? '-'}
                     </td>
                   ) : null}
                 </tr>

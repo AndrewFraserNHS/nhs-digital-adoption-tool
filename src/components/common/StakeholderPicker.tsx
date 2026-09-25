@@ -85,7 +85,7 @@ export function StakeholderPicker({
         {sorted.map((stakeholder) => (
           <option key={stakeholder.id} value={stakeholder.id}>
             {stakeholder.name}
-            {stakeholder.role ? ` — ${stakeholder.role}` : ''}
+            {stakeholder.role ? ` - ${stakeholder.role}` : ''}
             {stakeholder.department ? ` (${stakeholder.department})` : ''}
           </option>
         ))}

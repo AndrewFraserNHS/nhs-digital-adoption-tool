@@ -1,5 +1,5 @@
 import type { AssessmentComponent } from '@data/components';
-import { PATHWAY_OPTIONS, type CstPathwayKey } from '@data/cst';
+import { type CstPathwayKey,PATHWAY_OPTIONS } from '@data/cst';
 import type { DraftEntry } from '@lib/adoptionState';
 import { getPhasePassScore } from '@lib/readinessBands';
 
@@ -76,7 +76,7 @@ export const PREPAREDNESS_ASSESSMENT: PreparednessAssessment[] = [
       'The vision is communicated, understood and used to guide delivery decisions.',
       'The vision is embedded in leadership decisions, regularly reviewed and measured against intended outcomes.'
     ),
-    progress: [0, 0, 1, 2, 4],
+    progress: [0, 1, 2, 3, 4],
     phase: 1,
     target: 5,
   },

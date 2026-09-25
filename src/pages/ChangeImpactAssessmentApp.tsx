@@ -739,7 +739,7 @@ function AssessmentsTab({
                     <option value="">None</option>
                     {benefits.map((benefit) => (
                       <option key={benefit.id} value={benefit.id}>
-                        {benefit.benefitNo} — {benefit.title || '(untitled benefit)'}
+                        {benefit.benefitNo} - {benefit.title || '(untitled benefit)'}
                       </option>
                     ))}
                   </select>

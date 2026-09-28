@@ -327,7 +327,7 @@ export function WhereAmINowPage({
           Change Adoption Baseline (Where are we now?)
         </h2>
         <p className={`mt-2 text-sm ${textClass}`}>
-          Complete the Readiness Review to assess your readiness by component and determine which of
+          Complete the change adoption baseline to assess your readiness by component and determine which of
           the five change phases you're currently in.
         </p>
       </div>

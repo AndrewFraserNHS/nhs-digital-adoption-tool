@@ -278,7 +278,7 @@ export default function ReadinessReviewAnalysisApp({
           <ReportDetailView report={ownReport} components={components} />
         ) : (
           <div className="rounded-lg border border-slate-200 bg-white p-8 text-center text-sm text-slate-500">
-            Complete the Readiness Review first to see your answers here.
+            Complete the change adoption baseline first to see your answers here.
           </div>
         )
       ) : (
@@ -288,7 +288,7 @@ export default function ReadinessReviewAnalysisApp({
               htmlFor="readiness-import-file"
               className="block text-sm font-medium text-slate-700 mb-2"
             >
-              Import a Readiness Review report (.json, or the saved .eml)
+              Import a change adoption baseline report (.json, or the saved .eml)
             </label>
             <p className="mb-2 text-xs text-slate-500">
               Only held for this session - it is never saved to your project, and disappears if you

@@ -78,7 +78,7 @@ describe('SettingsPanel', () => {
     // act
     fireEvent.click(
       screen.getByLabelText(
-        'Show readiness review section (Project Profile, even after marked initiated)'
+        'Show change adoption baseline section (Project Profile, even after marked initiated)'
       )
     );
 

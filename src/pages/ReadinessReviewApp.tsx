@@ -421,14 +421,14 @@ export default function ReadinessReviewApp({
                           <span className="text-blue-400">Component:</span> {currentQuestion.label}
                         </>
                       ) : null}
-                      {currentQuestion.label && currentQuestion.lens ? '  ·  ' : null}
+                      {currentQuestion.label && currentQuestion.lens ? ' - ' : null}
                       {currentQuestion.lens ? (
                         <>
                           <span className="text-blue-400">Lens:</span> {currentQuestion.lens}
                         </>
                       ) : null}
                     </p>
-                    <p className="mt-1 text-base font-medium text-slate-800 break-words">
+                    <p className="mt-3 text-base font-medium text-slate-800 break-words">
                       {currentQuestion.question}
                     </p>
                   </div>

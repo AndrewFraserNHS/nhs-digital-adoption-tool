@@ -38,7 +38,7 @@ export const PATHWAY_QUESTION: PreparednessAssessment = {
   id: '',
   label: 'Pathway',
   lens: '',
-  question: 'Which pathway do you think you should be on?',
+  question: 'Which pathway are you on?',
   answers: PATHWAY_OPTIONS.map((option) => option.label),
   progress: [],
   phase: 0,

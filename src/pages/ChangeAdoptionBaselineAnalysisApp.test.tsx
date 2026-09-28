@@ -8,7 +8,7 @@ import { save } from '@lib/storage';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import ReadinessReviewAnalysisApp from './ReadinessReviewAnalysisApp';
+import ReadinessReviewAnalysisApp from './ChangeAdoptionBaselineAnalysisApp';
 
 const COMPONENTS: AssessmentComponent[] = [
   {
@@ -51,7 +51,7 @@ describe('ReadinessReviewAnalysisApp', () => {
   it('SHOULD show an empty state on "My Answers" when no report has been saved', () => {
     render(<ReadinessReviewAnalysisApp components={COMPONENTS} />);
 
-    expect(screen.getByText(/Complete the Readiness Review first/)).toBeInTheDocument();
+    expect(screen.getByText(/Complete the change adoption baseline first/)).toBeInTheDocument();
   });
 
   it('SHOULD render the saved report under "My Answers"', () => {

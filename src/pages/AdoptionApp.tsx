@@ -89,7 +89,7 @@ import ChangeImpactAssessmentApp from '@pages/ChangeImpactAssessmentApp';
 import CompareApp from '@pages/CompareApp';
 import ForceFieldAnalysisApp from '@pages/ForceFieldAnalysisApp';
 import RaidLogApp from '@pages/RaidLogApp';
-import ReadinessReviewAnalysisApp from '@pages/ReadinessReviewAnalysisApp';
+import ReadinessReviewAnalysisApp from '@pages/ChangeAdoptionBaselineAnalysisApp';
 import StakeholderAnalysisApp from '@pages/StakeholderAnalysisApp';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 

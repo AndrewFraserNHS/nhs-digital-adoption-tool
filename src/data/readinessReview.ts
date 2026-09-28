@@ -1,7 +1,7 @@
 import type { AssessmentComponent } from '@data/components';
 import { type CstPathwayKey,PATHWAY_OPTIONS } from '@data/cst';
 import type { DraftEntry } from '@lib/adoptionState';
-import { buildComponentRadarChartData } from '@lib/adoptionMetrics';
+import { buildComponentRadarChartData, computeCurrentPhase } from '@lib/adoptionMetrics';
 import { getPhasePassScore } from '@lib/readinessBands';
 import type { ChartData } from 'chart.js';
 
@@ -976,7 +976,12 @@ export function buildReportRadarData(
   components: AssessmentComponent[]
 ): ChartData<'radar'> {
   if (!report.radar) {
-    return buildComponentRadarChartData(components, buildReportScoreLookup(report));
+    // Older reports saved before the radar snapshot existed - fall back to the answers-implied
+    // scores, but still work out a phase so the exemplar line matches the phase-specific targets
+    // shown elsewhere, rather than the flat "Target Average" line.
+    const scoreLookup = buildReportScoreLookup(report);
+    const phase = computeCurrentPhase(components, (componentId, lens) => scoreLookup(componentId, lens).score);
+    return buildComponentRadarChartData(components, scoreLookup, phase);
   }
   const { entries, phase } = report.radar;
   return buildComponentRadarChartData(

@@ -356,4 +356,17 @@ describe('unscored, pathway and coverage handling', () => {
     expect(fromSnapshot).toEqual(buildComponentRadarChartData(COMPONENTS, live, 2));
     expect(fromSnapshot.datasets[1].label).toBe('Exemplar (Phase 2)');
   });
+
+  it('SHOULD use a phase-specific exemplar line, not the flat Target Average, for a report saved before the radar snapshot existed', () => {
+    const report = buildReadinessReviewReport(TRUST, { 1: 5, 2: 5 }, COMPONENTS, [
+      scored(1, 'L1'),
+      scored(2, 'L2'),
+    ]);
+    expect(report.radar).toBeUndefined();
+
+    const data = buildReportRadarData(report, COMPONENTS);
+
+    expect(data.datasets[1].label).not.toBe('Target Average');
+    expect(data.datasets[1].label).toMatch(/^Exemplar \(Phase \d\)$/);
+  });
 });

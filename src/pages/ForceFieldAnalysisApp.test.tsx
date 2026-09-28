@@ -78,7 +78,7 @@ describe('ForceFieldAnalysisApp', () => {
     expect(within(ownerSelect).getByText(/Sam Patel/)).toBeInTheDocument();
   });
 
-  it('SHOULD update the force\'s mitigated score as soon as an action is given a score, whatever its status', () => {
+  it("SHOULD update the force's mitigated score as soon as an action is given a score, whatever its status", () => {
     // arrange
     renderApp();
     addForceAndAction();

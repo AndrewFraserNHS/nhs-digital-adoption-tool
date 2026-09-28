@@ -426,7 +426,7 @@ export const DEFAULT_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
         'core',
         'Supports definition of adoption measures linked to intended benefits.'
       ),
-            futureNhsLink(
+      futureNhsLink(
         '179918149',
         "What's in a name?",
         'additional',
@@ -698,7 +698,7 @@ export const DEFAULT_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
       futureNhsLink('34038800', 'Adoption Checklist', 'core', 'Adoption Checklist'),
       futureNhsLink('34038256', 'Business Transition Plan', 'core', 'Business Transition Plan'),
       futureNhsLink('34038032', 'Change Management Plan', 'core', 'Change Management Plan'),
-            futureNhsLink(
+      futureNhsLink(
         '45932336',
         'Schein Model of Organisational Culture',
         'additional',
@@ -745,7 +745,7 @@ export const DEFAULT_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
       ),
       futureNhsLink('34037424', 'Change Impact Assessment', 'core', 'Change Impact Assessment'),
       futureNhsLink('34038416', 'Ways of Working (WoW)', 'core', 'Ways of Working (WoW)'),
-            futureNhsLink(
+      futureNhsLink(
         '34038128',
         'Kubler Ross Change Curve',
         'additional',
@@ -800,24 +800,24 @@ export const DEFAULT_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
       futureNhsLink('34038832', 'ADKAR Model', 'core', 'ADKAR Model'),
     ],
   },
-    Reinforcement: {
-      inputs: [
-        futureNhsLink('34038800', 'Adoption Checklist', 'core', 'Adoption Checklist'),
-        futureNhsLink('34039408', 'Feedback Cycle', 'core', 'Feedback Cycle'),
-        futureNhsLink('34038672', 'User Surveys', 'core', 'User Surveys'),
-        futureNhsLink('34038768', 'Lessons Learnt', 'core', 'Lessons Learnt'),
-        futureNhsLink('34030736', 'Benefits Realisation Plan', 'core', 'Benefits Realisation Plan'),
-        futureNhsLink('34038864', 'Celebrate Successes', 'core', 'Celebrate Successes'),
-        futureNhsLink('34037552', 'Change Network', 'core', 'Change Network'),
-        futureNhsLink(
-          '34038640',
-          'Sustainability Risk Assessment',
-          'additional',
-          'Sustainability Risk Assessment'
-        ),
-        futureNhsLink('34038832', 'ADKAR Model', 'additional', 'ADKAR Model'),
-      ],
-    },
+  Reinforcement: {
+    inputs: [
+      futureNhsLink('34038800', 'Adoption Checklist', 'core', 'Adoption Checklist'),
+      futureNhsLink('34039408', 'Feedback Cycle', 'core', 'Feedback Cycle'),
+      futureNhsLink('34038672', 'User Surveys', 'core', 'User Surveys'),
+      futureNhsLink('34038768', 'Lessons Learnt', 'core', 'Lessons Learnt'),
+      futureNhsLink('34030736', 'Benefits Realisation Plan', 'core', 'Benefits Realisation Plan'),
+      futureNhsLink('34038864', 'Celebrate Successes', 'core', 'Celebrate Successes'),
+      futureNhsLink('34037552', 'Change Network', 'core', 'Change Network'),
+      futureNhsLink(
+        '34038640',
+        'Sustainability Risk Assessment',
+        'additional',
+        'Sustainability Risk Assessment'
+      ),
+      futureNhsLink('34038832', 'ADKAR Model', 'additional', 'ADKAR Model'),
+    ],
+  },
   'Organisation Maturity': {
     inputs: [
       futureNhsLink('34037776', 'Risk Assessment', 'core', 'Risk Assessment'),
@@ -869,8 +869,9 @@ export const DEFAULT_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
   },
 };
 
+//todo: Think this is now legacy
 const PRODUCT_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
-  // TODO(Product): Populate product-specific guidance links per theme.Vision: { inputs: [], deliverables: [] },'Case for Change': { inputs: [], deliverables: [] },'Sponsorship/ Change Network': { inputs: [], deliverables: [] },Benefits: { inputs: [], deliverables: [] },'Change Impact & Risk': { inputs: [], deliverables: [] },'Change Management Readiness & Planning': { inputs: [], deliverables: [] },'Stakeholder Engagement & Comms': { inputs: [], deliverables: [] },'Resistance Management': { inputs: [], deliverables: [] },'Skills/Learning': { inputs: [], deliverables: [] },'Process change': { inputs: [], deliverables: [] },Reinforcement: { inputs: [], deliverables: [] },'Change Management Capability': { inputs: [], deliverables: [] },
+  // Populate product-specific guidance links per theme.Vision: { inputs: [], deliverables: [] },'Case for Change': { inputs: [], deliverables: [] },'Sponsorship/ Change Network': { inputs: [], deliverables: [] },Benefits: { inputs: [], deliverables: [] },'Change Impact & Risk': { inputs: [], deliverables: [] },'Change Management Readiness & Planning': { inputs: [], deliverables: [] },'Stakeholder Engagement & Comms': { inputs: [], deliverables: [] },'Resistance Management': { inputs: [], deliverables: [] },'Skills/Learning': { inputs: [], deliverables: [] },'Process change': { inputs: [], deliverables: [] },Reinforcement: { inputs: [], deliverables: [] },'Change Management Capability': { inputs: [], deliverables: [] },
 };
 
 export const MATURITY_GUIDANCE_LINKS: Record<MaturityGuidanceTarget, GuidanceLinkMap> = {

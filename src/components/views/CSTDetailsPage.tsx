@@ -1323,8 +1323,8 @@ export function ProjectDetailsPage({
           </div>
           <p className={`mt-2 text-sm p-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
             This is normally only set up once at the start of a project. Once you're done, tick
-            "Questions initiated" to hide this section - re-enable "Show readiness review section" in
-            Settings if you need to come back to it.
+            "Questions initiated" to hide this section - re-enable "Show readiness review section"
+            in Settings if you need to come back to it.
           </p>
 
           {!profile.readinessReviewQuestionsInitiated || showReviewQuestionsSection ? (
@@ -1342,8 +1342,8 @@ export function ProjectDetailsPage({
             </>
           ) : (
             <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-              Readiness review questions were set up at project start. Turn on "Show readiness review section" in
-              Settings if you need to come back and edit them.
+              Readiness review questions were set up at project start. Turn on "Show readiness
+              review section" in Settings if you need to come back and edit them.
             </p>
           )}
         </div>

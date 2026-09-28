@@ -3,8 +3,8 @@ import { PATHWAY_LABELS } from '@data/cst';
 import {
   buildReportRadarData,
   describeReportOutcome,
-  shouldShowImpliedScore,
   type ReadinessReviewReport,
+  shouldShowImpliedScore,
 } from '@data/readinessReview';
 import { READINESS_RADAR_OPTIONS } from '@lib/adoptionMetrics';
 import { createRadarChart } from '@lib/charts';
@@ -75,9 +75,12 @@ export function buildReadinessReviewPdf(report: ReadinessReviewReport, radarImag
   if (report.pathway) {
     write(`Suggested pathway: ${PATHWAY_LABELS[report.pathway]}`, { bold: true });
   }
-  write(describeReportOutcome(report, (phase) => PHASE_NAMES[phase] || `Phase ${phase}`), {
-    gap: 5,
-  });
+  write(
+    describeReportOutcome(report, (phase) => PHASE_NAMES[phase] || `Phase ${phase}`),
+    {
+      gap: 5,
+    }
+  );
 
   const showImplied = shouldShowImpliedScore(report.answers);
   report.answers.forEach((answer, index) => {

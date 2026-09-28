@@ -38,7 +38,11 @@ const COMPONENTS: AssessmentComponent[] = [
   {
     id: 'sponsorship',
     label: 'Senior Sponsorship & Governance',
-    lenses: ['Strategic Direction and Leadership', 'People Experience and Culture', 'Planning and Risk'],
+    lenses: [
+      'Strategic Direction and Leadership',
+      'People Experience and Culture',
+      'Planning and Risk',
+    ],
     phase: 2,
     target: 5,
   },
@@ -141,7 +145,9 @@ describe('ReadinessReviewApp', () => {
 
     // assert
     expect(
-      screen.getByText(`Question ${PREPAREDNESS_ASSESSMENT.length} of ${PREPAREDNESS_ASSESSMENT.length}`)
+      screen.getByText(
+        `Question ${PREPAREDNESS_ASSESSMENT.length} of ${PREPAREDNESS_ASSESSMENT.length}`
+      )
     ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Finish assessment' })).toBeInTheDocument();
   });
@@ -170,9 +176,7 @@ describe('ReadinessReviewApp', () => {
 
     // assert - no components passed in, so nothing to suggest or skip
     expect(screen.getByRole('dialog')).toBeInTheDocument();
-    expect(
-      screen.getByText(/Nothing to update yet/)
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Nothing to update yet/)).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
     expect(onReadinessEvaluated).toHaveBeenCalledWith({
       skipToPhase: null,
@@ -203,9 +207,7 @@ describe('ReadinessReviewApp', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
 
     // act
-    fireEvent.click(
-      screen.getByRole('button', { name: /Send across your assessment scores/ })
-    );
+    fireEvent.click(screen.getByRole('button', { name: /Send across your assessment scores/ }));
 
     // assert
     expect(sendReportBundle).toHaveBeenCalledTimes(1);
@@ -267,9 +269,7 @@ describe('ReadinessReviewApp', () => {
     });
     fireEvent.click(screen.getByRole('button', { name: 'Finish assessment' }));
     fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
-    fireEvent.click(
-      screen.getByRole('button', { name: /Send across your assessment scores/ })
-    );
+    fireEvent.click(screen.getByRole('button', { name: /Send across your assessment scores/ }));
 
     // assert
     const report = sendReportBundle.mock.calls[0][0];
@@ -285,7 +285,7 @@ describe('ReadinessReviewApp', () => {
 
   const DEFAULT_ENTRY: DraftEntry = { score: 5, rationale: '', evidence: '', actions: [] };
 
-  it('SHOULD apply the phase skip when accepted, without double-applying its own components\' suggestions', () => {
+  it("SHOULD apply the phase skip when accepted, without double-applying its own components' suggestions", () => {
     // arrange - vision/case_for_change lag behind (score 1); everything else already maxed (score 5)
     // so no other suggestions surface and sponsorship (target 5) never counts as ready.
     const entries: Record<string, Record<string, DraftEntry>> = {
@@ -302,11 +302,17 @@ describe('ReadinessReviewApp', () => {
         'People Experience and Culture': { score: 1, rationale: '', evidence: '', actions: [] },
       },
       case_for_change: {
-        'Strategic Direction and Leadership': { score: 1, rationale: '', evidence: '', actions: [] },
+        'Strategic Direction and Leadership': {
+          score: 1,
+          rationale: '',
+          evidence: '',
+          actions: [],
+        },
         'People Experience and Culture': { score: 1, rationale: '', evidence: '', actions: [] },
       },
     };
-    const getEntry = (componentId: string, lens: string) => entries[componentId]?.[lens] || DEFAULT_ENTRY;
+    const getEntry = (componentId: string, lens: string) =>
+      entries[componentId]?.[lens] || DEFAULT_ENTRY;
     const onEntryUpdate = vi.fn();
     const onReadinessEvaluated = vi.fn();
 
@@ -371,15 +377,26 @@ describe('ReadinessReviewApp', () => {
     // arrange - same lagging vision/case_for_change scores, but the user declines the phase skip
     const entries: Record<string, Record<string, DraftEntry>> = {
       vision: {
-        'Strategic Direction and Leadership': { score: 1, rationale: '', evidence: '', actions: [] },
+        'Strategic Direction and Leadership': {
+          score: 1,
+          rationale: '',
+          evidence: '',
+          actions: [],
+        },
         'People Experience and Culture': { score: 1, rationale: '', evidence: '', actions: [] },
       },
       case_for_change: {
-        'Strategic Direction and Leadership': { score: 1, rationale: '', evidence: '', actions: [] },
+        'Strategic Direction and Leadership': {
+          score: 1,
+          rationale: '',
+          evidence: '',
+          actions: [],
+        },
         'People Experience and Culture': { score: 1, rationale: '', evidence: '', actions: [] },
       },
     };
-    const getEntry = (componentId: string, lens: string) => entries[componentId]?.[lens] || DEFAULT_ENTRY;
+    const getEntry = (componentId: string, lens: string) =>
+      entries[componentId]?.[lens] || DEFAULT_ENTRY;
     const onEntryUpdate = vi.fn();
     const onReadinessEvaluated = vi.fn();
 
@@ -426,8 +443,22 @@ describe('ReadinessReviewApp', () => {
           rationale: '',
           evidence: '',
           actions: [
-            { id: 'below', text: 'Below the new score', owner: '', timescale: '', status: 'Planned', readinessScore: 1 },
-            { id: 'at', text: 'At the new score', owner: '', timescale: '', status: 'Planned', readinessScore: TOP_SCORE },
+            {
+              id: 'below',
+              text: 'Below the new score',
+              owner: '',
+              timescale: '',
+              status: 'Planned',
+              readinessScore: 1,
+            },
+            {
+              id: 'at',
+              text: 'At the new score',
+              owner: '',
+              timescale: '',
+              status: 'Planned',
+              readinessScore: TOP_SCORE,
+            },
             {
               id: 'already-completed',
               text: 'Already done',
@@ -441,15 +472,26 @@ describe('ReadinessReviewApp', () => {
         'People Experience and Culture': { score: 0, rationale: '', evidence: '', actions: [] },
       },
       case_for_change: {
-        'Strategic Direction and Leadership': { score: 0, rationale: '', evidence: '', actions: [] },
+        'Strategic Direction and Leadership': {
+          score: 0,
+          rationale: '',
+          evidence: '',
+          actions: [],
+        },
         'People Experience and Culture': { score: 0, rationale: '', evidence: '', actions: [] },
       },
     };
-    const getEntry = (componentId: string, lens: string) => entries[componentId]?.[lens] || DEFAULT_ENTRY;
+    const getEntry = (componentId: string, lens: string) =>
+      entries[componentId]?.[lens] || DEFAULT_ENTRY;
     const onEntryUpdate = vi.fn();
 
     render(
-      <ReadinessReviewApp questions={PREPAREDNESS_ASSESSMENT} components={COMPONENTS} getEntry={getEntry} onEntryUpdate={onEntryUpdate} />
+      <ReadinessReviewApp
+        questions={PREPAREDNESS_ASSESSMENT}
+        components={COMPONENTS}
+        getEntry={getEntry}
+        onEntryUpdate={onEntryUpdate}
+      />
     );
     goToQuestions();
     PREPAREDNESS_ASSESSMENT.forEach((question, index) => {

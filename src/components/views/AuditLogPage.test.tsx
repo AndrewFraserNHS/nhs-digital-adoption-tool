@@ -62,7 +62,10 @@ describe('AuditLogPage', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Export PDF' }));
 
     // assert
-    expect(downloadSpy).toHaveBeenCalledWith(expect.stringMatching(/^audit-log-.*\.pdf$/), expect.any(Blob));
+    expect(downloadSpy).toHaveBeenCalledWith(
+      expect.stringMatching(/^audit-log-.*\.pdf$/),
+      expect.any(Blob)
+    );
     downloadSpy.mockRestore();
   });
 });

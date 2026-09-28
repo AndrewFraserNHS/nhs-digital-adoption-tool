@@ -80,8 +80,8 @@ export function ReadinessOutcomeModal({
         ) : (
           <>
             <p className="mt-3 text-sm text-slate-600">
-              Based on your answers, here&apos;s what could be updated. Untick anything you don&apos;t
-              want applied.
+              Based on your answers, here&apos;s what could be updated. Untick anything you
+              don&apos;t want applied.
             </p>
 
             {hasSuggestions ? (

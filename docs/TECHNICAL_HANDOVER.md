@@ -6,15 +6,15 @@ Older material in this folder (the `.docx` technical spec and user guide, and th
 
 ## 1. Commands
 
-| Command | What it does |
-| --- | --- |
-| `npm run dev` | Vite dev server |
-| `npm run build` | `vite build` only - **does not typecheck** |
-| `npx tsc --noEmit` | Typecheck (see the baseline below) |
-| `npm test` / `npm run test:watch` / `npm run test:coverage` | Vitest (jsdom). Coverage thresholds 80/80/80/45 |
-| `npm run lint` / `format` / `format:check` | ESLint / Prettier |
-| `npm run deploy` | `gh-pages -d dist` (runs `build` first) |
-| `node scripts/generatePathwayContent.mjs` | Regenerates pathway-2/3 action JSON from the pathway-1 files |
+| Command                                                     | What it does                                                 |
+| ----------------------------------------------------------- | ------------------------------------------------------------ |
+| `npm run dev`                                               | Vite dev server                                              |
+| `npm run build`                                             | `vite build` only - **does not typecheck**                   |
+| `npx tsc --noEmit`                                          | Typecheck (see the baseline below)                           |
+| `npm test` / `npm run test:watch` / `npm run test:coverage` | Vitest (jsdom). Coverage thresholds 80/80/80/45              |
+| `npm run lint` / `format` / `format:check`                  | ESLint / Prettier                                            |
+| `npm run deploy`                                            | `gh-pages -d dist` (runs `build` first)                      |
+| `node scripts/generatePathwayContent.mjs`                   | Regenerates pathway-2/3 action JSON from the pathway-1 files |
 
 Path aliases (`tsconfig.json` **and** `vite.config.ts` - keep in sync): `@lib`, `@pages`, `@data`, `@components`, `@types`.
 
@@ -28,32 +28,37 @@ src/main.tsx -> App.tsx (HashRouter: /adoption, /compare, /force-field-analysis,
                         holds the AdoptionStore, persistence, import/export, audit log, sign-in guard
 ```
 
-- **Views vs tools.** Most tools (RAID log, Benefits, Stakeholder analysis, Change impact, Force field, Highlight builder, Readiness Review Analysis, Audit log, ...) are rendered *inside* `AdoptionApp` as `view`s. Only Compare, Force Field Analysis and the Action Library Review are also stand-alone routes.
+- **Views vs tools.** Most tools (RAID log, Benefits, Stakeholder analysis, Change impact, Force field, Highlight builder, Readiness Review Analysis, Audit log, ...) are rendered _inside_ `AdoptionApp` as `view`s. Only Compare, Force Field Analysis and the Action Library Review are also stand-alone routes.
 - `pages/` holds the tool apps, `components/views` the large page-level views (`AssessmentPanel`, `CSTDetailsPage` = "Project Profile", `WhereAmINowPage` = "Adoption Baseline", dashboard, ...), `components/common` and `components/ui` the shared pieces.
 - `lib/` is logic (state, IO, metrics, automation, PDF/eml export), `data/` is content (components, lenses, rubrics, action JSON, question bank).
 - Styling: Tailwind classes in JSX plus `styles/legacy.css` (imported first in `main.tsx`; despite the name it is live) and `styles/nhsTheme.ts` button classes.
 
 ### The store (`lib/adoptionState.ts`)
+
 `AdoptionStore` (alias `CstDocument`): `view`, `orgProfile` (trust/project/lead/region/contactEmail/executiveSponsorId, `cst` = pathway + dates + toolkit, `teamMembers`, links, `stakeholderReferenceLists`, `readinessQuestions`), `currentDraft[componentId][lens]` = `{score, rationale, evidence, actions[]}`, `objectives`, `suppressedAutoActions`, `auditLog`, `history` (snapshots), `phaseOverrides`, `pathwayChecks`, `raidItems`, `benefits`, `benefitTracker`, `stakeholders`. `normalizeOrgProfile` is the place to default new profile fields. `lib/observable.ts` provides the reactive wrapper.
 
 ### Persistence
+
 Everything goes through `lib/storage.ts` (`save/load/remove`, dispatches `nhs-storage-error`).
 
-| Key | Owner |
-| --- | --- |
-| `nhs-digital-adoption-store` | the whole `AdoptionStore` (`ADOPTION_STORAGE_KEY` in `adoptionIO.ts`) |
-| `nhs-digital-adoption-user-settings`, `-current-user-id`, `-engagement`, `-evidence-warning-dismissed`, `-introduction-complete` | per-device UI state (never exported) |
-| `nhs-readiness-review` | Adoption Baseline quiz progress (answers, text answers, skipped flag) |
-| `nhs-readiness-review-report` | the frozen report of the last completed review |
-| `nhs-highlight-builder-layout`, `nhs-guidance-workstreams`, `nhs-action-library-review`, `nhs-change-impact-assessment`, `nhs-force-field-analysis`, `nhs-stakeholder-analysis` | stand-alone tool state (not part of the store) |
+| Key                                                                                                                                                                             | Owner                                                                 |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `nhs-digital-adoption-store`                                                                                                                                                    | the whole `AdoptionStore` (`ADOPTION_STORAGE_KEY` in `adoptionIO.ts`) |
+| `nhs-digital-adoption-user-settings`, `-current-user-id`, `-engagement`, `-evidence-warning-dismissed`, `-introduction-complete`                                                | per-device UI state (never exported)                                  |
+| `nhs-readiness-review`                                                                                                                                                          | Adoption Baseline quiz progress (answers, text answers, skipped flag) |
+| `nhs-readiness-review-report`                                                                                                                                                   | the frozen report of the last completed review                        |
+| `nhs-highlight-builder-layout`, `nhs-guidance-workstreams`, `nhs-action-library-review`, `nhs-change-impact-assessment`, `nhs-force-field-analysis`, `nhs-stakeholder-analysis` | stand-alone tool state (not part of the store)                        |
 
 ### Import / export (`lib/adoptionIO.ts`, `lib/cstConflict.ts`)
+
 `buildAdoptionExportPayload` -> JSON (includes `orgProfile`, so new profile fields travel automatically; add validation in `validateOrgProfile` only if needed). Import goes `parseImportedAdoptionAssessment` -> `migrateSavedAdoptionAssessment` -> `mergeImportedAdoptionState`; two copies of one programme are matched by `cstId` and resolved in `ImportConflictModal`.
 
 ### Derived content
+
 Actions/outcomes per component come from JSON in `data/component-actions/` (3 files per component: pathway 1 authored, 2 and 3 generated by `scripts/generatePathwayContent.mjs`). Each `lib/*Automation.ts` is a thin config (component id, prefixes, fallback outcomes, lens aliases, source-by-pathway) over the shared engine in `componentDerivedAutomation.ts`; `derivedContentSync.ts` runs them all (`syncDerivedContent`, `clearDerivedContent`, `regenerateContentForPathway`). Action text carries an "M "/"S " MoSCoW prefix parsed by `lib/moscow.ts` (Could no longer exists). Pathway checklists come from `data/pathwayAnalysis.txt` via `data/pathway-rules.ts`.
 
 ### Readiness scale
+
 `lib/readinessBands.ts` is the single source for the six levels (0 Not Started ... 5 Thriving) and `getPhasePassScore` (where Thriving is required, Adopted passes). Phase exemplars per component are in `lib/adoptionMetrics.ts`; `computeCurrentPhase` is the score-only version of the "current phase" rule in `getMetrics`.
 
 ## 3. Adoption Baseline / Readiness Review flow
@@ -66,28 +71,33 @@ Actions/outcomes per component come from JSON in `data/component-actions/` (3 fi
 6. Export (`lib/readinessExport.ts`): JSON + PDF downloads and a `mailto:` (mailto cannot attach files, and opens the OS default mail app), plus an Outlook-friendly `.eml` draft with attachments (`lib/eml.ts`, `X-Unsent: 1`). The Analysis tool imports `.json` or the `.eml` itself; imported reports live in React state only.
 
 ## 4. Sign-in guard
+
 "You are signed in as" (Project Profile / Profile page) stores `currentUserId` per device. `AdoptionApp.requireSignedIn()` blocks data edits (scores, actions, objectives, RAID, benefits, stakeholders, readiness apply, import, example data, reset, profile fields once the project is configured) until a user is chosen, showing a banner and warning toast. Always open: navigation, settings, choosing a user, team roster edits, exports, viewing the audit log. Pure rules are in `lib/signInGuard.ts`. Stand-alone tool state in localStorage (highlight builder, action library review, ...) is **not** gated. The audit log records the resolved actor; `Unknown user` only remains for legacy/imported events. The Audit Log page exports the filtered events as PDF (`lib/auditLogPdf.ts`, shared writer `lib/pdfWriter.ts`).
 
 ## 5. Adding a tool (checklist)
+
 1. Add the key to the `View` union in `lib/adoptionState.ts`.
 2. Add it to `IN_APP_TOOLS` and `DEFAULT_TOOL_LINK_TEXT` in `data/toolLinks.ts`.
 3. In `pages/AdoptionApp.tsx`: import the page, add it to `sectionByView`, the Tools sidebar array **and** its label ternary, and add the `view === '...'` render block.
 4. If it edits shared data, route edits through the guarded handlers (`updateEntry`, `updateRaidItems`, ...).
 
 ## 6. Typecheck baseline: 92 errors, none from app logic
-| Count | Where | Cause / fix |
-| --- | --- | --- |
-| 55 | `node_modules/vite`, `vitest`, `rollup`, ... typings | No `@types/node` and `skipLibCheck: false`. Add `@types/node`, set `skipLibCheck: true`. |
-| 11 | `src/lib/charts.ts` | Real type errors in the centre-text plugin (`string \| CenterTextConfig` never narrowed, plugin option typing). |
-| 25 | test files (`AssessmentPanel`, `adoptionState`, `CSTDetailsPage`, `adoptionIO`, `charts`, `adoptionMetrics`, `RichTextEditor`) | Stale fixtures against current `DraftEntry`/`AdoptionStore`/`OrgProfile` shapes, and `.at()` needing `lib: es2022`. |
-| 1 | `HighlightBuilderTool.tsx:763` | Compares against `'decisions-required'`, which is not in the section-id union (stale branch or missing section). |
+
+| Count | Where                                                                                                                          | Cause / fix                                                                                                         |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------- |
+| 55    | `node_modules/vite`, `vitest`, `rollup`, ... typings                                                                           | No `@types/node` and `skipLibCheck: false`. Add `@types/node`, set `skipLibCheck: true`.                            |
+| 11    | `src/lib/charts.ts`                                                                                                            | Real type errors in the centre-text plugin (`string \| CenterTextConfig` never narrowed, plugin option typing).     |
+| 25    | test files (`AssessmentPanel`, `adoptionState`, `CSTDetailsPage`, `adoptionIO`, `charts`, `adoptionMetrics`, `RichTextEditor`) | Stale fixtures against current `DraftEntry`/`AdoptionStore`/`OrgProfile` shapes, and `.at()` needing `lib: es2022`. |
+| 1     | `HighlightBuilderTool.tsx:763`                                                                                                 | Compares against `'decisions-required'`, which is not in the section-id union (stale branch or missing section).    |
 
 `npm run build` does not fail on these, which is why the baseline persists. `npx vitest run` is fully green (61 files, 355 tests).
 
 ## 7. Cleanup done in this pass
+
 Deleted: `data/index.ts`, `data/legacy-data.ts`, `OnboardingIntro.tsx`, `lib/validation.ts` (+test), `action-library-review-Nikki.json`, `example-report.txt`, `component-descriptors/vision-details.json`, `public/preparednessassessment.txt`, `public/test-data/preparedness-assessment.ts`, `scripts/wirePathwayAutomation.mjs`, all `.DS_Store` (now git-ignored); removed the unwired monthly-report/email-draft code from `AdoptionApp` and the unused `onComponentChange` prop. `public/test-data/*.json` are the demo data files loaded by "Load example data" - keep them. `public/test-data/adoption-linked-actions-example.json` has no references and can go once confirmed.
 
 ## 8. What remains (recommended order)
+// TODO: 
 1. **Typecheck:** add `@types/node` + `skipLibCheck`, bump `lib` to ES2022, fix `charts.ts`, refresh stale test fixtures, resolve `'decisions-required'`; then add a `typecheck` script and CI (build + typecheck + test).
 2. **Consolidate the 17 `*Automation.ts` files** into one registry table (component, config, three JSON sources) with generic sync/clear - they are structurally identical.
 3. **Split the giant files:** `AssessmentPanel` (3.4k lines), `StakeholderAnalysisApp` (3.3k), `AdoptionApp` (2.3k), `HighlightBuilderTool` (2.3k), `CSTDetailsPage` (2k). `AdoptionApp` should lose its inline handlers to hooks (store updates, import/export, sign-in guard).

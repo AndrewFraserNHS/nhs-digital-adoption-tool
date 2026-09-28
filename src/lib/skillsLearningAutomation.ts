@@ -48,13 +48,23 @@ export const SKILLS_LEARNING_CONFIG: DerivedComponentConfig = {
 
 const SKILLS_LEARNING_SOURCE_BY_PATHWAY: Record<CstPathwayKey, DerivedComponentSource> = {
   'pathway-1': parseDerivedComponentSource(skillsLearningActionsText, SKILLS_LEARNING_CONFIG),
-  'pathway-2': parseDerivedComponentSource(skillsLearningActionsTextPathway2, SKILLS_LEARNING_CONFIG),
-  'pathway-3': parseDerivedComponentSource(skillsLearningActionsTextPathway3, SKILLS_LEARNING_CONFIG),
+  'pathway-2': parseDerivedComponentSource(
+    skillsLearningActionsTextPathway2,
+    SKILLS_LEARNING_CONFIG
+  ),
+  'pathway-3': parseDerivedComponentSource(
+    skillsLearningActionsTextPathway3,
+    SKILLS_LEARNING_CONFIG
+  ),
 };
 
 export function syncSkillsLearningDerivedContent(store: AdoptionStore): AdoptionStore {
   const pathway = store.orgProfile.cst.pathway || 'pathway-1';
-  return syncDerivedComponentContent(store, SKILLS_LEARNING_CONFIG, SKILLS_LEARNING_SOURCE_BY_PATHWAY[pathway]);
+  return syncDerivedComponentContent(
+    store,
+    SKILLS_LEARNING_CONFIG,
+    SKILLS_LEARNING_SOURCE_BY_PATHWAY[pathway]
+  );
 }
 
 export function clearSkillsLearningDerivedContent(store: AdoptionStore): AdoptionStore {

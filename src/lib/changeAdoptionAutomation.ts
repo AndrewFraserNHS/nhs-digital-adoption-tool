@@ -44,13 +44,23 @@ export const CHANGE_ADOPTION_CONFIG: DerivedComponentConfig = {
 
 const CHANGE_ADOPTION_SOURCE_BY_PATHWAY: Record<CstPathwayKey, DerivedComponentSource> = {
   'pathway-1': parseDerivedComponentSource(changeAdoptionActionsText, CHANGE_ADOPTION_CONFIG),
-  'pathway-2': parseDerivedComponentSource(changeAdoptionActionsTextPathway2, CHANGE_ADOPTION_CONFIG),
-  'pathway-3': parseDerivedComponentSource(changeAdoptionActionsTextPathway3, CHANGE_ADOPTION_CONFIG),
+  'pathway-2': parseDerivedComponentSource(
+    changeAdoptionActionsTextPathway2,
+    CHANGE_ADOPTION_CONFIG
+  ),
+  'pathway-3': parseDerivedComponentSource(
+    changeAdoptionActionsTextPathway3,
+    CHANGE_ADOPTION_CONFIG
+  ),
 };
 
 export function syncChangeAdoptionDerivedContent(store: AdoptionStore): AdoptionStore {
   const pathway = store.orgProfile.cst.pathway || 'pathway-1';
-  return syncDerivedComponentContent(store, CHANGE_ADOPTION_CONFIG, CHANGE_ADOPTION_SOURCE_BY_PATHWAY[pathway]);
+  return syncDerivedComponentContent(
+    store,
+    CHANGE_ADOPTION_CONFIG,
+    CHANGE_ADOPTION_SOURCE_BY_PATHWAY[pathway]
+  );
 }
 
 export function clearChangeAdoptionDerivedContent(store: AdoptionStore): AdoptionStore {

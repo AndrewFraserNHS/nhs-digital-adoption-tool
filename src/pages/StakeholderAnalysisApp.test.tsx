@@ -156,9 +156,8 @@ describe('StakeholderAnalysisApp', () => {
     const copySelect = screen.getByLabelText(
       'Copy fields from another stakeholder'
     ) as HTMLSelectElement;
-    const sourceOptionValue = (
-      within(copySelect).getByText('Source Person') as HTMLOptionElement
-    ).value;
+    const sourceOptionValue = (within(copySelect).getByText('Source Person') as HTMLOptionElement)
+      .value;
     fireEvent.change(copySelect, { target: { value: sourceOptionValue } });
     fireEvent.click(screen.getByRole('button', { name: 'Copy' }));
 

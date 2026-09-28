@@ -198,7 +198,11 @@ export function AdoptionDashboard({
           component.target
         );
         const status =
-          avgNum === 0 ? 'not-started' : avgNum >= getPhasePassScore(exemplarTarget) ? 'on-track' : 'below-target';
+          avgNum === 0
+            ? 'not-started'
+            : avgNum >= getPhasePassScore(exemplarTarget)
+              ? 'on-track'
+              : 'below-target';
 
         // Compare to last finalised snapshot (null when no history or unchanged)
         let delta: number | null = null;
@@ -391,20 +395,6 @@ export function AdoptionDashboard({
         based on {components.length} change-management components, each assessed through up to{' '}
         {lenses.length} lenses.
       </p>
-
-      {/* todo: Have removed for noise reasons */}
-      {/* <div className="dashboard-callout dashboard-callout--pathway mb-6 rounded-lg border p-4">
-        <p className="dashboard-callout__eyebrow text-xs font-semibold uppercase tracking-wider">
-          Current CST pathway
-        </p>
-        <p className="dashboard-callout__title mt-1 text-sm font-semibold">
-          {PATHWAY_LABELS[pathway]}
-        </p>
-        <p className="dashboard-callout__body mt-1 text-sm">
-          Pathway checklist completion: {pathwaySummary.checked}/{pathwaySummary.required} (
-          {pathwaySummary.pct}%).
-        </p>
-      </div> */}
 
       {/* Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">

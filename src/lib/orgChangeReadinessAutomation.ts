@@ -42,7 +42,10 @@ export const ORG_CHANGE_READINESS_CONFIG: DerivedComponentConfig = {
 };
 
 const ORG_CHANGE_READINESS_SOURCE_BY_PATHWAY: Record<CstPathwayKey, DerivedComponentSource> = {
-  'pathway-1': parseDerivedComponentSource(orgChangeReadinessActionsText, ORG_CHANGE_READINESS_CONFIG),
+  'pathway-1': parseDerivedComponentSource(
+    orgChangeReadinessActionsText,
+    ORG_CHANGE_READINESS_CONFIG
+  ),
   'pathway-2': parseDerivedComponentSource(
     orgChangeReadinessActionsPathway2,
     ORG_CHANGE_READINESS_CONFIG

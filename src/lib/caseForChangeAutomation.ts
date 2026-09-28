@@ -34,13 +34,23 @@ export const CASE_FOR_CHANGE_CONFIG: DerivedComponentConfig = {
 
 const CASE_FOR_CHANGE_SOURCE_BY_PATHWAY: Record<CstPathwayKey, DerivedComponentSource> = {
   'pathway-1': parseDerivedComponentSource(caseForChangeActionsText, CASE_FOR_CHANGE_CONFIG),
-  'pathway-2': parseDerivedComponentSource(caseForChangeActionsTextPathway2, CASE_FOR_CHANGE_CONFIG),
-  'pathway-3': parseDerivedComponentSource(caseForChangeActionsTextPathway3, CASE_FOR_CHANGE_CONFIG),
+  'pathway-2': parseDerivedComponentSource(
+    caseForChangeActionsTextPathway2,
+    CASE_FOR_CHANGE_CONFIG
+  ),
+  'pathway-3': parseDerivedComponentSource(
+    caseForChangeActionsTextPathway3,
+    CASE_FOR_CHANGE_CONFIG
+  ),
 };
 
 export function syncCaseForChangeDerivedContent(store: AdoptionStore): AdoptionStore {
   const pathway = store.orgProfile.cst.pathway || 'pathway-1';
-  return syncDerivedComponentContent(store, CASE_FOR_CHANGE_CONFIG, CASE_FOR_CHANGE_SOURCE_BY_PATHWAY[pathway]);
+  return syncDerivedComponentContent(
+    store,
+    CASE_FOR_CHANGE_CONFIG,
+    CASE_FOR_CHANGE_SOURCE_BY_PATHWAY[pathway]
+  );
 }
 
 export function clearCaseForChangeDerivedContent(store: AdoptionStore): AdoptionStore {

@@ -13,7 +13,7 @@ import { createRadarChart } from '@lib/charts';
 import { extractEmlAttachments } from '@lib/eml';
 import { downloadReportJson, downloadReportPdf } from '@lib/readinessExport';
 import { load } from '@lib/storage';
-import { JSX, useEffect, useMemo, useRef, useState } from 'react';
+import { ChangeEvent, JSX, useEffect, useMemo, useRef, useState } from 'react';
 
 import { PHASE_NAMES } from '../types/constants';
 
@@ -32,7 +32,10 @@ function ReportDetailView({
   components: AssessmentComponent[];
 }): JSX.Element {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const missingLenses = useMemo(() => getReportMissingLenses(components, report), [components, report]);
+  const missingLenses = useMemo(
+    () => getReportMissingLenses(components, report),
+    [components, report]
+  );
   const showImplied = shouldShowImpliedScore(report.answers);
 
   useEffect(() => {
@@ -197,7 +200,7 @@ export default function ReadinessReviewAnalysisApp({
   // view of whatever was last saved, no local mutation of its own.
   const ownReport = load<ReadinessReviewReport>(READINESS_REVIEW_REPORT_STORAGE_KEY);
 
-  const handleFileSelected = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelected = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     event.target.value = '';
     if (!file) {
@@ -224,7 +227,9 @@ export default function ReadinessReviewAnalysisApp({
         // disappears on refresh or in a new session, as intended for a quick external review.
         setImportedReport(parsed);
       } catch (_error) {
-        setImportError('Could not read this file. Please check it is a valid Readiness Review export.');
+        setImportError(
+          'Could not read this file. Please check it is a valid Readiness Review export.'
+        );
       }
     };
     reader.readAsText(file);
@@ -250,9 +255,7 @@ export default function ReadinessReviewAnalysisApp({
           aria-selected={activeTab === 'my-answers'}
           onClick={() => setActiveTab('my-answers')}
           className={`flex-1 rounded px-3 py-1.5 transition-colors ${
-            activeTab === 'my-answers'
-              ? 'bg-[#005eb8] text-white'
-              : 'text-slate-600 hover:bg-white'
+            activeTab === 'my-answers' ? 'bg-[#005eb8] text-white' : 'text-slate-600 hover:bg-white'
           }`}
         >
           My Answers
@@ -281,7 +284,10 @@ export default function ReadinessReviewAnalysisApp({
       ) : (
         <div className="space-y-4">
           <div className="rounded-lg border border-slate-200 bg-white p-5">
-            <label htmlFor="readiness-import-file" className="block text-sm font-medium text-slate-700 mb-2">
+            <label
+              htmlFor="readiness-import-file"
+              className="block text-sm font-medium text-slate-700 mb-2"
+            >
               Import a Readiness Review report (.json, or the saved .eml)
             </label>
             <p className="mb-2 text-xs text-slate-500">

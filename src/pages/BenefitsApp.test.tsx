@@ -1,4 +1,9 @@
-import { type BenefitItem, type BenefitTrackerEntry, EMPTY_STAKEHOLDER, type Stakeholder } from '@lib/adoptionState';
+import {
+  type BenefitItem,
+  type BenefitTrackerEntry,
+  EMPTY_STAKEHOLDER,
+  type Stakeholder,
+} from '@lib/adoptionState';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
@@ -10,7 +15,12 @@ import BenefitsApp, { type BenefitsAppProps } from './BenefitsApp';
 function ControlledBenefits(
   props: Omit<
     BenefitsAppProps,
-    'benefits' | 'onBenefitsChange' | 'tracker' | 'onTrackerChange' | 'stakeholders' | 'onStakeholdersChange'
+    | 'benefits'
+    | 'onBenefitsChange'
+    | 'tracker'
+    | 'onTrackerChange'
+    | 'stakeholders'
+    | 'onStakeholdersChange'
   > & { initialStakeholders?: Stakeholder[] }
 ) {
   const { initialStakeholders = [], ...rest } = props;

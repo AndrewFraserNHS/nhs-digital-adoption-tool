@@ -48,13 +48,23 @@ export const TRANSFER_TO_BAU_CONFIG: DerivedComponentConfig = {
 
 const TRANSFER_TO_BAU_SOURCE_BY_PATHWAY: Record<CstPathwayKey, DerivedComponentSource> = {
   'pathway-1': parseDerivedComponentSource(transferToBauActionsText, TRANSFER_TO_BAU_CONFIG),
-  'pathway-2': parseDerivedComponentSource(transferToBauActionsTextPathway2, TRANSFER_TO_BAU_CONFIG),
-  'pathway-3': parseDerivedComponentSource(transferToBauActionsTextPathway3, TRANSFER_TO_BAU_CONFIG),
+  'pathway-2': parseDerivedComponentSource(
+    transferToBauActionsTextPathway2,
+    TRANSFER_TO_BAU_CONFIG
+  ),
+  'pathway-3': parseDerivedComponentSource(
+    transferToBauActionsTextPathway3,
+    TRANSFER_TO_BAU_CONFIG
+  ),
 };
 
 export function syncTransferToBauDerivedContent(store: AdoptionStore): AdoptionStore {
   const pathway = store.orgProfile.cst.pathway || 'pathway-1';
-  return syncDerivedComponentContent(store, TRANSFER_TO_BAU_CONFIG, TRANSFER_TO_BAU_SOURCE_BY_PATHWAY[pathway]);
+  return syncDerivedComponentContent(
+    store,
+    TRANSFER_TO_BAU_CONFIG,
+    TRANSFER_TO_BAU_SOURCE_BY_PATHWAY[pathway]
+  );
 }
 
 export function clearTransferToBauDerivedContent(store: AdoptionStore): AdoptionStore {

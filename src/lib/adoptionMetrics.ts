@@ -7,7 +7,11 @@ import { AssessmentComponent } from '@data/components';
 import type { ChartData } from 'chart.js';
 
 import { PHASE_NAMES } from '../types/constants';
-import { isCompletedActionStatus, isNonOutstandingActionStatus, isSkippedActionStatus } from './actionModel';
+import {
+  isCompletedActionStatus,
+  isNonOutstandingActionStatus,
+  isSkippedActionStatus,
+} from './actionModel';
 import { AdoptionStore, deriveObjectiveStatus, DraftEntry } from './adoptionState';
 import { type BragStatus, getTimelineBragStatus } from './bragStatus';
 import { getPhasePassScore, getReadinessBand } from './readinessBands';
@@ -307,7 +311,9 @@ export function getMetrics(store: AdoptionStore, components: AssessmentComponent
 
       // Skipped actions count neither as outstanding nor as completed - they're excluded from
       // this percentage entirely, so a skipped phase never drags the RAG down or is inflated up.
-      const actions = (entry?.actions || []).filter((action) => !isSkippedActionStatus(action.status));
+      const actions = (entry?.actions || []).filter(
+        (action) => !isSkippedActionStatus(action.status)
+      );
       actions.forEach((action) => {
         totalActions += 1;
         phaseBucket.totalActions += 1;
@@ -559,7 +565,10 @@ export function buildComponentRadarChartData(
 }
 
 /** Tooltip formatter for a `buildComponentRadarChartData` chart - suppresses the score suffix on the Exemplar/Target line, since that line is a reference marker, not a real per-lens value. */
-export function radarTooltipLabel(context: { dataset?: { label?: string }; raw?: unknown }): string {
+export function radarTooltipLabel(context: {
+  dataset?: { label?: string };
+  raw?: unknown;
+}): string {
   const label = context.dataset?.label || '';
   if (label.startsWith('Exemplar') || label === 'Target Average') {
     return label;

@@ -37,7 +37,9 @@ export function ReadinessQuestionEditor({
 
   const updateQuestion = (nu: number, updates: Partial<PreparednessAssessment>) =>
     onChange(
-      questions.map((q) => (q.nu === nu ? { ...q, ...updates, ...(q.custom ? {} : { edited: true }) } : q))
+      questions.map((q) =>
+        q.nu === nu ? { ...q, ...updates, ...(q.custom ? {} : { edited: true }) } : q
+      )
     );
 
   const move = (index: number, direction: -1 | 1) => {
@@ -146,7 +148,9 @@ export function ReadinessQuestionEditor({
                       <input
                         aria-label={`Question ${index + 1} answer ${answerIndex + 1}`}
                         value={answer}
-                        onChange={(event) => updateAnswer(question, answerIndex, event.target.value)}
+                        onChange={(event) =>
+                          updateAnswer(question, answerIndex, event.target.value)
+                        }
                         className={inputClass}
                       />
                       {isScoredQuestion(question) ? (
@@ -220,7 +224,11 @@ export function ReadinessQuestionEditor({
           type="button"
           className={smallButton}
           onClick={() => {
-            if (window.confirm('Reset to the built-in questions? Your custom questions and edits will be lost.')) {
+            if (
+              window.confirm(
+                'Reset to the built-in questions? Your custom questions and edits will be lost.'
+              )
+            ) {
               onChange(undefined);
             }
           }}

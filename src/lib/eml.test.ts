@@ -24,7 +24,11 @@ describe('eml', () => {
       body: 'Body',
       attachments: [
         { filename: 'r.json', contentType: 'application/json', data: '{"trustName":"Café"}' },
-        { filename: 'r.pdf', contentType: 'application/pdf', data: new Uint8Array([37, 80, 68, 70]) },
+        {
+          filename: 'r.pdf',
+          contentType: 'application/pdf',
+          data: new Uint8Array([37, 80, 68, 70]),
+        },
       ],
     });
 

@@ -51,7 +51,11 @@ const RESISTANCE_SOURCE_BY_PATHWAY: Record<CstPathwayKey, DerivedComponentSource
 
 export function syncResistanceDerivedContent(store: AdoptionStore): AdoptionStore {
   const pathway = store.orgProfile.cst.pathway || 'pathway-1';
-  return syncDerivedComponentContent(store, RESISTANCE_CONFIG, RESISTANCE_SOURCE_BY_PATHWAY[pathway]);
+  return syncDerivedComponentContent(
+    store,
+    RESISTANCE_CONFIG,
+    RESISTANCE_SOURCE_BY_PATHWAY[pathway]
+  );
 }
 
 export function clearResistanceDerivedContent(store: AdoptionStore): AdoptionStore {

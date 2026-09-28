@@ -5,6 +5,7 @@ import { ReadinessOutcomeModal } from './ReadinessOutcomeModal';
 
 describe('ReadinessOutcomeModal', () => {
   it('SHOULD show readiness level names, not numbers, in each suggested update', () => {
+    // arrange + act
     render(
       <ReadinessOutcomeModal
         open
@@ -26,10 +27,12 @@ describe('ReadinessOutcomeModal', () => {
       />
     );
 
+    // assert
     expect(screen.getByText(/Not Started/)).toHaveTextContent('Not Started → Emerging');
   });
 
   it('SHOULD offer the pathway switch and report it when applied', () => {
+    // arrange
     const onApply = vi.fn();
     render(
       <ReadinessOutcomeModal
@@ -41,8 +44,10 @@ describe('ReadinessOutcomeModal', () => {
       />
     );
 
+    // act
     fireEvent.click(screen.getByRole('button', { name: 'Apply selected' }));
 
+    // assert
     expect(onApply).toHaveBeenCalledWith([], false, true);
   });
 });

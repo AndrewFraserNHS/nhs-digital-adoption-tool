@@ -1,5 +1,8 @@
 import type { AssessmentComponent } from '@data/components';
-import { READINESS_REVIEW_REPORT_STORAGE_KEY, type ReadinessReviewReport } from '@data/readinessReview';
+import {
+  READINESS_REVIEW_REPORT_STORAGE_KEY,
+  type ReadinessReviewReport,
+} from '@data/readinessReview';
 import { buildEml } from '@lib/eml';
 import { save } from '@lib/storage';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
@@ -8,7 +11,13 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import ReadinessReviewAnalysisApp from './ReadinessReviewAnalysisApp';
 
 const COMPONENTS: AssessmentComponent[] = [
-  { id: 'vision', label: 'Vision', lenses: ['Strategic Direction and Leadership'], phase: 1, target: 2 },
+  {
+    id: 'vision',
+    label: 'Vision',
+    lenses: ['Strategic Direction and Leadership'],
+    phase: 1,
+    target: 2,
+  },
 ];
 
 const REPORT: ReadinessReviewReport = {
@@ -111,7 +120,13 @@ describe('ReadinessReviewAnalysisApp', () => {
     save(READINESS_REVIEW_REPORT_STORAGE_KEY, REPORT);
     const two: AssessmentComponent[] = [
       ...COMPONENTS,
-      { id: 'case', label: 'Case for Change', lenses: ['Strategic Direction and Leadership'], phase: 1, target: 2 },
+      {
+        id: 'case',
+        label: 'Case for Change',
+        lenses: ['Strategic Direction and Leadership'],
+        phase: 1,
+        target: 2,
+      },
     ];
 
     render(<ReadinessReviewAnalysisApp components={two} />);

@@ -40,7 +40,11 @@ const SPONSORSHIP_SOURCE_BY_PATHWAY: Record<CstPathwayKey, DerivedComponentSourc
 
 export function syncSponsorshipDerivedContent(store: AdoptionStore): AdoptionStore {
   const pathway = store.orgProfile.cst.pathway || 'pathway-1';
-  return syncDerivedComponentContent(store, SPONSORSHIP_CONFIG, SPONSORSHIP_SOURCE_BY_PATHWAY[pathway]);
+  return syncDerivedComponentContent(
+    store,
+    SPONSORSHIP_CONFIG,
+    SPONSORSHIP_SOURCE_BY_PATHWAY[pathway]
+  );
 }
 
 export function clearSponsorshipDerivedContent(store: AdoptionStore): AdoptionStore {

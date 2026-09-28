@@ -44,7 +44,9 @@ export function buildEml({ to, subject, body, attachments }: EmlOptions): string
   const boundary = `----nhs-adoption-${Date.now()}`;
   const parts = attachments.flatMap((attachment) => {
     const bytes =
-      typeof attachment.data === 'string' ? new TextEncoder().encode(attachment.data) : attachment.data;
+      typeof attachment.data === 'string'
+        ? new TextEncoder().encode(attachment.data)
+        : attachment.data;
     return [
       `--${boundary}`,
       `Content-Type: ${attachment.contentType}; name="${attachment.filename}"`,

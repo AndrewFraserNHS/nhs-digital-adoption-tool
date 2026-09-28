@@ -209,7 +209,9 @@ export default function ReadinessReviewApp({
 
   const applySkip = (skipToPhase: number): Set<string> => {
     const skippedComponentIds = new Set(
-      components.filter((component) => component.phase < skipToPhase).map((component) => component.id)
+      components
+        .filter((component) => component.phase < skipToPhase)
+        .map((component) => component.id)
     );
     if (!getEntry || !onEntryUpdate) {
       return skippedComponentIds;
@@ -484,9 +486,7 @@ export default function ReadinessReviewApp({
                   type="button"
                   disabled={!currentIsText && !currentAnswer}
                   onClick={() =>
-                    isLastQuestion
-                      ? handleFinish()
-                      : update({ currentIndex: currentIndex + 1 })
+                    isLastQuestion ? handleFinish() : update({ currentIndex: currentIndex + 1 })
                   }
                   className="rounded-md bg-[#005eb8] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
@@ -502,7 +502,9 @@ export default function ReadinessReviewApp({
         <ReadinessOutcomeModal
           open={showModal}
           outcome={outcome}
-          suggestedPathway={chosenPathway && chosenPathway !== currentPathway ? chosenPathway : null}
+          suggestedPathway={
+            chosenPathway && chosenPathway !== currentPathway ? chosenPathway : null
+          }
           onApply={handleApply}
           onDecline={handleDecline}
         />

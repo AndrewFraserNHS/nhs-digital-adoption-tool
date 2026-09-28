@@ -43,13 +43,23 @@ export const RISK_MANAGEMENT_CONFIG: DerivedComponentConfig = {
 
 const RISK_MANAGEMENT_SOURCE_BY_PATHWAY: Record<CstPathwayKey, DerivedComponentSource> = {
   'pathway-1': parseDerivedComponentSource(riskManagementActionsText, RISK_MANAGEMENT_CONFIG),
-  'pathway-2': parseDerivedComponentSource(riskManagementActionsTextPathway2, RISK_MANAGEMENT_CONFIG),
-  'pathway-3': parseDerivedComponentSource(riskManagementActionsTextPathway3, RISK_MANAGEMENT_CONFIG),
+  'pathway-2': parseDerivedComponentSource(
+    riskManagementActionsTextPathway2,
+    RISK_MANAGEMENT_CONFIG
+  ),
+  'pathway-3': parseDerivedComponentSource(
+    riskManagementActionsTextPathway3,
+    RISK_MANAGEMENT_CONFIG
+  ),
 };
 
 export function syncRiskManagementDerivedContent(store: AdoptionStore): AdoptionStore {
   const pathway = store.orgProfile.cst.pathway || 'pathway-1';
-  return syncDerivedComponentContent(store, RISK_MANAGEMENT_CONFIG, RISK_MANAGEMENT_SOURCE_BY_PATHWAY[pathway]);
+  return syncDerivedComponentContent(
+    store,
+    RISK_MANAGEMENT_CONFIG,
+    RISK_MANAGEMENT_SOURCE_BY_PATHWAY[pathway]
+  );
 }
 
 export function clearRiskManagementDerivedContent(store: AdoptionStore): AdoptionStore {

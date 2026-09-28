@@ -49,7 +49,11 @@ const CM_READINESS_SOURCE_BY_PATHWAY: Record<CstPathwayKey, DerivedComponentSour
 
 export function syncCmReadinessDerivedContent(store: AdoptionStore): AdoptionStore {
   const pathway = store.orgProfile.cst.pathway || 'pathway-1';
-  return syncDerivedComponentContent(store, CM_READINESS_CONFIG, CM_READINESS_SOURCE_BY_PATHWAY[pathway]);
+  return syncDerivedComponentContent(
+    store,
+    CM_READINESS_CONFIG,
+    CM_READINESS_SOURCE_BY_PATHWAY[pathway]
+  );
 }
 
 export function clearCmReadinessDerivedContent(store: AdoptionStore): AdoptionStore {

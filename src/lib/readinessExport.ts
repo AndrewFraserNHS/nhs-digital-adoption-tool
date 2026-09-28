@@ -4,6 +4,7 @@ import { buildEml } from '@lib/eml';
 import { buildReadinessReviewPdf, renderReportRadarImage } from '@lib/readinessPdf';
 import { downloadBlob, downloadFile } from '@lib/utils';
 
+// TODO: This mailbox needs updatable in Project Profile
 export const AVT_MAILBOX = 'england.digitaladoptionavt@nhs.net';
 
 function fileBase(trustName: string): string {

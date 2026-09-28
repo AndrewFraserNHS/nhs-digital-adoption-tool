@@ -1849,23 +1849,21 @@ export function AssessmentPanel({
       )}
 
       {componentDetail && (
-                        <div
-          className={`mb-6 rounded-lg`}
-        >
-            <div
-              className={`mt-3 flex flex-wrap items-center justify-between gap-3 rounded-lg border px-4 py-3 ${darkMode ? 'border-blue-800 bg-blue-950/40 text-slate-200' : 'border-blue-200 bg-blue-50 text-slate-700'}`}
+        <div className={`mb-6 rounded-lg`}>
+          <div
+            className={`mt-3 flex flex-wrap items-center justify-between gap-3 rounded-lg border px-4 py-3 ${darkMode ? 'border-blue-800 bg-blue-950/40 text-slate-200' : 'border-blue-200 bg-blue-50 text-slate-700'}`}
+          >
+            <p className="text-sm">Want to understand what {component.label} covers?</p>
+            <button
+              type="button"
+              onClick={() => setShowComponentOverviewModal(true)}
+              className="font-semibold text-[#005eb8] underline underline-offset-2 hover:text-[#003087]"
             >
-              <p className="text-sm">Want to understand what {component.label} covers?</p>
-              <button
-                type="button"
-                onClick={() => setShowComponentOverviewModal(true)}
-                className="font-semibold text-[#005eb8] underline underline-offset-2 hover:text-[#003087]"
-              >
-                Further Reading
-              </button>
-            </div>
-            </div>
-          )}
+              Further Reading
+            </button>
+          </div>
+        </div>
+      )}
 
       {!hideGuidedWorkflow && !guidedWorkflowDismissed && (
         <div

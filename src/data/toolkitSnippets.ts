@@ -7,6 +7,7 @@ export interface ToolkitSnippet {
   text: string;
 }
 
+//Todo: Need to have more specific snippets for every page
 export const TOOLKIT_SNIPPETS: Record<ToolkitOptionKey, ToolkitSnippet[]> = {
   'avt-v2-2026': [
     {

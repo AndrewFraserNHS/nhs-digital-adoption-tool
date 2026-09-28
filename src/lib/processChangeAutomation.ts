@@ -51,7 +51,11 @@ const PROCESS_CHANGE_SOURCE_BY_PATHWAY: Record<CstPathwayKey, DerivedComponentSo
 
 export function syncProcessChangeDerivedContent(store: AdoptionStore): AdoptionStore {
   const pathway = store.orgProfile.cst.pathway || 'pathway-1';
-  return syncDerivedComponentContent(store, PROCESS_CHANGE_CONFIG, PROCESS_CHANGE_SOURCE_BY_PATHWAY[pathway]);
+  return syncDerivedComponentContent(
+    store,
+    PROCESS_CHANGE_CONFIG,
+    PROCESS_CHANGE_SOURCE_BY_PATHWAY[pathway]
+  );
 }
 
 export function clearProcessChangeDerivedContent(store: AdoptionStore): AdoptionStore {

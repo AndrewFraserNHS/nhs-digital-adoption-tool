@@ -45,7 +45,11 @@ const STAKEHOLDER_SOURCE_BY_PATHWAY: Record<CstPathwayKey, DerivedComponentSourc
 
 export function syncStakeholderDerivedContent(store: AdoptionStore): AdoptionStore {
   const pathway = store.orgProfile.cst.pathway || 'pathway-1';
-  return syncDerivedComponentContent(store, STAKEHOLDER_CONFIG, STAKEHOLDER_SOURCE_BY_PATHWAY[pathway]);
+  return syncDerivedComponentContent(
+    store,
+    STAKEHOLDER_CONFIG,
+    STAKEHOLDER_SOURCE_BY_PATHWAY[pathway]
+  );
 }
 
 export function clearStakeholderDerivedContent(store: AdoptionStore): AdoptionStore {

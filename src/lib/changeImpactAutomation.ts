@@ -40,7 +40,11 @@ const CHANGE_IMPACT_SOURCE_BY_PATHWAY: Record<CstPathwayKey, DerivedComponentSou
 
 export function syncChangeImpactDerivedContent(store: AdoptionStore): AdoptionStore {
   const pathway = store.orgProfile.cst.pathway || 'pathway-1';
-  return syncDerivedComponentContent(store, CHANGE_IMPACT_CONFIG, CHANGE_IMPACT_SOURCE_BY_PATHWAY[pathway]);
+  return syncDerivedComponentContent(
+    store,
+    CHANGE_IMPACT_CONFIG,
+    CHANGE_IMPACT_SOURCE_BY_PATHWAY[pathway]
+  );
 }
 
 export function clearChangeImpactDerivedContent(store: AdoptionStore): AdoptionStore {

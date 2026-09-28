@@ -2,9 +2,9 @@ import type { AssessmentComponent } from '@data/components';
 import { describe, expect, it } from 'vitest';
 
 import {
-  computeCurrentPhase,
   buildComponentRadarChartData,
   buildRadarChartData,
+  computeCurrentPhase,
   computeEngagementObjectives,
   computeRadarData,
   computeTargetRadarData,

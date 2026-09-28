@@ -76,10 +76,10 @@ function RadarHelpIcon({ darkMode }: { darkMode: boolean }): JSX.Element {
         >
           <p className="font-semibold">Understanding this radar</p>
           <p className="mt-1.5">
-            The grey area is where we would ideally be at this phase, and the blue area is where
-            you are currently tracking. Areas where you&apos;re not meeting the grey exemplar data
-            can be areas of focus. Areas where you&apos;re exceeding the plan may be areas that
-            have been progressed ahead of where they need to be at this current point.
+            The grey area is where we would ideally be at this phase, and the blue area is where you
+            are currently tracking. Areas where you&apos;re not meeting the grey exemplar data can
+            be areas of focus. Areas where you&apos;re exceeding the plan may be areas that have
+            been progressed ahead of where they need to be at this current point.
           </p>
           <ul className="mt-2.5 space-y-1.5">
             <li className="flex gap-1.5">
@@ -91,16 +91,16 @@ function RadarHelpIcon({ darkMode }: { darkMode: boolean }): JSX.Element {
             <li className="flex gap-1.5">
               <span className="mt-0.5 h-2 w-2 flex-shrink-0 rounded-full bg-amber-500" />
               <span>
-                <strong>Ahead in the wrong areas:</strong> blue is well past grey on one or two
-                axes but lagging on the rest - effort may be focused on the wrong priorities for
-                this phase.
+                <strong>Ahead in the wrong areas:</strong> blue is well past grey on one or two axes
+                but lagging on the rest - effort may be focused on the wrong priorities for this
+                phase.
               </span>
             </li>
             <li className="flex gap-1.5">
               <span className="mt-0.5 h-2 w-2 flex-shrink-0 rounded-full bg-red-500" />
               <span>
-                <strong>Behind:</strong> blue sits inside grey on most axes - these are the areas
-                to focus on next.
+                <strong>Behind:</strong> blue sits inside grey on most axes - these are the areas to
+                focus on next.
               </span>
             </li>
           </ul>
@@ -325,7 +325,8 @@ export function WhereAmINowPage({
           Change Adoption Baseline (Where are we now?)
         </h2>
         <p className={`mt-2 text-sm ${textClass}`}>
-          Complete the Readiness Review to assess your readiness by component and determine which of the five change phases you're currently in.
+          Complete the Readiness Review to assess your readiness by component and determine which of
+          the five change phases you're currently in.
         </p>
       </div>
 
@@ -340,7 +341,8 @@ export function WhereAmINowPage({
               Change Adoption Baseline
             </h3>
             <p className={`mt-1 text-sm ${textClass}`}>
-              Answer a short set of questions about your programme - your answers can update your readiness scores and highlight phases you may be able to fast-track or skip.
+              Answer a short set of questions about your programme - your answers can update your
+              readiness scores and highlight phases you may be able to fast-track or skip.
             </p>
           </div>
 

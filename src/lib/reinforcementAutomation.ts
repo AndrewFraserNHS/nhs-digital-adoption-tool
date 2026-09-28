@@ -49,7 +49,11 @@ const REINFORCEMENT_SOURCE_BY_PATHWAY: Record<CstPathwayKey, DerivedComponentSou
 
 export function syncReinforcementDerivedContent(store: AdoptionStore): AdoptionStore {
   const pathway = store.orgProfile.cst.pathway || 'pathway-1';
-  return syncDerivedComponentContent(store, REINFORCEMENT_CONFIG, REINFORCEMENT_SOURCE_BY_PATHWAY[pathway]);
+  return syncDerivedComponentContent(
+    store,
+    REINFORCEMENT_CONFIG,
+    REINFORCEMENT_SOURCE_BY_PATHWAY[pathway]
+  );
 }
 
 export function clearReinforcementDerivedContent(store: AdoptionStore): AdoptionStore {

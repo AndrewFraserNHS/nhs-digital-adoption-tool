@@ -43,7 +43,10 @@ describe('regenerateContentForPathway', () => {
 
     // act
     const next = regenerateContentForPathway(
-      { ...store, orgProfile: { ...store.orgProfile, cst: { ...store.orgProfile.cst, pathway: 'pathway-2' } } },
+      {
+        ...store,
+        orgProfile: { ...store.orgProfile, cst: { ...store.orgProfile.cst, pathway: 'pathway-2' } },
+      },
       'pathway-2'
     );
 
@@ -61,7 +64,13 @@ describe('regenerateContentForPathway', () => {
     // arrange
     const seeded = createSeededStore();
     const pathway2Store = regenerateContentForPathway(
-      { ...seeded, orgProfile: { ...seeded.orgProfile, cst: { ...seeded.orgProfile.cst, pathway: 'pathway-2' } } },
+      {
+        ...seeded,
+        orgProfile: {
+          ...seeded.orgProfile,
+          cst: { ...seeded.orgProfile.cst, pathway: 'pathway-2' },
+        },
+      },
       'pathway-2'
     );
     expect(

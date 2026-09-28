@@ -46,7 +46,11 @@ const CHANGE_NETWORK_SOURCE_BY_PATHWAY: Record<CstPathwayKey, DerivedComponentSo
 
 export function syncChangeNetworkDerivedContent(store: AdoptionStore): AdoptionStore {
   const pathway = store.orgProfile.cst.pathway || 'pathway-1';
-  return syncDerivedComponentContent(store, CHANGE_NETWORK_CONFIG, CHANGE_NETWORK_SOURCE_BY_PATHWAY[pathway]);
+  return syncDerivedComponentContent(
+    store,
+    CHANGE_NETWORK_CONFIG,
+    CHANGE_NETWORK_SOURCE_BY_PATHWAY[pathway]
+  );
 }
 
 export function clearChangeNetworkDerivedContent(store: AdoptionStore): AdoptionStore {

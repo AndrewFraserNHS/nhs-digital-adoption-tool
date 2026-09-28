@@ -30,7 +30,6 @@ import {
   resolveGuidanceLinksForAdoptionComponent,
 } from '@data/maturity-guidance-links';
 import { resolveReadinessQuestions } from '@data/readinessReview';
-import { canEditProfile, SIGN_IN_REQUIRED_MESSAGE } from '@lib/signInGuard';
 import { GENERIC_RUBRIC } from '@data/rubrics';
 import {
   isCompletedActionStatus,
@@ -82,6 +81,7 @@ import {
 } from '@lib/cstConflict';
 import { regenerateContentForPathway, syncDerivedContent } from '@lib/derivedContentSync';
 import { getReadinessBand } from '@lib/readinessBands';
+import { canEditProfile, SIGN_IN_REQUIRED_MESSAGE } from '@lib/signInGuard';
 import { load, save } from '@lib/storage';
 import { downloadFile, escapeHtml } from '@lib/utils';
 import BenefitsApp from '@pages/BenefitsApp';
@@ -889,15 +889,12 @@ export function AdoptionApp() {
     setStore((prev) => ({ ...prev, benefits: nextBenefits }));
   }, []);
 
-  const updateBenefitTracker = useCallback(
-    (nextTracker: Record<string, BenefitTrackerEntry>) => {
-      if (!requireSignedIn()) {
-        return;
-      }
-      setStore((prev) => ({ ...prev, benefitTracker: nextTracker }));
-    },
-    []
-  );
+  const updateBenefitTracker = useCallback((nextTracker: Record<string, BenefitTrackerEntry>) => {
+    if (!requireSignedIn()) {
+      return;
+    }
+    setStore((prev) => ({ ...prev, benefitTracker: nextTracker }));
+  }, []);
 
   const updateStakeholders = useCallback((nextStakeholders: Stakeholder[]) => {
     if (!requireSignedIn()) {
@@ -1257,63 +1254,63 @@ export function AdoptionApp() {
 
   const handleProfileUpdate = useCallback(
     (updatedProfile: OrgProfile) => {
-    // Profile fields are only locked once the project is configured and nobody is signed in; the
-    // team roster is always editable so someone can add themselves and sign in.
-    if (
-      !canEditProfile(orgProfileRef.current, updatedProfile, {
-        signedIn: Boolean(currentUserIdRef.current),
-        configured: !isCstUnconfigured(orgProfileRef.current),
-      })
-    ) {
-      requireSignedIn();
-      return;
-    }
-    setStore((prev) => {
-      const pathwayChanged = prev.orgProfile.cst.pathway !== updatedProfile.cst.pathway;
-      const mergedStore = { ...prev, orgProfile: updatedProfile };
-      const nextStore = pathwayChanged
-        ? regenerateContentForPathway(mergedStore, updatedProfile.cst.pathway)
-        : mergedStore;
-
-      const changed = JSON.stringify(prev.orgProfile) !== JSON.stringify(updatedProfile);
-      if (!changed) {
-        return nextStore;
+      // Profile fields are only locked once the project is configured and nobody is signed in; the
+      // team roster is always editable so someone can add themselves and sign in.
+      if (
+        !canEditProfile(orgProfileRef.current, updatedProfile, {
+          signedIn: Boolean(currentUserIdRef.current),
+          configured: !isCstUnconfigured(orgProfileRef.current),
+        })
+      ) {
+        requireSignedIn();
+        return;
       }
+      setStore((prev) => {
+        const pathwayChanged = prev.orgProfile.cst.pathway !== updatedProfile.cst.pathway;
+        const mergedStore = { ...prev, orgProfile: updatedProfile };
+        const nextStore = pathwayChanged
+          ? regenerateContentForPathway(mergedStore, updatedProfile.cst.pathway)
+          : mergedStore;
 
-      return {
-        ...nextStore,
-        auditLog: appendAuditEvents(prev, [
-          {
-            eventType: 'profile-updated',
-            entityType: 'profile',
-            summary: 'Updated CST profile details',
-            before: {
-              trustName: prev.orgProfile.trustName,
-              projectName: prev.orgProfile.projectName,
-              cst: prev.orgProfile.cst,
+        const changed = JSON.stringify(prev.orgProfile) !== JSON.stringify(updatedProfile);
+        if (!changed) {
+          return nextStore;
+        }
+
+        return {
+          ...nextStore,
+          auditLog: appendAuditEvents(prev, [
+            {
+              eventType: 'profile-updated',
+              entityType: 'profile',
+              summary: 'Updated CST profile details',
+              before: {
+                trustName: prev.orgProfile.trustName,
+                projectName: prev.orgProfile.projectName,
+                cst: prev.orgProfile.cst,
+              },
+              after: {
+                trustName: updatedProfile.trustName,
+                projectName: updatedProfile.projectName,
+                cst: updatedProfile.cst,
+              },
+              source: 'local',
             },
-            after: {
-              trustName: updatedProfile.trustName,
-              projectName: updatedProfile.projectName,
-              cst: updatedProfile.cst,
-            },
-            source: 'local',
-          },
-          ...(pathwayChanged
-            ? [
-                {
-                  eventType: 'pathway-changed' as const,
-                  entityType: 'profile' as const,
-                  summary: `Changed pathway from ${prev.orgProfile.cst.pathway} to ${updatedProfile.cst.pathway}`,
-                  before: { pathway: prev.orgProfile.cst.pathway },
-                  after: { pathway: updatedProfile.cst.pathway },
-                  source: 'local' as const,
-                },
-              ]
-            : []),
-        ]),
-      };
-    });
+            ...(pathwayChanged
+              ? [
+                  {
+                    eventType: 'pathway-changed' as const,
+                    entityType: 'profile' as const,
+                    summary: `Changed pathway from ${prev.orgProfile.cst.pathway} to ${updatedProfile.cst.pathway}`,
+                    before: { pathway: prev.orgProfile.cst.pathway },
+                    after: { pathway: updatedProfile.cst.pathway },
+                    source: 'local' as const,
+                  },
+                ]
+              : []),
+          ]),
+        };
+      });
     },
     [requireSignedIn]
   );
@@ -1447,12 +1444,7 @@ export function AdoptionApp() {
           {expandedNavSections.intro ? (
             <nav className="space-y-1 mb-4">
               {(
-                [
-                  'introduction',
-                  'engine-explained',
-                  'project-details',
-                  'where-am-i-now',
-                ] as View[]
+                ['introduction', 'engine-explained', 'project-details', 'where-am-i-now'] as View[]
               ).map((v) => (
                 <button
                   key={v}
@@ -1798,8 +1790,8 @@ export function AdoptionApp() {
               className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900"
             >
               <span>
-                You&apos;re not signed in as a team member, so changes are locked. Select who you are
-                in Project Profile to make edits.
+                You&apos;re not signed in as a team member, so changes are locked. Select who you
+                are in Project Profile to make edits.
               </span>
               <button
                 type="button"
@@ -1946,7 +1938,8 @@ export function AdoptionApp() {
                 )?.name
               }
               currentUserName={
-                (store.orgProfile.teamMembers || []).find((member) => member.id === currentUserId)?.name
+                (store.orgProfile.teamMembers || []).find((member) => member.id === currentUserId)
+                  ?.name
               }
               currentPhase={effectivePhaseFocus}
               currentPathway={store.orgProfile.cst.pathway}

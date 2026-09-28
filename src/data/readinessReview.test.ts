@@ -4,10 +4,10 @@ import { buildComponentRadarChartData } from '@lib/adoptionMetrics';
 import { describe, expect, it } from 'vitest';
 
 import {
-  buildReadinessReviewReport,
-  buildReportScoreLookup,
   buildRadarSnapshot,
+  buildReadinessReviewReport,
   buildReportRadarData,
+  buildReportScoreLookup,
   computeReadinessOutcome,
   DEFAULT_READINESS_QUESTIONS,
   describeReportOutcome,
@@ -15,9 +15,9 @@ import {
   getReportMissingLenses,
   PATHWAY_QUESTION,
   PREPAREDNESS_ASSESSMENT,
+  type PreparednessAssessment,
   resolveReadinessQuestions,
   shouldShowImpliedScore,
-  type PreparednessAssessment,
 } from './readinessReview';
 
 const noExistingScores = () => undefined;
@@ -67,19 +67,18 @@ describe('computeReadinessOutcome (synthetic fixture)', () => {
     { nu: 4, id: 'b2', label: 'B2', lens: 'Lens', question: 'Q4', phase: 2, target: 2 },
   ].map((q) => ({
     ...q,
-    answers: ['1. a', '2. b', '3. c', '4. d', '5. e'] as [
-      string,
-      string,
-      string,
-      string,
-      string,
-    ],
+    answers: ['1. a', '2. b', '3. c', '4. d', '5. e'] as [string, string, string, string, string],
     progress: [0, 0, 1, 1, 2] as [number, number, number, number, number],
   }));
 
   it('SHOULD offer to skip to phase 2 WHEN every phase-1 component meets its target', () => {
     // act - answer 5 on both phase-1 questions (implied score 2, meets target 2); leave phase 2 unanswered
-    const outcome = computeReadinessOutcome({ 1: 5, 2: 5 }, COMPONENTS, noExistingScores, QUESTIONS);
+    const outcome = computeReadinessOutcome(
+      { 1: 5, 2: 5 },
+      COMPONENTS,
+      noExistingScores,
+      QUESTIONS
+    );
 
     // assert
     expect(outcome.skipToPhase).toBe(2);
@@ -115,8 +114,7 @@ describe('computeReadinessOutcome (synthetic fixture)', () => {
 
   it('SHOULD only suggest a readiness-level update WHEN the implied score beats what is already recorded', () => {
     // arrange - a1 already recorded at 2 (== implied score for answer 5), a2 recorded at 0
-    const getEntry = (componentId: string) =>
-      componentId === 'a1' ? { score: 2 } : { score: 0 };
+    const getEntry = (componentId: string) => (componentId === 'a1' ? { score: 2 } : { score: 0 });
 
     // act
     const outcome = computeReadinessOutcome({ 1: 5, 2: 5 }, COMPONENTS, getEntry, QUESTIONS);
@@ -312,12 +310,10 @@ describe('unscored, pathway and coverage handling', () => {
       progress: [0, 1, 2, 3, 4],
     });
 
-    const outcome = computeReadinessOutcome(
-      { 1: 5, 2: 4 },
-      thriving,
-      () => undefined,
-      [adopted(1, 'a1'), adopted(2, 'a2')]
-    );
+    const outcome = computeReadinessOutcome({ 1: 5, 2: 4 }, thriving, () => undefined, [
+      adopted(1, 'a1'),
+      adopted(2, 'a2'),
+    ]);
 
     expect(outcome.readyComponentIds).toEqual(['a1']);
     expect(outcome.skipToPhase).toBe(2);
@@ -328,15 +324,24 @@ describe('unscored, pathway and coverage handling', () => {
     const name = (phase: number) => `P${phase}`;
     const offered = { ...base, outcome: { skipToPhase: 3, readyComponentIds: [] } };
 
-    expect(describeReportOutcome({ ...offered, decision: 'applied', appliedSkipToPhase: 3 }, name)).toBe(
-      'Skipped to Phase 3: P3.'
+    expect(
+      describeReportOutcome({ ...offered, decision: 'applied', appliedSkipToPhase: 3 }, name)
+    ).toBe('Skipped to Phase 3: P3.');
+    expect(describeReportOutcome({ ...offered, decision: 'declined' }, name)).toContain(
+      '(not applied)'
     );
-    expect(describeReportOutcome({ ...offered, decision: 'declined' }, name)).toContain('(not applied)');
-    expect(describeReportOutcome({ ...offered, decision: 'pending' }, name)).toContain('suggest skipping');
-    expect(describeReportOutcome({ ...base, outcome: { skipToPhase: null, readyComponentIds: [] } }, name)).toBe(
-      'Answers did not suggest skipping any phase.'
+    expect(describeReportOutcome({ ...offered, decision: 'pending' }, name)).toContain(
+      'suggest skipping'
     );
-    expect(describeReportOutcome({ ...base, decision: 'skipped' }, name)).toContain('starts at Phase 1');
+    expect(
+      describeReportOutcome(
+        { ...base, outcome: { skipToPhase: null, readyComponentIds: [] } },
+        name
+      )
+    ).toBe('Answers did not suggest skipping any phase.');
+    expect(describeReportOutcome({ ...base, decision: 'skipped' }, name)).toContain(
+      'starts at Phase 1'
+    );
   });
 
   it('SHOULD build the same radar data from a frozen snapshot as from the live entries it captured', () => {

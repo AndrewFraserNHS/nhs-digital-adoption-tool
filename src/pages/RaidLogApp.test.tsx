@@ -88,7 +88,11 @@ describe('RaidLogApp', () => {
     };
     const onEntryUpdate = vi.fn();
     render(
-      <ControlledRaidLog components={components} getEntry={() => entry} onEntryUpdate={onEntryUpdate} />
+      <ControlledRaidLog
+        components={components}
+        getEntry={() => entry}
+        onEntryUpdate={onEntryUpdate}
+      />
     );
 
     // act - save the item first (linking only shows once an item has been saved once)

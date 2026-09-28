@@ -36,7 +36,8 @@ describe('syncCaseForChangeDerivedContent', () => {
     expect(
       strategicEntry.actions.some(
         (action) =>
-          action.text.includes('Recognise that a clear rationale and evidence base') && action.actionType === 'Analysis & Insight'
+          action.text.includes('Recognise that a clear rationale and evidence base') &&
+          action.actionType === 'Analysis & Insight'
       )
     ).toBe(true);
     expect(

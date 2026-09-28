@@ -303,7 +303,7 @@ export interface OrgProfile {
    * (per device, not exported) by AdoptionUserSettings.showExternalLinksSection.
    */
   externalLinksInitiated?: boolean;
-   /**
+  /**
    * Once set, the Project Profile page's Readiness Review Questions section collapses by default -
    * links are a one-time project-setup concern. Travels with export/import. Overridden locally
    * (per device, not exported) by AdoptionUserSettings.showExternalLinksSection.

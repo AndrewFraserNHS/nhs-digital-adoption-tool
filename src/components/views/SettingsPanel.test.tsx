@@ -62,7 +62,7 @@ describe('SettingsPanel', () => {
     expect(onLoadExampleData).toHaveBeenCalledWith('green');
   });
 
-    it('SHOULD toggle showReadinessReviewQuestionsSection', () => {
+  it('SHOULD toggle showReadinessReviewQuestionsSection', () => {
     // arrange
     const onUserSettingsUpdate = vi.fn();
 

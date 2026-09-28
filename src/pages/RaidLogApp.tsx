@@ -1,7 +1,14 @@
 import { FilterBar } from '@components/common/FilterBar';
 import { BinIcon, IconActionButton, PencilIcon } from '@components/common/IconButtons';
 import type { AssessmentComponent } from '@data/components';
-import type { DraftAction, DraftEntry, RaidItem, RaidStatus, RaidType, TeamMember } from '@lib/adoptionState';
+import type {
+  DraftAction,
+  DraftEntry,
+  RaidItem,
+  RaidStatus,
+  RaidType,
+  TeamMember,
+} from '@lib/adoptionState';
 import { bragBadgeClass, getBragStatus } from '@lib/brag';
 import { getReadinessBand, READINESS_BANDS } from '@lib/readinessBands';
 import { JSX, useEffect, useMemo, useState } from 'react';
@@ -127,7 +134,9 @@ export default function RaidLogApp({
     );
   }, [getEntry, linkComponentId, linkLens, linkReadinessFilter]);
 
-  const isEditingExistingItem = Boolean(formData.id && items.some((item) => item.id === formData.id));
+  const isEditingExistingItem = Boolean(
+    formData.id && items.some((item) => item.id === formData.id)
+  );
 
   /** Every real action across the whole project, grouped by which RAID item it links to (if any). */
   const linkedActionsByRaidItemId = useMemo(() => {
@@ -149,7 +158,8 @@ export default function RaidLogApp({
     return map;
   }, [getEntry, components]);
 
-  const linkedActions: LinkedActionRef[] = (formData.id && linkedActionsByRaidItemId[formData.id]) || [];
+  const linkedActions: LinkedActionRef[] =
+    (formData.id && linkedActionsByRaidItemId[formData.id]) || [];
 
   const linkActionToItem = (componentId: string, lens: string, actionId: string) => {
     if (!getEntry || !onEntryUpdate || !formData.id) {
@@ -481,9 +491,7 @@ export default function RaidLogApp({
                       ))}
                     </ul>
                   ) : (
-                    <p className="mb-3 text-xs text-slate-500 italic">
-                      No actions linked yet.
-                    </p>
+                    <p className="mb-3 text-xs text-slate-500 italic">No actions linked yet.</p>
                   )}
                   <p className="text-sm font-medium text-slate-700 mb-2">Link another action</p>
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
@@ -706,7 +714,8 @@ export default function RaidLogApp({
                             return <span className="text-slate-400">-</span>;
                           }
                           const first = refs[0];
-                          const label = componentById[first.componentId]?.label || first.componentId;
+                          const label =
+                            componentById[first.componentId]?.label || first.componentId;
                           const suffix = refs.length > 1 ? ` +${refs.length - 1} more` : '';
                           return onNavigateToAction ? (
                             <button

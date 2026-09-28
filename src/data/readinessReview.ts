@@ -1,7 +1,7 @@
 import type { AssessmentComponent } from '@data/components';
-import { type CstPathwayKey,PATHWAY_OPTIONS } from '@data/cst';
-import type { DraftEntry } from '@lib/adoptionState';
+import { type CstPathwayKey, PATHWAY_OPTIONS } from '@data/cst';
 import { buildComponentRadarChartData, computeCurrentPhase } from '@lib/adoptionMetrics';
+import type { DraftEntry } from '@lib/adoptionState';
 import { getPhasePassScore } from '@lib/readinessBands';
 import type { ChartData } from 'chart.js';
 
@@ -758,7 +758,9 @@ export function resolveReadinessQuestions(
   if (!stored) {
     return DEFAULT_READINESS_QUESTIONS;
   }
-  const defaultsByNu = new Map(DEFAULT_READINESS_QUESTIONS.map((question) => [question.nu, question]));
+  const defaultsByNu = new Map(
+    DEFAULT_READINESS_QUESTIONS.map((question) => [question.nu, question])
+  );
   const seen = new Set<number>();
   const resolved = stored.map((question) => {
     seen.add(question.nu);
@@ -960,9 +962,9 @@ export function buildRadarSnapshot(
         score: Number(entry?.score || 0),
         assessed: Boolean(
           Number(entry?.score || 0) > 0 ||
-            entry?.rationale?.trim() ||
-            entry?.evidence?.trim() ||
-            (entry?.actions || []).length > 0
+          entry?.rationale?.trim() ||
+          entry?.evidence?.trim() ||
+          (entry?.actions || []).length > 0
         ),
       };
     });
@@ -980,7 +982,10 @@ export function buildReportRadarData(
     // scores, but still work out a phase so the exemplar line matches the phase-specific targets
     // shown elsewhere, rather than the flat "Target Average" line.
     const scoreLookup = buildReportScoreLookup(report);
-    const phase = computeCurrentPhase(components, (componentId, lens) => scoreLookup(componentId, lens).score);
+    const phase = computeCurrentPhase(
+      components,
+      (componentId, lens) => scoreLookup(componentId, lens).score
+    );
     return buildComponentRadarChartData(components, scoreLookup, phase);
   }
   const { entries, phase } = report.radar;
@@ -1120,7 +1125,8 @@ export function getMissingLensCoverage(
     questions
       .filter(
         (question) =>
-          isScoredQuestion(question) && question.progress[(answers[question.nu] || 0) - 1] !== undefined
+          isScoredQuestion(question) &&
+          question.progress[(answers[question.nu] || 0) - 1] !== undefined
       )
       .map((question) => `${question.id}:${question.lens}`)
   );

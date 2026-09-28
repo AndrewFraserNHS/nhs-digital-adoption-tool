@@ -91,7 +91,6 @@ const STORAGE_KEY = 'nhs-stakeholder-analysis';
 
 const RATINGS_MAP: Record<string, number> = { Low: 1, Medium: 2, High: 3, 'Very High': 4 };
 
-// TODO: Descriptions need available to users in frontend
 const COMMITMENTS_MAP: Record<string, number> = {
   Resistant: 1, // Opposed to the change and is actively hostile towards it
   Opposed: 2, // Quietly opposed to the change without proactive resistance
@@ -101,7 +100,6 @@ const COMMITMENTS_MAP: Record<string, number> = {
   Leading: 6, // Actively leading the change within their area or the organisation as a whole with total commitment
 };
 
-// TODO: Descriptions need available to users in frontend
 const CAPABILITIES_MAP: Record<string, number> = {
   Unaware: 1, // Unaware	Not yet aware of the change
   Aware: 2, // Aware of the change but has little information
@@ -146,52 +144,38 @@ function createId(prefix = ''): string {
   return `${prefix}${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
-// Todo: Bring this table data into the reference data
-// Ideally this would be done in Project Set-up though, and just be seen + updated in Reference data but is owned at a project level.
-
-// Functional Group		Location		Department		Relationship Categories
-// SRO		LRH		Ward 1		Customer
-// Manager		GH		Ward 2		Provider
-// Trades Union		Community 		Ward 3		Influencer
-// Programme		CCG office		Ward 4		Governance
-// Project				Pharmacy
-// Trainer				Pathology
-// Clinical				A+E
-// Arms Length Body				Main Reception
-// CCG				Exec Offices
-// GP				GP Practices
-// CSU				IT
-// Staff				HR
-// 				Comms
-
 function freshReferenceData(): ReferenceData {
   return {
-    groups: ['SRO',
-    'Manager',
-    'Trades Union',
-    'Programme',
-    'Project',
-    'Trainer',
-    'Clinical',
-    'Arms Length Body',
-    'CCG',
-    'GP',
-    'CSU',
-    'Staff',],
+    groups: [
+      'SRO',
+      'Manager',
+      'Trades Union',
+      'Programme',
+      'Project',
+      'Trainer',
+      'Clinical',
+      'Arms Length Body',
+      'CCG',
+      'GP',
+      'CSU',
+      'Staff',
+    ],
     subGroups: ['LRH', 'GH', 'Community', 'CGC office'],
-    departments: ['Ward 1',
-    'Ward 2',
-    'Ward 3',
-    'Ward 4',
-    'Pharmacy',
-    'Pathology',
-    'A+E',
-    'Main Reception',
-    'Exec Offices',
-    'GP Practices',
-    'IT',
-    'HR',
-    'Comms'],
+    departments: [
+      'Ward 1',
+      'Ward 2',
+      'Ward 3',
+      'Ward 4',
+      'Pharmacy',
+      'Pathology',
+      'A+E',
+      'Main Reception',
+      'Exec Offices',
+      'GP Practices',
+      'IT',
+      'HR',
+      'Comms',
+    ],
     relationships: ['Customer', 'Provider', 'Influencer', 'Governance'],
     commitments: ['Resistant', 'Opposed', 'Ambivalent', 'Complying', 'Supporting', 'Leading'],
     capabilities: ['Unaware', 'Aware', 'Informed', 'Equipped', 'Practised', 'Exemplary'],
@@ -1897,7 +1881,8 @@ function EngagementTab({
     });
     if (componentFilter) {
       result = result.filter(
-        (log) => log.linkedComponentId && componentById[log.linkedComponentId]?.label === componentFilter
+        (log) =>
+          log.linkedComponentId && componentById[log.linkedComponentId]?.label === componentFilter
       );
     }
     if (phaseFilter) {
@@ -2149,7 +2134,10 @@ function AnalysisMapTab({
   state: StakeholderAnalysisState;
   groups: string[];
   groupColors: Record<string, string>;
-  onFilterChange: (key: 'group' | 'subGroup' | 'department' | 'relationship', value: string) => void;
+  onFilterChange: (
+    key: 'group' | 'subGroup' | 'department' | 'relationship',
+    value: string
+  ) => void;
   onAxisChange: (axis: 'x' | 'y', value: MapAxisKey) => void;
   onResetFilters: () => void;
   onOpenStakeholder: (id: string) => void;
@@ -2727,8 +2715,7 @@ export default function StakeholderAnalysisApp({
   stateRef.current = state;
   const setState = (
     updater:
-      | StakeholderAnalysisState
-      | ((current: StakeholderAnalysisState) => StakeholderAnalysisState)
+      StakeholderAnalysisState | ((current: StakeholderAnalysisState) => StakeholderAnalysisState)
   ) => {
     const previous = stateRef.current;
     const next = typeof updater === 'function' ? updater(previous) : updater;

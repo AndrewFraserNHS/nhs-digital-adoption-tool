@@ -25,9 +25,7 @@
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
       "action": "M Re-engage teams to address: recognise that successful implementation requires sustained adoption of new ways of working.",
-      "outcomeIds": [
-        "CA_O1"
-      ],
+      "outcomeIds": ["CA_O1"],
       "readinessScore": 0
     },
     {
@@ -37,9 +35,7 @@
       "lens": "Planning & Risk",
       "category": "Engagement",
       "action": "M Re-open discussions with leaders and stakeholders about what successful adoption may look like.",
-      "outcomeIds": [
-        "CA_O1"
-      ],
+      "outcomeIds": ["CA_O1"],
       "readinessScore": 0
     },
     {
@@ -49,9 +45,7 @@
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
       "action": "M Diagnose high-level behaviours and ways of working expected to change.",
-      "outcomeIds": [
-        "CA_O1"
-      ],
+      "outcomeIds": ["CA_O1"],
       "readinessScore": 0
     },
     {
@@ -61,9 +55,7 @@
       "lens": "Skills & Behaviour",
       "category": "Communication",
       "action": "M Re-engage teams to address: begin communicating the importance of adoption and behavioural change in achieving change outcomes.",
-      "outcomeIds": [
-        "CA_O1"
-      ],
+      "outcomeIds": ["CA_O1"],
       "readinessScore": 0
     },
     {
@@ -73,9 +65,7 @@
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
       "action": "M Diagnose groups likely to be critical to successful adoption.",
-      "outcomeIds": [
-        "CA_O1"
-      ],
+      "outcomeIds": ["CA_O1"],
       "readinessScore": 0
     },
     {
@@ -85,9 +75,7 @@
       "lens": "Planning & Risk",
       "category": "Governance",
       "action": "M Re-engage teams to address: gain initial agreement that adoption outcomes will need to be monitored and managed.",
-      "outcomeIds": [
-        "CA_O1"
-      ],
+      "outcomeIds": ["CA_O1"],
       "readinessScore": 0
     },
     {
@@ -97,9 +85,7 @@
       "lens": "Skills & Behaviour",
       "category": "Engagement",
       "action": "S Diagnose stakeholder perceptions of potential adoption barriers and enablers.",
-      "outcomeIds": [
-        "CA_O1"
-      ],
+      "outcomeIds": ["CA_O1"],
       "readinessScore": 0
     },
     {
@@ -109,9 +95,7 @@
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
       "action": "S Diagnose gaps in lessons learned from previous changes relating to adoption challenges and successes.",
-      "outcomeIds": [
-        "CA_O1"
-      ],
+      "outcomeIds": ["CA_O1"],
       "readinessScore": 0
     },
     {
@@ -121,9 +105,7 @@
       "lens": "Planning & Risk",
       "category": "Design",
       "action": "M Revisit and clarify and document what successful adoption looks like for the change.",
-      "outcomeIds": [
-        "CA_O1"
-      ],
+      "outcomeIds": ["CA_O1"],
       "readinessScore": 1
     },
     {
@@ -133,9 +115,7 @@
       "lens": "Planning & Risk",
       "category": "Measurement & Evaluation",
       "action": "M Rebuild adoption indicators, measures, targets and success criteria.",
-      "outcomeIds": [
-        "CA_O1"
-      ],
+      "outcomeIds": ["CA_O1"],
       "readinessScore": 1
     },
     {
@@ -145,9 +125,7 @@
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
       "action": "M Revisit and clarify behaviours, activities and practices that will indicate successful adoption.",
-      "outcomeIds": [
-        "CA_O1"
-      ],
+      "outcomeIds": ["CA_O1"],
       "readinessScore": 1
     },
     {
@@ -157,9 +135,7 @@
       "lens": "Planning & Risk",
       "category": "Measurement & Evaluation",
       "action": "M Re-establish baseline adoption measures for future comparison.",
-      "outcomeIds": [
-        "CA_O1"
-      ],
+      "outcomeIds": ["CA_O1"],
       "readinessScore": 1
     },
     {
@@ -169,9 +145,7 @@
       "lens": "Planning & Risk",
       "category": "Governance",
       "action": "M Revisit and clarify ownership, accountabilities and reporting arrangements for adoption outcomes.",
-      "outcomeIds": [
-        "CA_O1"
-      ],
+      "outcomeIds": ["CA_O1"],
       "readinessScore": 1
     },
     {
@@ -181,9 +155,7 @@
       "lens": "Skills & Behaviour",
       "category": "Analysis & Insight",
       "action": "S Diagnose stakeholder groups requiring targeted adoption support.",
-      "outcomeIds": [
-        "CA_O1"
-      ],
+      "outcomeIds": ["CA_O1"],
       "readinessScore": 1
     },
     {
@@ -193,9 +165,7 @@
       "lens": "Skills & Behaviour",
       "category": "Engagement",
       "action": "S Re-validate adoption barriers and enablers with impacted stakeholder groups.",
-      "outcomeIds": [
-        "CA_O1"
-      ],
+      "outcomeIds": ["CA_O1"],
       "readinessScore": 1
     },
     {
@@ -205,9 +175,7 @@
       "lens": "Skills & Behaviour",
       "category": "Communication",
       "action": "M re-communicate expected adoption outcomes, behaviours and performance expectations.",
-      "outcomeIds": [
-        "CA_O1"
-      ],
+      "outcomeIds": ["CA_O1"],
       "readinessScore": 1
     },
     {
@@ -217,9 +185,7 @@
       "lens": "Planning & Risk",
       "category": "Dependency Management",
       "action": "S Diagnose dependencies between adoption, capability, learning, readiness and implementation activities.",
-      "outcomeIds": [
-        "CA_O1"
-      ],
+      "outcomeIds": ["CA_O1"],
       "readinessScore": 1
     },
     {
@@ -229,9 +195,7 @@
       "lens": "Planning & Risk",
       "category": "Design",
       "action": "S Rebuild a structured adoption monitoring and support approach.",
-      "outcomeIds": [
-        "CA_O1"
-      ],
+      "outcomeIds": ["CA_O1"],
       "readinessScore": 1
     },
     {
@@ -241,9 +205,7 @@
       "lens": "Planning & Risk",
       "category": "Measurement & Evaluation",
       "action": "S Recover implementation of mechanisms for monitoring adoption levels and behavioural change.",
-      "outcomeIds": [
-        "CA_O2"
-      ],
+      "outcomeIds": ["CA_O2"],
       "readinessScore": 2
     },
     {
@@ -253,9 +215,7 @@
       "lens": "Planning & Risk",
       "category": "Measurement & Evaluation",
       "action": "M Re-engage teams to address: collect adoption data, usage information, feedback and performance insight.",
-      "outcomeIds": [
-        "CA_O2"
-      ],
+      "outcomeIds": ["CA_O2"],
       "readinessScore": 2
     },
     {
@@ -265,9 +225,7 @@
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
       "action": "S Re-engage teams to address: analyse adoption trends across different stakeholder groups and operational areas.",
-      "outcomeIds": [
-        "CA_O2"
-      ],
+      "outcomeIds": ["CA_O2"],
       "readinessScore": 2
     },
     {
@@ -277,9 +235,7 @@
       "lens": "Planning & Risk",
       "category": "Governance",
       "action": "M Diagnose gaps in adoption performance through governance and reporting structures.",
-      "outcomeIds": [
-        "CA_O2"
-      ],
+      "outcomeIds": ["CA_O2"],
       "readinessScore": 2
     },
     {
@@ -289,9 +245,7 @@
       "lens": "Planning & Risk",
       "category": "Risk Management",
       "action": "S Diagnose adoption risks and issues arising from low or inconsistent adoption levels.",
-      "outcomeIds": [
-        "CA_O2"
-      ],
+      "outcomeIds": ["CA_O2"],
       "readinessScore": 2
     },
     {
@@ -301,9 +255,7 @@
       "lens": "Skills & Behaviour",
       "category": "Engagement",
       "action": "S Gather fresh evidence on feedback from high and low adopters to understand adoption drivers and barriers.",
-      "outcomeIds": [
-        "CA_O2"
-      ],
+      "outcomeIds": ["CA_O2"],
       "readinessScore": 2
     },
     {
@@ -313,9 +265,7 @@
       "lens": "Skills & Behaviour",
       "category": "Training & Learning",
       "action": "M Re-engage teams to address: provide targeted support and development for groups experiencing adoption challenges.",
-      "outcomeIds": [
-        "CA_O2"
-      ],
+      "outcomeIds": ["CA_O2"],
       "readinessScore": 2
     },
     {
@@ -325,9 +275,7 @@
       "lens": "Skills & Behaviour",
       "category": "Communication",
       "action": "S re-communicate adoption progress, successes and areas of focus.",
-      "outcomeIds": [
-        "CA_O2"
-      ],
+      "outcomeIds": ["CA_O2"],
       "readinessScore": 2
     },
     {
@@ -337,9 +285,7 @@
       "lens": "Skills & Behaviour",
       "category": "Engagement",
       "action": "M Re-engage teams to address: use change agents, change champions and managers to support adoption activity.",
-      "outcomeIds": [
-        "CA_O2"
-      ],
+      "outcomeIds": ["CA_O2"],
       "readinessScore": 2
     },
     {
@@ -349,9 +295,7 @@
       "lens": "Planning & Risk",
       "category": "Design",
       "action": "S Re-engage teams to address: refine adoption interventions using feedback and monitoring information.",
-      "outcomeIds": [
-        "CA_O2"
-      ],
+      "outcomeIds": ["CA_O2"],
       "readinessScore": 2
     },
     {
@@ -361,10 +305,7 @@
       "lens": "Planning & Risk",
       "category": "Measurement & Evaluation",
       "action": "M Re-establish tracking of adoption performance against targets, expectations and baseline measures.",
-      "outcomeIds": [
-        "CA_O2",
-        "CA_O3"
-      ],
+      "outcomeIds": ["CA_O2", "CA_O3"],
       "readinessScore": 3
     },
     {
@@ -374,10 +315,7 @@
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
       "action": "M Diagnose areas with lower adoption rates requiring additional intervention.",
-      "outcomeIds": [
-        "CA_O2",
-        "CA_O3"
-      ],
+      "outcomeIds": ["CA_O2", "CA_O3"],
       "readinessScore": 3
     },
     {
@@ -387,9 +325,7 @@
       "lens": "Skills & Behaviour",
       "category": "Engagement",
       "action": "M Re-engage teams to address: conduct targeted engagement with low-adoption groups to understand remaining barriers.",
-      "outcomeIds": [
-        "CA_O2"
-      ],
+      "outcomeIds": ["CA_O2"],
       "readinessScore": 3
     },
     {
@@ -399,9 +335,7 @@
       "lens": "Skills & Behaviour",
       "category": "Reinforcement",
       "action": "S Re-engage teams to address: recognise and promote examples of successful adoption and effective practice.",
-      "outcomeIds": [
-        "CA_O3"
-      ],
+      "outcomeIds": ["CA_O3"],
       "readinessScore": 3
     },
     {
@@ -411,9 +345,7 @@
       "lens": "Planning & Risk",
       "category": "Dependency Management",
       "action": "S Re-coordinate adoption activity with a focus on reinforcement, capability and benefits realisation.",
-      "outcomeIds": [
-        "CA_O3"
-      ],
+      "outcomeIds": ["CA_O3"],
       "readinessScore": 3
     },
     {
@@ -423,9 +355,7 @@
       "lens": "Planning & Risk",
       "category": "Testing & Validation",
       "action": "S Re-validate that adopted behaviours and practices align with intended future-state outcomes.",
-      "outcomeIds": [
-        "CA_O3"
-      ],
+      "outcomeIds": ["CA_O3"],
       "readinessScore": 3
     },
     {
@@ -435,9 +365,7 @@
       "lens": "Planning & Risk",
       "category": "Governance",
       "action": "M Diagnose gaps in adoption outcomes and improvement actions through governance processes.",
-      "outcomeIds": [
-        "CA_O3"
-      ],
+      "outcomeIds": ["CA_O3"],
       "readinessScore": 3
     },
     {
@@ -447,9 +375,7 @@
       "lens": "Planning & Risk",
       "category": "Design",
       "action": "S Re-engage teams to address: refine adoption approaches using learning from implementation experience.",
-      "outcomeIds": [
-        "CA_O3"
-      ],
+      "outcomeIds": ["CA_O3"],
       "readinessScore": 3
     },
     {
@@ -459,9 +385,7 @@
       "lens": "Skills & Behaviour",
       "category": "Reinforcement",
       "action": "S Re-engage support for managers and leaders to reinforce adoption expectations.",
-      "outcomeIds": [
-        "CA_O3"
-      ],
+      "outcomeIds": ["CA_O3"],
       "readinessScore": 3
     },
     {
@@ -471,9 +395,7 @@
       "lens": "Planning & Risk",
       "category": "Governance",
       "action": "M Re-embed adoption monitoring into BAU performance and improvement processes.",
-      "outcomeIds": [
-        "CA_O3"
-      ],
+      "outcomeIds": ["CA_O3"],
       "readinessScore": 4
     },
     {
@@ -483,9 +405,7 @@
       "lens": "Planning & Risk",
       "category": "Measurement & Evaluation",
       "action": "S Re-establish monitoring of long-term adoption performance and behavioural sustainability.",
-      "outcomeIds": [
-        "CA_O3"
-      ],
+      "outcomeIds": ["CA_O3"],
       "readinessScore": 4
     },
     {
@@ -495,9 +415,7 @@
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
       "action": "S Re-engage teams to address: use adoption data to identify opportunities for optimisation and improvement.",
-      "outcomeIds": [
-        "CA_O3"
-      ],
+      "outcomeIds": ["CA_O3"],
       "readinessScore": 4
     },
     {
@@ -517,9 +435,7 @@
       "lens": "Process & Sustainment",
       "category": "Design",
       "action": "S Re-engage teams to address: use organisational learning to strengthen future adoption approaches.",
-      "outcomeIds": [
-        "CA_O3"
-      ],
+      "outcomeIds": ["CA_O3"],
       "readinessScore": 4
     },
     {
@@ -599,9 +515,7 @@
       "lens": "Process & Sustainment",
       "category": "Reinforcement",
       "action": "S Re-embed adoption-focused behaviours and improvement practices into organisational culture.",
-      "outcomeIds": [
-        "CA_O3"
-      ],
+      "outcomeIds": ["CA_O3"],
       "readinessScore": 4
     },
     {

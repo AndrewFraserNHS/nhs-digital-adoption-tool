@@ -6,23 +6,29 @@ import { ReadinessQuestionEditor } from './ReadinessQuestionEditor';
 
 describe('ReadinessQuestionEditor', () => {
   it('SHOULD reorder a question with the arrow buttons', () => {
+    // arrange
     const onChange = vi.fn();
     render(<ReadinessQuestionEditor questions={DEFAULT_READINESS_QUESTIONS} onChange={onChange} />);
 
+    // act
     fireEvent.click(screen.getByRole('button', { name: 'Move question 1 down' }));
 
+    // assert
     const next = onChange.mock.calls[0][0];
     expect(next[0].nu).toBe(DEFAULT_READINESS_QUESTIONS[1].nu);
     expect(next[1].nu).toBe(DEFAULT_READINESS_QUESTIONS[0].nu);
   });
 
   it('SHOULD add a free-text and a multiple-choice custom question with no scoring', () => {
+    // arrange
     const onChange = vi.fn();
     render(<ReadinessQuestionEditor questions={DEFAULT_READINESS_QUESTIONS} onChange={onChange} />);
 
+    // act
     fireEvent.click(screen.getByRole('button', { name: 'Add free-text question' }));
     fireEvent.click(screen.getByRole('button', { name: 'Add multiple-choice question' }));
 
+    // assert
     const text = onChange.mock.calls[0][0].at(-1);
     const choice = onChange.mock.calls[1][0].at(-1);
     expect(text).toMatchObject({ kind: 'text', custom: true, progress: [] });
@@ -31,6 +37,7 @@ describe('ReadinessQuestionEditor', () => {
   });
 
   it('SHOULD only allow deleting custom questions', () => {
+    // arrange
     const custom = {
       ...DEFAULT_READINESS_QUESTIONS[0],
       nu: 1001,
@@ -39,6 +46,8 @@ describe('ReadinessQuestionEditor', () => {
       answers: [],
     };
     const onChange = vi.fn();
+
+    // act 1
     render(
       <ReadinessQuestionEditor
         questions={[...DEFAULT_READINESS_QUESTIONS, custom]}
@@ -46,38 +55,49 @@ describe('ReadinessQuestionEditor', () => {
       />
     );
 
+    // assert 1
     expect(screen.getAllByRole('button', { name: /^Delete question/ })).toHaveLength(1);
+
+    // act 2
     fireEvent.click(screen.getByRole('button', { name: /^Delete question/ }));
 
+    // assert 2
     expect(onChange.mock.calls[0][0]).toHaveLength(DEFAULT_READINESS_QUESTIONS.length);
   });
 
   it('SHOULD edit a question and reset to the defaults', () => {
+    // arrange
     const onChange = vi.fn();
     vi.spyOn(window, 'confirm').mockReturnValue(true);
     render(<ReadinessQuestionEditor questions={DEFAULT_READINESS_QUESTIONS} onChange={onChange} />);
 
+    // act
     fireEvent.change(screen.getByLabelText('Question 2 text'), { target: { value: 'Reworded?' } });
     fireEvent.click(screen.getByRole('button', { name: 'Reset to defaults' }));
 
+    // assert
     expect(onChange.mock.calls[0][0][1].question).toBe('Reworded?');
     expect(onChange.mock.calls[1][0]).toBeUndefined();
   });
 
   it('SHOULD let each scored answer be aligned to a readiness level and mark the question edited', () => {
+    // arrange
     const onChange = vi.fn();
     render(<ReadinessQuestionEditor questions={DEFAULT_READINESS_QUESTIONS} onChange={onChange} />);
 
+    // act
     fireEvent.change(screen.getByLabelText('Question 2 answer 5 readiness level'), {
       target: { value: '3' },
     });
 
+    // assert
     const changed = onChange.mock.calls[0][0][1];
     expect(changed.progress).toEqual([...DEFAULT_READINESS_QUESTIONS[1].progress.slice(0, 4), 3]);
     expect(changed.edited).toBe(true);
   });
 
   it('SHOULD not offer level dropdowns on custom or pathway questions', () => {
+    // arrange + act
     render(
       <ReadinessQuestionEditor
         questions={[
@@ -95,6 +115,7 @@ describe('ReadinessQuestionEditor', () => {
       />
     );
 
+    // assert
     expect(screen.queryAllByLabelText(/readiness level/)).toHaveLength(0);
   });
 });

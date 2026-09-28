@@ -94,7 +94,10 @@ export function StakeholderPicker({
       {adding ? (
         <div className="mt-2 grid grid-cols-1 gap-2 rounded border border-blue-200 bg-white p-3">
           <div>
-            <label htmlFor={`${id}-new-name`} className="block text-xs font-medium text-slate-600 mb-1">
+            <label
+              htmlFor={`${id}-new-name`}
+              className="block text-xs font-medium text-slate-600 mb-1"
+            >
               New stakeholder name
             </label>
             <input
@@ -106,7 +109,10 @@ export function StakeholderPicker({
             />
           </div>
           <div>
-            <label htmlFor={`${id}-new-role`} className="block text-xs font-medium text-slate-600 mb-1">
+            <label
+              htmlFor={`${id}-new-role`}
+              className="block text-xs font-medium text-slate-600 mb-1"
+            >
               New stakeholder role
             </label>
             <input

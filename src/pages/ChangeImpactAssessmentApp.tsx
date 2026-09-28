@@ -561,8 +561,7 @@ function AssessmentsTab({
     if (n === 0) {
       return result;
     }
-    const thresholdCount =
-      n > 2 ? Math.min(Math.max(Math.ceil(n * 0.1), 5), Math.floor(n / 2)) : 0;
+    const thresholdCount = n > 2 ? Math.min(Math.max(Math.ceil(n * 0.1), 5), Math.floor(n / 2)) : 0;
     const byImpact = [...sortedAndFiltered].sort((a, b) => b.peopleImpacted - a.peopleImpacted);
     const redIds = new Set(byImpact.slice(0, thresholdCount).map((item) => item.id));
     const greenIds = new Set(byImpact.slice(n - thresholdCount).map((item) => item.id));

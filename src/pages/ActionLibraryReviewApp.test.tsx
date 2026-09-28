@@ -40,7 +40,9 @@ describe('ActionLibraryReviewApp', () => {
       screen.queryByDisplayValue('A compelling future state has been defined')
     ).not.toBeInTheDocument();
     expect(
-      screen.getByDisplayValue('The pilot has validated that a compelling future state has been defined')
+      screen.getByDisplayValue(
+        'The pilot has validated that a compelling future state has been defined'
+      )
     ).toBeInTheDocument();
 
     // act - add an outcome under Pathway 2

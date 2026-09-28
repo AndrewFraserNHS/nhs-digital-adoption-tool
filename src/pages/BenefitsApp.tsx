@@ -155,7 +155,8 @@ function chronologicalFilledPeriods(entry: BenefitTrackerEntry): BenefitTrackerP
   return [...entry.periods]
     .filter((period) => period.forecast !== '' || period.actual !== '')
     .sort(
-      (a, b) => a.year - b.year || QUARTER_ORDER.indexOf(a.quarterKey) - QUARTER_ORDER.indexOf(b.quarterKey)
+      (a, b) =>
+        a.year - b.year || QUARTER_ORDER.indexOf(a.quarterKey) - QUARTER_ORDER.indexOf(b.quarterKey)
     );
 }
 
@@ -184,7 +185,9 @@ function yearAverageVariance(
   const variances = entry.periods
     .filter((period) => period.year === year)
     .map((period) => computeVariance(period.forecast, period.actual))
-    .filter((v): v is { status: ReturnType<typeof getBragStatus>; percentDelta: number } => v !== null);
+    .filter(
+      (v): v is { status: ReturnType<typeof getBragStatus>; percentDelta: number } => v !== null
+    );
   if (variances.length === 0) {
     return null;
   }
@@ -194,7 +197,11 @@ function yearAverageVariance(
 
 type TrendDisplayItem =
   | { kind: 'period'; period: BenefitTrackerPeriod }
-  | { kind: 'yearAverage'; year: number; variance: { status: ReturnType<typeof getBragStatus>; percentDelta: number } };
+  | {
+      kind: 'yearAverage';
+      year: number;
+      variance: { status: ReturnType<typeof getBragStatus>; percentDelta: number };
+    };
 
 /**
  * Builds the row of trend chips shown on the collapsed tracker row:
@@ -241,7 +248,9 @@ function VarianceValue({
   variance: { status: ReturnType<typeof getBragStatus>; percentDelta: number };
 }): JSX.Element {
   return (
-    <span className={`mt-0.5 rounded-full border px-1.5 font-bold ${bragBadgeClass(variance.status)}`}>
+    <span
+      className={`mt-0.5 rounded-full border px-1.5 font-bold ${bragBadgeClass(variance.status)}`}
+    >
       {variance.percentDelta > 0 ? '+' : ''}
       {variance.percentDelta.toFixed(0)}%
     </span>
@@ -517,7 +526,8 @@ export default function BenefitsApp({
     });
   };
 
-  const varianceStatus = (forecast: string, actual: string) => computeVariance(forecast, actual)?.status ?? null;
+  const varianceStatus = (forecast: string, actual: string) =>
+    computeVariance(forecast, actual)?.status ?? null;
 
   return (
     <div>
@@ -761,7 +771,9 @@ export default function BenefitsApp({
                     />
                   </div>
                   <div>
-                    <FieldLabel htmlFor="benefit-measurements">Benefit measurement(s) used</FieldLabel>
+                    <FieldLabel htmlFor="benefit-measurements">
+                      Benefit measurement(s) used
+                    </FieldLabel>
                     <textarea
                       id="benefit-measurements"
                       value={formData.measurementsUsed}
@@ -930,10 +942,15 @@ export default function BenefitsApp({
                             </td>
                             <td className="px-4 py-3 text-slate-600">{item.speciality}</td>
                             <td className="px-4 py-3 text-slate-600 text-xs">
-                              {ownerLabel(item.strategicOwnerId)} / {ownerLabel(item.operationalOwnerId)}
+                              {ownerLabel(item.strategicOwnerId)} /{' '}
+                              {ownerLabel(item.operationalOwnerId)}
                             </td>
-                            <td className="px-4 py-3 text-slate-600">{item.unitOfMeasure || '-'}</td>
-                            <td className="px-4 py-3 text-slate-600">{item.baselineValue || '-'}</td>
+                            <td className="px-4 py-3 text-slate-600">
+                              {item.unitOfMeasure || '-'}
+                            </td>
+                            <td className="px-4 py-3 text-slate-600">
+                              {item.baselineValue || '-'}
+                            </td>
                             <td className="px-4 py-3 text-slate-600">{item.dateCreated}</td>
                             <td className="px-4 py-3 text-slate-600">{item.dateReviewed}</td>
                             <td className="px-4 py-3 text-right">
@@ -964,12 +981,18 @@ export default function BenefitsApp({
                                     label="Beneficiary Groups"
                                     value={item.beneficiaryGroups.join(', ')}
                                   />
-                                  <DetailField label="Trust Objective(s)" value={item.trustObjectives} />
+                                  <DetailField
+                                    label="Trust Objective(s)"
+                                    value={item.trustObjectives}
+                                  />
                                   <div className="md:col-span-3">
                                     <DetailField label="Benefit Details" value={item.details} />
                                   </div>
                                   <div className="md:col-span-3">
-                                    <DetailField label="Change Enablers" value={item.changeEnablers} />
+                                    <DetailField
+                                      label="Change Enablers"
+                                      value={item.changeEnablers}
+                                    />
                                   </div>
                                   <div className="md:col-span-3">
                                     <DetailField
@@ -1042,12 +1065,16 @@ export default function BenefitsApp({
                               {item.benefitNo}
                             </td>
                             <td className="px-4 py-3 text-slate-600">{item.title}</td>
-                            <td className="px-4 py-3 text-slate-600">{item.baselineValue || '-'}</td>
+                            <td className="px-4 py-3 text-slate-600">
+                              {item.baselineValue || '-'}
+                            </td>
                             <td className="px-4 py-3">
                               {(() => {
                                 const trend = buildTrendDisplay(entry);
                                 if (trend.length === 0) {
-                                  return <span className="text-slate-400 text-xs">No data yet</span>;
+                                  return (
+                                    <span className="text-slate-400 text-xs">No data yet</span>
+                                  );
                                 }
                                 return (
                                   <div className="flex flex-wrap gap-1">
@@ -1081,7 +1108,9 @@ export default function BenefitsApp({
                                     id={`tracker-variance-${item.id}`}
                                     value={entry.varianceReason}
                                     onChange={(e) =>
-                                      updateTrackerEntry(item.id, { varianceReason: e.target.value })
+                                      updateTrackerEntry(item.id, {
+                                        varianceReason: e.target.value,
+                                      })
                                     }
                                     className="w-full p-2 border border-slate-300 rounded outline-none h-16"
                                   />
@@ -1102,8 +1131,16 @@ export default function BenefitsApp({
                                         QUARTERS.map((quarter, quarterIndex) => {
                                           const period = entry.periods.find(
                                             (p) => p.year === year && p.quarterKey === quarter.key
-                                          ) || { year, quarterKey: quarter.key, forecast: '', actual: '' };
-                                          const status = varianceStatus(period.forecast, period.actual);
+                                          ) || {
+                                            year,
+                                            quarterKey: quarter.key,
+                                            forecast: '',
+                                            actual: '',
+                                          };
+                                          const status = varianceStatus(
+                                            period.forecast,
+                                            period.actual
+                                          );
                                           return (
                                             <tr key={`${item.id}-${year}-${quarter.key}`}>
                                               {quarterIndex === 0 ? (
@@ -1114,7 +1151,9 @@ export default function BenefitsApp({
                                                   Y{year}
                                                 </td>
                                               ) : null}
-                                              <td className="px-3 py-2 text-slate-600">{quarter.label}</td>
+                                              <td className="px-3 py-2 text-slate-600">
+                                                {quarter.label}
+                                              </td>
                                               <td className="px-3 py-2">
                                                 <label
                                                   htmlFor={`forecast-${item.id}-${year}-${quarter.key}`}

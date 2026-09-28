@@ -39,6 +39,7 @@ import { TOOLKIT_OPTIONS, type ToolkitOptionKey } from '@data/toolkits';
 import { ReadinessQuestionEditor } from '@components/common/ReadinessQuestionEditor';
 import { StakeholderPicker } from '@components/common/StakeholderPicker';
 import { resolveReadinessQuestions, type PreparednessAssessment } from '@data/readinessReview';
+import { AVT_MAILBOX } from '@lib/readinessExport';
 import { PHASE_NAMES } from '../../types/constants';
 
 function sanitizeFileNamePart(value: string): string {
@@ -1329,6 +1330,26 @@ export function ProjectDetailsPage({
 
           {!profile.readinessReviewQuestionsInitiated || showReviewQuestionsSection ? (
             <>
+              <div className="mt-3">
+                <label
+                  htmlFor="org-avt-mailbox"
+                  className={`block text-sm font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
+                >
+                  Readiness Review mailbox
+                </label>
+                <input
+                  id="org-avt-mailbox"
+                  type="email"
+                  className={`w-full rounded-md border shadow-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8] sm:text-sm p-2 ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-[#768692] bg-white text-slate-900'}`}
+                  placeholder={AVT_MAILBOX}
+                  value={profile.avtMailbox || ''}
+                  onChange={(e) => handleProfileFieldChange({ avtMailbox: e.target.value })}
+                />
+                <p className={`mt-1 text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                  Where the completed Readiness Review report is sent. Leave blank to use the
+                  default AVT mailbox ({AVT_MAILBOX}).
+                </p>
+              </div>
               <p className={`mt-2 text-sm p-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
                 Reword, reorder or add questions to the Readiness Review. Added questions can be
                 multiple choice or free text and are recorded in the exported report without

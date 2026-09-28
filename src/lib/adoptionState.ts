@@ -318,6 +318,8 @@ export interface OrgProfile {
   contactEmail?: string;
   /** Stakeholder id (AdoptionStore.stakeholders) of the executive sponsor / SRO. */
   executiveSponsorId?: string;
+  /** Where the Readiness Review report is sent. Unset means the built-in AVT mailbox default. */
+  avtMailbox?: string;
   /**
    * Stable identity for this CST, assigned once and carried through every export so two
    * copies of the same programme can be recognised as such after diverging. Never invented
@@ -414,6 +416,7 @@ export function normalizeOrgProfile(profile?: Partial<OrgProfile>): OrgProfile {
     readinessQuestions: profile?.readinessQuestions,
     contactEmail: profile?.contactEmail,
     executiveSponsorId: profile?.executiveSponsorId,
+    avtMailbox: profile?.avtMailbox,
     cstId: profile?.cstId,
   };
 }

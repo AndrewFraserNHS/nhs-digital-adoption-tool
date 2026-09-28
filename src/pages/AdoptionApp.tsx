@@ -1932,6 +1932,7 @@ export function AdoptionApp() {
               onReadinessEvaluated={handleReadinessEvaluated}
               readinessQuestions={resolveReadinessQuestions(store.orgProfile.readinessQuestions)}
               contactEmail={store.orgProfile.contactEmail}
+              avtMailbox={store.orgProfile.avtMailbox}
               executiveSponsor={
                 store.stakeholders.find(
                   (stakeholder) => stakeholder.id === store.orgProfile.executiveSponsorId

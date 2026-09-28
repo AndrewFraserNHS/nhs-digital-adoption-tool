@@ -46,6 +46,8 @@ export interface ReadinessReviewAppProps {
   region?: string;
   leadName?: string;
   contactEmail?: string;
+  /** Where the completed report is sent. Unset uses the built-in AVT mailbox default. */
+  avtMailbox?: string;
   executiveSponsor?: string;
   /** The signed-in team member, recorded as who completed the review. */
   currentUserName?: string;
@@ -72,6 +74,7 @@ export default function ReadinessReviewApp({
   region = '',
   leadName = '',
   contactEmail = '',
+  avtMailbox,
   executiveSponsor = '',
   currentUserName = '',
   currentPhase = 1,
@@ -196,14 +199,14 @@ export default function ReadinessReviewApp({
   const handleSendReport = () => {
     const report = loadReport();
     if (report) {
-      sendReportBundle(report, components);
+      sendReportBundle(report, components, avtMailbox);
     }
   };
 
   const handleDownloadEml = () => {
     const report = loadReport();
     if (report) {
-      void downloadReportEml(report, components);
+      void downloadReportEml(report, components, avtMailbox);
     }
   };
 
@@ -413,7 +416,17 @@ export default function ReadinessReviewApp({
                 >
                   <div className="text-center">
                     <p className="text-xs font-semibold uppercase tracking-wide text-blue-600 break-words">
-                      {[currentQuestion.label, currentQuestion.lens].filter(Boolean).join(' · ')}
+                      {currentQuestion.label ? (
+                        <>
+                          <span className="text-blue-400">Component:</span> {currentQuestion.label}
+                        </>
+                      ) : null}
+                      {currentQuestion.label && currentQuestion.lens ? '  ·  ' : null}
+                      {currentQuestion.lens ? (
+                        <>
+                          <span className="text-blue-400">Lens:</span> {currentQuestion.lens}
+                        </>
+                      ) : null}
                     </p>
                     <p className="mt-1 text-base font-medium text-slate-800 break-words">
                       {currentQuestion.question}

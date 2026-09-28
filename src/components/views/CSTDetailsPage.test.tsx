@@ -550,4 +550,33 @@ describe('ProjectDetailsPage', () => {
       expect.objectContaining({ customComponentLinks: { vision: [] } })
     );
   });
+
+  it('SHOULD propagate an overridden Readiness Review mailbox', () => {
+    // arrange
+    const onProfileUpdate = vi.fn();
+
+    render(
+      <ProjectDetailsPage
+        orgProfile={orgProfile}
+        onProfileUpdate={onProfileUpdate}
+        components={components}
+        lenses={['Strategic Direction and Leadership']}
+        onComponentClick={vi.fn()}
+        onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
+        onCurrentUserChange={vi.fn()}
+      />
+    );
+
+    // act
+    fireEvent.change(screen.getByLabelText('Readiness Review mailbox'), {
+      target: { value: 'custom@example.nhs.uk' },
+    });
+
+    // assert
+    expect(onProfileUpdate).toHaveBeenLastCalledWith(
+      expect.objectContaining({ avtMailbox: 'custom@example.nhs.uk' })
+    );
+  });
 });

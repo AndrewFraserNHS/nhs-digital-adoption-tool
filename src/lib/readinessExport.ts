@@ -4,7 +4,7 @@ import { buildEml } from '@lib/eml';
 import { buildReadinessReviewPdf, renderReportRadarImage } from '@lib/readinessPdf';
 import { downloadBlob, downloadFile } from '@lib/utils';
 
-// TODO: This mailbox needs updatable in Project Profile
+/** Default recipient - overridable per project via Project Profile (`OrgProfile.avtMailbox`). */
 export const AVT_MAILBOX = 'england.digitaladoptionavt@nhs.net';
 
 function fileBase(trustName: string): string {
@@ -34,12 +34,13 @@ export function downloadReportPdf(
 /** A ready-to-send draft with both files attached, for Outlook (X-Unsent) and other .eml handlers. */
 export async function downloadReportEml(
   report: ReadinessReviewReport,
-  components: AssessmentComponent[]
+  components: AssessmentComponent[],
+  mailbox: string = AVT_MAILBOX
 ): Promise<void> {
   const base = fileBase(report.trustName);
   const pdfBytes = new Uint8Array(await buildPdfBlob(report, components).arrayBuffer());
   const eml = buildEml({
-    to: AVT_MAILBOX,
+    to: mailbox,
     subject: `${report.trustName} - Assessment outcomes`,
     body: 'Please find our AVT Readiness Review outcomes attached.',
     attachments: [
@@ -54,19 +55,23 @@ export async function downloadReportEml(
   downloadFile(`${base}.eml`, eml, 'message/rfc822');
 }
 
-export function buildReportMailto(report: ReadinessReviewReport): string {
+export function buildReportMailto(
+  report: ReadinessReviewReport,
+  mailbox: string = AVT_MAILBOX
+): string {
   const base = fileBase(report.trustName);
   const subject = `${report.trustName} - Assessment outcomes`;
   const body = `Please find our AVT Readiness Review outcomes attached (${base}.pdf and ${base}.json - both have just been downloaded to your device, please attach them to this email).`;
-  return `mailto:${AVT_MAILBOX}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  return `mailto:${mailbox}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
 /** Downloads the JSON + PDF and opens a mailto draft (in the user's default mail app) to attach them to. */
 export function sendReportBundle(
   report: ReadinessReviewReport,
-  components: AssessmentComponent[]
+  components: AssessmentComponent[],
+  mailbox: string = AVT_MAILBOX
 ): void {
   downloadReportJson(report);
   downloadReportPdf(report, components);
-  window.location.href = buildReportMailto(report);
+  window.location.href = buildReportMailto(report, mailbox);
 }

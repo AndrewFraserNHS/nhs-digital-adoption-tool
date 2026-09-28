@@ -34,6 +34,7 @@ export interface WhereAmINowPageProps {
     skipped?: boolean;
   }) => void;
   contactEmail?: string;
+  avtMailbox?: string;
   executiveSponsor?: string;
   currentUserName?: string;
   currentPhase?: number;
@@ -207,6 +208,7 @@ export function WhereAmINowPage({
   currentPathway,
   onPathwayChosen,
   contactEmail,
+  avtMailbox,
   executiveSponsor,
   currentUserName,
   currentPhase,
@@ -359,6 +361,7 @@ export function WhereAmINowPage({
               onReadinessEvaluated={onReadinessEvaluated}
               questions={readinessQuestions}
               contactEmail={contactEmail}
+              avtMailbox={avtMailbox}
               executiveSponsor={executiveSponsor}
               currentUserName={currentUserName}
               currentPhase={currentPhase}

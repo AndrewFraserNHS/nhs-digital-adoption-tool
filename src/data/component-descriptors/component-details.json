@@ -261,8 +261,51 @@
     "userInsight": "Adoption was strongest where trusted peers led the change, clinical and admin teams were engaged early and patients and clinicians had clarity and confidence around the change.",
     "whyThisMatters": "Engagement reduces resistance by building understanding and addressing misconceptions early.\n When people are involved in design, they become advocates.\n Patient trust and understanding is increased when communication is transparent and choice based.",
     "quickRealityCheck": "Is there a feedback loop after communications go out? Are comms understandable to non-technical staff?\n Are issues tracked through to closure? Are real life scenarios included in validations?",
-    "whatGoodLooksLike": [],
-    "risksIfYouDont": []
+    "whatGoodLooksLike": [
+      {
+        "title": "EARLY INCLUSION",
+        "body": "Clinical staff and admin teams are included early in workflow design and feedback loops."
+      },
+      {
+        "title": "GOOD PATIENT INFORMATION",
+        "body": "Patient information exists in inclusive formats (posters/FAQs) and clinicians can explain it confidently."
+      },
+      {
+        "title": "VISIBLE CHAMPIONS",
+        "body": "Champions are visible, supported and used as peer-facing demonstrators."
+      },
+      {
+        "title": "EARLY ENGAGEMENT",
+        "body": "Engagement starts early enough to shape decisions."
+      },
+      {
+        "title": "IDENTIFIED STAKEHOLDERS",
+        "body": "All stakeholders are identified by impact, not just seniority"
+      }
+    ],
+    "risksIfYouDont": [
+      {
+        "title": "RUMOURS AND MISINTERPRETATION",
+        "body": "Rumour and misinterpretation regarding increased workload and admin replacement, become narratives."
+      },
+      {
+        "title": "FRICTION CAUSES REWORK",
+        "body": "Workflow issues surface late and create friction and rework."
+      },
+      {
+        "title": "INCREASED PATIENT CONFUSION",
+        "body": "Patient confusion and uncertainty increases complaints or reduces "
+      },
+
+      {
+        "title": "MISSED RISKS",
+        "body": "Critical risks or situations where it might struggle in practice (such as complex consultations or noisy environments) are missed."
+      },
+      {
+        "title": "MONITORING CEASE",
+        "body": "Monitoring stops after it use begins rather than continuing in live use"
+      }
+    ]
   },
   "resistance": {
     "component": "Resistance Management",
@@ -479,8 +522,50 @@
     "userInsight": "$projectName only transformed practice when teams changed habits, otherwise old ways persisted.",
     "whyThisMatters": "Inconsistent practice can emerge across teams and settings.\n Clinicians slip back into old habits rewriting notes or just dictation.\n Safety risks increase when \"Human in the Loop\" review and approval and clinical ownership drop when it gets busy.",
     "quickRealityCheck": "Can staff explain how $projectName fits with the workflow? Do supporting materials match actual practice?\n Are workarounds being spotted? Is feedback being used to refine the workflow?",
-    "whatGoodLooksLike": [],
-    "risksIfYouDont": []
+    "whatGoodLooksLike": [
+      {
+        "title": "RECOGNISE GAPS",
+        "body": "As-Is/To-Be workflows are mapped and variations between teams are recognised."
+      },
+      {
+        "title": "TAILOR TEMPLATES",
+        "body": "Templates and outputs are deliberately tailored to local workflow requirements."
+      },
+      {
+        "title": "RETIRE OLD WORKAROUNDS",
+        "body": "Old workarounds are identified and actively retired as the new process stabilises."
+      },
+      {
+        "title": "STAFF INVOLVEMENT",
+        "body": "Involve the right staff in mapping workflows."
+      },
+      {
+        "title": "CONTINUOUS IMPROVEMENT LOOP",
+        "body": "Feedback from users and operations are used to refine the process"
+      }
+    ],
+    "risksIfYouDont": [
+      {
+        "title": "WORKAROUNDS BECOME NORMALISED",
+        "body": "Workarounds become normalised and difficult to reverse."
+      },
+      {
+        "title": "INCONSISTENT PROCESSES",
+        "body": "Safety and governance risks increase due to inconsistent process routes and identifiers."
+      },
+      {
+        "title": "LOST EFFICIENCY GAINS",
+        "body": "Efficiency gains are lost due to parallel processes and rework."
+      },
+      {
+        "title": "POOR SCALABILITY",
+        "body": "It may work in isolated cases but fail at broader rollout."
+      },
+      {
+        "title": "STAKEHOLDER RESISTANCE LATER",
+        "body": "Adoption becomes harder once expectations and habits are fixed."
+      }
+    ]
   },
   "reinforcement": {
     "component": "Reinforcement",

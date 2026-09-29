@@ -8,7 +8,7 @@ import { save } from '@lib/storage';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import ReadinessReviewAnalysisApp from './ChangeAdoptionBaselineAnalysisApp';
+import ChangeAdoptionBaselineAnalysisApp from './ChangeAdoptionBaselineAnalysisApp';
 
 const COMPONENTS: AssessmentComponent[] = [
   {
@@ -43,13 +43,13 @@ const REPORT: ReadinessReviewReport = {
   outcome: { skipToPhase: 2, readyComponentIds: ['vision'] },
 };
 
-describe('ReadinessReviewAnalysisApp', () => {
+describe('ChangeAdoptionBaselineAnalysisApp', () => {
   beforeEach(() => {
     window.localStorage.clear();
   });
 
   it('SHOULD show an empty state on "My Answers" when no report has been saved', () => {
-    render(<ReadinessReviewAnalysisApp components={COMPONENTS} />);
+    render(<ChangeAdoptionBaselineAnalysisApp components={COMPONENTS} />);
 
     expect(screen.getByText(/Complete the change adoption baseline first/)).toBeInTheDocument();
   });
@@ -57,7 +57,7 @@ describe('ReadinessReviewAnalysisApp', () => {
   it('SHOULD render the saved report under "My Answers"', () => {
     save(READINESS_REVIEW_REPORT_STORAGE_KEY, REPORT);
 
-    render(<ReadinessReviewAnalysisApp components={COMPONENTS} />);
+    render(<ChangeAdoptionBaselineAnalysisApp components={COMPONENTS} />);
 
     expect(screen.getByText('Test Trust')).toBeInTheDocument();
     expect(screen.getByText('Q1')).toBeInTheDocument();
@@ -65,12 +65,12 @@ describe('ReadinessReviewAnalysisApp', () => {
   });
 
   it('SHOULD import an external report, render it, and clear it without ever touching localStorage', async () => {
-    render(<ReadinessReviewAnalysisApp components={COMPONENTS} />);
+    render(<ChangeAdoptionBaselineAnalysisApp components={COMPONENTS} />);
 
     fireEvent.click(screen.getByRole('tab', { name: 'Import External Answers' }));
 
     const file = new File([JSON.stringify(REPORT)], 'report.json', { type: 'application/json' });
-    const input = screen.getByLabelText(/Import a Readiness Review report/) as HTMLInputElement;
+    const input = screen.getByLabelText(/Import a Change Adoption Baseline report/) as HTMLInputElement;
     fireEvent.change(input, { target: { files: [file] } });
 
     await waitFor(() => expect(screen.getByText('Test Trust')).toBeInTheDocument());
@@ -80,24 +80,24 @@ describe('ReadinessReviewAnalysisApp', () => {
     expect(screen.queryByText('Test Trust')).not.toBeInTheDocument();
   });
 
-  it('SHOULD reject a file that is not a Readiness Review report', async () => {
-    render(<ReadinessReviewAnalysisApp components={COMPONENTS} />);
+  it('SHOULD reject a file that is not a Change Adoption Baseline report', async () => {
+    render(<ChangeAdoptionBaselineAnalysisApp components={COMPONENTS} />);
 
     fireEvent.click(screen.getByRole('tab', { name: 'Import External Answers' }));
 
     const file = new File([JSON.stringify({ notAReport: true })], 'bad.json', {
       type: 'application/json',
     });
-    const input = screen.getByLabelText(/Import a Readiness Review report/) as HTMLInputElement;
+    const input = screen.getByLabelText(/Import a Change Adoption Baseline report/) as HTMLInputElement;
     fireEvent.change(input, { target: { files: [file] } });
 
     await waitFor(() =>
-      expect(screen.getByText(/does not look like a Readiness Review report/)).toBeInTheDocument()
+      expect(screen.getByText(/does not look like a Change Adoption Baseline report/)).toBeInTheDocument()
     );
   });
 
   it('SHOULD import a report straight from a saved .eml attachment', async () => {
-    render(<ReadinessReviewAnalysisApp components={COMPONENTS} />);
+    render(<ChangeAdoptionBaselineAnalysisApp components={COMPONENTS} />);
     fireEvent.click(screen.getByRole('tab', { name: 'Import External Answers' }));
     const eml = buildEml({
       to: 'a@b.c',
@@ -108,7 +108,7 @@ describe('ReadinessReviewAnalysisApp', () => {
       ],
     });
 
-    const input = screen.getByLabelText(/Import a Readiness Review report/) as HTMLInputElement;
+    const input = screen.getByLabelText(/Import a Change Adoption Baseline report/) as HTMLInputElement;
     fireEvent.change(input, {
       target: { files: [new File([eml], 'report.eml', { type: 'message/rfc822' })] },
     });
@@ -129,14 +129,14 @@ describe('ReadinessReviewAnalysisApp', () => {
       },
     ];
 
-    render(<ReadinessReviewAnalysisApp components={two} />);
+    render(<ChangeAdoptionBaselineAnalysisApp components={two} />);
 
     expect(screen.getByRole('alert')).toHaveTextContent('Case for Change');
   });
 
   it('SHOULD hide the implied score column unless a mapping falls outside 0-4', () => {
     save(READINESS_REVIEW_REPORT_STORAGE_KEY, REPORT);
-    const { unmount } = render(<ReadinessReviewAnalysisApp components={COMPONENTS} />);
+    const { unmount } = render(<ChangeAdoptionBaselineAnalysisApp components={COMPONENTS} />);
     expect(screen.queryByText('Implied score')).not.toBeInTheDocument();
     unmount();
 
@@ -144,7 +144,7 @@ describe('ReadinessReviewAnalysisApp', () => {
       ...REPORT,
       answers: [{ ...REPORT.answers[0], impliedScore: 5 }],
     });
-    render(<ReadinessReviewAnalysisApp components={COMPONENTS} />);
+    render(<ChangeAdoptionBaselineAnalysisApp components={COMPONENTS} />);
 
     expect(screen.getByText('Implied score')).toBeInTheDocument();
   });

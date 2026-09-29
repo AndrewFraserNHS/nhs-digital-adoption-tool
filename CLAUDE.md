@@ -12,7 +12,7 @@ React 18 + TypeScript + Vite, no backend (state in `localStorage`, moved as expo
 
 - One shell: `src/pages/AdoptionApp.tsx` renders every tool by `view`. Adding a tool = `View` union + `IN_APP_TOOLS`/`DEFAULT_TOOL_LINK_TEXT` + sidebar array/label + `sectionByView` + render block.
 - Readiness levels/labels: `lib/readinessBands.ts` only. Thriving-required scores are passed at Adopted via `getPhasePassScore`.
-- Readiness Review answers are keyed by permanent `nu`; never renumber. Report radar comes from the frozen snapshot via `buildReportRadarData` - don't rebuild it from answers.
+- Change Adoption Baseline answers are keyed by permanent `nu`; never renumber. Report radar comes from the frozen snapshot via `buildReportRadarData` - don't rebuild it from answers. The feature is user-facing "Change Adoption Baseline"; internal files/types/storage keys still say `readinessReview`/`ReadinessReview*` - don't rename those without a good reason, it's a large surface.
 - Every data edit must go through the guarded handlers in `AdoptionApp` (`requireSignedIn`); keep the rules in `lib/signInGuard.ts`.
 - Text output in tests uses SHOULD/WHERE naming and arrange/act/assert comments.
 - Action text uses "M "/"S " prefixes (`lib/moscow.ts`); there is no "Could".

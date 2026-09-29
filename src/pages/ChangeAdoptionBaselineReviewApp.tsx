@@ -69,7 +69,7 @@ export interface ReadinessReviewAppProps {
   }) => void;
 }
 
-export default function ReadinessReviewApp({
+export default function ChangeAdoptionBaselineReviewApp({
   trustName = '',
   region = '',
   leadName = '',
@@ -140,7 +140,7 @@ export default function ReadinessReviewApp({
     update({ completed: true });
 
     // A frozen snapshot of everything answered, for the emailed attachment and for the
-    // "Readiness Review Analysis" tool's "My Answers" view - overwritten on every completion.
+    // "Change Adoption Baseline Analysis" tool's "My Answers" view - overwritten on every completion.
     save(READINESS_REVIEW_REPORT_STORAGE_KEY, {
       ...buildReadinessReviewReport(
         {
@@ -358,8 +358,8 @@ export default function ReadinessReviewApp({
             <div className="rounded-lg border border-green-200 bg-green-50 p-6 space-y-4 text-center">
               <h2 className="text-lg font-semibold text-green-900">Assessment complete</h2>
               <p className="text-sm text-green-800">
-                Thanks for completing the Readiness Review. See your updated readiness in
-                &quot;Readiness by component&quot; below, or retake the review any time.
+                Thanks for completing the Change Adoption Baseline. See your updated readiness in
+                &quot;Readiness by component&quot; below, or retake the assessment any time.
               </p>
               <div className="flex flex-wrap justify-center gap-3">
                 <button

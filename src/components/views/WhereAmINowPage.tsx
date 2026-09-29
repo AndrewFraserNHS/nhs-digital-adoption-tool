@@ -13,7 +13,7 @@ import { createBarChart, createRadarChart } from '@lib/charts';
 import { getReadinessBand } from '@lib/readinessBands';
 import { PHASE_NAMES } from '../../types/constants';
 
-import ReadinessReviewApp from '@pages/ReadinessReviewApp';
+import ChangeAdoptionBaselineReviewApp from '@pages/ChangeAdoptionBaselineReviewApp';
 
 export interface WhereAmINowPageProps {
   components: AssessmentComponent[];
@@ -132,6 +132,11 @@ function ComponentLensBarChart({
     const target = getComponentExemplarScore(component.id, phase, component.target);
     const tickColor = darkMode ? '#e2e8f0' : '#0b1220';
     const gridColor = darkMode ? 'rgba(226,232,240,0.10)' : 'rgba(11,18,32,0.06)';
+    // Stacked rather than grouped, so "Current" and the remaining gap to "Target" sit end to end
+    // on one bar (reading 0 -> target) instead of two separate bars side by side.
+    const currentScores = component.lenses.map((lens) =>
+      Number(getEntry(component.id, lens).score || 0)
+    );
     createBarChart(
       canvasRef.current,
       {
@@ -139,17 +144,15 @@ function ComponentLensBarChart({
         datasets: [
           {
             label: 'Current',
-            data: component.lenses.map((lens) => Number(getEntry(component.id, lens).score || 0)),
+            data: currentScores,
             backgroundColor: '#005EB8',
           },
           {
-            label: 'Target',
-            data: component.lenses.map(() => target),
-            backgroundColor: 'transparent',
+            label: 'Remaining to target',
+            data: currentScores.map((score) => Math.max(0, target - score)),
+            backgroundColor: darkMode ? 'rgba(148,163,184,0.25)' : 'rgba(148,163,184,0.35)',
             borderColor: '#94a3b8',
-            borderWidth: 2,
-            // borderDash isn't in this Chart.js version's bar dataset types but is a valid runtime option.
-            ...({ borderDash: [5, 5] } as Record<string, unknown>),
+            borderWidth: 1,
           },
         ],
       },
@@ -157,6 +160,7 @@ function ComponentLensBarChart({
         indexAxis: 'y',
         scales: {
           x: {
+            stacked: true,
             min: 0,
             max: 5,
             grid: { color: gridColor },
@@ -167,6 +171,7 @@ function ComponentLensBarChart({
             },
           },
           y: {
+            stacked: true,
             grid: { display: false },
             ticks: { color: tickColor, font: { size: 11 } },
           },
@@ -351,7 +356,7 @@ export function WhereAmINowPage({
           <div
             className={`rounded-lg border p-6 ${darkMode ? 'border-slate-600 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
           >
-            <ReadinessReviewApp
+            <ChangeAdoptionBaselineReviewApp
               trustName={trustName}
               region={region}
               leadName={leadName}
@@ -509,7 +514,8 @@ export function WhereAmINowPage({
             <>
               <p className={`mt-3 text-xs ${textClass}`}>
                 Every component in Phase {effectivePhaseFocus}: {PHASE_NAMES[effectivePhaseFocus]},
-                with a bar per lens and a dashed target bar for where it's expected to be.
+                with a stacked bar per lens - current readiness, plus the remaining gap to where
+                it's expected to be.
               </p>
               <div className="mt-4 grid grid-cols-1 gap-3">
                 {componentsInCurrentPhase.map((component) => (

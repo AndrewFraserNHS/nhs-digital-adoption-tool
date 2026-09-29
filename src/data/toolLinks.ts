@@ -23,8 +23,8 @@ export const DEFAULT_TOOL_LINK_TEXT: Record<InAppTool, { label: string; matchTex
   'raid-log': { label: 'RAID Log', matchText: 'RAID Log' },
   benefits: { label: 'Benefits Register & Tracker', matchText: 'Benefits Register' },
   'readiness-review-analysis': {
-    label: 'Readiness Review Analysis',
-    matchText: 'Readiness Review Analysis',
+    label: 'Change Adoption Baseline Analysis',
+    matchText: 'Change Adoption Baseline Analysis',
   },
 };
 

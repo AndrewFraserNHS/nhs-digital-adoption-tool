@@ -13,7 +13,7 @@ function getEntry(): DraftEntry {
 }
 
 describe('WhereAmINowPage', () => {
-  it('SHOULD show the Readiness Review as the top section instead of a phase picker', () => {
+  it('SHOULD show the Change Adoption Baseline as the top section instead of a phase picker', () => {
     // arrange
     render(
       <WhereAmINowPage

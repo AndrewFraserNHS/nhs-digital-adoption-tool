@@ -9,7 +9,7 @@ import { load } from '@lib/storage';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import ReadinessReviewApp from './ReadinessReviewApp';
+import ChangeAdoptionBaselineReviewApp from './ChangeAdoptionBaselineReviewApp';
 
 const { sendReportBundle } = vi.hoisted(() => ({ sendReportBundle: vi.fn() }));
 vi.mock('@lib/readinessExport', () => ({
@@ -61,14 +61,14 @@ function answerQuestion(nu: number, optionNumber: number) {
   fireEvent.click(screen.getByLabelText(question.answers[optionNumber - 1]));
 }
 
-describe('ReadinessReviewApp', () => {
+describe('ChangeAdoptionBaselineReviewApp', () => {
   beforeEach(() => {
     localStorage.clear();
   });
 
   it('SHOULD start with a message pointing at Project Profile and the two start options', () => {
     // arrange
-    render(<ReadinessReviewApp questions={PREPAREDNESS_ASSESSMENT} trustName="Test Trust" />);
+    render(<ChangeAdoptionBaselineReviewApp questions={PREPAREDNESS_ASSESSMENT} trustName="Test Trust" />);
 
     // assert
     expect(screen.getByText('Step 1 of 2')).toBeInTheDocument();
@@ -87,7 +87,7 @@ describe('ReadinessReviewApp', () => {
     const onReadinessEvaluated = vi.fn();
     const onEntryUpdate = vi.fn();
     render(
-      <ReadinessReviewApp
+      <ChangeAdoptionBaselineReviewApp
         questions={PREPAREDNESS_ASSESSMENT}
         components={COMPONENTS}
         onEntryUpdate={onEntryUpdate}
@@ -111,7 +111,7 @@ describe('ReadinessReviewApp', () => {
 
   it('SHOULD show one question at a time with a progress bar, and require an answer before Next', () => {
     // arrange
-    render(<ReadinessReviewApp questions={PREPAREDNESS_ASSESSMENT} />);
+    render(<ChangeAdoptionBaselineReviewApp questions={PREPAREDNESS_ASSESSMENT} />);
     goToQuestions();
 
     // assert - first question shown with a progress indicator
@@ -132,7 +132,7 @@ describe('ReadinessReviewApp', () => {
 
   it('SHOULD reach the last question and show a Finish assessment button', () => {
     // arrange
-    render(<ReadinessReviewApp questions={PREPAREDNESS_ASSESSMENT} />);
+    render(<ChangeAdoptionBaselineReviewApp questions={PREPAREDNESS_ASSESSMENT} />);
     goToQuestions();
 
     // act - answer every question
@@ -156,7 +156,7 @@ describe('ReadinessReviewApp', () => {
     // arrange
     const onReadinessEvaluated = vi.fn();
     render(
-      <ReadinessReviewApp
+      <ChangeAdoptionBaselineReviewApp
         questions={PREPAREDNESS_ASSESSMENT}
         trustName="Test Trust"
         components={[]}
@@ -190,7 +190,7 @@ describe('ReadinessReviewApp', () => {
     // arrange
     sendReportBundle.mockClear();
     render(
-      <ReadinessReviewApp
+      <ChangeAdoptionBaselineReviewApp
         trustName="Test Trust"
         components={[]}
         questions={PREPAREDNESS_ASSESSMENT}
@@ -222,7 +222,7 @@ describe('ReadinessReviewApp', () => {
       { id: 'ghost', label: 'Ghost', lenses: ['Made Up Lens'], phase: 1, target: 2 },
     ];
     render(
-      <ReadinessReviewApp
+      <ChangeAdoptionBaselineReviewApp
         trustName="Test Trust"
         components={uncovered}
         questions={PREPAREDNESS_ASSESSMENT.slice(0, 1)}
@@ -258,7 +258,7 @@ describe('ReadinessReviewApp', () => {
         custom: true,
       },
     ];
-    render(<ReadinessReviewApp trustName="Test Trust" components={[]} questions={questions} />);
+    render(<ChangeAdoptionBaselineReviewApp trustName="Test Trust" components={[]} questions={questions} />);
     goToQuestions();
     answerQuestion(PREPAREDNESS_ASSESSMENT[0].nu, 1);
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
@@ -317,7 +317,7 @@ describe('ReadinessReviewApp', () => {
     const onReadinessEvaluated = vi.fn();
 
     render(
-      <ReadinessReviewApp
+      <ChangeAdoptionBaselineReviewApp
         questions={PREPAREDNESS_ASSESSMENT}
         components={COMPONENTS}
         getEntry={getEntry}
@@ -401,7 +401,7 @@ describe('ReadinessReviewApp', () => {
     const onReadinessEvaluated = vi.fn();
 
     render(
-      <ReadinessReviewApp
+      <ChangeAdoptionBaselineReviewApp
         questions={PREPAREDNESS_ASSESSMENT}
         components={COMPONENTS}
         getEntry={getEntry}
@@ -486,7 +486,7 @@ describe('ReadinessReviewApp', () => {
     const onEntryUpdate = vi.fn();
 
     render(
-      <ReadinessReviewApp
+      <ChangeAdoptionBaselineReviewApp
         questions={PREPAREDNESS_ASSESSMENT}
         components={COMPONENTS}
         getEntry={getEntry}

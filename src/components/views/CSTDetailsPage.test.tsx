@@ -472,6 +472,10 @@ describe('ProjectDetailsPage', () => {
     // assert
     const updatedCoreLinks = onProfileUpdate.mock.calls.at(-1)[0].coreLinks;
     expect(updatedCoreLinks[0].matchAliases).toEqual(['network link']);
+
+    // assert - the wording variant is visible inline on the link row, without reopening the modal
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(screen.getByText('network link')).toBeInTheDocument();
   });
 
   it('SHOULD add a custom link to a component', () => {
@@ -551,7 +555,7 @@ describe('ProjectDetailsPage', () => {
     );
   });
 
-  it('SHOULD propagate an overridden Readiness Review mailbox', () => {
+  it('SHOULD propagate an overridden Change Adoption Baseline mailbox', () => {
     // arrange
     const onProfileUpdate = vi.fn();
 
@@ -570,7 +574,7 @@ describe('ProjectDetailsPage', () => {
     );
 
     // act
-    fireEvent.change(screen.getByLabelText('Readiness Review mailbox'), {
+    fireEvent.change(screen.getByLabelText('Change Adoption Baseline mailbox'), {
       target: { value: 'custom@example.nhs.uk' },
     });
 
@@ -578,5 +582,49 @@ describe('ProjectDetailsPage', () => {
     expect(onProfileUpdate).toHaveBeenLastCalledWith(
       expect.objectContaining({ avtMailbox: 'custom@example.nhs.uk' })
     );
+  });
+
+  it('SHOULD apply the AVT preset after confirming, and do nothing WHEN the confirm is declined', () => {
+    // arrange
+    const onProfileUpdate = vi.fn();
+    const confirmSpy = vi.spyOn(window, 'confirm');
+
+    render(
+      <ProjectDetailsPage
+        orgProfile={{
+          ...orgProfile,
+          coreLinks: [{ key: 'existing', label: 'Old link', url: 'https://old.example', type: 'core' }],
+        }}
+        onProfileUpdate={onProfileUpdate}
+        components={components}
+        lenses={['Strategic Direction and Leadership']}
+        onComponentClick={vi.fn()}
+        onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
+        onCurrentUserChange={vi.fn()}
+      />
+    );
+    const applyButton = screen.getByRole('button', { name: /Apply .*preset/ });
+
+    // act 1 - decline
+    confirmSpy.mockReturnValueOnce(false);
+    fireEvent.click(applyButton);
+
+    // assert 1
+    expect(onProfileUpdate).not.toHaveBeenCalled();
+
+    // act 2 - confirm
+    confirmSpy.mockReturnValueOnce(true);
+    fireEvent.click(applyButton);
+
+    // assert 2
+    expect(onProfileUpdate).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        coreLinks: [expect.objectContaining({ key: 'avt-preset-toolkit' })],
+        readinessQuestions: undefined,
+      })
+    );
+    confirmSpy.mockRestore();
   });
 });

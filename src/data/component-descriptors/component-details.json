@@ -266,60 +266,105 @@
   },
   "resistance": {
     "component": "Resistance Management",
-    "description": "",
-    "whatIsIt": "",
+    "description": "Understand and address the concerns that could prevent adoption",
+    "whatIsIt": "Resistance Management helps organisations identify, understand and address the concerns, perceptions and experiences that may prevent people from adopting a change. It recognises that resistance is often valuable feedback about how a change is being experienced and provides practical approaches to addressing barriers before they affect adoption.",
     "userInsight": "",
-    "whyThisMatters": "",
-    "quickRealityCheck": "",
-    "whatGoodLooksLike": [],
-    "risksIfYouDont": []
-  },
-  "skills_learning": {
-    "component": "Skills and Learning",
-    "description": "",
-    "whatIsIt": "",
-    "userInsight": "",
-    "whyThisMatters": "",
-    "quickRealityCheck": "",
+    "whyThisMatters": "Resistance can be a natural response to change but often provides important insight into the challenges people are experiencing.\n Many adoption issues are incorrectly labelled as resistance when the underlying cause is unclear communication, poor workflow fit, lack of confidence, insufficient support, competing priorities or previous negative experiences of change.\n Understanding the reasons behind resistance helps organisations address the real issue rather than treating the symptom.\n When concerns are acknowledged and addressed early, organisations can build trust, improve engagement, strengthen adoption and reduce the likelihood of barriers becoming embedded.",
+    "quickRealityCheck": "Do you understand the reasons why people may be reluctant to adopt the change?\n Are concerns being identified and discussed early?\n Can you distinguish between resistance, capability gaps, poor communication and workflow challenges?\n Are leaders, managers and change champions equipped to respond to concerns constructively?",
     "whatGoodLooksLike": [
       {
-        "title": "ROLE BASED TRAINING",
-        "body": "Training is role-based and reinforces \"Human in the Loop\" review and approval of $projectName outputs, with clear clinical accountability."
+        "title": "CONCERNS ARE SURFACED EARLY",
+        "body": "People feel able to raise questions, concerns and challenges openly without fear of being labelled negative or resistant."
       },
       {
-        "title": "AT THE ELBOW",
-        "body": "\"At the elbow\" or in-service support exists for early use and those lacking confidence."
+        "title": "THE ROOT CAUSE IS UNDERSTOOD",
+        "body": "The organisation seeks to understand what is driving resistance and addresses the underlying issue rather than making assumptions."
       },
       {
-        "title": "HELP",
-        "body": "Refreshers and rapid help routes exist; small irritants are fixed quickly."
+        "title": "CONCERNS SHAPE CHANGE ACTIONS",
+        "body": "Feedback and insight are used to improve communication, engagement, support, leadership activity and implementation approaches."
       },
       {
-        "title": "PREPARATION FOR NEW WAYS OF WORKING",
-        "body": "Frontline teams are prepared for new ways of working."
+        "title": "LEADERS RESPOND CONSTRUCTIVELY",
+        "body": "Managers, sponsors and change leaders actively listen, address concerns and demonstrate visible action where improvements are needed."
       },
       {
-        "title": "PRE-GO LIVE ASSESSMENTS",
-        "body": "Confidence and readiness are assessed before go live."
+        "title": "TRUST IS BUILT THROUGH ACTION",
+        "body": "People see evidence that feedback is taken seriously and results in meaningful improvements, building confidence and credibility."
       }
     ],
     "risksIfYouDont": [
       {
-        "title": "NON-ADOPTION",
-        "body": "People attend training but still don't adopt because confidence is low and support isn't available."
+        "title": "RESISTANCE BECOMES ENTRENCHED",
+        "body": "Concerns remain unaddressed and gradually become fixed attitudes, behaviours or opposition to the change."
       },
       {
-        "title": "MIXED MESSAGES",
-        "body": "Mixed messages on \"Human in the Loop\" review and approval of $projectName outputs can lead to unsafe practice or avoidance."
+        "title": "THE WRONG PROBLEM IS SOLVED",
+        "body": "Adoption challenges are treated as resistance when the real issue relates to capability, communication, workflow or support."
       },
       {
-        "title": "SUPPLIER RELIANCE",
-        "body": "Reliance on suppliers persists because local super-user capability is not built."
+        "title": "TRUST DECLINES",
+        "body": "People become less willing to engage when they feel concerns are ignored, dismissed or misunderstood."
       },
-      { "title": "LATE IDENTIFICATION", "body": "Skills gaps are identified too late." },
       {
-        "title": "GENERIC TRAINING",
-        "body": "Training is too generic and not tailored to real use."
+        "title": "WORKAROUNDS EMERGE",
+        "body": "Individuals and teams develop alternative ways of working to avoid the change rather than adopting the intended approach."
+      },
+      {
+        "title": "ADOPTION STALLS",
+        "body": "Confidence, engagement and commitment reduce over time, limiting adoption and preventing benefits from being fully realised."
+      }
+    ]
+  },
+  "skills_learning": {
+    "component": "Skills and Learning",
+    "description": "Build the capability and confidence needed to adopt new ways of working",
+    "whatIsIt": "Skills and Learning helps people develop the knowledge, skills and confidence needed to adopt and sustain new ways of working. It focuses on enabling people to apply what they have learned in practice, building capability over time and ensuring support is available when it is needed most.",
+    "userInsight": "",
+    "whyThisMatters": "Digital adoption is not achieved through training alone. People need the confidence, capability and opportunity to apply new knowledge in their day-to-day work.\n Many adoption challenges occur because people understand the change in theory but struggle to apply it in practice. Learning that is disconnected from real workflows, responsibilities and experiences rarely results in sustained adoption.\n Effective learning helps people understand not only how to use a solution, but how their role, behaviours and ways of working may need to change.\n Building capability and confidence reduces uncertainty, increases adoption and helps people adapt successfully as the change becomes part of everyday practice.",
+    "quickRealityCheck": "Do people have the knowledge and skills needed to adopt the change successfully?\n Is learning designed around real roles, workflows and day-to-day experiences?\n Can people access support when they need it, not just during formal training?\n Are confidence and capability improving as adoption progresses?",
+    "whatGoodLooksLike": [
+      {
+        "title": "LEARNING IS RELEVANT TO REAL WORK",
+        "body": "Learning reflects real roles, responsibilities, workflows and scenarios, helping people understand how the change applies to their day-to-day work."
+      },
+      {
+        "title": "CAPABILITY IS BUILT OVER TIME",
+        "body": "Learning is viewed as an ongoing process, with opportunities to practise, reinforce and develop skills as confidence grows."
+      },
+      {
+        "title": "SUPPORT IS AVAILABLE AT THE POINT OF NEED",
+        "body": "People can access guidance, coaching, peer support and resources when they encounter challenges in real situations."
+      },
+      {
+        "title": "DIFFERENT NEEDS ARE RECOGNISED",
+        "body": "Learning approaches are tailored to different roles, levels of experience, learning preferences and adoption needs."
+      },
+      {
+        "title": "CONFIDENCE IS ACTIVELY DEVELOPED",
+        "body": "Organisations measure and strengthen confidence alongside competence, helping people apply new knowledge successfully in practice."
+      }
+    ],
+    "risksIfYouDont": [
+      {
+        "title": "KNOWLEDGE FAILS TO TRANSFER INTO PRACTICE",
+        "body": "People complete training but struggle to apply what they have learned in their day-to-day work."
+      },
+      {
+        "title": "CONFIDENCE REMAINS LOW",
+        "body": "Individuals understand what is expected but lack the confidence to change existing behaviours and ways of working."
+      },
+      {
+        "title": "CAPABILITY GAPS REMAIN HIDDEN",
+        "body": "Critical skills gaps are not identified until they begin to affect performance, adoption or user experience."
+      },
+      {
+        "title": "PEOPLE RELY ON OLD HABITS",
+        "body": "Individuals revert to familiar processes and behaviours because they feel more confident using existing approaches."
+      },
+      {
+        "title": "ADOPTION PROGRESSES UNEVENLY",
+        "body": "Some teams develop confidence and capability quickly while others struggle due to inconsistent learning and support."
       }
     ]
   },
@@ -439,53 +484,53 @@
   },
   "reinforcement": {
     "component": "Reinforcement",
-    "description": "",
-    "whatIsIt": "",
+    "description": "Sustain adoption by embedding, reinforcing and normalising new ways of working",
+    "whatIsIt": "Reinforcement helps organisations sustain change by ensuring new behaviours, ways of working and adoption outcomes become part of everyday practice. It focuses on maintaining momentum, addressing barriers, recognising progress and continuously strengthening adoption long after implementation activities have finished.",
     "userInsight": "",
-    "whyThisMatters": "",
-    "quickRealityCheck": "",
+    "whyThisMatters": "Implementation introduces change. Reinforcement helps the change last.\n Without reinforcement, people often revert to familiar behaviours, especially when workloads increase, priorities shift or support is reduced. Initial adoption does not automatically translate into sustained adoption.\n Successful digital adoption requires ongoing attention to behaviours, habits, leadership, support and continuous improvement. Reinforcement helps organisations ensure that new ways of working become the normal way of working.\n Effective reinforcement also demonstrates that adoption matters, feedback is valued and improvements continue beyond initial implementation, helping organisations realise and sustain the intended benefits of change.",
+    "quickRealityCheck": "Are new behaviours and ways of working being reinforced after implementation?\n Do leaders and managers consistently support and model the change?\n Are feedback, adoption insights and lessons learned being used to drive action?\n Is progress being recognised, celebrated and shared to maintain momentum?",
     "whatGoodLooksLike": [
       {
-        "title": "TARGETED REINFORCEMENT ACTIONS",
-        "body": "Regular review of adoption plus feedback is used to target reinforcement actions."
+        "title": "NEW WAYS OF WORKING BECOME THE NORM",
+        "body": "People consistently apply the expected behaviours, processes and ways of working as part of everyday practice."
       },
       {
-        "title": "FIXED PAIN POINTS",
-        "body": "Known pain points are fixed quickly and communicated back to users."
+        "title": "FEEDBACK LEADS TO IMPROVEMENT",
+        "body": "Adoption insights, feedback and lessons learned are used to improve support, remove barriers and strengthen adoption."
       },
       {
-        "title": "ONGOING BENEFITS",
-        "body": "Ongoing optimisation and benefits tracking continues beyond initial rollout. Benefits and successes are shared widely to reinforce value."
+        "title": "LEADERS ACTIVELY REINFORCE CHANGE",
+        "body": "Sponsors, managers and leaders continue to champion the change, demonstrate commitment and reinforce expectations through their actions."
       },
       {
-        "title": "$projectName BECOMES ROUTINE",
-        "body": "$projectName is embedded into everyday workflows, meetings, supervision and operational conversations."
+        "title": "SUCCESS IS VISIBLE",
+        "body": "Progress, achievements, improvements and positive outcomes are shared regularly to build confidence and maintain momentum."
       },
       {
-        "title": "DATA GUIDES REINFORCEMENT",
-        "body": "Usage data, feedback and adoption patterns show where extra reinforcement is needed."
+        "title": "ADOPTION IS CONTINUOUSLY STRENGTHENED",
+        "body": "Organisations actively monitor adoption and provide additional support, guidance and intervention where reinforcement is needed."
       }
     ],
     "risksIfYouDont": [
       {
-        "title": "FALLEN ADOPTION",
-        "body": "Adoption falls after initial friction because no one closes the loop."
+        "title": "PEOPLE REVERT TO OLD HABITS",
+        "body": "Individuals and teams gradually return to familiar behaviours because the new ways of working are not actively reinforced."
       },
       {
-        "title": "ENTRENCHED BEHAVIOURS",
-        "body": "Small irritants become entrenched behaviours and workarounds."
+        "title": "ADOPTION DECLINES OVER TIME",
+        "body": "Initial enthusiasm reduces and adoption levels fall as attention moves to other priorities and initiatives."
       },
       {
-        "title": "UNPROVEN BENEFITS",
-        "body": "Benefits remain unproven and scaling loses momentum."
+        "title": "FEEDBACK IS IGNORED",
+        "body": "People stop providing insight and raising issues because they do not see evidence that feedback is being acted upon."
       },
       {
-        "title": "OLD HABITS RETURN",
-        "body": "Teams revert to previous ways of working when $projectName in not embedded into daily routines."
+        "title": "BENEFITS FAIL TO BE SUSTAINED",
+        "body": "Early improvements are achieved but weaken over time because adoption is not maintained and embedded."
       },
       {
-        "title": "ONE OFF TRAINING",
-        "body": "Staff receive go live training but no refresher support as context changes."
+        "title": "CHANGE FEELS TEMPORARY",
+        "body": "People perceive the change as a short-term project rather than a lasting improvement to how work is performed."
       }
     ]
   },
@@ -697,366 +742,109 @@
         "body": "Teams develop alternative practices to overcome challenges, leading to inconsistent adoption, reduced confidence and difficulty sustaining the change."
       }
     ]
+  },
+  "change_impact": {
+    "component": "Change Impact",
+    "description": "Understand the human consequences of change before asking people to adopt it",
+    "whatIsIt": "Change Impact helps organisations understand how a change will affect people, roles, responsibilities, behaviours, workflows and ways of working. It provides a structured approach to identifying who is impacted, what will be different and what support is needed to enable successful adoption.",
+    "userInsight": "",
+    "whyThisMatters": "Digital adoption is ultimately a human process. People do not adopt technology. They adopt new behaviours, new workflows and new ways of working.\n\nMany adoption challenges occur because organisations focus on implementing the solution without fully understanding the consequences for the people expected to use it. What appears to be resistance is often uncertainty, increased workload, competing priorities, reduced confidence or poorly understood expectations.\n\nUnderstanding change impact enables organisations to anticipate where adoption challenges may emerge, identify who needs the most support and design interventions that reflect the reality of people's day-to-day experiences.\n\nThe better an organisation understands the human consequences of change, the more effectively it can target communication, engagement, sponsorship, learning and support activities to enable successful adoption.",
+    "quickRealityCheck": "Do you understand how this change will affect different roles, teams and stakeholder groups? \n\nCan you clearly describe what people will need to start doing, stop doing or do differently? \n\nHave you identified which groups will experience the greatest level of disruption, uncertainty or behavioural change? \n\nAre communications, engagement and support activities aligned to the impacts people will actually experience?",
+    "whatGoodLooksLike": [
+      {
+        "title": "THE HUMAN CONSEQUENCES ARE UNDERSTOOD",
+        "body": "The organisation has a clear understanding of how the change will affect people, roles, responsibilities, relationships, behaviours and day-to-day ways of working."
+      },
+      {
+        "title": "HIGH-IMPACT GROUPS ARE IDENTIFIED",
+        "body": "The individuals, teams and stakeholder groups most affected by the change are identified early, enabling targeted support and intervention."
+      },
+      {
+        "title": "SUPPORT IS ALIGNED TO IMPACT",
+        "body": "Communication, engagement, leadership, learning and adoption activities are tailored according to the level and nature of the impact experienced."
+      },
+      {
+        "title": "IMPACT INSIGHTS SHAPE DECISIONS",
+        "body": "Change impact information influences implementation plans, readiness assessments, adoption strategies and prioritisation decisions."
+      },
+      {
+        "title": "IMPACTS ARE REVIEWED AS CHANGE EVOLVES",
+        "body": "The organisation continually monitors the effect of the change, identifying emerging impacts and adapting support as adoption progresses."
+      }
+    ],
+    "risksIfYouDont": [
+      {
+        "title": "PEOPLE EXPERIENCE SURPRISE CHANGE",
+        "body": "Individuals are expected to adopt new ways of working without understanding what is changing, why it matters or how it affects them."
+      },
+      {
+        "title": "SUPPORT MISSES THE REAL NEED",
+        "body": "Generic communication, training and engagement activities are delivered without reflecting the actual challenges people are experiencing."
+      },
+      {
+        "title": "ADOPTION BARRIERS ARE MISUNDERSTOOD",
+        "body": "Leaders interpret low engagement or resistance as poor attitude rather than recognising the underlying impacts driving those behaviours."
+      },
+      {
+        "title": "UNCERTAINTY AND ANXIETY INCREASE",
+        "body": "People fill information gaps themselves, leading to assumptions, speculation and reduced confidence in the change."
+      },
+      {
+        "title": "NEW WAYS OF WORKING FAIL TO EMBED",
+        "body": "The solution is implemented, but expected behaviours and workflows do not become part of everyday practice because the human consequences were never fully understood or addressed."
+      }
+    ]
+  },
+  "cm_readiness": {
+    "component": "Change Management Readiness and Planning",
+    "description": "Create the conditions for adoption before implementation begins",
+    "whatIsIt": "Change Management Readiness and Planning helps organisations determine whether the conditions for successful adoption exist and what actions are needed before implementation proceeds. It focuses on understanding whether leaders, managers, teams and stakeholders are prepared, willing and able to adopt the change and identifying the actions needed to strengthen readiness where gaps exist.",
+    "userInsight": "",
+    "whyThisMatters": "Successful digital adoption depends on more than solution readiness. It depends on people readiness.\n\nOrganisations often know whether a system is ready to go live but have less visibility of whether leaders are aligned, managers are prepared, stakeholders are engaged and teams understand what is changing and why.\n\nReadiness and Planning helps organisations identify adoption barriers before implementation begins, reducing the risk of resistance, confusion, poor engagement and delayed benefits realisation.\n\nUnderstanding readiness enables organisations to focus effort where it is most needed, strengthening leadership, communication, engagement, capability and support before adoption is affected.",
+    "quickRealityCheck": "Do you know whether people are genuinely ready to adopt this change? \n\nHave leadership, stakeholder, capability and adoption readiness been assessed? \n\nDo you understand what conditions could help or hinder adoption across different teams or services? \n\nAre readiness insights shaping implementation decisions, timelines and support activities?",
+    "whatGoodLooksLike": [
+      {
+        "title": "ADOPTION READINESS IS UNDERSTOOD",
+        "body": "The organisation understands whether leaders, managers, teams and stakeholders are prepared to adopt and support the change."
+      },
+      {
+        "title": "READINESS GAPS ARE IDENTIFIED EARLY",
+        "body": "Potential barriers relating to leadership, engagement, capability, ownership or support are identified before implementation begins."
+      },
+      {
+        "title": "PLANS REFLECT ADOPTION REALITY",
+        "body": "Implementation plans are informed by readiness insights and recognise that different teams and stakeholder groups may require different levels of support."
+      },
+      {
+        "title": "READINESS DRIVES DECISION MAKING",
+        "body": "Readiness findings influence priorities, sequencing, implementation decisions and adoption activities rather than being treated as a compliance exercise."
+      },
+      {
+        "title": "READINESS IS CONTINUOUSLY REVIEWED",
+        "body": "Readiness is reassessed throughout the change lifecycle so emerging issues, changing circumstances and adoption risks can be identified and addressed."
+      }
+    ],
+    "risksIfYouDont": [
+      {
+        "title": "IMPLEMENTATION OUTPACES ADOPTION",
+        "body": "The solution is introduced before people are ready, creating avoidable confusion, uncertainty and low adoption."
+      },
+      {
+        "title": "READINESS GAPS REMAIN HIDDEN",
+        "body": "Issues relating to leadership, engagement, ownership, capability or support are not recognised until implementation is already underway."
+      },
+      {
+        "title": "SUPPORT ARRIVES TOO LATE",
+        "body": "Organisations only discover adoption challenges after confidence has reduced and negative perceptions have become established."
+      },
+      {
+        "title": "CHANGE SATURATION IS OVERLOOKED",
+        "body": "Competing priorities and multiple changes reduce people's capacity to engage, but the impact is not recognised or addressed within plans."
+      },
+      {
+        "title": "BENEFITS ARE DELAYED OR LOST",
+        "body": "Expected outcomes take longer to achieve because the conditions required for successful adoption were not established before implementation began."
+      }
+    ]
   }
-
-
-Change Impact Component overview 
-
-Understand the human consequences of change before asking people to adopt it 
-
-Change Impact helps organisations understand how a change will affect people, roles, responsibilities, behaviours, workflows and ways of working. It provides a structured approach to identifying who is impacted, what will be different and what support is needed to enable successful adoption. 
-
-Why this matters 
-
-Digital adoption is ultimately a human process. People do not adopt technology. They adopt new behaviours, new workflows and new ways of working. 
-
-Many adoption challenges occur because organisations focus on implementing the solution without fully understanding the consequences for the people expected to use it. What appears to be resistance is often uncertainty, increased workload, competing priorities, reduced confidence or poorly understood expectations. 
-
-Understanding change impact enables organisations to anticipate where adoption challenges may emerge, identify who needs the most support and design interventions that reflect the reality of people's day-to-day experiences. 
-
-The better an organisation understands the human consequences of change, the more effectively it can target communication, engagement, sponsorship, learning and support activities to enable successful adoption. 
-
-Quick reality check 
-
-Do you understand how this change will affect different roles, teams and stakeholder groups? 
-
-Can you clearly describe what people will need to start doing, stop doing or do differently? 
-
-Have you identified which groups will experience the greatest level of disruption, uncertainty or behavioural change? 
-
-Are communications, engagement and support activities aligned to the impacts people will actually experience? 
-
-What good looks like 
-
-THE HUMAN CONSEQUENCES ARE UNDERSTOOD 
-
-The organisation has a clear understanding of how the change will affect people, roles, responsibilities, relationships, behaviours and day-to-day ways of working. 
-
-HIGH-IMPACT GROUPS ARE IDENTIFIED 
-
-The individuals, teams and stakeholder groups most affected by the change are identified early, enabling targeted support and intervention. 
-
-SUPPORT IS ALIGNED TO IMPACT 
-
-Communication, engagement, leadership, learning and adoption activities are tailored according to the level and nature of the impact experienced. 
-
-IMPACT INSIGHTS SHAPE DECISIONS 
-
-Change impact information influences implementation plans, readiness assessments, adoption strategies and prioritisation decisions. 
-
-IMPACTS ARE REVIEWED AS CHANGE EVOLVES 
-
-The organisation continually monitors the effect of the change, identifying emerging impacts and adapting support as adoption progresses. 
-
-Risks if you don't 
-
-PEOPLE EXPERIENCE SURPRISE CHANGE 
-
-Individuals are expected to adopt new ways of working without understanding what is changing, why it matters or how it affects them. 
-
-SUPPORT MISSES THE REAL NEED 
-
-Generic communication, training and engagement activities are delivered without reflecting the actual challenges people are experiencing. 
-
-ADOPTION BARRIERS ARE MISUNDERSTOOD 
-
-Leaders interpret low engagement or resistance as poor attitude rather than recognising the underlying impacts driving those behaviours. 
-
-UNCERTAINTY AND ANXIETY INCREASE 
-
-People fill information gaps themselves, leading to assumptions, speculation and reduced confidence in the change. 
-
-NEW WAYS OF WORKING FAIL TO EMBED 
-
-The solution is implemented, but expected behaviours and workflows do not become part of everyday practice because the human consequences were never fully understood or addressed. 
-
- 
-
-Change Management Readiness and Planning Component overview 
-
-Create the conditions for adoption before implementation begins 
-
-Change Management Readiness and Planning helps organisations determine whether the conditions for successful adoption exist and what actions are needed before implementation proceeds. It focuses on understanding whether leaders, managers, teams and stakeholders are prepared, willing and able to adopt the change and identifying the actions needed to strengthen readiness where gaps exist. 
-
-Why this matters 
-
-Successful digital adoption depends on more than solution readiness. It depends on people readiness. 
-
-Organisations often know whether a system is ready to go live but have less visibility of whether leaders are aligned, managers are prepared, stakeholders are engaged and teams understand what is changing and why. 
-
-Readiness and Planning helps organisations identify adoption barriers before implementation begins, reducing the risk of resistance, confusion, poor engagement and delayed benefits realisation. 
-
-Understanding readiness enables organisations to focus effort where it is most needed, strengthening leadership, communication, engagement, capability and support before adoption is affected. 
-
-Quick reality check 
-
-Do you know whether people are genuinely ready to adopt this change? 
-
-Have leadership, stakeholder, capability and adoption readiness been assessed? 
-
-Do you understand what conditions could help or hinder adoption across different teams or services? 
-
-Are readiness insights shaping implementation decisions, timelines and support activities? 
-
-What good looks like 
-
-ADOPTION READINESS IS UNDERSTOOD 
-
-The organisation understands whether leaders, managers, teams and stakeholders are prepared to adopt and support the change. 
-
-READINESS GAPS ARE IDENTIFIED EARLY 
-
-Potential barriers relating to leadership, engagement, capability, ownership or support are identified before implementation begins. 
-
-PLANS REFLECT ADOPTION REALITY 
-
-Implementation plans are informed by readiness insights and recognise that different teams and stakeholder groups may require different levels of support. 
-
-READINESS DRIVES DECISION MAKING 
-
-Readiness findings influence priorities, sequencing, implementation decisions and adoption activities rather than being treated as a compliance exercise. 
-
-READINESS IS CONTINUOUSLY REVIEWED 
-
-Readiness is reassessed throughout the change lifecycle so emerging issues, changing circumstances and adoption risks can be identified and addressed. 
-
-Risks if you don't 
-
-IMPLEMENTATION OUTPACES ADOPTION 
-
-The solution is introduced before people are ready, creating avoidable confusion, uncertainty and low adoption. 
-
-READINESS GAPS REMAIN HIDDEN 
-
-Issues relating to leadership, engagement, ownership, capability or support are not recognised until implementation is already underway. 
-
-SUPPORT ARRIVES TOO LATE 
-
-Organisations only discover adoption challenges after confidence has reduced and negative perceptions have become established. 
-
-CHANGE SATURATION IS OVERLOOKED 
-
-Competing priorities and multiple changes reduce people's capacity to engage, but the impact is not recognised or addressed within plans. 
-
-BENEFITS ARE DELAYED OR LOST 
-
-Expected outcomes take longer to achieve because the conditions required for successful adoption were not established before implementation began. 
-
- 
-
-Resistance Management Component overview 
-
-Understand and address the concerns that could prevent adoption 
-
-Resistance Management helps organisations identify, understand and address the concerns, perceptions and experiences that may prevent people from adopting a change. It recognises that resistance is often valuable feedback about how a change is being experienced and provides practical approaches to addressing barriers before they affect adoption. 
-
-Why this matters 
-
-Resistance can be a natural response to change but often provides important insight into the challenges people are experiencing. 
-
-Many adoption issues are incorrectly labelled as resistance when the underlying cause is unclear communication, poor workflow fit, lack of confidence, insufficient support, competing priorities or previous negative experiences of change. 
-
-Understanding the reasons behind resistance helps organisations address the real issue rather than treating the symptom. 
-
-When concerns are acknowledged and addressed early, organisations can build trust, improve engagement, strengthen adoption and reduce the likelihood of barriers becoming embedded. 
-
-Quick reality check 
-
-Do you understand the reasons why people may be reluctant to adopt the change? 
-
-Are concerns being identified and discussed early? 
-
-Can you distinguish between resistance, capability gaps, poor communication and workflow challenges? 
-
-Are leaders, managers and change champions equipped to respond to concerns constructively? 
-
-What good looks like 
-
-CONCERNS ARE SURFACED EARLY 
-
-People feel able to raise questions, concerns and challenges openly without fear of being labelled negative or resistant. 
-
-THE ROOT CAUSE IS UNDERSTOOD 
-
-The organisation seeks to understand what is driving resistance and addresses the underlying issue rather than making assumptions. 
-
-CONCERNS SHAPE CHANGE ACTIONS 
-
-Feedback and insight are used to improve communication, engagement, support, leadership activity and implementation approaches. 
-
-LEADERS RESPOND CONSTRUCTIVELY 
-
-Managers, sponsors and change leaders actively listen, address concerns and demonstrate visible action where improvements are needed. 
-
-TRUST IS BUILT THROUGH ACTION 
-
-People see evidence that feedback is taken seriously and results in meaningful improvements, building confidence and credibility. 
-
-Risks if you don't 
-
-RESISTANCE BECOMES ENTRENCHED 
-
-Concerns remain unaddressed and gradually become fixed attitudes, behaviours or opposition to the change. 
-
-THE WRONG PROBLEM IS SOLVED 
-
-Adoption challenges are treated as resistance when the real issue relates to capability, communication, workflow or support. 
-
-TRUST DECLINES 
-
-People become less willing to engage when they feel concerns are ignored, dismissed or misunderstood. 
-
-WORKAROUNDS EMERGE 
-
-Individuals and teams develop alternative ways of working to avoid the change rather than adopting the intended approach. 
-
-ADOPTION STALLS 
-
-Confidence, engagement and commitment reduce over time, limiting adoption and preventing benefits from being fully realised. 
-
- 
-
-Skills/Learning Component overview 
-
-Build the capability and confidence needed to adopt new ways of working 
-
-Skills and Learning helps people develop the knowledge, skills and confidence needed to adopt and sustain new ways of working. It focuses on enabling people to apply what they have learned in practice, building capability over time and ensuring support is available when it is needed most. 
-
-Why this matters 
-
-Digital adoption is not achieved through training alone. People need the confidence, capability and opportunity to apply new knowledge in their day-to-day work. 
-
-Many adoption challenges occur because people understand the change in theory but struggle to apply it in practice. Learning that is disconnected from real workflows, responsibilities and experiences rarely results in sustained adoption. 
-
-Effective learning helps people understand not only how to use a solution, but how their role, behaviours and ways of working may need to change. 
-
-Building capability and confidence reduces uncertainty, increases adoption and helps people adapt successfully as the change becomes part of everyday practice. 
-
-Quick reality check 
-
-Do people have the knowledge and skills needed to adopt the change successfully? 
-
-Is learning designed around real roles, workflows and day-to-day experiences? 
-
-Can people access support when they need it, not just during formal training? 
-
-Are confidence and capability improving as adoption progresses? 
-
-What good looks like 
-
-LEARNING IS RELEVANT TO REAL WORK 
-
-Learning reflects real roles, responsibilities, workflows and scenarios, helping people understand how the change applies to their day-to-day work. 
-
-CAPABILITY IS BUILT OVER TIME 
-
-Learning is viewed as an ongoing process, with opportunities to practise, reinforce and develop skills as confidence grows. 
-
-SUPPORT IS AVAILABLE AT THE POINT OF NEED 
-
-People can access guidance, coaching, peer support and resources when they encounter challenges in real situations. 
-
-DIFFERENT NEEDS ARE RECOGNISED 
-
-Learning approaches are tailored to different roles, levels of experience, learning preferences and adoption needs. 
-
-CONFIDENCE IS ACTIVELY DEVELOPED 
-
-Organisations measure and strengthen confidence alongside competence, helping people apply new knowledge successfully in practice. 
-
-Risks if you don't 
-
-KNOWLEDGE FAILS TO TRANSFER INTO PRACTICE 
-
-People complete training but struggle to apply what they have learned in their day-to-day work. 
-
-CONFIDENCE REMAINS LOW 
-
-Individuals understand what is expected but lack the confidence to change existing behaviours and ways of working. 
-
-CAPABILITY GAPS REMAIN HIDDEN 
-
-Critical skills gaps are not identified until they begin to affect performance, adoption or user experience. 
-
-PEOPLE RELY ON OLD HABITS 
-
-Individuals revert to familiar processes and behaviours because they feel more confident using existing approaches. 
-
-ADOPTION PROGRESSES UNEVENLY 
-
-Some teams develop confidence and capability quickly while others struggle due to inconsistent learning and support. 
-
- 
-
-Reinforcement Component overview 
-
-Sustain adoption by embedding, reinforcing and normalising new ways of working 
-
-Reinforcement helps organisations sustain change by ensuring new behaviours, ways of working and adoption outcomes become part of everyday practice. It focuses on maintaining momentum, addressing barriers, recognising progress and continuously strengthening adoption long after implementation activities have finished. 
-
-Why this matters 
-
-Implementation introduces change. Reinforcement helps the change last. 
-
-Without reinforcement, people often revert to familiar behaviours, especially when workloads increase, priorities shift or support is reduced. Initial adoption does not automatically translate into sustained adoption. 
-
-Successful digital adoption requires ongoing attention to behaviours, habits, leadership, support and continuous improvement. Reinforcement helps organisations ensure that new ways of working become the normal way of working. 
-
-Effective reinforcement also demonstrates that adoption matters, feedback is valued and improvements continue beyond initial implementation, helping organisations realise and sustain the intended benefits of change. 
-
-Quick reality check 
-
-Are new behaviours and ways of working being reinforced after implementation? 
-
-Do leaders and managers consistently support and model the change? 
-
-Are feedback, adoption insights and lessons learned being used to drive action? 
-
-Is progress being recognised, celebrated and shared to maintain momentum? 
-
-What good looks like 
-
-NEW WAYS OF WORKING BECOME THE NORM 
-
-People consistently apply the expected behaviours, processes and ways of working as part of everyday practice. 
-
-FEEDBACK LEADS TO IMPROVEMENT 
-
-Adoption insights, feedback and lessons learned are used to improve support, remove barriers and strengthen adoption. 
-
-LEADERS ACTIVELY REINFORCE CHANGE 
-
-Sponsors, managers and leaders continue to champion the change, demonstrate commitment and reinforce expectations through their actions. 
-
-SUCCESS IS VISIBLE 
-
-Progress, achievements, improvements and positive outcomes are shared regularly to build confidence and maintain momentum. 
-
-ADOPTION IS CONTINUOUSLY STRENGTHENED 
-
-Organisations actively monitor adoption and provide additional support, guidance and intervention where reinforcement is needed. 
-
-Risks if you don't 
-
-PEOPLE REVERT TO OLD HABITS 
-
-Individuals and teams gradually return to familiar behaviours because the new ways of working are not actively reinforced. 
-
-ADOPTION DECLINES OVER TIME 
-
-Initial enthusiasm reduces and adoption levels fall as attention moves to other priorities and initiatives. 
-
-FEEDBACK IS IGNORED 
-
-People stop providing insight and raising issues because they do not see evidence that feedback is being acted upon. 
-
-BENEFITS FAIL TO BE SUSTAINED 
-
-Early improvements are achieved but weaken over time because adoption is not maintained and embedded. 
-
-CHANGE FEELS TEMPORARY 
-
-People perceive the change as a short-term project rather than a lasting improvement to how work is performed. 
-
- 
 }

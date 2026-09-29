@@ -42,7 +42,7 @@ export async function downloadReportEml(
   const eml = buildEml({
     to: mailbox,
     subject: `${report.trustName} - Assessment outcomes`,
-    body: 'Please find our AVT Readiness Review outcomes attached.',
+    body: 'Please find our AVT Change Adoption Baseline outcomes attached.',
     attachments: [
       {
         filename: `${base}.json`,
@@ -61,7 +61,7 @@ export function buildReportMailto(
 ): string {
   const base = fileBase(report.trustName);
   const subject = `${report.trustName} - Assessment outcomes`;
-  const body = `Please find our AVT Readiness Review outcomes attached (${base}.pdf and ${base}.json - both have just been downloaded to your device, please attach them to this email).`;
+  const body = `Please find our AVT Change Adoption Baseline outcomes attached (${base}.pdf and ${base}.json - both have just been downloaded to your device, please attach them to this email).`;
   return `mailto:${mailbox}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 

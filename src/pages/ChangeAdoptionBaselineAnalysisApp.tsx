@@ -189,7 +189,7 @@ function isReadinessReviewReport(value: unknown): value is ReadinessReviewReport
   );
 }
 
-export default function ReadinessReviewAnalysisApp({
+export default function ChangeAdoptionBaselineAnalysisApp({
   components = [],
 }: ReadinessReviewAnalysisAppProps = {}): JSX.Element {
   const [activeTab, setActiveTab] = useState<Tab>('my-answers');
@@ -220,7 +220,7 @@ export default function ReadinessReviewAnalysisApp({
             );
         const parsed = JSON.parse(jsonText);
         if (!isReadinessReviewReport(parsed)) {
-          setImportError('This file does not look like a Readiness Review report.');
+          setImportError('This file does not look like a Change Adoption Baseline report.');
           return;
         }
         // Held only in this component's state - never written to localStorage or the CST, so it
@@ -228,7 +228,7 @@ export default function ReadinessReviewAnalysisApp({
         setImportedReport(parsed);
       } catch (_error) {
         setImportError(
-          'Could not read this file. Please check it is a valid Readiness Review export.'
+          'Could not read this file. Please check it is a valid Change Adoption Baseline export.'
         );
       }
     };
@@ -238,9 +238,9 @@ export default function ReadinessReviewAnalysisApp({
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-slate-800">Readiness Review Analysis</h2>
+        <h2 className="text-2xl font-bold text-slate-800">Change Adoption Baseline Analysis</h2>
         <p className="mt-2 text-sm text-slate-600">
-          Review your own Readiness Review answers, or import a report someone else emailed you to
+          Review your own Change Adoption Baseline answers, or import a report someone else emailed you to
           see their answers and maturity radar.
         </p>
       </div>
@@ -288,7 +288,7 @@ export default function ReadinessReviewAnalysisApp({
               htmlFor="readiness-import-file"
               className="block text-sm font-medium text-slate-700 mb-2"
             >
-              Import a change adoption baseline report (.json, or the saved .eml)
+              Import a Change Adoption Baseline report (.json, or the saved .eml)
             </label>
             <p className="mb-2 text-xs text-slate-500">
               Only held for this session - it is never saved to your project, and disappears if you

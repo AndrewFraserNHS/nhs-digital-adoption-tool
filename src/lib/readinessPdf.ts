@@ -58,7 +58,7 @@ export function buildReadinessReviewPdf(report: ReadinessReviewReport, radarImag
   const writer = createPdfWriter();
   const { doc, write, ensureSpace } = writer;
 
-  write('Readiness Review', { size: 18, bold: true, gap: 3 });
+  write('Change Adoption Baseline', { size: 18, bold: true, gap: 3 });
   write(report.trustName || 'Trust not set', { size: 12, bold: true, gap: 3 });
   (
     [

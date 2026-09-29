@@ -89,7 +89,7 @@ import ChangeImpactAssessmentApp from '@pages/ChangeImpactAssessmentApp';
 import CompareApp from '@pages/CompareApp';
 import ForceFieldAnalysisApp from '@pages/ForceFieldAnalysisApp';
 import RaidLogApp from '@pages/RaidLogApp';
-import ReadinessReviewAnalysisApp from '@pages/ChangeAdoptionBaselineAnalysisApp';
+import ChangeAdoptionBaselineAnalysisApp from '@pages/ChangeAdoptionBaselineAnalysisApp';
 import StakeholderAnalysisApp from '@pages/StakeholderAnalysisApp';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -920,12 +920,12 @@ export function AdoptionApp() {
         auditLog: trimAuditEvents([
           ...(prev.auditLog || []),
           createAuditEvent({
-            actor: 'Readiness Review',
+            actor: 'Change Adoption Baseline',
             eventType: 'readiness-evaluated',
             entityType: 'readiness',
             summary: details.skipped
               ? 'Adoption Baseline skipped - starting at Phase 1'
-              : 'Readiness Evaluation',
+              : 'Change Adoption Baseline Evaluation',
             trustName: prev.orgProfile.trustName,
             projectName: prev.orgProfile.projectName,
             after: {
@@ -1628,7 +1628,7 @@ export function AdoptionApp() {
                                   : v === 'benefits'
                                     ? 'Benefits Register & Tracker'
                                     : v === 'readiness-review-analysis'
-                                      ? 'Readiness Review Analysis'
+                                      ? 'Change Adoption Baseline Analysis'
                                       : 'Audit Log'}
                     </button>
                   ))}
@@ -2216,7 +2216,7 @@ export function AdoptionApp() {
             />
           )}
           {view === 'readiness-review-analysis' && (
-            <ReadinessReviewAnalysisApp components={COMPONENTS} />
+            <ChangeAdoptionBaselineAnalysisApp components={COMPONENTS} />
           )}
           {view === 'audit-log' && (
             <AuditLogPage

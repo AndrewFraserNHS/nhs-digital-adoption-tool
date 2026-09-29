@@ -39,6 +39,7 @@ import { TOOLKIT_OPTIONS, type ToolkitOptionKey } from '@data/toolkits';
 import { ReadinessQuestionEditor } from '@components/common/ReadinessQuestionEditor';
 import { StakeholderPicker } from '@components/common/StakeholderPicker';
 import { resolveReadinessQuestions, type PreparednessAssessment } from '@data/readinessReview';
+import { AVT_PRESET, applyAvtPreset } from '@data/presets/avtPreset';
 import { AVT_MAILBOX } from '@lib/readinessExport';
 import { PHASE_NAMES } from '../../types/constants';
 
@@ -140,6 +141,34 @@ function AliasEditor({
           {addButtonLabel}
         </button>
       </div>
+    </div>
+  );
+}
+
+/** Read-only preview of a link's wording variants, shown inline so they're visible without opening the edit modal. */
+function MatchAliasPreview({
+  aliases,
+  darkMode,
+}: {
+  aliases?: string[];
+  darkMode?: boolean;
+}): JSX.Element | null {
+  if (!aliases || aliases.length === 0) {
+    return null;
+  }
+  return (
+    <div className="col-span-full -mt-1 flex flex-wrap items-center gap-1.5">
+      <span className={`text-[11px] ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+        Also matches:
+      </span>
+      {aliases.map((alias) => (
+        <span
+          key={alias}
+          className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-300' : 'border-slate-300 bg-slate-100 text-slate-600'}`}
+        >
+          {alias}
+        </span>
+      ))}
     </div>
   );
 }
@@ -647,6 +676,19 @@ export function ProjectDetailsPage({
 
   const effectiveStakeholderReferenceLists =
     profile.stakeholderReferenceLists || DEFAULT_STAKEHOLDER_REFERENCE_LISTS;
+
+  const handleApplyAvtPreset = useCallback(() => {
+    if (
+      !window.confirm(
+        `Apply the ${AVT_PRESET.label} preset? This replaces this project's Core Links and resets its Change Adoption Baseline questions to the AVT default set. Custom component links and tool links are left as they are.`
+      )
+    ) {
+      return;
+    }
+    const updated = applyAvtPreset(profile);
+    setProfile(updated);
+    onProfileUpdate(updated);
+  }, [profile, onProfileUpdate]);
 
   const handleReadinessQuestionsChange = useCallback(
     (questions: PreparednessAssessment[] | undefined) => {
@@ -1302,6 +1344,23 @@ export function ProjectDetailsPage({
       </div>
 
       <div
+        className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-3`}
+      >
+        <div>
+          <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
+            Presets
+          </h3>
+          <p className={`mt-1 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+            Apply a bundled preset to set this project's External Links and Change Adoption
+            Baseline questions to a known starting point.
+          </p>
+        </div>
+        <button type="button" onClick={handleApplyAvtPreset} className={nhsButtonSecondary}>
+          Apply {AVT_PRESET.label} preset
+        </button>
+      </div>
+
+      <div
         className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-4`}
       >
         <div>
@@ -1309,7 +1368,7 @@ export function ProjectDetailsPage({
             <h3
               className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
             >
-              Step 5: Readiness Review Questions
+              Step 5: Change Adoption Baseline Questions
             </h3>
             <label
               className={`flex items-center gap-2 text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
@@ -1335,7 +1394,7 @@ export function ProjectDetailsPage({
                   htmlFor="org-avt-mailbox"
                   className={`block text-sm font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
                 >
-                  Readiness Review mailbox
+                  Change Adoption Baseline mailbox
                 </label>
                 <input
                   id="org-avt-mailbox"
@@ -1346,12 +1405,12 @@ export function ProjectDetailsPage({
                   onChange={(e) => handleProfileFieldChange({ avtMailbox: e.target.value })}
                 />
                 <p className={`mt-1 text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
-                  Where the completed Readiness Review report is sent. Leave blank to use the
+                  Where the completed Change Adoption Baseline report is sent. Leave blank to use the
                   default AVT mailbox ({AVT_MAILBOX}).
                 </p>
               </div>
               <p className={`mt-2 text-sm p-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-                Reword, reorder or add questions to the Readiness Review. Added questions can be
+                Reword, reorder or add questions to the Change Adoption Baseline. Added questions can be
                 multiple choice or free text and are recorded in the exported report without
                 affecting any readiness score.
               </p>
@@ -1363,8 +1422,9 @@ export function ProjectDetailsPage({
             </>
           ) : (
             <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-              Readiness review questions were set up at project start. Turn on "Show readiness
-              review section" in Settings if you need to come back and edit them.
+              Change Adoption Baseline questions were set up at project start. Turn on "Show
+              change adoption baseline section" in Settings if you need to come back and edit
+              them.
             </p>
           )}
         </div>
@@ -1591,6 +1651,7 @@ export function ProjectDetailsPage({
                       >
                         Remove
                       </button>
+                      <MatchAliasPreview aliases={link.matchAliases} darkMode={darkMode} />
                     </div>
                   ))}
                 </div>
@@ -1918,6 +1979,7 @@ export function ProjectDetailsPage({
                               >
                                 Remove
                               </button>
+                              <MatchAliasPreview aliases={link.matchAliases} darkMode={darkMode} />
                             </div>
                           ))}
                           <button

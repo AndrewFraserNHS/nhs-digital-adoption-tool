@@ -304,7 +304,7 @@ export interface OrgProfile {
    */
   externalLinksInitiated?: boolean;
   /**
-   * Once set, the Project Profile page's Readiness Review Questions section collapses by default -
+   * Once set, the Project Profile page's Change Adoption Baseline Questions section collapses by default -
    * links are a one-time project-setup concern. Travels with export/import. Overridden locally
    * (per device, not exported) by AdoptionUserSettings.showExternalLinksSection.
    */
@@ -312,13 +312,13 @@ export interface OrgProfile {
   teamMembers?: TeamMember[];
   /** Groups/Sub-Groups/Locations/Relationships used by the Stakeholder Analysis tool - shared here so every project only defines them once. */
   stakeholderReferenceLists?: StakeholderReferenceLists;
-  /** This project's Readiness Review questions, in display order. Unset means the built-in defaults. */
+  /** This project's Change Adoption Baseline questions, in display order. Unset means the built-in defaults. */
   readinessQuestions?: PreparednessAssessment[];
   /** Contact email for the programme, shown on the Adoption Baseline report. */
   contactEmail?: string;
   /** Stakeholder id (AdoptionStore.stakeholders) of the executive sponsor / SRO. */
   executiveSponsorId?: string;
-  /** Where the Readiness Review report is sent. Unset means the built-in AVT mailbox default. */
+  /** Where the Change Adoption Baseline report is sent. Unset means the built-in AVT mailbox default. */
   avtMailbox?: string;
   /**
    * Stable identity for this CST, assigned once and carried through every export so two

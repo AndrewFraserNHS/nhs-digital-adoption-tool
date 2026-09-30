@@ -13,6 +13,7 @@ import { ASSESSMENT_COMPONENTS, AssessmentComponent } from '@data/components';
 import { PATHWAY_LABELS } from '@data/cst';
 import {
   CORE_LINKS,
+  PHASE_LINKS,
   type GuidanceLink,
   type LinkOverrides,
   resolveEffectiveLink,
@@ -1029,6 +1030,10 @@ export function AssessmentPanel({
     store.orgProfile?.coreLinks && store.orgProfile.coreLinks.length > 0
       ? store.orgProfile.coreLinks
       : CORE_LINKS;
+  const effectivePhaseLinks =
+    store.orgProfile?.phaseLinks
+      ? store.orgProfile.phaseLinks
+      : PHASE_LINKS;
   const toolLinkMatches: MatchableLink[] = useMemo(
     () =>
       (store.orgProfile?.toolLinks || [])

@@ -400,6 +400,7 @@ export function normalizeOrgProfile(profile?: Partial<OrgProfile>): OrgProfile {
     linkOverrides: profile?.linkOverrides,
     componentFurtherReading: profile?.componentFurtherReading,
     coreLinks: profile?.coreLinks,
+    phaseLinks: profile?.phaseLinks,
     customComponentLinks: profile?.customComponentLinks,
     toolLinks:
       profile?.toolLinks ??

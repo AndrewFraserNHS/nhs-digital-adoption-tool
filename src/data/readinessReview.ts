@@ -293,13 +293,13 @@ export const PREPAREDNESS_ASSESSMENT: PreparednessAssessment[] = [
     label: 'Change Impact',
     lens: 'Planning and Risk',
     question:
-      'How effectively are change impacts used to plan resources, manage dependencies and reduce delivery risks?',
+      'How well does the organisation understand and manage the operational impacts, opportunities and risks that could influence successful adoption and benefit realisation?',
     answers: answers(
-      'Change impacts are not considered within delivery planning or risk management.',
-      'Some impacts are recognised informally, but they are not consistently documented or used in planning.',
-      'A formal change impact assessment has been completed and key impacts, dependencies and resource needs are recorded.',
-      'Impacts are translated into delivery actions, resource requirements, risks, mitigations and dependency plans.',
-      'Change impact information is routinely reviewed through governance and used to adapt delivery, resourcing and risk decisions.'
+      'Expected benefits and related improvements have not been defined, and there is no understanding of how benefits could translate into operational outcomes.',
+      'Potential benefits have been identified, but the expected impact on capacity, productivity, workload or service delivery is unclear. Measures, baselines or ownership may be incomplete.',
+      'Expected benefits, measures, baselines and owners have been defined, and potential improvements in operational performance are understood for key services or groups.',
+      'Benefits are assessed using local evidence and linked to measurable improvements in capacity, productivity, service delivery or workforce experience. Progress is regularly reviewed and action is taken where outcomes are not being achieved.',
+      'Benefits are consistently realised, evidenced and sustained. Operational insight is routinely used to optimise outcomes, and continuous improvement is embedded within performance management and decision-making.'
     ),
     progress: [0, 1, 2, 3, 4],
     phase: 2,

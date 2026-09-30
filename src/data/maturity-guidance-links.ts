@@ -146,6 +146,39 @@ export const CORE_LINKS: GuidanceLink[] = [
   ),
 ];
 
+export const PHASE_LINKS: Record<number, string> = {
+  1: futureNhsLink(
+    '303028357',
+    'Phase 1',
+    'core',
+    'The wider NHS community for change management practice, discussion and shared resources.'
+  ).url,
+  2: futureNhsLink(
+    '303028485',
+    'Phase 2',
+    'core',
+    'The wider NHS community for change management practice, discussion and shared resources.'
+  ).url,
+  3: futureNhsLink(
+    '303028421',
+    'Phase 3',
+    'core',
+    'The wider NHS community for change management practice, discussion and shared resources.'
+  ).url,
+  4: futureNhsLink(
+    '303028453',
+    'Phase 4',
+    'core',
+    'The wider NHS community for change management practice, discussion and shared resources.'
+  ).url,
+  5: futureNhsLink(
+    '303028389',
+    'Phase 5',
+    'core',
+    'The wider NHS community for change management practice, discussion and shared resources.'
+  ).url,
+};
+
 export const DEFAULT_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
   Vision: {
     inputs: [

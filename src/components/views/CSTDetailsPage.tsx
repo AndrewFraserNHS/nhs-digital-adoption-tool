@@ -22,6 +22,7 @@ import {
   ADOPTION_COMPONENT_TO_GUIDANCE_KEYS,
   CORE_LINKS,
   DEFAULT_GUIDANCE_LINK_MAP,
+  PHASE_LINKS,
   TOOLKIT_BASE_DEFAULTS,
   resolveEffectiveLink,
   type GuidanceLink,
@@ -714,6 +715,8 @@ export function ProjectDetailsPage({
   const effectiveCoreLinks =
     profile.coreLinks && profile.coreLinks.length > 0 ? profile.coreLinks : CORE_LINKS;
 
+  const effectivePhaseLinks = profile.phaseLinks ? profile.phaseLinks : PHASE_LINKS;
+
   const handleAddCoreLink = useCallback(() => {
     const newLink: GuidanceLink = {
       key: `core-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
@@ -721,7 +724,11 @@ export function ProjectDetailsPage({
       url: '',
       type: 'core',
     };
-    const updated = { ...profile, coreLinks: [...effectiveCoreLinks, newLink] };
+    const updated = {
+      ...profile,
+      coreLinks: [...effectiveCoreLinks, newLink],
+      phaseLinks: { ...effectivePhaseLinks },
+    };
     setProfile(updated);
     onProfileUpdate(updated);
   }, [profile, effectiveCoreLinks, onProfileUpdate]);
@@ -1351,8 +1358,8 @@ export function ProjectDetailsPage({
             Presets
           </h3>
           <p className={`mt-1 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-            Apply a bundled preset to set this project's External Links and Change Adoption
-            Baseline questions to a known starting point.
+            Apply a bundled preset to set this project's External Links and Change Adoption Baseline
+            questions to a known starting point.
           </p>
         </div>
         <button type="button" onClick={handleApplyAvtPreset} className={nhsButtonSecondary}>
@@ -1383,8 +1390,8 @@ export function ProjectDetailsPage({
           </div>
           <p className={`mt-2 text-sm p-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
             This is normally only set up once at the start of a project. Once you're done, tick
-            "Questions initiated" to hide this section - re-enable "Show change adoption baseline section"
-            in Settings if you need to come back to it.
+            "Questions initiated" to hide this section - re-enable "Show change adoption baseline
+            section" in Settings if you need to come back to it.
           </p>
 
           {!profile.readinessReviewQuestionsInitiated || showReviewQuestionsSection ? (
@@ -1405,13 +1412,13 @@ export function ProjectDetailsPage({
                   onChange={(e) => handleProfileFieldChange({ avtMailbox: e.target.value })}
                 />
                 <p className={`mt-1 text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
-                  Where the completed Change Adoption Baseline report is sent. Leave blank to use the
-                  default AVT mailbox ({AVT_MAILBOX}).
+                  Where the completed Change Adoption Baseline report is sent. Leave blank to use
+                  the default AVT mailbox ({AVT_MAILBOX}).
                 </p>
               </div>
               <p className={`mt-2 text-sm p-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-                Reword, reorder or add questions to the Change Adoption Baseline. Added questions can be
-                multiple choice or free text and are recorded in the exported report without
+                Reword, reorder or add questions to the Change Adoption Baseline. Added questions
+                can be multiple choice or free text and are recorded in the exported report without
                 affecting any readiness score.
               </p>
               <ReadinessQuestionEditor
@@ -1422,9 +1429,8 @@ export function ProjectDetailsPage({
             </>
           ) : (
             <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-              Change Adoption Baseline questions were set up at project start. Turn on "Show
-              change adoption baseline section" in Settings if you need to come back and edit
-              them.
+              Change Adoption Baseline questions were set up at project start. Turn on "Show change
+              adoption baseline section" in Settings if you need to come back and edit them.
             </p>
           )}
         </div>

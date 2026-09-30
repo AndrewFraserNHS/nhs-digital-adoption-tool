@@ -179,6 +179,29 @@ export const PHASE_LINKS: Record<number, string> = {
   ).url,
 };
 
+/**
+ * Default "Further Reading" URL per component, shown on Project Profile ("Component links") and
+ * the component overview panel until a project sets its own (`OrgProfile.componentFurtherReading`).
+ * Sourced from docs/furtherReading.txt - components not listed there (skills_learning, capability,
+ * org_maturity) have no bundled default yet.
+ */
+export const DEFAULT_FURTHER_READING: Record<string, string> = {
+  vision: 'https://future.nhs.uk/CMN/view?objectId=74014704',
+  transfer_bau: 'https://future.nhs.uk/CMN/view?objectID=74024240',
+  stakeholder: 'https://future.nhs.uk/CMN/view?objectID=74023856',
+  sponsorship: 'https://future.nhs.uk/CMN/view?objectID=74023760',
+  risk_management: 'https://future.nhs.uk/CMN/view?objectID=76507440',
+  resistance: 'https://future.nhs.uk/CMN/view?objectID=74024144',
+  reinforcement: 'https://future.nhs.uk/CMN/view?objectID=74296272',
+  cm_readiness: 'https://future.nhs.uk/CMN/view?objectID=74023984',
+  process_change: 'https://future.nhs.uk/CMN/view?objectID=74023952',
+  change_network: 'https://future.nhs.uk/CMN/view?objectID=76507984',
+  change_impact: 'https://future.nhs.uk/CMN/view?objectID=74023920',
+  change_adoption: 'https://future.nhs.uk/CMN/view?objectID=74023728',
+  case_for_change: 'https://future.nhs.uk/CMN/view?objectID=74021584',
+  benefits: 'https://future.nhs.uk/CMN/view?objectID=73997232',
+};
+
 export const DEFAULT_GUIDANCE_LINK_MAP: GuidanceLinkMap = {
   Vision: {
     inputs: [

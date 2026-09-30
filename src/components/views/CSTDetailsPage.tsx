@@ -21,6 +21,7 @@ import { AssessmentComponent } from '@data/components';
 import {
   ADOPTION_COMPONENT_TO_GUIDANCE_KEYS,
   CORE_LINKS,
+  DEFAULT_FURTHER_READING,
   DEFAULT_GUIDANCE_LINK_MAP,
   PHASE_LINKS,
   TOOLKIT_BASE_DEFAULTS,
@@ -29,12 +30,6 @@ import {
   type LinkOverrides,
   type PerLinkOverride,
 } from '@data/maturity-guidance-links';
-import {
-  IN_APP_TOOLS,
-  DEFAULT_TOOL_LINK_TEXT,
-  type InAppTool,
-  type ToolLinkEntry,
-} from '@data/toolLinks';
 import { PATHWAY_LABELS, PATHWAY_OPTIONS, type CstPathwayKey } from '@data/cst';
 import { TOOLKIT_OPTIONS, type ToolkitOptionKey } from '@data/toolkits';
 import { ReadinessQuestionEditor } from '@components/common/ReadinessQuestionEditor';
@@ -174,10 +169,68 @@ function MatchAliasPreview({
   );
 }
 
+/**
+ * A URL input pre-filled with a bundled default until the project overrides it - editing it
+ * immediately sets a "Custom" override; "Reset" clears it back to the default. Used for Phase
+ * linking and each component's Further Reading link.
+ */
+function DefaultableLinkInput({
+  id,
+  value,
+  defaultUrl,
+  onChange,
+  darkMode,
+}: {
+  id: string;
+  value: string | undefined;
+  defaultUrl: string | undefined;
+  onChange: (value: string) => void;
+  darkMode?: boolean;
+}): JSX.Element {
+  const isOverridden = Boolean(value && value.trim());
+  return (
+    <div className="flex min-w-0 flex-1 items-center gap-2">
+      <input
+        id={id}
+        type="url"
+        placeholder={defaultUrl ? undefined : 'https://...'}
+        value={isOverridden ? value! : defaultUrl || ''}
+        onChange={(e) => onChange(e.target.value)}
+        className={`min-w-0 flex-1 rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
+      />
+      {defaultUrl ? (
+        <span
+          className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-semibold ${
+            isOverridden
+              ? darkMode
+                ? 'bg-green-500/20 text-green-300'
+                : 'bg-green-100 text-green-700'
+              : darkMode
+                ? 'bg-amber-500/20 text-amber-200'
+                : 'bg-amber-100 text-amber-800'
+          }`}
+        >
+          {isOverridden ? 'Custom' : 'Default'}
+        </span>
+      ) : null}
+      {isOverridden && defaultUrl ? (
+        <button
+          type="button"
+          onClick={() => onChange('')}
+          className={`shrink-0 rounded border px-2 py-1.5 text-xs font-medium ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-50'}`}
+        >
+          Reset
+        </button>
+      ) : null}
+    </div>
+  );
+}
+
 function LinkOverrideModal({
   link,
   perLink,
   baseOverrideUrl,
+  projectName,
   onSave,
   onClose,
   darkMode,
@@ -185,6 +238,7 @@ function LinkOverrideModal({
   link: GuidanceLink;
   perLink: PerLinkOverride | undefined;
   baseOverrideUrl: string | undefined;
+  projectName?: string;
   onSave: (next: PerLinkOverride | undefined) => void;
   onClose: () => void;
   darkMode?: boolean;
@@ -196,8 +250,8 @@ function LinkOverrideModal({
   const autoVariant = buildLabelVariants(link.label).find((variant) => variant !== link.label);
 
   const sourceOptions: { value: LinkOverrideStatus; label: string; url: string }[] = [
-    { value: 'default', label: 'Default Toolkit Link', url: link.url },
-    { value: 'base', label: 'Project Specific Homepage', url: effectiveBaseUrl },
+    { value: 'default', label: 'Default Change Management Link', url: link.url },
+    { value: 'base', label: `${projectName || 'Project'} Homepage`, url: effectiveBaseUrl },
     { value: 'custom', label: 'Custom URL', url: customUrl },
   ];
 
@@ -773,57 +827,6 @@ export function ProjectDetailsPage({
       onProfileUpdate(updated);
     },
     [profile, effectiveCoreLinks, onProfileUpdate]
-  );
-
-  const toolLinks = profile.toolLinks || [];
-
-  const handleAddToolLink = useCallback(() => {
-    const defaultTool: InAppTool = 'highlight-builder';
-    const newLink: ToolLinkEntry = {
-      key: `tool-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-      tool: defaultTool,
-      matchText: DEFAULT_TOOL_LINK_TEXT[defaultTool].matchText,
-    };
-    const updated = { ...profile, toolLinks: [...toolLinks, newLink] };
-    setProfile(updated);
-    onProfileUpdate(updated);
-  }, [profile, toolLinks, onProfileUpdate]);
-
-  const handleUpdateToolLinkTool = useCallback(
-    (key: string, tool: InAppTool) => {
-      const updated = {
-        ...profile,
-        toolLinks: toolLinks.map((link) =>
-          link.key === key
-            ? { ...link, tool, matchText: DEFAULT_TOOL_LINK_TEXT[tool].matchText }
-            : link
-        ),
-      };
-      setProfile(updated);
-      onProfileUpdate(updated);
-    },
-    [profile, toolLinks, onProfileUpdate]
-  );
-
-  const handleUpdateToolLinkMatchText = useCallback(
-    (key: string, matchText: string) => {
-      const updated = {
-        ...profile,
-        toolLinks: toolLinks.map((link) => (link.key === key ? { ...link, matchText } : link)),
-      };
-      setProfile(updated);
-      onProfileUpdate(updated);
-    },
-    [profile, toolLinks, onProfileUpdate]
-  );
-
-  const handleRemoveToolLink = useCallback(
-    (key: string) => {
-      const updated = { ...profile, toolLinks: toolLinks.filter((link) => link.key !== key) };
-      setProfile(updated);
-      onProfileUpdate(updated);
-    },
-    [profile, toolLinks, onProfileUpdate]
   );
 
   const phaseLinks = profile.phaseLinks || {};
@@ -1477,12 +1480,13 @@ export function ProjectDetailsPage({
               >
                 <p className="font-semibold">Fallback reference</p>
                 <p className="mt-1">
-                  Project Specific Homepage:{' '}
+                  {profile.projectName || 'Project'} Homepage:{' '}
                   <span className="font-medium">{TOOLKIT_BASE_DEFAULTS.label}</span> (
                   {TOOLKIT_BASE_DEFAULTS.url})
                 </p>
                 <p className="mt-1">
-                  Default Toolkit Link: the original NHS Future link defined per guidance item.
+                  Default Change Management Link: the original NHS Future link defined per
+                  guidance item.
                 </p>
               </div>
 
@@ -1523,7 +1527,7 @@ export function ProjectDetailsPage({
                   <p
                     className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
                   >
-                    Project Specific Homepage
+                    {profile.projectName || 'Project'} Homepage
                   </p>
                   <p className={`text-xs mt-0.5 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
                     Replaces the Change Management Toolkit destination for all links that fall back
@@ -1666,62 +1670,6 @@ export function ProjectDetailsPage({
                 </button>
               </div>
 
-              {/* Tool linking - matches text in action/summary bodies to in-app tools instead of URLs */}
-              <div
-                className={`mt-4 rounded-md border p-4 space-y-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
-              >
-                <div>
-                  <p
-                    className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
-                  >
-                    Tool linking
-                  </p>
-                  <p className={`text-xs mt-0.5 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-                    Matches text in action/summary bodies and turns it into a button that opens an
-                    in-app tool, instead of a link to a URL.
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  {toolLinks.map((link) => (
-                    <div
-                      key={link.key}
-                      className="grid grid-cols-1 md:grid-cols-[1fr,2fr,auto] gap-2 items-center"
-                    >
-                      <select
-                        value={link.tool}
-                        onChange={(e) =>
-                          handleUpdateToolLinkTool(link.key, e.target.value as InAppTool)
-                        }
-                        className={`rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}
-                      >
-                        {IN_APP_TOOLS.map((tool) => (
-                          <option key={tool} value={tool}>
-                            {DEFAULT_TOOL_LINK_TEXT[tool].label}
-                          </option>
-                        ))}
-                      </select>
-                      <input
-                        type="text"
-                        placeholder="Matched text"
-                        value={link.matchText}
-                        onChange={(e) => handleUpdateToolLinkMatchText(link.key, e.target.value)}
-                        className={`rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveToolLink(link.key)}
-                        className={`shrink-0 rounded border px-2 py-1.5 text-xs font-medium ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-50'}`}
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  ))}
-                </div>
-                <button type="button" onClick={handleAddToolLink} className={nhsButtonSecondary}>
-                  + Add Tool Link
-                </button>
-              </div>
-
               {/* Phase linking - a landing-page URL per phase, shown on the Daily Phase Overview */}
               <div
                 className={`mt-4 rounded-md border p-4 space-y-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
@@ -1751,13 +1699,12 @@ export function ProjectDetailsPage({
                         >
                           Phase {phase}: {phaseName}
                         </label>
-                        <input
+                        <DefaultableLinkInput
                           id={`phase-link-${phase}`}
-                          type="url"
-                          placeholder="https://..."
-                          value={phaseLinks[phase] || ''}
-                          onChange={(e) => handleUpdatePhaseLink(phase, e.target.value)}
-                          className={`rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
+                          value={phaseLinks[phase]}
+                          defaultUrl={PHASE_LINKS[phase]}
+                          onChange={(url) => handleUpdatePhaseLink(phase, url)}
+                          darkMode={darkMode}
                         />
                       </div>
                     );
@@ -1775,11 +1722,11 @@ export function ProjectDetailsPage({
                 <p className={`text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
                   Set the "Further Reading" link shown on each component's overview panel, and
                   override any of its individual guidance links. Each link shows whether it
-                  currently points at the <strong>Default Toolkit Link</strong> (the original NHS
-                  Future link), <strong>Project Specific Homepage</strong> (your organisation's
-                  override above), or a <strong>Custom</strong> URL you've set - click the pencil to
-                  change it. Additional links can be hidden from Settings if you only want the
-                  essentials.
+                  currently points at the <strong>Default Change Management Link</strong> (the
+                  original NHS Future link), <strong>{profile.projectName || 'Project'} Homepage</strong>{' '}
+                  (your organisation's override above), or a <strong>Custom</strong> URL you've set
+                  - click the pencil to change it. Additional links can be hidden from Settings if
+                  you only want the essentials.
                 </p>
                 {components.map((component) => {
                   const sectionLinks = getGuidanceLinksForComponent(component.id);
@@ -1833,28 +1780,13 @@ export function ProjectDetailsPage({
                           >
                             Further reading
                           </p>
-                          <div className="flex gap-2">
-                            <input
-                              type="url"
-                              placeholder="https://..."
-                              value={profile.componentFurtherReading?.[component.id] ?? ''}
-                              onChange={(e) =>
-                                handleComponentFurtherReadingChange(component.id, e.target.value)
-                              }
-                              className={`flex-1 min-w-0 rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
-                            />
-                            {hasFurtherReading && (
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  handleComponentFurtherReadingChange(component.id, '')
-                                }
-                                className={`shrink-0 rounded border px-2 py-1.5 text-xs font-medium ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-50'}`}
-                              >
-                                Clear
-                              </button>
-                            )}
-                          </div>
+                          <DefaultableLinkInput
+                            id={`further-reading-${component.id}`}
+                            value={profile.componentFurtherReading?.[component.id]}
+                            defaultUrl={DEFAULT_FURTHER_READING[component.id]}
+                            onChange={(url) => handleComponentFurtherReadingChange(component.id, url)}
+                            darkMode={darkMode}
+                          />
                         </div>
                         {!allLinks.length && (
                           <p
@@ -1889,9 +1821,9 @@ export function ProjectDetailsPage({
                                     : 'bg-red-50 border-red-100 text-red-700',
                                 };
                                 const statusLabel: Record<LinkOverrideStatus, string> = {
-                                  default: 'Default Toolkit Link',
+                                  default: 'Default Change Management Link',
                                   custom: 'Custom',
-                                  base: 'Project Specific Homepage',
+                                  base: `${profile.projectName || 'Project'} Homepage`,
                                 };
                                 return (
                                   <div
@@ -2016,6 +1948,7 @@ export function ProjectDetailsPage({
           link={editingLink}
           perLink={profile.linkOverrides?.links?.[editingLink.key]}
           baseOverrideUrl={profile.linkOverrides?.base?.url}
+          projectName={profile.projectName}
           onSave={(next) => {
             const links = { ...profile.linkOverrides?.links };
             if (next) {

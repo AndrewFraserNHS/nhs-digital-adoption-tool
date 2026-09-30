@@ -1030,10 +1030,25 @@ export function AssessmentPanel({
     store.orgProfile?.coreLinks && store.orgProfile.coreLinks.length > 0
       ? store.orgProfile.coreLinks
       : CORE_LINKS;
-  const effectivePhaseLinks =
-    store.orgProfile?.phaseLinks
-      ? store.orgProfile.phaseLinks
-      : PHASE_LINKS;
+  const effectivePhaseLinks = store.orgProfile?.phaseLinks
+    ? store.orgProfile.phaseLinks
+    : PHASE_LINKS;
+  const phaseLinkMatches: MatchableLink[] = useMemo(
+    () =>
+      Object.entries(effectivePhaseLinks)
+        .filter(([, url]) => url && url.trim())
+        .map(([phaseKey, url]) => {
+          const phase = Number(phaseKey);
+          return {
+            key: `phase-link-${phase}`,
+            label: `Phase ${phase}: ${PHASE_NAMES[phase] || ''}`.trim(),
+            url: toAbsoluteUrl(url),
+            type: 'core',
+            kind: 'url',
+          };
+        }),
+    [effectivePhaseLinks]
+  );
   const toolLinkMatches: MatchableLink[] = useMemo(
     () =>
       (store.orgProfile?.toolLinks || [])
@@ -1065,6 +1080,9 @@ export function AssessmentPanel({
           });
         }
       });
+      phaseLinkMatches.forEach((link) => {
+        byLabel.set(link.label.toLowerCase(), link);
+      });
       toolLinkMatches.forEach((link) => {
         byLabel.set(link.label.toLowerCase(), link);
       });
@@ -1076,6 +1094,7 @@ export function AssessmentPanel({
     effectiveCoreLinks,
     store.orgProfile?.linkOverrides,
     store.orgProfile?.customComponentLinks,
+    phaseLinkMatches,
     toolLinkMatches,
   ]);
   const [actionEditor, setActionEditor] = useState<ActionEditorState | null>(null);

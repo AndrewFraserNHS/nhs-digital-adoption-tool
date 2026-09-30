@@ -1784,7 +1784,10 @@ export function AdoptionApp() {
 
         {/* Main Content Area */}
         <main ref={mainContentRef} className="flex-1 overflow-y-auto px-8 pt-8 pb-28">
-          {projectConfigured && !currentUserId ? (
+          {projectConfigured &&
+          !currentUserId &&
+          view !== 'project-details' &&
+          view !== 'profile' ? (
             <div
               role="alert"
               className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900"

@@ -31,17 +31,29 @@ describe('ActionLibraryReviewApp', () => {
     expect(
       screen.getByDisplayValue('A compelling future state has been defined')
     ).toBeInTheDocument();
+    expect(
+      screen.getByDisplayValue(
+        'Gather information on organisational priorities, programme objectives and expected outcomes to inform vision development.'
+      )
+    ).toBeInTheDocument();
 
     // act - switch to Pathway 2
     fireEvent.click(screen.getByRole('button', { name: 'Piloted and Ready to Scale Up' }));
 
-    // assert 1 - Pathway 2 has its own distinct default content, not Pathway 1's
+    // assert 1 - Pathway 2 reuses Pathway 1's outcome names (by design, so outcomes stay
+    // comparable across pathways), but its own distinct approved-wording action text, not
+    // Pathway 1's
     expect(
-      screen.queryByDisplayValue('A compelling future state has been defined')
+      screen.getByDisplayValue('A compelling future state has been defined')
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByDisplayValue(
+        'Gather information on organisational priorities, programme objectives and expected outcomes to inform vision development.'
+      )
     ).not.toBeInTheDocument();
     expect(
       screen.getByDisplayValue(
-        'The pilot has validated that a compelling future state has been defined'
+        'Review the original vision against pilot outcomes and current organisational priorities.'
       )
     ).toBeInTheDocument();
 

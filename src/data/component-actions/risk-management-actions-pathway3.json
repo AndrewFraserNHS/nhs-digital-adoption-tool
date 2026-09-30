@@ -6,15 +6,15 @@
   "outcomes": [
     {
       "id": "RM_O1",
-      "name": "Adoption has been re-engaged so that change risks have been identified and assessed"
+      "name": "Change risks have been identified and assessed"
     },
     {
       "id": "RM_O2",
-      "name": "Adoption has been re-engaged so that risk mitigation and management activities are in place"
+      "name": "Risk mitigation and management activities are in place"
     },
     {
       "id": "RM_O3",
-      "name": "Adoption has been re-engaged so that risks are proactively managed throughout the change lifecycle"
+      "name": "Risks are proactively managed throughout the change lifecycle"
     }
   ],
   "actions": [
@@ -24,8 +24,10 @@
       "toStatus": "Emerging",
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
-      "action": "M Re-engage teams to address: recognise that change-related risks may affect successful delivery, adoption, benefits realisation and sustainment.",
-      "outcomeIds": ["RM_O1"],
+      "action": "S Review live adoption risks, issues, mitigations and lessons learned.",
+      "outcomeIds": [
+        "RM_O1"
+      ],
       "readinessScore": 0
     },
     {
@@ -33,9 +35,11 @@
       "fromStatus": "Not Started",
       "toStatus": "Emerging",
       "lens": "Planning & Risk",
-      "category": "Engagement",
-      "action": "S Re-open discussions with sponsors, leaders and stakeholders about potential risks associated with the change.",
-      "outcomeIds": ["RM_O1"],
+      "category": "Analysis & Insight",
+      "action": "S Identify new risks created by greater scale, complexity and service variation.",
+      "outcomeIds": [
+        "RM_O1"
+      ],
       "readinessScore": 0
     },
     {
@@ -44,208 +48,250 @@
       "toStatus": "Emerging",
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
-      "action": "S Diagnose high-level areas of uncertainty, vulnerability and potential risk exposure.",
-      "outcomeIds": ["RM_O1"],
+      "action": "S Confirm owners and escalation routes for priority adoption recovery risks.",
+      "outcomeIds": [
+        "RM_O1"
+      ],
       "readinessScore": 0
     },
     {
       "id": "risk_management-3",
-      "fromStatus": "Not Started",
-      "toStatus": "Emerging",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
       "lens": "Planning & Risk",
-      "category": "Analysis & Insight",
-      "action": "M Diagnose factors that could increase the likelihood of implementation, adoption or sustainment risks.",
-      "outcomeIds": ["RM_O1"],
-      "readinessScore": 0
+      "category": "Risk Management",
+      "action": "S Update the risk register for each targeted recovery activity and service.",
+      "outcomeIds": [
+        "RM_O1"
+      ],
+      "readinessScore": 1
     },
     {
       "id": "risk_management-4",
-      "fromStatus": "Not Started",
-      "toStatus": "Emerging",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
       "lens": "Planning & Risk",
-      "category": "Governance",
-      "action": "S Re-engage teams to address: gain initial agreement with sponsors that change risks will need to be identified, assessed and actively managed.",
-      "outcomeIds": ["RM_O1"],
-      "readinessScore": 0
+      "category": "Design",
+      "action": "S Define mitigations, triggers, review dates and contingency actions.",
+      "outcomeIds": [
+        "RM_O1"
+      ],
+      "readinessScore": 1
     },
     {
       "id": "risk_management-5",
-      "fromStatus": "Not Started",
-      "toStatus": "Emerging",
-      "lens": "Process & Sustainment",
-      "category": "Communication",
-      "action": "M Re-engage teams to address: begin raising awareness at governance level of the importance of proactive, change related risk management.",
-      "outcomeIds": ["RM_O1"],
-      "readinessScore": 0
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Planning & Risk",
+      "category": "Design",
+      "action": "S Test controls against realistic adoption and operational scenarios.",
+      "outcomeIds": [
+        "RM_O1"
+      ],
+      "readinessScore": 1
     },
     {
       "id": "risk_management-6",
-      "fromStatus": "Not Started",
-      "toStatus": "Emerging",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
       "lens": "Planning & Risk",
-      "category": "Analysis & Insight",
-      "action": "S Diagnose gaps in lessons learned from previous changes to identify recurring risk themes and vulnerabilities.",
-      "outcomeIds": ["RM_O1"],
-      "readinessScore": 0
+      "category": "Measurement & Evaluation",
+      "action": "S Implement and track risk mitigations throughout adoption recovery.",
+      "outcomeIds": [
+        "RM_O2"
+      ],
+      "readinessScore": 2
     },
     {
       "id": "risk_management-7",
-      "fromStatus": "Emerging",
-      "toStatus": "Developing",
-      "lens": "Planning & Risk",
-      "category": "Analysis & Insight",
-      "action": "S Re-engage teams to address: conduct structured change risk assessment activities involving stakeholders and subject matter experts.",
-      "outcomeIds": ["RM_O1"],
-      "readinessScore": 1
-    },
-    {
-      "id": "risk_management-8",
-      "fromStatus": "Emerging",
-      "toStatus": "Developing",
-      "lens": "Planning & Risk",
-      "category": "Analysis & Insight",
-      "action": "M Diagnose and document risks that could affect successful delivery, adoption, benefit realisation or sustainment of the change (RAID log).",
-      "outcomeIds": ["RM_O1"],
-      "readinessScore": 1
-    },
-    {
-      "id": "risk_management-9",
-      "fromStatus": "Emerging",
-      "toStatus": "Developing",
-      "lens": "Planning & Risk",
-      "category": "Risk Management",
-      "action": "M Diagnose and categorise identified risks according to likelihood, impact, urgency and priority.",
-      "outcomeIds": ["RM_O1"],
-      "readinessScore": 1
-    },
-    {
-      "id": "risk_management-10",
-      "fromStatus": "Emerging",
-      "toStatus": "Developing",
-      "lens": "Planning & Risk",
-      "category": "Risk Management",
-      "action": "S Re-engage teams to address: apply structured risk assessment techniques to analyse consequences and exposure levels.",
-      "outcomeIds": ["RM_O1"],
-      "readinessScore": 1
-    },
-    {
-      "id": "risk_management-11",
-      "fromStatus": "Emerging",
-      "toStatus": "Developing",
-      "lens": "Planning & Risk",
-      "category": "Risk Management",
-      "action": "M Re-establish and maintain an initial change risk register.",
-      "outcomeIds": ["RM_O1", "RM_O2"],
-      "readinessScore": 1
-    },
-    {
-      "id": "risk_management-12",
-      "fromStatus": "Emerging",
-      "toStatus": "Developing",
-      "lens": "Process & Sustainment",
-      "category": "Analysis & Insight",
-      "action": "M Diagnose processes, operating arrangements and dependencies to identify areas of elevated risk (RAID log).",
-      "outcomeIds": ["RM_O1"],
-      "readinessScore": 1
-    },
-    {
-      "id": "risk_management-13",
-      "fromStatus": "Emerging",
-      "toStatus": "Developing",
-      "lens": "Process & Sustainment",
-      "category": "Engagement",
-      "action": "S Re-engage teams to address: engage stakeholders to identify risks from operational, behavioural, cultural and organisational perspectives.",
-      "outcomeIds": ["RM_O1"],
-      "readinessScore": 1
-    },
-    {
-      "id": "risk_management-14",
-      "fromStatus": "Emerging",
-      "toStatus": "Developing",
-      "lens": "Process & Sustainment",
-      "category": "Analysis & Insight",
-      "action": "S Diagnose known concerns, previous change experiences and organisational vulnerabilities that may increase risk exposure.",
-      "outcomeIds": ["RM_O1"],
-      "readinessScore": 1
-    },
-    {
-      "id": "risk_management-15",
-      "fromStatus": "Emerging",
-      "toStatus": "Developing",
-      "lens": "Process & Sustainment",
-      "category": "Engagement",
-      "action": "S Re-engage teams to address: use the completed change impact assessment to explore stakeholder perceptions of key concerns, risks and organisational vulnerabilities.",
-      "outcomeIds": ["RM_O1"],
-      "readinessScore": 1
-    },
-    {
-      "id": "risk_management-16",
-      "fromStatus": "Emerging",
-      "toStatus": "Developing",
-      "lens": "Process & Sustainment",
-      "category": "Dependency Management",
-      "action": "S Diagnose and assess critical dependencies that may increase the overall risk profile of the change.",
-      "outcomeIds": ["RM_O1"],
-      "readinessScore": 1
-    },
-    {
-      "id": "risk_management-17",
-      "fromStatus": "Emerging",
-      "toStatus": "Developing",
-      "lens": "Process & Sustainment",
-      "category": "Analysis & Insight",
-      "action": "S Diagnose stakeholder confidence in the organisation's ability to manage risks associated with the change.",
-      "outcomeIds": ["RM_O1"],
-      "readinessScore": 1
-    },
-    {
-      "id": "risk_management-18",
-      "fromStatus": "Developing",
-      "toStatus": "Embedding",
-      "lens": "Planning & Risk",
-      "category": "Risk Management",
-      "action": "M Re-engage teams to address: assign ownership and accountability for identified risks.",
-      "outcomeIds": ["RM_O2"],
-      "readinessScore": 2
-    },
-    {
-      "id": "risk_management-19",
-      "fromStatus": "Developing",
-      "toStatus": "Embedding",
-      "lens": "Planning & Risk",
-      "category": "Risk Management",
-      "action": "M Rebuild mitigation strategies and action plans for high-priority risks.",
-      "outcomeIds": ["RM_O2"],
-      "readinessScore": 2
-    },
-    {
-      "id": "risk_management-20",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
       "category": "Governance",
-      "action": "S Re-engage teams to address: integrate change risks into programme and organisational governance arrangements.",
-      "outcomeIds": ["RM_O2", "RM_O3"],
+      "action": "S Escalate risks that exceed agreed tolerance or local authority.",
+      "outcomeIds": [
+        "RM_O2"
+      ],
       "readinessScore": 2
+    },
+    {
+      "id": "risk_management-8",
+      "fromStatus": "Developing",
+      "toStatus": "Embedding",
+      "lens": "Planning & Risk",
+      "category": "Implementation",
+      "action": "S Record emerging risks and apply learning to later targeted recovery activities.",
+      "outcomeIds": [
+        "RM_O2"
+      ],
+      "readinessScore": 2
+    },
+    {
+      "id": "risk_management-9",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "Risk Management",
+      "action": "S Review risk trends and the effectiveness of mitigations across services.",
+      "outcomeIds": [
+        "RM_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "risk_management-10",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "Risk Management",
+      "action": "S Strengthen controls where issues recur or risk exposure increases.",
+      "outcomeIds": [
+        "RM_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "risk_management-11",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "Risk Management",
+      "action": "S Share risk learning with governance and low adopting teams.",
+      "outcomeIds": [
+        "RM_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "risk_management-12",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Planning & Risk",
+      "category": "Reinforcement",
+      "action": "S Transfer ongoing risks and controls to named business as usual owners.",
+      "outcomeIds": [
+        "RM_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "risk_management-13",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Planning & Risk",
+      "category": "Measurement & Evaluation",
+      "action": "S Monitor leading indicators so action is taken before adoption is affected.",
+      "outcomeIds": [
+        "RM_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "risk_management-14",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Planning & Risk",
+      "category": "Risk Management",
+      "action": "S Use risk evidence to improve sustained adoption recovery and optimisation decisions.",
+      "outcomeIds": [
+        "RM_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "risk_management-15",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Process & Sustainment",
+      "category": "Implementation",
+      "action": "S Review live usage data and user feedback of workarounds, variation, support demand and benefit loss.",
+      "outcomeIds": [
+        "RM_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "risk_management-16",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Process & Sustainment",
+      "category": "Implementation",
+      "action": "S Identify risks that could cause adoption to decline after targeted adoption support ends.",
+      "outcomeIds": [
+        "RM_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "risk_management-17",
+      "fromStatus": "Not Started",
+      "toStatus": "Emerging",
+      "lens": "Process & Sustainment",
+      "category": "Analysis & Insight",
+      "action": "S Confirm operational owners for sustainment risks.",
+      "outcomeIds": [
+        "RM_O1"
+      ],
+      "readinessScore": 0
+    },
+    {
+      "id": "risk_management-18",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Process & Sustainment",
+      "category": "Design",
+      "action": "S Build sustainment risks and controls into process and support plans.",
+      "outcomeIds": [
+        "RM_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "risk_management-19",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Process & Sustainment",
+      "category": "Design",
+      "action": "S Define indicators for variation, regression and recurring support issues.",
+      "outcomeIds": [
+        "RM_O1"
+      ],
+      "readinessScore": 1
+    },
+    {
+      "id": "risk_management-20",
+      "fromStatus": "Emerging",
+      "toStatus": "Developing",
+      "lens": "Process & Sustainment",
+      "category": "Governance",
+      "action": "S Agree actions and escalation routes when agreed thresholds are reached.",
+      "outcomeIds": [
+        "RM_O1"
+      ],
+      "readinessScore": 1
     },
     {
       "id": "risk_management-21",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
-      "lens": "Planning & Risk",
-      "category": "Measurement & Evaluation",
-      "action": "S Revisit and clarify risk monitoring indicators, thresholds and reporting arrangements.",
-      "outcomeIds": ["RM_O2"],
+      "lens": "Process & Sustainment",
+      "category": "Implementation",
+      "action": "S Apply sustainment controls as each service moves through rollout.",
+      "outcomeIds": [
+        "RM_O2"
+      ],
       "readinessScore": 2
     },
     {
       "id": "risk_management-22",
       "fromStatus": "Developing",
       "toStatus": "Embedding",
-      "lens": "Planning & Risk",
-      "category": "Risk Management",
-      "action": "S Re-validate risk ratings and mitigation plans with relevant stakeholders and sponsors.",
-      "outcomeIds": ["RM_O2"],
+      "lens": "Process & Sustainment",
+      "category": "Measurement & Evaluation",
+      "action": "S Monitor workarounds, process adherence and support demand.",
+      "outcomeIds": [
+        "RM_O2"
+      ],
       "readinessScore": 2
     },
     {
@@ -253,239 +299,83 @@
       "fromStatus": "Developing",
       "toStatus": "Embedding",
       "lens": "Process & Sustainment",
-      "category": "Communication",
-      "action": "S re-communicate significant risks and agreed mitigations to appropriate stakeholder groups.",
-      "outcomeIds": ["RM_O2"],
+      "category": "Engagement",
+      "action": "S Resolve issues before they become accepted local practice.",
+      "outcomeIds": [
+        "RM_O2"
+      ],
       "readinessScore": 2
     },
     {
       "id": "risk_management-24",
-      "fromStatus": "Developing",
-      "toStatus": "Embedding",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
       "lens": "Process & Sustainment",
-      "category": "Engagement",
-      "action": "S Re-engage teams to address: refine risk understanding and mitigation activities using stakeholder insight and feedback.",
-      "outcomeIds": ["RM_O2"],
-      "readinessScore": 2
+      "category": "Measurement & Evaluation",
+      "action": "S Compare sustainment risks and recurring issues across services.",
+      "outcomeIds": [
+        "RM_O2"
+      ],
+      "readinessScore": 3
     },
     {
       "id": "risk_management-25",
-      "fromStatus": "Developing",
-      "toStatus": "Embedding",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
       "lens": "Process & Sustainment",
-      "category": "Design",
-      "action": "M Re-engage teams to address: incorporate risk mitigation activities into implementation, communications, learning and readiness plans.",
-      "outcomeIds": ["RM_O2", "RM_O3"],
-      "readinessScore": 2
+      "category": "Measurement & Evaluation",
+      "action": "S Target corrective action where adoption or benefits are declining.",
+      "outcomeIds": [
+        "RM_O2"
+      ],
+      "readinessScore": 3
     },
     {
       "id": "risk_management-26",
-      "fromStatus": "Developing",
-      "toStatus": "Embedding",
-      "lens": "Process & Sustainment",
-      "category": "Dependency Management",
-      "action": "S Re-engage teams to address: manage identified dependencies that increase overall change risk.",
-      "outcomeIds": ["RM_O2", "RM_O3"],
-      "readinessScore": 2
-    },
-    {
-      "id": "risk_management-27",
-      "fromStatus": "Developing",
-      "toStatus": "Embedding",
-      "lens": "Process & Sustainment",
-      "category": "Testing & Validation",
-      "action": "S Re-test proposed controls and mitigations before implementation where practical.",
-      "outcomeIds": ["RM_O2"],
-      "readinessScore": 2
-    },
-    {
-      "id": "risk_management-28",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
-      "lens": "Planning & Risk",
-      "category": "Risk Management",
-      "action": "M Diagnose gaps in and update risk ratings based on emerging evidence and implementation experience.",
-      "outcomeIds": ["RM_O3"],
-      "readinessScore": 3
-    },
-    {
-      "id": "risk_management-29",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
-      "lens": "Planning & Risk",
-      "category": "Measurement & Evaluation",
-      "action": "S Re-establish monitoring of change risks regularly using agreed review cycles, thresholds and governance forums.",
-      "outcomeIds": ["RM_O3"],
-      "readinessScore": 3
-    },
-    {
-      "id": "risk_management-30",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
-      "lens": "Planning & Risk",
-      "category": "Governance",
-      "action": "M Re-engage teams to address: escalate significant risks through agreed governance routes and obtain timely decisions where required.",
-      "outcomeIds": ["RM_O3"],
-      "readinessScore": 3
-    },
-    {
-      "id": "risk_management-31",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
-      "lens": "Planning & Risk",
-      "category": "Risk Management",
-      "action": "S Recover implementation of additional mitigation actions where existing controls are not sufficiently reducing risk exposure.",
-      "outcomeIds": ["RM_O3"],
-      "readinessScore": 3
-    },
-    {
-      "id": "risk_management-32",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
-      "lens": "Planning & Risk",
-      "category": "Measurement & Evaluation",
-      "action": "S Diagnose the effectiveness of mitigation activities and controls.",
-      "outcomeIds": ["RM_O2", "RM_O3"],
-      "readinessScore": 3
-    },
-    {
-      "id": "risk_management-33",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
-      "lens": "Process & Sustainment",
-      "category": "Dependency Management",
-      "action": "M Diagnose gaps in evolving dependencies and their impact on the risk profile.",
-      "outcomeIds": ["RM_O3"],
-      "readinessScore": 3
-    },
-    {
-      "id": "risk_management-34",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
-      "lens": "Process & Sustainment",
-      "category": "Engagement",
-      "action": "S Gather fresh evidence on stakeholder feedback on emerging risks, concerns and unintended consequences.",
-      "outcomeIds": ["RM_O3"],
-      "readinessScore": 3
-    },
-    {
-      "id": "risk_management-35",
       "fromStatus": "Embedding",
       "toStatus": "Adopted",
       "lens": "Process & Sustainment",
       "category": "Communication",
-      "action": "S Re-engage teams to address: provide regular risk updates to stakeholders and leadership teams.",
-      "outcomeIds": ["RM_O3"],
+      "action": "S Share effective controls and recovery approaches between live services and teams.",
+      "outcomeIds": [
+        "RM_O2"
+      ],
       "readinessScore": 3
     },
     {
-      "id": "risk_management-36",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
-      "lens": "Process & Sustainment",
-      "category": "Testing & Validation",
-      "action": "S Re-validate whether risk controls are operating as intended in practice.",
-      "outcomeIds": ["RM_O2", "RM_O3"],
-      "readinessScore": 3
-    },
-    {
-      "id": "risk_management-37",
-      "fromStatus": "Embedding",
-      "toStatus": "Adopted",
+      "id": "risk_management-27",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
       "lens": "Process & Sustainment",
       "category": "Risk Management",
-      "action": "S Re-engage teams to address: improve current mitigation and control activities using lessons learned.",
-      "outcomeIds": ["RM_O3"],
-      "readinessScore": 3
-    },
-    {
-      "id": "risk_management-38",
-      "fromStatus": "Adopted",
-      "toStatus": "Thriving",
-      "lens": "Planning & Risk",
-      "category": "Risk Management",
-      "action": "M Re-engage teams to address: continuously monitor current risks and proactively scan for emerging risks associated with ongoing change and continuous improvement.",
-      "outcomeIds": ["RM_O3"],
+      "action": "S Embed sustainment risk monitoring in routine operational governance.",
+      "outcomeIds": [
+        "RM_O3"
+      ],
       "readinessScore": 4
     },
     {
-      "id": "risk_management-39",
-      "fromStatus": "Adopted",
-      "toStatus": "Thriving",
-      "lens": "Planning & Risk",
-      "category": "Governance",
-      "action": "S Re-embed change risk management into routine governance, planning and operational management processes.",
-      "outcomeIds": ["RM_O3"],
-      "readinessScore": 4
-    },
-    {
-      "id": "risk_management-40",
-      "fromStatus": "Adopted",
-      "toStatus": "Thriving",
-      "lens": "Planning & Risk",
-      "category": "Measurement & Evaluation",
-      "action": "S Diagnose gaps in long-term trends and recurring patterns in change-related risks.",
-      "outcomeIds": ["RM_O3"],
-      "readinessScore": 4
-    },
-    {
-      "id": "risk_management-41",
-      "fromStatus": "Adopted",
-      "toStatus": "Thriving",
-      "lens": "Planning & Risk",
-      "category": "Design",
-      "action": "S Re-engage teams to address: use organisational learning to improve risk identification, assessment and mitigation approaches.",
-      "outcomeIds": ["RM_O3"],
-      "readinessScore": 4
-    },
-    {
-      "id": "risk_management-42",
+      "id": "risk_management-28",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Process & Sustainment",
-      "category": "Reinforcement",
-      "action": "M Re-embed a culture of proactive risk management and continuous vigilance across the organisation.",
-      "outcomeIds": ["RM_O3"],
+      "category": "Analysis & Insight",
+      "action": "S Review controls as processes, technology and service needs change.",
+      "outcomeIds": [
+        "RM_O3"
+      ],
       "readinessScore": 4
     },
     {
-      "id": "risk_management-43",
+      "id": "risk_management-29",
       "fromStatus": "Adopted",
       "toStatus": "Thriving",
       "lens": "Process & Sustainment",
-      "category": "Engagement",
-      "action": "S Re-engage and encourage proactive risk identification and escalation throughout the organisation.",
-      "outcomeIds": ["RM_O3"],
-      "readinessScore": 4
-    },
-    {
-      "id": "risk_management-44",
-      "fromStatus": "Adopted",
-      "toStatus": "Thriving",
-      "lens": "Process & Sustainment",
-      "category": "Reinforcement",
-      "action": "S Re-engage teams to address: recognise and reinforce behaviours that contribute to effective risk management.",
-      "outcomeIds": ["RM_O3"],
-      "readinessScore": 4
-    },
-    {
-      "id": "risk_management-45",
-      "fromStatus": "Adopted",
-      "toStatus": "Thriving",
-      "lens": "Process & Sustainment",
-      "category": "Measurement & Evaluation",
-      "action": "S Re-evaluate the maturity and effectiveness of the risk management approach on a regular basis.",
-      "outcomeIds": ["RM_O3"],
-      "readinessScore": 4
-    },
-    {
-      "id": "risk_management-46",
-      "fromStatus": "Adopted",
-      "toStatus": "Thriving",
-      "lens": "Process & Sustainment",
-      "category": "Design",
-      "action": "S Re-engage teams to address: continuously improve risk management processes using lessons learned and organisational insight.",
-      "outcomeIds": ["RM_O3"],
+      "category": "Implementation",
+      "action": "S Use long term evidence to prevent regression and protect benefits.",
+      "outcomeIds": [
+        "RM_O3"
+      ],
       "readinessScore": 4
     }
   ]

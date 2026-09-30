@@ -1,10 +1,13 @@
+// SUPERSEDED as of 2026-09-30: pathway-2 and pathway-3 *-actions-pathway{2,3}.json files are now
+// hand-authored from the approved-wording documents in docs/Pathway_2_Approved_Wording_Action_
+// Library.docx and docs/Pathway_3_Approved_Wording_Action_Library.docx (see docs/TECHNICAL_
+// HANDOVER.md). Do NOT run this script - it will overwrite that approved content with the old
+// phrase-substituted text. Kept only for reference/history.
+//
 // One-off content generator: duplicates each pathway-1 component-actions JSON file into
 // pathway-2 and pathway-3 variants, keeping the same structure (ids, lens, category, statuses,
 // outcomeIds, readinessScore) but rewording the free text (outcome names, action sentences) via a
 // phrase-substitution map so each pathway reads as its own framing rather than pathway-1 verbatim.
-//
-// Run with: node scripts/generatePathwayContent.mjs
-// Re-run whenever a pathway-1 *-actions.json file's content changes, to keep pathway-2/3 in sync.
 
 import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';

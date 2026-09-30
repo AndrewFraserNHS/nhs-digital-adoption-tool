@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { ProjectDetailsPage } from './CSTDetailsPage';
 import type { OrgProfile } from '@lib/adoptionState';
 import type { AssessmentComponent } from '@data/components';
+import { DEFAULT_FURTHER_READING, PHASE_LINKS } from '@data/maturity-guidance-links';
 
 const orgProfile: OrgProfile = {
   trustName: 'Trust',
@@ -226,7 +227,7 @@ describe('ProjectDetailsPage', () => {
     );
 
     // assert 1
-    expect(screen.queryByText('Tool linking')).not.toBeInTheDocument();
+    expect(screen.queryByText('Phase linking')).not.toBeInTheDocument();
     expect(screen.getByText(/set up at project start/)).toBeInTheDocument();
 
     // act 2 - reshown via the per-device override
@@ -246,7 +247,7 @@ describe('ProjectDetailsPage', () => {
     );
 
     // assert 2
-    expect(screen.getByText('Tool linking')).toBeInTheDocument();
+    expect(screen.getByText('Phase linking')).toBeInTheDocument();
   });
 
   it('SHOULD write externalLinksInitiated WHERE the "Links initiated" checkbox is toggled', () => {
@@ -276,69 +277,7 @@ describe('ProjectDetailsPage', () => {
     );
   });
 
-  it('SHOULD add a Tool Linking entry', () => {
-    // arrange
-    const onProfileUpdate = vi.fn();
-
-    render(
-      <ProjectDetailsPage
-        orgProfile={orgProfile}
-        onProfileUpdate={onProfileUpdate}
-        components={components}
-        lenses={['Strategic Direction and Leadership']}
-        onComponentClick={vi.fn()}
-        onGoToIntroduction={vi.fn()}
-        onContinueToVision={vi.fn()}
-        onGoToWhereAmINow={vi.fn()}
-        onCurrentUserChange={vi.fn()}
-      />
-    );
-
-    // act
-    fireEvent.click(screen.getByRole('button', { name: '+ Add Tool Link' }));
-
-    // assert
-    expect(onProfileUpdate).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        toolLinks: [
-          expect.objectContaining({ tool: 'highlight-builder', matchText: 'Highlight Builder' }),
-        ],
-      })
-    );
-  });
-
-  it('SHOULD remove a Tool Linking entry', () => {
-    // arrange
-    const onProfileUpdate = vi.fn();
-    const profileWithToolLink: OrgProfile = {
-      ...orgProfile,
-      toolLinks: [{ key: 'tool-1', tool: 'highlight-builder', matchText: 'Highlight Builder' }],
-    };
-
-    render(
-      <ProjectDetailsPage
-        orgProfile={profileWithToolLink}
-        onProfileUpdate={onProfileUpdate}
-        components={components}
-        lenses={['Strategic Direction and Leadership']}
-        onComponentClick={vi.fn()}
-        onGoToIntroduction={vi.fn()}
-        onContinueToVision={vi.fn()}
-        onGoToWhereAmINow={vi.fn()}
-        onCurrentUserChange={vi.fn()}
-      />
-    );
-    const toolLinkingContainer = screen.getByRole('button', { name: '+ Add Tool Link' })
-      .parentElement as HTMLElement;
-
-    // act
-    fireEvent.click(within(toolLinkingContainer).getByRole('button', { name: 'Remove' }));
-
-    // assert
-    expect(onProfileUpdate).toHaveBeenLastCalledWith(expect.objectContaining({ toolLinks: [] }));
-  });
-
-  it('SHOULD show a "Default Toolkit Link" badge for an unmodified component link, and no "Custom" badge yet', () => {
+  it('SHOULD show a "Default Change Management Link" badge for an unmodified component link, and no "Custom" badge yet', () => {
     // act
     render(
       <ProjectDetailsPage
@@ -355,7 +294,9 @@ describe('ProjectDetailsPage', () => {
     );
 
     // assert
-    expect(screen.getAllByRole('link', { name: 'Default Toolkit Link' }).length).toBeGreaterThan(0);
+    expect(
+      screen.getAllByRole('link', { name: 'Default Change Management Link' }).length
+    ).toBeGreaterThan(0);
     expect(screen.queryByRole('link', { name: 'Custom' })).not.toBeInTheDocument();
   });
 
@@ -626,5 +567,86 @@ describe('ProjectDetailsPage', () => {
       })
     );
     confirmSpy.mockRestore();
+  });
+
+  it('SHOULD show the bundled default for a Phase link until it is overridden, then allow resetting back to it', () => {
+    // arrange
+    const onProfileUpdate = vi.fn();
+    const { rerender } = render(
+      <ProjectDetailsPage
+        orgProfile={orgProfile}
+        onProfileUpdate={onProfileUpdate}
+        components={components}
+        lenses={['Strategic Direction and Leadership']}
+        onComponentClick={vi.fn()}
+        onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
+        onCurrentUserChange={vi.fn()}
+      />
+    );
+
+    // assert 1 - shows the bundled default, badged as such
+    const phaseOneInput = screen.getByLabelText('Phase 1: Pre-Discovery') as HTMLInputElement;
+    expect(phaseOneInput.value).toBe(PHASE_LINKS[1]);
+    expect(within(phaseOneInput.parentElement as HTMLElement).getByText('Default')).toBeInTheDocument();
+
+    // act - override it
+    fireEvent.change(phaseOneInput, { target: { value: 'https://example.nhs.uk/phase-1' } });
+
+    // assert 2
+    expect(onProfileUpdate).toHaveBeenLastCalledWith(
+      expect.objectContaining({ phaseLinks: expect.objectContaining({ 1: 'https://example.nhs.uk/phase-1' }) })
+    );
+
+    // act - reset back to default
+    rerender(
+      <ProjectDetailsPage
+        orgProfile={{ ...orgProfile, phaseLinks: { 1: 'https://example.nhs.uk/phase-1' } }}
+        onProfileUpdate={onProfileUpdate}
+        components={components}
+        lenses={['Strategic Direction and Leadership']}
+        onComponentClick={vi.fn()}
+        onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
+        onCurrentUserChange={vi.fn()}
+      />
+    );
+    fireEvent.click(
+      within(screen.getByLabelText('Phase 1: Pre-Discovery').parentElement as HTMLElement).getByRole(
+        'button',
+        { name: 'Reset' }
+      )
+    );
+
+    // assert 3
+    expect(onProfileUpdate).toHaveBeenLastCalledWith(
+      expect.objectContaining({ phaseLinks: expect.objectContaining({ 1: '' }) })
+    );
+  });
+
+  it('SHOULD show the bundled default Further Reading link for a component until overridden', () => {
+    // arrange + act
+    render(
+      <ProjectDetailsPage
+        orgProfile={orgProfile}
+        onProfileUpdate={vi.fn()}
+        components={components}
+        lenses={['Strategic Direction and Leadership']}
+        onComponentClick={vi.fn()}
+        onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
+        onCurrentUserChange={vi.fn()}
+      />
+    );
+    fireEvent.click(screen.getByText('Vision'));
+
+    // assert
+    const furtherReadingInput = document.getElementById(
+      'further-reading-vision'
+    ) as HTMLInputElement;
+    expect(furtherReadingInput.value).toBe(DEFAULT_FURTHER_READING.vision);
   });
 });

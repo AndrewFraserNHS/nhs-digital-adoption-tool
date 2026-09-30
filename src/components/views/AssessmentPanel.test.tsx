@@ -6,6 +6,7 @@ import { EVIDENCE_WARNING_DISMISSED_KEY } from '@components/common/EvidenceWarni
 const ASSESSMENT_PAGE_INTRO_SEEN_KEY = 'nhs-digital-adoption-page-intro-seen:assessment';
 import type { DraftEntry, OrgProfile, RaidItem } from '@lib/adoptionState';
 import type { AssessmentComponent } from '@data/components';
+import { PHASE_LINKS } from '@data/maturity-guidance-links';
 
 const components: AssessmentComponent[] = [
   {
@@ -570,6 +571,31 @@ describe('AssessmentPanel', () => {
     const link = screen.getByRole('link', { name: 'RACI/RASCI Matrix' });
     expect(link).toHaveAttribute('href', 'https://future.nhs.uk/CMN/view?objectId=34040240');
     expect(link).toHaveAttribute('target', '_blank');
+  });
+
+  it('SHOULD render a matching Phase link inside an action description', () => {
+    // arrange
+    const entry = createEntry({
+      actions: [
+        {
+          id: 'action-1',
+          text: 'See Phase 1: Pre-Discovery for what to prepare beforehand.',
+          owner: 'PMO',
+          timescale: 'Q3',
+          status: 'Planned',
+        },
+      ],
+    });
+    const props = createProps({ entry });
+    props.store.currentDraft = { vision: { 'Strategic Direction': entry } };
+    props.getEntry = () => entry;
+
+    // act
+    render(<AssessmentPanel {...props} />);
+
+    // assert
+    const link = screen.getByRole('link', { name: 'Phase 1: Pre-Discovery' });
+    expect(link).toHaveAttribute('href', PHASE_LINKS[1]);
   });
 
   it('SHOULD hide additional guidance links from action descriptions WHERE showAdditionalGuidanceLinks is false', () => {

@@ -200,6 +200,9 @@ export const DEFAULT_FURTHER_READING: Record<string, string> = {
   change_adoption: 'https://future.nhs.uk/CMN/view?objectID=74023728',
   case_for_change: 'https://future.nhs.uk/CMN/view?objectID=74021584',
   benefits: 'https://future.nhs.uk/CMN/view?objectID=73997232',
+  change_readiness: 'https://future.nhs.uk/CMN/view?objectID=76508176',
+  capability: 'https://future.nhs.uk/CMN/view?objectID=76508048',
+  skills_learning: 'https://future.nhs.uk/CMN/view?objectID=76508112'
 };
 
 export const DEFAULT_GUIDANCE_LINK_MAP: GuidanceLinkMap = {

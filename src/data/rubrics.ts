@@ -22,12 +22,12 @@ export const MATURITY_STAGES = [
 ];
 
 export const STAGE_COLORS = [
-  '#768692', // Pre-Emergent: gray
-  '#AE2521', // Emerging: red
-  '#FFB81C', // Developing: orange
-  '#005EB8', // Maturing: blue
-  '#330072', // Embedding: purple
-  '#00A499', // Thriving: teal
+  '#d9dccf', // Pre-Emergent: gray
+  '#fcf229', // Emerging: red
+  '#d18410', // Developing: orange
+  '#4D7EA8', // Maturing: blue
+  '#9a62aa', // Embedding: purple
+  '#1522b0', // Thriving: teal
 ];
 
 export type SpecificRubricEntry = Record<number, string>;

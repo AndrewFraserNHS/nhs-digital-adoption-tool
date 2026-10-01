@@ -1974,7 +1974,7 @@ export function AssessmentPanel({
             <label
               className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}
             >
-              Assessment Rationale
+              Status Rationale
             </label>
             <p className={`text-xs mb-2 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
               Explain what is currently known, what evidence supports that view, and where the

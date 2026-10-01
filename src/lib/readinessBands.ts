@@ -11,12 +11,12 @@ export interface ReadinessBand {
 }
 
 export const READINESS_BANDS: ReadinessBand[] = [
-  { score: 0, label: 'Not Started', color: '#768692' },
-  { score: 1, label: 'Emerging', color: '#AE2521' },
-  { score: 2, label: 'Developing', color: '#FFB81C' },
-  { score: 3, label: 'Embedding', color: '#005EB8' },
-  { score: 4, label: 'Adopted', color: '#330072' },
-  { score: 5, label: 'Thriving', color: '#00A499' },
+  { score: 0, label: 'Not Started', color: '#d9dccf' },
+  { score: 1, label: 'Emerging', color: '#fcf229' },
+  { score: 2, label: 'Developing', color: '#d18410' },
+  { score: 3, label: 'Embedding', color: '#4D7EA8' },
+  { score: 4, label: 'Adopted', color: '#9E90A2' },
+  { score: 5, label: 'Thriving', color: '#1522b0' },
 ];
 
 export function getReadinessBand(score: number): ReadinessBand {

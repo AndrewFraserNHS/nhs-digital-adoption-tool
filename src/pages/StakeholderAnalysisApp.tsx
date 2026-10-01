@@ -147,7 +147,6 @@ function createId(prefix = ''): string {
 function freshReferenceData(): ReferenceData {
   return {
     groups: [
-      'SRO',
       'Manager',
       'Trades Union',
       'Programme',
@@ -201,7 +200,7 @@ function freshReferenceData(): ReferenceData {
       },
       {
         id: 'act-3',
-        name: 'Targetted X/Twitter Feed',
+        name: 'Targeted Social Media Feed',
         inform: 'High',
         consult: 'Medium',
         involve: '',

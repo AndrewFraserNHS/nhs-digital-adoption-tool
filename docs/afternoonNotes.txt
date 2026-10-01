@@ -1,0 +1,16 @@
+1. Live delivery progress kept, new wording is action count. Keep it up. Remove third card.
+2. Phase Progress needs explanation as to the RAG status.
+3. Phase Progress subtitle copy needs to remove 100% lens coverage, highlight amount of actions cancelled and skipped. 
+4. Key is missing on Adoption Baseline page, with colours hihglighted.
+5. Swap colours for Thriving and Embedding.
+6. Action tracker needs to be clickable into the action modal
+7. Remove average column from action tracker. and 100% checklist copy.
+8. Confidence and Capability by Phase can be commented Outcome
+9. Make Programme/Project Readiness Slides optional (toggle)
+10. (Optional) Highlight builder ability to export text content to import across devices.
+11. (Optional) Instead of two different engines, it would be month to month comparison on progres.
+12. (Optional) Way to group stakeholders, select stakeholder or stakeholder group.
+13. (Optional) Link to action from Engagement Log (clickable). Action on component would need changes reflected including linked stakeholder.
+14. 4. Key Risks and Issues should come from RAID log on Highlight Builder. (Don't let them input from highlight builder)
+15. First of the month, "Do you want to update anyone on progress?", reminder to send across JSON CST and Audit PDF, can be done manually in profile.
+16. Show external links section and Show change adoption baseline section swapped for "Show admin action" toggle that is off by default.

@@ -1229,6 +1229,8 @@ export function AdoptionApp() {
       .filter((key) => key.startsWith('nhs-digital-adoption-page-intro-seen:'))
       .forEach((key) => localStorage.removeItem(key));
 
+    window.sessionStorage.clear();
+
     announceStatus('Assessment data has been reset and you have been signed out.');
 
     if (shouldAutoCloseSidebar()) {
@@ -1389,14 +1391,15 @@ export function AdoptionApp() {
       />
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 z-10 bg-slate-900/35 backdrop-blur-[1px] lg:hidden"
+          className="fixed inset-0 z-10 bg-slate-900/10 lg:hidden"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
-      {/* Sidebar */}
+      {/* Sidebar - full width on small screens when open (so it reads as its own screen, not a
+          narrow strip), a collapsible 288px panel from the lg breakpoint up. */}
       <div
         className={`fixed inset-y-0 left-0 z-20 bg-[#005eb8] text-white flex flex-col shadow-xl overflow-hidden transition-all duration-300 ease-out lg:static lg:translate-x-0 ${
-          isSidebarOpen ? 'w-72 translate-x-0' : 'w-0 -translate-x-full lg:w-0'
+          isSidebarOpen ? 'w-full lg:w-72 translate-x-0' : 'w-0 -translate-x-full lg:w-0'
         }`}
         style={{ backgroundColor: userSettings.themeColor }}
       >
@@ -1793,8 +1796,8 @@ export function AdoptionApp() {
               className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900"
             >
               <span>
-                You&apos;re not signed in as a team member, so changes are locked. Select who you
-                are in Project Profile to make edits.
+                You&apos;re not signed in as anyone, so changes are locked. Go to Project Profile
+                and set &quot;You are signed in as&quot; to your name.
               </span>
               <button
                 type="button"
@@ -1805,67 +1808,6 @@ export function AdoptionApp() {
               </button>
             </div>
           ) : null}
-          {view === 'daily-checkin' && showEngagementCard ? (
-            <section
-              className={`${userSettings.darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'} mb-6 rounded-xl border p-4 shadow-sm`}
-            >
-              <div className="flex flex-wrap items-start justify-between gap-4">
-                <div>
-                  <p
-                    className={`text-xs font-semibold uppercase tracking-wider ${userSettings.darkMode ? 'text-slate-300' : 'text-slate-500'}`}
-                  >
-                    Objectives
-                  </p>
-                  <p
-                    className={`text-sm mt-1 ${userSettings.darkMode ? 'text-slate-100' : 'text-slate-700'}`}
-                  >
-                    {completedObjectivesCount}/{engagementObjectives.length} complete - based on
-                    phase readiness, ownership, cadence and team participation.
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setShowEngagementCard(false)}
-                  className={`${userSettings.darkMode ? 'border-slate-600 bg-slate-900 text-slate-100 hover:bg-slate-700' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'} rounded-md border px-3 py-2 text-sm font-medium`}
-                  aria-label="Dismiss objectives card"
-                >
-                  Dismiss
-                </button>
-              </div>
-
-              <div className="mt-4 grid gap-3 md:grid-cols-3">
-                {engagementObjectives.map((objective) => (
-                  <div
-                    key={objective.id}
-                    className={`rounded-lg border p-3 ${
-                      objective.completed
-                        ? 'border-green-200 bg-green-50'
-                        : userSettings.darkMode
-                          ? 'border-slate-700 bg-slate-900'
-                          : 'border-slate-200 bg-slate-50'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between gap-2">
-                      <p
-                        className={`text-sm font-semibold ${userSettings.darkMode ? 'text-slate-100' : 'text-slate-800'}`}
-                      >
-                        {objective.label}
-                      </p>
-                      <span className="text-xs font-bold">
-                        {objective.completed ? 'Done' : 'Not yet'}
-                      </span>
-                    </div>
-                    <p
-                      className={`mt-1 text-xs ${userSettings.darkMode ? 'text-slate-300' : 'text-slate-600'}`}
-                    >
-                      {objective.description}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </section>
-          ) : null}
-
           {view === 'dashboard' && (
             <div ref={dashboardRef}>
               <AdoptionDashboard
@@ -1967,6 +1909,66 @@ export function AdoptionApp() {
               darkMode={Boolean(userSettings.darkMode)}
             />
           )}
+          {view === 'daily-checkin' && showEngagementCard ? (
+            <section
+              className={`${userSettings.darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'} mt-6 rounded-xl border p-4 shadow-sm`}
+            >
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <p
+                    className={`text-xs font-semibold uppercase tracking-wider ${userSettings.darkMode ? 'text-slate-300' : 'text-slate-500'}`}
+                  >
+                    Objectives
+                  </p>
+                  <p
+                    className={`text-sm mt-1 ${userSettings.darkMode ? 'text-slate-100' : 'text-slate-700'}`}
+                  >
+                    {completedObjectivesCount}/{engagementObjectives.length} complete - based on
+                    phase readiness, ownership, cadence and team participation.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowEngagementCard(false)}
+                  className={`${userSettings.darkMode ? 'border-slate-600 bg-slate-900 text-slate-100 hover:bg-slate-700' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'} rounded-md border px-3 py-2 text-sm font-medium`}
+                  aria-label="Dismiss objectives card"
+                >
+                  Dismiss
+                </button>
+              </div>
+
+              <div className="mt-4 grid gap-3 md:grid-cols-3">
+                {engagementObjectives.map((objective) => (
+                  <div
+                    key={objective.id}
+                    className={`rounded-lg border p-3 ${
+                      objective.completed
+                        ? 'border-green-200 bg-green-50'
+                        : userSettings.darkMode
+                          ? 'border-slate-700 bg-slate-900'
+                          : 'border-slate-200 bg-slate-50'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <p
+                        className={`text-sm font-semibold ${userSettings.darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+                      >
+                        {objective.label}
+                      </p>
+                      <span className="text-xs font-bold">
+                        {objective.completed ? 'Done' : 'Not yet'}
+                      </span>
+                    </div>
+                    <p
+                      className={`mt-1 text-xs ${userSettings.darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+                    >
+                      {objective.description}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          ) : null}
           {view === 'project-details' && (
             <ProjectDetailsPage
               orgProfile={store.orgProfile}
@@ -1977,10 +1979,14 @@ export function AdoptionApp() {
               onGoToIntroduction={() => handleViewChange('introduction')}
               onContinueToVision={() => openComponentAssessment('vision')}
               onGoToWhereAmINow={() => handleViewChange('where-am-i-now')}
+              onGoToStakeholderAnalysis={() => handleViewChange('stakeholder-analysis')}
               currentUserId={currentUserId}
               onCurrentUserChange={setCurrentUserId}
               showExternalLinksSection={Boolean(userSettings.showExternalLinksSection)}
               showReviewQuestionsSection={Boolean(userSettings.showReadinessReviewQuestionsSection)}
+              showStakeholderReferenceDataSection={Boolean(
+                userSettings.showStakeholderReferenceDataSection
+              )}
               stakeholders={store.stakeholders}
               onStakeholdersChange={updateStakeholders}
               departments={

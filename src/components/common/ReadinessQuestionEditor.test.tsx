@@ -86,13 +86,13 @@ describe('ReadinessQuestionEditor', () => {
     render(<ReadinessQuestionEditor questions={DEFAULT_READINESS_QUESTIONS} onChange={onChange} />);
 
     // act
-    fireEvent.change(screen.getByLabelText('Question 2 answer 5 readiness level'), {
+    fireEvent.change(screen.getByLabelText('Question 3 answer 5 readiness level'), {
       target: { value: '3' },
     });
 
     // assert
-    const changed = onChange.mock.calls[0][0][1];
-    expect(changed.progress).toEqual([...DEFAULT_READINESS_QUESTIONS[1].progress.slice(0, 4), 3]);
+    const changed = onChange.mock.calls[0][0][2];
+    expect(changed.progress).toEqual([...DEFAULT_READINESS_QUESTIONS[2].progress.slice(0, 4), 3]);
     expect(changed.edited).toBe(true);
   });
 

@@ -460,6 +460,48 @@ describe('adoptionMetrics', () => {
     expect(chartData.datasets[0].data).toEqual([0, 2]);
   });
 
+  it('SHOULD only draw the automatic target line by default', () => {
+    // act
+    const chartData = buildComponentRadarChartData(components, getEntry);
+
+    // assert
+    expect(chartData.datasets).toHaveLength(2);
+    expect(chartData.datasets[1].label).toBe('Target Average');
+  });
+
+  it("SHOULD draw only the flat manual target line WHEN targetMode is 'manual'", () => {
+    // act
+    const chartData = buildComponentRadarChartData(
+      components,
+      getEntry,
+      undefined,
+      undefined,
+      'manual'
+    );
+
+    // assert
+    expect(chartData.datasets).toHaveLength(2);
+    expect(chartData.datasets[1].label).toBe('Manual target');
+    expect(chartData.datasets[1].data).toEqual(components.map((component) => component.target));
+  });
+
+  it("SHOULD draw both target lines, each labelled, WHEN targetMode is 'both'", () => {
+    // act
+    const chartData = buildComponentRadarChartData(
+      components,
+      getEntry,
+      undefined,
+      undefined,
+      'both'
+    );
+
+    // assert
+    expect(chartData.datasets).toHaveLength(3);
+    expect(chartData.datasets[1].label).toBe('Automatic target');
+    expect(chartData.datasets[2].label).toBe('Manual target');
+    expect(chartData.datasets[2].data).toEqual(components.map((component) => component.target));
+  });
+
   it('SHOULD work out the phase from plain scores, treating Adopted as passing a Thriving requirement', () => {
     const comps: AssessmentComponent[] = [
       { id: 'vision', label: 'Vision', lenses: ['A', 'B'], phase: 1, target: 5 },

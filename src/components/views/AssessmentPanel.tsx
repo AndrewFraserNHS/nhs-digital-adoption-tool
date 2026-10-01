@@ -1045,9 +1045,10 @@ export function AssessmentPanel({
             url: toAbsoluteUrl(url),
             type: 'core',
             kind: 'url',
+            matchAliases: store.orgProfile?.phaseLinkAliases?.[phase],
           };
         }),
-    [effectivePhaseLinks]
+    [effectivePhaseLinks, store.orgProfile?.phaseLinkAliases]
   );
   const toolLinkMatches: MatchableLink[] = useMemo(
     () =>

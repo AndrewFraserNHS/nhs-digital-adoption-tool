@@ -28,7 +28,14 @@ describe('applyAvtPreset', () => {
     const updated = applyAvtPreset(profile);
 
     expect(updated.coreLinks).toEqual(AVT_PRESET.coreLinks);
+    expect(updated.phaseLinks).toEqual(AVT_PRESET.phaseLinks);
+    expect(updated.componentFurtherReading).toEqual(AVT_PRESET.componentFurtherReading);
     expect(updated.readinessQuestions).toBeUndefined();
     expect(updated.trustName).toBe(profile.trustName);
+  });
+
+  it('SHOULD bundle a landing-page link for every phase, and a further-reading link for vision', () => {
+    expect(AVT_PRESET.phaseLinks).toMatchObject({ 1: expect.any(String), 5: expect.any(String) });
+    expect(AVT_PRESET.componentFurtherReading?.vision).toMatch(/^https:\/\/future\.nhs\.uk/);
   });
 });

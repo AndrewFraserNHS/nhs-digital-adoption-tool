@@ -2,7 +2,7 @@ import { ActionEditorFields } from '@components/common/ActionEditorFields';
 import type { AssessmentComponent } from '@data/components';
 import type { ComponentObjective, DraftAction, DraftEntry, TeamMember } from '@lib/adoptionState';
 import { load, save } from '@lib/storage';
-import { downloadFile } from '@lib/utils';
+import { downloadFile, escapeCsv } from '@lib/utils';
 import { type ChangeEvent, JSX, useEffect, useRef, useState } from 'react';
 
 import { nhsButtonPrimary, nhsButtonSecondary } from '../styles/nhsTheme';
@@ -34,6 +34,22 @@ interface ForceFieldAnalysisState {
   actions: ForceAction[];
 }
 
+/** Whether a version reflects the engine's own current assessment ('internal') or a separate, outside view ('external') - purely informational, doesn't affect scoring. */
+type ForceFieldVersionAlignment = 'internal' | 'external';
+
+interface ForceFieldVersion {
+  id: string;
+  name: string;
+  alignment: ForceFieldVersionAlignment;
+  data: ForceFieldAnalysisState;
+}
+
+/** Several named versions (e.g. different scenarios or points in time), one active at a time - all stored together so switching between them is instant. */
+interface ForceFieldAnalysisStorage {
+  versions: ForceFieldVersion[];
+  activeVersionId: string;
+}
+
 const STORAGE_KEY = 'nhs-force-field-analysis';
 const SCORE_OPTIONS = Array.from({ length: 11 }, (_, i) => i);
 const STATUS_OPTIONS: ForceActionStatus[] = ['Planned', 'In Progress', 'Blocked', 'Completed'];
@@ -46,6 +62,14 @@ const DEFAULT_STATE: ForceFieldAnalysisState = {
 
 function createId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function createVersion(
+  name: string,
+  alignment: ForceFieldVersionAlignment = 'internal',
+  data: ForceFieldAnalysisState = DEFAULT_STATE
+): ForceFieldVersion {
+  return { id: createId(), name, alignment, data };
 }
 
 function createForce(side: ForceSide): Force {
@@ -103,12 +127,55 @@ function normaliseState(
   };
 }
 
-function readStoredState(): ForceFieldAnalysisState {
-  const raw = load<Partial<ForceFieldAnalysisState>>(STORAGE_KEY);
-  if (!raw) {
-    return DEFAULT_STATE;
+function normaliseVersion(
+  parsed: Partial<ForceFieldVersion> | null | undefined,
+  fallbackName: string
+): ForceFieldVersion {
+  return {
+    id: parsed?.id || createId(),
+    name: parsed?.name || fallbackName,
+    alignment: parsed?.alignment === 'external' ? 'external' : 'internal',
+    data: normaliseState(parsed?.data),
+  };
+}
+
+/**
+ * Accepts either today's `{ versions, activeVersionId }` shape, or the legacy flat
+ * `{ projectName, forces, actions }` shape saved before multi-version support existed - which is
+ * wrapped into a single "Version 1" so existing saved data isn't lost.
+ */
+function normaliseStorage(
+  parsed: Partial<ForceFieldAnalysisStorage> | Partial<ForceFieldAnalysisState> | null | undefined
+): ForceFieldAnalysisStorage {
+  if (parsed && Array.isArray((parsed as Partial<ForceFieldAnalysisStorage>).versions)) {
+    const storage = parsed as Partial<ForceFieldAnalysisStorage>;
+    const versions = (storage.versions || [])
+      .filter(Boolean)
+      .map((version, index) => normaliseVersion(version, `Version ${index + 1}`));
+    const resolvedVersions = versions.length ? versions : [createVersion('Version 1')];
+    const activeVersionId = resolvedVersions.some((version) => version.id === storage.activeVersionId)
+      ? (storage.activeVersionId as string)
+      : resolvedVersions[0].id;
+    return { versions: resolvedVersions, activeVersionId };
   }
-  return normaliseState(raw);
+
+  const legacyState = parsed as Partial<ForceFieldAnalysisState> | null | undefined;
+  const hasLegacyData = Boolean(
+    legacyState && (legacyState.projectName || legacyState.forces || legacyState.actions)
+  );
+  const version = createVersion(
+    'Version 1',
+    'internal',
+    hasLegacyData ? normaliseState(legacyState) : DEFAULT_STATE
+  );
+  return { versions: [version], activeVersionId: version.id };
+}
+
+function readStoredStorage(): ForceFieldAnalysisStorage {
+  const raw = load<Partial<ForceFieldAnalysisStorage> | Partial<ForceFieldAnalysisState>>(
+    STORAGE_KEY
+  );
+  return normaliseStorage(raw);
 }
 
 /**
@@ -990,39 +1057,59 @@ export default function ForceFieldAnalysisApp({
   onEntryUpdate,
   onObjectivesUpdate,
 }: ForceFieldAnalysisAppProps = {}): JSX.Element {
-  const [state, setState] = useState<ForceFieldAnalysisState>(() => readStoredState());
+  const [storage, setStorage] = useState<ForceFieldAnalysisStorage>(() => readStoredStorage());
   const [screen, setScreen] = useState<'forces' | 'actions' | 'apply'>('forces');
   const [importError, setImportError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    save(STORAGE_KEY, state);
-  }, [state]);
+    save(STORAGE_KEY, storage);
+  }, [storage]);
+
+  const activeVersion =
+    storage.versions.find((version) => version.id === storage.activeVersionId) ||
+    storage.versions[0];
+  const state = activeVersion.data;
+
+  /** Applies `updater` to the active version's data only, leaving every other version untouched. */
+  const updateActiveVersionData = (
+    updater: (data: ForceFieldAnalysisState) => ForceFieldAnalysisState
+  ) => {
+    setStorage((current) => ({
+      ...current,
+      versions: current.versions.map((version) =>
+        version.id === current.activeVersionId ? { ...version, data: updater(version.data) } : version
+      ),
+    }));
+  };
 
   const updateProjectName = (value: string) => {
-    setState((current) => ({ ...current, projectName: value }));
+    updateActiveVersionData((current) => ({ ...current, projectName: value }));
   };
 
   const addForce = (side: ForceSide) => {
-    setState((current) => ({ ...current, forces: [...current.forces, createForce(side)] }));
+    updateActiveVersionData((current) => ({
+      ...current,
+      forces: [...current.forces, createForce(side)],
+    }));
   };
 
   const updateForceText = (id: string, text: string) => {
-    setState((current) => ({
+    updateActiveVersionData((current) => ({
       ...current,
       forces: current.forces.map((force) => (force.id === id ? { ...force, text } : force)),
     }));
   };
 
   const updateForceScore = (id: string, score: number) => {
-    setState((current) => ({
+    updateActiveVersionData((current) => ({
       ...current,
       forces: current.forces.map((force) => (force.id === id ? { ...force, score } : force)),
     }));
   };
 
   const removeForce = (id: string) => {
-    setState((current) => ({
+    updateActiveVersionData((current) => ({
       ...current,
       forces: current.forces.filter((force) => force.id !== id),
       actions: current.actions.filter((action) => action.forceId !== id),
@@ -1033,11 +1120,14 @@ export default function ForceFieldAnalysisApp({
     if (!forceId) {
       return;
     }
-    setState((current) => ({ ...current, actions: [...current.actions, createAction(forceId)] }));
+    updateActiveVersionData((current) => ({
+      ...current,
+      actions: [...current.actions, createAction(forceId)],
+    }));
   };
 
   const updateAction = (id: string, updates: Partial<ForceAction>) => {
-    setState((current) => ({
+    updateActiveVersionData((current) => ({
       ...current,
       actions: current.actions.map((action) =>
         action.id === id ? { ...action, ...updates } : action
@@ -1046,25 +1136,108 @@ export default function ForceFieldAnalysisApp({
   };
 
   const removeAction = (id: string) => {
-    setState((current) => ({
+    updateActiveVersionData((current) => ({
       ...current,
       actions: current.actions.filter((action) => action.id !== id),
     }));
   };
 
+  const fileNameFor = (extension: string) =>
+    `force-field-analysis-${(state.projectName || activeVersion.name || 'export').trim().replace(/\s+/g, '_') || 'export'}.${extension}`;
+
   const handleExport = () => {
-    const filename = `force-field-analysis-${(state.projectName || 'export').trim().replace(/\s+/g, '_') || 'export'}.json`;
-    downloadFile(filename, JSON.stringify(state, null, 2), 'application/json');
+    downloadFile(fileNameFor('json'), JSON.stringify(state, null, 2), 'application/json');
+  };
+
+  const handleExportCsv = () => {
+    const forceRows = [
+      ['Side', 'Force', 'Original Score', 'Mitigated Score'],
+      ...state.forces.map((force) => [
+        force.side === 'driving' ? 'Driving' : 'Restraining',
+        force.text,
+        String(force.score),
+        String(deriveMitigatedScore(force, state.actions)),
+      ]),
+    ];
+    const actionRows = [
+      ['Force', 'Action', 'Owner', 'Due Date', 'Status', 'Score Impact'],
+      ...state.actions.map((action) => [
+        state.forces.find((force) => force.id === action.forceId)?.text || '',
+        action.text,
+        action.owner,
+        action.dueDate,
+        action.status,
+        String(action.impact),
+      ]),
+    ];
+    const csv = [
+      'Forces',
+      ...forceRows.map((row) => row.map(escapeCsv).join(',')),
+      '',
+      'Actions',
+      ...actionRows.map((row) => row.map(escapeCsv).join(',')),
+    ].join('\n');
+    downloadFile(fileNameFor('csv'), csv, 'text/csv');
   };
 
   const handleReset = () => {
     if (
-      !window.confirm('Reset this Force Field Analysis? All forces and actions will be removed.')
+      !window.confirm('Reset this version? All its forces and actions will be removed.')
     ) {
       return;
     }
 
-    setState({ ...DEFAULT_STATE, forces: [], actions: [] });
+    updateActiveVersionData(() => ({ ...DEFAULT_STATE, forces: [], actions: [] }));
+    setScreen('forces');
+    setImportError(null);
+  };
+
+  const handleAddVersion = () => {
+    const newVersion = createVersion(`Version ${storage.versions.length + 1}`);
+    setStorage((current) => ({
+      versions: [...current.versions, newVersion],
+      activeVersionId: newVersion.id,
+    }));
+    setScreen('forces');
+    setImportError(null);
+  };
+
+  const handleSwitchVersion = (id: string) => {
+    setStorage((current) => ({ ...current, activeVersionId: id }));
+    setScreen('forces');
+    setImportError(null);
+  };
+
+  const handleRenameVersion = (name: string) => {
+    setStorage((current) => ({
+      ...current,
+      versions: current.versions.map((version) =>
+        version.id === current.activeVersionId ? { ...version, name } : version
+      ),
+    }));
+  };
+
+  const handleSetAlignment = (alignment: ForceFieldVersionAlignment) => {
+    setStorage((current) => ({
+      ...current,
+      versions: current.versions.map((version) =>
+        version.id === current.activeVersionId ? { ...version, alignment } : version
+      ),
+    }));
+  };
+
+  const handleDeleteVersion = () => {
+    if (storage.versions.length <= 1) {
+      handleReset();
+      return;
+    }
+    if (!window.confirm(`Delete "${activeVersion.name}"? This cannot be undone.`)) {
+      return;
+    }
+    setStorage((current) => {
+      const versions = current.versions.filter((version) => version.id !== current.activeVersionId);
+      return { versions, activeVersionId: versions[0].id };
+    });
     setScreen('forces');
     setImportError(null);
   };
@@ -1083,7 +1256,7 @@ export default function ForceFieldAnalysisApp({
     try {
       const text = await file.text();
       const parsed = JSON.parse(text) as Partial<ForceFieldAnalysisState>;
-      setState(normaliseState(parsed));
+      updateActiveVersionData(() => normaliseState(parsed));
       setScreen('forces');
       setImportError(null);
     } catch {
@@ -1130,6 +1303,9 @@ export default function ForceFieldAnalysisApp({
         <button type="button" onClick={handleExport} className={nhsButtonSecondary}>
           Export
         </button>
+        <button type="button" onClick={handleExportCsv} className={nhsButtonSecondary}>
+          Export CSV
+        </button>
         <button
           type="button"
           onClick={handleReset}
@@ -1169,6 +1345,68 @@ export default function ForceFieldAnalysisApp({
         </div>
       </div>
     </header>
+  );
+
+  const versionBar = (
+    <div
+      className={`flex flex-wrap items-center gap-3 rounded-lg border border-slate-200 bg-white p-3 ${embedded ? 'mb-6' : ''}`}
+    >
+      <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+        Version
+      </label>
+      <select
+        aria-label="Active version"
+        value={storage.activeVersionId}
+        onChange={(event) => handleSwitchVersion(event.target.value)}
+        className="rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+      >
+        {storage.versions.map((version) => (
+          <option key={version.id} value={version.id}>
+            {version.name}
+          </option>
+        ))}
+      </select>
+      <input
+        value={activeVersion.name}
+        onChange={(event) => handleRenameVersion(event.target.value)}
+        aria-label="Version name"
+        className="rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+      />
+      <div
+        className="flex items-center rounded-md border border-slate-300 overflow-hidden text-xs font-semibold"
+        role="radiogroup"
+        aria-label="Version alignment"
+      >
+        <button
+          type="button"
+          role="radio"
+          aria-checked={activeVersion.alignment === 'internal'}
+          onClick={() => handleSetAlignment('internal')}
+          className={`px-3 py-1.5 transition-colors ${activeVersion.alignment === 'internal' ? 'bg-[#005eb8] text-white' : 'bg-white text-slate-600 hover:bg-slate-100'}`}
+        >
+          Internal (engine aligned)
+        </button>
+        <button
+          type="button"
+          role="radio"
+          aria-checked={activeVersion.alignment === 'external'}
+          onClick={() => handleSetAlignment('external')}
+          className={`px-3 py-1.5 transition-colors border-l border-slate-300 ${activeVersion.alignment === 'external' ? 'bg-[#005eb8] text-white' : 'bg-white text-slate-600 hover:bg-slate-100'}`}
+        >
+          External
+        </button>
+      </div>
+      <button type="button" onClick={handleAddVersion} className={nhsButtonSecondary}>
+        + New version
+      </button>
+      <button
+        type="button"
+        onClick={handleDeleteVersion}
+        className="rounded-md border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100"
+      >
+        Delete version
+      </button>
+    </div>
   );
 
   const body = (
@@ -1231,6 +1469,7 @@ export default function ForceFieldAnalysisApp({
       <div className="text-slate-800">
         {fileInput}
         {header}
+        {versionBar}
         {body}
       </div>
     );
@@ -1240,7 +1479,10 @@ export default function ForceFieldAnalysisApp({
     <div className="min-h-screen bg-slate-50 text-slate-800">
       {fileInput}
       {header}
-      <main className="max-w-5xl mx-auto px-6 py-8">{body}</main>
+      <main className="max-w-5xl mx-auto px-6 py-8">
+        <div className="mb-6">{versionBar}</div>
+        {body}
+      </main>
     </div>
   );
 }

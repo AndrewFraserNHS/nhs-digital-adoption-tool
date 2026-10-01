@@ -5,7 +5,9 @@ import type { DraftEntry } from '@lib/adoptionState';
 import { getPhasePassScore } from '@lib/readinessBands';
 import type { ChartData } from 'chart.js';
 
-export type ReadinessQuestionKind = 'choice' | 'text' | 'pathway';
+import { PHASE_NAMES } from '../types/constants';
+
+export type ReadinessQuestionKind = 'choice' | 'text' | 'pathway' | 'phase-self-assessment';
 
 export interface PreparednessAssessment {
   /** Stable answer key - never reused or renumbered, so reordering questions is safe. */
@@ -48,6 +50,29 @@ export const PATHWAY_QUESTION: PreparednessAssessment = {
 
 export function pathwayFromAnswer(optionNumber: number | undefined): CstPathwayKey | null {
   return (optionNumber && PATHWAY_OPTIONS[optionNumber - 1]?.value) || null;
+}
+
+export const PHASE_SELF_ASSESSMENT_QUESTION_NU = 101;
+
+export const PHASE_SELF_ASSESSMENT_QUESTION: PreparednessAssessment = {
+  nu: PHASE_SELF_ASSESSMENT_QUESTION_NU,
+  id: '',
+  label: 'Phase',
+  lens: '',
+  question: 'What phase do you think you are in?',
+  answers: Object.keys(PHASE_NAMES)
+    .map(Number)
+    .sort((a, b) => a - b)
+    .map((phase) => `Phase ${phase}: ${PHASE_NAMES[phase]}`),
+  progress: [],
+  phase: 0,
+  target: 0,
+  kind: 'phase-self-assessment',
+};
+
+/** Each option is itself a phase number (1-5), so the implied phase is just the chosen option. */
+export function phaseFromAnswer(optionNumber: number | undefined): number | null {
+  return optionNumber || null;
 }
 
 const answers = (
@@ -744,6 +769,7 @@ export const PREPAREDNESS_ASSESSMENT: PreparednessAssessment[] = [
 
 export const DEFAULT_READINESS_QUESTIONS: PreparednessAssessment[] = [
   PATHWAY_QUESTION,
+  PHASE_SELF_ASSESSMENT_QUESTION,
   ...PREPAREDNESS_ASSESSMENT,
 ];
 
@@ -786,6 +812,10 @@ export interface ReadinessOutcome {
   skipToPhase: number | null;
   /** Component ids found to be at/above their target score, based on the quiz answers. */
   readyComponentIds: string[];
+  /** What "What phase do you think you are in?" (nu 101) implied, or null if unanswered. */
+  selfAssessedPhase: number | null;
+  /** Lenses of components at or before the self-assessed phase that aren't yet at their target - what the team is currently behind on. Empty when the question is unanswered. */
+  behindLenses: MissingLens[];
 }
 
 /**
@@ -874,7 +904,28 @@ export function computeReadinessOutcome(
   const skipToPhase =
     lastReadyPhase === 0 || lastReadyPhase >= maxPhase ? null : lastReadyPhase + 1;
 
-  return { suggestions, skipToPhase, readyComponentIds };
+  let selfAssessedPhase: number | null = null;
+  const phaseQuestion = questions.find((question) => question.kind === 'phase-self-assessment');
+  if (phaseQuestion) {
+    const answer = answers[phaseQuestion.nu];
+    selfAssessedPhase = phaseFromAnswer(answer);
+  }
+
+  const behindLenses: MissingLens[] = [];
+  if (selfAssessedPhase) {
+    components
+      .filter((component) => component.phase <= selfAssessedPhase)
+      .forEach((component) => {
+        component.lenses.forEach((lens) => {
+          const currentScore = Number(getEntry(component.id, lens)?.score || 0);
+          if (currentScore < getPhasePassScore(component.target)) {
+            behindLenses.push({ componentId: component.id, componentLabel: component.label, lens });
+          }
+        });
+      });
+  }
+
+  return { suggestions, skipToPhase, readyComponentIds, selfAssessedPhase, behindLenses };
 }
 
 /** Where the last completed Change Adoption Baseline's frozen report snapshot is saved - shared between `ChangeAdoptionBaselineReviewApp` (writes it on Finish) and `ChangeAdoptionBaselineAnalysisApp` (reads it for "My Answers"). */

@@ -8,5 +8,31 @@
       "url": "/AVT%20Digital%20Adoption%20Toolkit%20-%20V2.1%20July%202026.pdf",
       "type": "core"
     }
-  ]
+  ],
+  "phaseLinks": {
+    "1": "https://future.nhs.uk/CMN/view?objectID=76541360",
+    "2": "https://future.nhs.uk/CMN/view?objectID=76541872",
+    "3": "https://future.nhs.uk/CMN/view?objectID=76541936",
+    "4": "https://future.nhs.uk/CMN/view?objectID=76541968",
+    "5": "https://future.nhs.uk/CMN/view?objectID=76542032"
+  },
+  "componentFurtherReading": {
+    "vision": "https://future.nhs.uk/CMN/view?objectId=74014704",
+    "transfer_bau": "https://future.nhs.uk/CMN/view?objectID=74024240",
+    "stakeholder": "https://future.nhs.uk/CMN/view?objectID=74023856",
+    "sponsorship": "https://future.nhs.uk/CMN/view?objectID=74023760",
+    "risk_management": "https://future.nhs.uk/CMN/view?objectID=76507440",
+    "resistance": "https://future.nhs.uk/CMN/view?objectID=74024144",
+    "reinforcement": "https://future.nhs.uk/CMN/view?objectID=74296272",
+    "cm_readiness": "https://future.nhs.uk/CMN/view?objectID=74023984",
+    "process_change": "https://future.nhs.uk/CMN/view?objectID=74023952",
+    "change_network": "https://future.nhs.uk/CMN/view?objectID=76507984",
+    "change_impact": "https://future.nhs.uk/CMN/view?objectID=74023920",
+    "change_adoption": "https://future.nhs.uk/CMN/view?objectID=74023728",
+    "case_for_change": "https://future.nhs.uk/CMN/view?objectID=74021584",
+    "benefits": "https://future.nhs.uk/CMN/view?objectID=73997232",
+    "change_readiness": "https://future.nhs.uk/CMN/view?objectID=76508176",
+    "capability": "https://future.nhs.uk/CMN/view?objectID=76508048",
+    "skills_learning": "https://future.nhs.uk/CMN/view?objectID=76508112"
+  }
 }

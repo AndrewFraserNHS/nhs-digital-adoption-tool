@@ -8,6 +8,7 @@ import {
   buildComponentRadarChartData,
   getComponentExemplarScore,
   radarTooltipLabel,
+  type RadarTargetMode,
 } from '@lib/adoptionMetrics';
 import { createBarChart, createRadarChart } from '@lib/charts';
 import { getReadinessBand } from '@lib/readinessBands';
@@ -222,6 +223,7 @@ export function WhereAmINowPage({
     'by-component'
   );
   const [selectedLens, setSelectedLens] = useState<string>(ASSESSMENT_LENSES[0]);
+  const [targetMode, setTargetMode] = useState<RadarTargetMode>('auto');
 
   const byComponentCanvasRef = useRef<HTMLCanvasElement>(null);
   const byLensCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -238,7 +240,13 @@ export function WhereAmINowPage({
     if (readinessTab !== 'by-component' || !byComponentCanvasRef.current) {
       return;
     }
-    const chartData = buildComponentRadarChartData(components, getEntry, effectivePhaseFocus);
+    const chartData = buildComponentRadarChartData(
+      components,
+      getEntry,
+      effectivePhaseFocus,
+      undefined,
+      targetMode
+    );
     createRadarChart(
       byComponentCanvasRef.current,
       chartData,
@@ -262,7 +270,7 @@ export function WhereAmINowPage({
       }
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [components, getEntry, effectivePhaseFocus, onComponentClick, readinessTab]);
+  }, [components, getEntry, effectivePhaseFocus, onComponentClick, readinessTab, targetMode]);
 
   useEffect(() => {
     if (readinessTab !== 'by-lens' || !byLensCanvasRef.current) {
@@ -278,7 +286,8 @@ export function WhereAmINowPage({
       componentsWithLens,
       getEntry,
       effectivePhaseFocus,
-      selectedLens
+      selectedLens,
+      targetMode
     );
     createRadarChart(
       byLensCanvasRef.current,
@@ -303,7 +312,15 @@ export function WhereAmINowPage({
       }
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [components, getEntry, effectivePhaseFocus, onComponentClick, readinessTab, selectedLens]);
+  }, [
+    components,
+    getEntry,
+    effectivePhaseFocus,
+    onComponentClick,
+    readinessTab,
+    selectedLens,
+    targetMode,
+  ]);
 
   const componentsInCurrentPhase = useMemo(
     () => getComponentsByPhase(effectivePhaseFocus),
@@ -407,7 +424,41 @@ export function WhereAmINowPage({
             >
               Readiness by component
             </h3>
-            <RadarHelpIcon darkMode={darkMode} />
+            <div className="flex items-center gap-2">
+              {readinessTab !== 'by-phases' ? (
+                <div
+                  className={`flex gap-0.5 rounded-md border p-0.5 text-xs font-semibold ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
+                  role="tablist"
+                  aria-label="Target line to show"
+                >
+                  {(
+                    [
+                      { id: 'auto', label: 'Auto' },
+                      { id: 'manual', label: 'Manual' },
+                      { id: 'both', label: 'Both' },
+                    ] as const
+                  ).map((option) => (
+                    <button
+                      key={option.id}
+                      type="button"
+                      role="tab"
+                      aria-selected={targetMode === option.id}
+                      onClick={() => setTargetMode(option.id)}
+                      className={`rounded px-2 py-1 transition-colors ${
+                        targetMode === option.id
+                          ? 'bg-[#005eb8] text-white'
+                          : darkMode
+                            ? 'text-slate-300 hover:bg-slate-800'
+                            : 'text-slate-600 hover:bg-white'
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+              <RadarHelpIcon darkMode={darkMode} />
+            </div>
           </div>
 
           <div

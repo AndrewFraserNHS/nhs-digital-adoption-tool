@@ -483,11 +483,15 @@ export function buildRadarChartData(
   };
 }
 
+/** Which target line(s) to draw on a component radar: the phase-exemplar-derived line ('auto'), the flat `component.target` line ('manual'), or both at once. */
+export type RadarTargetMode = 'auto' | 'manual' | 'both';
+
 export function buildComponentRadarChartData(
   components: AssessmentComponent[],
   getEntry: (componentId: string, lens: string) => DraftEntry,
   currentPhase?: number,
-  lens?: string
+  lens?: string,
+  targetMode: RadarTargetMode = 'auto'
 ): ChartData<'radar', (number | null)[], string> {
   const exemplarPhase =
     currentPhase && COMPONENT_PHASE_EXEMPLARS[currentPhase] ? currentPhase : null;
@@ -534,6 +538,51 @@ export function buildComponentRadarChartData(
     return scores.length ? Math.min(...scores) : null;
   });
 
+  // Kept as the original single-dataset label ("Exemplar (Phase N)" / "Target Average") when only
+  // the automatic line is shown, so existing snapshots/tooltips/tests that depend on that exact
+  // wording are unaffected; the "both" mode (where it sits alongside the manual line) needs its
+  // own, disambiguated label instead.
+  const autoTargetDataset = {
+    label:
+      targetMode === 'both'
+        ? exemplarPhase
+          ? `Automatic target (Phase ${exemplarPhase})`
+          : 'Automatic target'
+        : exemplarPhase
+          ? `Exemplar (Phase ${exemplarPhase})`
+          : 'Target Average',
+    data: components.map((component) =>
+      getComponentExemplarScore(component.id, exemplarPhase || undefined, component.target)
+    ),
+    borderColor: '#94a3b8',
+    backgroundColor: 'rgba(148, 163, 184, 0.06)',
+    borderWidth: 2,
+    borderDash: [5, 5],
+    pointRadius: 3,
+    pointHoverRadius: 5,
+  };
+  // The manual line always uses the component's flat `target`, ignoring phase - a fixed baseline,
+  // shown even paler than the automatic line so the two don't compete visually when both are on.
+  const manualTargetDataset = {
+    label: 'Manual target',
+    data: components.map((component) =>
+      getComponentExemplarScore(component.id, undefined, component.target)
+    ),
+    borderColor: '#cbd5e1',
+    backgroundColor: 'rgba(203, 213, 225, 0.04)',
+    borderWidth: 2,
+    borderDash: [2, 4],
+    pointRadius: 3,
+    pointHoverRadius: 5,
+  };
+
+  const targetDatasets =
+    targetMode === 'both'
+      ? [autoTargetDataset, manualTargetDataset]
+      : targetMode === 'manual'
+        ? [manualTargetDataset]
+        : [autoTargetDataset];
+
   return {
     labels: components.map((component) => component.label),
     datasets: [
@@ -548,18 +597,7 @@ export function buildComponentRadarChartData(
         pointBackgroundColor: scoresByComponent.map((score) => colorForScore(score ?? 0)),
         pointBorderColor: scoresByComponent.map((score) => colorForScore(score ?? 0)),
       },
-      {
-        label: exemplarPhase ? `Exemplar (Phase ${exemplarPhase})` : 'Target Average',
-        data: components.map((component) =>
-          getComponentExemplarScore(component.id, exemplarPhase || undefined, component.target)
-        ),
-        borderColor: '#94a3b8',
-        backgroundColor: 'rgba(148, 163, 184, 0.06)',
-        borderWidth: 2,
-        borderDash: [5, 5],
-        pointRadius: 3,
-        pointHoverRadius: 5,
-      },
+      ...targetDatasets,
     ],
   };
 }
@@ -570,7 +608,12 @@ export function radarTooltipLabel(context: {
   raw?: unknown;
 }): string {
   const label = context.dataset?.label || '';
-  if (label.startsWith('Exemplar') || label === 'Target Average') {
+  if (
+    label.startsWith('Exemplar') ||
+    label === 'Target Average' ||
+    label.startsWith('Automatic target') ||
+    label === 'Manual target'
+  ) {
     return label;
   }
   if (context.raw === null || context.raw === undefined) {

@@ -118,7 +118,9 @@ describe('EngineExplainedPage', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
 
     // assert 8 - the full recap diagram, built from real data
-    expect(screen.getByRole('heading', { name: 'The whole engine, one page' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'The Adoption Engine, One page view' })
+    ).toBeInTheDocument();
     expect(screen.getByText('Starting for the First Time')).toBeInTheDocument();
     expect(screen.getByText('Pre-Discovery')).toBeInTheDocument();
     expect(screen.getByText('Senior Sponsorship & Governance')).toBeInTheDocument();

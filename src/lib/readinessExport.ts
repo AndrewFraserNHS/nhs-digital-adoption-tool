@@ -7,8 +7,17 @@ import { downloadBlob, downloadFile } from '@lib/utils';
 /** Default recipient - overridable per project via Project Profile (`OrgProfile.avtMailbox`). */
 export const AVT_MAILBOX = 'england.digitaladoptionavt@nhs.net';
 
-function fileBase(trustName: string): string {
-  return `${(trustName || 'assessment').replace(/[^a-z0-9]+/gi, '-').toLowerCase()}-readiness-review`;
+/** `YYYY-MM-DD` (or any Date-parseable string) -> `DDMMYY`, falling back to today if unparseable. */
+function toDdmmyy(isoDate: string): string {
+  const parsed = isoDate ? new Date(isoDate) : new Date();
+  const date = Number.isNaN(parsed.getTime()) ? new Date() : parsed;
+  const pad = (value: number) => String(value).padStart(2, '0');
+  return `${pad(date.getDate())}${pad(date.getMonth() + 1)}${String(date.getFullYear()).slice(-2)}`;
+}
+
+function fileBase(report: ReadinessReviewReport): string {
+  const trustSlug = (report.trustName || 'assessment').replace(/[^a-z0-9]+/gi, '-').toLowerCase();
+  return `${trustSlug}-baseline-${toDdmmyy(report.dateCompleted)}`;
 }
 
 function buildPdfBlob(report: ReadinessReviewReport, components: AssessmentComponent[]): Blob {
@@ -18,7 +27,7 @@ function buildPdfBlob(report: ReadinessReviewReport, components: AssessmentCompo
 
 export function downloadReportJson(report: ReadinessReviewReport): void {
   downloadFile(
-    `${fileBase(report.trustName)}.json`,
+    `${fileBase(report)}.json`,
     JSON.stringify(report, null, 2),
     'application/json'
   );
@@ -28,7 +37,7 @@ export function downloadReportPdf(
   report: ReadinessReviewReport,
   components: AssessmentComponent[]
 ): void {
-  downloadBlob(`${fileBase(report.trustName)}.pdf`, buildPdfBlob(report, components));
+  downloadBlob(`${fileBase(report)}.pdf`, buildPdfBlob(report, components));
 }
 
 /** A ready-to-send draft with both files attached, for Outlook (X-Unsent) and other .eml handlers. */
@@ -37,7 +46,7 @@ export async function downloadReportEml(
   components: AssessmentComponent[],
   mailbox: string = AVT_MAILBOX
 ): Promise<void> {
-  const base = fileBase(report.trustName);
+  const base = fileBase(report);
   const pdfBytes = new Uint8Array(await buildPdfBlob(report, components).arrayBuffer());
   const eml = buildEml({
     to: mailbox,
@@ -59,7 +68,7 @@ export function buildReportMailto(
   report: ReadinessReviewReport,
   mailbox: string = AVT_MAILBOX
 ): string {
-  const base = fileBase(report.trustName);
+  const base = fileBase(report);
   const subject = `${report.trustName} - Assessment outcomes`;
   const body = `Please find our AVT Change Adoption Baseline outcomes attached (${base}.pdf and ${base}.json - both have just been downloaded to your device, please attach them to this email).`;
   return `mailto:${mailbox}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

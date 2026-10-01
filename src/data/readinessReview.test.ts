@@ -14,6 +14,7 @@ import {
   getMissingLensCoverage,
   getReportMissingLenses,
   PATHWAY_QUESTION,
+  PHASE_SELF_ASSESSMENT_QUESTION,
   PREPAREDNESS_ASSESSMENT,
   type PreparednessAssessment,
   resolveReadinessQuestions,
@@ -131,6 +132,37 @@ describe('computeReadinessOutcome (synthetic fixture)', () => {
     ]);
   });
 
+  it('SHOULD report the self-assessed phase and which lenses are still behind it', () => {
+    // arrange - self-assessed Phase 2, but b1's current score is still below its target
+    const getEntry = (componentId: string) =>
+      componentId === 'b1' ? { score: 0 } : { score: 2 };
+    const questions = [PHASE_SELF_ASSESSMENT_QUESTION, ...QUESTIONS];
+
+    // act
+    const outcome = computeReadinessOutcome(
+      { [PHASE_SELF_ASSESSMENT_QUESTION.nu]: 2 },
+      COMPONENTS,
+      getEntry,
+      questions
+    );
+
+    // assert
+    expect(outcome.selfAssessedPhase).toBe(2);
+    expect(outcome.behindLenses).toEqual([{ componentId: 'b1', componentLabel: 'B1', lens: 'Lens' }]);
+  });
+
+  it('SHOULD leave the self-assessed phase null WHEN the phase question is unanswered', () => {
+    // act
+    const outcome = computeReadinessOutcome({}, COMPONENTS, noExistingScores, [
+      PHASE_SELF_ASSESSMENT_QUESTION,
+      ...QUESTIONS,
+    ]);
+
+    // assert
+    expect(outcome.selfAssessedPhase).toBeNull();
+    expect(outcome.behindLenses).toEqual([]);
+  });
+
   const TRUST_DETAILS = {
     trustName: 'Test Trust',
     icbRegion: 'North West ICB',
@@ -229,9 +261,10 @@ describe('unscored, pathway and coverage handling', () => {
     contactEmail: '',
   };
 
-  it('SHOULD start the default questions with the pathway question', () => {
+  it('SHOULD start the default questions with the pathway and phase self-assessment questions', () => {
     expect(DEFAULT_READINESS_QUESTIONS[0]).toBe(PATHWAY_QUESTION);
-    expect(DEFAULT_READINESS_QUESTIONS.length).toBe(PREPAREDNESS_ASSESSMENT.length + 1);
+    expect(DEFAULT_READINESS_QUESTIONS[1]).toBe(PHASE_SELF_ASSESSMENT_QUESTION);
+    expect(DEFAULT_READINESS_QUESTIONS.length).toBe(PREPAREDNESS_ASSESSMENT.length + 2);
   });
 
   it('SHOULD carry text and pathway answers without scoring them', () => {

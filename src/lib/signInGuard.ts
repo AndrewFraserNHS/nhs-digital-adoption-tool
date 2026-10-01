@@ -1,7 +1,7 @@
 import type { OrgProfile } from '@lib/adoptionState';
 
 export const SIGN_IN_REQUIRED_MESSAGE =
-  'Select who you are in Project Profile (You are signed in as) before making changes.';
+  "You're not signed in as anyone. Go to Project Profile and set \"You are signed in as\" to your name before making changes.";
 
 /** True when two profiles differ only in their team roster - roster edits stay open so someone can add themselves and then sign in. */
 export function isTeamRosterOnlyChange(previous: OrgProfile, next: OrgProfile): boolean {

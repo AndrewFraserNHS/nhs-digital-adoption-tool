@@ -521,4 +521,50 @@ describe('ChangeAdoptionBaselineReviewApp', () => {
       })
     );
   });
+
+  it('SHOULD select an answer with its number key and move on with Enter', () => {
+    // arrange
+    render(<ChangeAdoptionBaselineReviewApp questions={PREPAREDNESS_ASSESSMENT} />);
+    goToQuestions();
+    const firstQuestion = PREPAREDNESS_ASSESSMENT[0];
+
+    // act
+    fireEvent.keyDown(window, { key: '3' });
+
+    // assert 1 - option 3 is selected and Next is enabled
+    expect(screen.getByLabelText(firstQuestion.answers[2])).toBeChecked();
+    expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled();
+
+    // act 2
+    fireEvent.keyDown(window, { key: 'Enter' });
+
+    // assert 2 - moved on to the second question
+    expect(screen.getByText(`Question 2 of ${PREPAREDNESS_ASSESSMENT.length}`)).toBeInTheDocument();
+  });
+
+  it('SHOULD let the user amend an earlier answer without losing the rest, or clear everything and start over', () => {
+    // arrange
+    render(<ChangeAdoptionBaselineReviewApp questions={PREPAREDNESS_ASSESSMENT} />);
+    goToQuestions();
+    answerQuestion(PREPAREDNESS_ASSESSMENT[0].nu, 2);
+    fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+    answerQuestion(PREPAREDNESS_ASSESSMENT[1].nu, 4);
+
+    // act - amend
+    fireEvent.click(screen.getByRole('button', { name: 'Amend answers' }));
+
+    // assert - back at question 1, with its original answer still selected
+    expect(screen.getByText(`Question 1 of ${PREPAREDNESS_ASSESSMENT.length}`)).toBeInTheDocument();
+    expect(screen.getByLabelText(PREPAREDNESS_ASSESSMENT[0].answers[1])).toBeChecked();
+    fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+    expect(screen.getByLabelText(PREPAREDNESS_ASSESSMENT[1].answers[3])).toBeChecked();
+
+    // act - clear
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    fireEvent.click(screen.getByRole('button', { name: 'Clear and start again' }));
+
+    // assert - back to the very start, nothing pre-filled
+    fireEvent.click(screen.getByRole('button', { name: 'Adoption Baseline Questions' }));
+    expect(screen.getByLabelText(PREPAREDNESS_ASSESSMENT[0].answers[1])).not.toBeChecked();
+  });
 });

@@ -876,7 +876,7 @@ export function EngineExplainedPage({
             <h3
               className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
             >
-              The whole engine, one page
+              The Adoption Engine, One page view
             </h3>
             <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
               Every pathway, phase, component, lens and readiness level really used in this tool,

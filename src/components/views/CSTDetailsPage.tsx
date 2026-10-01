@@ -21,7 +21,6 @@ import { AssessmentComponent } from '@data/components';
 import {
   ADOPTION_COMPONENT_TO_GUIDANCE_KEYS,
   CORE_LINKS,
-  DEFAULT_FURTHER_READING,
   DEFAULT_GUIDANCE_LINK_MAP,
   PHASE_LINKS,
   TOOLKIT_BASE_DEFAULTS,
@@ -68,6 +67,7 @@ function AliasEditor({
   placeholder = 'Add text this link should also match...',
   emptyLabel = 'No extra matching text added yet.',
   addButtonLabel = 'Add',
+  confirmRemove = false,
 }: {
   aliases: string[];
   onChange: (aliases: string[]) => void;
@@ -75,6 +75,8 @@ function AliasEditor({
   placeholder?: string;
   emptyLabel?: string;
   addButtonLabel?: string;
+  /** Ask for confirmation before removing an entry - used where removal is harder to notice/undo, e.g. shared stakeholder reference lists. */
+  confirmRemove?: boolean;
 }): JSX.Element {
   const [draft, setDraft] = useState('');
 
@@ -100,7 +102,12 @@ function AliasEditor({
               {alias}
               <button
                 type="button"
-                onClick={() => onChange(aliases.filter((a) => a !== alias))}
+                onClick={() => {
+                  if (confirmRemove && !window.confirm(`Remove "${alias}"?`)) {
+                    return;
+                  }
+                  onChange(aliases.filter((a) => a !== alias));
+                }}
                 aria-label={`Remove "${alias}"`}
                 className={
                   darkMode
@@ -477,12 +484,14 @@ export interface ProjectDetailsPageProps {
   onGoToIntroduction: () => void;
   onContinueToVision: () => void;
   onGoToWhereAmINow: () => void;
+  onGoToStakeholderAnalysis?: () => void;
   darkMode?: boolean;
   currentUserId?: string;
   onCurrentUserChange: (id: string) => void;
   /** Per-device override that force-shows the External Links section even after it's been marked initiated. */
   showExternalLinksSection?: boolean;
   showReviewQuestionsSection?: boolean;
+  showStakeholderReferenceDataSection?: boolean;
   /** For the executive sponsor picker (shared stakeholder list). */
   stakeholders?: Stakeholder[];
   onStakeholdersChange?: (stakeholders: Stakeholder[]) => void;
@@ -496,11 +505,13 @@ export function ProjectDetailsPage({
   onGoToIntroduction,
   onContinueToVision,
   onGoToWhereAmINow,
+  onGoToStakeholderAnalysis,
   darkMode = false,
   currentUserId,
   onCurrentUserChange,
   showReviewQuestionsSection = false,
   showExternalLinksSection = false,
+  showStakeholderReferenceDataSection = false,
   stakeholders = [],
   onStakeholdersChange,
   departments = [],
@@ -511,6 +522,7 @@ export function ProjectDetailsPage({
     link: GuidanceLink;
     componentId?: string;
   } | null>(null);
+  const [editingPhaseAliasesFor, setEditingPhaseAliasesFor] = useState<number | null>(null);
   const cstImportInputRef = useRef<HTMLInputElement>(null);
   const pageIntro = usePageIntroSeen('cst-personalisation');
   const profileValidation = validateOrgProfile(profile);
@@ -657,6 +669,22 @@ export function ProjectDetailsPage({
     [profile, onProfileUpdate]
   );
 
+  const handleToggleComponentLinkOptional = useCallback(
+    (componentId: string, key: string, optional: boolean) => {
+      const links = profile.customComponentLinks?.[componentId] || [];
+      const next = {
+        ...profile.customComponentLinks,
+        [componentId]: links.map((link) =>
+          link.key === key ? { ...link, optional: optional || undefined } : link
+        ),
+      };
+      const updated = { ...profile, customComponentLinks: next };
+      setProfile(updated);
+      onProfileUpdate(updated);
+    },
+    [profile, onProfileUpdate]
+  );
+
   const handleUpdateComponentLinkAliases = useCallback(
     (componentId: string, key: string, matchAliases: string[]) => {
       const links = profile.customComponentLinks?.[componentId] || [];
@@ -735,7 +763,7 @@ export function ProjectDetailsPage({
   const handleApplyAvtPreset = useCallback(() => {
     if (
       !window.confirm(
-        `Apply the ${AVT_PRESET.label} preset? This replaces this project's Core Links and resets its Change Adoption Baseline questions to the AVT default set. Custom component links and tool links are left as they are.`
+        `Apply the ${AVT_PRESET.label} preset? This replaces this project's Core Links, Phase links and component Further Reading links, and resets its Change Adoption Baseline questions to the AVT default set. Custom component links and tool links are left as they are.`
       )
     ) {
       return;
@@ -840,6 +868,21 @@ export function ProjectDetailsPage({
     [profile, phaseLinks, onProfileUpdate]
   );
 
+  const handleUpdatePhaseLinkAliases = useCallback(
+    (phase: number, aliases: string[]) => {
+      const next = { ...profile.phaseLinkAliases };
+      if (aliases.length) {
+        next[phase] = aliases;
+      } else {
+        delete next[phase];
+      }
+      const updated = { ...profile, phaseLinkAliases: next };
+      setProfile(updated);
+      onProfileUpdate(updated);
+    },
+    [profile, onProfileUpdate]
+  );
+
   const handleExternalLinksInitiatedChange = useCallback(
     (value: boolean) => {
       const updated = { ...profile, externalLinksInitiated: value };
@@ -852,6 +895,15 @@ export function ProjectDetailsPage({
   const handleReadinessReviewInitiatedChange = useCallback(
     (value: boolean) => {
       const updated = { ...profile, readinessReviewQuestionsInitiated: value };
+      setProfile(updated);
+      onProfileUpdate(updated);
+    },
+    [profile, onProfileUpdate]
+  );
+
+  const handleStakeholderReferenceDataInitiatedChange = useCallback(
+    (value: boolean) => {
+      const updated = { ...profile, stakeholderReferenceDataInitiated: value };
       setProfile(updated);
       onProfileUpdate(updated);
     },
@@ -1311,46 +1363,90 @@ export function ProjectDetailsPage({
         className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-4`}
       >
         <div>
-          <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
-            Step 4: Stakeholder Reference Data
-          </h3>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h3
+              className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+            >
+              Step 4: Stakeholder Reference Data
+            </h3>
+            <label
+              className={`flex items-center gap-2 text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+            >
+              <input
+                type="checkbox"
+                checked={Boolean(profile.stakeholderReferenceDataInitiated)}
+                onChange={(e) =>
+                  handleStakeholderReferenceDataInitiatedChange(e.target.checked)
+                }
+              />
+              Stakeholder data initiated
+            </label>
+          </div>
           <p className={`text-sm mt-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
             Define your Stakeholder Groups, Sub-Groups, Departments and Relationships here for use
             in the Stakeholder Analysis Tool and for consistency of stakeholder records throughout
-            the Adoption Engine. *Todo: Copy needed to explain why this is needed.*
+            the Adoption Engine.
+          </p>
+          <p className={`text-sm mt-2 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+            Individual stakeholders themselves are added in the{' '}
+            {onGoToStakeholderAnalysis ? (
+              <button
+                type="button"
+                onClick={onGoToStakeholderAnalysis}
+                className="font-semibold text-[#005eb8] underline underline-offset-2 hover:text-[#003087]"
+              >
+                Stakeholder Analysis Tool
+              </button>
+            ) : (
+              'Stakeholder Analysis Tool'
+            )}
+            , not here - this section only sets up the shared reference lists they're picked from.
+          </p>
+          <p className={`mt-2 text-sm p-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+            This is normally only set up once at the start of a project. Once you're done, tick
+            "Stakeholder data initiated" to hide this section - re-enable "Show stakeholder
+            reference data section" in Settings if you need to come back to it.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
-          {(
-            [
-              { key: 'groups', label: 'Groups', placeholder: 'Add a group...' },
-              { key: 'subGroups', label: 'Sub-Groups', placeholder: 'Add a sub-group...' },
-              { key: 'departments', label: 'Departments', placeholder: 'Add a department...' },
-              {
-                key: 'relationships',
-                label: 'Relationships',
-                placeholder: 'Add a relationship...',
-              },
-            ] as const
-          ).map(({ key, label, placeholder }) => (
-            <div key={key}>
-              <p
-                className={`text-sm font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
-              >
-                {label}
-              </p>
-              <AliasEditor
-                aliases={effectiveStakeholderReferenceLists[key]}
-                onChange={(values) => handleUpdateStakeholderReferenceList(key, values)}
-                darkMode={darkMode}
-                placeholder={placeholder}
-                emptyLabel="None added yet."
-                addButtonLabel={`Add ${label.toLowerCase()}`}
-              />
-            </div>
-          ))}
-        </div>
+        {!profile.stakeholderReferenceDataInitiated || showStakeholderReferenceDataSection ? (
+          <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+            {(
+              [
+                { key: 'groups', label: 'Groups', placeholder: 'Add a group...' },
+                { key: 'subGroups', label: 'Sub-Groups', placeholder: 'Add a sub-group...' },
+                { key: 'departments', label: 'Departments', placeholder: 'Add a department...' },
+                {
+                  key: 'relationships',
+                  label: 'Relationships',
+                  placeholder: 'Add a relationship...',
+                },
+              ] as const
+            ).map(({ key, label, placeholder }) => (
+              <div key={key}>
+                <p
+                  className={`text-sm font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
+                >
+                  {label}
+                </p>
+                <AliasEditor
+                  aliases={effectiveStakeholderReferenceLists[key]}
+                  onChange={(values) => handleUpdateStakeholderReferenceList(key, values)}
+                  darkMode={darkMode}
+                  placeholder={placeholder}
+                  emptyLabel="None added yet."
+                  addButtonLabel={`Add ${label.toLowerCase()}`}
+                  confirmRemove
+                />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+            Stakeholder reference data was set up at project start. Turn on "Show stakeholder
+            reference data section" in Settings if you need to come back and edit it.
+          </p>
+        )}
       </div>
 
       <div
@@ -1691,7 +1787,7 @@ export function ProjectDetailsPage({
                     return (
                       <div
                         key={phase}
-                        className="grid grid-cols-1 md:grid-cols-[1fr,2fr] gap-2 items-center"
+                        className="grid grid-cols-1 md:grid-cols-[1fr,2fr,auto] gap-2 items-center"
                       >
                         <label
                           htmlFor={`phase-link-${phase}`}
@@ -1704,6 +1800,18 @@ export function ProjectDetailsPage({
                           value={phaseLinks[phase]}
                           defaultUrl={PHASE_LINKS[phase]}
                           onChange={(url) => handleUpdatePhaseLink(phase, url)}
+                          darkMode={darkMode}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setEditingPhaseAliasesFor(phase)}
+                          aria-label={`Edit phase link match text for Phase ${phase}`}
+                          className={`shrink-0 rounded border px-1.5 py-1.5 text-xs ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-100'}`}
+                        >
+                          ✎
+                        </button>
+                        <MatchAliasPreview
+                          aliases={profile.phaseLinkAliases?.[phase]}
                           darkMode={darkMode}
                         />
                       </div>
@@ -1784,7 +1892,7 @@ export function ProjectDetailsPage({
                           <DefaultableLinkInput
                             id={`further-reading-${component.id}`}
                             value={profile.componentFurtherReading?.[component.id]}
-                            defaultUrl={DEFAULT_FURTHER_READING[component.id]}
+                            defaultUrl={undefined}
                             onChange={(url) =>
                               handleComponentFurtherReadingChange(component.id, url)
                             }
@@ -1920,6 +2028,23 @@ export function ProjectDetailsPage({
                               >
                                 Remove
                               </button>
+                              <label
+                                className={`col-span-full -mt-1 flex items-center gap-1.5 text-[11px] ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={Boolean(link.optional)}
+                                  onChange={(e) =>
+                                    handleToggleComponentLinkOptional(
+                                      component.id,
+                                      link.key,
+                                      e.target.checked
+                                    )
+                                  }
+                                  className="h-3.5 w-3.5"
+                                />
+                                Optional (unticked = required)
+                              </label>
                               <MatchAliasPreview aliases={link.matchAliases} darkMode={darkMode} />
                             </div>
                           ))}
@@ -1984,6 +2109,19 @@ export function ProjectDetailsPage({
             setEditingAliasesFor(null);
           }}
           onClose={() => setEditingAliasesFor(null)}
+          darkMode={darkMode}
+        />
+      )}
+
+      {editingPhaseAliasesFor !== null && (
+        <MatchAliasesModal
+          title={`Phase ${editingPhaseAliasesFor}: ${PHASE_NAMES[editingPhaseAliasesFor] || ''}`}
+          aliases={profile.phaseLinkAliases?.[editingPhaseAliasesFor] || []}
+          onSave={(aliases) => {
+            handleUpdatePhaseLinkAliases(editingPhaseAliasesFor, aliases);
+            setEditingPhaseAliasesFor(null);
+          }}
+          onClose={() => setEditingPhaseAliasesFor(null)}
           darkMode={darkMode}
         />
       )}

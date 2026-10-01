@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { ProjectDetailsPage } from './CSTDetailsPage';
 import type { OrgProfile } from '@lib/adoptionState';
 import type { AssessmentComponent } from '@data/components';
-import { DEFAULT_FURTHER_READING, PHASE_LINKS } from '@data/maturity-guidance-links';
+import { PHASE_LINKS } from '@data/maturity-guidance-links';
 
 const orgProfile: OrgProfile = {
   trustName: 'Trust',
@@ -277,6 +277,147 @@ describe('ProjectDetailsPage', () => {
     );
   });
 
+  it('SHOULD collapse the Stakeholder Reference Data section once marked initiated, and reshow via the Settings override', () => {
+    // arrange
+    const initiatedProfile: OrgProfile = { ...orgProfile, stakeholderReferenceDataInitiated: true };
+
+    // act 1 - collapsed by default
+    const { rerender } = render(
+      <ProjectDetailsPage
+        orgProfile={initiatedProfile}
+        onProfileUpdate={vi.fn()}
+        components={components}
+        lenses={['Strategic Direction and Leadership']}
+        onComponentClick={vi.fn()}
+        onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
+        onCurrentUserChange={vi.fn()}
+      />
+    );
+
+    // assert 1
+    expect(screen.queryByText('Groups')).not.toBeInTheDocument();
+    expect(
+      screen.getByText(/Stakeholder reference data was set up at project start/)
+    ).toBeInTheDocument();
+
+    // act 2 - reshown via the per-device override
+    rerender(
+      <ProjectDetailsPage
+        orgProfile={initiatedProfile}
+        onProfileUpdate={vi.fn()}
+        components={components}
+        lenses={['Strategic Direction and Leadership']}
+        onComponentClick={vi.fn()}
+        onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
+        onCurrentUserChange={vi.fn()}
+        showStakeholderReferenceDataSection
+      />
+    );
+
+    // assert 2
+    expect(screen.getByText('Groups')).toBeInTheDocument();
+  });
+
+  it('SHOULD write stakeholderReferenceDataInitiated WHERE the "Stakeholder data initiated" checkbox is toggled', () => {
+    // arrange
+    const onProfileUpdate = vi.fn();
+
+    render(
+      <ProjectDetailsPage
+        orgProfile={orgProfile}
+        onProfileUpdate={onProfileUpdate}
+        components={components}
+        lenses={['Strategic Direction and Leadership']}
+        onComponentClick={vi.fn()}
+        onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
+        onCurrentUserChange={vi.fn()}
+      />
+    );
+
+    // act
+    fireEvent.click(screen.getByLabelText('Stakeholder data initiated'));
+
+    // assert
+    expect(onProfileUpdate).toHaveBeenLastCalledWith(
+      expect.objectContaining({ stakeholderReferenceDataInitiated: true })
+    );
+  });
+
+  it('SHOULD link to the Stakeholder Analysis Tool from the Stakeholder Reference Data section', () => {
+    // arrange
+    const onGoToStakeholderAnalysis = vi.fn();
+
+    render(
+      <ProjectDetailsPage
+        orgProfile={orgProfile}
+        onProfileUpdate={vi.fn()}
+        components={components}
+        lenses={['Strategic Direction and Leadership']}
+        onComponentClick={vi.fn()}
+        onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
+        onCurrentUserChange={vi.fn()}
+        onGoToStakeholderAnalysis={onGoToStakeholderAnalysis}
+      />
+    );
+
+    // act
+    fireEvent.click(screen.getByRole('button', { name: 'Stakeholder Analysis Tool' }));
+
+    // assert
+    expect(onGoToStakeholderAnalysis).toHaveBeenCalled();
+  });
+
+  it('SHOULD ask for confirmation before removing a stakeholder reference group', () => {
+    // arrange
+    const onProfileUpdate = vi.fn();
+    const profileWithGroup: OrgProfile = {
+      ...orgProfile,
+      stakeholderReferenceLists: {
+        groups: ['Clinical'],
+        subGroups: [],
+        departments: [],
+        relationships: [],
+      },
+    };
+    vi.spyOn(window, 'confirm').mockReturnValue(false);
+
+    render(
+      <ProjectDetailsPage
+        orgProfile={profileWithGroup}
+        onProfileUpdate={onProfileUpdate}
+        components={components}
+        lenses={['Strategic Direction and Leadership']}
+        onComponentClick={vi.fn()}
+        onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
+        onCurrentUserChange={vi.fn()}
+      />
+    );
+
+    // act - declined
+    fireEvent.click(screen.getByLabelText('Remove "Clinical"'));
+
+    // assert - nothing removed
+    expect(onProfileUpdate).not.toHaveBeenCalled();
+    expect(window.confirm).toHaveBeenCalledWith('Remove "Clinical"?');
+
+    // act - confirmed
+    vi.mocked(window.confirm).mockReturnValue(true);
+    fireEvent.click(screen.getByLabelText('Remove "Clinical"'));
+
+    // assert - removed
+    expect(onProfileUpdate).toHaveBeenCalled();
+  });
+
   it('SHOULD show a "Default Change Management Link" badge for an unmodified component link, and no "Custom" badge yet', () => {
     // act
     render(
@@ -496,6 +637,76 @@ describe('ProjectDetailsPage', () => {
     );
   });
 
+  it('SHOULD mark a custom component link as optional', () => {
+    // arrange
+    const onProfileUpdate = vi.fn();
+    const profileWithCustomLink: OrgProfile = {
+      ...orgProfile,
+      customComponentLinks: {
+        vision: [{ key: 'custom-1', label: 'Playbook', url: 'https://example.org', type: 'additional' }],
+      },
+    };
+
+    render(
+      <ProjectDetailsPage
+        orgProfile={profileWithCustomLink}
+        onProfileUpdate={onProfileUpdate}
+        components={components}
+        lenses={['Strategic Direction and Leadership']}
+        onComponentClick={vi.fn()}
+        onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
+        onCurrentUserChange={vi.fn()}
+      />
+    );
+
+    // act
+    fireEvent.click(screen.getByLabelText('Optional (unticked = required)'));
+
+    // assert
+    expect(onProfileUpdate).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        customComponentLinks: {
+          vision: [expect.objectContaining({ key: 'custom-1', optional: true })],
+        },
+      })
+    );
+  });
+
+  it('SHOULD add a match-text alias to a Phase link via its match-text modal', () => {
+    // arrange
+    const onProfileUpdate = vi.fn();
+
+    render(
+      <ProjectDetailsPage
+        orgProfile={orgProfile}
+        onProfileUpdate={onProfileUpdate}
+        components={components}
+        lenses={['Strategic Direction and Leadership']}
+        onComponentClick={vi.fn()}
+        onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
+        onCurrentUserChange={vi.fn()}
+      />
+    );
+
+    // act
+    fireEvent.click(screen.getByLabelText('Edit phase link match text for Phase 1'));
+    fireEvent.change(screen.getByPlaceholderText('Add text this link should also match...'), {
+      target: { value: 'kickoff phase' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Add' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Save' }));
+
+    // assert
+    expect(onProfileUpdate).toHaveBeenLastCalledWith(
+      expect.objectContaining({ phaseLinkAliases: { 1: ['kickoff phase'] } })
+    );
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
   it('SHOULD propagate an overridden Change Adoption Baseline mailbox', () => {
     // arrange
     const onProfileUpdate = vi.fn();
@@ -626,12 +837,14 @@ describe('ProjectDetailsPage', () => {
     );
   });
 
-  it('SHOULD show the bundled default Further Reading link for a component until overridden', () => {
-    // arrange + act
-    render(
+  it('SHOULD have no bundled Further Reading default, and fill it in once the AVT preset is applied', () => {
+    // arrange
+    const onProfileUpdate = vi.fn();
+    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
+    const { rerender } = render(
       <ProjectDetailsPage
         orgProfile={orgProfile}
-        onProfileUpdate={vi.fn()}
+        onProfileUpdate={onProfileUpdate}
         components={components}
         lenses={['Strategic Direction and Leadership']}
         onComponentClick={vi.fn()}
@@ -643,10 +856,32 @@ describe('ProjectDetailsPage', () => {
     );
     fireEvent.click(screen.getByText('Vision'));
 
-    // assert
-    const furtherReadingInput = document.getElementById(
-      'further-reading-vision'
-    ) as HTMLInputElement;
-    expect(furtherReadingInput.value).toBe(DEFAULT_FURTHER_READING.vision);
+    // assert 1 - no further reading default without a preset applied
+    expect((document.getElementById('further-reading-vision') as HTMLInputElement).value).toBe('');
+
+    // act - apply the AVT preset
+    fireEvent.click(screen.getByRole('button', { name: /Apply .*preset/ }));
+    const calls = onProfileUpdate.mock.calls;
+    const updatedProfile = calls[calls.length - 1][0];
+    rerender(
+      <ProjectDetailsPage
+        orgProfile={updatedProfile}
+        onProfileUpdate={onProfileUpdate}
+        components={components}
+        lenses={['Strategic Direction and Leadership']}
+        onComponentClick={vi.fn()}
+        onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
+        onCurrentUserChange={vi.fn()}
+      />
+    );
+    fireEvent.click(screen.getByText('Vision'));
+
+    // assert 2
+    expect((document.getElementById('further-reading-vision') as HTMLInputElement).value).toBe(
+      'https://future.nhs.uk/CMN/view?objectId=74014704'
+    );
+    confirmSpy.mockRestore();
   });
 });

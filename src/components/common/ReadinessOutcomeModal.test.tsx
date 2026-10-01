@@ -21,6 +21,8 @@ describe('ReadinessOutcomeModal', () => {
           ],
           skipToPhase: null,
           readyComponentIds: [],
+          selfAssessedPhase: null,
+          behindLenses: [],
         }}
         onApply={vi.fn()}
         onDecline={vi.fn()}
@@ -37,7 +39,13 @@ describe('ReadinessOutcomeModal', () => {
     render(
       <ReadinessOutcomeModal
         open
-        outcome={{ suggestions: [], skipToPhase: null, readyComponentIds: [] }}
+        outcome={{
+          suggestions: [],
+          skipToPhase: null,
+          readyComponentIds: [],
+          selfAssessedPhase: null,
+          behindLenses: [],
+        }}
         suggestedPathway="pathway-2"
         onApply={onApply}
         onDecline={vi.fn()}
@@ -49,5 +57,27 @@ describe('ReadinessOutcomeModal', () => {
 
     // assert
     expect(onApply).toHaveBeenCalledWith([], false, true);
+  });
+
+  it('SHOULD show the self-assessed phase and what is still behind it', () => {
+    // arrange + act
+    render(
+      <ReadinessOutcomeModal
+        open
+        outcome={{
+          suggestions: [],
+          skipToPhase: null,
+          readyComponentIds: [],
+          selfAssessedPhase: 3,
+          behindLenses: [{ componentId: 'b1', componentLabel: 'B1', lens: 'Lens' }],
+        }}
+        onApply={vi.fn()}
+        onDecline={vi.fn()}
+      />
+    );
+
+    // assert
+    expect(screen.getByText(/aligned to Phase 3/)).toBeInTheDocument();
+    expect(screen.getByText('B1 · Lens')).toBeInTheDocument();
   });
 });

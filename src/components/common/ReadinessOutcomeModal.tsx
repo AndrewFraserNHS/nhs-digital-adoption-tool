@@ -41,6 +41,9 @@ export function ReadinessOutcomeModal({
   const hasPathway = suggestedPathway !== null;
   const hasNothing = !hasSuggestions && !hasPhaseSkip && !hasPathway;
   const phaseName = outcome.skipToPhase ? PHASE_NAMES[outcome.skipToPhase] : null;
+  const selfAssessedPhaseName = outcome.selfAssessedPhase
+    ? PHASE_NAMES[outcome.selfAssessedPhase]
+    : null;
 
   const toggleSuggestion = (index: number) => {
     setCheckedSuggestions((current) =>
@@ -64,6 +67,27 @@ export function ReadinessOutcomeModal({
         <h2 id="readiness-outcome-title" className="text-lg font-semibold text-slate-900">
           Your readiness outcome
         </h2>
+
+        {selfAssessedPhaseName ? (
+          <div className="mt-3 rounded-md border border-blue-200 bg-blue-50 p-2.5 text-sm text-blue-900">
+            <p>
+              Based on these answers you have been aligned to Phase {outcome.selfAssessedPhase}:{' '}
+              {selfAssessedPhaseName}.
+            </p>
+            {outcome.behindLenses.length > 0 ? (
+              <>
+                <p className="mt-2">You&apos;re currently behind on:</p>
+                <ul className="mt-1 list-disc space-y-0.5 pl-5">
+                  {outcome.behindLenses.map((missing) => (
+                    <li key={`${missing.componentId}-${missing.lens}`}>
+                      {missing.componentLabel} &middot; {missing.lens}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : null}
+          </div>
+        ) : null}
 
         {hasNothing ? (
           <>

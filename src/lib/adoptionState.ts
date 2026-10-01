@@ -297,6 +297,8 @@ export interface OrgProfile {
   toolLinks?: ToolLinkEntry[];
   /** Landing-page URL per phase number (1-5), shown as "Visit phase page" on the Daily Phase Overview. */
   phaseLinks?: Record<number, string>;
+  /** Extra text (beyond "Phase N: <name>") that also auto-links to a phase's link in action/summary bodies. */
+  phaseLinkAliases?: Record<number, string[]>;
   /**
    * Once set, the Project Profile page's External Links section collapses by default -
    * links are a one-time project-setup concern. Travels with export/import. Overridden locally
@@ -309,6 +311,12 @@ export interface OrgProfile {
    * (per device, not exported) by AdoptionUserSettings.showExternalLinksSection.
    */
   readinessReviewQuestionsInitiated?: boolean;
+  /**
+   * Once set, the Project Profile page's Stakeholder Reference Data section collapses by default -
+   * it's a one-time project-setup concern. Travels with export/import. Overridden locally
+   * (per device, not exported) by AdoptionUserSettings.showStakeholderReferenceDataSection.
+   */
+  stakeholderReferenceDataInitiated?: boolean;
   teamMembers?: TeamMember[];
   /** Groups/Sub-Groups/Locations/Relationships used by the Stakeholder Analysis tool - shared here so every project only defines them once. */
   stakeholderReferenceLists?: StakeholderReferenceLists;
@@ -411,6 +419,7 @@ export function normalizeOrgProfile(profile?: Partial<OrgProfile>): OrgProfile {
       })),
     externalLinksInitiated: profile?.externalLinksInitiated,
     readinessReviewQuestionsInitiated: profile?.readinessReviewQuestionsInitiated,
+    stakeholderReferenceDataInitiated: profile?.stakeholderReferenceDataInitiated,
     teamMembers: profile?.teamMembers || [],
     stakeholderReferenceLists:
       profile?.stakeholderReferenceLists || DEFAULT_STAKEHOLDER_REFERENCE_LISTS,

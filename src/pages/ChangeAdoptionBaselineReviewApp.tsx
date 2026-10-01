@@ -21,7 +21,7 @@ import { computeCurrentPhase } from '@lib/adoptionMetrics';
 import type { DraftEntry } from '@lib/adoptionState';
 import { downloadReportEml, sendReportBundle } from '@lib/readinessExport';
 import { load, save } from '@lib/storage';
-import { JSX, useState } from 'react';
+import { JSX, useEffect, useState } from 'react';
 
 interface PreparednessState {
   /** Chosen option number (1-5), keyed by question `nu`. */
@@ -104,8 +104,18 @@ export default function ChangeAdoptionBaselineReviewApp({
   const setAnswer = (nu: number, option: number) =>
     persist({ ...state, answers: { ...state.answers, [nu]: option } });
 
-  const handleReset = () => {
-    if (window.confirm('This will clear every answer and start a new assessment. Continue?')) {
+  /** Goes back to question 1 to review/change answers, keeping everything already entered. */
+  const handleAmend = () => {
+    update({ currentIndex: 0, completed: false });
+    setPage(2);
+    setOutcome(null);
+    setShowModal(false);
+    setOutcomeHandled(false);
+  };
+
+  /** Permanently wipes every answer and starts a brand new assessment. */
+  const handleClear = () => {
+    if (window.confirm('This will permanently clear every answer. Continue?')) {
       persist(freshState());
       setPage(1);
       setOutcome(null);
@@ -303,6 +313,42 @@ export default function ChangeAdoptionBaselineReviewApp({
     setOutcomeHandled(true);
   };
 
+  // Number keys pick an answer, Enter moves on - skipped for free-text questions and once the
+  // question flow isn't showing (page 1, or the "Assessment complete" panel).
+  useEffect(() => {
+    if (page !== 2 || !currentQuestion || currentIsText || (state.completed && outcomeHandled)) {
+      return;
+    }
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const digit = Number(event.key);
+      if (Number.isInteger(digit) && digit >= 1 && digit <= currentQuestion.answers.length) {
+        event.preventDefault();
+        setAnswer(currentQuestion.nu, digit);
+        return;
+      }
+      if (event.key === 'Enter' && currentAnswer) {
+        event.preventDefault();
+        if (isLastQuestion) {
+          handleFinish();
+        } else {
+          update({ currentIndex: currentIndex + 1 });
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    page,
+    currentQuestion,
+    currentIsText,
+    currentAnswer,
+    currentIndex,
+    isLastQuestion,
+    state.completed,
+    outcomeHandled,
+  ]);
+
   const inputClass = 'w-full p-2 border border-slate-300 rounded outline-none';
   const progressPct = ((currentIndex + 1) / Math.max(QUESTIONS.length, 1)) * 100;
 
@@ -312,13 +358,24 @@ export default function ChangeAdoptionBaselineReviewApp({
         <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
           Step {page} of 2
         </p>
-        <button
-          type="button"
-          onClick={handleReset}
-          className="text-xs font-medium text-slate-500 hover:text-slate-700 hover:underline"
-        >
-          Start again
-        </button>
+        {state.currentIndex > 0 || Object.keys(state.answers).length > 0 ? (
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={handleAmend}
+              className="text-xs font-medium text-slate-500 hover:text-slate-700 hover:underline"
+            >
+              Amend answers
+            </button>
+            <button
+              type="button"
+              onClick={handleClear}
+              className="text-xs font-medium text-slate-500 hover:text-slate-700 hover:underline"
+            >
+              Clear and start again
+            </button>
+          </div>
+        ) : null}
       </div>
 
       {page === 1 ? (
@@ -378,10 +435,17 @@ export default function ChangeAdoptionBaselineReviewApp({
                 </button>
                 <button
                   type="button"
-                  onClick={handleReset}
+                  onClick={handleAmend}
                   className="rounded-md bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-200"
                 >
-                  Retake assessment
+                  Amend answers
+                </button>
+                <button
+                  type="button"
+                  onClick={handleClear}
+                  className="rounded-md bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-200"
+                >
+                  Clear and start again
                 </button>
               </div>
             </div>

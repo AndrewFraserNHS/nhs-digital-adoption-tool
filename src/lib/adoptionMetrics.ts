@@ -11,6 +11,7 @@ import {
   isCompletedActionStatus,
   isNonOutstandingActionStatus,
   isSkippedActionStatus,
+  normalizeActionStatus,
 } from './actionModel';
 import { AdoptionStore, deriveObjectiveStatus, DraftEntry } from './adoptionState';
 import { type BragStatus, getTimelineBragStatus } from './bragStatus';
@@ -145,6 +146,10 @@ export interface PhaseSummary {
   totalLenses: number;
   onTrackComponents: number;
   actionCompletionPct: number;
+  /** Actions explicitly marked Cancelled - not counted as outstanding, but also not completed work. */
+  cancelledActions: number;
+  /** Actions explicitly marked Skipped - excluded from actionCompletionPct entirely. */
+  skippedActions: number;
   rag: 'Red' | 'Amber' | 'Green';
 }
 
@@ -282,6 +287,8 @@ export function getMetrics(store: AdoptionStore, components: AssessmentComponent
       onTrackComponents: number;
       totalActions: number;
       completedActions: number;
+      cancelledActions: number;
+      skippedActions: number;
     }
   >();
 
@@ -293,6 +300,8 @@ export function getMetrics(store: AdoptionStore, components: AssessmentComponent
       onTrackComponents: 0,
       totalActions: 0,
       completedActions: 0,
+      cancelledActions: 0,
+      skippedActions: 0,
     };
     phaseBucket.componentCount += 1;
     phaseBucket.totalLenses += component.lenses.length;
@@ -309,12 +318,16 @@ export function getMetrics(store: AdoptionStore, components: AssessmentComponent
         phaseBucket.assessedLenses += 1;
       }
 
-      // Skipped actions count neither as outstanding nor as completed - they're excluded from
-      // this percentage entirely, so a skipped phase never drags the RAG down or is inflated up.
-      const actions = (entry?.actions || []).filter(
-        (action) => !isSkippedActionStatus(action.status)
-      );
-      actions.forEach((action) => {
+      (entry?.actions || []).forEach((action) => {
+        if (isSkippedActionStatus(action.status)) {
+          phaseBucket.skippedActions += 1;
+          // Skipped actions count neither as outstanding nor as completed - they're excluded
+          // from this percentage entirely, so a skipped phase never drags the RAG down or up.
+          return;
+        }
+        if (normalizeActionStatus(action.status) === 'Cancelled') {
+          phaseBucket.cancelledActions += 1;
+        }
         totalActions += 1;
         phaseBucket.totalActions += 1;
         if (isCompletedActionStatus(action.status)) {
@@ -372,6 +385,8 @@ export function getMetrics(store: AdoptionStore, components: AssessmentComponent
         totalLenses: bucket.totalLenses,
         onTrackComponents: bucket.onTrackComponents,
         actionCompletionPct: phaseActionCompletionPct,
+        cancelledActions: bucket.cancelledActions,
+        skippedActions: bucket.skippedActions,
         rag,
       };
     });

@@ -83,7 +83,8 @@ import { regenerateContentForPathway, syncDerivedContent } from '@lib/derivedCon
 import { getReadinessBand } from '@lib/readinessBands';
 import { canEditProfile, SIGN_IN_REQUIRED_MESSAGE } from '@lib/signInGuard';
 import { load, save } from '@lib/storage';
-import { downloadFile, escapeHtml } from '@lib/utils';
+import { downloadBlob, downloadFile, escapeHtml } from '@lib/utils';
+import { buildAuditLogPdf } from '@lib/auditLogPdf';
 import BenefitsApp from '@pages/BenefitsApp';
 import ChangeAdoptionBaselineAnalysisApp from '@pages/ChangeAdoptionBaselineAnalysisApp';
 import ChangeImpactAssessmentApp from '@pages/ChangeImpactAssessmentApp';
@@ -137,7 +138,7 @@ const DEFAULT_USER_SETTINGS: AdoptionUserSettings = {
   manualPhaseFocus: 1,
   hideGuidedWorkflow: false,
   showAdditionalGuidanceLinks: true,
-  showExternalLinksSection: false,
+  showAdminActionSection: false,
   showActionPriorityColours: false,
 };
 
@@ -1251,6 +1252,36 @@ export function AdoptionApp() {
     setUserSettings(nextSettings);
   }, []);
 
+  /** Exports the JSON CST (organisation profile) and the Audit PDF - the pair sent when updating anyone on progress, whether triggered from the monthly reminder or manually from Profile. */
+  const handleSendProgressUpdate = useCallback(() => {
+    const trustSlug =
+      (store.orgProfile.trustName || 'export')
+        .trim()
+        .replace(/[^a-z0-9]+/gi, '-')
+        .toLowerCase() || 'export';
+    downloadFile(
+      `cst-personalisation-${trustSlug}.json`,
+      JSON.stringify(
+        { schemaVersion: 'cst-v1', exportedAt: new Date().toISOString(), orgProfile: store.orgProfile },
+        null,
+        2
+      ),
+      'application/json'
+    );
+    downloadBlob(
+      `audit-log-${new Date().toISOString().slice(0, 10)}.pdf`,
+      buildAuditLogPdf(store.auditLog, {
+        trustName: store.orgProfile.trustName,
+        projectName: store.orgProfile.projectName,
+      }).output('blob')
+    );
+  }, [store.orgProfile, store.auditLog]);
+
+  const currentMonthKey = new Date().toISOString().slice(0, 7);
+  const dismissProgressReminder = useCallback(() => {
+    handleUserSettingsUpdate({ ...userSettings, lastProgressReminderMonth: currentMonthKey });
+  }, [handleUserSettingsUpdate, userSettings, currentMonthKey]);
+
   const orgProfileRef = React.useRef(store.orgProfile);
   orgProfileRef.current = store.orgProfile;
 
@@ -1366,6 +1397,10 @@ export function AdoptionApp() {
   const trustLabel = store.orgProfile.trustName || 'Unconfigured Trust';
   const projectLabel = store.orgProfile.projectName || 'Unnamed Project';
   const projectConfigured = !isCstUnconfigured(store.orgProfile);
+  const showProgressReminder =
+    projectConfigured &&
+    new Date().getDate() === 1 &&
+    userSettings.lastProgressReminderMonth !== currentMonthKey;
 
   return (
     <div
@@ -1787,6 +1822,33 @@ export function AdoptionApp() {
 
         {/* Main Content Area */}
         <main ref={mainContentRef} className="flex-1 overflow-y-auto px-8 pt-8 pb-28">
+          {showProgressReminder ? (
+            <div
+              role="alert"
+              className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-blue-300 bg-blue-50 px-4 py-3 text-sm text-blue-900"
+            >
+              <span>Do you want to update anyone on progress?</span>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleSendProgressUpdate();
+                    dismissProgressReminder();
+                  }}
+                  className="font-semibold text-[#005eb8] underline underline-offset-2 hover:text-[#003087]"
+                >
+                  Export JSON CST &amp; Audit PDF
+                </button>
+                <button
+                  type="button"
+                  onClick={dismissProgressReminder}
+                  className="font-semibold text-blue-700 hover:text-blue-900"
+                >
+                  Not now
+                </button>
+              </div>
+            </div>
+          ) : null}
           {projectConfigured &&
           !currentUserId &&
           view !== 'project-details' &&
@@ -1982,8 +2044,8 @@ export function AdoptionApp() {
               onGoToStakeholderAnalysis={() => handleViewChange('stakeholder-analysis')}
               currentUserId={currentUserId}
               onCurrentUserChange={setCurrentUserId}
-              showExternalLinksSection={Boolean(userSettings.showExternalLinksSection)}
-              showReviewQuestionsSection={Boolean(userSettings.showReadinessReviewQuestionsSection)}
+              showExternalLinksSection={Boolean(userSettings.showAdminActionSection)}
+              showReviewQuestionsSection={Boolean(userSettings.showAdminActionSection)}
               showStakeholderReferenceDataSection={Boolean(
                 userSettings.showStakeholderReferenceDataSection
               )}
@@ -2104,6 +2166,7 @@ export function AdoptionApp() {
               actions={actionRows}
               onComponentClick={openComponentAssessment}
               onStatusChange={requestActionStatusChange}
+              onActionView={openActionView}
               teamMembers={store.orgProfile.teamMembers || []}
               darkMode={Boolean(userSettings.darkMode)}
             />
@@ -2144,6 +2207,7 @@ export function AdoptionApp() {
               themeColor={userSettings.themeColor}
               currentUserId={currentUserId}
               darkMode={Boolean(userSettings.darkMode)}
+              onNavigateToRaidLog={() => handleViewChange('raid-log')}
             />
           )}
           {view === 'force-field-analysis' && (
@@ -2247,13 +2311,13 @@ export function AdoptionApp() {
           {view === 'profile' && (
             <ProfilePage
               orgProfile={store.orgProfile}
-              onProfileUpdate={handleProfileUpdate}
               userSettings={userSettings}
               onUserSettingsUpdate={handleUserSettingsUpdate}
               currentUserId={currentUserId}
               onCurrentUserChange={setCurrentUserId}
               objectives={engagementObjectives}
               darkMode={Boolean(userSettings.darkMode)}
+              onSendProgressUpdate={handleSendProgressUpdate}
             />
           )}
         </main>

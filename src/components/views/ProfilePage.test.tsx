@@ -12,7 +12,6 @@ describe('ProfilePage', () => {
   it('SHOULD let you pick which team member you are signed in as', () => {
     // arrange
     const onUserSettingsUpdate = vi.fn();
-    const onProfileUpdate = vi.fn();
     const onCurrentUserChange = vi.fn();
     const orgProfile = {
       ...initializeStore().orgProfile,
@@ -25,7 +24,6 @@ describe('ProfilePage', () => {
     render(
       <ProfilePage
         orgProfile={orgProfile}
-        onProfileUpdate={onProfileUpdate}
         userSettings={baseUserSettings}
         onUserSettingsUpdate={onUserSettingsUpdate}
         currentUserId="member-1"
@@ -49,7 +47,6 @@ describe('ProfilePage', () => {
     render(
       <ProfilePage
         orgProfile={orgProfile}
-        onProfileUpdate={vi.fn()}
         userSettings={baseUserSettings}
         onUserSettingsUpdate={vi.fn()}
         currentUserId=""
@@ -62,29 +59,40 @@ describe('ProfilePage', () => {
     expect(screen.getByText(/No team members have been added yet/)).toBeInTheDocument();
   });
 
-  it('SHOULD update phase capability and confidence', () => {
+  it('SHOULD offer a manual progress-update export WHEN a handler is given, and hide it otherwise', () => {
     // arrange
-    const onUserSettingsUpdate = vi.fn();
-    const onProfileUpdate = vi.fn();
+    const onSendProgressUpdate = vi.fn();
     const orgProfile = initializeStore().orgProfile;
 
-    render(
+    // act 1 - no handler: nothing shown
+    const { rerender } = render(
       <ProfilePage
         orgProfile={orgProfile}
-        onProfileUpdate={onProfileUpdate}
         userSettings={baseUserSettings}
-        onUserSettingsUpdate={onUserSettingsUpdate}
+        onUserSettingsUpdate={vi.fn()}
         currentUserId=""
         onCurrentUserChange={vi.fn()}
       />
     );
 
-    // act
-    const confidenceSelects = screen.getAllByText('Confidence');
-    expect(confidenceSelects.length).toBeGreaterThan(0);
+    // assert 1
+    expect(screen.queryByText('Update anyone on progress')).not.toBeInTheDocument();
 
-    // assert
-    expect(screen.getByText('Confidence and Capability by Phase')).toBeTruthy();
+    // act 2 - with a handler: button shown and wired up
+    rerender(
+      <ProfilePage
+        orgProfile={orgProfile}
+        userSettings={baseUserSettings}
+        onUserSettingsUpdate={vi.fn()}
+        currentUserId=""
+        onCurrentUserChange={vi.fn()}
+        onSendProgressUpdate={onSendProgressUpdate}
+      />
+    );
+    fireEvent.click(screen.getByRole('button', { name: /Export JSON CST/ }));
+
+    // assert 2
+    expect(onSendProgressUpdate).toHaveBeenCalled();
   });
 
   it('SHOULD show only the first few objectives, expanding to show the rest', () => {
@@ -101,7 +109,6 @@ describe('ProfilePage', () => {
     render(
       <ProfilePage
         orgProfile={orgProfile}
-        onProfileUpdate={vi.fn()}
         userSettings={baseUserSettings}
         onUserSettingsUpdate={vi.fn()}
         currentUserId=""

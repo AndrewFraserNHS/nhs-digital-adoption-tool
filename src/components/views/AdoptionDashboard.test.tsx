@@ -93,6 +93,8 @@ const metrics: Metrics = {
       totalLenses: 2,
       onTrackComponents: 1,
       actionCompletionPct: 0,
+      cancelledActions: 0,
+      skippedActions: 0,
       rag: 'Amber',
     },
   ],

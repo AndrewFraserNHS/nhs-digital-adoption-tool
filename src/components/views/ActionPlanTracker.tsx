@@ -24,6 +24,8 @@ export interface ActionPlanTrackerProps {
     actionId: string,
     status: UnifiedActionStatus
   ) => void;
+  /** Opens the action editor modal on the action's own component/lens page, scrolled straight to it. */
+  onActionView?: (componentId: string, lens: string, actionId: string) => void;
   teamMembers?: TeamMember[];
   darkMode?: boolean;
 }
@@ -32,6 +34,7 @@ export function ActionPlanTracker({
   actions,
   onComponentClick,
   onStatusChange,
+  onActionView,
   teamMembers = [],
   darkMode = false,
 }: ActionPlanTrackerProps): JSX.Element {
@@ -451,7 +454,17 @@ export function ActionPlanTracker({
                     <td
                       className={`w-[22%] px-4 py-3 text-sm whitespace-normal break-words leading-snug ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}
                     >
-                      {action.text}
+                      {onActionView ? (
+                        <button
+                          type="button"
+                          onClick={() => onActionView(compId, lens, action.id)}
+                          className="text-left underline underline-offset-2 hover:text-[#005eb8] transition-colors"
+                        >
+                          {action.text}
+                        </button>
+                      ) : (
+                        action.text
+                      )}
                     </td>
                     <td
                       className={`px-4 py-3 text-sm ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}

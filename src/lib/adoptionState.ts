@@ -302,13 +302,13 @@ export interface OrgProfile {
   /**
    * Once set, the Project Profile page's External Links section collapses by default -
    * links are a one-time project-setup concern. Travels with export/import. Overridden locally
-   * (per device, not exported) by AdoptionUserSettings.showExternalLinksSection.
+   * (per device, not exported) by AdoptionUserSettings.showAdminActionSection.
    */
   externalLinksInitiated?: boolean;
   /**
    * Once set, the Project Profile page's Change Adoption Baseline (CAB) Questions section collapses by default -
    * links are a one-time project-setup concern. Travels with export/import. Overridden locally
-   * (per device, not exported) by AdoptionUserSettings.showExternalLinksSection.
+   * (per device, not exported) by AdoptionUserSettings.showAdminActionSection.
    */
   readinessReviewQuestionsInitiated?: boolean;
   /**

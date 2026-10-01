@@ -16,14 +16,14 @@ export interface AdoptionUserSettings {
   manualPhaseFocus?: number;
   hideGuidedWorkflow?: boolean;
   showAdditionalGuidanceLinks?: boolean;
-  /** Per-device override: force-show the Project Profile page's External Links section even after it's marked initiated. */
-  showReadinessReviewQuestionsSection?: boolean;
-  /** Per-device override: force-show the Project Profile page's External Links section even after it's marked initiated. */
-  showExternalLinksSection?: boolean;
+  /** Per-device override: force-show the Project Profile page's External Links and Change Adoption Baseline Questions sections even after they're marked initiated. Off by default. */
+  showAdminActionSection?: boolean;
   /** Per-device override: force-show the Project Profile page's Stakeholder Reference Data section even after it's marked initiated. */
   showStakeholderReferenceDataSection?: boolean;
   /** Faint red/yellow background on Must/Should actions on component pages - Pathway 1 only. */
   showActionPriorityColours?: boolean;
+  /** `YYYY-MM` of the month the first-of-month progress-update reminder was last shown/dismissed, so it only asks once per month. Internal bookkeeping - not shown in this panel. */
+  lastProgressReminderMonth?: string;
 }
 
 export interface SettingsPanelProps {
@@ -166,27 +166,14 @@ export function SettingsPanel({
           <label
             className={`flex items-center justify-between rounded-md border px-3 py-2 text-sm ${darkMode ? 'border-slate-700 bg-slate-900 text-slate-100' : 'border-slate-200 bg-slate-50 text-slate-700'}`}
           >
-            <span>Show external links section (Project Profile, even after marked initiated)</span>
-            <input
-              type="checkbox"
-              checked={settings.showExternalLinksSection === true}
-              onChange={(e) => updateUserSettings({ showExternalLinksSection: e.target.checked })}
-              className="h-4 w-4"
-            />
-          </label>
-
-          <label
-            className={`flex items-center justify-between rounded-md border px-3 py-2 text-sm ${darkMode ? 'border-slate-700 bg-slate-900 text-slate-100' : 'border-slate-200 bg-slate-50 text-slate-700'}`}
-          >
             <span>
-              Show change adoption baseline section (Project Profile, even after marked initiated)
+              Show admin action (Project Profile's External Links and Change Adoption Baseline
+              Questions sections, even after marked initiated)
             </span>
             <input
               type="checkbox"
-              checked={settings.showReadinessReviewQuestionsSection === true}
-              onChange={(e) =>
-                updateUserSettings({ showReadinessReviewQuestionsSection: e.target.checked })
-              }
+              checked={settings.showAdminActionSection === true}
+              onChange={(e) => updateUserSettings({ showAdminActionSection: e.target.checked })}
               className="h-4 w-4"
             />
           </label>

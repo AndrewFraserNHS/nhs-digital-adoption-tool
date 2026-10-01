@@ -397,7 +397,7 @@ export function AdoptionDashboard({
       </p>
 
       {/* Metrics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         <div
           className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm p-4 border`}
         >
@@ -432,7 +432,7 @@ export function AdoptionDashboard({
           <div
             className={`flex justify-between text-xs mt-2 ${darkMode ? 'text-slate-400' : 'text-slate-400'}`}
           >
-            <span>Derived from current working data across all components.</span>
+            <span>{metrics.completedActions} actions completed. Keep it up!</span>
           </div>
         </div>
 
@@ -501,26 +501,6 @@ export function AdoptionDashboard({
               : ''}
           </p>
         </div>
-
-        <div
-          className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm p-4 border`}
-        >
-          <h3
-            className={`text-sm font-medium mb-1 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
-          >
-            Action Completion
-          </h3>
-          <div className="flex items-end space-x-2">
-            <span
-              className={`text-3xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}
-            >
-              {metrics.actionCompletionPct}%
-            </span>
-          </div>
-          <p className={`text-sm mt-2 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-            {metrics.completedActions} actions completed. Keep it up!
-          </p>
-        </div>
       </div>
 
       <div
@@ -577,7 +557,7 @@ export function AdoptionDashboard({
             >
               Phase Progress
             </h3>
-            <p className={`text-sm mb-4 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
+            <p className={`text-sm mb-1 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
               Phases run 1 to 5, from early readiness at go-live through to fully embedding the
               change.{' '}
               {onNavigate ? (
@@ -590,6 +570,13 @@ export function AdoptionDashboard({
                 </button>
               ) : null}
             </p>
+            <p className={`text-xs mb-4 ${darkMode ? 'text-slate-400' : 'text-slate-400'}`}>
+              RAG status: <span className="font-semibold text-green-700">Green</span> - most
+              components on target and half or more of its actions complete;{' '}
+              <span className="font-semibold text-amber-700">Amber</span> - some progress, but
+              short of Green; <span className="font-semibold text-red-700">Red</span> - limited
+              progress on components and actions alike.
+            </p>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
               {metrics.phaseSummaries.map((phaseSummary) => {
                 const ragClass =
@@ -598,10 +585,6 @@ export function AdoptionDashboard({
                     : phaseSummary.rag === 'Amber'
                       ? 'bg-amber-100 text-amber-700'
                       : 'bg-red-100 text-red-700';
-
-                const lensPct = phaseSummary.totalLenses
-                  ? Math.round((phaseSummary.assessedLenses / phaseSummary.totalLenses) * 100)
-                  : 0;
 
                 return (
                   <div
@@ -623,7 +606,10 @@ export function AdoptionDashboard({
                       target
                     </p>
                     <p className={`text-xs mt-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-                      {lensPct}% lens coverage, {phaseSummary.actionCompletionPct}% actions complete
+                      {phaseSummary.actionCompletionPct}% actions complete
+                      {phaseSummary.cancelledActions > 0 || phaseSummary.skippedActions > 0
+                        ? ` (${phaseSummary.cancelledActions} cancelled, ${phaseSummary.skippedActions} skipped)`
+                        : ''}
                     </p>
                   </div>
                 );

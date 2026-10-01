@@ -1,7 +1,7 @@
 import React, { JSX, useEffect, useMemo, useRef, useState } from 'react';
 import { downloadFile } from '@lib/utils';
 import { load, save } from '@lib/storage';
-import type { AdoptionStore, DraftEntry } from '@lib/adoptionState';
+import type { AdoptionStore, DraftEntry, RaidItem } from '@lib/adoptionState';
 import { ASSESSMENT_COMPONENTS } from '@data/components';
 import { type Metrics } from '@lib/adoptionMetrics';
 import { getBragStatusFromAverage, BRAG_BADGE_STYLES } from '@lib/bragStatus';
@@ -83,6 +83,8 @@ interface HighlightBuilderLayout {
   sroName: string;
   overallStatus: 'Green' | 'Amber' | 'Red';
   orientation: 'portrait' | 'landscape';
+  /** Whether the Programme/Project Readiness slides print at all - defaults to on. */
+  bragSlidesEnabled: boolean;
   bragSlides: BragSlide[];
   sections: string[];
   sectionNarratives: Record<string, string>;
@@ -141,6 +143,7 @@ const DEFAULT_LAYOUT: HighlightBuilderLayout = {
   sroName: '',
   overallStatus: 'Amber',
   orientation: 'landscape',
+  bragSlidesEnabled: true,
   bragSlides: [],
   sections: [
     'executive-summary',
@@ -377,6 +380,7 @@ export function HighlightBuilderTool({
   onLayoutSaved,
   darkMode = false,
   currentUserId,
+  onNavigateToRaidLog,
 }: {
   store: AdoptionStore;
   metrics: Metrics;
@@ -389,6 +393,8 @@ export function HighlightBuilderTool({
   onLayoutSaved?: () => void;
   darkMode?: boolean;
   currentUserId?: string;
+  /** Opens the RAID Log tool - "Key Risks and Issues" is read-only here, sourced from the RAID log. */
+  onNavigateToRaidLog?: () => void;
 }): JSX.Element {
   const pageIntro = usePageIntroSeen('highlight-builder');
   const teamMembers = store.orgProfile.teamMembers || [];
@@ -402,6 +408,12 @@ export function HighlightBuilderTool({
   const [logoFileName, setLogoFileName] = useState<string>('');
   const [fileInputKey, setFileInputKey] = useState<number>(0);
   const previewContainerRef = useRef<HTMLDivElement | null>(null);
+
+  /** The "Key Risks and Issues" section reads straight from the project's RAID log (Risk/Issue entries) - it's not editable from here. */
+  const keyRisksAndIssues: RaidItem[] = useMemo(
+    () => store.raidItems.filter((item) => item.type === 'Risk' || item.type === 'Issue'),
+    [store.raidItems]
+  );
 
   const selectedSectionSet = useMemo(() => new Set(layout.sections), [layout.sections]);
 
@@ -748,7 +760,7 @@ export function HighlightBuilderTool({
       case 'what-went-well':
         return componentPreview.length > 0;
       case 'risks-issues':
-        return layout.riskRows.length > 0;
+        return keyRisksAndIssues.length > 0;
       case 'stakeholder-insights':
         return (
           layout.stakeholderPositivePct +
@@ -862,9 +874,8 @@ export function HighlightBuilderTool({
     }
 
     if (visual.kind === 'risk') {
-      const riskCounts = layout.riskRows.reduce<Record<string, number>>((counts, row) => {
-        const status = row.status.trim() || 'Open';
-        counts[status] = (counts[status] || 0) + 1;
+      const riskCounts = keyRisksAndIssues.reduce<Record<string, number>>((counts, item) => {
+        counts[item.status] = (counts[item.status] || 0) + 1;
         return counts;
       }, {});
       const entries = Object.entries(riskCounts);
@@ -1202,6 +1213,9 @@ export function HighlightBuilderTool({
       return (
         <>
           <p className="mt-2 text-sm whitespace-pre-line text-slate-700">{narrative}</p>
+          <p data-print-hide="true" className="mt-2 text-xs text-slate-500">
+            Read from the project's RAID log - add or edit risks and issues there, not here.
+          </p>
           <div className="mt-3 overflow-x-auto rounded-md border border-slate-200">
             <table className="min-w-full divide-y divide-slate-200 bg-white">
               <thead className="bg-slate-50">
@@ -1210,7 +1224,7 @@ export function HighlightBuilderTool({
                     Risk / Issue
                   </th>
                   <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
-                    Impact
+                    Description
                   </th>
                   <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
                     Mitigation
@@ -1218,67 +1232,25 @@ export function HighlightBuilderTool({
                   <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
                     Status
                   </th>
-                  <th data-print-hide="true" className="px-3 py-2" />
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {layout.riskRows.map((row) => (
-                  <tr key={row.id}>
-                    <td className="px-3 py-2 align-top">
-                      <input
-                        value={row.risk}
-                        onChange={(event) =>
-                          updateRow('riskRows', row.id, { risk: event.target.value })
-                        }
-                        placeholder="e.g. Inconsistent adoption in Vision"
-                        className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
-                      />
+                {keyRisksAndIssues.map((item) => (
+                  <tr key={item.id}>
+                    <td className="px-3 py-2 align-top text-sm text-slate-800">
+                      {item.title || 'Untitled'}
                     </td>
-                    <td className="px-3 py-2 align-top">
-                      <input
-                        value={row.impact}
-                        onChange={(event) =>
-                          updateRow('riskRows', row.id, { impact: event.target.value })
-                        }
-                        placeholder="e.g. Benefits may not be realised"
-                        className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
-                      />
+                    <td className="px-3 py-2 align-top text-sm text-slate-600">
+                      {item.description}
                     </td>
-                    <td className="px-3 py-2 align-top">
-                      <input
-                        value={row.mitigation}
-                        onChange={(event) =>
-                          updateRow('riskRows', row.id, { mitigation: event.target.value })
-                        }
-                        placeholder="e.g. Targeted coaching sessions"
-                        className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
-                      />
-                    </td>
-                    <td className="px-3 py-2 align-top">
-                      <input
-                        value={row.status}
-                        onChange={(event) =>
-                          updateRow('riskRows', row.id, { status: event.target.value })
-                        }
-                        placeholder="Open"
-                        className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
-                      />
-                    </td>
-                    <td data-print-hide="true" className="px-3 py-2 align-top">
-                      <button
-                        type="button"
-                        onClick={() => removeRow('riskRows', row.id)}
-                        className="rounded-md border border-red-200 bg-red-50 px-2.5 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100"
-                      >
-                        Remove
-                      </button>
-                    </td>
+                    <td className="px-3 py-2 align-top text-sm text-slate-600">{item.notes}</td>
+                    <td className="px-3 py-2 align-top text-sm text-slate-600">{item.status}</td>
                   </tr>
                 ))}
-                {!layout.riskRows.length ? (
+                {!keyRisksAndIssues.length ? (
                   <tr>
-                    <td className="px-3 py-3 text-sm text-slate-500" colSpan={5}>
-                      No key risks added yet.
+                    <td className="px-3 py-3 text-sm text-slate-500" colSpan={4}>
+                      No risks or issues in the RAID log yet.
                     </td>
                   </tr>
                 ) : null}
@@ -1288,18 +1260,11 @@ export function HighlightBuilderTool({
           <button
             type="button"
             data-print-hide="true"
-            onClick={() =>
-              addRow('riskRows', {
-                id: createId(),
-                risk: '',
-                impact: '',
-                mitigation: '',
-                status: 'Open',
-              })
-            }
-            className="mt-3 rounded-md bg-slate-100 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-200"
+            onClick={onNavigateToRaidLog}
+            disabled={!onNavigateToRaidLog}
+            className="mt-3 rounded-md bg-slate-100 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-200 disabled:opacity-50"
           >
-            + Add Risk / Issue
+            Go to RAID Log
           </button>
         </>
       );
@@ -1852,13 +1817,28 @@ export function HighlightBuilderTool({
             </div>
 
             <div>
-              <div className="text-sm font-semibold text-slate-700 mb-1">
-                Programme/Project Readiness Slides
+              <div className="flex items-center justify-between gap-2 mb-1">
+                <div className="text-sm font-semibold text-slate-700">
+                  Programme/Project Readiness Slides
+                </div>
+                <label className="flex items-center gap-1.5 text-xs font-medium text-slate-600">
+                  <input
+                    type="checkbox"
+                    checked={layout.bragSlidesEnabled}
+                    onChange={(event) =>
+                      setLayout((current) => ({
+                        ...current,
+                        bragSlidesEnabled: event.target.checked,
+                      }))
+                    }
+                  />
+                  Include in report
+                </label>
               </div>
               <p className="text-xs text-slate-500 mb-3">
                 These print first, one per page. Add a slide per component you want to report on.
               </p>
-              <div className="space-y-2">
+              <div className={`space-y-2 ${layout.bragSlidesEnabled ? '' : 'opacity-50'}`}>
                 {layout.bragSlides.map((slide, index) => (
                   <div key={slide.id} className="rounded-md border border-slate-200 px-3 py-2">
                     <div className="flex items-center justify-between gap-2">
@@ -2021,7 +2001,7 @@ export function HighlightBuilderTool({
             className={isSlideMode ? 'grid gap-6' : 'grid gap-2'}
             data-orientation={layout.orientation}
           >
-            {layout.bragSlides.map((slide) => {
+            {(layout.bragSlidesEnabled ? layout.bragSlides : []).map((slide) => {
               const componentInfo = componentScores.find(
                 (item) => item.component.id === slide.componentId
               );

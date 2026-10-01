@@ -102,4 +102,28 @@ describe('ActionPlanTracker', () => {
     // assert
     expect(onStatusChange).toHaveBeenCalledWith('vision', 'Strategic Direction', 'a1', 'Completed');
   });
+
+  it('SHOULD open the action modal WHERE an action is clicked, and leave plain text WHERE no handler is given', () => {
+    // arrange
+    const onActionView = vi.fn();
+
+    // act 1 - no handler: plain text, not a button
+    render(<ActionPlanTracker actions={actions} onComponentClick={vi.fn()} />);
+    expect(
+      screen.queryByRole('button', { name: 'Run clinical workshop' })
+    ).not.toBeInTheDocument();
+
+    // act 2 - with a handler: clickable, and reports the action's component/lens/id
+    render(
+      <ActionPlanTracker
+        actions={actions}
+        onComponentClick={vi.fn()}
+        onActionView={onActionView}
+      />
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Run clinical workshop' }));
+
+    // assert
+    expect(onActionView).toHaveBeenCalledWith('vision', 'Strategic Direction', 'a1');
+  });
 });

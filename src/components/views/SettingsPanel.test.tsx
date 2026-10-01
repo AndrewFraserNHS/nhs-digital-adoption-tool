@@ -62,7 +62,7 @@ describe('SettingsPanel', () => {
     expect(onLoadExampleData).toHaveBeenCalledWith('green');
   });
 
-  it('SHOULD toggle showReadinessReviewQuestionsSection', () => {
+  it('SHOULD toggle showAdminActionSection', () => {
     // arrange
     const onUserSettingsUpdate = vi.fn();
 
@@ -78,13 +78,13 @@ describe('SettingsPanel', () => {
     // act
     fireEvent.click(
       screen.getByLabelText(
-        'Show change adoption baseline section (Project Profile, even after marked initiated)'
+        "Show admin action (Project Profile's External Links and Change Adoption Baseline Questions sections, even after marked initiated)"
       )
     );
 
     // assert
     expect(onUserSettingsUpdate).toHaveBeenLastCalledWith(
-      expect.objectContaining({ showReadinessReviewQuestionsSection: true })
+      expect.objectContaining({ showAdminActionSection: true })
     );
   });
 
@@ -114,29 +114,4 @@ describe('SettingsPanel', () => {
     );
   });
 
-  it('SHOULD toggle showExternalLinksSection', () => {
-    // arrange
-    const onUserSettingsUpdate = vi.fn();
-
-    render(
-      <SettingsPanel
-        userSettings={baseUserSettings}
-        onUserSettingsUpdate={onUserSettingsUpdate}
-        onLoadExampleData={vi.fn()}
-        onResetData={vi.fn()}
-      />
-    );
-
-    // act
-    fireEvent.click(
-      screen.getByLabelText(
-        'Show external links section (Project Profile, even after marked initiated)'
-      )
-    );
-
-    // assert
-    expect(onUserSettingsUpdate).toHaveBeenLastCalledWith(
-      expect.objectContaining({ showExternalLinksSection: true })
-    );
-  });
 });

@@ -24,10 +24,8 @@
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
       "category": "Implementation",
-      "action": "S Review feedback from active and partial users on learning content, access and support.",
-      "outcomeIds": [
-        "SL_O1"
-      ],
+      "action": "M Review feedback from active and partial users on learning content, access and support.",
+      "outcomeIds": ["SL_O1"],
       "readinessScore": 0
     },
     {
@@ -36,10 +34,8 @@
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
-      "action": "S Identify different learning needs across roles, services and confidence levels.",
-      "outcomeIds": [
-        "SL_O1"
-      ],
+      "action": "M Identify different learning needs across roles, services and confidence levels.",
+      "outcomeIds": ["SL_O1"],
       "readinessScore": 0
     },
     {
@@ -48,10 +44,8 @@
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
       "category": "Implementation",
-      "action": "S Confirm preferred learning and support methods for future live services and teams.",
-      "outcomeIds": [
-        "SL_O1"
-      ],
+      "action": "M Confirm preferred learning and support methods for future live services and teams.",
+      "outcomeIds": ["SL_O1"],
       "readinessScore": 0
     },
     {
@@ -60,10 +54,8 @@
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
       "category": "Design",
-      "action": "S Update the learning offer using feedback from active and partial users and practical examples.",
-      "outcomeIds": [
-        "SL_O1"
-      ],
+      "action": "M Update the learning offer using feedback from active and partial users and practical examples.",
+      "outcomeIds": ["SL_O1"],
       "readinessScore": 1
     },
     {
@@ -72,11 +64,8 @@
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
       "category": "Design",
-      "action": "S Plan accessible learning, practice and support for each targeted recovery activity.",
-      "outcomeIds": [
-        "SL_O1",
-        "SL_O2"
-      ],
+      "action": "M Plan accessible learning, practice and support for each targeted recovery activity.",
+      "outcomeIds": ["SL_O1", "SL_O2"],
       "readinessScore": 1
     },
     {
@@ -85,10 +74,8 @@
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
       "category": "Testing & Validation",
-      "action": "S Test the learner experience with people from a future live service or team.",
-      "outcomeIds": [
-        "SL_O1"
-      ],
+      "action": "M Test the learner experience with people from a future live service or team.",
+      "outcomeIds": ["SL_O1"],
       "readinessScore": 1
     },
     {
@@ -97,10 +84,8 @@
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Implementation",
-      "action": "S Deliver role-relevant learning before users begin live use.",
-      "outcomeIds": [
-        "SL_O2"
-      ],
+      "action": "M Deliver role-relevant learning before users begin live use.",
+      "outcomeIds": ["SL_O2"],
       "readinessScore": 2
     },
     {
@@ -109,10 +94,8 @@
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Implementation",
-      "action": "S Provide practice opportunities and clear routes for additional help.",
-      "outcomeIds": [
-        "SL_O2"
-      ],
+      "action": "M Provide practice opportunities and clear routes for additional help.",
+      "outcomeIds": ["SL_O2"],
       "readinessScore": 2
     },
     {
@@ -121,10 +104,8 @@
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
-      "action": "S Gather learner feedback during each targeted recovery activity.",
-      "outcomeIds": [
-        "SL_O2"
-      ],
+      "action": "M Gather learner feedback during each targeted recovery activity.",
+      "outcomeIds": ["SL_O2"],
       "readinessScore": 2
     },
     {
@@ -133,10 +114,8 @@
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
-      "action": "S Review participation, confidence and feedback across stakeholder groups.",
-      "outcomeIds": [
-        "SL_O2"
-      ],
+      "action": "M Review participation, confidence and feedback across stakeholder groups.",
+      "outcomeIds": ["SL_O2"],
       "readinessScore": 3
     },
     {
@@ -145,10 +124,8 @@
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
       "category": "Implementation",
-      "action": "S Provide targeted support where access or learner experience is weaker.",
-      "outcomeIds": [
-        "SL_O2"
-      ],
+      "action": "M Provide targeted support where access or learner experience is weaker.",
+      "outcomeIds": ["SL_O2"],
       "readinessScore": 3
     },
     {
@@ -157,10 +134,8 @@
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
       "category": "Communication",
-      "action": "S Share learning approaches that have worked well between services.",
-      "outcomeIds": [
-        "SL_O2"
-      ],
+      "action": "M Share learning approaches that have worked well between services.",
+      "outcomeIds": ["SL_O2"],
       "readinessScore": 3
     },
     {
@@ -169,10 +144,8 @@
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
-      "action": "S Embed accessible learning and support in standard onboarding and induction.",
-      "outcomeIds": [
-        "SL_O3"
-      ],
+      "action": "M Embed accessible learning and support in standard onboarding and induction.",
+      "outcomeIds": ["SL_O3"],
       "readinessScore": 4
     },
     {
@@ -181,10 +154,8 @@
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
-      "action": "S Review the offer regularly using learner feedback and adoption evidence.",
-      "outcomeIds": [
-        "SL_O3"
-      ],
+      "action": "M Review the offer regularly using learner feedback and adoption evidence.",
+      "outcomeIds": ["SL_O3"],
       "readinessScore": 4
     },
     {
@@ -193,10 +164,8 @@
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
       "category": "Implementation",
-      "action": "S Update learning as roles, workflows and support needs evolve.",
-      "outcomeIds": [
-        "SL_O3"
-      ],
+      "action": "M Update learning as roles, workflows and support needs evolve.",
+      "outcomeIds": ["SL_O3"],
       "readinessScore": 4
     },
     {
@@ -205,10 +174,8 @@
       "toStatus": "Emerging",
       "lens": "Skills & Behaviour",
       "category": "Implementation",
-      "action": "S Review live usage data and user feedback on the skills and behaviours needed for effective use.",
-      "outcomeIds": [
-        "SL_O1"
-      ],
+      "action": "M Review live usage data and user feedback on the skills and behaviours needed for effective use.",
+      "outcomeIds": ["SL_O1"],
       "readinessScore": 0
     },
     {
@@ -217,10 +184,8 @@
       "toStatus": "Emerging",
       "lens": "Skills & Behaviour",
       "category": "Analysis & Insight",
-      "action": "S Identify common skill gaps, unsafe practices and areas of low confidence.",
-      "outcomeIds": [
-        "SL_O1"
-      ],
+      "action": "M Identify common skill gaps, unsafe practices and areas of low confidence.",
+      "outcomeIds": ["SL_O1"],
       "readinessScore": 0
     },
     {
@@ -229,10 +194,8 @@
       "toStatus": "Emerging",
       "lens": "Skills & Behaviour",
       "category": "Analysis & Insight",
-      "action": "S Confirm which skills must be assessed through practical application.",
-      "outcomeIds": [
-        "SL_O1"
-      ],
+      "action": "M Confirm which skills must be assessed through practical application.",
+      "outcomeIds": ["SL_O1"],
       "readinessScore": 0
     },
     {
@@ -241,10 +204,8 @@
       "toStatus": "Developing",
       "lens": "Skills & Behaviour",
       "category": "Implementation",
-      "action": "S Update learning materials using feedback from active and partial users and common support needs.",
-      "outcomeIds": [
-        "SL_O1"
-      ],
+      "action": "M Update learning materials using feedback from active and partial users and common support needs.",
+      "outcomeIds": ["SL_O1"],
       "readinessScore": 1
     },
     {
@@ -253,11 +214,8 @@
       "toStatus": "Developing",
       "lens": "Skills & Behaviour",
       "category": "Design",
-      "action": "S Define role-based learning, practice and support for each targeted recovery activity.",
-      "outcomeIds": [
-        "SL_O1",
-        "SL_O2"
-      ],
+      "action": "M Define role-based learning, practice and support for each targeted recovery activity.",
+      "outcomeIds": ["SL_O1", "SL_O2"],
       "readinessScore": 1
     },
     {
@@ -266,10 +224,8 @@
       "toStatus": "Developing",
       "lens": "Skills & Behaviour",
       "category": "Testing & Validation",
-      "action": "S Test the learning approach with users from a future live service or team.",
-      "outcomeIds": [
-        "SL_O1"
-      ],
+      "action": "M Test the learning approach with users from a future live service or team.",
+      "outcomeIds": ["SL_O1"],
       "readinessScore": 1
     },
     {
@@ -278,10 +234,8 @@
       "toStatus": "Embedding",
       "lens": "Skills & Behaviour",
       "category": "Implementation",
-      "action": "S Deliver learning and supervised practice before targeted live support begins.",
-      "outcomeIds": [
-        "SL_O2"
-      ],
+      "action": "M Deliver learning and supervised practice before targeted live support begins.",
+      "outcomeIds": ["SL_O2"],
       "readinessScore": 2
     },
     {
@@ -290,10 +244,8 @@
       "toStatus": "Embedding",
       "lens": "Skills & Behaviour",
       "category": "Measurement & Evaluation",
-      "action": "S Assess whether users can demonstrate the required skills in realistic workflows.",
-      "outcomeIds": [
-        "SL_O2"
-      ],
+      "action": "M Assess whether users can demonstrate the required skills in realistic workflows.",
+      "outcomeIds": ["SL_O2"],
       "readinessScore": 2
     },
     {
@@ -302,10 +254,8 @@
       "toStatus": "Embedding",
       "lens": "Skills & Behaviour",
       "category": "Implementation",
-      "action": "S Provide coaching where practical competence remains below expectation.",
-      "outcomeIds": [
-        "SL_O2"
-      ],
+      "action": "M Provide coaching where practical competence remains below expectation.",
+      "outcomeIds": ["SL_O2"],
       "readinessScore": 2
     },
     {
@@ -314,10 +264,8 @@
       "toStatus": "Adopted",
       "lens": "Skills & Behaviour",
       "category": "Measurement & Evaluation",
-      "action": "S Monitor capability and behaviour in practice across live services and teams.",
-      "outcomeIds": [
-        "SL_O2"
-      ],
+      "action": "M Monitor capability and behaviour in practice across live services and teams.",
+      "outcomeIds": ["SL_O2"],
       "readinessScore": 3
     },
     {
@@ -326,10 +274,8 @@
       "toStatus": "Adopted",
       "lens": "Skills & Behaviour",
       "category": "Design",
-      "action": "S Refine learning where recurring errors or workarounds are identified.",
-      "outcomeIds": [
-        "SL_O2"
-      ],
+      "action": "M Refine learning where recurring errors or workarounds are identified.",
+      "outcomeIds": ["SL_O2"],
       "readinessScore": 3
     },
     {
@@ -338,10 +284,8 @@
       "toStatus": "Adopted",
       "lens": "Skills & Behaviour",
       "category": "Communication",
-      "action": "S Share effective coaching and peer learning methods between services.",
-      "outcomeIds": [
-        "SL_O2"
-      ],
+      "action": "M Share effective coaching and peer learning methods between services.",
+      "outcomeIds": ["SL_O2"],
       "readinessScore": 3
     },
     {
@@ -350,10 +294,8 @@
       "toStatus": "Thriving",
       "lens": "Skills & Behaviour",
       "category": "Reinforcement",
-      "action": "S Embed assessment, coaching and refresher learning in business as usual.",
-      "outcomeIds": [
-        "SL_O3"
-      ],
+      "action": "M Embed assessment, coaching and refresher learning in business as usual.",
+      "outcomeIds": ["SL_O3"],
       "readinessScore": 4
     },
     {
@@ -362,10 +304,8 @@
       "toStatus": "Thriving",
       "lens": "Skills & Behaviour",
       "category": "Implementation",
-      "action": "S Use capability evidence to improve learning content and standards.",
-      "outcomeIds": [
-        "SL_O3"
-      ],
+      "action": "M Use capability evidence to improve learning content and standards.",
+      "outcomeIds": ["SL_O3"],
       "readinessScore": 4
     },
     {
@@ -374,10 +314,8 @@
       "toStatus": "Thriving",
       "lens": "Skills & Behaviour",
       "category": "Reinforcement",
-      "action": "S Maintain local expertise so active and partial users receive ongoing support.",
-      "outcomeIds": [
-        "SL_O3"
-      ],
+      "action": "M Maintain local expertise so active and partial users receive ongoing support.",
+      "outcomeIds": ["SL_O3"],
       "readinessScore": 4
     }
   ]

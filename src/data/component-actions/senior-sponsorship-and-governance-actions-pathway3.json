@@ -24,10 +24,8 @@
       "toStatus": "Emerging",
       "lens": "Strategic Direction & Leadership",
       "category": "Measurement & Evaluation",
-      "action": "S Review whether pilot sponsorship is strong enough for consistent organisation wide adoption.",
-      "outcomeIds": [
-        "SSG_O1"
-      ],
+      "action": "M Review whether pilot sponsorship is strong enough for consistent organisation wide adoption.",
+      "outcomeIds": ["SSG_O1"],
       "readinessScore": 0
     },
     {
@@ -36,10 +34,8 @@
       "toStatus": "Emerging",
       "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
-      "action": "S Identify gaps in executive, clinical, operational and digital leadership coverage.",
-      "outcomeIds": [
-        "SSG_O1"
-      ],
+      "action": "M Identify gaps in executive, clinical, operational and digital leadership coverage.",
+      "outcomeIds": ["SSG_O1"],
       "readinessScore": 0
     },
     {
@@ -48,10 +44,8 @@
       "toStatus": "Emerging",
       "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
-      "action": "S Confirm the senior sponsor accountable for adoption recovery outcomes.",
-      "outcomeIds": [
-        "SSG_O1"
-      ],
+      "action": "M Confirm the senior sponsor accountable for adoption recovery outcomes.",
+      "outcomeIds": ["SSG_O1"],
       "readinessScore": 0
     },
     {
@@ -60,10 +54,8 @@
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
       "category": "Design",
-      "action": "S Define sponsor roles for organisation wide and local adoption recovery decisions.",
-      "outcomeIds": [
-        "SSG_O1"
-      ],
+      "action": "M Define sponsor roles for organisation wide and local adoption recovery decisions.",
+      "outcomeIds": ["SSG_O1"],
       "readinessScore": 1
     },
     {
@@ -72,10 +64,8 @@
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
       "category": "Design",
-      "action": "S Establish a sponsor coalition covering the services included in rollout.",
-      "outcomeIds": [
-        "SSG_O1"
-      ],
+      "action": "M Establish a sponsor coalition covering the services included in rollout.",
+      "outcomeIds": ["SSG_O1"],
       "readinessScore": 1
     },
     {
@@ -84,10 +74,8 @@
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
-      "action": "S Agree the decisions, behaviours and barriers that require sponsor action.",
-      "outcomeIds": [
-        "SSG_O1"
-      ],
+      "action": "M Agree the decisions, behaviours and barriers that require sponsor action.",
+      "outcomeIds": ["SSG_O1"],
       "readinessScore": 1
     },
     {
@@ -96,10 +84,8 @@
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
       "category": "Implementation",
-      "action": "S Activate sponsors before each targeted recovery activity and confirm their commitments.",
-      "outcomeIds": [
-        "SSG_O2"
-      ],
+      "action": "M Activate sponsors before each targeted recovery activity and confirm their commitments.",
+      "outcomeIds": ["SSG_O2"],
       "readinessScore": 2
     },
     {
@@ -108,10 +94,8 @@
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
       "category": "Implementation",
-      "action": "S Use sponsors to remove cross service barriers and resolve priority decisions.",
-      "outcomeIds": [
-        "SSG_O2"
-      ],
+      "action": "M Use sponsors to remove cross service barriers and resolve priority decisions.",
+      "outcomeIds": ["SSG_O2"],
       "readinessScore": 2
     },
     {
@@ -120,10 +104,8 @@
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
-      "action": "S Report sponsor actions and unresolved issues through governance.",
-      "outcomeIds": [
-        "SSG_O2"
-      ],
+      "action": "M Report sponsor actions and unresolved issues through governance.",
+      "outcomeIds": ["SSG_O2"],
       "readinessScore": 2
     },
     {
@@ -132,10 +114,8 @@
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
-      "action": "S Review sponsor visibility, consistency and effectiveness across live services and teams.",
-      "outcomeIds": [
-        "SSG_O2"
-      ],
+      "action": "M Review sponsor visibility, consistency and effectiveness across live services and teams.",
+      "outcomeIds": ["SSG_O2"],
       "readinessScore": 3
     },
     {
@@ -144,10 +124,8 @@
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
       "category": "Measurement & Evaluation",
-      "action": "S Address gaps in sponsor capacity, influence or follow-through.",
-      "outcomeIds": [
-        "SSG_O2"
-      ],
+      "action": "M Address gaps in sponsor capacity, influence or follow-through.",
+      "outcomeIds": ["SSG_O2"],
       "readinessScore": 3
     },
     {
@@ -156,10 +134,8 @@
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
       "category": "Communication",
-      "action": "S Share effective sponsorship practice across the leadership coalition.",
-      "outcomeIds": [
-        "SSG_O2"
-      ],
+      "action": "M Share effective sponsorship practice across the leadership coalition.",
+      "outcomeIds": ["SSG_O2"],
       "readinessScore": 3
     },
     {
@@ -168,10 +144,8 @@
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
       "category": "Reinforcement",
-      "action": "S Embed sponsorship accountability in routine leadership and governance roles.",
-      "outcomeIds": [
-        "SSG_O3"
-      ],
+      "action": "M Embed sponsorship accountability in routine leadership and governance roles.",
+      "outcomeIds": ["SSG_O3"],
       "readinessScore": 4
     },
     {
@@ -180,10 +154,8 @@
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
-      "action": "S Review leadership coverage as rollout expands or ownership changes.",
-      "outcomeIds": [
-        "SSG_O3"
-      ],
+      "action": "M Review leadership coverage as rollout expands or ownership changes.",
+      "outcomeIds": ["SSG_O3"],
       "readinessScore": 4
     },
     {
@@ -192,10 +164,8 @@
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
       "category": "Reinforcement",
-      "action": "S Develop succession arrangements to sustain sponsorship beyond the programme.",
-      "outcomeIds": [
-        "SSG_O3"
-      ],
+      "action": "M Develop succession arrangements to sustain sponsorship beyond the programme.",
+      "outcomeIds": ["SSG_O3"],
       "readinessScore": 4
     },
     {
@@ -204,10 +174,8 @@
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
       "category": "Implementation",
-      "action": "S Review how visible and accessible sponsors were since live use.",
-      "outcomeIds": [
-        "SSG_O1"
-      ],
+      "action": "M Review how visible and accessible sponsors were since live use.",
+      "outcomeIds": ["SSG_O1"],
       "readinessScore": 0
     },
     {
@@ -216,10 +184,8 @@
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
-      "action": "S Identify stakeholder groups that need stronger sponsor engagement during adoption recovery.",
-      "outcomeIds": [
-        "SSG_O1"
-      ],
+      "action": "M Identify stakeholder groups that need stronger sponsor engagement during adoption recovery.",
+      "outcomeIds": ["SSG_O1"],
       "readinessScore": 0
     },
     {
@@ -228,10 +194,8 @@
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
-      "action": "S Gather feedback on actions that would increase trust in leadership.",
-      "outcomeIds": [
-        "SSG_O1"
-      ],
+      "action": "M Gather feedback on actions that would increase trust in leadership.",
+      "outcomeIds": ["SSG_O1"],
       "readinessScore": 0
     },
     {
@@ -240,10 +204,8 @@
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
       "category": "Design",
-      "action": "S Plan sponsor engagement for each live service or team and stakeholder group.",
-      "outcomeIds": [
-        "SSG_O1"
-      ],
+      "action": "M Plan sponsor engagement for each live service or team and stakeholder group.",
+      "outcomeIds": ["SSG_O1"],
       "readinessScore": 1
     },
     {
@@ -252,10 +214,8 @@
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
       "category": "Implementation",
-      "action": "S Provide sponsors with credible stories from effective users, key messages and known concerns.",
-      "outcomeIds": [
-        "SSG_O1"
-      ],
+      "action": "M Provide sponsors with credible stories from effective users, key messages and known concerns.",
+      "outcomeIds": ["SSG_O1"],
       "readinessScore": 1
     },
     {
@@ -264,10 +224,8 @@
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
       "category": "Governance",
-      "action": "S Agree how sponsors will listen, respond and demonstrate visible action.",
-      "outcomeIds": [
-        "SSG_O1"
-      ],
+      "action": "M Agree how sponsors will listen, respond and demonstrate visible action.",
+      "outcomeIds": ["SSG_O1"],
       "readinessScore": 1
     },
     {
@@ -276,10 +234,8 @@
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Implementation",
-      "action": "S Deliver sponsor briefings, visits and engagement before and during adoption recovery.",
-      "outcomeIds": [
-        "SSG_O2"
-      ],
+      "action": "M Deliver sponsor briefings, visits and engagement before and during adoption recovery.",
+      "outcomeIds": ["SSG_O2"],
       "readinessScore": 2
     },
     {
@@ -288,10 +244,8 @@
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Engagement",
-      "action": "S Ensure sponsors respond visibly to significant feedback and barriers.",
-      "outcomeIds": [
-        "SSG_O2"
-      ],
+      "action": "M Ensure sponsors respond visibly to significant feedback and barriers.",
+      "outcomeIds": ["SSG_O2"],
       "readinessScore": 2
     },
     {
@@ -300,10 +254,8 @@
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Implementation",
-      "action": "S Support local leaders to reinforce the same messages and behaviours.",
-      "outcomeIds": [
-        "SSG_O2"
-      ],
+      "action": "M Support local leaders to reinforce the same messages and behaviours.",
+      "outcomeIds": ["SSG_O2"],
       "readinessScore": 2
     },
     {
@@ -312,10 +264,8 @@
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
       "category": "Measurement & Evaluation",
-      "action": "S Monitor stakeholder confidence in sponsors across live services and teams.",
-      "outcomeIds": [
-        "SSG_O2"
-      ],
+      "action": "M Monitor stakeholder confidence in sponsors across live services and teams.",
+      "outcomeIds": ["SSG_O2"],
       "readinessScore": 3
     },
     {
@@ -324,10 +274,8 @@
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
       "category": "Measurement & Evaluation",
-      "action": "S Address inconsistent leadership messages or limited local visibility.",
-      "outcomeIds": [
-        "SSG_O2"
-      ],
+      "action": "M Address inconsistent leadership messages or limited local visibility.",
+      "outcomeIds": ["SSG_O2"],
       "readinessScore": 3
     },
     {
@@ -336,10 +284,8 @@
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
       "category": "Communication",
-      "action": "S Share examples where sponsor action has resolved concerns or removed barriers.",
-      "outcomeIds": [
-        "SSG_O2"
-      ],
+      "action": "M Share examples where sponsor action has resolved concerns or removed barriers.",
+      "outcomeIds": ["SSG_O2"],
       "readinessScore": 3
     },
     {
@@ -348,10 +294,8 @@
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
-      "action": "S Build regular stakeholder listening into sponsors\u2019 routine responsibilities.",
-      "outcomeIds": [
-        "SSG_O3"
-      ],
+      "action": "M Build regular stakeholder listening into sponsors\u2019 routine responsibilities.",
+      "outcomeIds": ["SSG_O3"],
       "readinessScore": 4
     },
     {
@@ -360,10 +304,8 @@
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
       "category": "Governance",
-      "action": "S Use feedback to improve leadership communication and decision-making.",
-      "outcomeIds": [
-        "SSG_O3"
-      ],
+      "action": "M Use feedback to improve leadership communication and decision-making.",
+      "outcomeIds": ["SSG_O3"],
       "readinessScore": 4
     },
     {
@@ -372,10 +314,8 @@
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
-      "action": "S Recognise and maintain sponsorship behaviours that strengthen trust.",
-      "outcomeIds": [
-        "SSG_O3"
-      ],
+      "action": "M Recognise and maintain sponsorship behaviours that strengthen trust.",
+      "outcomeIds": ["SSG_O3"],
       "readinessScore": 4
     },
     {
@@ -384,10 +324,8 @@
       "toStatus": "Emerging",
       "lens": "Planning & Risk",
       "category": "Measurement & Evaluation",
-      "action": "S Review whether current governance can manage several targeted recovery activities safely.",
-      "outcomeIds": [
-        "SSG_O1"
-      ],
+      "action": "M Review whether current governance can manage several targeted recovery activities safely.",
+      "outcomeIds": ["SSG_O1"],
       "readinessScore": 0
     },
     {
@@ -396,10 +334,8 @@
       "toStatus": "Emerging",
       "lens": "Planning & Risk",
       "category": "Governance",
-      "action": "S Identify missing decision routes for readiness, risks, issues and escalation.",
-      "outcomeIds": [
-        "SSG_O1"
-      ],
+      "action": "M Identify missing decision routes for readiness, risks, issues and escalation.",
+      "outcomeIds": ["SSG_O1"],
       "readinessScore": 0
     },
     {
@@ -408,10 +344,8 @@
       "toStatus": "Emerging",
       "lens": "Planning & Risk",
       "category": "Governance",
-      "action": "S Confirm governance owners for adoption, benefits and operational risks.",
-      "outcomeIds": [
-        "SSG_O1"
-      ],
+      "action": "M Confirm governance owners for adoption, benefits and operational risks.",
+      "outcomeIds": ["SSG_O1"],
       "readinessScore": 0
     },
     {
@@ -420,10 +354,8 @@
       "toStatus": "Developing",
       "lens": "Planning & Risk",
       "category": "Design",
-      "action": "S Define entry, live use and transition decisions for each targeted recovery activity.",
-      "outcomeIds": [
-        "SSG_O1"
-      ],
+      "action": "M Define entry, live use and transition decisions for each targeted recovery activity.",
+      "outcomeIds": ["SSG_O1"],
       "readinessScore": 1
     },
     {
@@ -432,10 +364,8 @@
       "toStatus": "Developing",
       "lens": "Planning & Risk",
       "category": "Governance",
-      "action": "S Update governance terms, reporting and escalation routes for adoption recovery.",
-      "outcomeIds": [
-        "SSG_O1"
-      ],
+      "action": "M Update governance terms, reporting and escalation routes for adoption recovery.",
+      "outcomeIds": ["SSG_O1"],
       "readinessScore": 1
     },
     {
@@ -444,10 +374,8 @@
       "toStatus": "Developing",
       "lens": "Planning & Risk",
       "category": "Testing & Validation",
-      "action": "S Test the routes using pilot issues and realistic rollout scenarios.",
-      "outcomeIds": [
-        "SSG_O1"
-      ],
+      "action": "M Test the routes using pilot issues and realistic rollout scenarios.",
+      "outcomeIds": ["SSG_O1"],
       "readinessScore": 1
     },
     {
@@ -456,10 +384,8 @@
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
       "category": "Governance",
-      "action": "S Operate the agreed governance and readiness checkpoints for each wave.",
-      "outcomeIds": [
-        "SSG_O2"
-      ],
+      "action": "M Operate the agreed governance and readiness checkpoints for each wave.",
+      "outcomeIds": ["SSG_O2"],
       "readinessScore": 2
     },
     {
@@ -468,10 +394,8 @@
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
       "category": "Engagement",
-      "action": "S Record decisions, owners and actions for risks and unresolved issues.",
-      "outcomeIds": [
-        "SSG_O2"
-      ],
+      "action": "M Record decisions, owners and actions for risks and unresolved issues.",
+      "outcomeIds": ["SSG_O2"],
       "readinessScore": 2
     },
     {
@@ -480,10 +404,8 @@
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
       "category": "Governance",
-      "action": "S Escalate barriers that cannot be resolved within local live teams.",
-      "outcomeIds": [
-        "SSG_O2"
-      ],
+      "action": "M Escalate barriers that cannot be resolved within local live teams.",
+      "outcomeIds": ["SSG_O2"],
       "readinessScore": 2
     },
     {
@@ -492,10 +414,8 @@
       "toStatus": "Adopted",
       "lens": "Planning & Risk",
       "category": "Measurement & Evaluation",
-      "action": "S Review whether governance decisions are timely and effective across waves.",
-      "outcomeIds": [
-        "SSG_O2"
-      ],
+      "action": "M Review whether governance decisions are timely and effective across waves.",
+      "outcomeIds": ["SSG_O2"],
       "readinessScore": 3
     },
     {
@@ -504,10 +424,8 @@
       "toStatus": "Adopted",
       "lens": "Planning & Risk",
       "category": "Measurement & Evaluation",
-      "action": "S Strengthen controls where recurring risks or delays are identified.",
-      "outcomeIds": [
-        "SSG_O2"
-      ],
+      "action": "M Strengthen controls where recurring risks or delays are identified.",
+      "outcomeIds": ["SSG_O2"],
       "readinessScore": 3
     },
     {
@@ -516,10 +434,8 @@
       "toStatus": "Adopted",
       "lens": "Planning & Risk",
       "category": "Implementation",
-      "action": "S Use learning from each wave to improve later readiness decisions.",
-      "outcomeIds": [
-        "SSG_O2"
-      ],
+      "action": "M Use learning from each wave to improve later readiness decisions.",
+      "outcomeIds": ["SSG_O2"],
       "readinessScore": 3
     },
     {
@@ -528,10 +444,8 @@
       "toStatus": "Thriving",
       "lens": "Planning & Risk",
       "category": "Reinforcement",
-      "action": "S Transfer ongoing oversight to business as usual governance.",
-      "outcomeIds": [
-        "SSG_O3"
-      ],
+      "action": "M Transfer ongoing oversight to business as usual governance.",
+      "outcomeIds": ["SSG_O3"],
       "readinessScore": 4
     },
     {
@@ -540,10 +454,8 @@
       "toStatus": "Thriving",
       "lens": "Planning & Risk",
       "category": "Reinforcement",
-      "action": "S Maintain clear thresholds for intervention when adoption or outcomes decline.",
-      "outcomeIds": [
-        "SSG_O3"
-      ],
+      "action": "M Maintain clear thresholds for intervention when adoption or outcomes decline.",
+      "outcomeIds": ["SSG_O3"],
       "readinessScore": 4
     }
   ]

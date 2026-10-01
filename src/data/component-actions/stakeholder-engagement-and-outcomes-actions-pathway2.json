@@ -24,10 +24,8 @@
       "toStatus": "Emerging",
       "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
-      "action": "S Review leadership engagement and communication learning from the pilot.",
-      "outcomeIds": [
-        "SEC_O1"
-      ],
+      "action": "M Review leadership engagement and communication learning from the pilot.",
+      "outcomeIds": ["SEC_O1"],
       "readinessScore": 0
     },
     {
@@ -36,10 +34,8 @@
       "toStatus": "Emerging",
       "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
-      "action": "S Identify the leadership narrative needed for wider rollout.",
-      "outcomeIds": [
-        "SEC_O1"
-      ],
+      "action": "M Identify the leadership narrative needed for wider rollout.",
+      "outcomeIds": ["SEC_O1"],
       "readinessScore": 0
     },
     {
@@ -48,10 +44,8 @@
       "toStatus": "Emerging",
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
-      "action": "S Confirm accountability for engagement, communications and governance oversight.",
-      "outcomeIds": [
-        "SEC_O1"
-      ],
+      "action": "M Confirm accountability for engagement, communications and governance oversight.",
+      "outcomeIds": ["SEC_O1"],
       "readinessScore": 0
     },
     {
@@ -60,10 +54,8 @@
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
       "category": "Design",
-      "action": "S Update the engagement and communications strategy for scale-up.",
-      "outcomeIds": [
-        "SEC_O1"
-      ],
+      "action": "M Update the engagement and communications strategy for scale-up.",
+      "outcomeIds": ["SEC_O1"],
       "readinessScore": 1
     },
     {
@@ -72,10 +64,8 @@
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
-      "action": "S Agree consistent leadership messages, channels and decision points.",
-      "outcomeIds": [
-        "SEC_O1"
-      ],
+      "action": "M Agree consistent leadership messages, channels and decision points.",
+      "outcomeIds": ["SEC_O1"],
       "readinessScore": 1
     },
     {
@@ -84,10 +74,8 @@
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
       "category": "Testing & Validation",
-      "action": "S Test the narrative with pilot leaders and future rollout areas.",
-      "outcomeIds": [
-        "SEC_O1"
-      ],
+      "action": "M Test the narrative with pilot leaders and future rollout areas.",
+      "outcomeIds": ["SEC_O1"],
       "readinessScore": 1
     },
     {
@@ -96,10 +84,8 @@
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
       "category": "Implementation",
-      "action": "S Deliver visible leadership engagement and communication before and during each wave.",
-      "outcomeIds": [
-        "SEC_O2"
-      ],
+      "action": "M Deliver visible leadership engagement and communication before and during each wave.",
+      "outcomeIds": ["SEC_O2"],
       "readinessScore": 2
     },
     {
@@ -108,10 +94,8 @@
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
-      "action": "S Use governance to review feedback, concerns and communication gaps.",
-      "outcomeIds": [
-        "SEC_O2"
-      ],
+      "action": "M Use governance to review feedback, concerns and communication gaps.",
+      "outcomeIds": ["SEC_O2"],
       "readinessScore": 2
     },
     {
@@ -120,10 +104,8 @@
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
       "category": "Communication",
-      "action": "S Ensure leaders explain decisions and changes consistently.",
-      "outcomeIds": [
-        "SEC_O2"
-      ],
+      "action": "M Ensure leaders explain decisions and changes consistently.",
+      "outcomeIds": ["SEC_O2"],
       "readinessScore": 2
     },
     {
@@ -132,10 +114,8 @@
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
       "category": "Measurement & Evaluation",
-      "action": "S Monitor the credibility and consistency of leadership engagement and communication.",
-      "outcomeIds": [
-        "SEC_O2"
-      ],
+      "action": "M Monitor the credibility and consistency of leadership engagement and communication.",
+      "outcomeIds": ["SEC_O2"],
       "readinessScore": 3
     },
     {
@@ -144,10 +124,8 @@
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
       "category": "Measurement & Evaluation",
-      "action": "S Address conflicting messages or weak leadership visibility.",
-      "outcomeIds": [
-        "SEC_O2"
-      ],
+      "action": "M Address conflicting messages or weak leadership visibility.",
+      "outcomeIds": ["SEC_O2"],
       "readinessScore": 3
     },
     {
@@ -156,10 +134,8 @@
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
       "category": "Implementation",
-      "action": "S Use stakeholder insight to improve decisions and engagement and communication activity.",
-      "outcomeIds": [
-        "SEC_O2"
-      ],
+      "action": "M Use stakeholder insight to improve decisions and engagement and communication activity.",
+      "outcomeIds": ["SEC_O2"],
       "readinessScore": 3
     },
     {
@@ -168,10 +144,8 @@
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
       "category": "Reinforcement",
-      "action": "S Embed engagement oversight in routine leadership and governance forums.",
-      "outcomeIds": [
-        "SEC_O3"
-      ],
+      "action": "M Embed engagement oversight in routine leadership and governance forums.",
+      "outcomeIds": ["SEC_O3"],
       "readinessScore": 4
     },
     {
@@ -180,10 +154,8 @@
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
       "category": "Reinforcement",
-      "action": "S Maintain a consistent narrative as ownership and priorities change.",
-      "outcomeIds": [
-        "SEC_O3"
-      ],
+      "action": "M Maintain a consistent narrative as ownership and priorities change.",
+      "outcomeIds": ["SEC_O3"],
       "readinessScore": 4
     },
     {
@@ -192,10 +164,8 @@
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
       "category": "Implementation",
-      "action": "S Use stakeholder evidence to shape future transformation decisions.",
-      "outcomeIds": [
-        "SEC_O3"
-      ],
+      "action": "M Use stakeholder evidence to shape future transformation decisions.",
+      "outcomeIds": ["SEC_O3"],
       "readinessScore": 4
     },
     {
@@ -204,10 +174,8 @@
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
-      "action": "S Review stakeholder feedback and engagement learning from the pilot.",
-      "outcomeIds": [
-        "SEC_O1"
-      ],
+      "action": "M Review stakeholder feedback and engagement learning from the pilot.",
+      "outcomeIds": ["SEC_O1"],
       "readinessScore": 0
     },
     {
@@ -216,10 +184,8 @@
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
-      "action": "S Identify additional stakeholder groups affected by wider rollout.",
-      "outcomeIds": [
-        "SEC_O1"
-      ],
+      "action": "M Identify additional stakeholder groups affected by wider rollout.",
+      "outcomeIds": ["SEC_O1"],
       "readinessScore": 0
     },
     {
@@ -228,10 +194,8 @@
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
       "category": "Implementation",
-      "action": "S Assess stakeholder influence, impact, support and concerns in each rollout area.",
-      "outcomeIds": [
-        "SEC_O1"
-      ],
+      "action": "M Assess stakeholder influence, impact, support and concerns in each rollout area.",
+      "outcomeIds": ["SEC_O1"],
       "readinessScore": 0
     },
     {
@@ -240,10 +204,8 @@
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
       "category": "Design",
-      "action": "S Update the stakeholder analysis to include each planned rollout area.",
-      "outcomeIds": [
-        "SEC_O1"
-      ],
+      "action": "M Update the stakeholder analysis to include each planned rollout area.",
+      "outcomeIds": ["SEC_O1"],
       "readinessScore": 1
     },
     {
@@ -252,10 +214,8 @@
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
       "category": "Design",
-      "action": "S Develop tailored engagement activities for different roles and services.",
-      "outcomeIds": [
-        "SEC_O1"
-      ],
+      "action": "M Develop tailored engagement activities for different roles and services.",
+      "outcomeIds": ["SEC_O1"],
       "readinessScore": 1
     },
     {
@@ -264,10 +224,8 @@
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
-      "action": "S Confirm who will lead engagement with each stakeholder group.",
-      "outcomeIds": [
-        "SEC_O1"
-      ],
+      "action": "M Confirm who will lead engagement with each stakeholder group.",
+      "outcomeIds": ["SEC_O1"],
       "readinessScore": 1
     },
     {
@@ -276,10 +234,8 @@
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Implementation",
-      "action": "S Deliver engagement activities before each rollout wave begins.",
-      "outcomeIds": [
-        "SEC_O2"
-      ],
+      "action": "M Deliver engagement activities before each rollout wave begins.",
+      "outcomeIds": ["SEC_O2"],
       "readinessScore": 2
     },
     {
@@ -288,10 +244,8 @@
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
-      "action": "S Gather feedback from newly impacted stakeholders during rollout.",
-      "outcomeIds": [
-        "SEC_O2"
-      ],
+      "action": "M Gather feedback from newly impacted stakeholders during rollout.",
+      "outcomeIds": ["SEC_O2"],
       "readinessScore": 2
     },
     {
@@ -300,10 +254,8 @@
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Communication",
-      "action": "S Share pilot learning and success user stories relevant to each service.",
-      "outcomeIds": [
-        "SEC_O2"
-      ],
+      "action": "M Share pilot learning and success user stories relevant to each service.",
+      "outcomeIds": ["SEC_O2"],
       "readinessScore": 2
     },
     {
@@ -312,10 +264,8 @@
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
       "category": "Measurement & Evaluation",
-      "action": "S Monitor stakeholder understanding and support across rollout areas.",
-      "outcomeIds": [
-        "SEC_O2"
-      ],
+      "action": "M Monitor stakeholder understanding and support across rollout areas.",
+      "outcomeIds": ["SEC_O2"],
       "readinessScore": 3
     },
     {
@@ -324,10 +274,8 @@
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
       "category": "Measurement & Evaluation",
-      "action": "S Address recurring concerns and gaps in engagement.",
-      "outcomeIds": [
-        "SEC_O2"
-      ],
+      "action": "M Address recurring concerns and gaps in engagement.",
+      "outcomeIds": ["SEC_O2"],
       "readinessScore": 3
     },
     {
@@ -336,10 +284,8 @@
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
       "category": "Measurement & Evaluation",
-      "action": "S Adapt engagement activities where feedback shows they are not effective.",
-      "outcomeIds": [
-        "SEC_O2"
-      ],
+      "action": "M Adapt engagement activities where feedback shows they are not effective.",
+      "outcomeIds": ["SEC_O2"],
       "readinessScore": 3
     },
     {
@@ -348,10 +294,8 @@
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
-      "action": "S Embed stakeholder feedback within routine governance and service reviews.",
-      "outcomeIds": [
-        "SEC_O3"
-      ],
+      "action": "M Embed stakeholder feedback within routine governance and service reviews.",
+      "outcomeIds": ["SEC_O3"],
       "readinessScore": 4
     },
     {
@@ -360,10 +304,8 @@
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
-      "action": "S Maintain trusted communication channels after rollout support reduces.",
-      "outcomeIds": [
-        "SEC_O3"
-      ],
+      "action": "M Maintain trusted communication channels after rollout support reduces.",
+      "outcomeIds": ["SEC_O3"],
       "readinessScore": 4
     },
     {
@@ -372,10 +314,8 @@
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
       "category": "Implementation",
-      "action": "S Use stakeholder insight to improve future rollout waves.",
-      "outcomeIds": [
-        "SEC_O3"
-      ],
+      "action": "M Use stakeholder insight to improve future rollout waves.",
+      "outcomeIds": ["SEC_O3"],
       "readinessScore": 4
     }
   ]

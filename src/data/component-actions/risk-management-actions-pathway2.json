@@ -24,10 +24,8 @@
       "toStatus": "Emerging",
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
-      "action": "S Review pilot risks, issues, mitigations and lessons learned.",
-      "outcomeIds": [
-        "RM_O1"
-      ],
+      "action": "M Review pilot risks, issues, mitigations and lessons learned.",
+      "outcomeIds": ["RM_O1"],
       "readinessScore": 0
     },
     {
@@ -36,10 +34,8 @@
       "toStatus": "Emerging",
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
-      "action": "S Identify new risks created by greater scale, complexity and service variation.",
-      "outcomeIds": [
-        "RM_O1"
-      ],
+      "action": "M Identify new risks created by greater scale, complexity and service variation.",
+      "outcomeIds": ["RM_O1"],
       "readinessScore": 0
     },
     {
@@ -48,10 +44,8 @@
       "toStatus": "Emerging",
       "lens": "Planning & Risk",
       "category": "Analysis & Insight",
-      "action": "S Confirm owners and escalation routes for priority scale-up risks.",
-      "outcomeIds": [
-        "RM_O1"
-      ],
+      "action": "M Confirm owners and escalation routes for priority scale-up risks.",
+      "outcomeIds": ["RM_O1"],
       "readinessScore": 0
     },
     {
@@ -60,10 +54,8 @@
       "toStatus": "Developing",
       "lens": "Planning & Risk",
       "category": "Risk Management",
-      "action": "S Update the risk register for each rollout wave and service.",
-      "outcomeIds": [
-        "RM_O1"
-      ],
+      "action": "M Update the risk register for each rollout wave and service.",
+      "outcomeIds": ["RM_O1"],
       "readinessScore": 1
     },
     {
@@ -72,10 +64,8 @@
       "toStatus": "Developing",
       "lens": "Planning & Risk",
       "category": "Design",
-      "action": "S Define mitigations, triggers, review dates and contingency actions.",
-      "outcomeIds": [
-        "RM_O1"
-      ],
+      "action": "M Define mitigations, triggers, review dates and contingency actions.",
+      "outcomeIds": ["RM_O1"],
       "readinessScore": 1
     },
     {
@@ -84,10 +74,8 @@
       "toStatus": "Developing",
       "lens": "Planning & Risk",
       "category": "Design",
-      "action": "S Test controls against realistic adoption and operational scenarios.",
-      "outcomeIds": [
-        "RM_O1"
-      ],
+      "action": "M Test controls against realistic adoption and operational scenarios.",
+      "outcomeIds": ["RM_O1"],
       "readinessScore": 1
     },
     {
@@ -96,10 +84,8 @@
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
       "category": "Measurement & Evaluation",
-      "action": "S Implement and track risk mitigations throughout rollout.",
-      "outcomeIds": [
-        "RM_O2"
-      ],
+      "action": "M Implement and track risk mitigations throughout rollout.",
+      "outcomeIds": ["RM_O2"],
       "readinessScore": 2
     },
     {
@@ -108,10 +94,8 @@
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
       "category": "Governance",
-      "action": "S Escalate risks that exceed agreed tolerance or local authority.",
-      "outcomeIds": [
-        "RM_O2"
-      ],
+      "action": "M Escalate risks that exceed agreed tolerance or local authority.",
+      "outcomeIds": ["RM_O2"],
       "readinessScore": 2
     },
     {
@@ -120,10 +104,8 @@
       "toStatus": "Embedding",
       "lens": "Planning & Risk",
       "category": "Implementation",
-      "action": "S Record emerging risks and apply learning to later rollout waves.",
-      "outcomeIds": [
-        "RM_O2"
-      ],
+      "action": "M Record emerging risks and apply learning to later rollout waves.",
+      "outcomeIds": ["RM_O2"],
       "readinessScore": 2
     },
     {
@@ -132,10 +114,8 @@
       "toStatus": "Adopted",
       "lens": "Planning & Risk",
       "category": "Risk Management",
-      "action": "S Review risk trends and the effectiveness of mitigations across services.",
-      "outcomeIds": [
-        "RM_O2"
-      ],
+      "action": "M Review risk trends and the effectiveness of mitigations across services.",
+      "outcomeIds": ["RM_O2"],
       "readinessScore": 3
     },
     {
@@ -144,10 +124,8 @@
       "toStatus": "Adopted",
       "lens": "Planning & Risk",
       "category": "Risk Management",
-      "action": "S Strengthen controls where issues recur or risk exposure increases.",
-      "outcomeIds": [
-        "RM_O2"
-      ],
+      "action": "M Strengthen controls where issues recur or risk exposure increases.",
+      "outcomeIds": ["RM_O2"],
       "readinessScore": 3
     },
     {
@@ -156,10 +134,8 @@
       "toStatus": "Adopted",
       "lens": "Planning & Risk",
       "category": "Risk Management",
-      "action": "S Share risk learning with governance and future rollout teams.",
-      "outcomeIds": [
-        "RM_O2"
-      ],
+      "action": "M Share risk learning with governance and future rollout teams.",
+      "outcomeIds": ["RM_O2"],
       "readinessScore": 3
     },
     {
@@ -168,10 +144,8 @@
       "toStatus": "Thriving",
       "lens": "Planning & Risk",
       "category": "Reinforcement",
-      "action": "S Transfer ongoing risks and controls to named business as usual owners.",
-      "outcomeIds": [
-        "RM_O3"
-      ],
+      "action": "M Transfer ongoing risks and controls to named business as usual owners.",
+      "outcomeIds": ["RM_O3"],
       "readinessScore": 4
     },
     {
@@ -180,10 +154,8 @@
       "toStatus": "Thriving",
       "lens": "Planning & Risk",
       "category": "Measurement & Evaluation",
-      "action": "S Monitor leading indicators so action is taken before adoption is affected.",
-      "outcomeIds": [
-        "RM_O3"
-      ],
+      "action": "M Monitor leading indicators so action is taken before adoption is affected.",
+      "outcomeIds": ["RM_O3"],
       "readinessScore": 4
     },
     {
@@ -192,10 +164,8 @@
       "toStatus": "Thriving",
       "lens": "Planning & Risk",
       "category": "Risk Management",
-      "action": "S Use risk evidence to improve future scale-up and optimisation decisions.",
-      "outcomeIds": [
-        "RM_O3"
-      ],
+      "action": "M Use risk evidence to improve future scale-up and optimisation decisions.",
+      "outcomeIds": ["RM_O3"],
       "readinessScore": 4
     },
     {
@@ -204,10 +174,8 @@
       "toStatus": "Emerging",
       "lens": "Process & Sustainment",
       "category": "Implementation",
-      "action": "S Review pilot evidence of workarounds, variation, support demand and benefit loss.",
-      "outcomeIds": [
-        "RM_O1"
-      ],
+      "action": "M Review pilot evidence of workarounds, variation, support demand and benefit loss.",
+      "outcomeIds": ["RM_O1"],
       "readinessScore": 0
     },
     {
@@ -216,10 +184,8 @@
       "toStatus": "Emerging",
       "lens": "Process & Sustainment",
       "category": "Implementation",
-      "action": "S Identify risks that could cause adoption to decline after rollout support ends.",
-      "outcomeIds": [
-        "RM_O1"
-      ],
+      "action": "M Identify risks that could cause adoption to decline after rollout support ends.",
+      "outcomeIds": ["RM_O1"],
       "readinessScore": 0
     },
     {
@@ -228,10 +194,8 @@
       "toStatus": "Emerging",
       "lens": "Process & Sustainment",
       "category": "Analysis & Insight",
-      "action": "S Confirm operational owners for sustainment risks.",
-      "outcomeIds": [
-        "RM_O1"
-      ],
+      "action": "M Confirm operational owners for sustainment risks.",
+      "outcomeIds": ["RM_O1"],
       "readinessScore": 0
     },
     {
@@ -240,10 +204,8 @@
       "toStatus": "Developing",
       "lens": "Process & Sustainment",
       "category": "Design",
-      "action": "S Build sustainment risks and controls into process and support plans.",
-      "outcomeIds": [
-        "RM_O1"
-      ],
+      "action": "M Build sustainment risks and controls into process and support plans.",
+      "outcomeIds": ["RM_O1"],
       "readinessScore": 1
     },
     {
@@ -252,10 +214,8 @@
       "toStatus": "Developing",
       "lens": "Process & Sustainment",
       "category": "Design",
-      "action": "S Define indicators for variation, regression and recurring support issues.",
-      "outcomeIds": [
-        "RM_O1"
-      ],
+      "action": "M Define indicators for variation, regression and recurring support issues.",
+      "outcomeIds": ["RM_O1"],
       "readinessScore": 1
     },
     {
@@ -264,10 +224,8 @@
       "toStatus": "Developing",
       "lens": "Process & Sustainment",
       "category": "Governance",
-      "action": "S Agree actions and escalation routes when agreed thresholds are reached.",
-      "outcomeIds": [
-        "RM_O1"
-      ],
+      "action": "M Agree actions and escalation routes when agreed thresholds are reached.",
+      "outcomeIds": ["RM_O1"],
       "readinessScore": 1
     },
     {
@@ -276,10 +234,8 @@
       "toStatus": "Embedding",
       "lens": "Process & Sustainment",
       "category": "Implementation",
-      "action": "S Apply sustainment controls as each service moves through rollout.",
-      "outcomeIds": [
-        "RM_O2"
-      ],
+      "action": "M Apply sustainment controls as each service moves through rollout.",
+      "outcomeIds": ["RM_O2"],
       "readinessScore": 2
     },
     {
@@ -288,10 +244,8 @@
       "toStatus": "Embedding",
       "lens": "Process & Sustainment",
       "category": "Measurement & Evaluation",
-      "action": "S Monitor workarounds, process adherence and support demand.",
-      "outcomeIds": [
-        "RM_O2"
-      ],
+      "action": "M Monitor workarounds, process adherence and support demand.",
+      "outcomeIds": ["RM_O2"],
       "readinessScore": 2
     },
     {
@@ -300,10 +254,8 @@
       "toStatus": "Embedding",
       "lens": "Process & Sustainment",
       "category": "Engagement",
-      "action": "S Resolve issues before they become accepted local practice.",
-      "outcomeIds": [
-        "RM_O2"
-      ],
+      "action": "M Resolve issues before they become accepted local practice.",
+      "outcomeIds": ["RM_O2"],
       "readinessScore": 2
     },
     {
@@ -312,10 +264,8 @@
       "toStatus": "Adopted",
       "lens": "Process & Sustainment",
       "category": "Measurement & Evaluation",
-      "action": "S Compare sustainment risks and recurring issues across services.",
-      "outcomeIds": [
-        "RM_O2"
-      ],
+      "action": "M Compare sustainment risks and recurring issues across services.",
+      "outcomeIds": ["RM_O2"],
       "readinessScore": 3
     },
     {
@@ -324,10 +274,8 @@
       "toStatus": "Adopted",
       "lens": "Process & Sustainment",
       "category": "Measurement & Evaluation",
-      "action": "S Target corrective action where adoption or benefits are declining.",
-      "outcomeIds": [
-        "RM_O2"
-      ],
+      "action": "M Target corrective action where adoption or benefits are declining.",
+      "outcomeIds": ["RM_O2"],
       "readinessScore": 3
     },
     {
@@ -336,10 +284,8 @@
       "toStatus": "Adopted",
       "lens": "Process & Sustainment",
       "category": "Communication",
-      "action": "S Share effective controls and recovery approaches between rollout areas.",
-      "outcomeIds": [
-        "RM_O2"
-      ],
+      "action": "M Share effective controls and recovery approaches between rollout areas.",
+      "outcomeIds": ["RM_O2"],
       "readinessScore": 3
     },
     {
@@ -348,10 +294,8 @@
       "toStatus": "Thriving",
       "lens": "Process & Sustainment",
       "category": "Risk Management",
-      "action": "S Embed sustainment risk monitoring in routine operational governance.",
-      "outcomeIds": [
-        "RM_O3"
-      ],
+      "action": "M Embed sustainment risk monitoring in routine operational governance.",
+      "outcomeIds": ["RM_O3"],
       "readinessScore": 4
     },
     {
@@ -360,10 +304,8 @@
       "toStatus": "Thriving",
       "lens": "Process & Sustainment",
       "category": "Analysis & Insight",
-      "action": "S Review controls as processes, technology and service needs change.",
-      "outcomeIds": [
-        "RM_O3"
-      ],
+      "action": "M Review controls as processes, technology and service needs change.",
+      "outcomeIds": ["RM_O3"],
       "readinessScore": 4
     },
     {
@@ -372,10 +314,8 @@
       "toStatus": "Thriving",
       "lens": "Process & Sustainment",
       "category": "Implementation",
-      "action": "S Use long-term evidence to prevent regression and protect benefits.",
-      "outcomeIds": [
-        "RM_O3"
-      ],
+      "action": "M Use long-term evidence to prevent regression and protect benefits.",
+      "outcomeIds": ["RM_O3"],
       "readinessScore": 4
     }
   ]

@@ -24,10 +24,8 @@
       "toStatus": "Emerging",
       "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
-      "action": "S Review pilot ownership, accountability and transition learning.",
-      "outcomeIds": [
-        "BAU_O1"
-      ],
+      "action": "M Review pilot ownership, accountability and transition learning.",
+      "outcomeIds": ["BAU_O1"],
       "readinessScore": 0
     },
     {
@@ -36,10 +34,8 @@
       "toStatus": "Emerging",
       "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
-      "action": "S Identify the leaders who will own adoption, benefits and performance after rollout.",
-      "outcomeIds": [
-        "BAU_O1"
-      ],
+      "action": "M Identify the leaders who will own adoption, benefits and performance after rollout.",
+      "outcomeIds": ["BAU_O1"],
       "readinessScore": 0
     },
     {
@@ -48,10 +44,8 @@
       "toStatus": "Emerging",
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
-      "action": "S Confirm the criteria that each service must meet before handover.",
-      "outcomeIds": [
-        "BAU_O1"
-      ],
+      "action": "M Confirm the criteria that each service must meet before handover.",
+      "outcomeIds": ["BAU_O1"],
       "readinessScore": 0
     },
     {
@@ -60,11 +54,8 @@
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
       "category": "Reinforcement",
-      "action": "S Define leadership roles and decision rights for business as usual ownership.",
-      "outcomeIds": [
-        "BAU_O1",
-        "BAU_O3"
-      ],
+      "action": "M Define leadership roles and decision rights for business as usual ownership.",
+      "outcomeIds": ["BAU_O1", "BAU_O3"],
       "readinessScore": 1
     },
     {
@@ -73,10 +64,8 @@
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
       "category": "Design",
-      "action": "S Develop a transition plan covering accountability, benefits and ongoing assurance.",
-      "outcomeIds": [
-        "BAU_O1"
-      ],
+      "action": "M Develop a transition plan covering accountability, benefits and ongoing assurance.",
+      "outcomeIds": ["BAU_O1"],
       "readinessScore": 1
     },
     {
@@ -85,10 +74,8 @@
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
-      "action": "S Agree the evidence leaders need before accepting handover.",
-      "outcomeIds": [
-        "BAU_O1"
-      ],
+      "action": "M Agree the evidence leaders need before accepting handover.",
+      "outcomeIds": ["BAU_O1"],
       "readinessScore": 1
     },
     {
@@ -97,10 +84,8 @@
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
-      "action": "S Begin transferring ownership as each service approaches the transition criteria.",
-      "outcomeIds": [
-        "BAU_O2"
-      ],
+      "action": "M Begin transferring ownership as each service approaches the transition criteria.",
+      "outcomeIds": ["BAU_O2"],
       "readinessScore": 2
     },
     {
@@ -109,10 +94,8 @@
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
-      "action": "S Confirm leaders understand ongoing responsibilities and escalation routes.",
-      "outcomeIds": [
-        "BAU_O2"
-      ],
+      "action": "M Confirm leaders understand ongoing responsibilities and escalation routes.",
+      "outcomeIds": ["BAU_O2"],
       "readinessScore": 2
     },
     {
@@ -121,10 +104,8 @@
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
       "category": "Measurement & Evaluation",
-      "action": "S Track completion of leadership and governance handover actions.",
-      "outcomeIds": [
-        "BAU_O2"
-      ],
+      "action": "M Track completion of leadership and governance handover actions.",
+      "outcomeIds": ["BAU_O2"],
       "readinessScore": 2
     },
     {
@@ -133,11 +114,8 @@
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
       "category": "Measurement & Evaluation",
-      "action": "S Review whether business as usual leaders are maintaining oversight and action.",
-      "outcomeIds": [
-        "BAU_O2",
-        "BAU_O3"
-      ],
+      "action": "M Review whether business as usual leaders are maintaining oversight and action.",
+      "outcomeIds": ["BAU_O2", "BAU_O3"],
       "readinessScore": 3
     },
     {
@@ -146,10 +124,8 @@
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
       "category": "Measurement & Evaluation",
-      "action": "S Address gaps in ownership, benefits accountability or escalation.",
-      "outcomeIds": [
-        "BAU_O2"
-      ],
+      "action": "M Address gaps in ownership, benefits accountability or escalation.",
+      "outcomeIds": ["BAU_O2"],
       "readinessScore": 3
     },
     {
@@ -158,10 +134,8 @@
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
       "category": "Communication",
-      "action": "S Share transition learning with services approaching handover.",
-      "outcomeIds": [
-        "BAU_O2"
-      ],
+      "action": "M Share transition learning with services approaching handover.",
+      "outcomeIds": ["BAU_O2"],
       "readinessScore": 3
     },
     {
@@ -170,10 +144,8 @@
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
       "category": "Reinforcement",
-      "action": "S Embed accountability for adoption, benefits and improvement in leadership objectives.",
-      "outcomeIds": [
-        "BAU_O3"
-      ],
+      "action": "M Embed accountability for adoption, benefits and improvement in leadership objectives.",
+      "outcomeIds": ["BAU_O3"],
       "readinessScore": 4
     },
     {
@@ -182,10 +154,8 @@
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
       "category": "Reinforcement",
-      "action": "S Maintain governance oversight of outcomes after project closure.",
-      "outcomeIds": [
-        "BAU_O3"
-      ],
+      "action": "M Maintain governance oversight of outcomes after project closure.",
+      "outcomeIds": ["BAU_O3"],
       "readinessScore": 4
     },
     {
@@ -194,10 +164,8 @@
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
       "category": "Implementation",
-      "action": "S Use post handover evidence to improve leadership arrangements for future rollouts.",
-      "outcomeIds": [
-        "BAU_O3"
-      ],
+      "action": "M Use post handover evidence to improve leadership arrangements for future rollouts.",
+      "outcomeIds": ["BAU_O3"],
       "readinessScore": 4
     },
     {
@@ -206,10 +174,8 @@
       "toStatus": "Emerging",
       "lens": "Process & Sustainment",
       "category": "Implementation",
-      "action": "S Review pilot handover, support and operational ownership lessons.",
-      "outcomeIds": [
-        "BAU_O1"
-      ],
+      "action": "M Review pilot handover, support and operational ownership lessons.",
+      "outcomeIds": ["BAU_O1"],
       "readinessScore": 0
     },
     {
@@ -218,11 +184,8 @@
       "toStatus": "Emerging",
       "lens": "Process & Sustainment",
       "category": "Reinforcement",
-      "action": "S Identify the policies, training, support and monitoring needed in business as usual.",
-      "outcomeIds": [
-        "BAU_O1",
-        "BAU_O3"
-      ],
+      "action": "M Identify the policies, training, support and monitoring needed in business as usual.",
+      "outcomeIds": ["BAU_O1", "BAU_O3"],
       "readinessScore": 0
     },
     {
@@ -231,10 +194,8 @@
       "toStatus": "Emerging",
       "lens": "Process & Sustainment",
       "category": "Analysis & Insight",
-      "action": "S Confirm the operational teams that will accept each responsibility.",
-      "outcomeIds": [
-        "BAU_O1"
-      ],
+      "action": "M Confirm the operational teams that will accept each responsibility.",
+      "outcomeIds": ["BAU_O1"],
       "readinessScore": 0
     },
     {
@@ -243,10 +204,8 @@
       "toStatus": "Developing",
       "lens": "Process & Sustainment",
       "category": "Design",
-      "action": "S Develop a repeatable handover plan for every rollout area.",
-      "outcomeIds": [
-        "BAU_O1"
-      ],
+      "action": "M Develop a repeatable handover plan for every rollout area.",
+      "outcomeIds": ["BAU_O1"],
       "readinessScore": 1
     },
     {
@@ -255,10 +214,8 @@
       "toStatus": "Developing",
       "lens": "Process & Sustainment",
       "category": "Design",
-      "action": "S Define support routes, onboarding, monitoring and improvement responsibilities.",
-      "outcomeIds": [
-        "BAU_O1"
-      ],
+      "action": "M Define support routes, onboarding, monitoring and improvement responsibilities.",
+      "outcomeIds": ["BAU_O1"],
       "readinessScore": 1
     },
     {
@@ -267,10 +224,8 @@
       "toStatus": "Developing",
       "lens": "Process & Sustainment",
       "category": "Governance",
-      "action": "S Agree the exit evidence required before change support reduces.",
-      "outcomeIds": [
-        "BAU_O1"
-      ],
+      "action": "M Agree the exit evidence required before change support reduces.",
+      "outcomeIds": ["BAU_O1"],
       "readinessScore": 1
     },
     {
@@ -279,10 +234,8 @@
       "toStatus": "Embedding",
       "lens": "Process & Sustainment",
       "category": "Implementation",
-      "action": "S Transfer workflows, guidance, support routes and measures to operational teams.",
-      "outcomeIds": [
-        "BAU_O2"
-      ],
+      "action": "M Transfer workflows, guidance, support routes and measures to operational teams.",
+      "outcomeIds": ["BAU_O2"],
       "readinessScore": 2
     },
     {
@@ -291,11 +244,8 @@
       "toStatus": "Embedding",
       "lens": "Process & Sustainment",
       "category": "Reinforcement",
-      "action": "S Test that business as usual teams can support existing and new users.",
-      "outcomeIds": [
-        "BAU_O2",
-        "BAU_O3"
-      ],
+      "action": "M Test that business as usual teams can support existing and new users.",
+      "outcomeIds": ["BAU_O2", "BAU_O3"],
       "readinessScore": 2
     },
     {
@@ -304,10 +254,8 @@
       "toStatus": "Embedding",
       "lens": "Process & Sustainment",
       "category": "Implementation",
-      "action": "S Complete handover actions before change support is withdrawn.",
-      "outcomeIds": [
-        "BAU_O2"
-      ],
+      "action": "M Complete handover actions before change support is withdrawn.",
+      "outcomeIds": ["BAU_O2"],
       "readinessScore": 2
     },
     {
@@ -316,10 +264,8 @@
       "toStatus": "Adopted",
       "lens": "Process & Sustainment",
       "category": "Implementation",
-      "action": "S Review adoption, outcomes and support demand after handover.",
-      "outcomeIds": [
-        "BAU_O2"
-      ],
+      "action": "M Review adoption, outcomes and support demand after handover.",
+      "outcomeIds": ["BAU_O2"],
       "readinessScore": 3
     },
     {
@@ -328,10 +274,8 @@
       "toStatus": "Adopted",
       "lens": "Process & Sustainment",
       "category": "Implementation",
-      "action": "S Address gaps in operational ownership or unresolved support issues.",
-      "outcomeIds": [
-        "BAU_O2"
-      ],
+      "action": "M Address gaps in operational ownership or unresolved support issues.",
+      "outcomeIds": ["BAU_O2"],
       "readinessScore": 3
     },
     {
@@ -340,10 +284,8 @@
       "toStatus": "Adopted",
       "lens": "Process & Sustainment",
       "category": "Communication",
-      "action": "S Share handover learning with services preparing to transition.",
-      "outcomeIds": [
-        "BAU_O2"
-      ],
+      "action": "M Share handover learning with services preparing to transition.",
+      "outcomeIds": ["BAU_O2"],
       "readinessScore": 3
     },
     {
@@ -352,10 +294,8 @@
       "toStatus": "Thriving",
       "lens": "Process & Sustainment",
       "category": "Reinforcement",
-      "action": "S Embed the process in policies, induction, training and operational support.",
-      "outcomeIds": [
-        "BAU_O3"
-      ],
+      "action": "M Embed the process in policies, induction, training and operational support.",
+      "outcomeIds": ["BAU_O3"],
       "readinessScore": 4
     },
     {
@@ -364,10 +304,8 @@
       "toStatus": "Thriving",
       "lens": "Process & Sustainment",
       "category": "Measurement & Evaluation",
-      "action": "S Monitor adoption, outcomes and support demand after handover.",
-      "outcomeIds": [
-        "BAU_O3"
-      ],
+      "action": "M Monitor adoption, outcomes and support demand after handover.",
+      "outcomeIds": ["BAU_O3"],
       "readinessScore": 4
     },
     {
@@ -376,10 +314,8 @@
       "toStatus": "Thriving",
       "lens": "Process & Sustainment",
       "category": "Reinforcement",
-      "action": "S Use business as usual feedback to improve the model for future rollout areas.",
-      "outcomeIds": [
-        "BAU_O3"
-      ],
+      "action": "M Use business as usual feedback to improve the model for future rollout areas.",
+      "outcomeIds": ["BAU_O3"],
       "readinessScore": 4
     }
   ]

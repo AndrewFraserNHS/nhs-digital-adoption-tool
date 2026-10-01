@@ -38,10 +38,8 @@
       "toStatus": "Emerging",
       "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
-      "action": "S Review the original vision against live adoption evidence, realised outcomes and current organisational priorities.",
-      "outcomeIds": [
-        "VISION_O1"
-      ],
+      "action": "M Review the original vision against live adoption evidence, realised outcomes and current organisational priorities.",
+      "outcomeIds": ["VISION_O1"],
       "readinessScore": 0
     },
     {
@@ -50,10 +48,8 @@
       "toStatus": "Emerging",
       "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
-      "action": "S Identify how the vision should be reset to address patchy adoption and intended outcomes.",
-      "outcomeIds": [
-        "VISION_O1"
-      ],
+      "action": "M Identify how the vision should be reset to address patchy adoption and intended outcomes.",
+      "outcomeIds": ["VISION_O1"],
       "readinessScore": 0
     },
     {
@@ -62,10 +58,8 @@
       "toStatus": "Emerging",
       "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
-      "action": "S Confirm the leaders who will own and champion adoption recovery.",
-      "outcomeIds": [
-        "VISION_O1"
-      ],
+      "action": "M Confirm the leaders who will own and champion adoption recovery.",
+      "outcomeIds": ["VISION_O1"],
       "readinessScore": 0
     },
     {
@@ -74,10 +68,8 @@
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
       "category": "Design",
-      "action": "S Reset the vision using live adoption evidence and feedback from active and partial users.",
-      "outcomeIds": [
-        "VISION_O1"
-      ],
+      "action": "M Reset the vision using live adoption evidence and feedback from active and partial users.",
+      "outcomeIds": ["VISION_O1"],
       "readinessScore": 1
     },
     {
@@ -86,10 +78,8 @@
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
-      "action": "S Agree the principles that will guide decisions across targeted recovery activities.",
-      "outcomeIds": [
-        "VISION_O1"
-      ],
+      "action": "M Agree the principles that will guide decisions across targeted recovery activities.",
+      "outcomeIds": ["VISION_O1"],
       "readinessScore": 1
     },
     {
@@ -98,10 +88,8 @@
       "toStatus": "Developing",
       "lens": "Strategic Direction & Leadership",
       "category": "Testing & Validation",
-      "action": "S Test the updated vision with senior leaders and low-adopting teams.",
-      "outcomeIds": [
-        "VISION_O1"
-      ],
+      "action": "M Test the updated vision with senior leaders and low-adopting teams.",
+      "outcomeIds": ["VISION_O1"],
       "readinessScore": 1
     },
     {
@@ -110,10 +98,8 @@
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
       "category": "Governance",
-      "action": "S Approve and communicate the updated vision.",
-      "outcomeIds": [
-        "VISION_O2"
-      ],
+      "action": "M Approve and communicate the updated vision.",
+      "outcomeIds": ["VISION_O2"],
       "readinessScore": 2
     },
     {
@@ -122,10 +108,8 @@
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
       "category": "Communication",
-      "action": "S Brief sponsors and local leaders on how to use the vision in decisions.",
-      "outcomeIds": [
-        "VISION_O2"
-      ],
+      "action": "M Brief sponsors and local leaders on how to use the vision in decisions.",
+      "outcomeIds": ["VISION_O2"],
       "readinessScore": 2
     },
     {
@@ -134,10 +118,8 @@
       "toStatus": "Embedding",
       "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
-      "action": "S Check that rollout plans, benefits and priorities align with the agreed vision.",
-      "outcomeIds": [
-        "VISION_O2"
-      ],
+      "action": "M Check that rollout plans, benefits and priorities align with the agreed vision.",
+      "outcomeIds": ["VISION_O2"],
       "readinessScore": 2
     },
     {
@@ -146,10 +128,8 @@
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
       "category": "Measurement & Evaluation",
-      "action": "S Review whether leaders are using the vision consistently across live services and teams.",
-      "outcomeIds": [
-        "VISION_O2"
-      ],
+      "action": "M Review whether leaders are using the vision consistently across live services and teams.",
+      "outcomeIds": ["VISION_O2"],
       "readinessScore": 3
     },
     {
@@ -158,10 +138,8 @@
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
       "category": "Measurement & Evaluation",
-      "action": "S Address differences between the agreed vision and local delivery decisions.",
-      "outcomeIds": [
-        "VISION_O2"
-      ],
+      "action": "M Address differences between the agreed vision and local delivery decisions.",
+      "outcomeIds": ["VISION_O2"],
       "readinessScore": 3
     },
     {
@@ -170,10 +148,8 @@
       "toStatus": "Adopted",
       "lens": "Strategic Direction & Leadership",
       "category": "Communication",
-      "action": "S Share examples showing how the vision is being achieved in practice.",
-      "outcomeIds": [
-        "VISION_O2"
-      ],
+      "action": "M Share examples showing how the vision is being achieved in practice.",
+      "outcomeIds": ["VISION_O2"],
       "readinessScore": 3
     },
     {
@@ -182,10 +158,8 @@
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
       "category": "Reinforcement",
-      "action": "S Embed the vision in business planning, governance and investment decisions.",
-      "outcomeIds": [
-        "VISION_O3"
-      ],
+      "action": "M Embed the vision in business planning, governance and investment decisions.",
+      "outcomeIds": ["VISION_O3"],
       "readinessScore": 4
     },
     {
@@ -194,10 +168,8 @@
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
       "category": "Analysis & Insight",
-      "action": "S Review the vision regularly against adoption, benefits and organisational priorities.",
-      "outcomeIds": [
-        "VISION_O3"
-      ],
+      "action": "M Review the vision regularly against adoption, benefits and organisational priorities.",
+      "outcomeIds": ["VISION_O3"],
       "readinessScore": 4
     },
     {
@@ -206,10 +178,8 @@
       "toStatus": "Thriving",
       "lens": "Strategic Direction & Leadership",
       "category": "Design",
-      "action": "S Update the vision when evidence or organisational needs change.",
-      "outcomeIds": [
-        "VISION_O3"
-      ],
+      "action": "M Update the vision when evidence or organisational needs change.",
+      "outcomeIds": ["VISION_O3"],
       "readinessScore": 4
     },
     {
@@ -218,10 +188,8 @@
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
-      "action": "S Review feedback from active and partial users on how well people understood and related to the vision.",
-      "outcomeIds": [
-        "VISION_O1"
-      ],
+      "action": "M Review feedback from active and partial users on how well people understood and related to the vision.",
+      "outcomeIds": ["VISION_O1"],
       "readinessScore": 0
     },
     {
@@ -230,10 +198,8 @@
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
-      "action": "S Identify where the vision needs clearer language for new roles and services.",
-      "outcomeIds": [
-        "VISION_O1"
-      ],
+      "action": "M Identify where the vision needs clearer language for new roles and services.",
+      "outcomeIds": ["VISION_O1"],
       "readinessScore": 0
     },
     {
@@ -242,10 +208,8 @@
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
-      "action": "S Gather examples from effective users that make the vision credible and relevant.",
-      "outcomeIds": [
-        "VISION_O1"
-      ],
+      "action": "M Gather examples from effective users that make the vision credible and relevant.",
+      "outcomeIds": ["VISION_O1"],
       "readinessScore": 0
     },
     {
@@ -254,10 +218,8 @@
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
       "category": "Communication",
-      "action": "S Update vision messages to explain what adoption recovery across live services means for each audience.",
-      "outcomeIds": [
-        "VISION_O1"
-      ],
+      "action": "M Update vision messages to explain what adoption recovery across live services means for each audience.",
+      "outcomeIds": ["VISION_O1"],
       "readinessScore": 1
     },
     {
@@ -266,10 +228,8 @@
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
       "category": "Testing & Validation",
-      "action": "S Test the messages with both effective users and low-adopting teams.",
-      "outcomeIds": [
-        "VISION_O1"
-      ],
+      "action": "M Test the messages with both effective users and low-adopting teams.",
+      "outcomeIds": ["VISION_O1"],
       "readinessScore": 1
     },
     {
@@ -278,10 +238,8 @@
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
       "category": "Design",
-      "action": "S Address concerns or misunderstandings before communications are finalised.",
-      "outcomeIds": [
-        "VISION_O1"
-      ],
+      "action": "M Address concerns or misunderstandings before communications are finalised.",
+      "outcomeIds": ["VISION_O1"],
       "readinessScore": 1
     },
     {
@@ -290,10 +248,8 @@
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Communication",
-      "action": "S Share the vision with each service before targeted recovery activity begins.",
-      "outcomeIds": [
-        "VISION_O2"
-      ],
+      "action": "M Share the vision with each service before targeted recovery activity begins.",
+      "outcomeIds": ["VISION_O2"],
       "readinessScore": 2
     },
     {
@@ -302,10 +258,8 @@
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Implementation",
-      "action": "S Equip local leaders and change network members with clear, consistent messages.",
-      "outcomeIds": [
-        "VISION_O2"
-      ],
+      "action": "M Equip local leaders and change network members with clear, consistent messages.",
+      "outcomeIds": ["VISION_O2"],
       "readinessScore": 2
     },
     {
@@ -314,10 +268,8 @@
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Implementation",
-      "action": "S Provide opportunities for affected stakeholders to ask questions and discuss local implications.",
-      "outcomeIds": [
-        "VISION_O2"
-      ],
+      "action": "M Provide opportunities for affected stakeholders to ask questions and discuss local implications.",
+      "outcomeIds": ["VISION_O2"],
       "readinessScore": 2
     },
     {
@@ -326,10 +278,8 @@
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
-      "action": "S Check understanding of the vision across roles, services and locations.",
-      "outcomeIds": [
-        "VISION_O2"
-      ],
+      "action": "M Check understanding of the vision across roles, services and locations.",
+      "outcomeIds": ["VISION_O2"],
       "readinessScore": 3
     },
     {
@@ -338,10 +288,8 @@
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
       "category": "Implementation",
-      "action": "S Target further engagement where understanding or support is lower.",
-      "outcomeIds": [
-        "VISION_O2"
-      ],
+      "action": "M Target further engagement where understanding or support is lower.",
+      "outcomeIds": ["VISION_O2"],
       "readinessScore": 3
     },
     {
@@ -350,10 +298,8 @@
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
       "category": "Implementation",
-      "action": "S Use local user stories to show how the vision is improving day to day work.",
-      "outcomeIds": [
-        "VISION_O2"
-      ],
+      "action": "M Use local user stories to show how the vision is improving day to day work.",
+      "outcomeIds": ["VISION_O2"],
       "readinessScore": 3
     },
     {
@@ -362,10 +308,8 @@
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
-      "action": "S Build the vision into team objectives, induction and routine conversations.",
-      "outcomeIds": [
-        "VISION_O3"
-      ],
+      "action": "M Build the vision into team objectives, induction and routine conversations.",
+      "outcomeIds": ["VISION_O3"],
       "readinessScore": 4
     },
     {
@@ -374,10 +318,8 @@
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
-      "action": "S Keep listening to stakeholders and update messages when experiences change.",
-      "outcomeIds": [
-        "VISION_O3"
-      ],
+      "action": "M Keep listening to stakeholders and update messages when experiences change.",
+      "outcomeIds": ["VISION_O3"],
       "readinessScore": 4
     },
     {
@@ -386,10 +328,8 @@
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
-      "action": "S Recognise teams whose behaviours and improvements demonstrate the vision.",
-      "outcomeIds": [
-        "VISION_O3"
-      ],
+      "action": "M Recognise teams whose behaviours and improvements demonstrate the vision.",
+      "outcomeIds": ["VISION_O3"],
       "readinessScore": 4
     }
   ]

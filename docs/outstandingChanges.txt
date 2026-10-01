@@ -1,0 +1,29 @@
+1. NHS icon needs adding to tab 
+2. Side nav on small screen size should be full width and centered
+3. Grey blur appears on small screen sizes
+4. Further Reading links are AVT specific and should be moved as part of preset
+5. MoScoW tool added, with different projects being able to be created. Would need ability to export and import JSON or CSV. Provided the spreadsheet format. Would need to handle merge conflicts. Export file name should have hhmmDDMMYYY format.
+6. Additional Links and Phase Linking doesn't have additional wording functionality yet (custom links need ability to mark as optional or required)
+7. Forcefield analysis needs ability to export as CSV
+8. Update signed in modal warning
+9. Stakeholder reference data should be initiated link, and moved to admin section with questions, and external links.
+10. Reset data button needs to clear session storage.
+11. Forcefield analysis needs ability to have multiple versions (projects), and ability to reset/delete them, or mark as internal (engine aligned) or external.
+12. Engine needs ability to have ability to have different projects. And loading them in. (Different JSON files)
+13. What phase do you think you are in? Question after pathway. id 101. Outcome of quiz is, "Based on these answers you have been aligned to Phase X" Blurb as to what they are currently behind on.
+14. Maturity Radar should show RADAR for both manual and automatic target. With toggle in top right to show both or manual/auto. Even paler grey for manual.
+15. This will clear every answer and start a new assessment. Continue? "Update to amend or clear", so they could do it again from start or end.
+16. "The whole engine, one page" -> "The Adoption Engine, One page view" rename
+17. Modal to confirm deletion of stakeholder groups.
+18. Stakeholder Reference Data needs top second paragraph explaining stakeholders can be added in Stakeholder Analysis Tool with hyperlink.
+19. AVT preset needs phase links updating to 
+Pre-Discovery - Change Management - Futures - https://future.nhs.uk/CMN/view?objectID=76541360
+Solution Design - Change Management - Futures - https://future.nhs.uk/CMN/view?objectID=76541872
+Development - Change Management - Futures - https://future.nhs.uk/CMN/view?objectID=76541936
+Deployment - Change Management - Futures - https://future.nhs.uk/CMN/view?objectID=76541968
+Post Deployment - Change Management - Futures - https://future.nhs.uk/CMN/view?objectID=76542032
+20. Move Objectives to bottom of Daily Check in page.
+21. Daily Check in should appear above Metrics Dashboard on side nav
+22. Keyboard numbers to allow for answers to be selected, then enter to submit answer. (Adoption Baseline)
+23. Download of Adoption Baseline filename needs to match Baseline and DDmmYY.
+24. 

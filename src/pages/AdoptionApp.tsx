@@ -85,11 +85,11 @@ import { canEditProfile, SIGN_IN_REQUIRED_MESSAGE } from '@lib/signInGuard';
 import { load, save } from '@lib/storage';
 import { downloadFile, escapeHtml } from '@lib/utils';
 import BenefitsApp from '@pages/BenefitsApp';
+import ChangeAdoptionBaselineAnalysisApp from '@pages/ChangeAdoptionBaselineAnalysisApp';
 import ChangeImpactAssessmentApp from '@pages/ChangeImpactAssessmentApp';
 import CompareApp from '@pages/CompareApp';
 import ForceFieldAnalysisApp from '@pages/ForceFieldAnalysisApp';
 import RaidLogApp from '@pages/RaidLogApp';
-import ChangeAdoptionBaselineAnalysisApp from '@pages/ChangeAdoptionBaselineAnalysisApp';
 import StakeholderAnalysisApp from '@pages/StakeholderAnalysisApp';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -381,8 +381,8 @@ export function AdoptionApp() {
       'engine-explained': 'intro',
       'project-details': 'intro',
       'where-am-i-now': 'intro',
-      dashboard: 'overview',
       'daily-checkin': 'overview',
+      dashboard: 'overview',
       'action-plan': 'overview',
       'roadmap-view': 'overview',
       'highlight-builder': 'tools',
@@ -1485,7 +1485,7 @@ export function AdoptionApp() {
               </button>
               {expandedNavSections.overview ? (
                 <nav className="space-y-1 mb-4">
-                  {(['dashboard', 'daily-checkin', 'action-plan', 'roadmap-view'] as View[]).map(
+                  {(['daily-checkin', 'dashboard', 'action-plan', 'roadmap-view'] as View[]).map(
                     (v) => (
                       <button
                         key={v}
@@ -1499,10 +1499,10 @@ export function AdoptionApp() {
                             : 'text-blue-100 hover:bg-blue-800 border-l-4 border-transparent'
                         }`}
                       >
-                        {v === 'dashboard'
-                          ? 'Metrics Dashboard'
-                          : v === 'daily-checkin'
-                            ? 'Daily Check-in'
+                        {v === 'daily-checkin'
+                          ? 'Daily Check-in'
+                          : v === 'dashboard'
+                            ? 'Metrics Dashboard'
                             : v === 'action-plan'
                               ? 'Action Tracker'
                               : 'Component Delivery Timeline'}

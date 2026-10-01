@@ -24,10 +24,8 @@
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
-      "action": "S Review which recognition and reinforcement activities supported pilot adoption.",
-      "outcomeIds": [
-        "REINF_O1"
-      ],
+      "action": "M Review which recognition and reinforcement activities supported pilot adoption.",
+      "outcomeIds": ["REINF_O1"],
       "readinessScore": 0
     },
     {
@@ -36,10 +34,8 @@
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
-      "action": "S Identify teams or behaviours that will need reinforcement during adoption recovery.",
-      "outcomeIds": [
-        "REINF_O1"
-      ],
+      "action": "M Identify teams or behaviours that will need reinforcement during adoption recovery.",
+      "outcomeIds": ["REINF_O1"],
       "readinessScore": 0
     },
     {
@@ -48,10 +44,8 @@
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
       "category": "Implementation",
-      "action": "S Confirm who will recognise progress and provide local encouragement.",
-      "outcomeIds": [
-        "REINF_O1"
-      ],
+      "action": "M Confirm who will recognise progress and provide local encouragement.",
+      "outcomeIds": ["REINF_O1"],
       "readinessScore": 0
     },
     {
@@ -60,10 +54,8 @@
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
       "category": "Design",
-      "action": "S Plan recognition, peer support and success user stories for each targeted recovery activity.",
-      "outcomeIds": [
-        "REINF_O1"
-      ],
+      "action": "M Plan recognition, peer support and success user stories for each targeted recovery activity.",
+      "outcomeIds": ["REINF_O1"],
       "readinessScore": 1
     },
     {
@@ -72,10 +64,8 @@
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
       "category": "Governance",
-      "action": "S Agree how local leaders and champions will reinforce expected behaviours.",
-      "outcomeIds": [
-        "REINF_O1"
-      ],
+      "action": "M Agree how local leaders and champions will reinforce expected behaviours.",
+      "outcomeIds": ["REINF_O1"],
       "readinessScore": 1
     },
     {
@@ -84,10 +74,8 @@
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
       "category": "Design",
-      "action": "S Test reinforcement messages with low adopting teams.",
-      "outcomeIds": [
-        "REINF_O1"
-      ],
+      "action": "M Test reinforcement messages with low adopting teams.",
+      "outcomeIds": ["REINF_O1"],
       "readinessScore": 1
     },
     {
@@ -96,10 +84,8 @@
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Engagement",
-      "action": "S Recognise progress and effective practice during each targeted recovery activity.",
-      "outcomeIds": [
-        "REINF_O2"
-      ],
+      "action": "M Recognise progress and effective practice during each targeted recovery activity.",
+      "outcomeIds": ["REINF_O2"],
       "readinessScore": 2
     },
     {
@@ -108,10 +94,8 @@
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Implementation",
-      "action": "S Use leaders and peers to reinforce desired behaviours.",
-      "outcomeIds": [
-        "REINF_O2"
-      ],
+      "action": "M Use leaders and peers to reinforce desired behaviours.",
+      "outcomeIds": ["REINF_O2"],
       "readinessScore": 2
     },
     {
@@ -120,10 +104,8 @@
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Communication",
-      "action": "S Share relevant success user stories across services.",
-      "outcomeIds": [
-        "REINF_O2"
-      ],
+      "action": "M Share relevant success user stories across services.",
+      "outcomeIds": ["REINF_O2"],
       "readinessScore": 2
     },
     {
@@ -132,10 +114,8 @@
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
       "category": "Measurement & Evaluation",
-      "action": "S Monitor where adoption, confidence or motivation begins to decline.",
-      "outcomeIds": [
-        "REINF_O2"
-      ],
+      "action": "M Monitor where adoption, confidence or motivation begins to decline.",
+      "outcomeIds": ["REINF_O2"],
       "readinessScore": 3
     },
     {
@@ -144,10 +124,8 @@
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
       "category": "Implementation",
-      "action": "S Target reinforcement and support in areas showing regression.",
-      "outcomeIds": [
-        "REINF_O2"
-      ],
+      "action": "M Target reinforcement and support in areas showing regression.",
+      "outcomeIds": ["REINF_O2"],
       "readinessScore": 3
     },
     {
@@ -156,10 +134,8 @@
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
       "category": "Communication",
-      "action": "S Share reinforcement approaches that have worked well elsewhere.",
-      "outcomeIds": [
-        "REINF_O2"
-      ],
+      "action": "M Share reinforcement approaches that have worked well elsewhere.",
+      "outcomeIds": ["REINF_O2"],
       "readinessScore": 3
     },
     {
@@ -168,10 +144,8 @@
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
-      "action": "S Embed recognition and reinforcement in routine team and leadership activity.",
-      "outcomeIds": [
-        "REINF_O3"
-      ],
+      "action": "M Embed recognition and reinforcement in routine team and leadership activity.",
+      "outcomeIds": ["REINF_O3"],
       "readinessScore": 4
     },
     {
@@ -180,10 +154,8 @@
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
-      "action": "S Maintain local peer support after change activity reduces.",
-      "outcomeIds": [
-        "REINF_O3"
-      ],
+      "action": "M Maintain local peer support after change activity reduces.",
+      "outcomeIds": ["REINF_O3"],
       "readinessScore": 4
     },
     {
@@ -192,10 +164,8 @@
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
       "category": "Design",
-      "action": "S Use feedback and adoption evidence to refine reinforcement.",
-      "outcomeIds": [
-        "REINF_O3"
-      ],
+      "action": "M Use feedback and adoption evidence to refine reinforcement.",
+      "outcomeIds": ["REINF_O3"],
       "readinessScore": 4
     },
     {
@@ -204,10 +174,8 @@
       "toStatus": "Emerging",
       "lens": "Process & Sustainment",
       "category": "Governance",
-      "action": "S Review pilot measures, feedback routes and governance for sustaining the process.",
-      "outcomeIds": [
-        "REINF_O1"
-      ],
+      "action": "M Review pilot measures, feedback routes and governance for sustaining the process.",
+      "outcomeIds": ["REINF_O1"],
       "readinessScore": 0
     },
     {
@@ -216,10 +184,8 @@
       "toStatus": "Emerging",
       "lens": "Process & Sustainment",
       "category": "Analysis & Insight",
-      "action": "S Identify gaps in ownership, monitoring and corrective action.",
-      "outcomeIds": [
-        "REINF_O1"
-      ],
+      "action": "M Identify gaps in ownership, monitoring and corrective action.",
+      "outcomeIds": ["REINF_O1"],
       "readinessScore": 0
     },
     {
@@ -228,10 +194,8 @@
       "toStatus": "Emerging",
       "lens": "Process & Sustainment",
       "category": "Analysis & Insight",
-      "action": "S Confirm the process measures that must continue after rollout.",
-      "outcomeIds": [
-        "REINF_O1"
-      ],
+      "action": "M Confirm the process measures that must continue after rollout.",
+      "outcomeIds": ["REINF_O1"],
       "readinessScore": 0
     },
     {
@@ -240,11 +204,8 @@
       "toStatus": "Developing",
       "lens": "Process & Sustainment",
       "category": "Reinforcement",
-      "action": "S Define routine reporting, review and improvement arrangements.",
-      "outcomeIds": [
-        "REINF_O1",
-        "REINF_O3"
-      ],
+      "action": "M Define routine reporting, review and improvement arrangements.",
+      "outcomeIds": ["REINF_O1", "REINF_O3"],
       "readinessScore": 1
     },
     {
@@ -253,10 +214,8 @@
       "toStatus": "Developing",
       "lens": "Process & Sustainment",
       "category": "Design",
-      "action": "S Assign owners for process performance and corrective action.",
-      "outcomeIds": [
-        "REINF_O1"
-      ],
+      "action": "M Assign owners for process performance and corrective action.",
+      "outcomeIds": ["REINF_O1"],
       "readinessScore": 1
     },
     {
@@ -265,10 +224,8 @@
       "toStatus": "Developing",
       "lens": "Process & Sustainment",
       "category": "Governance",
-      "action": "S Agree triggers for intervention when performance or adoption declines.",
-      "outcomeIds": [
-        "REINF_O1"
-      ],
+      "action": "M Agree triggers for intervention when performance or adoption declines.",
+      "outcomeIds": ["REINF_O1"],
       "readinessScore": 1
     },
     {
@@ -277,11 +234,8 @@
       "toStatus": "Embedding",
       "lens": "Process & Sustainment",
       "category": "Reinforcement",
-      "action": "S Start routine process monitoring as each service goes live.",
-      "outcomeIds": [
-        "REINF_O2",
-        "REINF_O3"
-      ],
+      "action": "M Start routine process monitoring as each service goes live.",
+      "outcomeIds": ["REINF_O2", "REINF_O3"],
       "readinessScore": 2
     },
     {
@@ -290,10 +244,8 @@
       "toStatus": "Embedding",
       "lens": "Process & Sustainment",
       "category": "Governance",
-      "action": "S Use feedback and governance reviews to resolve process issues.",
-      "outcomeIds": [
-        "REINF_O2"
-      ],
+      "action": "M Use feedback and governance reviews to resolve process issues.",
+      "outcomeIds": ["REINF_O2"],
       "readinessScore": 2
     },
     {
@@ -302,10 +254,8 @@
       "toStatus": "Embedding",
       "lens": "Process & Sustainment",
       "category": "Measurement & Evaluation",
-      "action": "S Track corrective actions until performance improves.",
-      "outcomeIds": [
-        "REINF_O2"
-      ],
+      "action": "M Track corrective actions until performance improves.",
+      "outcomeIds": ["REINF_O2"],
       "readinessScore": 2
     },
     {
@@ -314,10 +264,8 @@
       "toStatus": "Adopted",
       "lens": "Process & Sustainment",
       "category": "Measurement & Evaluation",
-      "action": "S Compare process performance and recurring issues across services.",
-      "outcomeIds": [
-        "REINF_O2"
-      ],
+      "action": "M Compare process performance and recurring issues across services.",
+      "outcomeIds": ["REINF_O2"],
       "readinessScore": 3
     },
     {
@@ -326,10 +274,8 @@
       "toStatus": "Adopted",
       "lens": "Process & Sustainment",
       "category": "Implementation",
-      "action": "S Apply targeted improvements where standards or outcomes vary.",
-      "outcomeIds": [
-        "REINF_O2"
-      ],
+      "action": "M Apply targeted improvements where standards or outcomes vary.",
+      "outcomeIds": ["REINF_O2"],
       "readinessScore": 3
     },
     {
@@ -338,10 +284,8 @@
       "toStatus": "Adopted",
       "lens": "Process & Sustainment",
       "category": "Communication",
-      "action": "S Share effective corrective actions and process improvements.",
-      "outcomeIds": [
-        "REINF_O2"
-      ],
+      "action": "M Share effective corrective actions and process improvements.",
+      "outcomeIds": ["REINF_O2"],
       "readinessScore": 3
     },
     {
@@ -350,10 +294,8 @@
       "toStatus": "Thriving",
       "lens": "Process & Sustainment",
       "category": "Reinforcement",
-      "action": "S Embed sustainment measures and governance in operational routines.",
-      "outcomeIds": [
-        "REINF_O3"
-      ],
+      "action": "M Embed sustainment measures and governance in operational routines.",
+      "outcomeIds": ["REINF_O3"],
       "readinessScore": 4
     },
     {
@@ -362,10 +304,8 @@
       "toStatus": "Thriving",
       "lens": "Process & Sustainment",
       "category": "Implementation",
-      "action": "S Use performance, feedback and adoption evidence to drive improvement.",
-      "outcomeIds": [
-        "REINF_O3"
-      ],
+      "action": "M Use performance, feedback and adoption evidence to drive improvement.",
+      "outcomeIds": ["REINF_O3"],
       "readinessScore": 4
     },
     {
@@ -374,10 +314,8 @@
       "toStatus": "Thriving",
       "lens": "Process & Sustainment",
       "category": "Reinforcement",
-      "action": "S Optimise the process as service needs and evidence change.",
-      "outcomeIds": [
-        "REINF_O3"
-      ],
+      "action": "M Optimise the process as service needs and evidence change.",
+      "outcomeIds": ["REINF_O3"],
       "readinessScore": 4
     }
   ]

@@ -1317,7 +1317,7 @@ export function ProjectDetailsPage({
           <p className={`text-sm mt-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
             Define your Stakeholder Groups, Sub-Groups, Departments and Relationships here for use
             in the Stakeholder Analysis Tool and for consistency of stakeholder records throughout
-            the Adoption Engine
+            the Adoption Engine. *Todo: Copy needed to explain why this is needed.*
           </p>
         </div>
 
@@ -1485,8 +1485,8 @@ export function ProjectDetailsPage({
                   {TOOLKIT_BASE_DEFAULTS.url})
                 </p>
                 <p className="mt-1">
-                  Default Change Management Link: the original NHS Future link defined per
-                  guidance item.
+                  Default Change Management Link: the original NHS Future link defined per guidance
+                  item.
                 </p>
               </div>
 
@@ -1723,10 +1723,11 @@ export function ProjectDetailsPage({
                   Set the "Further Reading" link shown on each component's overview panel, and
                   override any of its individual guidance links. Each link shows whether it
                   currently points at the <strong>Default Change Management Link</strong> (the
-                  original NHS Future link), <strong>{profile.projectName || 'Project'} Homepage</strong>{' '}
-                  (your organisation's override above), or a <strong>Custom</strong> URL you've set
-                  - click the pencil to change it. Additional links can be hidden from Settings if
-                  you only want the essentials.
+                  original NHS Future link),{' '}
+                  <strong>{profile.projectName || 'Project'} Homepage</strong> (your organisation's
+                  override above), or a <strong>Custom</strong> URL you've set - click the pencil to
+                  change it. Additional links can be hidden from Settings if you only want the
+                  essentials.
                 </p>
                 {components.map((component) => {
                   const sectionLinks = getGuidanceLinksForComponent(component.id);
@@ -1784,7 +1785,9 @@ export function ProjectDetailsPage({
                             id={`further-reading-${component.id}`}
                             value={profile.componentFurtherReading?.[component.id]}
                             defaultUrl={DEFAULT_FURTHER_READING[component.id]}
-                            onChange={(url) => handleComponentFurtherReadingChange(component.id, url)}
+                            onChange={(url) =>
+                              handleComponentFurtherReadingChange(component.id, url)
+                            }
                             darkMode={darkMode}
                           />
                         </div>

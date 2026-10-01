@@ -24,10 +24,8 @@
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
-      "action": "S Review concerns, resistance themes and trust issues identified during the pilot.",
-      "outcomeIds": [
-        "RES_O1"
-      ],
+      "action": "M Review concerns, resistance themes and trust issues identified during the pilot.",
+      "outcomeIds": ["RES_O1"],
       "readinessScore": 0
     },
     {
@@ -36,10 +34,8 @@
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
-      "action": "S Identify which concerns are likely to recur in future rollout areas.",
-      "outcomeIds": [
-        "RES_O1"
-      ],
+      "action": "M Identify which concerns are likely to recur in future rollout areas.",
+      "outcomeIds": ["RES_O1"],
       "readinessScore": 0
     },
     {
@@ -48,10 +44,8 @@
       "toStatus": "Emerging",
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
-      "action": "S Gather local insight on new barriers, perceptions and previous change experience.",
-      "outcomeIds": [
-        "RES_O1"
-      ],
+      "action": "M Gather local insight on new barriers, perceptions and previous change experience.",
+      "outcomeIds": ["RES_O1"],
       "readinessScore": 0
     },
     {
@@ -60,10 +54,8 @@
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
       "category": "Design",
-      "action": "S Develop targeted responses for each major concern or stakeholder group.",
-      "outcomeIds": [
-        "RES_O1"
-      ],
+      "action": "M Develop targeted responses for each major concern or stakeholder group.",
+      "outcomeIds": ["RES_O1"],
       "readinessScore": 1
     },
     {
@@ -72,10 +64,8 @@
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
       "category": "Governance",
-      "action": "S Agree how leaders, peers and change network members will respond.",
-      "outcomeIds": [
-        "RES_O1"
-      ],
+      "action": "M Agree how leaders, peers and change network members will respond.",
+      "outcomeIds": ["RES_O1"],
       "readinessScore": 1
     },
     {
@@ -84,10 +74,8 @@
       "toStatus": "Developing",
       "lens": "People Experience & Culture",
       "category": "Design",
-      "action": "S Test responses with stakeholders from a future rollout service.",
-      "outcomeIds": [
-        "RES_O1"
-      ],
+      "action": "M Test responses with stakeholders from a future rollout service.",
+      "outcomeIds": ["RES_O1"],
       "readinessScore": 1
     },
     {
@@ -96,10 +84,8 @@
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Implementation",
-      "action": "S Use trusted messengers to address concerns before and during rollout.",
-      "outcomeIds": [
-        "RES_O2"
-      ],
+      "action": "M Use trusted messengers to address concerns before and during rollout.",
+      "outcomeIds": ["RES_O2"],
       "readinessScore": 2
     },
     {
@@ -108,10 +94,8 @@
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Governance",
-      "action": "S Record and escalate recurring concerns through agreed routes.",
-      "outcomeIds": [
-        "RES_O2"
-      ],
+      "action": "M Record and escalate recurring concerns through agreed routes.",
+      "outcomeIds": ["RES_O2"],
       "readinessScore": 2
     },
     {
@@ -120,10 +104,8 @@
       "toStatus": "Embedding",
       "lens": "People Experience & Culture",
       "category": "Engagement",
-      "action": "S Act quickly on practical issues that are driving resistance.",
-      "outcomeIds": [
-        "RES_O2"
-      ],
+      "action": "M Act quickly on practical issues that are driving resistance.",
+      "outcomeIds": ["RES_O2"],
       "readinessScore": 2
     },
     {
@@ -132,10 +114,8 @@
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
       "category": "Analysis & Insight",
-      "action": "S Review resistance themes and response effectiveness across services.",
-      "outcomeIds": [
-        "RES_O2"
-      ],
+      "action": "M Review resistance themes and response effectiveness across services.",
+      "outcomeIds": ["RES_O2"],
       "readinessScore": 3
     },
     {
@@ -144,10 +124,8 @@
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
       "category": "Measurement & Evaluation",
-      "action": "S Target additional engagement where concerns continue to affect adoption.",
-      "outcomeIds": [
-        "RES_O2"
-      ],
+      "action": "M Target additional engagement where concerns continue to affect adoption.",
+      "outcomeIds": ["RES_O2"],
       "readinessScore": 3
     },
     {
@@ -156,10 +134,8 @@
       "toStatus": "Adopted",
       "lens": "People Experience & Culture",
       "category": "Communication",
-      "action": "S Share successful responses and learning with future rollout teams.",
-      "outcomeIds": [
-        "RES_O2"
-      ],
+      "action": "M Share successful responses and learning with future rollout teams.",
+      "outcomeIds": ["RES_O2"],
       "readinessScore": 3
     },
     {
@@ -168,10 +144,8 @@
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
       "category": "Reinforcement",
-      "action": "S Maintain routine listening channels after rollout support reduces.",
-      "outcomeIds": [
-        "RES_O3"
-      ],
+      "action": "M Maintain routine listening channels after rollout support reduces.",
+      "outcomeIds": ["RES_O3"],
       "readinessScore": 4
     },
     {
@@ -180,10 +154,8 @@
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
       "category": "Implementation",
-      "action": "S Use resistance insight to improve processes, support and communication.",
-      "outcomeIds": [
-        "RES_O3"
-      ],
+      "action": "M Use resistance insight to improve processes, support and communication.",
+      "outcomeIds": ["RES_O3"],
       "readinessScore": 4
     },
     {
@@ -192,10 +164,8 @@
       "toStatus": "Thriving",
       "lens": "People Experience & Culture",
       "category": "Design",
-      "action": "S Build early identification of concerns into future change activity.",
-      "outcomeIds": [
-        "RES_O3"
-      ],
+      "action": "M Build early identification of concerns into future change activity.",
+      "outcomeIds": ["RES_O3"],
       "readinessScore": 4
     },
     {
@@ -204,10 +174,8 @@
       "toStatus": "Emerging",
       "lens": "Skills & Behaviour",
       "category": "Implementation",
-      "action": "S Review pilot barriers linked to skills, confidence, workflow fit and practical use.",
-      "outcomeIds": [
-        "RES_O1"
-      ],
+      "action": "M Review pilot barriers linked to skills, confidence, workflow fit and practical use.",
+      "outcomeIds": ["RES_O1"],
       "readinessScore": 0
     },
     {
@@ -216,10 +184,8 @@
       "toStatus": "Emerging",
       "lens": "Skills & Behaviour",
       "category": "Analysis & Insight",
-      "action": "S Separate capability gaps from technology, process or value concerns.",
-      "outcomeIds": [
-        "RES_O1"
-      ],
+      "action": "M Separate capability gaps from technology, process or value concerns.",
+      "outcomeIds": ["RES_O1"],
       "readinessScore": 0
     },
     {
@@ -228,11 +194,8 @@
       "toStatus": "Emerging",
       "lens": "Skills & Behaviour",
       "category": "Analysis & Insight",
-      "action": "S Identify roles and services likely to need additional practice or coaching.",
-      "outcomeIds": [
-        "RES_O1",
-        "RES_O2"
-      ],
+      "action": "M Identify roles and services likely to need additional practice or coaching.",
+      "outcomeIds": ["RES_O1", "RES_O2"],
       "readinessScore": 0
     },
     {
@@ -241,10 +204,8 @@
       "toStatus": "Developing",
       "lens": "Skills & Behaviour",
       "category": "Design",
-      "action": "S Define targeted learning and support for each identified barrier.",
-      "outcomeIds": [
-        "RES_O1"
-      ],
+      "action": "M Define targeted learning and support for each identified barrier.",
+      "outcomeIds": ["RES_O1"],
       "readinessScore": 1
     },
     {
@@ -253,11 +214,8 @@
       "toStatus": "Developing",
       "lens": "Skills & Behaviour",
       "category": "Governance",
-      "action": "S Agree who will provide coaching, opportunities for practice and local reinforcement.",
-      "outcomeIds": [
-        "RES_O1",
-        "RES_O2"
-      ],
+      "action": "M Agree who will provide coaching, opportunities for practice and local reinforcement.",
+      "outcomeIds": ["RES_O1", "RES_O2"],
       "readinessScore": 1
     },
     {
@@ -266,10 +224,8 @@
       "toStatus": "Developing",
       "lens": "Skills & Behaviour",
       "category": "Implementation",
-      "action": "S Test support activities with users from a future rollout area.",
-      "outcomeIds": [
-        "RES_O1"
-      ],
+      "action": "M Test support activities with users from a future rollout area.",
+      "outcomeIds": ["RES_O1"],
       "readinessScore": 1
     },
     {
@@ -278,10 +234,8 @@
       "toStatus": "Embedding",
       "lens": "Skills & Behaviour",
       "category": "Implementation",
-      "action": "S Provide practical coaching and at the elbow support during rollout.",
-      "outcomeIds": [
-        "RES_O2"
-      ],
+      "action": "M Provide practical coaching and at the elbow support during rollout.",
+      "outcomeIds": ["RES_O2"],
       "readinessScore": 2
     },
     {
@@ -290,10 +244,8 @@
       "toStatus": "Embedding",
       "lens": "Skills & Behaviour",
       "category": "Measurement & Evaluation",
-      "action": "S Track whether identified barriers reduce as capability develops.",
-      "outcomeIds": [
-        "RES_O2"
-      ],
+      "action": "M Track whether identified barriers reduce as capability develops.",
+      "outcomeIds": ["RES_O2"],
       "readinessScore": 2
     },
     {
@@ -302,10 +254,8 @@
       "toStatus": "Embedding",
       "lens": "Skills & Behaviour",
       "category": "Governance",
-      "action": "S Escalate process or technology issues that training cannot resolve.",
-      "outcomeIds": [
-        "RES_O2"
-      ],
+      "action": "M Escalate process or technology issues that training cannot resolve.",
+      "outcomeIds": ["RES_O2"],
       "readinessScore": 2
     },
     {
@@ -314,10 +264,8 @@
       "toStatus": "Adopted",
       "lens": "Skills & Behaviour",
       "category": "Measurement & Evaluation",
-      "action": "S Compare capability and behaviour barriers across rollout areas.",
-      "outcomeIds": [
-        "RES_O2"
-      ],
+      "action": "M Compare capability and behaviour barriers across rollout areas.",
+      "outcomeIds": ["RES_O2"],
       "readinessScore": 3
     },
     {
@@ -326,10 +274,8 @@
       "toStatus": "Adopted",
       "lens": "Skills & Behaviour",
       "category": "Implementation",
-      "action": "S Adapt coaching and support where practice remains inconsistent.",
-      "outcomeIds": [
-        "RES_O2"
-      ],
+      "action": "M Adapt coaching and support where practice remains inconsistent.",
+      "outcomeIds": ["RES_O2"],
       "readinessScore": 3
     },
     {
@@ -338,10 +284,8 @@
       "toStatus": "Adopted",
       "lens": "Skills & Behaviour",
       "category": "Communication",
-      "action": "S Share approaches that have improved confidence and effective use.",
-      "outcomeIds": [
-        "RES_O2"
-      ],
+      "action": "M Share approaches that have improved confidence and effective use.",
+      "outcomeIds": ["RES_O2"],
       "readinessScore": 3
     },
     {
@@ -350,10 +294,8 @@
       "toStatus": "Thriving",
       "lens": "Skills & Behaviour",
       "category": "Reinforcement",
-      "action": "S Embed coaching, peer support and refresher learning in business as usual.",
-      "outcomeIds": [
-        "RES_O3"
-      ],
+      "action": "M Embed coaching, peer support and refresher learning in business as usual.",
+      "outcomeIds": ["RES_O3"],
       "readinessScore": 4
     },
     {
@@ -362,10 +304,8 @@
       "toStatus": "Thriving",
       "lens": "Skills & Behaviour",
       "category": "Measurement & Evaluation",
-      "action": "S Monitor capability evidence and intervene before poor practice becomes embedded.",
-      "outcomeIds": [
-        "RES_O3"
-      ],
+      "action": "M Monitor capability evidence and intervene before poor practice becomes embedded.",
+      "outcomeIds": ["RES_O3"],
       "readinessScore": 4
     },
     {
@@ -374,10 +314,8 @@
       "toStatus": "Thriving",
       "lens": "Skills & Behaviour",
       "category": "Implementation",
-      "action": "S Use learning from recurring barriers to improve future onboarding.",
-      "outcomeIds": [
-        "RES_O3"
-      ],
+      "action": "M Use learning from recurring barriers to improve future onboarding.",
+      "outcomeIds": ["RES_O3"],
       "readinessScore": 4
     }
   ]

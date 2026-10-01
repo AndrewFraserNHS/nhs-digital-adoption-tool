@@ -112,6 +112,8 @@ describe('adoptionMetrics', () => {
           totalLenses: 3,
           onTrackComponents: 1,
           actionCompletionPct: 50,
+          cancelledActions: 0,
+          skippedActions: 0,
           rag: 'Amber',
         },
       ],
@@ -458,6 +460,33 @@ describe('adoptionMetrics', () => {
     // assert
     expect(chartData.labels).toEqual(['Vision', 'Benefits']);
     expect(chartData.datasets[0].data).toEqual([0, 2]);
+  });
+
+  it('SHOULD count cancelled and skipped actions per phase separately from the completion percentage', () => {
+    // arrange - a cancelled action still counts towards the total; a skipped one is excluded entirely
+    const storeWithCancelledAndSkipped: AdoptionStore = {
+      ...store,
+      currentDraft: {
+        ...store.currentDraft,
+        vision: {
+          ...store.currentDraft.vision,
+          'Lens A': {
+            ...store.currentDraft.vision['Lens A'],
+            actions: [
+              { id: '1', text: 'Action A', owner: 'Alex', timescale: 'Q3', status: 'Cancelled' },
+              { id: '3', text: 'Action C', owner: 'Alex', timescale: 'Q3', status: 'Skipped' },
+            ],
+          },
+        },
+      },
+    };
+
+    // act
+    const result = getMetrics(storeWithCancelledAndSkipped, components);
+
+    // assert
+    expect(result.phaseSummaries[0].cancelledActions).toBe(1);
+    expect(result.phaseSummaries[0].skippedActions).toBe(1);
   });
 
   it('SHOULD only draw the automatic target line by default', () => {

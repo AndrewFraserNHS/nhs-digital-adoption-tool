@@ -11,7 +11,7 @@ import {
   type RadarTargetMode,
 } from '@lib/adoptionMetrics';
 import { createBarChart, createRadarChart } from '@lib/charts';
-import { getReadinessBand } from '@lib/readinessBands';
+import { getReadinessBand, READINESS_BANDS } from '@lib/readinessBands';
 import { PHASE_NAMES } from '../../types/constants';
 
 import ChangeAdoptionBaselineReviewApp from '@pages/ChangeAdoptionBaselineReviewApp';
@@ -108,6 +108,22 @@ function RadarHelpIcon({ darkMode }: { darkMode: boolean }): JSX.Element {
           </ul>
         </div>
       ) : null}
+    </div>
+  );
+}
+
+/** Colour key for the readiness bands used on the radar (Not Started through Thriving) - matches the key on the main dashboard's component radar. */
+function ReadinessColorLegend({ darkMode }: { darkMode: boolean }): JSX.Element {
+  return (
+    <div
+      className={`mt-4 flex flex-wrap justify-center gap-x-4 gap-y-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+    >
+      {READINESS_BANDS.map((band) => (
+        <div key={band.score} className="flex items-center">
+          <span className="mr-2 h-3 w-3 rounded-full" style={{ backgroundColor: band.color }} />
+          <span>{band.label}</span>
+        </div>
+      ))}
     </div>
   );
 }
@@ -504,6 +520,7 @@ export function WhereAmINowPage({
               >
                 <canvas ref={byComponentCanvasRef} className="block h-full w-full" />
               </div>
+              <ReadinessColorLegend darkMode={darkMode} />
 
               <p className={`mt-4 text-center text-sm italic ${textClass}`}>
                 {nextUnderdevelopedComponent
@@ -558,6 +575,7 @@ export function WhereAmINowPage({
               >
                 <canvas ref={byLensCanvasRef} className="block h-full w-full" />
               </div>
+              <ReadinessColorLegend darkMode={darkMode} />
             </>
           ) : null}
 

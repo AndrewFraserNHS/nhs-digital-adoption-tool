@@ -68,7 +68,7 @@ function getRoadmapStatus(
 
   if (pathwayStatus.status === 'off-track') {
     return {
-      label: `Off track (${pathwayStatus.completionPct}% checklist)`,
+      label: 'Off track',
       rowClass: darkMode ? 'border-red-700 bg-red-950/45' : 'border-red-200 bg-red-50',
       chipClass: darkMode ? 'bg-red-900 text-red-100' : 'bg-red-100 text-red-700',
       barClass: 'bg-red-500',
@@ -77,7 +77,7 @@ function getRoadmapStatus(
 
   if (pathwayStatus.status === 'attention') {
     return {
-      label: `Needs attention (${pathwayStatus.completionPct}% checklist)`,
+      label: 'Needs attention',
       rowClass: darkMode ? 'border-amber-700 bg-amber-950/45' : 'border-amber-200 bg-amber-50',
       chipClass: darkMode ? 'bg-amber-900 text-amber-100' : 'bg-amber-100 text-amber-700',
       barClass: 'bg-amber-500',
@@ -86,7 +86,7 @@ function getRoadmapStatus(
 
   if (average >= component.target) {
     return {
-      label: `On track (${pathwayStatus.completionPct}% checklist)`,
+      label: 'On track',
       rowClass: darkMode ? 'border-green-700 bg-green-950/45' : 'border-green-200 bg-green-50',
       chipClass: darkMode ? 'bg-green-900 text-green-100' : 'bg-green-100 text-green-700',
       barClass: 'bg-green-500',
@@ -182,7 +182,7 @@ export function GuidanceRoadmapView({
       />
 
       <div className="lg:hidden space-y-3">
-        {rows.map(({ component, average, status }) => (
+        {rows.map(({ component, status }) => (
           <button
             key={`mobile-${component.id}`}
             type="button"
@@ -207,10 +207,9 @@ export function GuidanceRoadmapView({
             </div>
             <div className="mt-3">
               <div
-                className={`mb-1 flex items-center justify-between text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+                className={`mb-1 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
               >
                 <span>Timeline</span>
-                <span>Average {average}</span>
               </div>
               <div className="grid grid-cols-5 gap-1">
                 {PHASES.map((phase) => {
@@ -249,7 +248,7 @@ export function GuidanceRoadmapView({
       >
         <div className="min-w-[860px]">
           <div
-            className={`grid grid-cols-[230px_repeat(5,minmax(92px,1fr))_90px_115px] gap-2 border-b pb-3 text-xs font-semibold uppercase tracking-wider ${darkMode ? 'border-slate-700 text-slate-400' : 'border-slate-200 text-slate-500'}`}
+            className={`grid grid-cols-[230px_repeat(5,minmax(92px,1fr))_115px] gap-2 border-b pb-3 text-xs font-semibold uppercase tracking-wider ${darkMode ? 'border-slate-700 text-slate-400' : 'border-slate-200 text-slate-500'}`}
           >
             <div>Component</div>
             {PHASES.map((phase) => (
@@ -257,17 +256,16 @@ export function GuidanceRoadmapView({
                 Phase {phase}
               </div>
             ))}
-            <div className="text-center">Average</div>
             <div className="text-center">Status</div>
           </div>
 
           <div className="mt-4 space-y-3">
-            {rows.map(({ component, average, status }) => (
+            {rows.map(({ component, status }) => (
               <button
                 key={component.id}
                 type="button"
                 onClick={() => onComponentClick(component.id)}
-                className={`grid w-full grid-cols-[230px_repeat(5,minmax(92px,1fr))_90px_115px] gap-2 rounded-xl border p-2.5 text-left transition-colors ${darkMode ? 'hover:border-slate-500' : 'hover:border-slate-300'} ${status.rowClass}`}
+                className={`grid w-full grid-cols-[230px_repeat(5,minmax(92px,1fr))_115px] gap-2 rounded-xl border p-2.5 text-left transition-colors ${darkMode ? 'hover:border-slate-500' : 'hover:border-slate-300'} ${status.rowClass}`}
               >
                 <div>
                   <div
@@ -305,11 +303,6 @@ export function GuidanceRoadmapView({
                   );
                 })}
 
-                <div
-                  className={`flex items-center justify-center text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}
-                >
-                  {average}
-                </div>
                 <div className="flex items-center justify-center">
                   <span
                     className={`rounded-full text-center px-2.5 py-1 text-xs font-semibold ${status.chipClass}`}

@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { applyAvtPreset, AVT_PRESET } from './avtPreset';
 
 describe('applyAvtPreset', () => {
-  it('SHOULD set the preset Core Links and reset Change Adoption Baseline questions to the built-in defaults', () => {
+  it('SHOULD set the preset Core Links and reset Change Adoption Baseline (CAB) questions to the built-in defaults', () => {
     const profile: OrgProfile = {
       ...initializeStore({}).orgProfile,
       coreLinks: [{ key: 'existing', label: 'Old link', url: 'https://old.example', type: 'core' }],

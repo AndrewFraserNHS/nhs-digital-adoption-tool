@@ -15,7 +15,7 @@ export const READINESS_BANDS: ReadinessBand[] = [
   { score: 1, label: 'Emerging', color: '#fcf229' },
   { score: 2, label: 'Developing', color: '#d18410' },
   { score: 3, label: 'Embedding', color: '#4D7EA8' },
-  { score: 4, label: 'Adopted', color: '#9E90A2' },
+  { score: 4, label: 'Adopted', color: '#9a62aa' },
   { score: 5, label: 'Thriving', color: '#1522b0' },
 ];
 

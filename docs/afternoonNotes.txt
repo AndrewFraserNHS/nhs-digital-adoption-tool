@@ -1,7 +1,7 @@
 1. Live delivery progress kept, new wording is action count. Keep it up. Remove third card.
 2. Phase Progress needs explanation as to the RAG status.
 3. Phase Progress subtitle copy needs to remove 100% lens coverage, highlight amount of actions cancelled and skipped. 
-4. Key is missing on Adoption Baseline page, with colours hihglighted.
+4. Key is missing on Adoption Baseline page, with colours higlighted.
 5. Swap colours for Thriving and Embedding.
 6. Action tracker needs to be clickable into the action modal
 7. Remove average column from action tracker. and 100% checklist copy.
@@ -14,3 +14,5 @@
 14. 4. Key Risks and Issues should come from RAID log on Highlight Builder. (Don't let them input from highlight builder)
 15. First of the month, "Do you want to update anyone on progress?", reminder to send across JSON CST and Audit PDF, can be done manually in profile.
 16. Show external links section and Show change adoption baseline section swapped for "Show admin action" toggle that is off by default.
+17. (Optional) Currently tracking Phase 3: Development (set manually) doesn't seem to match question 2. Needs to align on metrics dashboard.
+18. Questions initiatiated has broken, needs to align with profile set up. Likely due to swap to admin toggle, so these toggles can be removed.

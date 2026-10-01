@@ -220,7 +220,7 @@ export default function ChangeAdoptionBaselineAnalysisApp({
             );
         const parsed = JSON.parse(jsonText);
         if (!isReadinessReviewReport(parsed)) {
-          setImportError('This file does not look like a Change Adoption Baseline report.');
+          setImportError('This file does not look like a Change Adoption Baseline (CAB) report.');
           return;
         }
         // Held only in this component's state - never written to localStorage or the CST, so it
@@ -228,7 +228,7 @@ export default function ChangeAdoptionBaselineAnalysisApp({
         setImportedReport(parsed);
       } catch (_error) {
         setImportError(
-          'Could not read this file. Please check it is a valid Change Adoption Baseline export.'
+          'Could not read this file. Please check it is a valid Change Adoption Baseline (CAB) export.'
         );
       }
     };
@@ -238,10 +238,12 @@ export default function ChangeAdoptionBaselineAnalysisApp({
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-slate-800">Change Adoption Baseline Analysis</h2>
+        <h2 className="text-2xl font-bold text-slate-800">
+          Change Adoption Baseline (CAB) Analysis
+        </h2>
         <p className="mt-2 text-sm text-slate-600">
-          Review your own Change Adoption Baseline answers, or import a report someone else emailed you to
-          see their answers and maturity radar.
+          Review your own Change Adoption Baseline (CAB) answers, or import a report someone else
+          emailed you to see their answers and maturity radar.
         </p>
       </div>
 
@@ -288,7 +290,7 @@ export default function ChangeAdoptionBaselineAnalysisApp({
               htmlFor="readiness-import-file"
               className="block text-sm font-medium text-slate-700 mb-2"
             >
-              Import a Change Adoption Baseline report (.json, or the saved .eml)
+              Import a Change Adoption Baseline (CAB) report (.json, or the saved .eml)
             </label>
             <p className="mb-2 text-xs text-slate-500">
               Only held for this session - it is never saved to your project, and disappears if you

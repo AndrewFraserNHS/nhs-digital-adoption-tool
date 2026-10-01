@@ -928,7 +928,7 @@ export function computeReadinessOutcome(
   return { suggestions, skipToPhase, readyComponentIds, selfAssessedPhase, behindLenses };
 }
 
-/** Where the last completed Change Adoption Baseline's frozen report snapshot is saved - shared between `ChangeAdoptionBaselineReviewApp` (writes it on Finish) and `ChangeAdoptionBaselineAnalysisApp` (reads it for "My Answers"). */
+/** Where the last completed Change Adoption Baseline (CAB)'s frozen report snapshot is saved - shared between `ChangeAdoptionBaselineReviewApp` (writes it on Finish) and `ChangeAdoptionBaselineAnalysisApp` (reads it for "My Answers"). */
 export const READINESS_REVIEW_REPORT_STORAGE_KEY = 'nhs-readiness-review-report';
 
 /** One answered question, frozen into a report: everything needed to display or re-derive a radar from it later, independent of the live question bank or CST. */
@@ -972,9 +972,9 @@ export interface ReadinessReviewRadarSnapshot {
 }
 
 /**
- * A full, frozen snapshot of one completed Change Adoption Baseline - every answered question plus the
+ * A full, frozen snapshot of one completed Change Adoption Baseline (CAB) - every answered question plus the
  * outcome computed from them at the time. Used both for the emailed JSON attachment and for the
- * "Change Adoption Baseline Analysis" tool's "My Answers" view, and is exactly the shape an "Import
+ * "Change Adoption Baseline (CAB) Analysis" tool's "My Answers" view, and is exactly the shape an "Import
  * External Answers" file is expected to be in, so both views can share one renderer.
  */
 export interface ReadinessReviewReport extends ReadinessReviewTrustDetails {

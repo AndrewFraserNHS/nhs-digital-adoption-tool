@@ -13,7 +13,7 @@ function getEntry(): DraftEntry {
 }
 
 describe('WhereAmINowPage', () => {
-  it('SHOULD show the Change Adoption Baseline as the top section instead of a phase picker', () => {
+  it('SHOULD show the Change Adoption Baseline (CAB) as the top section instead of a phase picker', () => {
     // arrange
     render(
       <WhereAmINowPage
@@ -28,7 +28,7 @@ describe('WhereAmINowPage', () => {
     );
 
     // assert
-    expect(screen.getByText('Change Adoption Baseline')).toBeInTheDocument();
+    expect(screen.getByText('Change Adoption Baseline (CAB)')).toBeInTheDocument();
     expect(screen.queryByText('Which of these is true for you?')).not.toBeInTheDocument();
     expect(screen.getByText(/Please fill out the remaining details/)).toBeInTheDocument();
   });

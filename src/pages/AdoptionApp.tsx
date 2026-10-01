@@ -920,12 +920,12 @@ export function AdoptionApp() {
         auditLog: trimAuditEvents([
           ...(prev.auditLog || []),
           createAuditEvent({
-            actor: 'Change Adoption Baseline',
+            actor: 'Change Adoption Baseline (CAB)',
             eventType: 'readiness-evaluated',
             entityType: 'readiness',
             summary: details.skipped
               ? 'Adoption Baseline skipped - starting at Phase 1'
-              : 'Change Adoption Baseline Evaluation',
+              : 'Change Adoption Baseline (CAB) Evaluation',
             trustName: prev.orgProfile.trustName,
             projectName: prev.orgProfile.projectName,
             after: {
@@ -1631,7 +1631,7 @@ export function AdoptionApp() {
                                   : v === 'benefits'
                                     ? 'Benefits Register & Tracker'
                                     : v === 'readiness-review-analysis'
-                                      ? 'Change Adoption Baseline Analysis'
+                                      ? 'Change Adoption Baseline (CAB) Analysis'
                                       : 'Audit Log'}
                     </button>
                   ))}
@@ -1797,7 +1797,7 @@ export function AdoptionApp() {
             >
               <span>
                 You&apos;re not signed in as anyone, so changes are locked. Go to Project Profile
-                and set &quot;You are signed in as&quot; to your name.
+                and update &quot;Team Members&quot; to align with your name.
               </span>
               <button
                 type="button"

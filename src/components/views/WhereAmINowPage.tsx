@@ -346,11 +346,11 @@ export function WhereAmINowPage({
     <div className="max-w-6xl mx-auto space-y-6">
       <div>
         <h2 className={`text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
-          Change Adoption Baseline (Where are we now?)
+          Change Adoption Baseline (CAB) (Where are we now?)
         </h2>
         <p className={`mt-2 text-sm ${textClass}`}>
-          Complete the change adoption baseline to assess your readiness by component and determine which of
-          the five change phases you're currently in.
+          Complete the change adoption baseline to assess your readiness by component and determine
+          which of the five change phases you're currently in.
         </p>
       </div>
 
@@ -362,7 +362,7 @@ export function WhereAmINowPage({
             <h3
               className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
             >
-              Change Adoption Baseline
+              Change Adoption Baseline (CAB)
             </h3>
             <p className={`mt-1 text-sm ${textClass}`}>
               Answer a short set of questions about your programme - your answers can update your

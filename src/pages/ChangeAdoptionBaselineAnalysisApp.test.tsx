@@ -70,7 +70,9 @@ describe('ChangeAdoptionBaselineAnalysisApp', () => {
     fireEvent.click(screen.getByRole('tab', { name: 'Import External Answers' }));
 
     const file = new File([JSON.stringify(REPORT)], 'report.json', { type: 'application/json' });
-    const input = screen.getByLabelText(/Import a Change Adoption Baseline report/) as HTMLInputElement;
+    const input = screen.getByLabelText(
+      /Import a Change Adoption Baseline (CAB) report/
+    ) as HTMLInputElement;
     fireEvent.change(input, { target: { files: [file] } });
 
     await waitFor(() => expect(screen.getByText('Test Trust')).toBeInTheDocument());
@@ -80,7 +82,7 @@ describe('ChangeAdoptionBaselineAnalysisApp', () => {
     expect(screen.queryByText('Test Trust')).not.toBeInTheDocument();
   });
 
-  it('SHOULD reject a file that is not a Change Adoption Baseline report', async () => {
+  it('SHOULD reject a file that is not a Change Adoption Baseline (CAB) report', async () => {
     render(<ChangeAdoptionBaselineAnalysisApp components={COMPONENTS} />);
 
     fireEvent.click(screen.getByRole('tab', { name: 'Import External Answers' }));
@@ -88,11 +90,15 @@ describe('ChangeAdoptionBaselineAnalysisApp', () => {
     const file = new File([JSON.stringify({ notAReport: true })], 'bad.json', {
       type: 'application/json',
     });
-    const input = screen.getByLabelText(/Import a Change Adoption Baseline report/) as HTMLInputElement;
+    const input = screen.getByLabelText(
+      /Import a Change Adoption Baseline (CAB) report/
+    ) as HTMLInputElement;
     fireEvent.change(input, { target: { files: [file] } });
 
     await waitFor(() =>
-      expect(screen.getByText(/does not look like a Change Adoption Baseline report/)).toBeInTheDocument()
+      expect(
+        screen.getByText(/does not look like a Change Adoption Baseline (CAB) report/)
+      ).toBeInTheDocument()
     );
   });
 
@@ -108,7 +114,9 @@ describe('ChangeAdoptionBaselineAnalysisApp', () => {
       ],
     });
 
-    const input = screen.getByLabelText(/Import a Change Adoption Baseline report/) as HTMLInputElement;
+    const input = screen.getByLabelText(
+      /Import a Change Adoption Baseline (CAB) report/
+    ) as HTMLInputElement;
     fireEvent.change(input, {
       target: { files: [new File([eml], 'report.eml', { type: 'message/rfc822' })] },
     });

@@ -1,6 +1,6 @@
 # Developer handover
 
-A React 18 + TypeScript + Vite single-page app (hash-routed, deployed to GitHub Pages with `base: './'`). Everything runs in the browser; there is no backend. Data lives in `localStorage` and moves between people as exported JSON (plus a PDF/`.eml` bundle for the Change Adoption Baseline).
+A React 18 + TypeScript + Vite single-page app (hash-routed, deployed to GitHub Pages with `base: './'`). Everything runs in the browser; there is no backend. Data lives in `localStorage` and moves between people as exported JSON (plus a PDF/`.eml` bundle for the Change Adoption Baseline (CAB)).
 
 Older material in this folder (the `.docx` technical spec and user guide, and the V5.20 `.html` tool) predates the React rebuild - treat it as background, not as a description of the code.
 
@@ -28,7 +28,7 @@ src/main.tsx -> App.tsx (HashRouter: /adoption, /compare, /force-field-analysis,
                         holds the AdoptionStore, persistence, import/export, audit log, sign-in guard
 ```
 
-- **Views vs tools.** Most tools (RAID log, Benefits, Stakeholder analysis, Change impact, Force field, Highlight builder, Change Adoption Baseline Analysis, Audit log, ...) are rendered _inside_ `AdoptionApp` as `view`s. Only Compare, Force Field Analysis and the Action Library Review are also stand-alone routes.
+- **Views vs tools.** Most tools (RAID log, Benefits, Stakeholder analysis, Change impact, Force field, Highlight builder, Change Adoption Baseline (CAB) Analysis, Audit log, ...) are rendered _inside_ `AdoptionApp` as `view`s. Only Compare, Force Field Analysis and the Action Library Review are also stand-alone routes.
 - `pages/` holds the tool apps, `components/views` the large page-level views (`AssessmentPanel`, `CSTDetailsPage` = "Project Profile", `WhereAmINowPage` = "Adoption Baseline", dashboard, ...), `components/common` and `components/ui` the shared pieces.
 - `lib/` is logic (state, IO, metrics, automation, PDF/eml export), `data/` is content (components, lenses, rubrics, action JSON, question bank).
 - Styling: Tailwind classes in JSX plus `styles/legacy.css` (imported first in `main.tsx`; despite the name it is live) and `styles/nhsTheme.ts` button classes.
@@ -67,13 +67,13 @@ Per the approved-wording docs' own structure, Pathway 2/3 have a *different* act
 
 `lib/readinessBands.ts` is the single source for the six levels (0 Not Started ... 5 Thriving) and `getPhasePassScore` (where Thriving is required, Adopted passes). Phase exemplars per component are in `lib/adoptionMetrics.ts`; `computeCurrentPhase` is the score-only version of the "current phase" rule in `getMetrics`.
 
-## 3. Adoption Baseline / Change Adoption Baseline flow
+## 3. Adoption Baseline / Change Adoption Baseline (CAB) flow
 
 1. **Project Profile step 1** holds trust name, region, lead, contact email and executive sponsor (stakeholder id). The baseline page no longer asks for them; it shows a message plus **Adoption Baseline Questions** / **I'm new, skip assessment** (skip changes nothing and leaves the project on Phase 1).
 2. Questions: `data/readinessReview.ts` (`PREPAREDNESS_ASSESSMENT` = 36 scored questions, one per component lens, `PATHWAY_QUESTION` first). A project can reword/reorder/add questions in Project Profile (`orgProfile.readinessQuestions`, edited in `components/common/ReadinessQuestionEditor.tsx`). `resolveReadinessQuestions` keeps un-edited built-in questions in step with the code defaults; edited ones (`edited: true`) and custom ones (`custom: true`, unscored, `nu >= 1001`) are kept as saved. `nu` is the permanent answer key - never renumber.
 3. Finish requires a scored answer for every component lens (`getMissingLensCoverage`), otherwise the radar would show gaps.
 4. `computeReadinessOutcome` -> `ReadinessOutcomeModal` offers per-lens score updates, a phase skip and (Q1) a pathway switch. Applying updates scores/action statuses through `onEntryUpdate`; the pathway switch runs last because it regenerates derived content.
-5. `finalizeReport` (in `ChangeAdoptionBaselineReviewApp.tsx`) stamps the saved report with the **decision** (`applied | declined | skipped`), `appliedSkipToPhase` and a frozen **radar snapshot** (`buildRadarSnapshot`). Every rendering of a report - Adoption Baseline export, PDF (`lib/readinessPdf.ts`), Change Adoption Baseline Analysis - draws its radar with `buildReportRadarData` + `READINESS_RADAR_OPTIONS`, so they cannot disagree. Old reports without a snapshot fall back to answer-implied scores.
+5. `finalizeReport` (in `ChangeAdoptionBaselineReviewApp.tsx`) stamps the saved report with the **decision** (`applied | declined | skipped`), `appliedSkipToPhase` and a frozen **radar snapshot** (`buildRadarSnapshot`). Every rendering of a report - Adoption Baseline export, PDF (`lib/readinessPdf.ts`), Change Adoption Baseline (CAB) Analysis - draws its radar with `buildReportRadarData` + `READINESS_RADAR_OPTIONS`, so they cannot disagree. Old reports without a snapshot fall back to answer-implied scores.
 6. Export (`lib/readinessExport.ts`): JSON + PDF downloads and a `mailto:` (mailto cannot attach files, and opens the OS default mail app), plus an Outlook-friendly `.eml` draft with attachments (`lib/eml.ts`, `X-Unsent: 1`). The Analysis tool imports `.json` or the `.eml` itself; imported reports live in React state only.
 
 ## 4. Sign-in guard
@@ -82,7 +82,7 @@ Per the approved-wording docs' own structure, Pathway 2/3 have a *different* act
 
 ## 4b. AVT preset
 
-`data/presets/avt.json` (loaded by `data/presets/avtPreset.ts`) is a bundled preset a project can apply from Project Profile ("Apply AVT preset"): it overwrites `orgProfile.coreLinks` with the preset's links and resets `orgProfile.readinessQuestions` to the built-in Change Adoption Baseline defaults (custom component links and tool links are left alone). It goes through the normal `onProfileUpdate` flow, so the existing sign-in guard and confirm-before-overwrite behaviour apply automatically. **The JSON is currently seeded with only the one real AVT toolkit PDF link as a placeholder** - add the actual AVT-specific external links (and, if the AVT baseline question set is ever meant to diverge from the code defaults, a `readinessQuestions` array in the same shape as `data/readinessReview.ts`'s `PreparednessAssessment[]`) to `avt.json` when that content is available. Bump `version`/`label` in the JSON when it's updated.
+`data/presets/avt.json` (loaded by `data/presets/avtPreset.ts`) is a bundled preset a project can apply from Project Profile ("Apply AVT preset"): it overwrites `orgProfile.coreLinks` with the preset's links and resets `orgProfile.readinessQuestions` to the built-in Change Adoption Baseline (CAB) defaults (custom component links and tool links are left alone). It goes through the normal `onProfileUpdate` flow, so the existing sign-in guard and confirm-before-overwrite behaviour apply automatically. **The JSON is currently seeded with only the one real AVT toolkit PDF link as a placeholder** - add the actual AVT-specific external links (and, if the AVT baseline question set is ever meant to diverge from the code defaults, a `readinessQuestions` array in the same shape as `data/readinessReview.ts`'s `PreparednessAssessment[]`) to `avt.json` when that content is available. Bump `version`/`label` in the JSON when it's updated.
 
 ## 5. Adding a tool (checklist)
 
@@ -114,6 +114,6 @@ Deleted: `data/index.ts`, `data/legacy-data.ts`, `OnboardingIntro.tsx`, `lib/val
 4. **De-duplicate helpers:** `createId()` exists in 7 tool pages; each tool re-implements its own `STORAGE_KEY` + load/save; `ActionPlanTracker` has its own `READINESS_SCORE_LABELS`; `AssessmentPanel` keeps a `SCORE_LABELS` alias of the bands; `types/constants.ts` (misnamed - holds rubrics, phase names and an unused `VERSION_HISTORY_ITEMS`) overlaps `data/rubrics.ts`.
 5. **Tool registry:** the sidebar array + label ternary duplicate `DEFAULT_TOOL_LINK_TEXT`; drive both from one table.
 6. **Tooling:** `.eslintignore` has an unanchored `components/` that probably makes ESLint skip `src/components`; the `@types/*` path alias shadows the npm `@types` namespace; `@typescript-eslint/*` sit in `dependencies`; `@types/react` 19 vs React 18.
-7. **Content:** pathway 2 and 3 action content is generated by phrase substitution from pathway 1 and needs a real content review; only pathway 1 has full objectives/actions. Custom Change Adoption Baseline questions do not yet feed derived content.
+7. **Content:** pathway 2 and 3 action content is generated by phrase substitution from pathway 1 and needs a real content review; only pathway 1 has full objectives/actions. Custom Change Adoption Baseline (CAB) questions do not yet feed derived content.
 8. **Sign-in guard** is client-side only and per device - it stops accidental anonymous edits, it is not access control. Stand-alone tool state is ungated.
-9. **Change Adoption Baseline:** email still relies on the user attaching downloaded files (browsers cannot attach to `mailto:`); revisit if a backend or Graph integration becomes available.
+9. **Change Adoption Baseline (CAB):** email still relies on the user attaching downloaded files (browsers cannot attach to `mailto:`); revisit if a backend or Graph integration becomes available.

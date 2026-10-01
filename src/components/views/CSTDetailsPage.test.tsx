@@ -707,7 +707,7 @@ describe('ProjectDetailsPage', () => {
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
-  it('SHOULD propagate an overridden Change Adoption Baseline mailbox', () => {
+  it('SHOULD propagate an overridden Change Adoption Baseline (CAB) mailbox', () => {
     // arrange
     const onProfileUpdate = vi.fn();
 
@@ -726,7 +726,7 @@ describe('ProjectDetailsPage', () => {
     );
 
     // act
-    fireEvent.change(screen.getByLabelText('Change Adoption Baseline mailbox'), {
+    fireEvent.change(screen.getByLabelText('Change Adoption Baseline (CAB) mailbox'), {
       target: { value: 'custom@example.nhs.uk' },
     });
 

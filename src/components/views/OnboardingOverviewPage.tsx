@@ -53,13 +53,14 @@ function buildSteps(darkMode: boolean): Step[] {
       body: (
         <div className={`text-sm space-y-2 ${textClass}`}>
           <p>
-            Going live with a new digital product isn't the finish line - people still need to adopt
-            it, change how they work, and keep using it.
+            Implementing a new product, service or way of working is only the beginning. To realise
+            the full value of change, people need to adopt it, embed it into their daily activities,
+            and sustain it over time.
           </p>
           <p>
-            The Adoption Engine helps you track how people and teams are adopting the change before
-            go-live, during rollout, and after launch so progress is visible and outcomes are
-            measurable.
+            The Adoption Engine helps you understand, measure and improve adoption before
+            implementation, during delivery and long after go-live. It provides a clear picture of
+            where you are today, what may be limiting success, and where to focus next.
           </p>
           <p>It helps you answer four simple questions:</p>
           <ul className="list-decimal pl-5 space-y-1">
@@ -69,8 +70,8 @@ function buildSteps(darkMode: boolean): Step[] {
             <li>What should we do next?</li>
           </ul>
           <p>
-            The goal is not just to implement change, but to ensure it is adopted, embedded and
-            delivering benefits.
+            The Adoption Engine doesn't just help you deliver change. It helps you ensure change is
+            adopted, embedded and delivering the outcomes and benefits you set out to achieve.
           </p>
         </div>
       ),

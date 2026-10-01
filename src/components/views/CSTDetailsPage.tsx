@@ -763,7 +763,7 @@ export function ProjectDetailsPage({
   const handleApplyAvtPreset = useCallback(() => {
     if (
       !window.confirm(
-        `Apply the ${AVT_PRESET.label} preset? This replaces this project's Core Links, Phase links and component Further Reading links, and resets its Change Adoption Baseline questions to the AVT default set. Custom component links and tool links are left as they are.`
+        `Apply the ${AVT_PRESET.label} preset? This replaces this project's Core Links, Phase links and component Further Reading links, and resets its Change Adoption Baseline (CAB) questions to the AVT default set. Custom component links and tool links are left as they are.`
       )
     ) {
       return;
@@ -1375,9 +1375,7 @@ export function ProjectDetailsPage({
               <input
                 type="checkbox"
                 checked={Boolean(profile.stakeholderReferenceDataInitiated)}
-                onChange={(e) =>
-                  handleStakeholderReferenceDataInitiatedChange(e.target.checked)
-                }
+                onChange={(e) => handleStakeholderReferenceDataInitiatedChange(e.target.checked)}
               />
               Stakeholder data initiated
             </label>
@@ -1458,7 +1456,7 @@ export function ProjectDetailsPage({
           </h3>
           <p className={`mt-1 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
             Apply a bundled preset to set this project's External Links and Change Adoption Baseline
-            questions to a known starting point.
+            (CAB) questions to a known starting point.
           </p>
         </div>
         <button type="button" onClick={handleApplyAvtPreset} className={nhsButtonSecondary}>
@@ -1474,7 +1472,7 @@ export function ProjectDetailsPage({
             <h3
               className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
             >
-              Step 5: Change Adoption Baseline Questions
+              Step 5: Change Adoption Baseline (CAB) Questions
             </h3>
             <label
               className={`flex items-center gap-2 text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
@@ -1500,7 +1498,7 @@ export function ProjectDetailsPage({
                   htmlFor="org-avt-mailbox"
                   className={`block text-sm font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
                 >
-                  Change Adoption Baseline mailbox
+                  Change Adoption Baseline (CAB) mailbox
                 </label>
                 <input
                   id="org-avt-mailbox"
@@ -1511,14 +1509,14 @@ export function ProjectDetailsPage({
                   onChange={(e) => handleProfileFieldChange({ avtMailbox: e.target.value })}
                 />
                 <p className={`mt-1 text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
-                  Where the completed Change Adoption Baseline report is sent. Leave blank to use
-                  the default AVT mailbox ({AVT_MAILBOX}).
+                  Where the completed Change Adoption Baseline (CAB) report is sent. Leave blank to
+                  use the default AVT mailbox ({AVT_MAILBOX}).
                 </p>
               </div>
               <p className={`mt-2 text-sm p-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-                Reword, reorder or add questions to the Change Adoption Baseline. Added questions
-                can be multiple choice or free text and are recorded in the exported report without
-                affecting any readiness score.
+                Reword, reorder or add questions to the Change Adoption Baseline (CAB). Added
+                questions can be multiple choice or free text and are recorded in the exported
+                report without affecting any readiness score.
               </p>
               <ReadinessQuestionEditor
                 questions={resolveReadinessQuestions(profile.readinessQuestions)}
@@ -1528,8 +1526,8 @@ export function ProjectDetailsPage({
             </>
           ) : (
             <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-              Change Adoption Baseline questions were set up at project start. Turn on "Show change
-              adoption baseline section" in Settings if you need to come back and edit them.
+              Change Adoption Baseline (CAB) questions were set up at project start. Turn on "Show
+              change adoption baseline section" in Settings if you need to come back and edit them.
             </p>
           )}
         </div>

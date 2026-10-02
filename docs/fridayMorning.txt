@@ -1,2 +1,5 @@
 1. Reset data shouldn't be blocked by sign in.
-2. Need success message when applying preset.
+2. Need success message when applying AVT or any future preset.
+3. Side nav button should still shown when it goes full width
+4. Category and Owner should be drop down in moscow. Also needs to support csv import. 
+5. Styling of "Version row" has buttons different height and is a little unclear, needs to be better designed. e.g. Versioning button that opens modal. (Moscow and Forcefield analysis)

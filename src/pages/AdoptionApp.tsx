@@ -72,6 +72,7 @@ import {
 } from '@lib/adoptionState';
 import { validateCstProfile } from '@lib/adoptionValidator';
 import { type AuditEvent, createAuditEvent, trimAuditEvents } from '@lib/auditLog';
+import { buildAuditLogPdf } from '@lib/auditLogPdf';
 import { createLineChart, createRadarChart } from '@lib/charts';
 import {
   applyConflictResolutions,
@@ -84,7 +85,6 @@ import { getReadinessBand } from '@lib/readinessBands';
 import { canEditProfile, SIGN_IN_REQUIRED_MESSAGE } from '@lib/signInGuard';
 import { load, save } from '@lib/storage';
 import { downloadBlob, downloadFile, escapeHtml } from '@lib/utils';
-import { buildAuditLogPdf } from '@lib/auditLogPdf';
 import BenefitsApp from '@pages/BenefitsApp';
 import ChangeAdoptionBaselineAnalysisApp from '@pages/ChangeAdoptionBaselineAnalysisApp';
 import ChangeImpactAssessmentApp from '@pages/ChangeImpactAssessmentApp';
@@ -172,8 +172,15 @@ function isCstEmpty(store: AdoptionStore): boolean {
 }
 
 /** Gates the guided CST setup wizard's one-time auto-open - filling in a trust name is itself the "seen" signal. */
-function isCstUnconfigured(profile: OrgProfile): boolean {
-  return !profile.trustName.trim();
+function isCstUnconfigured(
+  profile: OrgProfile,
+  store: AdoptionStore,
+  currentUserId: string
+): boolean {
+  const signedIn = (store.orgProfile.teamMembers || []).some(
+    (member) => member.id === currentUserId && member.name.trim()
+  );
+  return !profile.trustName.trim() || !signedIn;
 }
 
 function actionHasEvidence(action: DraftAction): boolean {
@@ -429,20 +436,13 @@ export function AdoptionApp() {
 
   // Redirect away from views that aren't meaningful until the project has been set up.
   useEffect(() => {
-    if (isCstUnconfigured(store.orgProfile) && !ALLOWED_VIEWS_WHEN_UNCONFIGURED.includes(view)) {
+    if (
+      isCstUnconfigured(store.orgProfile, store, currentUserId) &&
+      !ALLOWED_VIEWS_WHEN_UNCONFIGURED.includes(view)
+    ) {
       setView('introduction');
     }
   }, [store.orgProfile, view]);
-
-  // The Adoption Baseline needs an organisation name and a signed-in, named team member.
-  useEffect(() => {
-    const signedIn = (store.orgProfile.teamMembers || []).some(
-      (member) => member.id === currentUserId && member.name.trim()
-    );
-    if (view === 'where-am-i-now' && (isCstUnconfigured(store.orgProfile) || !signedIn)) {
-      setView('project-details');
-    }
-  }, [store.orgProfile, currentUserId, view]);
 
   // Render charts after dashboard mounts
   useEffect(() => {
@@ -1317,7 +1317,7 @@ export function AdoptionApp() {
       if (
         !canEditProfile(orgProfileRef.current, updatedProfile, {
           signedIn: Boolean(currentUserIdRef.current),
-          configured: !isCstUnconfigured(orgProfileRef.current),
+          configured: !isCstUnconfigured(orgProfileRef.current, store, currentUserIdRef.current),
         })
       ) {
         requireSignedIn();
@@ -1421,7 +1421,7 @@ export function AdoptionApp() {
 
   const trustLabel = store.orgProfile.trustName || 'Unconfigured Trust';
   const projectLabel = store.orgProfile.projectName || 'Unnamed Project';
-  const projectConfigured = !isCstUnconfigured(store.orgProfile);
+  const projectConfigured = !isCstUnconfigured(store.orgProfile, store, currentUserId);
   const signedInMember = (store.orgProfile.teamMembers || []).find(
     (member) => member.id === currentUserId && member.name.trim()
   );

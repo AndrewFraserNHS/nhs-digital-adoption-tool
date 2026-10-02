@@ -212,6 +212,141 @@ describe('ProjectDetailsPage', () => {
     expect(screen.getByLabelText('Pathway')).toHaveValue('pathway-1');
   });
 
+  it('SHOULD ask for default setup or the AVT preset on first entry, and never again once chosen', () => {
+    // arrange
+    const onProfileUpdate = vi.fn();
+    const blank: OrgProfile = { ...orgProfile, trustName: '' };
+    const { rerender } = render(
+      <ProjectDetailsPage
+        orgProfile={blank}
+        onProfileUpdate={onProfileUpdate}
+        components={components}
+        lenses={['Strategic Direction and Leadership']}
+        onComponentClick={vi.fn()}
+        onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
+        onCurrentUserChange={vi.fn()}
+      />
+    );
+
+    // assert 1
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+
+    // act
+    fireEvent.click(screen.getByRole('button', { name: /Use .* preset/ }));
+
+    // assert 2 - preset applied and choice recorded
+    expect(onProfileUpdate).toHaveBeenLastCalledWith(
+      expect.objectContaining({ setupChoiceMade: true, phaseLinks: expect.any(Object) })
+    );
+    rerender(
+      <ProjectDetailsPage
+        orgProfile={{ ...blank, setupChoiceMade: true }}
+        onProfileUpdate={onProfileUpdate}
+        components={components}
+        lenses={['Strategic Direction and Leadership']}
+        onComponentClick={vi.fn()}
+        onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
+        onCurrentUserChange={vi.fn()}
+      />
+    );
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('SHOULD keep the default setup WHERE it is chosen, without applying the preset', () => {
+    // arrange
+    const onProfileUpdate = vi.fn();
+    render(
+      <ProjectDetailsPage
+        orgProfile={{ ...orgProfile, trustName: '' }}
+        onProfileUpdate={onProfileUpdate}
+        components={components}
+        lenses={['Strategic Direction and Leadership']}
+        onComponentClick={vi.fn()}
+        onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
+        onCurrentUserChange={vi.fn()}
+      />
+    );
+
+    // act
+    fireEvent.click(screen.getByRole('button', { name: 'Default setup' }));
+
+    // assert
+    const saved = onProfileUpdate.mock.calls[0][0];
+    expect(saved.setupChoiceMade).toBe(true);
+    expect(saved.phaseLinks).toBeUndefined();
+  });
+
+  it('SHOULD sign in the first team member added, but not later ones', () => {
+    // arrange
+    const onCurrentUserChange = vi.fn();
+    const { rerender } = render(
+      <ProjectDetailsPage
+        orgProfile={orgProfile}
+        onProfileUpdate={vi.fn()}
+        components={components}
+        lenses={['Strategic Direction and Leadership']}
+        onComponentClick={vi.fn()}
+        onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
+        onCurrentUserChange={onCurrentUserChange}
+      />
+    );
+
+    // act 1
+    fireEvent.click(screen.getByRole('button', { name: '+ Add Team Member' }));
+
+    // assert 1
+    expect(onCurrentUserChange).toHaveBeenCalledTimes(1);
+
+    // act 2 - a roster that already has someone, and a signed-in user
+    rerender(
+      <ProjectDetailsPage
+        orgProfile={{ ...orgProfile, teamMembers: [{ id: 'm1', name: 'Ann', role: '' }] }}
+        onProfileUpdate={vi.fn()}
+        components={components}
+        lenses={['Strategic Direction and Leadership']}
+        onComponentClick={vi.fn()}
+        onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
+        currentUserId="m1"
+        onCurrentUserChange={onCurrentUserChange}
+      />
+    );
+    fireEvent.click(screen.getByRole('button', { name: '+ Add Team Member' }));
+
+    // assert 2
+    expect(onCurrentUserChange).toHaveBeenCalledTimes(1);
+  });
+
+  it('SHOULD hide the Adoption Baseline shortcut WHERE it is not yet available', () => {
+    // act
+    render(
+      <ProjectDetailsPage
+        orgProfile={orgProfile}
+        onProfileUpdate={vi.fn()}
+        components={components}
+        lenses={['Strategic Direction and Leadership']}
+        onComponentClick={vi.fn()}
+        onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
+        onCurrentUserChange={vi.fn()}
+        baselineAvailable={false}
+      />
+    );
+
+    // assert
+    expect(screen.queryByText('What phase are you currently in?')).not.toBeInTheDocument();
+  });
+
   it('SHOULD hide the whole Admin section unless showAdminSection is set', () => {
     // arrange + act 1 - default (hidden)
     const { rerender } = render(

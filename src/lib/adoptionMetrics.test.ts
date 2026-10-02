@@ -13,6 +13,7 @@ import {
   getMetrics,
 } from './adoptionMetrics';
 import type { AdoptionStore, DraftEntry } from './adoptionState';
+import { getReadinessBand } from './readinessBands';
 
 const components: AssessmentComponent[] = [
   {
@@ -487,6 +488,17 @@ describe('adoptionMetrics', () => {
     // assert
     expect(result.phaseSummaries[0].cancelledActions).toBe(1);
     expect(result.phaseSummaries[0].skippedActions).toBe(1);
+  });
+
+  it('SHOULD colour each radar point from the readiness key, so it always matches the legend', () => {
+    // act
+    const chartData = buildComponentRadarChartData(components, getEntry);
+    const dataset = chartData.datasets[0] as { data: (number | null)[]; pointBackgroundColor: string[] };
+
+    // assert
+    dataset.data.forEach((score, index) => {
+      expect(dataset.pointBackgroundColor[index]).toBe(getReadinessBand(score ?? 0).color);
+    });
   });
 
   it('SHOULD only draw the automatic target line by default', () => {

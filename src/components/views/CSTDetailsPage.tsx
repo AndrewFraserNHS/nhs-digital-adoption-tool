@@ -490,6 +490,8 @@ export interface ProjectDetailsPageProps {
   onCurrentUserChange: (id: string) => void;
   /** Per-device override that force-shows the External Links section even after it's been marked initiated. */
   showAdminSection?: boolean;
+  /** The Adoption Baseline needs an organisation name plus a signed-in team member, so its shortcut stays hidden until then. */
+  baselineAvailable?: boolean;
   /** For the executive sponsor picker (shared stakeholder list). */
   stakeholders?: Stakeholder[];
   onStakeholdersChange?: (stakeholders: Stakeholder[]) => void;
@@ -508,6 +510,7 @@ export function ProjectDetailsPage({
   currentUserId,
   onCurrentUserChange,
   showAdminSection = false,
+  baselineAvailable = true,
   stakeholders = [],
   onStakeholdersChange,
   departments = [],
@@ -722,7 +725,20 @@ export function ProjectDetailsPage({
     const updated = { ...profile, teamMembers: [...(profile.teamMembers || []), newMember] };
     setProfile(updated);
     onProfileUpdate(updated);
-  }, [profile, onProfileUpdate]);
+    if (!(profile.teamMembers || []).length && !currentUserId) {
+      onCurrentUserChange(newMember.id);
+    }
+  }, [profile, onProfileUpdate, currentUserId, onCurrentUserChange]);
+
+  const handleChooseSetup = useCallback(
+    (usePreset: boolean) => {
+      const base = usePreset ? applyAvtPreset(profile) : profile;
+      const updated = { ...base, setupChoiceMade: true };
+      setProfile(updated);
+      onProfileUpdate(updated);
+    },
+    [profile, onProfileUpdate]
+  );
 
   const handleUpdateTeamMember = useCallback(
     (id: string, field: 'name' | 'role', value: string) => {
@@ -1338,743 +1354,776 @@ export function ProjectDetailsPage({
         </button>
       </div>
 
-      <div
-        className={`flex flex-wrap items-center justify-between gap-3 rounded-lg border p-5 ${darkMode ? 'border-blue-500/30 bg-blue-500/10' : 'border-blue-200 bg-blue-50'}`}
-      >
-        <div>
-          <p className={`text-sm font-semibold ${darkMode ? 'text-blue-100' : 'text-blue-900'}`}>
-            What phase are you currently in?
-          </p>
-          <p className={`mt-1 text-xs ${darkMode ? 'text-blue-200' : 'text-blue-800'}`}>
-            Answer a few quick questions and see your readiness by component to figure out where you
-            really are in the change journey.
-          </p>
+      {baselineAvailable ? (
+        <div
+          className={`flex flex-wrap items-center justify-between gap-3 rounded-lg border p-5 ${darkMode ? 'border-blue-500/30 bg-blue-500/10' : 'border-blue-200 bg-blue-50'}`}
+        >
+          <div>
+            <p className={`text-sm font-semibold ${darkMode ? 'text-blue-100' : 'text-blue-900'}`}>
+              What phase are you currently in?
+            </p>
+            <p className={`mt-1 text-xs ${darkMode ? 'text-blue-200' : 'text-blue-800'}`}>
+              Answer a few quick questions and see your readiness by component to figure out where
+              you really are in the change journey.
+            </p>
+          </div>
+          <button type="button" onClick={onGoToWhereAmINow} className={nhsButtonPrimary}>
+            Adoption Baseline
+          </button>
         </div>
-        <button type="button" onClick={onGoToWhereAmINow} className={nhsButtonPrimary}>
-          Adoption Baseline
-        </button>
-      </div>
+      ) : null}
 
       {showAdminSection ? (
-      <div
-        data-testid="admin-section"
-        className={`space-y-6 rounded-xl border p-5 ${darkMode ? 'border-slate-700 bg-slate-950' : 'border-slate-300 bg-slate-200'}`}
-      >
-        <div>
-          <h2 className={`text-xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
-            Admin
-          </h2>
-          <p className={`mt-1 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-            One-time project setup. Hide this section in Settings once you're done.
-          </p>
-        </div>
-      <div
-        className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-4`}
-      >
-        <div>
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <h3
-              className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
-            >
-              Step 4: Stakeholder Reference Data
-            </h3>
-            <label
-              className={`flex items-center gap-2 text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
-            >
-              <input
-                type="checkbox"
-                checked={Boolean(profile.stakeholderReferenceDataInitiated)}
-                onChange={(e) => handleStakeholderReferenceDataInitiatedChange(e.target.checked)}
-              />
-              Stakeholder data initiated
-            </label>
-          </div>
-          <p className={`text-sm mt-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-            Define your Stakeholder Groups, Sub-Groups, Departments and Relationships here for use
-            in the Stakeholder Analysis Tool and for consistency of stakeholder records throughout
-            the Adoption Engine.
-          </p>
-          <p className={`text-sm mt-2 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-            Individual stakeholders themselves are added in the{' '}
-            {onGoToStakeholderAnalysis ? (
-              <button
-                type="button"
-                onClick={onGoToStakeholderAnalysis}
-                className="font-semibold text-[#005eb8] underline underline-offset-2 hover:text-[#003087]"
-              >
-                Stakeholder Analysis Tool
-              </button>
-            ) : (
-              'Stakeholder Analysis Tool'
-            )}
-            , not here - this section only sets up the shared reference lists they're picked from.
-          </p>
-          <p className={`mt-2 text-sm p-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-            This is normally only set up once at the start of a project. Once you're done, tick
-            "Stakeholder data initiated" to collapse this section - untick it to edit again.
-          </p>
-        </div>
-
-        {!profile.stakeholderReferenceDataInitiated ? (
-          <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
-            {(
-              [
-                { key: 'groups', label: 'Groups', placeholder: 'Add a group...' },
-                { key: 'subGroups', label: 'Sub-Groups', placeholder: 'Add a sub-group...' },
-                { key: 'departments', label: 'Departments', placeholder: 'Add a department...' },
-                {
-                  key: 'relationships',
-                  label: 'Relationships',
-                  placeholder: 'Add a relationship...',
-                },
-              ] as const
-            ).map(({ key, label, placeholder }) => (
-              <div key={key}>
-                <p
-                  className={`text-sm font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
-                >
-                  {label}
-                </p>
-                <AliasEditor
-                  aliases={effectiveStakeholderReferenceLists[key]}
-                  onChange={(values) => handleUpdateStakeholderReferenceList(key, values)}
-                  darkMode={darkMode}
-                  placeholder={placeholder}
-                  emptyLabel="None added yet."
-                  addButtonLabel={`Add ${label.toLowerCase()}`}
-                  confirmRemove
-                />
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-            Stakeholder reference data was set up at project start. Untick "Stakeholder data
-            initiated" if you need to come back and edit it.
-          </p>
-        )}
-      </div>
-
-      <div
-        className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-3`}
-      >
-        <div>
-          <h3 className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
-            Presets
-          </h3>
-          <p className={`mt-1 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-            Apply a bundled preset to set this project's External Links and Change Adoption Baseline
-            (CAB) questions to a known starting point.
-          </p>
-        </div>
-        <button type="button" onClick={handleApplyAvtPreset} className={nhsButtonSecondary}>
-          Apply {AVT_PRESET.label} preset
-        </button>
-      </div>
-
-      <div
-        className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-4`}
-      >
-        <div>
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <h3
-              className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
-            >
-              Step 5: Change Adoption Baseline (CAB) Questions
-            </h3>
-            <label
-              className={`flex items-center gap-2 text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
-            >
-              <input
-                type="checkbox"
-                checked={Boolean(profile.readinessReviewQuestionsInitiated)}
-                onChange={(e) => handleReadinessReviewInitiatedChange(e.target.checked)}
-              />
-              Questions initiated
-            </label>
-          </div>
-          <p className={`mt-2 text-sm p-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-            This is normally only set up once at the start of a project. Once you're done, tick
-            "Questions initiated" to collapse this section - untick it to edit again.
-          </p>
-
-          {!profile.readinessReviewQuestionsInitiated ? (
-            <>
-              <div className="mt-3">
-                <label
-                  htmlFor="org-avt-mailbox"
-                  className={`block text-sm font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
-                >
-                  Change Adoption Baseline (CAB) mailbox
-                </label>
-                <input
-                  id="org-avt-mailbox"
-                  type="email"
-                  className={`w-full rounded-md border shadow-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8] sm:text-sm p-2 ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-[#768692] bg-white text-slate-900'}`}
-                  placeholder={AVT_MAILBOX}
-                  value={profile.avtMailbox || ''}
-                  onChange={(e) => handleProfileFieldChange({ avtMailbox: e.target.value })}
-                />
-                <p className={`mt-1 text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
-                  Where the completed Change Adoption Baseline (CAB) report is sent. Leave blank to
-                  use the default AVT mailbox ({AVT_MAILBOX}).
-                </p>
-              </div>
-              <p className={`mt-2 text-sm p-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-                Reword, reorder or add questions to the Change Adoption Baseline (CAB). Added
-                questions can be multiple choice or free text and are recorded in the exported
-                report without affecting any readiness score.
-              </p>
-              <ReadinessQuestionEditor
-                questions={resolveReadinessQuestions(profile.readinessQuestions)}
-                onChange={handleReadinessQuestionsChange}
-                darkMode={darkMode}
-              />
-            </>
-          ) : (
-            <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-              Change Adoption Baseline (CAB) questions were set up at project start. Untick
-              "Questions initiated" if you need to come back and edit them.
+        <div
+          data-testid="admin-section"
+          className={`space-y-6 rounded-xl border p-5 ${darkMode ? 'border-slate-700 bg-slate-950' : 'border-slate-300 bg-slate-200'}`}
+        >
+          <div>
+            <h2 className={`text-xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
+              Admin
+            </h2>
+            <p className={`mt-1 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+              One-time project setup. Hide this section in Settings once you're done.
             </p>
-          )}
-        </div>
-      </div>
-
-      {/* Step 4: External link overrides */}
-      <div
-        className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-4`}
-      >
-        <div>
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <h3
-              className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
-            >
-              Step 6: External links
-            </h3>
-            <label
-              className={`flex items-center gap-2 text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
-            >
-              <input
-                type="checkbox"
-                checked={Boolean(profile.externalLinksInitiated)}
-                onChange={(e) => handleExternalLinksInitiatedChange(e.target.checked)}
-              />
-              Links initiated
-            </label>
           </div>
-          <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-            This is normally only set up once at the start of a project. Once you're done, tick
-            "Links initiated" to collapse this section - untick it to edit again.
-          </p>
-
-          {!profile.externalLinksInitiated ? (
-            <>
-              <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-                All toolkit links across the tool point to the NHS Future platform by default. You
-                can override the base toolkit destination for your organisation, or change
-                individual links independently.
-              </p>
-
-              <div
-                className={`mt-3 rounded-md border p-3 text-xs ${darkMode ? 'border-blue-500/30 bg-blue-500/10 text-blue-100' : 'border-blue-200 bg-blue-50 text-blue-900'}`}
-              >
-                <p className="font-semibold">Fallback reference</p>
-                <p className="mt-1">
-                  {profile.projectName || 'Project'} Homepage:{' '}
-                  <span className="font-medium">{TOOLKIT_BASE_DEFAULTS.label}</span> (
-                  {TOOLKIT_BASE_DEFAULTS.url})
-                </p>
-                <p className="mt-1">
-                  Default Change Management Link: the original NHS Future link defined per guidance
-                  item.
-                </p>
-              </div>
-
-              <div
-                className={`mt-4 rounded-md border p-4 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
-              >
+          <div
+            className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-4`}
+          >
+            <div>
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <h3
+                  className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+                >
+                  Step 4: Stakeholder Reference Data
+                </h3>
                 <label
-                  htmlFor="cst-toolkit-choice"
-                  className={`block text-xs font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
+                  className={`flex items-center gap-2 text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
                 >
-                  Default toolkit for assistant preview
+                  <input
+                    type="checkbox"
+                    checked={Boolean(profile.stakeholderReferenceDataInitiated)}
+                    onChange={(e) =>
+                      handleStakeholderReferenceDataInitiatedChange(e.target.checked)
+                    }
+                  />
+                  Stakeholder data initiated
                 </label>
-                <select
-                  id="cst-toolkit-choice"
-                  value={profile.cst.toolkitChoice}
-                  onChange={(event) =>
-                    handleToolkitChoiceChange(event.target.value as ToolkitOptionKey)
-                  }
-                  className={`w-full rounded-md border shadow-sm sm:text-sm p-2 pr-10 ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100' : 'border-[#768692] bg-white text-slate-900'}`}
-                >
-                  {TOOLKIT_OPTIONS.map((toolkit) => (
-                    <option key={toolkit.key} value={toolkit.key}>
-                      {toolkit.label}
-                    </option>
-                  ))}
-                </select>
-                <p className={`mt-2 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-                  This controls which toolkit the chatbot-style assistant opens by default across
-                  the tool.
-                </p>
               </div>
-
-              {/* Base override */}
-              <div
-                className={`mt-4 rounded-md border p-4 space-y-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
-              >
-                <div>
-                  <p
-                    className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+              <p className={`text-sm mt-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                Define your Stakeholder Groups, Sub-Groups, Departments and Relationships here for
+                use in the Stakeholder Analysis Tool and for consistency of stakeholder records
+                throughout the Adoption Engine.
+              </p>
+              <p className={`text-sm mt-2 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                Individual stakeholders themselves are added in the{' '}
+                {onGoToStakeholderAnalysis ? (
+                  <button
+                    type="button"
+                    onClick={onGoToStakeholderAnalysis}
+                    className="font-semibold text-[#005eb8] underline underline-offset-2 hover:text-[#003087]"
                   >
-                    {profile.projectName || 'Project'} Homepage
-                  </p>
-                  <p className={`text-xs mt-0.5 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-                    Replaces the Change Management Toolkit destination for all links that fall back
-                    to it.
-                  </p>
-                  <p className="mt-1 text-xs">
-                    Currently:{' '}
-                    <a
-                      href={toAbsoluteUrl(
-                        profile.linkOverrides?.base?.url?.trim() || TOOLKIT_BASE_DEFAULTS.url
-                      )}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`underline ${darkMode ? 'text-blue-300 hover:text-blue-200' : 'text-[#005eb8] hover:text-[#00417a]'}`}
+                    Stakeholder Analysis Tool
+                  </button>
+                ) : (
+                  'Stakeholder Analysis Tool'
+                )}
+                , not here - this section only sets up the shared reference lists they're picked
+                from.
+              </p>
+              <p className={`mt-2 text-sm p-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                This is normally only set up once at the start of a project. Once you're done, tick
+                "Stakeholder data initiated" to collapse this section - untick it to edit again.
+              </p>
+            </div>
+
+            {!profile.stakeholderReferenceDataInitiated ? (
+              <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+                {(
+                  [
+                    { key: 'groups', label: 'Groups', placeholder: 'Add a group...' },
+                    { key: 'subGroups', label: 'Sub-Groups', placeholder: 'Add a sub-group...' },
+                    {
+                      key: 'departments',
+                      label: 'Departments',
+                      placeholder: 'Add a department...',
+                    },
+                    {
+                      key: 'relationships',
+                      label: 'Relationships',
+                      placeholder: 'Add a relationship...',
+                    },
+                  ] as const
+                ).map(({ key, label, placeholder }) => (
+                  <div key={key}>
+                    <p
+                      className={`text-sm font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
                     >
-                      {profile.linkOverrides?.base?.url?.trim() || TOOLKIT_BASE_DEFAULTS.url}
-                    </a>
-                  </p>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <div>
-                    <label
-                      className={`block text-xs font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
-                    >
-                      Toolkit name
-                    </label>
-                    <input
-                      type="text"
-                      placeholder={TOOLKIT_BASE_DEFAULTS.label}
-                      value={profile.linkOverrides?.base?.label ?? ''}
-                      onChange={(e) =>
-                        handleLinkOverridesChange({
-                          ...profile.linkOverrides,
-                          base: {
-                            ...profile.linkOverrides?.base,
-                            label: e.target.value || undefined,
-                          },
-                        })
-                      }
-                      className={`w-full rounded-md border shadow-sm sm:text-sm p-2 ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
+                      {label}
+                    </p>
+                    <AliasEditor
+                      aliases={effectiveStakeholderReferenceLists[key]}
+                      onChange={(values) => handleUpdateStakeholderReferenceList(key, values)}
+                      darkMode={darkMode}
+                      placeholder={placeholder}
+                      emptyLabel="None added yet."
+                      addButtonLabel={`Add ${label.toLowerCase()}`}
+                      confirmRemove
                     />
                   </div>
-                  <div>
+                ))}
+              </div>
+            ) : (
+              <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                Stakeholder reference data was set up at project start. Untick "Stakeholder data
+                initiated" if you need to come back and edit it.
+              </p>
+            )}
+          </div>
+
+          <div
+            className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-3`}
+          >
+            <div>
+              <h3
+                className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+              >
+                Presets
+              </h3>
+              <p className={`mt-1 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                Apply a bundled preset to set this project's External Links and Change Adoption
+                Baseline (CAB) questions to a known starting point.
+              </p>
+            </div>
+            <button type="button" onClick={handleApplyAvtPreset} className={nhsButtonSecondary}>
+              Apply {AVT_PRESET.label} preset
+            </button>
+          </div>
+
+          <div
+            className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-4`}
+          >
+            <div>
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <h3
+                  className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+                >
+                  Step 5: Change Adoption Baseline (CAB) Questions
+                </h3>
+                <label
+                  className={`flex items-center gap-2 text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={Boolean(profile.readinessReviewQuestionsInitiated)}
+                    onChange={(e) => handleReadinessReviewInitiatedChange(e.target.checked)}
+                  />
+                  Questions initiated
+                </label>
+              </div>
+              <p className={`mt-2 text-sm p-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                This is normally only set up once at the start of a project. Once you're done, tick
+                "Questions initiated" to collapse this section - untick it to edit again.
+              </p>
+
+              {!profile.readinessReviewQuestionsInitiated ? (
+                <>
+                  <div className="mt-3">
                     <label
+                      htmlFor="org-avt-mailbox"
+                      className={`block text-sm font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
+                    >
+                      Change Adoption Baseline (CAB) mailbox
+                    </label>
+                    <input
+                      id="org-avt-mailbox"
+                      type="email"
+                      className={`w-full rounded-md border shadow-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2 focus-visible:border-[#005eb8] sm:text-sm p-2 ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-[#768692] bg-white text-slate-900'}`}
+                      placeholder={AVT_MAILBOX}
+                      value={profile.avtMailbox || ''}
+                      onChange={(e) => handleProfileFieldChange({ avtMailbox: e.target.value })}
+                    />
+                    <p className={`mt-1 text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                      Where the completed Change Adoption Baseline (CAB) report is sent. Leave blank
+                      to use the default AVT mailbox ({AVT_MAILBOX}).
+                    </p>
+                  </div>
+                  <p
+                    className={`mt-2 text-sm p-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+                  >
+                    Reword, reorder or add questions to the Change Adoption Baseline (CAB). Added
+                    questions can be multiple choice or free text and are recorded in the exported
+                    report without affecting any readiness score.
+                  </p>
+                  <ReadinessQuestionEditor
+                    questions={resolveReadinessQuestions(profile.readinessQuestions)}
+                    onChange={handleReadinessQuestionsChange}
+                    darkMode={darkMode}
+                  />
+                </>
+              ) : (
+                <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                  Change Adoption Baseline (CAB) questions were set up at project start. Untick
+                  "Questions initiated" if you need to come back and edit them.
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Step 4: External link overrides */}
+          <div
+            className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-4`}
+          >
+            <div>
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <h3
+                  className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+                >
+                  Step 6: External links
+                </h3>
+                <label
+                  className={`flex items-center gap-2 text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={Boolean(profile.externalLinksInitiated)}
+                    onChange={(e) => handleExternalLinksInitiatedChange(e.target.checked)}
+                  />
+                  Links initiated
+                </label>
+              </div>
+              <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                This is normally only set up once at the start of a project. Once you're done, tick
+                "Links initiated" to collapse this section - untick it to edit again.
+              </p>
+
+              {!profile.externalLinksInitiated ? (
+                <>
+                  <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                    All toolkit links across the tool point to the NHS Future platform by default.
+                    You can override the base toolkit destination for your organisation, or change
+                    individual links independently.
+                  </p>
+
+                  <div
+                    className={`mt-3 rounded-md border p-3 text-xs ${darkMode ? 'border-blue-500/30 bg-blue-500/10 text-blue-100' : 'border-blue-200 bg-blue-50 text-blue-900'}`}
+                  >
+                    <p className="font-semibold">Fallback reference</p>
+                    <p className="mt-1">
+                      {profile.projectName || 'Project'} Homepage:{' '}
+                      <span className="font-medium">{TOOLKIT_BASE_DEFAULTS.label}</span> (
+                      {TOOLKIT_BASE_DEFAULTS.url})
+                    </p>
+                    <p className="mt-1">
+                      Default Change Management Link: the original NHS Future link defined per
+                      guidance item.
+                    </p>
+                  </div>
+
+                  <div
+                    className={`mt-4 rounded-md border p-4 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
+                  >
+                    <label
+                      htmlFor="cst-toolkit-choice"
                       className={`block text-xs font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
                     >
-                      Toolkit URL
+                      Default toolkit for assistant preview
                     </label>
-                    <div className="flex gap-2">
-                      <input
-                        type="url"
-                        placeholder={TOOLKIT_BASE_DEFAULTS.url}
-                        value={profile.linkOverrides?.base?.url ?? ''}
-                        onChange={(e) =>
-                          handleLinkOverridesChange({
-                            ...profile.linkOverrides,
-                            base: {
-                              ...profile.linkOverrides?.base,
-                              url: e.target.value || undefined,
-                            },
-                          })
-                        }
-                        className={`flex-1 min-w-0 rounded-md border shadow-sm sm:text-sm p-2 ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
-                      />
-                      {profile.linkOverrides?.base?.url && (
-                        <button
-                          type="button"
-                          onClick={() =>
+                    <select
+                      id="cst-toolkit-choice"
+                      value={profile.cst.toolkitChoice}
+                      onChange={(event) =>
+                        handleToolkitChoiceChange(event.target.value as ToolkitOptionKey)
+                      }
+                      className={`w-full rounded-md border shadow-sm sm:text-sm p-2 pr-10 ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100' : 'border-[#768692] bg-white text-slate-900'}`}
+                    >
+                      {TOOLKIT_OPTIONS.map((toolkit) => (
+                        <option key={toolkit.key} value={toolkit.key}>
+                          {toolkit.label}
+                        </option>
+                      ))}
+                    </select>
+                    <p className={`mt-2 text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
+                      This controls which toolkit the chatbot-style assistant opens by default
+                      across the tool.
+                    </p>
+                  </div>
+
+                  {/* Base override */}
+                  <div
+                    className={`mt-4 rounded-md border p-4 space-y-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
+                  >
+                    <div>
+                      <p
+                        className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+                      >
+                        {profile.projectName || 'Project'} Homepage
+                      </p>
+                      <p
+                        className={`text-xs mt-0.5 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
+                      >
+                        Replaces the Change Management Toolkit destination for all links that fall
+                        back to it.
+                      </p>
+                      <p className="mt-1 text-xs">
+                        Currently:{' '}
+                        <a
+                          href={toAbsoluteUrl(
+                            profile.linkOverrides?.base?.url?.trim() || TOOLKIT_BASE_DEFAULTS.url
+                          )}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`underline ${darkMode ? 'text-blue-300 hover:text-blue-200' : 'text-[#005eb8] hover:text-[#00417a]'}`}
+                        >
+                          {profile.linkOverrides?.base?.url?.trim() || TOOLKIT_BASE_DEFAULTS.url}
+                        </a>
+                      </p>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div>
+                        <label
+                          className={`block text-xs font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
+                        >
+                          Toolkit name
+                        </label>
+                        <input
+                          type="text"
+                          placeholder={TOOLKIT_BASE_DEFAULTS.label}
+                          value={profile.linkOverrides?.base?.label ?? ''}
+                          onChange={(e) =>
                             handleLinkOverridesChange({
                               ...profile.linkOverrides,
-                              base: { ...profile.linkOverrides?.base, url: undefined },
+                              base: {
+                                ...profile.linkOverrides?.base,
+                                label: e.target.value || undefined,
+                              },
                             })
                           }
-                          className={`shrink-0 rounded-md border px-3 py-2 text-xs font-medium ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-50'}`}
-                        >
-                          Reset
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Core links - global reference links not tied to any one component */}
-              <div
-                className={`mt-4 rounded-md border p-4 space-y-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
-              >
-                <div>
-                  <p
-                    className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
-                  >
-                    Additional Links
-                  </p>
-                  <p className={`text-xs mt-0.5 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-                    General reference links that aren't tied to a single component - shown here and
-                    matched into action/summary text across every component.
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  {effectiveCoreLinks.map((link) => (
-                    <div
-                      key={link.key}
-                      className="grid grid-cols-1 md:grid-cols-[1fr,2fr,auto,auto] gap-2 items-center"
-                    >
-                      <input
-                        type="text"
-                        placeholder="Link name"
-                        value={link.label}
-                        onChange={(e) => handleUpdateCoreLink(link.key, 'label', e.target.value)}
-                        className={`rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
-                      />
-                      <input
-                        type="url"
-                        placeholder="https://..."
-                        value={link.url}
-                        onChange={(e) => handleUpdateCoreLink(link.key, 'url', e.target.value)}
-                        className={`rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setEditingAliasesFor({ link })}
-                        aria-label={`Edit match text for ${link.label || 'this core link'}`}
-                        className={`shrink-0 rounded border px-1.5 py-1.5 text-xs ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-100'}`}
-                      >
-                        ✎
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveCoreLink(link.key)}
-                        className={`shrink-0 rounded border px-2 py-1.5 text-xs font-medium ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-50'}`}
-                      >
-                        Remove
-                      </button>
-                      <MatchAliasPreview aliases={link.matchAliases} darkMode={darkMode} />
-                    </div>
-                  ))}
-                </div>
-                <button type="button" onClick={handleAddCoreLink} className={nhsButtonSecondary}>
-                  + Add Core Link
-                </button>
-              </div>
-
-              {/* Phase linking - a landing-page URL per phase, shown on the Daily Phase Overview */}
-              <div
-                className={`mt-4 rounded-md border p-4 space-y-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
-              >
-                <div>
-                  <p
-                    className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
-                  >
-                    Phase linking
-                  </p>
-                  <p className={`text-xs mt-0.5 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-                    Set a landing page URL for each phase - shown as a "Visit phase page" link when
-                    that phase is expanded on the Daily Phase Overview.
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  {Object.entries(PHASE_NAMES).map(([phaseKey, phaseName]) => {
-                    const phase = Number(phaseKey);
-                    return (
-                      <div
-                        key={phase}
-                        className="grid grid-cols-1 md:grid-cols-[1fr,2fr,auto] gap-2 items-center"
-                      >
-                        <label
-                          htmlFor={`phase-link-${phase}`}
-                          className={`text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
-                        >
-                          Phase {phase}: {phaseName}
-                        </label>
-                        <DefaultableLinkInput
-                          id={`phase-link-${phase}`}
-                          value={phaseLinks[phase]}
-                          defaultUrl={PHASE_LINKS[phase]}
-                          onChange={(url) => handleUpdatePhaseLink(phase, url)}
-                          darkMode={darkMode}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setEditingPhaseAliasesFor(phase)}
-                          aria-label={`Edit phase link match text for Phase ${phase}`}
-                          className={`shrink-0 rounded border px-1.5 py-1.5 text-xs ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-100'}`}
-                        >
-                          ✎
-                        </button>
-                        <MatchAliasPreview
-                          aliases={profile.phaseLinkAliases?.[phase]}
-                          darkMode={darkMode}
+                          className={`w-full rounded-md border shadow-sm sm:text-sm p-2 ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
                         />
                       </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Per-component links: further reading + per-link overrides, grouped by component */}
-              <div className="mt-4 space-y-3">
-                <p
-                  className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
-                >
-                  Component links
-                </p>
-                <p className={`text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-                  Set the "Further Reading" link shown on each component's overview panel, and
-                  override any of its individual guidance links. Each link shows whether it
-                  currently points at the <strong>Default Change Management Link</strong> (the
-                  original NHS Future link),{' '}
-                  <strong>{profile.projectName || 'Project'} Homepage</strong> (your organisation's
-                  override above), or a <strong>Custom</strong> URL you've set - click the pencil to
-                  change it. Additional links can be hidden from Settings if you only want the
-                  essentials.
-                </p>
-                {components.map((component) => {
-                  const sectionLinks = getGuidanceLinksForComponent(component.id);
-                  const allLinks = [...sectionLinks.inputs, ...sectionLinks.deliverables];
-                  const overrideCount = allLinks.filter((l) =>
-                    profile.linkOverrides?.links?.[l.key]?.url?.trim()
-                  ).length;
-                  const hasFurtherReading = Boolean(
-                    profile.componentFurtherReading?.[component.id]
-                  );
-                  return (
-                    <details
-                      key={component.id}
-                      className={`group overflow-hidden rounded-md border ${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'}`}
-                    >
-                      <summary
-                        className={`flex cursor-pointer list-none items-center justify-between gap-3 p-3 text-sm font-medium transition-colors focus:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-[#ffeb3b] ${darkMode ? 'bg-slate-800 text-slate-200 hover:bg-slate-700' : 'bg-slate-50 text-slate-700 hover:bg-blue-50'} [&::-webkit-details-marker]:hidden`}
-                      >
-                        <span className="flex min-w-0 items-center gap-2">
-                          <span
-                            aria-hidden="true"
-                            className={`shrink-0 text-lg font-bold leading-none transition-transform group-open:rotate-45 ${darkMode ? 'text-blue-300' : 'text-[#005eb8]'}`}
-                          >
-                            +
-                          </span>
-                          <span className="truncate">{component.label}</span>
-                        </span>
-                        <span className="flex items-center gap-2">
-                          {hasFurtherReading && (
-                            <span
-                              className={`rounded-full px-2 py-0.5 text-xs font-semibold ${darkMode ? 'bg-emerald-500/20 text-emerald-300' : 'bg-emerald-100 text-emerald-700'}`}
-                            >
-                              Further reading set
-                            </span>
-                          )}
-                          {overrideCount > 0 && (
-                            <span
-                              className={`rounded-full px-2 py-0.5 text-xs font-semibold ${darkMode ? 'bg-blue-500/20 text-blue-300' : 'bg-blue-100 text-blue-700'}`}
-                            >
-                              {overrideCount} override{overrideCount !== 1 ? 's' : ''}
-                            </span>
-                          )}
-                        </span>
-                      </summary>
-                      <div
-                        className={`border-t divide-y ${darkMode ? 'border-slate-700 divide-slate-700' : 'border-slate-200 divide-slate-100'}`}
-                      >
-                        <div className="p-3 space-y-1.5">
-                          <p
-                            className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
-                          >
-                            Further reading
-                          </p>
-                          <DefaultableLinkInput
-                            id={`further-reading-${component.id}`}
-                            value={profile.componentFurtherReading?.[component.id]}
-                            defaultUrl={undefined}
-                            onChange={(url) =>
-                              handleComponentFurtherReadingChange(component.id, url)
+                      <div>
+                        <label
+                          className={`block text-xs font-medium mb-1 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
+                        >
+                          Toolkit URL
+                        </label>
+                        <div className="flex gap-2">
+                          <input
+                            type="url"
+                            placeholder={TOOLKIT_BASE_DEFAULTS.url}
+                            value={profile.linkOverrides?.base?.url ?? ''}
+                            onChange={(e) =>
+                              handleLinkOverridesChange({
+                                ...profile.linkOverrides,
+                                base: {
+                                  ...profile.linkOverrides?.base,
+                                  url: e.target.value || undefined,
+                                },
+                              })
                             }
-                            darkMode={darkMode}
+                            className={`flex-1 min-w-0 rounded-md border shadow-sm sm:text-sm p-2 ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
                           />
+                          {profile.linkOverrides?.base?.url && (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleLinkOverridesChange({
+                                  ...profile.linkOverrides,
+                                  base: { ...profile.linkOverrides?.base, url: undefined },
+                                })
+                              }
+                              className={`shrink-0 rounded-md border px-3 py-2 text-xs font-medium ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-50'}`}
+                            >
+                              Reset
+                            </button>
+                          )}
                         </div>
-                        {!allLinks.length && (
-                          <p
-                            className={`p-3 text-xs ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Core links - global reference links not tied to any one component */}
+                  <div
+                    className={`mt-4 rounded-md border p-4 space-y-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
+                  >
+                    <div>
+                      <p
+                        className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+                      >
+                        Additional Links
+                      </p>
+                      <p
+                        className={`text-xs mt-0.5 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
+                      >
+                        General reference links that aren't tied to a single component - shown here
+                        and matched into action/summary text across every component.
+                      </p>
+                    </div>
+                    <div className="space-y-2">
+                      {effectiveCoreLinks.map((link) => (
+                        <div
+                          key={link.key}
+                          className="grid grid-cols-1 md:grid-cols-[1fr,2fr,auto,auto] gap-2 items-center"
+                        >
+                          <input
+                            type="text"
+                            placeholder="Link name"
+                            value={link.label}
+                            onChange={(e) =>
+                              handleUpdateCoreLink(link.key, 'label', e.target.value)
+                            }
+                            className={`rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
+                          />
+                          <input
+                            type="url"
+                            placeholder="https://..."
+                            value={link.url}
+                            onChange={(e) => handleUpdateCoreLink(link.key, 'url', e.target.value)}
+                            className={`rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setEditingAliasesFor({ link })}
+                            aria-label={`Edit match text for ${link.label || 'this core link'}`}
+                            className={`shrink-0 rounded border px-1.5 py-1.5 text-xs ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-100'}`}
                           >
-                            No default guidance links for this component - add one below.
-                          </p>
-                        )}
-                        {(['inputs', 'deliverables'] as const).map((sect) => {
-                          const links = sectionLinks[sect] ?? [];
-                          if (!links.length) return null;
-                          return (
-                            <div key={sect} className="p-3 space-y-2">
+                            ✎
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveCoreLink(link.key)}
+                            className={`shrink-0 rounded border px-2 py-1.5 text-xs font-medium ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-50'}`}
+                          >
+                            Remove
+                          </button>
+                          <MatchAliasPreview aliases={link.matchAliases} darkMode={darkMode} />
+                        </div>
+                      ))}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleAddCoreLink}
+                      className={nhsButtonSecondary}
+                    >
+                      + Add Core Link
+                    </button>
+                  </div>
+
+                  {/* Phase linking - a landing-page URL per phase, shown on the Daily Phase Overview */}
+                  <div
+                    className={`mt-4 rounded-md border p-4 space-y-3 ${darkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
+                  >
+                    <div>
+                      <p
+                        className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+                      >
+                        Phase linking
+                      </p>
+                      <p
+                        className={`text-xs mt-0.5 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
+                      >
+                        Set a landing page URL for each phase - shown as a "Visit phase page" link
+                        when that phase is expanded on the Daily Phase Overview.
+                      </p>
+                    </div>
+                    <div className="space-y-2">
+                      {Object.entries(PHASE_NAMES).map(([phaseKey, phaseName]) => {
+                        const phase = Number(phaseKey);
+                        return (
+                          <div
+                            key={phase}
+                            className="grid grid-cols-1 md:grid-cols-[1fr,2fr,auto] gap-2 items-center"
+                          >
+                            <label
+                              htmlFor={`phase-link-${phase}`}
+                              className={`text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+                            >
+                              Phase {phase}: {phaseName}
+                            </label>
+                            <DefaultableLinkInput
+                              id={`phase-link-${phase}`}
+                              value={phaseLinks[phase]}
+                              defaultUrl={PHASE_LINKS[phase]}
+                              onChange={(url) => handleUpdatePhaseLink(phase, url)}
+                              darkMode={darkMode}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setEditingPhaseAliasesFor(phase)}
+                              aria-label={`Edit phase link match text for Phase ${phase}`}
+                              className={`shrink-0 rounded border px-1.5 py-1.5 text-xs ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-100'}`}
+                            >
+                              ✎
+                            </button>
+                            <MatchAliasPreview
+                              aliases={profile.phaseLinkAliases?.[phase]}
+                              darkMode={darkMode}
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Per-component links: further reading + per-link overrides, grouped by component */}
+                  <div className="mt-4 space-y-3">
+                    <p
+                      className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
+                    >
+                      Component links
+                    </p>
+                    <p className={`text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
+                      Set the "Further Reading" link shown on each component's overview panel, and
+                      override any of its individual guidance links. Each link shows whether it
+                      currently points at the <strong>Default Change Management Link</strong> (the
+                      original NHS Future link),{' '}
+                      <strong>{profile.projectName || 'Project'} Homepage</strong> (your
+                      organisation's override above), or a <strong>Custom</strong> URL you've set -
+                      click the pencil to change it. Additional links can be hidden from Settings if
+                      you only want the essentials.
+                    </p>
+                    {components.map((component) => {
+                      const sectionLinks = getGuidanceLinksForComponent(component.id);
+                      const allLinks = [...sectionLinks.inputs, ...sectionLinks.deliverables];
+                      const overrideCount = allLinks.filter((l) =>
+                        profile.linkOverrides?.links?.[l.key]?.url?.trim()
+                      ).length;
+                      const hasFurtherReading = Boolean(
+                        profile.componentFurtherReading?.[component.id]
+                      );
+                      return (
+                        <details
+                          key={component.id}
+                          className={`group overflow-hidden rounded-md border ${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'}`}
+                        >
+                          <summary
+                            className={`flex cursor-pointer list-none items-center justify-between gap-3 p-3 text-sm font-medium transition-colors focus:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-[#ffeb3b] ${darkMode ? 'bg-slate-800 text-slate-200 hover:bg-slate-700' : 'bg-slate-50 text-slate-700 hover:bg-blue-50'} [&::-webkit-details-marker]:hidden`}
+                          >
+                            <span className="flex min-w-0 items-center gap-2">
+                              <span
+                                aria-hidden="true"
+                                className={`shrink-0 text-lg font-bold leading-none transition-transform group-open:rotate-45 ${darkMode ? 'text-blue-300' : 'text-[#005eb8]'}`}
+                              >
+                                +
+                              </span>
+                              <span className="truncate">{component.label}</span>
+                            </span>
+                            <span className="flex items-center gap-2">
+                              {hasFurtherReading && (
+                                <span
+                                  className={`rounded-full px-2 py-0.5 text-xs font-semibold ${darkMode ? 'bg-emerald-500/20 text-emerald-300' : 'bg-emerald-100 text-emerald-700'}`}
+                                >
+                                  Further reading set
+                                </span>
+                              )}
+                              {overrideCount > 0 && (
+                                <span
+                                  className={`rounded-full px-2 py-0.5 text-xs font-semibold ${darkMode ? 'bg-blue-500/20 text-blue-300' : 'bg-blue-100 text-blue-700'}`}
+                                >
+                                  {overrideCount} override{overrideCount !== 1 ? 's' : ''}
+                                </span>
+                              )}
+                            </span>
+                          </summary>
+                          <div
+                            className={`border-t divide-y ${darkMode ? 'border-slate-700 divide-slate-700' : 'border-slate-200 divide-slate-100'}`}
+                          >
+                            <div className="p-3 space-y-1.5">
                               <p
                                 className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
                               >
-                                {sect}
+                                Further reading
                               </p>
-                              {links.map((link) => {
-                                const perLink = profile.linkOverrides?.links?.[link.key];
-                                const resolved = resolveEffectiveLink(link, profile.linkOverrides);
-                                const status = getLinkOverrideStatus(perLink);
-                                const statusStyles: Record<LinkOverrideStatus, string> = {
-                                  default: darkMode
-                                    ? 'border-amber-500/40 bg-amber-500/15 text-amber-200'
-                                    : 'bg-amber-50 border-amber-200 text-amber-800',
-                                  custom: darkMode
-                                    ? 'border-green-500/40 bg-green-500/15 text-green-200'
-                                    : 'bg-green-50 border-green-200 text-green-800',
-                                  base: darkMode
-                                    ? 'border-red-500/30 bg-red-500/10 text-red-200'
-                                    : 'bg-red-50 border-red-100 text-red-700',
-                                };
-                                const statusLabel: Record<LinkOverrideStatus, string> = {
-                                  default: 'Default Change Management Link',
-                                  custom: 'Custom',
-                                  base: `${profile.projectName || 'Project'} Homepage`,
-                                };
-                                return (
-                                  <div
-                                    key={link.key}
-                                    className="flex items-center justify-between gap-2"
+                              <DefaultableLinkInput
+                                id={`further-reading-${component.id}`}
+                                value={profile.componentFurtherReading?.[component.id]}
+                                defaultUrl={undefined}
+                                onChange={(url) =>
+                                  handleComponentFurtherReadingChange(component.id, url)
+                                }
+                                darkMode={darkMode}
+                              />
+                            </div>
+                            {!allLinks.length && (
+                              <p
+                                className={`p-3 text-xs ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}
+                              >
+                                No default guidance links for this component - add one below.
+                              </p>
+                            )}
+                            {(['inputs', 'deliverables'] as const).map((sect) => {
+                              const links = sectionLinks[sect] ?? [];
+                              if (!links.length) return null;
+                              return (
+                                <div key={sect} className="p-3 space-y-2">
+                                  <p
+                                    className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
                                   >
-                                    <span
-                                      className={`text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}
-                                    >
-                                      {link.type !== 'core' ? '(Optional) ' : ''}
-                                      {link.label}
-                                    </span>
-                                    <div className="flex items-center gap-2">
-                                      <a
-                                        href={resolved.url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        title={resolved.url}
-                                        className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${statusStyles[status]}`}
+                                    {sect}
+                                  </p>
+                                  {links.map((link) => {
+                                    const perLink = profile.linkOverrides?.links?.[link.key];
+                                    const resolved = resolveEffectiveLink(
+                                      link,
+                                      profile.linkOverrides
+                                    );
+                                    const status = getLinkOverrideStatus(perLink);
+                                    const statusStyles: Record<LinkOverrideStatus, string> = {
+                                      default: darkMode
+                                        ? 'border-amber-500/40 bg-amber-500/15 text-amber-200'
+                                        : 'bg-amber-50 border-amber-200 text-amber-800',
+                                      custom: darkMode
+                                        ? 'border-green-500/40 bg-green-500/15 text-green-200'
+                                        : 'bg-green-50 border-green-200 text-green-800',
+                                      base: darkMode
+                                        ? 'border-red-500/30 bg-red-500/10 text-red-200'
+                                        : 'bg-red-50 border-red-100 text-red-700',
+                                    };
+                                    const statusLabel: Record<LinkOverrideStatus, string> = {
+                                      default: 'Default Change Management Link',
+                                      custom: 'Custom',
+                                      base: `${profile.projectName || 'Project'} Homepage`,
+                                    };
+                                    return (
+                                      <div
+                                        key={link.key}
+                                        className="flex items-center justify-between gap-2"
                                       >
-                                        {statusLabel[status]}
-                                      </a>
-                                      <button
-                                        type="button"
-                                        onClick={() => setEditingLink(link)}
-                                        aria-label={`Edit ${link.label} link`}
-                                        className={`shrink-0 rounded-md border px-1.5 py-0.5 text-xs ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-100'}`}
-                                      >
-                                        ✎
-                                      </button>
-                                    </div>
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          );
-                        })}
-                        <div className="p-3 space-y-2">
-                          <p
-                            className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
-                          >
-                            Custom links
-                          </p>
-                          {(profile.customComponentLinks?.[component.id] || []).map((link) => (
-                            <div
-                              key={link.key}
-                              className="grid grid-cols-1 md:grid-cols-[1fr,2fr,auto,auto] gap-2 items-center"
-                            >
-                              <input
-                                type="text"
-                                placeholder="Link name"
-                                value={link.label}
-                                onChange={(e) =>
-                                  handleUpdateComponentLink(
-                                    component.id,
-                                    link.key,
-                                    'label',
-                                    e.target.value
-                                  )
-                                }
-                                className={`rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
-                              />
-                              <input
-                                type="url"
-                                placeholder="https://..."
-                                value={link.url}
-                                onChange={(e) =>
-                                  handleUpdateComponentLink(
-                                    component.id,
-                                    link.key,
-                                    'url',
-                                    e.target.value
-                                  )
-                                }
-                                className={`rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
-                              />
+                                        <span
+                                          className={`text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}
+                                        >
+                                          {link.type !== 'core' ? '(Optional) ' : ''}
+                                          {link.label}
+                                        </span>
+                                        <div className="flex items-center gap-2">
+                                          <a
+                                            href={resolved.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            title={resolved.url}
+                                            className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${statusStyles[status]}`}
+                                          >
+                                            {statusLabel[status]}
+                                          </a>
+                                          <button
+                                            type="button"
+                                            onClick={() => setEditingLink(link)}
+                                            aria-label={`Edit ${link.label} link`}
+                                            className={`shrink-0 rounded-md border px-1.5 py-0.5 text-xs ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-100'}`}
+                                          >
+                                            ✎
+                                          </button>
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              );
+                            })}
+                            <div className="p-3 space-y-2">
+                              <p
+                                className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}
+                              >
+                                Custom links
+                              </p>
+                              {(profile.customComponentLinks?.[component.id] || []).map((link) => (
+                                <div
+                                  key={link.key}
+                                  className="grid grid-cols-1 md:grid-cols-[1fr,2fr,auto,auto] gap-2 items-center"
+                                >
+                                  <input
+                                    type="text"
+                                    placeholder="Link name"
+                                    value={link.label}
+                                    onChange={(e) =>
+                                      handleUpdateComponentLink(
+                                        component.id,
+                                        link.key,
+                                        'label',
+                                        e.target.value
+                                      )
+                                    }
+                                    className={`rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
+                                  />
+                                  <input
+                                    type="url"
+                                    placeholder="https://..."
+                                    value={link.url}
+                                    onChange={(e) =>
+                                      handleUpdateComponentLink(
+                                        component.id,
+                                        link.key,
+                                        'url',
+                                        e.target.value
+                                      )
+                                    }
+                                    className={`rounded border px-2 py-1.5 text-xs ${darkMode ? 'border-slate-600 bg-slate-800 text-slate-100 placeholder-slate-500' : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'}`}
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setEditingAliasesFor({ link, componentId: component.id })
+                                    }
+                                    aria-label={`Edit match text for ${link.label || 'this link'}`}
+                                    className={`shrink-0 rounded border px-1.5 py-1.5 text-xs ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-100'}`}
+                                  >
+                                    ✎
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      handleRemoveComponentLink(component.id, link.key)
+                                    }
+                                    className={`shrink-0 rounded border px-2 py-1.5 text-xs font-medium ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-50'}`}
+                                  >
+                                    Remove
+                                  </button>
+                                  <label
+                                    className={`col-span-full -mt-1 flex items-center gap-1.5 text-[11px] ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+                                  >
+                                    <input
+                                      type="checkbox"
+                                      checked={Boolean(link.optional)}
+                                      onChange={(e) =>
+                                        handleToggleComponentLinkOptional(
+                                          component.id,
+                                          link.key,
+                                          e.target.checked
+                                        )
+                                      }
+                                      className="h-3.5 w-3.5"
+                                    />
+                                    Optional (unticked = required)
+                                  </label>
+                                  <MatchAliasPreview
+                                    aliases={link.matchAliases}
+                                    darkMode={darkMode}
+                                  />
+                                </div>
+                              ))}
                               <button
                                 type="button"
-                                onClick={() =>
-                                  setEditingAliasesFor({ link, componentId: component.id })
-                                }
-                                aria-label={`Edit match text for ${link.label || 'this link'}`}
-                                className={`shrink-0 rounded border px-1.5 py-1.5 text-xs ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-100'}`}
+                                onClick={() => handleAddComponentLink(component.id)}
+                                className={nhsButtonSecondary}
                               >
-                                ✎
+                                + Add Link
                               </button>
-                              <button
-                                type="button"
-                                onClick={() => handleRemoveComponentLink(component.id, link.key)}
-                                className={`shrink-0 rounded border px-2 py-1.5 text-xs font-medium ${darkMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-600 hover:bg-slate-50'}`}
-                              >
-                                Remove
-                              </button>
-                              <label
-                                className={`col-span-full -mt-1 flex items-center gap-1.5 text-[11px] ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
-                              >
-                                <input
-                                  type="checkbox"
-                                  checked={Boolean(link.optional)}
-                                  onChange={(e) =>
-                                    handleToggleComponentLinkOptional(
-                                      component.id,
-                                      link.key,
-                                      e.target.checked
-                                    )
-                                  }
-                                  className="h-3.5 w-3.5"
-                                />
-                                Optional (unticked = required)
-                              </label>
-                              <MatchAliasPreview aliases={link.matchAliases} darkMode={darkMode} />
                             </div>
-                          ))}
-                          <button
-                            type="button"
-                            onClick={() => handleAddComponentLink(component.id)}
-                            className={nhsButtonSecondary}
-                          >
-                            + Add Link
-                          </button>
-                        </div>
-                      </div>
-                    </details>
-                  );
-                })}
-              </div>
-            </>
-          ) : (
-            <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-              External links were set up at project start. Untick "Links initiated" if you need to
-              come back and edit them.
-            </p>
-          )}
+                          </div>
+                        </details>
+                      );
+                    })}
+                  </div>
+                </>
+              ) : (
+                <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                  External links were set up at project start. Untick "Links initiated" if you need
+                  to come back and edit them.
+                </p>
+              )}
+            </div>
+          </div>
         </div>
-      </div>
-      </div>
       ) : null}
 
       {editingLink && (
@@ -2131,6 +2180,47 @@ export function ProjectDetailsPage({
           darkMode={darkMode}
         />
       )}
+
+      {!profile.setupChoiceMade && !profile.trustName.trim() ? (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="setup-choice-title"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 p-4"
+        >
+          <div
+            className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} w-full max-w-lg rounded-xl border p-6 shadow-2xl`}
+          >
+            <h3
+              id="setup-choice-title"
+              className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
+            >
+              How would you like to set up this project?
+            </h3>
+            <p className={`mt-3 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+              Start from the default setup, or apply the {AVT_PRESET.label} preset to pre-fill the
+              Core links, Phase links, Further Reading links and Change Adoption Baseline (CAB)
+              questions. You can still change any of it later in the Admin section.
+            </p>
+            <div className="mt-6 flex flex-wrap justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => handleChooseSetup(false)}
+                className={nhsButtonSecondary}
+              >
+                Default setup
+              </button>
+              <button
+                type="button"
+                onClick={() => handleChooseSetup(true)}
+                className={nhsButtonPrimary}
+              >
+                Use {AVT_PRESET.label} preset
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       {pendingPathwayChange && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 p-4">

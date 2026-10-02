@@ -434,6 +434,16 @@ export function AdoptionApp() {
     }
   }, [store.orgProfile, view]);
 
+  // The Adoption Baseline needs an organisation name and a signed-in, named team member.
+  useEffect(() => {
+    const signedIn = (store.orgProfile.teamMembers || []).some(
+      (member) => member.id === currentUserId && member.name.trim()
+    );
+    if (view === 'where-am-i-now' && (isCstUnconfigured(store.orgProfile) || !signedIn)) {
+      setView('project-details');
+    }
+  }, [store.orgProfile, currentUserId, view]);
+
   // Render charts after dashboard mounts
   useEffect(() => {
     if (view === 'dashboard' && dashboardRef.current) {
@@ -1273,7 +1283,11 @@ export function AdoptionApp() {
     downloadFile(
       `cst-personalisation-${trustSlug}.json`,
       JSON.stringify(
-        { schemaVersion: 'cst-v1', exportedAt: new Date().toISOString(), orgProfile: store.orgProfile },
+        {
+          schemaVersion: 'cst-v1',
+          exportedAt: new Date().toISOString(),
+          orgProfile: store.orgProfile,
+        },
         null,
         2
       ),
@@ -1408,6 +1422,10 @@ export function AdoptionApp() {
   const trustLabel = store.orgProfile.trustName || 'Unconfigured Trust';
   const projectLabel = store.orgProfile.projectName || 'Unnamed Project';
   const projectConfigured = !isCstUnconfigured(store.orgProfile);
+  const signedInMember = (store.orgProfile.teamMembers || []).find(
+    (member) => member.id === currentUserId && member.name.trim()
+  );
+  const baselineAvailable = projectConfigured && Boolean(signedInMember);
   const showProgressReminder =
     projectConfigured &&
     new Date().getDate() === 1 &&
@@ -1492,30 +1510,30 @@ export function AdoptionApp() {
           </button>
           {expandedNavSections.intro ? (
             <nav className="space-y-1 mb-4">
-              {(
-                ['introduction', 'engine-explained', 'project-details', 'where-am-i-now'] as View[]
-              ).map((v) => (
-                <button
-                  key={v}
-                  ref={(el) => {
-                    navItemRefs.current[`view:${v}`] = el;
-                  }}
-                  onClick={() => handleViewChange(v)}
-                  className={`w-full flex items-center px-4 py-2.5 text-sm transition-colors ${
-                    view === v
-                      ? 'bg-blue-800 text-white font-medium border-l-4 border-white'
-                      : 'text-blue-100 hover:bg-blue-800 border-l-4 border-transparent'
-                  }`}
-                >
-                  {v === 'introduction'
-                    ? 'Introduction'
-                    : v === 'engine-explained'
-                      ? 'Engine Explained'
-                      : v === 'project-details'
-                        ? 'Project Profile'
-                        : 'Adoption Baseline'}
-                </button>
-              ))}
+              {(['introduction', 'engine-explained', 'project-details', 'where-am-i-now'] as View[])
+                .filter((v) => v !== 'where-am-i-now' || baselineAvailable)
+                .map((v) => (
+                  <button
+                    key={v}
+                    ref={(el) => {
+                      navItemRefs.current[`view:${v}`] = el;
+                    }}
+                    onClick={() => handleViewChange(v)}
+                    className={`w-full flex items-center px-4 py-2.5 text-sm transition-colors ${
+                      view === v
+                        ? 'bg-blue-800 text-white font-medium border-l-4 border-white'
+                        : 'text-blue-100 hover:bg-blue-800 border-l-4 border-transparent'
+                    }`}
+                  >
+                    {v === 'introduction'
+                      ? 'Introduction'
+                      : v === 'engine-explained'
+                        ? 'Engine Explained'
+                        : v === 'project-details'
+                          ? 'Project Profile'
+                          : 'Adoption Baseline'}
+                  </button>
+                ))}
             </nav>
           ) : null}
 
@@ -2055,6 +2073,7 @@ export function AdoptionApp() {
               onGoToIntroduction={() => handleViewChange('introduction')}
               onContinueToVision={() => openComponentAssessment('vision')}
               onGoToWhereAmINow={() => handleViewChange('where-am-i-now')}
+              baselineAvailable={baselineAvailable}
               onGoToStakeholderAnalysis={() => handleViewChange('stakeholder-analysis')}
               currentUserId={currentUserId}
               onCurrentUserChange={setCurrentUserId}

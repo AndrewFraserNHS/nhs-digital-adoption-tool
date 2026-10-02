@@ -308,6 +308,8 @@ export interface OrgProfile {
   readinessReviewQuestionsInitiated?: boolean;
   /** As externalLinksInitiated, for the Admin section's Stakeholder Reference Data block. */
   stakeholderReferenceDataInitiated?: boolean;
+  /** Set once the first-entry "default setup or preset" choice has been made, so the modal never reappears. */
+  setupChoiceMade?: boolean;
   teamMembers?: TeamMember[];
   /** Groups/Sub-Groups/Locations/Relationships used by the Stakeholder Analysis tool - shared here so every project only defines them once. */
   stakeholderReferenceLists?: StakeholderReferenceLists;
@@ -412,6 +414,7 @@ export function normalizeOrgProfile(profile?: Partial<OrgProfile>): OrgProfile {
     externalLinksInitiated: profile?.externalLinksInitiated,
     readinessReviewQuestionsInitiated: profile?.readinessReviewQuestionsInitiated,
     stakeholderReferenceDataInitiated: profile?.stakeholderReferenceDataInitiated,
+    setupChoiceMade: profile?.setupChoiceMade,
     teamMembers: profile?.teamMembers || [],
     stakeholderReferenceLists:
       profile?.stakeholderReferenceLists || DEFAULT_STAKEHOLDER_REFERENCE_LISTS,

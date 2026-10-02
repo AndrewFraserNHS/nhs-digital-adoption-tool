@@ -510,24 +510,8 @@ export function buildComponentRadarChartData(
 ): ChartData<'radar', (number | null)[], string> {
   const exemplarPhase =
     currentPhase && COMPONENT_PHASE_EXEMPLARS[currentPhase] ? currentPhase : null;
-  const colorForScore = (score: number): string => {
-    if (score <= 0) {
-      return '#768692';
-    }
-    if (score < 1.5) {
-      return '#AE2521';
-    }
-    if (score < 2.5) {
-      return '#FFB81C';
-    }
-    if (score < 3.5) {
-      return '#005EB8';
-    }
-    if (score < 4.5) {
-      return '#330072';
-    }
-    return '#00A499';
-  };
+  // Point colours are the readiness key (READINESS_BANDS) so the radar always matches its legend.
+  const colorForScore = (score: number): string => getReadinessBand(score).color;
   // The weakest lens gates the component's overall readiness - a component isn't "ready" just
   // because most of its lenses score well while one lags badly, so we surface the minimum rather
   // than smoothing it away with an average. WHEN a specific lens is requested, that lens's own

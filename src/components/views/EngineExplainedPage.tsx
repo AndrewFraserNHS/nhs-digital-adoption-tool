@@ -341,7 +341,7 @@ function EngineOverviewDiagram({ darkMode }: { darkMode: boolean }): JSX.Element
               style={{ backgroundColor: band.color }}
             >
               <span
-                className={`text-[10px] font-semibold ${band.score === 2 ? 'text-slate-900' : 'text-white'}`}
+                className={`text-[10px] font-semibold ${band.score < 3 ? 'text-slate-900' : 'text-white'}`}
               >
                 {band.label}
               </span>

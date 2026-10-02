@@ -1,8 +1,5 @@
-1. Admin Section on Project Profile not present yet, should house all sections below "What phase are you currently in?" Slightly darker grey background, and only way to hide or show is in profile settings. Off/Hidden by default
-2. MoSCoW tool needs to be adding with similar project level split as forcefield analysis
-3. (Optional) Highlight builder ability to export text content to import across devices.
-4. (Optional) Instead of two different engines, it would be month to month comparison on progres.
-5. (Optional) Way to group stakeholders, select stakeholder or stakeholder group.
-6. (Optional) Link to action from Engagement Log (clickable). Action on component would need changes reflected including linked stakeholder.
-7. (Optional) Currently tracking Phase 3: Development (set manually) doesn't seem to match question 2. Needs to align on metrics dashboard.
-8. Change Adoption Baseline (CAB) Analysis side nav is center aligned for some reason.
+1. Project Profile needs modal on first entry asking if we want default setup or AVT preset
+2. Hide Adoption Baseline until both Org Name, and team member + signed in user.
+3. Auto sign in the first person added in team members
+4. Radar colours still don't match the key at the bottom, key is the truth.
+5. 

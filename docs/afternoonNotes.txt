@@ -16,3 +16,6 @@
 16. Show external links section and Show change adoption baseline section swapped for "Show admin action" toggle that is off by default.
 17. (Optional) Currently tracking Phase 3: Development (set manually) doesn't seem to match question 2. Needs to align on metrics dashboard.
 18. Questions initiatiated has broken, needs to align with profile set up. Likely due to swap to admin toggle, so these toggles can be removed.
+19. Project profile order needs to be Org profile, team members, pathway and timeline, what phase are you in, then Admin section, hidden by default and showable from settings.
+20. Radar points colour not correlated.
+21. Preset needs to be modal first tiem you hit project setup not just a section on page. "Leave as default links or apply AVT preset" Disabled option.

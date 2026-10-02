@@ -1630,11 +1630,12 @@ export function AdoptionApp() {
                     [
                       'highlight-builder',
                       'force-field-analysis',
-                      'compare',
-                      'change-impact-assessment',
                       'stakeholder-analysis',
-                      'raid-log',
+                      'change-impact-assessment',
                       'benefits',
+                      //Todo: MoSCoW Analysis
+                      'raid-log',
+                      'compare',
                       'readiness-review-analysis',
                       'audit-log',
                     ] as View[]

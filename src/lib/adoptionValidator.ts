@@ -152,7 +152,7 @@ export function validateOrgProfile(profile: OrgProfile): ValidationResult {
   const errors: ValidationError[] = [];
 
   if (!profile.trustName || profile.trustName.trim() === '') {
-    errors.push({ field: 'trustName', message: 'Trust name is required' });
+    errors.push({ field: 'trustName', message: 'Organisation name is required' });
   }
 
   if (profile.trustName && profile.trustName.length > 255) {

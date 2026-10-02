@@ -242,7 +242,6 @@ export interface StakeholderReferenceLists {
 
 export const DEFAULT_STAKEHOLDER_REFERENCE_LISTS: StakeholderReferenceLists = {
   groups: [
-    'SRO',
     'Manager',
     'Trades Union',
     'Programme',

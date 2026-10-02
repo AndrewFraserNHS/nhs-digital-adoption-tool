@@ -1,5 +1,2 @@
-1. Project Profile needs modal on first entry asking if we want default setup or AVT preset
-2. Hide Adoption Baseline until both Org Name, and team member + signed in user.
-3. Auto sign in the first person added in team members
-4. Radar colours still don't match the key at the bottom, key is the truth.
-5. 
+1. Reset data shouldn't be blocked by sign in.
+2. Need success message when applying preset.

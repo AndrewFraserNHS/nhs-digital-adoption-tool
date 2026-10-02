@@ -365,7 +365,7 @@ describe('ProjectDetailsPage', () => {
 
     // assert 1
     expect(screen.queryByTestId('admin-section')).not.toBeInTheDocument();
-    expect(screen.queryByText('Step 4: Stakeholder Reference Data')).not.toBeInTheDocument();
+    expect(screen.queryByText('Stakeholder Reference Data')).not.toBeInTheDocument();
     expect(screen.getByText('What phase are you currently in?')).toBeInTheDocument();
 
     // act 2 - shown
@@ -386,7 +386,7 @@ describe('ProjectDetailsPage', () => {
 
     // assert 2
     expect(screen.getByTestId('admin-section')).toBeInTheDocument();
-    expect(screen.getByText('Step 4: Stakeholder Reference Data')).toBeInTheDocument();
+    expect(screen.getByText('Stakeholder Reference Data')).toBeInTheDocument();
   });
 
   it('SHOULD collapse the External Links section once marked initiated, and expand it again WHEN unticked', () => {

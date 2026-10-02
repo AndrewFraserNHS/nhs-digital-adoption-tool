@@ -1394,7 +1394,7 @@ export function ProjectDetailsPage({
                 <h3
                   className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
                 >
-                  Step 4: Stakeholder Reference Data
+                  Stakeholder Reference Data
                 </h3>
                 <label
                   className={`flex items-center gap-2 text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
@@ -1480,7 +1480,7 @@ export function ProjectDetailsPage({
             )}
           </div>
 
-          <div
+          {/* <div
             className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-3`}
           >
             <div>
@@ -1497,7 +1497,7 @@ export function ProjectDetailsPage({
             <button type="button" onClick={handleApplyAvtPreset} className={nhsButtonSecondary}>
               Apply {AVT_PRESET.label} preset
             </button>
-          </div>
+          </div> */}
 
           <div
             className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-4`}
@@ -1507,7 +1507,7 @@ export function ProjectDetailsPage({
                 <h3
                   className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
                 >
-                  Step 5: Change Adoption Baseline (CAB) Questions
+                  Change Adoption Baseline (CAB) Questions
                 </h3>
                 <label
                   className={`flex items-center gap-2 text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
@@ -1578,7 +1578,7 @@ export function ProjectDetailsPage({
                 <h3
                   className={`text-lg font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
                 >
-                  Step 6: External links
+                  External links
                 </h3>
                 <label
                   className={`flex items-center gap-2 text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}

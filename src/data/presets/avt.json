@@ -4,9 +4,66 @@
   "coreLinks": [
     {
       "key": "avt-preset-toolkit",
-      "label": "AVT Digital Adoption Toolkit v2.1",
+      "label": "AVT Digital Adoption Toolkit",
       "url": "/AVT%20Digital%20Adoption%20Toolkit%20-%20V2.1%20July%202026.pdf",
+      "type": "core",
+      "matchAliases": [
+        "Toolkit"
+      ]
+    },
+    {
+      "key": "core-1790943454247-23hawv",
+      "label": "AVT Sandpit",
+      "url": "https://future.nhs.uk/CMN/view?objectID=76138768",
+      "type": "core",
+      "matchAliases": [
+        "Sandpit"
+      ]
+    },
+    {
+      "key": "core-1790943464541-m40leu",
+      "label": "Further Resources",
+      "url": "https://future.nhs.uk/CMN/view?objectID=74287280",
+      "type": "core",
+      "matchAliases": [
+        "Further Reading"
+      ]
+    },
+    {
+      "key": "core-1790943523271-isqtur",
+      "label": "Development",
+      "url": "https://future.nhs.uk/CMN/view?objectID=76541936",
       "type": "core"
+    },
+    {
+      "key": "core-1790943528049-m37w6y",
+      "label": "Deployment",
+      "url": "https://future.nhs.uk/CMN/view?objectID=76541968",
+      "type": "core"
+    },
+    {
+      "key": "core-1790943548935-gm5si3",
+      "label": "AVT Events",
+      "url": "https://future.nhs.uk/CMN/view?objectID=1407185",
+      "type": "core"
+    },
+    {
+      "key": "core-1790943555995-4sak0n",
+      "label": "AVT Playbook",
+      "url": "https://future.nhs.uk/CMN/view?objectId=298454789",
+      "type": "core",
+      "matchAliases": [
+        "Playbook"
+      ]
+    },
+    {
+      "key": "core-1790943666383-azyx9s",
+      "label": "AVT Community Forum",
+      "url": "https://future.nhs.uk/CMN/view?objectID=1650554",
+      "type": "core",
+      "matchAliases": [
+        "Community Forum"
+      ]
     }
   ],
   "phaseLinks": {
@@ -34,5 +91,11 @@
     "change_readiness": "https://future.nhs.uk/CMN/view?objectID=76508176",
     "capability": "https://future.nhs.uk/CMN/view?objectID=76508048",
     "skills_learning": "https://future.nhs.uk/CMN/view?objectID=76508112"
+  },
+  "linkOverrides": {
+    "base": {
+      "url": "https://future.nhs.uk/CMN/view?objectID=293772485",
+      "label": "AVT Change Management Toolkit"
+    }
   }
 }

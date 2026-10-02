@@ -90,6 +90,7 @@ import ChangeAdoptionBaselineAnalysisApp from '@pages/ChangeAdoptionBaselineAnal
 import ChangeImpactAssessmentApp from '@pages/ChangeImpactAssessmentApp';
 import CompareApp from '@pages/CompareApp';
 import ForceFieldAnalysisApp from '@pages/ForceFieldAnalysisApp';
+import HelpfulLinksApp from '@pages/HelpfulLinksApp';
 import MoscowApp from '@pages/MoscowApp';
 import RaidLogApp from '@pages/RaidLogApp';
 import StakeholderAnalysisApp from '@pages/StakeholderAnalysisApp';
@@ -401,6 +402,7 @@ export function AdoptionApp() {
       'stakeholder-analysis': 'tools',
       'raid-log': 'tools',
       moscow: 'tools',
+      'helpful-links': 'tools',
       benefits: 'tools',
       'readiness-review-analysis': 'tools',
       'audit-log': 'tools',
@@ -1221,10 +1223,8 @@ export function AdoptionApp() {
     [announceStatus, appendAuditEvents]
   );
 
+  // Deliberately not behind requireSignedIn: resetting is the way out of a project nobody can sign in to.
   const handleResetData = useCallback(() => {
-    if (!requireSignedIn()) {
-      return;
-    }
     const confirmed = window.confirm(
       'Warning: this will reset all assessment data (organisation profile, scores, actions, and history) and sign you out. If you are worried, please export your data first. Continue?'
     );
@@ -1487,6 +1487,14 @@ export function AdoptionApp() {
 
           <button
             type="button"
+            onClick={() => setIsSidebarOpen(false)}
+            className="mt-3 w-full rounded-md border border-blue-300/60 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-800 lg:hidden"
+          >
+            « Close menu
+          </button>
+
+          <button
+            type="button"
             onClick={() => handleViewChange('profile')}
             className="mt-3 w-full rounded-md bg-blue-700 p-2 text-left text-xs hover:bg-blue-600"
           >
@@ -1663,6 +1671,7 @@ export function AdoptionApp() {
                       'change-impact-assessment',
                       'benefits',
                       'moscow',
+                      'helpful-links',
                       'raid-log',
                       'compare',
                       'readiness-review-analysis',
@@ -1693,13 +1702,15 @@ export function AdoptionApp() {
                                 ? 'Stakeholder Analysis'
                                 : v === 'raid-log'
                                   ? 'RAID Log'
-                                  : v === 'moscow'
-                                    ? 'MoSCoW Analysis'
-                                    : v === 'benefits'
-                                      ? 'Benefits Register & Tracker'
-                                      : v === 'readiness-review-analysis'
-                                        ? 'Change Adoption Baseline (CAB) Analysis'
-                                        : 'Audit Log'}
+                                  : v === 'helpful-links'
+                                    ? 'Helpful Links'
+                                    : v === 'moscow'
+                                      ? 'MoSCoW Analysis'
+                                      : v === 'benefits'
+                                        ? 'Benefits Register & Tracker'
+                                        : v === 'readiness-review-analysis'
+                                          ? 'Change Adoption Baseline (CAB) Analysis'
+                                          : 'Audit Log'}
                     </button>
                   ))}
                 </nav>
@@ -2239,9 +2250,17 @@ export function AdoptionApp() {
               onNavigateToRaidLog={() => handleViewChange('raid-log')}
             />
           )}
+          {view === 'helpful-links' && (
+            <HelpfulLinksApp
+              orgProfile={store.orgProfile}
+              components={COMPONENTS}
+              darkMode={Boolean(userSettings.darkMode)}
+            />
+          )}
           {view === 'moscow' && (
             <MoscowApp
               embedded
+              teamMembers={store.orgProfile.teamMembers || []}
               onBack={() => handleViewChange('dashboard')}
               darkMode={Boolean(userSettings.darkMode)}
             />

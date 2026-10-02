@@ -5,6 +5,7 @@ import {
   buildMoscowConflictReport,
   countByPriority,
   csvToRequirements,
+  dropdownOptions,
   normaliseStorage,
   parseCsv,
   parsePriority,
@@ -74,6 +75,14 @@ describe('moscowTool', () => {
       ['a', 'b\nc'],
       ['d', 'e'],
     ]);
+  });
+
+  it('SHOULD build dropdown options from the base list plus used values, without duplicates', () => {
+    // act
+    const options = dropdownOptions(['Data', 'Security'], ['security', 'Imported', ' ', 'Data']);
+
+    // assert
+    expect(options).toEqual(['Data', 'Imported', 'Security']);
   });
 
   it('SHOULD count requirements per priority', () => {

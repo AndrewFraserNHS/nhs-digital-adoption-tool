@@ -1,4 +1,5 @@
 import type { GuidanceLink } from '@data/maturity-guidance-links';
+import type { LinkBaseOverride } from '@data/maturity-guidance-links';
 import type { OrgProfile } from '@lib/adoptionState';
 
 import avtPresetJson from './avt.json';
@@ -11,6 +12,8 @@ export interface AvtPreset {
   phaseLinks?: Record<number, string>;
   /** Default "Further Reading" URL per component id. */
   componentFurtherReading?: Record<string, string>;
+  /** The toolkit homepage every default link falls back to for AVT projects. */
+  linkOverrides?: { base?: LinkBaseOverride };
 }
 
 /**
@@ -34,6 +37,9 @@ export function applyAvtPreset(profile: OrgProfile): OrgProfile {
     coreLinks: AVT_PRESET.coreLinks,
     phaseLinks: AVT_PRESET.phaseLinks,
     componentFurtherReading: AVT_PRESET.componentFurtherReading,
+    linkOverrides: AVT_PRESET.linkOverrides?.base
+      ? { ...profile.linkOverrides, base: AVT_PRESET.linkOverrides.base }
+      : profile.linkOverrides,
     readinessQuestions: undefined,
   };
 }

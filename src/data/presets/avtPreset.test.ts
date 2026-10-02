@@ -34,6 +34,21 @@ describe('applyAvtPreset', () => {
     expect(updated.trustName).toBe(profile.trustName);
   });
 
+  it('SHOULD set the AVT toolkit homepage as the base link, keeping any per-link overrides', () => {
+    // arrange
+    const profile: OrgProfile = {
+      ...initializeStore({}).orgProfile,
+      linkOverrides: { links: { someKey: { url: 'https://mine.example', fallback: 'default' } } },
+    };
+
+    // act
+    const updated = applyAvtPreset(profile);
+
+    // assert
+    expect(updated.linkOverrides?.base?.url).toBe(AVT_PRESET.linkOverrides?.base?.url);
+    expect(updated.linkOverrides?.links).toEqual({ someKey: { url: 'https://mine.example', fallback: 'default' } });
+  });
+
   it('SHOULD bundle a landing-page link for every phase, and a further-reading link for vision', () => {
     expect(AVT_PRESET.phaseLinks).toMatchObject({ 1: expect.any(String), 5: expect.any(String) });
     expect(AVT_PRESET.componentFurtherReading?.vision).toMatch(/^https:\/\/future\.nhs\.uk/);

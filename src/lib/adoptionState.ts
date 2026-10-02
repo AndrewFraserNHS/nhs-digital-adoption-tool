@@ -361,6 +361,7 @@ export type View =
   | 'stakeholder-analysis'
   | 'raid-log'
   | 'moscow'
+  | 'helpful-links'
   | 'benefits'
   | 'readiness-review-analysis'
   | 'audit-log'

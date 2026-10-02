@@ -916,15 +916,14 @@ describe('ProjectDetailsPage', () => {
     );
   });
 
-  it('SHOULD apply the AVT preset after confirming, and do nothing WHEN the confirm is declined', () => {
+  it('SHOULD apply the AVT preset from the first-entry choice, and confirm it with a success message', () => {
     // arrange
     const onProfileUpdate = vi.fn();
-    const confirmSpy = vi.spyOn(window, 'confirm');
-
     render(
       <ProjectDetailsPage
         orgProfile={{
           ...orgProfile,
+          trustName: '',
           coreLinks: [{ key: 'existing', label: 'Old link', url: 'https://old.example', type: 'core' }],
         }}
         onProfileUpdate={onProfileUpdate}
@@ -937,27 +936,19 @@ describe('ProjectDetailsPage', () => {
         onCurrentUserChange={vi.fn()}
       />
     );
-    const applyButton = screen.getByRole('button', { name: /Apply .*preset/ });
 
-    // act 1 - decline
-    confirmSpy.mockReturnValueOnce(false);
-    fireEvent.click(applyButton);
+    // act
+    fireEvent.click(screen.getByRole('button', { name: /Use .* preset/ }));
 
-    // assert 1
-    expect(onProfileUpdate).not.toHaveBeenCalled();
-
-    // act 2 - confirm
-    confirmSpy.mockReturnValueOnce(true);
-    fireEvent.click(applyButton);
-
-    // assert 2
+    // assert
     expect(onProfileUpdate).toHaveBeenLastCalledWith(
       expect.objectContaining({
-        coreLinks: [expect.objectContaining({ key: 'avt-preset-toolkit' })],
+        coreLinks: expect.arrayContaining([expect.objectContaining({ key: 'avt-preset-toolkit' })]),
+        linkOverrides: expect.objectContaining({ base: expect.objectContaining({ url: expect.any(String) }) }),
         readinessQuestions: undefined,
       })
     );
-    confirmSpy.mockRestore();
+    expect(screen.getByText('AVT preset applied.')).toBeInTheDocument();
   });
 
   it('SHOULD show the bundled default for a Phase link until it is overridden, then allow resetting back to it', () => {
@@ -1020,10 +1011,10 @@ describe('ProjectDetailsPage', () => {
   it('SHOULD have no bundled Further Reading default, and fill it in once the AVT preset is applied', () => {
     // arrange
     const onProfileUpdate = vi.fn();
-    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
+    const blank: OrgProfile = { ...orgProfile, trustName: '' };
     const { rerender } = render(
       <ProjectDetailsPage
-        orgProfile={orgProfile}
+        orgProfile={blank}
         onProfileUpdate={onProfileUpdate}
         components={components}
         lenses={['Strategic Direction and Leadership']}
@@ -1034,13 +1025,9 @@ describe('ProjectDetailsPage', () => {
         onCurrentUserChange={vi.fn()}
       />
     );
-    fireEvent.click(screen.getByText('Vision'));
 
-    // assert 1 - no further reading default without a preset applied
-    expect((document.getElementById('further-reading-vision') as HTMLInputElement).value).toBe('');
-
-    // act - apply the AVT preset
-    fireEvent.click(screen.getByRole('button', { name: /Apply .*preset/ }));
+    // act - choose the AVT preset in the first-entry modal
+    fireEvent.click(screen.getByRole('button', { name: /Use .* preset/ }));
     const calls = onProfileUpdate.mock.calls;
     const updatedProfile = calls[calls.length - 1][0];
     rerender(
@@ -1058,10 +1045,9 @@ describe('ProjectDetailsPage', () => {
     );
     fireEvent.click(screen.getByText('Vision'));
 
-    // assert 2
+    // assert
     expect((document.getElementById('further-reading-vision') as HTMLInputElement).value).toBe(
       'https://future.nhs.uk/CMN/view?objectId=74014704'
     );
-    confirmSpy.mockRestore();
   });
 });

@@ -70,7 +70,7 @@ describe('ForceFieldAnalysisApp', () => {
     // assert - the legacy data survives, wrapped as "Version 1"
     expect(screen.getByDisplayValue('Legacy Project')).toBeInTheDocument();
     expect(screen.getByDisplayValue('Old force')).toBeInTheDocument();
-    expect(screen.getByLabelText('Version name')).toHaveValue('Version 1');
+    expect(screen.getByRole('button', { name: /Version 1/ })).toBeInTheDocument();
   });
 
   it('SHOULD list Side before Force in the Force Mitigation summary table header', () => {
@@ -177,15 +177,14 @@ describe('ForceFieldAnalysisApp', () => {
     fireEvent.click(screen.getByRole('button', { name: '+ Add Driving Force' }));
 
     // act
+    fireEvent.click(screen.getByRole('button', { name: /^Version/ }));
     fireEvent.click(screen.getByRole('button', { name: '+ New version' }));
 
     // assert - the new version starts empty
     expect(screen.getByText('No driving forces added yet.')).toBeInTheDocument();
 
     // act - switch back to the original version
-    fireEvent.change(screen.getByLabelText('Active version'), {
-      target: { value: screen.getAllByRole('option')[0].getAttribute('value') },
-    });
+    fireEvent.click(screen.getAllByRole('option')[0]);
 
     // assert - its force is still there
     expect(screen.queryByText('No driving forces added yet.')).not.toBeInTheDocument();
@@ -194,6 +193,7 @@ describe('ForceFieldAnalysisApp', () => {
   it('SHOULD mark the active version as internal or external', () => {
     // arrange
     renderApp();
+    fireEvent.click(screen.getByRole('button', { name: /^Version/ }));
 
     // assert - defaults to internal
     expect(screen.getByRole('radio', { name: 'Internal (engine aligned)' })).toHaveAttribute(
@@ -212,6 +212,7 @@ describe('ForceFieldAnalysisApp', () => {
     // arrange
     renderApp();
     vi.spyOn(window, 'confirm').mockReturnValue(true);
+    fireEvent.click(screen.getByRole('button', { name: /^Version/ }));
     fireEvent.click(screen.getByRole('button', { name: '+ New version' }));
     expect(screen.getAllByRole('option')).toHaveLength(2);
 

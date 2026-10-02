@@ -1,4 +1,5 @@
 import { ActionEditorFields } from '@components/common/ActionEditorFields';
+import { VersionManager } from '@components/common/VersionManager';
 import type { AssessmentComponent } from '@data/components';
 import type { ComponentObjective, DraftAction, DraftEntry, TeamMember } from '@lib/adoptionState';
 import { load, save } from '@lib/storage';
@@ -153,7 +154,9 @@ function normaliseStorage(
       .filter(Boolean)
       .map((version, index) => normaliseVersion(version, `Version ${index + 1}`));
     const resolvedVersions = versions.length ? versions : [createVersion('Version 1')];
-    const activeVersionId = resolvedVersions.some((version) => version.id === storage.activeVersionId)
+    const activeVersionId = resolvedVersions.some(
+      (version) => version.id === storage.activeVersionId
+    )
       ? (storage.activeVersionId as string)
       : resolvedVersions[0].id;
     return { versions: resolvedVersions, activeVersionId };
@@ -1078,7 +1081,9 @@ export default function ForceFieldAnalysisApp({
     setStorage((current) => ({
       ...current,
       versions: current.versions.map((version) =>
-        version.id === current.activeVersionId ? { ...version, data: updater(version.data) } : version
+        version.id === current.activeVersionId
+          ? { ...version, data: updater(version.data) }
+          : version
       ),
     }));
   };
@@ -1181,9 +1186,7 @@ export default function ForceFieldAnalysisApp({
   };
 
   const handleReset = () => {
-    if (
-      !window.confirm('Reset this version? All its forces and actions will be removed.')
-    ) {
+    if (!window.confirm('Reset this version? All its forces and actions will be removed.')) {
       return;
     }
 
@@ -1348,65 +1351,20 @@ export default function ForceFieldAnalysisApp({
   );
 
   const versionBar = (
-    <div
-      className={`flex flex-wrap items-center gap-3 rounded-lg border border-slate-200 bg-white p-3 ${embedded ? 'mb-6' : ''}`}
-    >
-      <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-        Version
-      </label>
-      <select
-        aria-label="Active version"
-        value={storage.activeVersionId}
-        onChange={(event) => handleSwitchVersion(event.target.value)}
-        className="rounded-md border border-slate-300 px-2 py-1.5 text-sm"
-      >
-        {storage.versions.map((version) => (
-          <option key={version.id} value={version.id}>
-            {version.name}
-          </option>
-        ))}
-      </select>
-      <input
-        value={activeVersion.name}
-        onChange={(event) => handleRenameVersion(event.target.value)}
-        aria-label="Version name"
-        className="rounded-md border border-slate-300 px-2 py-1.5 text-sm"
-      />
-      <div
-        className="flex items-center rounded-md border border-slate-300 overflow-hidden text-xs font-semibold"
-        role="radiogroup"
-        aria-label="Version alignment"
-      >
-        <button
-          type="button"
-          role="radio"
-          aria-checked={activeVersion.alignment === 'internal'}
-          onClick={() => handleSetAlignment('internal')}
-          className={`px-3 py-1.5 transition-colors ${activeVersion.alignment === 'internal' ? 'bg-[#005eb8] text-white' : 'bg-white text-slate-600 hover:bg-slate-100'}`}
-        >
-          Internal (engine aligned)
-        </button>
-        <button
-          type="button"
-          role="radio"
-          aria-checked={activeVersion.alignment === 'external'}
-          onClick={() => handleSetAlignment('external')}
-          className={`px-3 py-1.5 transition-colors border-l border-slate-300 ${activeVersion.alignment === 'external' ? 'bg-[#005eb8] text-white' : 'bg-white text-slate-600 hover:bg-slate-100'}`}
-        >
-          External
-        </button>
-      </div>
-      <button type="button" onClick={handleAddVersion} className={nhsButtonSecondary}>
-        + New version
-      </button>
-      <button
-        type="button"
-        onClick={handleDeleteVersion}
-        className="rounded-md border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100"
-      >
-        Delete version
-      </button>
-    </div>
+    <VersionManager
+      versions={storage.versions.map((version) => ({
+        id: version.id,
+        name: version.name,
+        alignment: version.alignment,
+        detail: `${version.data.forces.length} force${version.data.forces.length === 1 ? '' : 's'}`,
+      }))}
+      activeVersionId={storage.activeVersionId}
+      onSwitch={handleSwitchVersion}
+      onRename={handleRenameVersion}
+      onSetAlignment={handleSetAlignment}
+      onAdd={handleAddVersion}
+      onDelete={handleDeleteVersion}
+    />
   );
 
   const body = (

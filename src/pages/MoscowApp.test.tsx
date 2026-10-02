@@ -32,17 +32,58 @@ describe('MoscowApp', () => {
     expect(screen.getByRole('button', { name: /Must have 1/ })).toBeInTheDocument();
   });
 
+  it('SHOULD pick the category and owner from dropdowns, offering team members and imported values', async () => {
+    // arrange
+    render(
+      <MoscowApp embedded teamMembers={[{ id: 'm1', name: 'Alex Morgan', role: 'Lead' }]} />
+    );
+    addRequirement('Single sign-on');
+
+    // act
+    fireEvent.change(screen.getByLabelText('Category'), { target: { value: 'Security' } });
+    fireEvent.change(screen.getByLabelText('Owner'), { target: { value: 'Alex Morgan' } });
+
+    // assert
+    expect((screen.getByLabelText('Category') as HTMLSelectElement).value).toBe('Security');
+    expect((screen.getByLabelText('Owner') as HTMLSelectElement).value).toBe('Alex Morgan');
+
+    // act - a CSV with a category and owner that aren't in the lists yet
+    importFile(
+      'reqs.csv',
+      'Requirement,Category,Owner\nDark mode,Branding,Sam Patel\n',
+      'text/csv'
+    );
+    await screen.findByDisplayValue('Dark mode');
+
+    // assert - imported values become selectable options
+    const categories = screen.getAllByLabelText('Category') as HTMLSelectElement[];
+    expect(categories[1].value).toBe('Branding');
+    expect((screen.getAllByLabelText('Owner') as HTMLSelectElement[])[1].value).toBe('Sam Patel');
+  });
+
+  it('SHOULD add a new category from the dropdown', () => {
+    // arrange
+    vi.spyOn(window, 'prompt').mockReturnValue('Branding');
+    render(<MoscowApp embedded />);
+    addRequirement('Dark mode');
+
+    // act
+    fireEvent.change(screen.getByLabelText('Category'), { target: { value: '__add-category__' } });
+
+    // assert
+    expect((screen.getByLabelText('Category') as HTMLSelectElement).value).toBe('Branding');
+  });
+
   it('SHOULD keep each version separate WHERE a new one is created and switched back', () => {
     // arrange
     render(<MoscowApp embedded />);
     addRequirement('Original requirement');
 
     // act - new version starts empty
+    fireEvent.click(screen.getByRole('button', { name: /^Version/ }));
     fireEvent.click(screen.getByRole('button', { name: '+ New version' }));
     expect(screen.getByText('No requirements yet.')).toBeInTheDocument();
-    fireEvent.change(screen.getByLabelText('Active version'), {
-      target: { value: screen.getAllByRole('option')[0].getAttribute('value') },
-    });
+    fireEvent.click(screen.getAllByRole('option')[0]);
 
     // assert
     expect(screen.getByDisplayValue('Original requirement')).toBeInTheDocument();
@@ -54,6 +95,7 @@ describe('MoscowApp', () => {
     render(<MoscowApp embedded />);
 
     // act 1
+    fireEvent.click(screen.getByRole('button', { name: /^Version/ }));
     fireEvent.click(screen.getByRole('radio', { name: 'External' }));
 
     // assert 1

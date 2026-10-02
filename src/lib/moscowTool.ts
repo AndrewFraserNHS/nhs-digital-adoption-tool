@@ -29,8 +29,41 @@ export interface MoscowStorage {
   activeVersionId: string;
 }
 
+export const MOSCOW_DEFAULT_CATEGORIES = [
+  'Functional',
+  'Non-functional',
+  'Data',
+  'Integration',
+  'Reporting',
+  'Security',
+  'Training',
+  'Other',
+];
+
+/** Dropdown options: the base list plus anything already used (e.g. from an imported CSV), de-duplicated and sorted. */
+export function dropdownOptions(base: string[], used: string[]): string[] {
+  const seen = new Set<string>();
+  const result: string[] = [];
+  [...base, ...used].forEach((value) => {
+    const trimmed = value.trim();
+    if (trimmed && !seen.has(trimmed.toLowerCase())) {
+      seen.add(trimmed.toLowerCase());
+      result.push(trimmed);
+    }
+  });
+  return result.sort((a, b) => a.localeCompare(b));
+}
+
 export const MOSCOW_STORAGE_KEY = 'nhs-moscow-tool';
-export const MOSCOW_CSV_HEADERS = ['ID', 'Requirement', 'Category', 'MoSCoW', 'Owner', 'Status', 'Notes'];
+export const MOSCOW_CSV_HEADERS = [
+  'ID',
+  'Requirement',
+  'Category',
+  'MoSCoW',
+  'Owner',
+  'Status',
+  'Notes',
+];
 
 export function createMoscowId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;

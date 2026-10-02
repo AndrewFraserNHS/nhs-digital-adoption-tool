@@ -33,6 +33,7 @@ import { PATHWAY_LABELS, PATHWAY_OPTIONS, type CstPathwayKey } from '@data/cst';
 import { TOOLKIT_OPTIONS, type ToolkitOptionKey } from '@data/toolkits';
 import { ReadinessQuestionEditor } from '@components/common/ReadinessQuestionEditor';
 import { StakeholderPicker } from '@components/common/StakeholderPicker';
+import { Toast } from '@components/ui/Toast';
 import { resolveReadinessQuestions, type PreparednessAssessment } from '@data/readinessReview';
 import { AVT_PRESET, applyAvtPreset } from '@data/presets/avtPreset';
 import { AVT_MAILBOX } from '@lib/readinessExport';
@@ -522,6 +523,8 @@ export function ProjectDetailsPage({
     componentId?: string;
   } | null>(null);
   const [editingPhaseAliasesFor, setEditingPhaseAliasesFor] = useState<number | null>(null);
+  /** Success message shown after a preset is applied (any preset, so future ones reuse it). */
+  const [presetNotice, setPresetNotice] = useState('');
   const cstImportInputRef = useRef<HTMLInputElement>(null);
   const pageIntro = usePageIntroSeen('cst-personalisation');
   const profileValidation = validateOrgProfile(profile);
@@ -736,6 +739,9 @@ export function ProjectDetailsPage({
       const updated = { ...base, setupChoiceMade: true };
       setProfile(updated);
       onProfileUpdate(updated);
+      if (usePreset) {
+        setPresetNotice(`${AVT_PRESET.label} preset applied.`);
+      }
     },
     [profile, onProfileUpdate]
   );
@@ -771,19 +777,6 @@ export function ProjectDetailsPage({
 
   const effectiveStakeholderReferenceLists =
     profile.stakeholderReferenceLists || DEFAULT_STAKEHOLDER_REFERENCE_LISTS;
-
-  const handleApplyAvtPreset = useCallback(() => {
-    if (
-      !window.confirm(
-        `Apply the ${AVT_PRESET.label} preset? This replaces this project's Core Links, Phase links and component Further Reading links, and resets its Change Adoption Baseline (CAB) questions to the AVT default set. Custom component links and tool links are left as they are.`
-      )
-    ) {
-      return;
-    }
-    const updated = applyAvtPreset(profile);
-    setProfile(updated);
-    onProfileUpdate(updated);
-  }, [profile, onProfileUpdate]);
 
   const handleReadinessQuestionsChange = useCallback(
     (questions: PreparednessAssessment[] | undefined) => {
@@ -2180,6 +2173,15 @@ export function ProjectDetailsPage({
           darkMode={darkMode}
         />
       )}
+
+      {presetNotice ? (
+        <Toast
+          message={presetNotice}
+          variant="success"
+          durationMs={4000}
+          onDismiss={() => setPresetNotice('')}
+        />
+      ) : null}
 
       {!profile.setupChoiceMade && !profile.trustName.trim() ? (
         <div

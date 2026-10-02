@@ -1,9 +1,12 @@
 import { ImportConflictModal } from '@components/views/ImportConflictModal';
+import { VersionManager } from '@components/common/VersionManager';
 import type { ConflictChoice } from '@lib/cstConflict';
 import {
   applyMoscowResolutions,
   buildMoscowConflictReport,
   countByPriority,
+  dropdownOptions,
+  MOSCOW_DEFAULT_CATEGORIES,
   createMoscowVersion,
   createRequirement,
   csvToRequirements,
@@ -18,6 +21,7 @@ import {
   type MoscowRequirement,
   type MoscowStorage,
 } from '@lib/moscowTool';
+import type { TeamMember } from '@lib/adoptionState';
 import { load, save } from '@lib/storage';
 import { downloadFile, formatHhmmDdmmyyyy } from '@lib/utils';
 import { type ChangeEvent, JSX, useEffect, useRef, useState } from 'react';
@@ -35,6 +39,8 @@ export interface MoscowAppProps {
   embedded?: boolean;
   onBack?: () => void;
   darkMode?: boolean;
+  /** Names offered in the Owner dropdown. */
+  teamMembers?: TeamMember[];
 }
 
 interface PendingImport {
@@ -42,7 +48,11 @@ interface PendingImport {
   fileName: string;
 }
 
-export default function MoscowApp({ embedded = false, onBack }: MoscowAppProps = {}): JSX.Element {
+export default function MoscowApp({
+  embedded = false,
+  onBack,
+  teamMembers = [],
+}: MoscowAppProps = {}): JSX.Element {
   const [storage, setStorage] = useState<MoscowStorage>(() =>
     normaliseStorage(load<Partial<MoscowStorage>>(MOSCOW_STORAGE_KEY))
   );
@@ -60,14 +70,21 @@ export default function MoscowApp({ embedded = false, onBack }: MoscowAppProps =
     storage.versions[0];
   const requirements = activeVersion.requirements;
   const counts = countByPriority(requirements);
+  const categoryOptions = dropdownOptions(
+    MOSCOW_DEFAULT_CATEGORIES,
+    requirements.map((requirement) => requirement.category)
+  );
+  const ownerOptions = dropdownOptions(
+    teamMembers.map((member) => member.name),
+    requirements.map((requirement) => requirement.owner)
+  );
+  const ADD_CATEGORY = '__add-category__';
   const visible =
     priorityFilter === 'all'
       ? requirements
       : requirements.filter((requirement) => requirement.priority === priorityFilter);
 
-  const updateActiveVersion = (
-    updater: (current: MoscowRequirement[]) => MoscowRequirement[]
-  ) => {
+  const updateActiveVersion = (updater: (current: MoscowRequirement[]) => MoscowRequirement[]) => {
     setStorage((current) => ({
       ...current,
       versions: current.versions.map((version) =>
@@ -259,7 +276,7 @@ export default function MoscowApp({ embedded = false, onBack }: MoscowAppProps =
           }}
           className={nhsButtonSecondary}
         >
-          Import
+          Import JSON / CSV
         </button>
         <button type="button" onClick={handleExportJson} className={nhsButtonSecondary}>
           Export JSON
@@ -279,62 +296,20 @@ export default function MoscowApp({ embedded = false, onBack }: MoscowAppProps =
   );
 
   const versionBar = (
-    <div className="flex flex-wrap items-center gap-3 rounded-lg border border-slate-200 bg-white p-3">
-      <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-        Version
-      </label>
-      <select
-        aria-label="Active version"
-        value={storage.activeVersionId}
-        onChange={(event) => handleSwitchVersion(event.target.value)}
-        className="rounded-md border border-slate-300 px-2 py-1.5 text-sm"
-      >
-        {storage.versions.map((version) => (
-          <option key={version.id} value={version.id}>
-            {version.name}
-          </option>
-        ))}
-      </select>
-      <input
-        value={activeVersion.name}
-        onChange={(event) => handleRenameVersion(event.target.value)}
-        aria-label="Version name"
-        className="rounded-md border border-slate-300 px-2 py-1.5 text-sm"
-      />
-      <div
-        className="flex items-center rounded-md border border-slate-300 overflow-hidden text-xs font-semibold"
-        role="radiogroup"
-        aria-label="Version alignment"
-      >
-        {(
-          [
-            { value: 'internal', label: 'Internal (engine aligned)' },
-            { value: 'external', label: 'External' },
-          ] as const
-        ).map((option, index) => (
-          <button
-            key={option.value}
-            type="button"
-            role="radio"
-            aria-checked={activeVersion.alignment === option.value}
-            onClick={() => handleSetAlignment(option.value)}
-            className={`px-3 py-1.5 transition-colors ${index ? 'border-l border-slate-300' : ''} ${activeVersion.alignment === option.value ? 'bg-[#005eb8] text-white' : 'bg-white text-slate-600 hover:bg-slate-100'}`}
-          >
-            {option.label}
-          </button>
-        ))}
-      </div>
-      <button type="button" onClick={handleAddVersion} className={nhsButtonSecondary}>
-        + New version
-      </button>
-      <button
-        type="button"
-        onClick={handleDeleteVersion}
-        className="rounded-md border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100"
-      >
-        Delete version
-      </button>
-    </div>
+    <VersionManager
+      versions={storage.versions.map((version) => ({
+        id: version.id,
+        name: version.name,
+        alignment: version.alignment,
+        detail: `${version.requirements.length} requirement${version.requirements.length === 1 ? '' : 's'}`,
+      }))}
+      activeVersionId={storage.activeVersionId}
+      onSwitch={handleSwitchVersion}
+      onRename={handleRenameVersion}
+      onSetAlignment={handleSetAlignment}
+      onAdd={handleAddVersion}
+      onDelete={handleDeleteVersion}
+    />
   );
 
   const body = (
@@ -351,7 +326,9 @@ export default function MoscowApp({ embedded = false, onBack }: MoscowAppProps =
             key={priority}
             type="button"
             aria-pressed={priorityFilter === priority}
-            onClick={() => setPriorityFilter((current) => (current === priority ? 'all' : priority))}
+            onClick={() =>
+              setPriorityFilter((current) => (current === priority ? 'all' : priority))
+            }
             className={`rounded-lg border p-4 text-left ${PRIORITY_STYLES[priority]} ${priorityFilter === priority ? 'ring-2 ring-[#005eb8]' : ''}`}
           >
             <p className="text-xs font-semibold uppercase tracking-wider">{priority} have</p>
@@ -406,14 +383,29 @@ export default function MoscowApp({ embedded = false, onBack }: MoscowAppProps =
                     />
                   </td>
                   <td className="px-3 py-2 align-top">
-                    <input
+                    <select
                       aria-label="Category"
                       value={requirement.category}
-                      onChange={(event) =>
-                        updateRequirement(requirement.id, { category: event.target.value })
-                      }
-                      className="w-full rounded-md border border-slate-300 px-2 py-1 text-sm"
-                    />
+                      onChange={(event) => {
+                        if (event.target.value === ADD_CATEGORY) {
+                          const name = window.prompt('New category name');
+                          if (name?.trim()) {
+                            updateRequirement(requirement.id, { category: name.trim() });
+                          }
+                          return;
+                        }
+                        updateRequirement(requirement.id, { category: event.target.value });
+                      }}
+                      className="w-full min-w-[9rem] rounded-md border border-slate-300 px-2 py-1 text-sm"
+                    >
+                      <option value="">No category</option>
+                      {categoryOptions.map((category) => (
+                        <option key={category} value={category}>
+                          {category}
+                        </option>
+                      ))}
+                      <option value={ADD_CATEGORY}>+ Add category...</option>
+                    </select>
                   </td>
                   <td className="px-3 py-2 align-top">
                     <select
@@ -434,14 +426,21 @@ export default function MoscowApp({ embedded = false, onBack }: MoscowAppProps =
                     </select>
                   </td>
                   <td className="px-3 py-2 align-top">
-                    <input
+                    <select
                       aria-label="Owner"
                       value={requirement.owner}
                       onChange={(event) =>
                         updateRequirement(requirement.id, { owner: event.target.value })
                       }
-                      className="w-full rounded-md border border-slate-300 px-2 py-1 text-sm"
-                    />
+                      className="w-full min-w-[9rem] rounded-md border border-slate-300 px-2 py-1 text-sm"
+                    >
+                      <option value="">Unassigned</option>
+                      {ownerOptions.map((owner) => (
+                        <option key={owner} value={owner}>
+                          {owner}
+                        </option>
+                      ))}
+                    </select>
                   </td>
                   <td className="px-3 py-2 align-top">
                     <select
@@ -452,13 +451,16 @@ export default function MoscowApp({ embedded = false, onBack }: MoscowAppProps =
                       }
                       className="rounded-md border border-slate-300 px-2 py-1 text-xs"
                     >
-                      {[...MOSCOW_STATUSES, ...(MOSCOW_STATUSES as readonly string[]).includes(requirement.status) ? [] : [requirement.status]].map(
-                        (status) => (
-                          <option key={status} value={status}>
-                            {status}
-                          </option>
-                        )
-                      )}
+                      {[
+                        ...MOSCOW_STATUSES,
+                        ...((MOSCOW_STATUSES as readonly string[]).includes(requirement.status)
+                          ? []
+                          : [requirement.status]),
+                      ].map((status) => (
+                        <option key={status} value={status}>
+                          {status}
+                        </option>
+                      ))}
                     </select>
                   </td>
                   <td className="px-3 py-2 align-top">

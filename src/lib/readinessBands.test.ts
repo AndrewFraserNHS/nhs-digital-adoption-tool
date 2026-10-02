@@ -12,8 +12,16 @@ describe('getPhasePassScore', () => {
 });
 
 describe('getReadinessBand', () => {
-  it('SHOULD give Embedding and Thriving their swapped colours', () => {
-    expect(getReadinessBand(3)).toMatchObject({ label: 'Embedding', color: '#1522b0' });
-    expect(getReadinessBand(5)).toMatchObject({ label: 'Thriving', color: '#4D7EA8' });
+  it('SHOULD map each score to its band label and give every band its own colour', () => {
+    const bands = [0, 1, 2, 3, 4, 5].map((score) => getReadinessBand(score));
+    expect(bands.map((band) => band.label)).toEqual([
+      'Not Started',
+      'Emerging',
+      'Developing',
+      'Embedding',
+      'Adopted',
+      'Thriving',
+    ]);
+    expect(new Set(bands.map((band) => band.color)).size).toBe(6);
   });
 });

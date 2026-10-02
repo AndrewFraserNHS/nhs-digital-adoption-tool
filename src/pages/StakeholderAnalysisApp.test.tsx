@@ -147,7 +147,7 @@ describe('StakeholderAnalysisApp', () => {
     // arrange - create a source stakeholder with a distinctive group/relationship
     render(<StakeholderAnalysisApp embedded />);
     addStakeholder('Source Person');
-    fireEvent.change(screen.getByLabelText('Group'), { target: { value: 'SRO' } });
+    fireEvent.change(screen.getByLabelText('Group'), { target: { value: 'Clinical' } });
     fireEvent.click(screen.getByRole('button', { name: 'Save Stakeholder' }));
 
     // act - add a second stakeholder and copy from the first
@@ -162,7 +162,7 @@ describe('StakeholderAnalysisApp', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Copy' }));
 
     // assert
-    expect((screen.getByLabelText('Group') as HTMLSelectElement).value).toBe('SRO');
+    expect((screen.getByLabelText('Group') as HTMLSelectElement).value).toBe('Clinical');
   });
 
   it('SHOULD show the Groups/Sub-Groups/Departments/Relationships lists on the Reference Data tab and link back to Project Details', () => {
@@ -230,6 +230,83 @@ describe('StakeholderAnalysisApp', () => {
 
     // assert - already linked, so the "Add to project plan" button should not be offered
     expect(screen.queryByTitle('Add to project plan')).not.toBeInTheDocument();
+  });
+
+  it('SHOULD create one engagement log per member WHERE a whole stakeholder group is chosen', () => {
+    // arrange
+    const stakeholders = ['Ann', 'Ben', 'Cy'].map((name, index) => ({
+      id: `s${index}`,
+      name,
+      role: '',
+      group: index < 2 ? 'Clinical' : 'Manager',
+      subGroup: '',
+      department: '',
+      relationship: '',
+      groupSize: 1,
+      interest: 'Medium',
+      impact: 'Medium',
+      power: 'Medium',
+      influence: 'Medium',
+      engagementPlan: '',
+      notes: '',
+    }));
+    render(<StakeholderAnalysisApp embedded stakeholders={stakeholders as never} />);
+    unlockGuidance();
+    fireEvent.click(screen.getByRole('button', { name: 'Engagement Plan' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Add Engagement Log' }));
+
+    // act
+    fireEvent.change(document.getElementById('eng-stakeholder') as HTMLSelectElement, {
+      target: { value: 'group:Clinical' },
+    });
+    fireEvent.change(screen.getByLabelText('Activity Description'), {
+      target: { value: 'Brief the clinical group' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Save Log' }));
+
+    // assert - Ann and Ben each get a log, Cy (Manager) does not
+    expect(screen.getAllByText('Brief the clinical group')).toHaveLength(2);
+    expect(screen.getByRole('cell', { name: 'Ann' })).toBeInTheDocument();
+    expect(screen.getByRole('cell', { name: 'Ben' })).toBeInTheDocument();
+    expect(screen.queryByRole('cell', { name: 'Cy' })).not.toBeInTheDocument();
+  });
+
+  it('SHOULD open the linked action WHERE the Linked badge is clicked', () => {
+    // arrange
+    const components = [{ id: 'vision', label: 'Vision', lenses: ['Lens A'], phase: 1, target: 4 }];
+    const entry = {
+      score: 2,
+      rationale: '',
+      evidence: '',
+      actions: [
+        {
+          id: 'action-1',
+          text: 'Run stakeholder briefing',
+          actionType: 'Engagement' as const,
+          owner: 'PMO',
+          timescale: '',
+          status: 'Planned' as const,
+        },
+      ],
+    };
+    const onNavigateToAction = vi.fn();
+    render(
+      <StakeholderAnalysisApp
+        embedded
+        components={components}
+        getEntry={() => entry}
+        onEntryUpdate={vi.fn()}
+        onNavigateToAction={onNavigateToAction}
+      />
+    );
+    unlockGuidance();
+    fireEvent.click(screen.getByRole('button', { name: 'Engagement Plan' }));
+
+    // act
+    fireEvent.click(screen.getByRole('button', { name: 'Linked' }));
+
+    // assert
+    expect(onNavigateToAction).toHaveBeenCalledWith('vision', 'Lens A', 'action-1');
   });
 
   it('SHOULD read and write the shared project stakeholders (including Role) when they are provided', () => {

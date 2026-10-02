@@ -66,6 +66,8 @@ export interface ReadinessReviewAppProps {
     accepted: boolean;
     updatedCount: number;
     skipped?: boolean;
+    /** The phase chosen in "What phase do you think you are in?" - becomes the tracked phase. */
+    selfAssessedPhase?: number | null;
   }) => void;
 }
 
@@ -301,6 +303,7 @@ export default function ChangeAdoptionBaselineReviewApp({
       skipToPhase,
       accepted: Boolean(skipToPhase) || suggestionsToApply.length > 0,
       updatedCount: suggestionsToApply.length + (skipToPhase ? skippedComponentIds.size : 0),
+      selfAssessedPhase: outcome?.selfAssessedPhase ?? null,
     });
     setShowModal(false);
     setOutcomeHandled(true);
@@ -308,7 +311,12 @@ export default function ChangeAdoptionBaselineReviewApp({
 
   const handleDecline = () => {
     finalizeReport('declined', null, {});
-    onReadinessEvaluated?.({ skipToPhase: null, accepted: false, updatedCount: 0 });
+    onReadinessEvaluated?.({
+      skipToPhase: null,
+      accepted: false,
+      updatedCount: 0,
+      selfAssessedPhase: outcome?.selfAssessedPhase ?? null,
+    });
     setShowModal(false);
     setOutcomeHandled(true);
   };

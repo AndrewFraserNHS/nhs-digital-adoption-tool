@@ -1,9 +1,14 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { ProjectDetailsPage } from './CSTDetailsPage';
+import { ProjectDetailsPage as BaseProjectDetailsPage, type ProjectDetailsPageProps } from './CSTDetailsPage';
 import type { OrgProfile } from '@lib/adoptionState';
 import type { AssessmentComponent } from '@data/components';
 import { PHASE_LINKS } from '@data/maturity-guidance-links';
+
+/** The Admin section is hidden by default; most tests exercise its contents, so show it unless a test says otherwise. */
+function ProjectDetailsPage(props: ProjectDetailsPageProps) {
+  return <BaseProjectDetailsPage showAdminSection {...props} />;
+}
 
 const orgProfile: OrgProfile = {
   trustName: 'Trust',
@@ -207,7 +212,49 @@ describe('ProjectDetailsPage', () => {
     expect(screen.getByLabelText('Pathway')).toHaveValue('pathway-1');
   });
 
-  it('SHOULD collapse the External Links section once marked initiated, and reshow via the Settings override', () => {
+  it('SHOULD hide the whole Admin section unless showAdminSection is set', () => {
+    // arrange + act 1 - default (hidden)
+    const { rerender } = render(
+      <BaseProjectDetailsPage
+        orgProfile={orgProfile}
+        onProfileUpdate={vi.fn()}
+        components={components}
+        lenses={['Strategic Direction and Leadership']}
+        onComponentClick={vi.fn()}
+        onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
+        onCurrentUserChange={vi.fn()}
+      />
+    );
+
+    // assert 1
+    expect(screen.queryByTestId('admin-section')).not.toBeInTheDocument();
+    expect(screen.queryByText('Step 4: Stakeholder Reference Data')).not.toBeInTheDocument();
+    expect(screen.getByText('What phase are you currently in?')).toBeInTheDocument();
+
+    // act 2 - shown
+    rerender(
+      <BaseProjectDetailsPage
+        orgProfile={orgProfile}
+        onProfileUpdate={vi.fn()}
+        components={components}
+        lenses={['Strategic Direction and Leadership']}
+        onComponentClick={vi.fn()}
+        onGoToIntroduction={vi.fn()}
+        onContinueToVision={vi.fn()}
+        onGoToWhereAmINow={vi.fn()}
+        onCurrentUserChange={vi.fn()}
+        showAdminSection
+      />
+    );
+
+    // assert 2
+    expect(screen.getByTestId('admin-section')).toBeInTheDocument();
+    expect(screen.getByText('Step 4: Stakeholder Reference Data')).toBeInTheDocument();
+  });
+
+  it('SHOULD collapse the External Links section once marked initiated, and expand it again WHEN unticked', () => {
     // arrange
     const initiatedProfile: OrgProfile = { ...orgProfile, externalLinksInitiated: true };
 
@@ -230,10 +277,10 @@ describe('ProjectDetailsPage', () => {
     expect(screen.queryByText('Phase linking')).not.toBeInTheDocument();
     expect(screen.getByText(/set up at project start/)).toBeInTheDocument();
 
-    // act 2 - reshown via the per-device override
+    // act 2 - unticked again
     rerender(
       <ProjectDetailsPage
-        orgProfile={initiatedProfile}
+        orgProfile={orgProfile}
         onProfileUpdate={vi.fn()}
         components={components}
         lenses={['Strategic Direction and Leadership']}
@@ -242,7 +289,6 @@ describe('ProjectDetailsPage', () => {
         onContinueToVision={vi.fn()}
         onGoToWhereAmINow={vi.fn()}
         onCurrentUserChange={vi.fn()}
-        showExternalLinksSection
       />
     );
 
@@ -277,7 +323,7 @@ describe('ProjectDetailsPage', () => {
     );
   });
 
-  it('SHOULD collapse the Stakeholder Reference Data section once marked initiated, and reshow via the Settings override', () => {
+  it('SHOULD collapse the Stakeholder Reference Data section once marked initiated, and expand it again WHEN unticked', () => {
     // arrange
     const initiatedProfile: OrgProfile = { ...orgProfile, stakeholderReferenceDataInitiated: true };
 
@@ -302,10 +348,10 @@ describe('ProjectDetailsPage', () => {
       screen.getByText(/Stakeholder reference data was set up at project start/)
     ).toBeInTheDocument();
 
-    // act 2 - reshown via the per-device override
+    // act 2 - unticked again
     rerender(
       <ProjectDetailsPage
-        orgProfile={initiatedProfile}
+        orgProfile={orgProfile}
         onProfileUpdate={vi.fn()}
         components={components}
         lenses={['Strategic Direction and Leadership']}
@@ -314,7 +360,6 @@ describe('ProjectDetailsPage', () => {
         onContinueToVision={vi.fn()}
         onGoToWhereAmINow={vi.fn()}
         onCurrentUserChange={vi.fn()}
-        showStakeholderReferenceDataSection
       />
     );
 

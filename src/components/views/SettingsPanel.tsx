@@ -16,10 +16,8 @@ export interface AdoptionUserSettings {
   manualPhaseFocus?: number;
   hideGuidedWorkflow?: boolean;
   showAdditionalGuidanceLinks?: boolean;
-  /** Per-device override: force-show the Project Profile page's External Links and Change Adoption Baseline Questions sections even after they're marked initiated. Off by default. */
+  /** Per-device: show the Project Profile page's Admin section (stakeholder reference data, presets, CAB questions, external links). Off by default. */
   showAdminActionSection?: boolean;
-  /** Per-device override: force-show the Project Profile page's Stakeholder Reference Data section even after it's marked initiated. */
-  showStakeholderReferenceDataSection?: boolean;
   /** Faint red/yellow background on Must/Should actions on component pages - Pathway 1 only. */
   showActionPriorityColours?: boolean;
   /** `YYYY-MM` of the month the first-of-month progress-update reminder was last shown/dismissed, so it only asks once per month. Internal bookkeeping - not shown in this panel. */
@@ -149,27 +147,7 @@ export function SettingsPanel({
           <label
             className={`flex items-center justify-between rounded-md border px-3 py-2 text-sm ${darkMode ? 'border-slate-700 bg-slate-900 text-slate-100' : 'border-slate-200 bg-slate-50 text-slate-700'}`}
           >
-            <span>
-              Show stakeholder reference data section (Project Profile, even after marked
-              initiated)
-            </span>
-            <input
-              type="checkbox"
-              checked={settings.showStakeholderReferenceDataSection === true}
-              onChange={(e) =>
-                updateUserSettings({ showStakeholderReferenceDataSection: e.target.checked })
-              }
-              className="h-4 w-4"
-            />
-          </label>
-
-          <label
-            className={`flex items-center justify-between rounded-md border px-3 py-2 text-sm ${darkMode ? 'border-slate-700 bg-slate-900 text-slate-100' : 'border-slate-200 bg-slate-50 text-slate-700'}`}
-          >
-            <span>
-              Show admin action (Project Profile's External Links and Change Adoption Baseline
-              Questions sections, even after marked initiated)
-            </span>
+            <span>Show admin section (Project Profile setup sections, hidden by default)</span>
             <input
               type="checkbox"
               checked={settings.showAdminActionSection === true}

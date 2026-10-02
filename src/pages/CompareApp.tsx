@@ -1,7 +1,7 @@
 import { ASSESSMENT_COMPONENTS } from '@data/components';
 import { normalizeActionStatus } from '@lib/actionModel';
 import type { SavedAdoptionAssessment } from '@lib/adoptionIO';
-import type { DraftEntry, OrgProfile } from '@lib/adoptionState';
+import type { DraftEntry, HistorySnapshot, OrgProfile } from '@lib/adoptionState';
 import { type DragEvent, JSX, useCallback, useRef, useState } from 'react';
 
 // ─── Analysis types ───────────────────────────────────────────────────────────
@@ -1177,12 +1177,94 @@ export interface CompareAppProps {
   /** Rendered inside another app's shell (e.g. the Adoption tool's sidenav) - skips this page's own outer shell/header/back-link. */
   embedded?: boolean;
   onBack?: () => void;
+  /** When the project's live data is supplied, the page compares two months of progress from it instead of asking for exported files. */
+  orgProfile?: OrgProfile;
+  currentDraft?: Record<string, Record<string, DraftEntry>>;
+  history?: HistorySnapshot[];
+}
+
+/** Compares any two finalised months (or the live "Current" data) with the same side-by-side view used for exported files. */
+function MonthComparison({
+  orgProfile,
+  currentDraft,
+  history,
+}: {
+  orgProfile: OrgProfile;
+  currentDraft: Record<string, Record<string, DraftEntry>>;
+  history: HistorySnapshot[];
+}): JSX.Element {
+  const options = [
+    { label: 'Current (live data)', draft: currentDraft },
+    ...[...history].reverse().map((snapshot) => ({
+      label: snapshot.monthLabel,
+      draft: snapshot.data,
+    })),
+  ];
+  const [aIndex, setAIndex] = useState(options.length > 1 ? 1 : 0);
+  const [bIndex, setBIndex] = useState(0);
+
+  if (!history.length) {
+    return (
+      <div className="rounded-lg border border-slate-200 bg-white p-6 text-sm text-slate-600">
+        No finalised months yet. Finalise a month on the dashboard to start comparing progress month
+        to month.
+      </div>
+    );
+  }
+
+  const analyse = (index: number): AnalysisResult =>
+    analyseFile({
+      orgProfile,
+      currentDraft: options[index].draft,
+      history,
+      phaseOverrides: {},
+      pathwayChecks: {},
+    });
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-center gap-4 rounded-lg border border-slate-200 bg-white p-4">
+        {(
+          [
+            { id: 'compare-month-a', label: 'From', value: aIndex, set: setAIndex },
+            { id: 'compare-month-b', label: 'To', value: bIndex, set: setBIndex },
+          ] as const
+        ).map((picker) => (
+          <div key={picker.id} className="flex items-center gap-2">
+            <label htmlFor={picker.id} className="text-sm font-semibold text-slate-700">
+              {picker.label}
+            </label>
+            <select
+              id={picker.id}
+              value={picker.value}
+              onChange={(event) => picker.set(Number(event.target.value))}
+              className="rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+            >
+              {options.map((option, index) => (
+                <option key={`${option.label}-${index}`} value={index}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        ))}
+      </div>
+      <CompareView
+        results={[analyse(aIndex), analyse(bIndex)]}
+        fileNames={[options[aIndex].label, options[bIndex].label]}
+      />
+    </div>
+  );
 }
 
 export default function CompareApp({
   embedded = false,
   onBack,
+  orgProfile,
+  currentDraft,
+  history,
 }: CompareAppProps = {}): JSX.Element {
+  const monthMode = Boolean(orgProfile && currentDraft && history);
   const [files, setFiles] = useState<LoadedFile[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [singleFileView, setSingleFileView] = useState<'engagement' | 'timeline'>('engagement');
@@ -1235,11 +1317,13 @@ export default function CompareApp({
         <div>
           <h1 className="text-lg font-bold text-slate-800">Assess & Compare</h1>
           <p className="text-xs text-slate-500">
-            Engagement analysis and side-by-side comparison of adoption assessments
+            {monthMode
+              ? 'Compare your progress month to month'
+              : 'Engagement analysis and side-by-side comparison of adoption assessments'}
           </p>
         </div>
       </div>
-      {files.length > 0 && (
+      {!monthMode && files.length > 0 && (
         <button
           onClick={reset}
           className="text-sm px-4 py-2 border border-slate-300 rounded-md text-slate-600 hover:bg-slate-100 transition-colors"
@@ -1258,9 +1342,13 @@ export default function CompareApp({
         </div>
       )}
 
-      {files.length === 0 && <DropZone onFiles={handleFiles} />}
+      {monthMode && orgProfile && currentDraft && history ? (
+        <MonthComparison orgProfile={orgProfile} currentDraft={currentDraft} history={history} />
+      ) : null}
 
-      {files.length === 1 && (
+      {!monthMode && files.length === 0 && <DropZone onFiles={handleFiles} />}
+
+      {!monthMode && files.length === 1 && (
         <>
           {(files[0].payload.history || []).length > 0 && (
             <div
@@ -1299,7 +1387,7 @@ export default function CompareApp({
         </>
       )}
 
-      {files.length === 2 && (
+      {!monthMode && files.length === 2 && (
         <CompareView
           results={[files[0].result, files[1].result]}
           fileNames={[files[0].name, files[1].name]}

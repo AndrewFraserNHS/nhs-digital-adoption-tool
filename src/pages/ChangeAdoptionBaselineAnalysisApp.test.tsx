@@ -71,7 +71,7 @@ describe('ChangeAdoptionBaselineAnalysisApp', () => {
 
     const file = new File([JSON.stringify(REPORT)], 'report.json', { type: 'application/json' });
     const input = screen.getByLabelText(
-      /Import a Change Adoption Baseline (CAB) report/
+      /Import a Change Adoption Baseline \(CAB\) report/
     ) as HTMLInputElement;
     fireEvent.change(input, { target: { files: [file] } });
 
@@ -91,13 +91,13 @@ describe('ChangeAdoptionBaselineAnalysisApp', () => {
       type: 'application/json',
     });
     const input = screen.getByLabelText(
-      /Import a Change Adoption Baseline (CAB) report/
+      /Import a Change Adoption Baseline \(CAB\) report/
     ) as HTMLInputElement;
     fireEvent.change(input, { target: { files: [file] } });
 
     await waitFor(() =>
       expect(
-        screen.getByText(/does not look like a Change Adoption Baseline (CAB) report/)
+        screen.getByText(/does not look like a Change Adoption Baseline \(CAB\) report/)
       ).toBeInTheDocument()
     );
   });
@@ -115,7 +115,7 @@ describe('ChangeAdoptionBaselineAnalysisApp', () => {
     });
 
     const input = screen.getByLabelText(
-      /Import a Change Adoption Baseline (CAB) report/
+      /Import a Change Adoption Baseline \(CAB\) report/
     ) as HTMLInputElement;
     fireEvent.change(input, {
       target: { files: [new File([eml], 'report.eml', { type: 'message/rfc822' })] },

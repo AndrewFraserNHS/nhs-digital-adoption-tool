@@ -78,39 +78,13 @@ describe('SettingsPanel', () => {
     // act
     fireEvent.click(
       screen.getByLabelText(
-        "Show admin action (Project Profile's External Links and Change Adoption Baseline Questions sections, even after marked initiated)"
+        'Show admin section (Project Profile setup sections, hidden by default)'
       )
     );
 
     // assert
     expect(onUserSettingsUpdate).toHaveBeenLastCalledWith(
       expect.objectContaining({ showAdminActionSection: true })
-    );
-  });
-
-  it('SHOULD toggle showStakeholderReferenceDataSection', () => {
-    // arrange
-    const onUserSettingsUpdate = vi.fn();
-
-    render(
-      <SettingsPanel
-        userSettings={baseUserSettings}
-        onUserSettingsUpdate={onUserSettingsUpdate}
-        onLoadExampleData={vi.fn()}
-        onResetData={vi.fn()}
-      />
-    );
-
-    // act
-    fireEvent.click(
-      screen.getByLabelText(
-        'Show stakeholder reference data section (Project Profile, even after marked initiated)'
-      )
-    );
-
-    // assert
-    expect(onUserSettingsUpdate).toHaveBeenLastCalledWith(
-      expect.objectContaining({ showStakeholderReferenceDataSection: true })
     );
   });
 

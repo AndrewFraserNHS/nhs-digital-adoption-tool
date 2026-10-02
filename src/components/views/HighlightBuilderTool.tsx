@@ -405,6 +405,7 @@ export function HighlightBuilderTool({
     }
     return stored;
   });
+  const [loadError, setLoadError] = useState<string>('');
   const [logoFileName, setLogoFileName] = useState<string>('');
   const [fileInputKey, setFileInputKey] = useState<number>(0);
   const previewContainerRef = useRef<HTMLDivElement | null>(null);
@@ -675,8 +676,9 @@ export function HighlightBuilderTool({
         decisionRows: normaliseDecisionRows(parsed.decisionRows),
         assessmentRows: normaliseAssessmentRows(parsed.assessmentRows),
       });
+      setLoadError('');
     } catch {
-      window.alert('Unable to load the selected layout JSON. Please verify the file contents.');
+      setLoadError('Unable to import the selected layout file. Please check it is a Highlight Builder export.');
     } finally {
       event.target.value = '';
     }
@@ -1661,12 +1663,16 @@ export function HighlightBuilderTool({
             <button
               type="button"
               onClick={saveLayoutJson}
+              title="Downloads all your text, tables and the logo so you can import them on another device"
               className="rounded-md bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-200"
             >
-              Save JSON Layout
+              Export layout (for another device)
             </button>
-            <label className="rounded-md bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-200 cursor-pointer">
-              Load JSON Layout
+            <label
+              title="Load a layout exported from another device"
+              className="rounded-md bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-200 cursor-pointer"
+            >
+              Import layout
               <input
                 key={fileInputKey}
                 type="file"
@@ -1675,6 +1681,11 @@ export function HighlightBuilderTool({
                 onChange={handleLoadLayout}
               />
             </label>
+            {loadError ? (
+              <p role="alert" className="w-full text-sm text-red-700">
+                {loadError}
+              </p>
+            ) : null}
             <div
               className="flex items-center rounded-md border border-slate-300 overflow-hidden text-sm font-semibold"
               role="group"

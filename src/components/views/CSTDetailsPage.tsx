@@ -489,9 +489,7 @@ export interface ProjectDetailsPageProps {
   currentUserId?: string;
   onCurrentUserChange: (id: string) => void;
   /** Per-device override that force-shows the External Links section even after it's been marked initiated. */
-  showExternalLinksSection?: boolean;
-  showReviewQuestionsSection?: boolean;
-  showStakeholderReferenceDataSection?: boolean;
+  showAdminSection?: boolean;
   /** For the executive sponsor picker (shared stakeholder list). */
   stakeholders?: Stakeholder[];
   onStakeholdersChange?: (stakeholders: Stakeholder[]) => void;
@@ -509,9 +507,7 @@ export function ProjectDetailsPage({
   darkMode = false,
   currentUserId,
   onCurrentUserChange,
-  showReviewQuestionsSection = false,
-  showExternalLinksSection = false,
-  showStakeholderReferenceDataSection = false,
+  showAdminSection = false,
   stakeholders = [],
   onStakeholdersChange,
   departments = [],
@@ -1359,6 +1355,19 @@ export function ProjectDetailsPage({
         </button>
       </div>
 
+      {showAdminSection ? (
+      <div
+        data-testid="admin-section"
+        className={`space-y-6 rounded-xl border p-5 ${darkMode ? 'border-slate-700 bg-slate-950' : 'border-slate-300 bg-slate-200'}`}
+      >
+        <div>
+          <h2 className={`text-xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
+            Admin
+          </h2>
+          <p className={`mt-1 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+            One-time project setup. Hide this section in Settings once you're done.
+          </p>
+        </div>
       <div
         className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-lg shadow-sm border p-6 space-y-4`}
       >
@@ -1402,12 +1411,11 @@ export function ProjectDetailsPage({
           </p>
           <p className={`mt-2 text-sm p-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
             This is normally only set up once at the start of a project. Once you're done, tick
-            "Stakeholder data initiated" to hide this section - re-enable "Show stakeholder
-            reference data section" in Settings if you need to come back to it.
+            "Stakeholder data initiated" to collapse this section - untick it to edit again.
           </p>
         </div>
 
-        {!profile.stakeholderReferenceDataInitiated || showStakeholderReferenceDataSection ? (
+        {!profile.stakeholderReferenceDataInitiated ? (
           <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
             {(
               [
@@ -1441,8 +1449,8 @@ export function ProjectDetailsPage({
           </div>
         ) : (
           <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-            Stakeholder reference data was set up at project start. Turn on "Show stakeholder
-            reference data section" in Settings if you need to come back and edit it.
+            Stakeholder reference data was set up at project start. Untick "Stakeholder data
+            initiated" if you need to come back and edit it.
           </p>
         )}
       </div>
@@ -1487,11 +1495,10 @@ export function ProjectDetailsPage({
           </div>
           <p className={`mt-2 text-sm p-1 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
             This is normally only set up once at the start of a project. Once you're done, tick
-            "Questions initiated" to hide this section - re-enable "Show change adoption baseline
-            section" in Settings if you need to come back to it.
+            "Questions initiated" to collapse this section - untick it to edit again.
           </p>
 
-          {!profile.readinessReviewQuestionsInitiated || showReviewQuestionsSection ? (
+          {!profile.readinessReviewQuestionsInitiated ? (
             <>
               <div className="mt-3">
                 <label
@@ -1526,8 +1533,8 @@ export function ProjectDetailsPage({
             </>
           ) : (
             <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-              Change Adoption Baseline (CAB) questions were set up at project start. Turn on "Show
-              change adoption baseline section" in Settings if you need to come back and edit them.
+              Change Adoption Baseline (CAB) questions were set up at project start. Untick
+              "Questions initiated" if you need to come back and edit them.
             </p>
           )}
         </div>
@@ -1557,11 +1564,10 @@ export function ProjectDetailsPage({
           </div>
           <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
             This is normally only set up once at the start of a project. Once you're done, tick
-            "Links initiated" to hide this section - re-enable "Show external links section" in
-            Settings if you need to come back to it.
+            "Links initiated" to collapse this section - untick it to edit again.
           </p>
 
-          {!profile.externalLinksInitiated || showExternalLinksSection ? (
+          {!profile.externalLinksInitiated ? (
             <>
               <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
                 All toolkit links across the tool point to the NHS Future platform by default. You
@@ -2062,12 +2068,14 @@ export function ProjectDetailsPage({
             </>
           ) : (
             <p className={`mt-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-              External links were set up at project start. Turn on "Show external links section" in
-              Settings if you need to come back and edit them.
+              External links were set up at project start. Untick "Links initiated" if you need to
+              come back and edit them.
             </p>
           )}
         </div>
       </div>
+      </div>
+      ) : null}
 
       {editingLink && (
         <LinkOverrideModal

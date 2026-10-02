@@ -812,6 +812,9 @@ function StakeholderModal({
   );
 }
 
+/** A new engagement log can target a whole stakeholder group: the select holds `group:<name>` and saving fans out to one log per member. */
+const GROUP_VALUE_PREFIX = 'group:';
+
 /** ---------- Engagement log add/edit modal ---------- */
 function EngagementModal({
   log,
@@ -837,6 +840,15 @@ function EngagementModal({
     () => [...stakeholders].sort((a, b) => a.name.localeCompare(b.name)),
     [stakeholders]
   );
+  const groupCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    stakeholders.forEach((s) => {
+      if (s.group) {
+        counts.set(s.group, (counts.get(s.group) || 0) + 1);
+      }
+    });
+    return [...counts.entries()].sort(([a], [b]) => a.localeCompare(b));
+  }, [stakeholders]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
@@ -869,11 +881,22 @@ function EngagementModal({
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
             >
               <option value="">Select stakeholder...</option>
-              {sortedStakeholders.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.name} ({s.group || 'N/A'} | {s.subGroup || 'N/A'} | {s.department || 'N/A'})
-                </option>
-              ))}
+              {!isEdit && groupCounts.length ? (
+                <optgroup label="Stakeholder groups (one log per member)">
+                  {groupCounts.map(([group, count]) => (
+                    <option key={group} value={`${GROUP_VALUE_PREFIX}${group}`}>
+                      Group: {group} ({count})
+                    </option>
+                  ))}
+                </optgroup>
+              ) : null}
+              <optgroup label="Stakeholders">
+                {sortedStakeholders.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name} ({s.group || 'N/A'} | {s.subGroup || 'N/A'} | {s.department || 'N/A'})
+                  </option>
+                ))}
+              </optgroup>
             </select>
           </div>
           <div>
@@ -1821,6 +1844,7 @@ function EngagementTab({
   onOpen,
   onDelete,
   onApply,
+  onNavigateToAction,
   onSortChange,
   onFilterChange,
   onResetFilters,
@@ -1833,6 +1857,7 @@ function EngagementTab({
   onOpen: (id: string | null) => void;
   onDelete: (id: string) => void;
   onApply: (log: EngagementLog) => void;
+  onNavigateToAction?: (componentId: string, lens: string, actionId: string) => void;
   onSortChange: (key: string) => void;
   onFilterChange: (key: string, value: string) => void;
   onResetFilters: () => void;
@@ -2056,6 +2081,22 @@ function EngagementTab({
                           <span className="w-fit rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">
                             Needs linking
                           </span>
+                        ) : onNavigateToAction && log.linkedComponentId && log.linkedLens ? (
+                          <button
+                            type="button"
+                            className="w-fit rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 underline underline-offset-2 hover:bg-green-200"
+                            title={`Open the linked action: ${componentById[log.linkedComponentId]?.label || log.linkedComponentId} · ${log.linkedLens}`}
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              onNavigateToAction(
+                                log.linkedComponentId as string,
+                                log.linkedLens as string,
+                                log.linkedActionId as string
+                              );
+                            }}
+                          >
+                            Linked
+                          </button>
                         ) : (
                           <span
                             className="w-fit rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800"
@@ -2684,6 +2725,8 @@ export interface StakeholderAnalysisAppProps {
   /** Shared project-wide stakeholders (AdoptionStore.stakeholders). When provided, this tool reads/writes them here instead of its own storage, so other tools (e.g. Benefits owners) see the same people. */
   stakeholders?: Stakeholder[];
   onStakeholdersChange?: (stakeholders: Stakeholder[]) => void;
+  /** Opens a linked action's component page with the action in focus (same callback the RAID Log uses). */
+  onNavigateToAction?: (componentId: string, lens: string, actionId: string) => void;
 }
 
 type Tab =
@@ -2701,6 +2744,7 @@ export default function StakeholderAnalysisApp({
   onEntryUpdate,
   stakeholders: sharedStakeholders,
   onStakeholdersChange,
+  onNavigateToAction,
 }: StakeholderAnalysisAppProps = {}): JSX.Element {
   const [localState, setLocalState] = useState<StakeholderAnalysisState>(
     () => load<StakeholderAnalysisState>(STORAGE_KEY) || freshState()
@@ -2886,6 +2930,21 @@ export default function StakeholderAnalysisApp({
           engagementLog: current.engagementLog.map((existing) =>
             existing.id === log.id ? log : existing
           ),
+        };
+      }
+      if (log.stakeholderId.startsWith(GROUP_VALUE_PREFIX)) {
+        const group = log.stakeholderId.slice(GROUP_VALUE_PREFIX.length);
+        const members = current.stakeholders.filter((s) => s.group === group);
+        return {
+          ...current,
+          engagementLog: [
+            ...current.engagementLog,
+            ...members.map((member) => ({
+              ...log,
+              id: createId('eng-'),
+              stakeholderId: member.id,
+            })),
+          ],
         };
       }
       return {
@@ -3134,6 +3193,7 @@ export default function StakeholderAnalysisApp({
           onOpen={openEngagementModal}
           onDelete={deleteEngagementLog}
           onApply={setApplyModal}
+          onNavigateToAction={onNavigateToAction}
           onSortChange={updateEngagementSort}
           onFilterChange={updateEngagementFilter}
           onResetFilters={() =>

@@ -21,6 +21,12 @@ export function escapeHtml(value: string | null | undefined): string {
  */
 export const esc = escapeHtml;
 
+/** `hhmmDDMMYYYY` timestamp for export file names, e.g. 14:30 on 2 Oct 2026 -> `143002102026`. */
+export function formatHhmmDdmmyyyy(date: Date = new Date()): string {
+  const pad = (value: number) => String(value).padStart(2, '0');
+  return `${pad(date.getHours())}${pad(date.getMinutes())}${pad(date.getDate())}${pad(date.getMonth() + 1)}${date.getFullYear()}`;
+}
+
 /**
  * Escape values for CSV to prevent injection attacks
  */

@@ -1,8 +1,13 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { downloadFile, esc, escapeCsv, escapeHtml } from './utils';
+import { downloadFile, esc, escapeCsv, escapeHtml, formatHhmmDdmmyyyy } from './utils';
 
 describe('utils', () => {
+  it('SHOULD format a timestamp as hhmmDDMMYYYY', () => {
+    // assert
+    expect(formatHhmmDdmmyyyy(new Date(2026, 9, 2, 14, 5))).toBe('140502102026');
+  });
+
   it('SHOULD escape html characters and handles nullish values', () => {
     // arrange + act + assert
     expect(escapeHtml(null)).toBe('');

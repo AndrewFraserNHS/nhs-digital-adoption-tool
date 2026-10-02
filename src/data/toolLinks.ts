@@ -5,6 +5,7 @@ export const IN_APP_TOOLS = [
   'change-impact-assessment',
   'stakeholder-analysis',
   'raid-log',
+  'moscow',
   'benefits',
   'readiness-review-analysis',
 ] as const;
@@ -21,6 +22,7 @@ export const DEFAULT_TOOL_LINK_TEXT: Record<InAppTool, { label: string; matchTex
   },
   'stakeholder-analysis': { label: 'Stakeholder Analysis', matchText: 'Stakeholder Analysis' },
   'raid-log': { label: 'RAID Log', matchText: 'RAID Log' },
+  moscow: { label: 'MoSCoW Analysis', matchText: 'MoSCoW Analysis' },
   benefits: { label: 'Benefits Register & Tracker', matchText: 'Benefits Register' },
   'readiness-review-analysis': {
     label: 'Change Adoption Baseline (CAB) Analysis',

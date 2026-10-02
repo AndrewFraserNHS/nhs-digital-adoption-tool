@@ -1,5 +1,6 @@
 import type { AssessmentComponent } from '@data/components';
 import {
+  PHASE_SELF_ASSESSMENT_QUESTION,
   PREPAREDNESS_ASSESSMENT,
   READINESS_REVIEW_REPORT_STORAGE_KEY,
   type ReadinessReviewReport,
@@ -182,8 +183,40 @@ describe('ChangeAdoptionBaselineReviewApp', () => {
       skipToPhase: null,
       accepted: false,
       updatedCount: 0,
+      selfAssessedPhase: null,
     });
     expect(screen.getByText('Assessment complete')).toBeInTheDocument();
+  });
+
+  it('SHOULD report the phase chosen in the self-assessment question so it becomes the tracked phase', () => {
+    // arrange
+    const onReadinessEvaluated = vi.fn();
+    render(
+      <ChangeAdoptionBaselineReviewApp
+        questions={[PHASE_SELF_ASSESSMENT_QUESTION, ...PREPAREDNESS_ASSESSMENT]}
+        components={[]}
+        onReadinessEvaluated={onReadinessEvaluated}
+      />
+    );
+    goToQuestions();
+    fireEvent.click(screen.getByLabelText('Phase 3: Development'));
+    fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+    PREPAREDNESS_ASSESSMENT.forEach((question, index) => {
+      answerQuestion(question.nu, 1);
+      if (index < PREPAREDNESS_ASSESSMENT.length - 1) {
+        fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+      }
+    });
+
+    // act
+    fireEvent.click(screen.getByRole('button', { name: 'Finish assessment' }));
+    expect(screen.getByText(/aligned to Phase 3/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
+
+    // assert
+    expect(onReadinessEvaluated).toHaveBeenCalledWith(
+      expect.objectContaining({ selfAssessedPhase: 3 })
+    );
   });
 
   it('SHOULD send the report bundle (JSON + PDF + mailto) with every answer in the report', () => {
@@ -361,6 +394,7 @@ describe('ChangeAdoptionBaselineReviewApp', () => {
       skipToPhase: 2,
       accepted: true,
       updatedCount: 2,
+      selfAssessedPhase: null,
     });
 
     // assert - the stored report records the decision and freezes the radar as the page now shows it

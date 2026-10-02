@@ -90,6 +90,7 @@ import ChangeAdoptionBaselineAnalysisApp from '@pages/ChangeAdoptionBaselineAnal
 import ChangeImpactAssessmentApp from '@pages/ChangeImpactAssessmentApp';
 import CompareApp from '@pages/CompareApp';
 import ForceFieldAnalysisApp from '@pages/ForceFieldAnalysisApp';
+import MoscowApp from '@pages/MoscowApp';
 import RaidLogApp from '@pages/RaidLogApp';
 import StakeholderAnalysisApp from '@pages/StakeholderAnalysisApp';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -392,6 +393,7 @@ export function AdoptionApp() {
       'change-impact-assessment': 'tools',
       'stakeholder-analysis': 'tools',
       'raid-log': 'tools',
+      moscow: 'tools',
       benefits: 'tools',
       'readiness-review-analysis': 'tools',
       'audit-log': 'tools',
@@ -910,9 +912,18 @@ export function AdoptionApp() {
       accepted: boolean;
       updatedCount: number;
       skipped?: boolean;
+      selfAssessedPhase?: number | null;
     }) => {
       if (!details.skipped && !requireSignedIn()) {
         return;
+      }
+      if (details.selfAssessedPhase) {
+        const selfAssessedPhase = details.selfAssessedPhase;
+        setUserSettings((prev) => ({
+          ...prev,
+          phaseFocusMode: 'manual',
+          manualPhaseFocus: selfAssessedPhase,
+        }));
       }
       setStore((prev) => ({
         ...prev,
@@ -1633,7 +1644,7 @@ export function AdoptionApp() {
                       'stakeholder-analysis',
                       'change-impact-assessment',
                       'benefits',
-                      //Todo: MoSCoW Analysis
+                      'moscow',
                       'raid-log',
                       'compare',
                       'readiness-review-analysis',
@@ -1646,7 +1657,7 @@ export function AdoptionApp() {
                         navItemRefs.current[`view:${v}`] = el;
                       }}
                       onClick={() => handleViewChange(v)}
-                      className={`w-full flex items-center px-4 py-1 text-sm transition-colors ${
+                      className={`w-full flex items-center px-4 py-1 text-left text-sm transition-colors ${
                         view === v
                           ? 'bg-blue-800 text-white font-medium border-l-4 border-white'
                           : 'text-blue-100 hover:bg-blue-800 border-l-4 border-transparent'
@@ -1664,11 +1675,13 @@ export function AdoptionApp() {
                                 ? 'Stakeholder Analysis'
                                 : v === 'raid-log'
                                   ? 'RAID Log'
-                                  : v === 'benefits'
-                                    ? 'Benefits Register & Tracker'
-                                    : v === 'readiness-review-analysis'
-                                      ? 'Change Adoption Baseline (CAB) Analysis'
-                                      : 'Audit Log'}
+                                  : v === 'moscow'
+                                    ? 'MoSCoW Analysis'
+                                    : v === 'benefits'
+                                      ? 'Benefits Register & Tracker'
+                                      : v === 'readiness-review-analysis'
+                                        ? 'Change Adoption Baseline (CAB) Analysis'
+                                        : 'Audit Log'}
                     </button>
                   ))}
                 </nav>
@@ -1690,7 +1703,7 @@ export function AdoptionApp() {
                   navItemRefs.current[`view:${v}`] = el;
                 }}
                 onClick={() => handleViewChange(v)}
-                className={`w-full flex items-center px-4 py-1 text-sm transition-colors ${
+                className={`w-full flex items-center px-4 py-1 text-left text-sm transition-colors ${
                   view === v
                     ? 'bg-blue-800 text-white font-medium border-l-4 border-white'
                     : 'text-blue-100 hover:bg-blue-800 border-l-4 border-transparent'
@@ -2045,11 +2058,7 @@ export function AdoptionApp() {
               onGoToStakeholderAnalysis={() => handleViewChange('stakeholder-analysis')}
               currentUserId={currentUserId}
               onCurrentUserChange={setCurrentUserId}
-              showExternalLinksSection={Boolean(userSettings.showAdminActionSection)}
-              showReviewQuestionsSection={Boolean(userSettings.showAdminActionSection)}
-              showStakeholderReferenceDataSection={Boolean(
-                userSettings.showStakeholderReferenceDataSection
-              )}
+              showAdminSection={Boolean(userSettings.showAdminActionSection)}
               stakeholders={store.stakeholders}
               onStakeholdersChange={updateStakeholders}
               departments={
@@ -2211,6 +2220,13 @@ export function AdoptionApp() {
               onNavigateToRaidLog={() => handleViewChange('raid-log')}
             />
           )}
+          {view === 'moscow' && (
+            <MoscowApp
+              embedded
+              onBack={() => handleViewChange('dashboard')}
+              darkMode={Boolean(userSettings.darkMode)}
+            />
+          )}
           {view === 'force-field-analysis' && (
             <ForceFieldAnalysisApp
               embedded
@@ -2224,7 +2240,13 @@ export function AdoptionApp() {
             />
           )}
           {view === 'compare' && (
-            <CompareApp embedded onBack={() => handleViewChange('dashboard')} />
+            <CompareApp
+              embedded
+              onBack={() => handleViewChange('dashboard')}
+              orgProfile={store.orgProfile}
+              currentDraft={store.currentDraft}
+              history={store.history}
+            />
           )}
           {view === 'change-impact-assessment' && (
             <ChangeImpactAssessmentApp
@@ -2250,6 +2272,7 @@ export function AdoptionApp() {
               onEntryUpdate={updateEntry}
               stakeholders={store.stakeholders}
               onStakeholdersChange={updateStakeholders}
+              onNavigateToAction={openActionView}
             />
           )}
           {view === 'raid-log' && (

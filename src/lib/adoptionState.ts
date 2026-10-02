@@ -299,22 +299,14 @@ export interface OrgProfile {
   /** Extra text (beyond "Phase N: <name>") that also auto-links to a phase's link in action/summary bodies. */
   phaseLinkAliases?: Record<number, string[]>;
   /**
-   * Once set, the Project Profile page's External Links section collapses by default -
-   * links are a one-time project-setup concern. Travels with export/import. Overridden locally
-   * (per device, not exported) by AdoptionUserSettings.showAdminActionSection.
+   * Once set, the Admin section's External Links block collapses - links are a one-time
+   * project-setup concern. Travels with export/import. The whole Admin section is shown per
+   * device by AdoptionUserSettings.showAdminActionSection.
    */
   externalLinksInitiated?: boolean;
-  /**
-   * Once set, the Project Profile page's Change Adoption Baseline (CAB) Questions section collapses by default -
-   * links are a one-time project-setup concern. Travels with export/import. Overridden locally
-   * (per device, not exported) by AdoptionUserSettings.showAdminActionSection.
-   */
+  /** As externalLinksInitiated, for the Admin section's Change Adoption Baseline (CAB) Questions block. */
   readinessReviewQuestionsInitiated?: boolean;
-  /**
-   * Once set, the Project Profile page's Stakeholder Reference Data section collapses by default -
-   * it's a one-time project-setup concern. Travels with export/import. Overridden locally
-   * (per device, not exported) by AdoptionUserSettings.showStakeholderReferenceDataSection.
-   */
+  /** As externalLinksInitiated, for the Admin section's Stakeholder Reference Data block. */
   stakeholderReferenceDataInitiated?: boolean;
   teamMembers?: TeamMember[];
   /** Groups/Sub-Groups/Locations/Relationships used by the Stakeholder Analysis tool - shared here so every project only defines them once. */
@@ -366,6 +358,7 @@ export type View =
   | 'change-impact-assessment'
   | 'stakeholder-analysis'
   | 'raid-log'
+  | 'moscow'
   | 'benefits'
   | 'readiness-review-analysis'
   | 'audit-log'

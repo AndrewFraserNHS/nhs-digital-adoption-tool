@@ -33,6 +33,7 @@ export interface WhereAmINowPageProps {
     accepted: boolean;
     updatedCount: number;
     skipped?: boolean;
+    selfAssessedPhase?: number | null;
   }) => void;
   contactEmail?: string;
   avtMailbox?: string;

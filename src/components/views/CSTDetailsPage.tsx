@@ -16,7 +16,6 @@ import {
   PageIntroModal,
   usePageIntroSeen,
 } from '@components/onboarding/PageIntroModal';
-import { PathwayContentNotice } from '@components/common/PathwayContentNotice';
 import { AssessmentComponent } from '@data/components';
 import {
   ADOPTION_COMPONENT_TO_GUIDANCE_KEYS,
@@ -1163,8 +1162,6 @@ export function ProjectDetailsPage({
           </div>
         </div>
 
-        <PathwayContentNotice pathway={profile.cst.pathway} darkMode={darkMode} />
-
         <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label
@@ -2237,17 +2234,10 @@ export function ProjectDetailsPage({
             <div
               className={`mt-3 space-y-2 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
             >
-              {pendingPathwayChange === 'pathway-1' ? (
+              {pendingPathwayChange ?? (
                 <p>
                   This will regenerate every component's outcomes and actions for Pathway 1. Any
                   items you've added yourself are kept.
-                </p>
-              ) : (
-                <p>
-                  Pathway 2 and Pathway 3 don't have their own outcomes and actions written yet, so
-                  this will clear the Pathway 1 stand-in content instead of leaving it in place -
-                  components will show an honest empty state until pathway-specific content is
-                  added. Any items you've added yourself are kept.
                 </p>
               )}
             </div>

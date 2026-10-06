@@ -8,6 +8,7 @@ import {
   usePageIntroSeen,
 } from '@components/onboarding/PageIntroModal';
 import { nhsButtonSecondary } from '../../styles/nhsTheme';
+import { CONSTANTS } from '../../types/constants';
 
 export interface ProfilePageProps {
   orgProfile: OrgProfile;
@@ -195,6 +196,17 @@ export function ProfilePage({
               link your profile.
             </p>
           )}
+        </div>
+
+        <div>
+          <p
+            className={`block text-sm font-medium ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}
+          >
+            App version
+          </p>
+          <p className={`mt-1 text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+            {CONSTANTS.VERSION}
+          </p>
         </div>
 
         <div>

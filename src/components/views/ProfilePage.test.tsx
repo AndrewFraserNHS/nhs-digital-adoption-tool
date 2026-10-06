@@ -2,6 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { ProfilePage } from './ProfilePage';
 import { initializeStore } from '@lib/adoptionState';
+import { CONSTANTS } from '../../types/constants';
 
 const baseUserSettings = {
   name: 'Jordan',
@@ -9,6 +10,22 @@ const baseUserSettings = {
 };
 
 describe('ProfilePage', () => {
+  it('SHOULD show the current app version', () => {
+    // arrange / act
+    render(
+      <ProfilePage
+        orgProfile={initializeStore().orgProfile}
+        userSettings={baseUserSettings}
+        onUserSettingsUpdate={vi.fn()}
+        onCurrentUserChange={vi.fn()}
+      />
+    );
+
+    // assert
+    expect(screen.getByText('App version')).toBeInTheDocument();
+    expect(screen.getByText(CONSTANTS.VERSION)).toBeInTheDocument();
+  });
+
   it('SHOULD let you pick which team member you are signed in as', () => {
     // arrange
     const onUserSettingsUpdate = vi.fn();

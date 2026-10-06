@@ -67,7 +67,7 @@ export function toAppAssetUrl(path: string): string {
  * Trigger file download in browser
  */
 export function downloadFile(filename: string, content: string, mime = 'text/csv'): void {
-  downloadBlob(filename, new Blob([content], { type: mime + ';charset=utf-8;' }));
+  downloadBlob(filename, new Blob([content], { type: `${mime};charset=utf-8` }));
 }
 
 export function downloadBlob(filename: string, blob: Blob): void {

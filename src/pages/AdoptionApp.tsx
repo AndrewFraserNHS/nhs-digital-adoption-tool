@@ -1010,17 +1010,11 @@ export function AdoptionApp() {
   }, [announceStatus, confirmIfCstWarnings, store]);
 
   const handleImportClick = useCallback(() => {
-    if (!requireSignedIn()) {
-      return;
-    }
     fileInputRef.current?.click();
   }, []);
 
   const handleImportFile = useCallback(
     async (event: React.ChangeEvent<HTMLInputElement>) => {
-      if (!requireSignedIn()) {
-        return;
-      }
       const file = event.target.files?.[0];
       if (!file) {
         return;

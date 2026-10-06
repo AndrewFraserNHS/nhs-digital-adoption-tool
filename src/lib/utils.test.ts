@@ -47,13 +47,17 @@ describe('utils', () => {
     );
 
     // act
-    downloadFile('report.csv', 'a,b,c');
+    downloadFile('report.json', '{}', 'application/json');
 
     // assert
     expect(appendSpy).toHaveBeenCalled();
+    expect((appendSpy.mock.calls[0][0] as HTMLAnchorElement).download).toBe('report.json');
     expect(clickSpy).toHaveBeenCalled();
     expect(removeSpy).toHaveBeenCalled();
     expect(revokeSpy).toHaveBeenCalledWith('blob:mock');
+    expect(createUrlSpy.mock.calls[0][0]).toMatchObject({
+      type: 'application/json;charset=utf-8',
+    });
 
     // reset
     appendSpy.mockRestore();

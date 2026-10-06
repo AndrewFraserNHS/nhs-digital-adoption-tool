@@ -1,3 +1,5 @@
+import { toAppAssetUrl } from '@lib/utils';
+
 export type ToolkitOptionKey = 'avt-v2-2026' | 'change-management-v3-2023';
 
 export interface ToolkitOption {
@@ -12,13 +14,13 @@ export const TOOLKIT_OPTIONS: ToolkitOption[] = [
     key: 'change-management-v3-2023',
     label: 'Change Management Toolkit (V3.0, Sep 2023)',
     filename: 'Change Management Toolkit v3.0 September 2023.pdf',
-    path: '/Change%20Management%20Toolkit%20v3.0%20September%202023.pdf',
+    path: toAppAssetUrl('/Change%20Management%20Toolkit%20v3.0%20September%202023.pdf'),
   },
   {
     key: 'avt-v2-2026',
     label: 'AVT Digital Adoption Toolkit (V2.1, Jul 2026)',
     filename: 'AVT Digital Adoption Toolkit - V2.1 July 2026.pdf',
-    path: '/AVT%20Digital%20Adoption%20Toolkit%20-%20V2.1%20July%202026.pdf',
+    path: toAppAssetUrl('/AVT%20Digital%20Adoption%20Toolkit%20-%20V2.1%20July%202026.pdf'),
   },
 ];
 

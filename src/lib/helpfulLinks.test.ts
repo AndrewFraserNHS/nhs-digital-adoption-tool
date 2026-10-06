@@ -52,6 +52,29 @@ describe('buildHelpfulLinkSections', () => {
     const phaseOne = sections.find((section) => section.id === 'phases')?.links[0];
     expect(phaseOne?.url).toBe('https://example.org/phase-1');
   });
+
+  it('SHOULD resolve root-relative PDF links against the app base path', () => {
+    // arrange / act
+    const sections = buildHelpfulLinkSections(
+      {
+        ...baseProfile,
+        coreLinks: [
+          {
+            key: 'avt',
+            label: 'AVT Digital Adoption Toolkit',
+            url: '/AVT%20Digital%20Adoption%20Toolkit.pdf',
+            type: 'core',
+          },
+        ],
+      },
+      components
+    );
+
+    // assert
+    expect(sections[0].links[0].url).toBe(
+      `${import.meta.env.BASE_URL}AVT%20Digital%20Adoption%20Toolkit.pdf`
+    );
+  });
 });
 
 describe('filterHelpfulLinkSections', () => {

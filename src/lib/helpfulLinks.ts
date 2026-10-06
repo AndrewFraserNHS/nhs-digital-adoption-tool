@@ -7,7 +7,7 @@ import {
 
 import { PHASE_NAMES } from '../types/constants';
 import type { OrgProfile } from './adoptionState';
-import { toAbsoluteUrl } from './utils';
+import { toAbsoluteUrl, toAppAssetUrl } from './utils';
 
 export interface HelpfulLink {
   key: string;
@@ -29,7 +29,10 @@ function usable(links: HelpfulLink[]): HelpfulLink[] {
   const seen = new Set<string>();
   return links
     .filter((link) => link.label.trim() && link.url.trim())
-    .map((link) => ({ ...link, url: toAbsoluteUrl(link.url) }))
+    .map((link) => ({
+      ...link,
+      url: link.url.startsWith('/') ? toAppAssetUrl(link.url) : toAbsoluteUrl(link.url),
+    }))
     .filter((link) => {
       const id = `${link.label.toLowerCase()}::${link.url}`;
       if (seen.has(id)) {

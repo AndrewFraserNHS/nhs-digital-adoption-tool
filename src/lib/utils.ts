@@ -58,6 +58,11 @@ export function toAbsoluteUrl(url: string | null | undefined): string {
   return `https://${trimmed}`;
 }
 
+/** Resolves a bundled public asset against Vite's configured base path. */
+export function toAppAssetUrl(path: string): string {
+  return `${import.meta.env.BASE_URL}${path.replace(/^\/+/, '')}`;
+}
+
 /**
  * Trigger file download in browser
  */

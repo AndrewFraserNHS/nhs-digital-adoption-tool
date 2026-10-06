@@ -1282,7 +1282,7 @@ export function AdoptionApp() {
     setTimeout(() => {
       window.location.reload();
     }, 100);
-  };, [announceStatus]);
+  }, [announceStatus]);
 
   const engagementObjectives = useMemo(
     () => computeEngagementObjectives(store, metrics, currentMonthLabel),

@@ -1233,32 +1233,56 @@ export function AdoptionApp() {
       return;
     }
 
-    const resetStore = syncDerivedContent(initializeStore());
-    setStore(resetStore);
-    setView('introduction');
+    // CRITICAL: Clear storage SYNCHRONOUSLY to avoid race condition where page reload
+    // before useEffect saves leaves old data in localStorage, trapping users on old versions.
+    // Remove main adoption store first (synchronous)
+    localStorage.removeItem(ADOPTION_STORAGE_KEY);
 
-    setUserSettings(DEFAULT_USER_SETTINGS);
-    save(ADOPTION_USER_SETTINGS_KEY, DEFAULT_USER_SETTINGS);
-
+    // Remove all adoption-related storage keys
     localStorage.removeItem(ADOPTION_ENGAGEMENT_KEY);
+    localStorage.removeItem(ADOPTION_USER_SETTINGS_KEY);
+    localStorage.removeItem(ADOPTION_CURRENT_USER_KEY);
+    localStorage.removeItem(ADOPTION_INTRODUCTION_COMPLETE_KEY);
+    localStorage.removeItem(EVIDENCE_WARNING_DISMISSED_KEY);
 
-    save(ADOPTION_INTRODUCTION_COMPLETE_KEY, false);
+    // Remove tool-specific storage that may retain old assessment state
+    localStorage.removeItem('nhs-readiness-review-report');
+    localStorage.removeItem('nhs-readiness-review');
+    localStorage.removeItem('nhs-moscow-tool');
+    localStorage.removeItem('nhs-highlight-builder-layout');
+    localStorage.removeItem('nhs-action-library-review');
+    localStorage.removeItem('nhs-change-impact-assessment');
+    localStorage.removeItem('nhs-force-field-analysis');
+    localStorage.removeItem('nhs-stakeholder-analysis');
+    localStorage.removeItem('nhs-guidance-workstreams');
 
-    setCurrentUserId('');
-    save(ADOPTION_CURRENT_USER_KEY, '');
-
+    // Remove all page intro-seen flags
     Object.keys(localStorage)
       .filter((key) => key.startsWith('nhs-digital-adoption-page-intro-seen:'))
       .forEach((key) => localStorage.removeItem(key));
 
+    // Clear session storage
     window.sessionStorage.clear();
+
+    // Now update UI state (these will attempt to re-save, but localStorage is already cleared)
+    const resetStore = syncDerivedContent(initializeStore());
+    setStore(resetStore);
+    setView('introduction');
+    setUserSettings(DEFAULT_USER_SETTINGS);
+    setCurrentUserId('');
 
     announceStatus('Assessment data has been reset and you have been signed out.');
 
     if (shouldAutoCloseSidebar()) {
       setIsSidebarOpen(false);
     }
-  }, [announceStatus]);
+
+    // Reload page to ensure browser cache of old app code is cleared
+    // and all async state is flushed
+    setTimeout(() => {
+      window.location.reload();
+    }, 100);
+  };, [announceStatus]);
 
   const engagementObjectives = useMemo(
     () => computeEngagementObjectives(store, metrics, currentMonthLabel),

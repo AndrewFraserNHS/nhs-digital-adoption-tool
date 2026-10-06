@@ -30,6 +30,7 @@ describe('applyAvtPreset', () => {
     expect(updated.coreLinks).toEqual(AVT_PRESET.coreLinks);
     expect(updated.phaseLinks).toEqual(AVT_PRESET.phaseLinks);
     expect(updated.componentFurtherReading).toEqual(AVT_PRESET.componentFurtherReading);
+    expect(updated.cst.toolkitChoice).toBe('avt-v2-2026');
     expect(updated.readinessQuestions).toBeUndefined();
     expect(updated.trustName).toBe(profile.trustName);
   });

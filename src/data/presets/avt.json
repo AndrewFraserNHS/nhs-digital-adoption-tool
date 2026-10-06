@@ -1,33 +1,28 @@
 {
   "version": "2026-07",
   "label": "AVT",
+  "defaultToolkit": "avt-v2-2026",
   "coreLinks": [
     {
       "key": "avt-preset-toolkit",
       "label": "AVT Digital Adoption Toolkit",
       "url": "/AVT%20Digital%20Adoption%20Toolkit%20-%20V2.1%20July%202026.pdf",
       "type": "core",
-      "matchAliases": [
-        "Toolkit"
-      ]
+      "matchAliases": ["Toolkit"]
     },
     {
       "key": "core-1790943454247-23hawv",
       "label": "AVT Sandpit",
       "url": "https://future.nhs.uk/CMN/view?objectID=76138768",
       "type": "core",
-      "matchAliases": [
-        "Sandpit"
-      ]
+      "matchAliases": ["Sandpit"]
     },
     {
       "key": "core-1790943464541-m40leu",
       "label": "Further Resources",
       "url": "https://future.nhs.uk/CMN/view?objectID=74287280",
       "type": "core",
-      "matchAliases": [
-        "Further Reading"
-      ]
+      "matchAliases": ["Further Reading"]
     },
     {
       "key": "core-1790943523271-isqtur",
@@ -52,18 +47,14 @@
       "label": "AVT Playbook",
       "url": "https://future.nhs.uk/CMN/view?objectId=298454789",
       "type": "core",
-      "matchAliases": [
-        "Playbook"
-      ]
+      "matchAliases": ["Playbook"]
     },
     {
       "key": "core-1790943666383-azyx9s",
       "label": "AVT Community Forum",
       "url": "https://future.nhs.uk/CMN/view?objectID=1650554",
       "type": "core",
-      "matchAliases": [
-        "Community Forum"
-      ]
+      "matchAliases": ["Community Forum"]
     }
   ],
   "phaseLinks": {

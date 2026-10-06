@@ -1,12 +1,14 @@
 import type { GuidanceLink } from '@data/maturity-guidance-links';
 import type { LinkBaseOverride } from '@data/maturity-guidance-links';
 import type { OrgProfile } from '@lib/adoptionState';
+import type { ToolkitOptionKey } from '@data/toolkits';
 
 import avtPresetJson from './avt.json';
 
 export interface AvtPreset {
   version: string;
   label: string;
+  defaultToolkit?: ToolkitOptionKey;
   coreLinks: GuidanceLink[];
   /** Landing-page URL per phase number (1-5), shown on the Daily Phase Overview. */
   phaseLinks?: Record<number, string>;
@@ -34,6 +36,10 @@ export const AVT_PRESET: AvtPreset = avtPresetJson as AvtPreset;
 export function applyAvtPreset(profile: OrgProfile): OrgProfile {
   return {
     ...profile,
+    cst: {
+      ...profile.cst,
+      ...(AVT_PRESET.defaultToolkit ? { toolkitChoice: AVT_PRESET.defaultToolkit } : {}),
+    },
     coreLinks: AVT_PRESET.coreLinks,
     phaseLinks: AVT_PRESET.phaseLinks,
     componentFurtherReading: AVT_PRESET.componentFurtherReading,

@@ -1990,6 +1990,8 @@ export function AdoptionApp() {
               getEntry={getEntry}
               onEntryUpdate={updateEntry}
               effectivePhaseFocus={effectivePhaseFocus}
+              automaticPhaseFocus={metrics.currentPhase}
+              manualPhaseFocus={userSettings.manualPhaseFocus ?? effectivePhaseFocus}
               phaseFocusMode={userSettings.phaseFocusMode || 'auto'}
               onComponentClick={openComponentAssessment}
               onResetToAuto={() =>

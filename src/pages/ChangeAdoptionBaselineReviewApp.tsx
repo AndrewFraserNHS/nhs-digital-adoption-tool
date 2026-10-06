@@ -193,11 +193,14 @@ export default function ChangeAdoptionBaselineReviewApp({
           Number(overrides[`${componentId}:${lens}`] ?? liveEntry(componentId, lens)?.score ?? 0)
         )
       : currentPhase;
+    const manualPhase =
+      report.answers.find((answer) => answer.kind === 'phase-self-assessment')?.optionNumber ??
+      null;
     save(READINESS_REVIEW_REPORT_STORAGE_KEY, {
       ...report,
       decision,
       appliedSkipToPhase,
-      radar: buildRadarSnapshot(components, liveEntry, phase, overrides),
+      radar: buildRadarSnapshot(components, liveEntry, phase, overrides, manualPhase),
     });
   };
 

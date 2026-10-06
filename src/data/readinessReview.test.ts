@@ -392,7 +392,44 @@ describe('unscored, pathway and coverage handling', () => {
     const fromSnapshot = buildReportRadarData(report, COMPONENTS);
 
     expect(fromSnapshot).toEqual(buildComponentRadarChartData(COMPONENTS, live, 2));
-    expect(fromSnapshot.datasets[1].label).toBe('Exemplar (Phase 2)');
+    expect(fromSnapshot.datasets[1].label).toBe('Automatic (Solution Design)');
+  });
+
+  it('SHOULD preserve Question 2 as the manual target while Auto follows progress', () => {
+    const live = (componentId: string, lens: string) => ({
+      score: componentId === 'a1' && lens === 'L1' ? 3 : 0,
+      rationale: '',
+      evidence: '',
+      actions: [],
+    });
+    const report = {
+      ...buildReadinessReviewReport(TRUST, { 101: 3 }, COMPONENTS, [
+        {
+          nu: 101,
+          id: '',
+          label: 'Phase',
+          lens: '',
+          question: 'What phase do you think you are in?',
+          answers: ['Phase 1', 'Phase 2', 'Phase 3'],
+          progress: [],
+          phase: 0,
+          target: 0,
+          kind: 'phase-self-assessment',
+        },
+      ]),
+      radar: buildRadarSnapshot(COMPONENTS, live, 2, {}, 3),
+    };
+
+    const data = buildReportRadarData(report, COMPONENTS);
+
+    expect(data.datasets[1].label).toBe('Automatic (Solution Design)');
+    expect(data.datasets[2].label).toBe('Manual target (Development)');
+    expect(data.datasets[1].data).toEqual(
+      buildComponentRadarChartData(COMPONENTS, live, 2).datasets[1].data
+    );
+    expect(data.datasets[2].data).toEqual(
+      buildComponentRadarChartData(COMPONENTS, live, 2, undefined, 'manual', 3).datasets[1].data
+    );
   });
 
   it('SHOULD use a phase-specific exemplar line, not the flat Target Average, for a report saved before the radar snapshot existed', () => {
@@ -405,6 +442,6 @@ describe('unscored, pathway and coverage handling', () => {
     const data = buildReportRadarData(report, COMPONENTS);
 
     expect(data.datasets[1].label).not.toBe('Target Average');
-    expect(data.datasets[1].label).toMatch(/^Exemplar \(Phase \d\)$/);
+    expect(data.datasets[1].label).toMatch(/^Automatic \(.+\)$/);
   });
 });

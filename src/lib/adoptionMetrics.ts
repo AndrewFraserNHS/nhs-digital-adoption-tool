@@ -498,7 +498,7 @@ export function buildRadarChartData(
   };
 }
 
-/** Which target line(s) to draw on a component radar: the phase-exemplar-derived line ('auto'), the flat `component.target` line ('manual'), or both at once. */
+/** Which target line(s) to draw on a component radar: the progress-derived ('auto') phase, the user-selected ('manual') phase, or both. */
 export type RadarTargetMode = 'auto' | 'manual' | 'both';
 
 export function buildComponentRadarChartData(
@@ -506,10 +506,15 @@ export function buildComponentRadarChartData(
   getEntry: (componentId: string, lens: string) => DraftEntry,
   currentPhase?: number,
   lens?: string,
-  targetMode: RadarTargetMode = 'auto'
+  targetMode: RadarTargetMode = 'auto',
+  manualPhase?: number
 ): ChartData<'radar', (number | null)[], string> {
   const exemplarPhase =
     currentPhase && COMPONENT_PHASE_EXEMPLARS[currentPhase] ? currentPhase : null;
+  const exemplarPhaseName = exemplarPhase
+    ? PHASE_NAMES[exemplarPhase] || `Phase ${exemplarPhase}`
+    : null;
+  const manualPhaseName = manualPhase ? PHASE_NAMES[manualPhase] || `Phase ${manualPhase}` : null;
   // Point colours are the readiness key (READINESS_BANDS) so the radar always matches its legend.
   const colorForScore = (score: number): string => getReadinessBand(score).color;
   // The weakest lens gates the component's overall readiness - a component isn't "ready" just
@@ -537,19 +542,8 @@ export function buildComponentRadarChartData(
     return scores.length ? Math.min(...scores) : null;
   });
 
-  // Kept as the original single-dataset label ("Exemplar (Phase N)" / "Target Average") when only
-  // the automatic line is shown, so existing snapshots/tooltips/tests that depend on that exact
-  // wording are unaffected; the "both" mode (where it sits alongside the manual line) needs its
-  // own, disambiguated label instead.
   const autoTargetDataset = {
-    label:
-      targetMode === 'both'
-        ? exemplarPhase
-          ? `Automatic target (Phase ${exemplarPhase})`
-          : 'Automatic target'
-        : exemplarPhase
-          ? `Exemplar (Phase ${exemplarPhase})`
-          : 'Target Average',
+    label: exemplarPhase ? `Automatic (${exemplarPhaseName})` : 'Automatic target',
     data: components.map((component) =>
       getComponentExemplarScore(component.id, exemplarPhase || undefined, component.target)
     ),
@@ -560,12 +554,11 @@ export function buildComponentRadarChartData(
     pointRadius: 3,
     pointHoverRadius: 5,
   };
-  // The manual line always uses the component's flat `target`, ignoring phase - a fixed baseline,
-  // shown even paler than the automatic line so the two don't compete visually when both are on.
+  // CAB Question 2 supplies the manual phase; without one, retain the configured flat target.
   const manualTargetDataset = {
-    label: 'Manual target',
+    label: manualPhaseName ? `Manual target (${manualPhaseName})` : 'Manual target',
     data: components.map((component) =>
-      getComponentExemplarScore(component.id, undefined, component.target)
+      getComponentExemplarScore(component.id, manualPhase, component.target)
     ),
     borderColor: '#cbd5e1',
     backgroundColor: 'rgba(203, 213, 225, 0.04)',

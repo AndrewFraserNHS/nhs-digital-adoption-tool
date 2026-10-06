@@ -1,6 +1,10 @@
 import type { AssessmentComponent } from '@data/components';
 import { type CstPathwayKey, PATHWAY_OPTIONS } from '@data/cst';
-import { buildComponentRadarChartData, computeCurrentPhase } from '@lib/adoptionMetrics';
+import {
+  buildComponentRadarChartData,
+  computeCurrentPhase,
+  type RadarTargetMode,
+} from '@lib/adoptionMetrics';
 import type { DraftEntry } from '@lib/adoptionState';
 import { getPhasePassScore } from '@lib/readinessBands';
 import type { ChartData } from 'chart.js';
@@ -962,12 +966,15 @@ export interface ReadinessReviewTrustDetails {
 export type ReadinessReviewDecision = 'pending' | 'applied' | 'declined' | 'skipped';
 
 /**
- * The readiness radar exactly as the Adoption Baseline page showed it once the outcome was applied
- * (or declined): one frozen entry per component lens plus the phase whose exemplar line was drawn.
- * Every radar rendering of a report (page, PDF, analysis tool) reads this, so they can't disagree.
+/** The readiness radar exactly as the Adoption Baseline page showed it once the outcome was applied
+ * (or declined): frozen scores, progress-derived automatic phase and optional CAB-selected manual
+ * phase. Every radar rendering of a report (page, PDF, analysis tool) reads this.
  */
 export interface ReadinessReviewRadarSnapshot {
+  /** Progress-derived phase used for the automatic target. */
   phase: number;
+  /** Phase selected by the user in CAB Question 2. */
+  manualPhase?: number | null;
   entries: Record<string, { score: number; assessed: boolean }>;
 }
 
@@ -998,7 +1005,8 @@ export function buildRadarSnapshot(
   components: AssessmentComponent[],
   getEntry: (componentId: string, lens: string) => DraftEntry | undefined,
   phase: number,
-  overrides: Record<string, number> = {}
+  overrides: Record<string, number> = {},
+  manualPhase: number | null = null
 ): ReadinessReviewRadarSnapshot {
   const entries: ReadinessReviewRadarSnapshot['entries'] = {};
   components.forEach((component) => {
@@ -1020,7 +1028,7 @@ export function buildRadarSnapshot(
       };
     });
   });
-  return { phase, entries };
+  return { phase, manualPhase, entries };
 }
 
 /** The radar data for a report, built the same way as the Adoption Baseline page's radar. */
@@ -1028,6 +1036,12 @@ export function buildReportRadarData(
   report: ReadinessReviewReport,
   components: AssessmentComponent[]
 ): ChartData<'radar'> {
+  const manualPhaseAnswer = report.answers.find(
+    (answer) => answer.kind === 'phase-self-assessment'
+  );
+  const manualPhase = report.radar?.manualPhase ?? manualPhaseAnswer?.optionNumber ?? null;
+  const targetMode: RadarTargetMode = manualPhase ? 'both' : 'auto';
+
   if (!report.radar) {
     // Older reports saved before the radar snapshot existed - fall back to the answers-implied
     // scores, but still work out a phase so the exemplar line matches the phase-specific targets
@@ -1037,7 +1051,14 @@ export function buildReportRadarData(
       components,
       (componentId, lens) => scoreLookup(componentId, lens).score
     );
-    return buildComponentRadarChartData(components, scoreLookup, phase);
+    return buildComponentRadarChartData(
+      components,
+      scoreLookup,
+      phase,
+      undefined,
+      targetMode,
+      manualPhase ?? undefined
+    );
   }
   const { entries, phase } = report.radar;
   return buildComponentRadarChartData(
@@ -1051,7 +1072,10 @@ export function buildReportRadarData(
         actions: [],
       };
     },
-    phase
+    phase,
+    undefined,
+    targetMode,
+    manualPhase ?? undefined
   );
 }
 

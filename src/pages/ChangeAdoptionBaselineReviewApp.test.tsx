@@ -217,6 +217,8 @@ describe('ChangeAdoptionBaselineReviewApp', () => {
     expect(onReadinessEvaluated).toHaveBeenCalledWith(
       expect.objectContaining({ selfAssessedPhase: 3 })
     );
+    const report = load<ReadinessReviewReport>(READINESS_REVIEW_REPORT_STORAGE_KEY);
+    expect(report?.radar?.manualPhase).toBe(3);
   });
 
   it('SHOULD send the report bundle (JSON + PDF + mailto) with every answer in the report', () => {

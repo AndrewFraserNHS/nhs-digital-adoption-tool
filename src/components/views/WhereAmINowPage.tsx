@@ -21,6 +21,10 @@ export interface WhereAmINowPageProps {
   getEntry: (componentId: string, lens: string) => DraftEntry;
   onEntryUpdate: (componentId: string, lens: string, entry: DraftEntry) => void;
   effectivePhaseFocus: number;
+  /** Progress-derived phase, independent of a manual phase chosen in CAB Question 2. */
+  automaticPhaseFocus?: number;
+  /** User-selected phase, populated from CAB Question 2 or the manual phase control. */
+  manualPhaseFocus?: number;
   phaseFocusMode: 'auto' | 'manual';
   onComponentClick: (componentId: string) => void;
   onResetToAuto: () => void;
@@ -219,6 +223,8 @@ export function WhereAmINowPage({
   getEntry,
   onEntryUpdate,
   effectivePhaseFocus,
+  automaticPhaseFocus,
+  manualPhaseFocus,
   phaseFocusMode,
   onComponentClick,
   onResetToAuto,
@@ -260,9 +266,10 @@ export function WhereAmINowPage({
     const chartData = buildComponentRadarChartData(
       components,
       getEntry,
-      effectivePhaseFocus,
+      automaticPhaseFocus ?? effectivePhaseFocus,
       undefined,
-      targetMode
+      targetMode,
+      manualPhaseFocus ?? effectivePhaseFocus
     );
     createRadarChart(
       byComponentCanvasRef.current,
@@ -287,7 +294,16 @@ export function WhereAmINowPage({
       }
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [components, getEntry, effectivePhaseFocus, onComponentClick, readinessTab, targetMode]);
+  }, [
+    components,
+    getEntry,
+    effectivePhaseFocus,
+    automaticPhaseFocus,
+    manualPhaseFocus,
+    onComponentClick,
+    readinessTab,
+    targetMode,
+  ]);
 
   useEffect(() => {
     if (readinessTab !== 'by-lens' || !byLensCanvasRef.current) {
@@ -302,9 +318,10 @@ export function WhereAmINowPage({
     const chartData = buildComponentRadarChartData(
       componentsWithLens,
       getEntry,
-      effectivePhaseFocus,
+      automaticPhaseFocus ?? effectivePhaseFocus,
       selectedLens,
-      targetMode
+      targetMode,
+      manualPhaseFocus ?? effectivePhaseFocus
     );
     createRadarChart(
       byLensCanvasRef.current,
@@ -333,6 +350,8 @@ export function WhereAmINowPage({
     components,
     getEntry,
     effectivePhaseFocus,
+    automaticPhaseFocus,
+    manualPhaseFocus,
     onComponentClick,
     readinessTab,
     selectedLens,

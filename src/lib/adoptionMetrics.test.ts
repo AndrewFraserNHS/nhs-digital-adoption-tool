@@ -10,6 +10,7 @@ import {
   computeTargetRadarData,
   flattenActions,
   getComponentObjectiveCounts,
+  getComponentExemplarScore,
   getMetrics,
 } from './adoptionMetrics';
 import type { AdoptionStore, DraftEntry } from './adoptionState';
@@ -507,7 +508,7 @@ describe('adoptionMetrics', () => {
 
     // assert
     expect(chartData.datasets).toHaveLength(2);
-    expect(chartData.datasets[1].label).toBe('Target Average');
+    expect(chartData.datasets[1].label).toBe('Automatic target');
   });
 
   it("SHOULD draw only the flat manual target line WHEN targetMode is 'manual'", () => {
@@ -541,6 +542,21 @@ describe('adoptionMetrics', () => {
     expect(chartData.datasets[1].label).toBe('Automatic target');
     expect(chartData.datasets[2].label).toBe('Manual target');
     expect(chartData.datasets[2].data).toEqual(components.map((component) => component.target));
+  });
+
+  it('SHOULD use the progress phase for Auto and the selected CAB phase for Manual', () => {
+    // act
+    const chartData = buildComponentRadarChartData(components, getEntry, 2, undefined, 'both', 3);
+
+    // assert
+    expect(chartData.datasets[1].label).toBe('Automatic (Solution Design)');
+    expect(chartData.datasets[1].data).toEqual(
+      components.map((component) => getComponentExemplarScore(component.id, 2, component.target))
+    );
+    expect(chartData.datasets[2].label).toBe('Manual target (Development)');
+    expect(chartData.datasets[2].data).toEqual(
+      components.map((component) => getComponentExemplarScore(component.id, 3, component.target))
+    );
   });
 
   it('SHOULD work out the phase from plain scores, treating Adopted as passing a Thriving requirement', () => {

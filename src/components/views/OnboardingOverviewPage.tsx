@@ -77,27 +77,20 @@ function buildSteps(darkMode: boolean): Step[] {
       ),
     },
     {
-      title: 'What benefit does this tool give me?',
+      title: 'Why use the Adoption engine?',
       body: (
         <div className={`text-sm space-y-2 ${textClass}`}>
+          <p>Successful adoption doesn't happen by chance.</p>
           <p>
-            Without it, adoption progress lives in scattered spreadsheets, memories and gut feel -
-            hard to prove, hard to hand over, and easy to lose momentum on.
-          </p>
-          <p>
-            With it, you get a single, evidenced picture of where your change effort actually
-            stands:
+            The adoption Engine helps you understand what is driving success, where barriers exist,
+            and what actions will have the greatest impact.
           </p>
           <ul className="list-disc pl-5 space-y-1">
-            <li>See at a glance what's on track, what's at risk, and what to do next.</li>
-            <li>
-              Turn vague "how's it going?" conversations into a clear, evidence-backed status you
-              can show your sponsor or board.
-            </li>
-            <li>
-              Get a ready-made action plan for each area, so you're not starting from a blank page.
-            </li>
-            <li>Build a highlight report in minutes instead of an afternoon of copy-pasting.</li>
+            <li>Measure and track adoption with confidence</li>
+            <li>Prioritise effort where it will make the biggest difference.</li>
+            <li>Reduce risk and address challenges early. </li>
+            <li>Evidence progress for sponsors, governance groups and boards.</li>
+            <li>Build the foundations for sustainable, long-term change.</li>
           </ul>
         </div>
       ),

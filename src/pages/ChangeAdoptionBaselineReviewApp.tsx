@@ -20,7 +20,7 @@ import { isResolvedActionStatus } from '@lib/actionModel';
 import { computeCurrentPhase } from '@lib/adoptionMetrics';
 import type { DraftEntry } from '@lib/adoptionState';
 import { downloadReportEml, sendReportBundle } from '@lib/readinessExport';
-import { load, save } from '@lib/storage';
+import { load, remove, save } from '@lib/storage';
 import { JSX, useEffect, useState } from 'react';
 
 interface PreparednessState {
@@ -35,6 +35,23 @@ interface PreparednessState {
 }
 
 const STORAGE_KEY = 'nhs-readiness-review';
+const ROLLBACK_STORAGE_KEY = 'nhs-readiness-review-rollback';
+
+interface ReadinessRollbackEntry {
+  componentId: string;
+  lens: string;
+  entry: DraftEntry;
+}
+
+function cloneDraftEntry(entry: DraftEntry): DraftEntry {
+  return {
+    ...entry,
+    actions: entry.actions.map((action) => ({
+      ...action,
+      linkedTargets: action.linkedTargets?.map((target) => ({ ...target })),
+    })),
+  };
+}
 
 function freshState(): PreparednessState {
   return { answers: {}, currentIndex: 0, completed: false };
@@ -118,11 +135,30 @@ export default function ChangeAdoptionBaselineReviewApp({
   /** Permanently wipes every answer and starts a brand new assessment. */
   const handleClear = () => {
     if (window.confirm('This will permanently clear every answer. Continue?')) {
+      const rollback = load<ReadinessRollbackEntry[]>(ROLLBACK_STORAGE_KEY) || [];
+      if (getEntry && onEntryUpdate && rollback.length > 0) {
+        rollback.forEach((item) => {
+          const liveEntry = getEntry(item.componentId, item.lens);
+          const restoredActions = item.entry.actions.map((savedAction) => {
+            const matchingLive = liveEntry.actions.find((liveAction) => liveAction.id === savedAction.id);
+            return matchingLive
+              ? { ...savedAction, linkedTargets: matchingLive.linkedTargets }
+              : savedAction;
+          });
+          onEntryUpdate(item.componentId, item.lens, {
+            ...item.entry,
+            actions: restoredActions,
+          });
+        });
+      }
       persist(freshState());
+      remove(READINESS_REVIEW_REPORT_STORAGE_KEY);
+      remove(ROLLBACK_STORAGE_KEY);
       setPage(1);
       setOutcome(null);
       setShowModal(false);
       setOutcomeHandled(false);
+      setMissingLenses([]);
     }
   };
 
@@ -243,7 +279,7 @@ export default function ChangeAdoptionBaselineReviewApp({
             ...entry,
             score: component.target,
             actions: entry.actions.map((action) =>
-              isResolvedActionStatus(action.status) ? action : { ...action, status: 'Skipped' }
+              isResolvedActionStatus(action.status) ? action : { ...action, status: 'Completed' }
             ),
           });
         });
@@ -256,7 +292,28 @@ export default function ChangeAdoptionBaselineReviewApp({
     applyPhaseSkip: boolean,
     applyPathway: boolean
   ) => {
+    const rollbackByKey = new Map<string, ReadinessRollbackEntry>();
+    const captureRollback = (componentId: string, lens: string) => {
+      if (!getEntry || rollbackByKey.has(`${componentId}:${lens}`)) {
+        return;
+      }
+      rollbackByKey.set(`${componentId}:${lens}`, {
+        componentId,
+        lens,
+        entry: cloneDraftEntry(getEntry(componentId, lens)),
+      });
+    };
+
     const skipToPhase = applyPhaseSkip ? (outcome?.skipToPhase ?? null) : null;
+    if (skipToPhase) {
+      components
+        .filter((component) => component.phase < skipToPhase)
+        .forEach((component) =>
+          component.lenses.forEach((lens) => {
+            captureRollback(component.id, lens);
+          })
+        );
+    }
     const skippedComponentIds = skipToPhase ? applySkip(skipToPhase) : new Set<string>();
     const overrides: Record<string, number> = {};
     components
@@ -273,6 +330,7 @@ export default function ChangeAdoptionBaselineReviewApp({
       (suggestion) => !skippedComponentIds.has(suggestion.componentId)
     );
     suggestionsToApply.forEach((suggestion) => {
+      captureRollback(suggestion.componentId, suggestion.lens);
       overrides[`${suggestion.componentId}:${suggestion.lens}`] = suggestion.impliedScore;
     });
     if (getEntry && onEntryUpdate) {
@@ -286,7 +344,7 @@ export default function ChangeAdoptionBaselineReviewApp({
           actions: entry.actions.map((action) =>
             (action.readinessScore ?? 0) < suggestion.impliedScore &&
             !isResolvedActionStatus(action.status)
-              ? { ...action, status: 'Skipped' }
+              ? { ...action, status: 'Completed' }
               : action
           ),
         });
@@ -300,6 +358,11 @@ export default function ChangeAdoptionBaselineReviewApp({
     }
 
     const accepted = Boolean(skipToPhase) || suggestionsToApply.length > 0;
+    if (accepted && rollbackByKey.size > 0) {
+      save(ROLLBACK_STORAGE_KEY, [...rollbackByKey.values()]);
+    } else {
+      remove(ROLLBACK_STORAGE_KEY);
+    }
     finalizeReport(accepted ? 'applied' : 'declined', skipToPhase, overrides);
 
     onReadinessEvaluated?.({
@@ -313,6 +376,7 @@ export default function ChangeAdoptionBaselineReviewApp({
   };
 
   const handleDecline = () => {
+    remove(ROLLBACK_STORAGE_KEY);
     finalizeReport('declined', null, {});
     onReadinessEvaluated?.({
       skipToPhase: null,

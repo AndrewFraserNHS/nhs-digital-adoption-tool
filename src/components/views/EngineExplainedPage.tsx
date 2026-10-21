@@ -459,7 +459,8 @@ export function EngineExplainedPage({
           Engine Explained
         </h2>
         <p className={`mt-2 max-w-3xl text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-          A quick worked example showing how everything fits together, step by step.
+          Adoption engine one page view: a quick worked example showing how everything fits
+          together, step by step.
         </p>
       </div>
 

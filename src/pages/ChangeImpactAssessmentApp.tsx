@@ -1504,6 +1504,7 @@ function GuideTab(): JSX.Element {
 export interface ChangeImpactAssessmentAppProps {
   embedded?: boolean;
   onBack?: () => void;
+  darkMode?: boolean;
   benefits?: BenefitItem[];
   onNavigateToBenefit?: (benefitId: string) => void;
 }
@@ -1539,6 +1540,7 @@ function parseCsvLine(line: string): string[] {
 
 export default function ChangeImpactAssessmentApp({
   embedded = false,
+  darkMode = false,
   benefits = [],
   onNavigateToBenefit,
 }: ChangeImpactAssessmentAppProps = {}): JSX.Element {
@@ -1794,7 +1796,7 @@ export default function ChangeImpactAssessmentApp({
 
   if (embedded) {
     return (
-      <div>
+      <div className={darkMode ? 'dark-mode-fallback' : ''}>
         {header}
         {body}
       </div>

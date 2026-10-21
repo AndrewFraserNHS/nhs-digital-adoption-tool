@@ -12,6 +12,7 @@ import type { jsPDF } from 'jspdf';
 
 import { PHASE_NAMES } from '../types/constants';
 import { createPdfWriter, PDF_CONTENT_WIDTH, PDF_MARGIN } from './pdfWriter';
+import { READINESS_BANDS } from './readinessBands';
 
 /**
  * Renders the maturity radar for a frozen report onto an offscreen white canvas and returns it as
@@ -81,6 +82,11 @@ export function buildReadinessReviewPdf(report: ReadinessReviewReport, radarImag
       gap: 5,
     }
   );
+  write('Readiness level key', { bold: true, gap: 1 });
+  READINESS_BANDS.forEach((band) => {
+    write(`${band.score} - ${band.label}`, { size: 9, gap: 0.5 });
+  });
+  writer.y += 2;
 
   const showImplied = shouldShowImpliedScore(report.answers);
   report.answers.forEach((answer, index) => {

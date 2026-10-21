@@ -67,7 +67,19 @@ export const PHASE_SELF_ASSESSMENT_QUESTION: PreparednessAssessment = {
   answers: Object.keys(PHASE_NAMES)
     .map(Number)
     .sort((a, b) => a - b)
-    .map((phase) => `Phase ${phase}: ${PHASE_NAMES[phase]}`),
+    .map((phase) => {
+      const phaseDescriptor =
+        phase === 1
+          ? 'Define the change'
+          : phase === 2
+            ? 'Prepare the change'
+            : phase === 3
+              ? 'Plan the change'
+              : phase === 4
+                ? 'Manage implementation of the change'
+                : 'Reinforce and sustain the change';
+      return `Phase ${phase}: ${PHASE_NAMES[phase]} - ${phaseDescriptor}`;
+    }),
   progress: [],
   phase: 0,
   target: 0,
@@ -625,13 +637,13 @@ export const PREPAREDNESS_ASSESSMENT: PreparednessAssessment[] = [
     label: 'Process Change',
     lens: 'Process and Sustainment',
     question:
-      'To what extent has the changed process been embedded and sustained in day-to-day practice?',
+      'To what extent have the new ways of working been embedded and sustained in day-to-day practice?',
     answers: answers(
-      'The future-state process has not yet been implemented.',
-      'The changed process is being piloted and refined using feedback and learning.',
-      'The changed process is being adopted, but application remains inconsistent across teams or services.',
-      'The changed process is embedded in routine operations, with clear ownership, governance and performance measures.',
-      'The changed process is sustained as business as usual and continuously improved using operational insight and feedback.'
+      'The future-state ways of working have not yet been implemented.',
+      'The new ways of working are being piloted and refined using feedback and learning.',
+      'The new ways of working are being adopted, but application remains inconsistent across teams or services.',
+      'The new ways of working are embedded in routine operations, with clear ownership, governance and performance measures.',
+      'The new ways of working are sustained as business as usual and continuously improved using operational insight and feedback.'
     ),
     progress: [0, 1, 2, 3, 4],
     phase: 4,
@@ -644,12 +656,12 @@ export const PREPAREDNESS_ASSESSMENT: PreparednessAssessment[] = [
     label: 'Process Change',
     lens: 'Skills and Behaviour',
     question:
-      'How consistently are people demonstrating the skills and behaviours needed to apply the changed process?',
+      'How consistently are people demonstrating the skills and behaviours needed to apply the new ways of working?',
     answers: answers(
-      'People have not yet developed the knowledge, skills or behaviours needed to apply the changed process.',
-      'People are beginning to learn and apply the process, but rely heavily on individual support and guidance.',
-      'People are starting to apply the changed process and associated behaviours, but practice remains inconsistent.',
-      'People consistently apply the changed process and demonstrate the expected behaviours, with support available where needed.',
+      'People have not yet developed the knowledge, skills or behaviours needed to apply the new ways of working.',
+      'People are beginning to learn and apply the new ways of working, but rely heavily on individual support and guidance.',
+      'People are starting to apply the new ways of working and associated behaviours, but practice remains inconsistent.',
+      'People consistently apply the new ways of working and demonstrate the expected behaviours, with support available where needed.',
       'People confidently apply the process in routine practice and improve it through shared learning, feedback and experience.'
     ),
     progress: [0, 1, 2, 3, 4],
@@ -682,9 +694,9 @@ export const PREPAREDNESS_ASSESSMENT: PreparednessAssessment[] = [
     label: 'Reinforcement',
     lens: 'Process and Sustainment',
     question:
-      'How effectively are process performance, feedback and governance used to sustain and improve the changed process?',
+      'How effectively are process performance, feedback and governance used to sustain and improve the new ways of working?',
     answers: answers(
-      'There is no structured approach to monitoring, governing or sustaining the changed process.',
+      'There is no structured approach to monitoring, governing or sustaining the new ways of working.',
       'Monitoring and feedback occur occasionally, but roles, measures and governance arrangements are unclear or inconsistent.',
       'Measures, reporting arrangements and ownership are defined, and process performance is beginning to be monitored.',
       'Process performance is regularly reviewed, with feedback and governance used to identify issues and take corrective action.',

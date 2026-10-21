@@ -52,11 +52,19 @@ function buildSteps(darkMode: boolean): Step[] {
       title: 'What is the Adoption Engine?',
       body: (
         <div className={`text-sm space-y-2 ${textClass}`}>
+          <p className={darkMode ? 'text-slate-100 font-semibold' : 'text-slate-900 font-semibold'}>
+            Adoption engine one page view
+          </p>
           <p>
             Implementing a new product, service or way of working is only the beginning. To realise
             the full value of change, people need to adopt it, embed it into their daily activities,
             and sustain it over time.
           </p>
+          <img
+            src={`${import.meta.env.BASE_URL}assets/AdoptionEngineOverview.png`}
+            alt="Adoption Engine one-page overview"
+            className="w-full max-w-3xl mx-auto rounded-md border border-slate-200"
+          />
           <p>
             The Adoption Engine helps you understand, measure and improve adoption before
             implementation, during delivery and long after go-live. It provides a clear picture of

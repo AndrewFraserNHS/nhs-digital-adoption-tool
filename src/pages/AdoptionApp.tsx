@@ -299,6 +299,7 @@ export function AdoptionApp() {
     }
     setSignInNotice(SIGN_IN_REQUIRED_MESSAGE);
     setStatusAnnouncement(SIGN_IN_REQUIRED_MESSAGE);
+    window.alert(SIGN_IN_REQUIRED_MESSAGE);
     return false;
   }, []);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
@@ -1403,7 +1404,6 @@ export function AdoptionApp() {
 
   const getComponentStatus = (comp: (typeof COMPONENTS)[0]) => {
     let scoredCount = 0;
-    let justifiedCount = 0;
     let actionCount = 0;
     let completedActionCount = 0;
 
@@ -1411,9 +1411,6 @@ export function AdoptionApp() {
       const e = store.currentDraft[comp.id]?.[l];
       if (e && e.score > 0) {
         scoredCount++;
-        if (e.rationale?.trim()) {
-          justifiedCount++;
-        }
       }
       const actions = e?.actions || [];
       actionCount += actions.length;
@@ -1424,9 +1421,6 @@ export function AdoptionApp() {
 
     if (scoredCount === 0) {
       return { icon: '◯', color: 'text-blue-100', label: 'Not Started' };
-    }
-    if (scoredCount > justifiedCount) {
-      return { icon: '⚠', color: 'text-red-300', label: 'Missing Rationale' };
     }
     if (scoredCount < comp.lenses.length) {
       return { icon: '◐', color: 'text-amber-300', label: 'In Progress' };
@@ -1451,7 +1445,7 @@ export function AdoptionApp() {
 
   return (
     <div
-      className={`flex h-screen overflow-hidden ${userSettings.darkMode ? 'bg-slate-900 text-slate-100' : 'bg-slate-50 text-slate-800'}`}
+      className={`flex h-screen overflow-hidden ${userSettings.darkMode ? 'dark-mode-fallback bg-slate-900 text-slate-100' : 'bg-slate-50 text-slate-800'}`}
     >
       <div role="status" aria-live="polite" className="sr-only">
         {statusAnnouncement}
@@ -1768,7 +1762,6 @@ export function AdoptionApp() {
             <div className="space-y-2 text-xs text-blue-200">
               <div>◯ Not Started</div>
               <div>◐ In Progress</div>
-              <div>⚠ Missing Rationale</div>
               <div>✓ Completed</div>
             </div>
           </div>
@@ -2309,6 +2302,7 @@ export function AdoptionApp() {
           {view === 'change-impact-assessment' && (
             <ChangeImpactAssessmentApp
               embedded
+              darkMode={Boolean(userSettings.darkMode)}
               onBack={() => handleViewChange('dashboard')}
               benefits={store.benefits}
               onNavigateToBenefit={openBenefit}
@@ -2317,6 +2311,7 @@ export function AdoptionApp() {
           {view === 'stakeholder-analysis' && (
             <StakeholderAnalysisApp
               embedded
+              darkMode={Boolean(userSettings.darkMode)}
               onBack={() => handleViewChange('dashboard')}
               trustName={store.orgProfile.trustName}
               projectName={store.orgProfile.projectName}
@@ -2353,6 +2348,7 @@ export function AdoptionApp() {
           {view === 'benefits' && (
             <BenefitsApp
               embedded
+              darkMode={Boolean(userSettings.darkMode)}
               onBack={() => handleViewChange('dashboard')}
               trustName={store.orgProfile.trustName}
               projectName={store.orgProfile.projectName}

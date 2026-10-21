@@ -199,7 +199,7 @@ describe('ChangeAdoptionBaselineReviewApp', () => {
       />
     );
     goToQuestions();
-    fireEvent.click(screen.getByLabelText('Phase 3: Development'));
+    fireEvent.click(screen.getByLabelText(/Phase 3: Development/));
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     PREPAREDNESS_ASSESSMENT.forEach((question, index) => {
       answerQuestion(question.nu, 1);
@@ -210,7 +210,7 @@ describe('ChangeAdoptionBaselineReviewApp', () => {
 
     // act
     fireEvent.click(screen.getByRole('button', { name: 'Finish assessment' }));
-    expect(screen.getByText(/aligned to Phase 3/)).toBeInTheDocument();
+    expect(screen.getByText(/You answered that you were at Phase 3/)).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
 
     // assert
@@ -378,14 +378,14 @@ describe('ChangeAdoptionBaselineReviewApp', () => {
     // act - accept everything as pre-checked
     fireEvent.click(screen.getByRole('button', { name: 'Apply selected' }));
 
-    // assert - vision's first lens: score raised to its target (2), Planned action Skipped, Completed left alone
+    // assert - vision's first lens: score raised to its target (2), Planned action Completed, Completed left alone
     expect(onEntryUpdate).toHaveBeenCalledWith(
       'vision',
       'Strategic Direction and Leadership',
       expect.objectContaining({
         score: 2,
         actions: [
-          expect.objectContaining({ id: 'a1', status: 'Skipped' }),
+          expect.objectContaining({ id: 'a1', status: 'Completed' }),
           expect.objectContaining({ id: 'a2', status: 'Completed' }),
         ],
       })
@@ -470,7 +470,7 @@ describe('ChangeAdoptionBaselineReviewApp', () => {
     );
   });
 
-  it("SHOULD mark a lens's below-threshold actions as Skipped when its own suggestion is applied (declining the phase skip)", () => {
+  it("SHOULD mark a lens's below-threshold actions as Completed when its own suggestion is applied (declining the phase skip)", () => {
     // arrange - vision's first lens starts at 0 with three actions at readiness levels 0, 1 and 2
     const entries: Record<string, Record<string, DraftEntry>> = {
       vision: {
@@ -542,7 +542,7 @@ describe('ChangeAdoptionBaselineReviewApp', () => {
     fireEvent.click(screen.getByLabelText(/Skip straight to Phase 2/));
     fireEvent.click(screen.getByRole('button', { name: 'Apply selected' }));
 
-    // assert - only the action below the new score is marked Skipped; the one already at that
+    // assert - only the action below the new score is marked Completed; the one already at that
     // level and the already-Completed one are left alone
     expect(onEntryUpdate).toHaveBeenCalledWith(
       'vision',
@@ -550,12 +550,73 @@ describe('ChangeAdoptionBaselineReviewApp', () => {
       expect.objectContaining({
         score: TOP_SCORE,
         actions: [
-          expect.objectContaining({ id: 'below', status: 'Skipped' }),
+          expect.objectContaining({ id: 'below', status: 'Completed' }),
           expect.objectContaining({ id: 'at', status: 'Planned' }),
           expect.objectContaining({ id: 'already-completed', status: 'Completed' }),
         ],
       })
     );
+  });
+
+  it('SHOULD restore readiness updates WHEN clearing after applying CAB outcome', () => {
+    // arrange - one lens starts at 0 with one Planned action that CAB will auto-complete
+    const entries: Record<string, Record<string, DraftEntry>> = {
+      vision: {
+        'Strategic Direction and Leadership': {
+          score: 0,
+          rationale: '',
+          evidence: '',
+          actions: [
+            { id: 'restore-me', text: 'Action', owner: '', timescale: '', status: 'Planned' },
+          ],
+        },
+        'People Experience and Culture': { score: 0, rationale: '', evidence: '', actions: [] },
+      },
+      case_for_change: {
+        'Strategic Direction and Leadership': { score: 0, rationale: '', evidence: '', actions: [] },
+        'People Experience and Culture': { score: 0, rationale: '', evidence: '', actions: [] },
+      },
+    };
+    const getEntry = (componentId: string, lens: string) =>
+      entries[componentId]?.[lens] || DEFAULT_ENTRY;
+    const onEntryUpdate = vi.fn((componentId: string, lens: string, entry: DraftEntry) => {
+      if (!entries[componentId]) {
+        entries[componentId] = {};
+      }
+      entries[componentId][lens] = entry;
+    });
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+
+    render(
+      <ChangeAdoptionBaselineReviewApp
+        questions={PREPAREDNESS_ASSESSMENT}
+        components={COMPONENTS}
+        getEntry={getEntry}
+        onEntryUpdate={onEntryUpdate}
+      />
+    );
+    goToQuestions();
+
+    // act - apply CAB updates
+    PREPAREDNESS_ASSESSMENT.forEach((question, index) => {
+      answerQuestion(question.nu, question.id === 'sponsorship' ? 1 : 5);
+      if (index < PREPAREDNESS_ASSESSMENT.length - 1) {
+        fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+      }
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Finish assessment' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Apply selected' }));
+
+    // assert 1 - score and status changed by CAB apply
+    expect(entries.vision['Strategic Direction and Leadership'].score).toBe(2);
+    expect(entries.vision['Strategic Direction and Leadership'].actions[0].status).toBe('Completed');
+
+    // act 2 - clear the assessment
+    fireEvent.click(screen.getAllByRole('button', { name: 'Clear and start again' })[0]);
+
+    // assert 2 - readiness state restored to pre-CAB values
+    expect(entries.vision['Strategic Direction and Leadership'].score).toBe(0);
+    expect(entries.vision['Strategic Direction and Leadership'].actions[0].status).toBe('Planned');
   });
 
   it('SHOULD select an answer with its number key and move on with Enter', () => {
@@ -599,7 +660,8 @@ describe('ChangeAdoptionBaselineReviewApp', () => {
     vi.spyOn(window, 'confirm').mockReturnValue(true);
     fireEvent.click(screen.getByRole('button', { name: 'Clear and start again' }));
 
-    // assert - back to the very start, nothing pre-filled
+    // assert - back to the very start, nothing pre-filled and report snapshot removed
+    expect(load(READINESS_REVIEW_REPORT_STORAGE_KEY)).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: 'Adoption Baseline Questions' }));
     expect(screen.getByLabelText(PREPAREDNESS_ASSESSMENT[0].answers[1])).not.toBeChecked();
   });

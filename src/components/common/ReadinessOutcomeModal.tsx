@@ -44,6 +44,14 @@ export function ReadinessOutcomeModal({
   const selfAssessedPhaseName = outcome.selfAssessedPhase
     ? PHASE_NAMES[outcome.selfAssessedPhase]
     : null;
+  const componentLabelById = new Map<string, string>();
+  outcome.suggestions.forEach((suggestion) =>
+    componentLabelById.set(suggestion.componentId, suggestion.componentLabel)
+  );
+  outcome.behindLenses.forEach((item) => componentLabelById.set(item.componentId, item.componentLabel));
+  const readyComponentLabels = outcome.readyComponentIds.map(
+    (componentId) => componentLabelById.get(componentId) || componentId
+  );
 
   const toggleSuggestion = (index: number) => {
     setCheckedSuggestions((current) =>
@@ -71,12 +79,26 @@ export function ReadinessOutcomeModal({
         {selfAssessedPhaseName ? (
           <div className="mt-3 rounded-md border border-blue-200 bg-blue-50 p-2.5 text-sm text-blue-900">
             <p>
-              Based on these answers you have been aligned to Phase {outcome.selfAssessedPhase}:{' '}
+              You answered that you were at Phase {outcome.selfAssessedPhase}:{' '}
               {selfAssessedPhaseName}.
             </p>
+            {readyComponentLabels.length > 0 ? (
+              <>
+                <p className="mt-2">
+                  Based on your answers, you have already shown progress on the following areas:
+                </p>
+                <ul className="mt-1 list-disc space-y-0.5 pl-5">
+                  {readyComponentLabels.map((label) => (
+                    <li key={label}>{label}</li>
+                  ))}
+                </ul>
+              </>
+            ) : null}
             {outcome.behindLenses.length > 0 ? (
               <>
-                <p className="mt-2">You&apos;re currently behind on:</p>
+                <p className="mt-2">
+                  The areas that you may need to focus more attention on are:
+                </p>
                 <ul className="mt-1 list-disc space-y-0.5 pl-5">
                   {outcome.behindLenses.map((missing) => (
                     <li key={`${missing.componentId}-${missing.lens}`}>
@@ -183,7 +205,7 @@ export function ReadinessOutcomeModal({
                   />
                   <span>
                     Skip straight to Phase {outcome.skipToPhase}: {phaseName}. This marks the
-                    actions in the phases before it as Skipped and sets those components&apos;
+                    actions in the phases before it as Completed and sets those components&apos;
                     scores to their target.
                   </span>
                 </label>

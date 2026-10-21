@@ -415,3 +415,127 @@ button:focus {
 .text-brand-teal {
   color: #00a499;
 }
+
+/* Dark-mode fallback for legacy cards/utilities that still hardcode light Tailwind classes. */
+.dark-mode-fallback .bg-white {
+  background-color: #0f172a !important;
+}
+.dark-mode-fallback .bg-slate-50,
+.dark-mode-fallback .bg-slate-100,
+.dark-mode-fallback .bg-gray-50,
+.dark-mode-fallback .bg-gray-100 {
+  background-color: #111827 !important;
+}
+.dark-mode-fallback .border-slate-100,
+.dark-mode-fallback .border-slate-200,
+.dark-mode-fallback .border-slate-300,
+.dark-mode-fallback .border-gray-100,
+.dark-mode-fallback .border-gray-200,
+.dark-mode-fallback .border-gray-300 {
+  border-color: #334155 !important;
+}
+.dark-mode-fallback .text-slate-900,
+.dark-mode-fallback .text-slate-800,
+.dark-mode-fallback .text-slate-700,
+.dark-mode-fallback .text-gray-900,
+.dark-mode-fallback .text-gray-800,
+.dark-mode-fallback .text-gray-700 {
+  color: #f1f5f9 !important;
+}
+.dark-mode-fallback .text-slate-600,
+.dark-mode-fallback .text-slate-500,
+.dark-mode-fallback .text-slate-400,
+.dark-mode-fallback .text-gray-600,
+.dark-mode-fallback .text-gray-500,
+.dark-mode-fallback .text-gray-400 {
+  color: #cbd5e1 !important;
+}
+.dark-mode-fallback table thead {
+  background-color: #0b1220 !important;
+}
+.dark-mode-fallback input,
+.dark-mode-fallback textarea,
+.dark-mode-fallback select {
+  background-color: #0b1220 !important;
+  color: #f1f5f9 !important;
+  border-color: #334155 !important;
+}
+
+/* Keep semantic status/priority colors meaningful in dark mode (not neutralized). */
+.dark-mode-fallback .bg-red-50 {
+  background-color: #3b1f23 !important;
+}
+.dark-mode-fallback .bg-red-100 {
+  background-color: #4c1d25 !important;
+}
+.dark-mode-fallback .text-red-900,
+.dark-mode-fallback .text-red-800,
+.dark-mode-fallback .text-red-700 {
+  color: #fca5a5 !important;
+}
+.dark-mode-fallback .border-red-300,
+.dark-mode-fallback .border-red-200 {
+  border-color: #b45359 !important;
+}
+
+.dark-mode-fallback .bg-amber-50 {
+  background-color: #3a2a14 !important;
+}
+.dark-mode-fallback .bg-amber-100 {
+  background-color: #4a3316 !important;
+}
+.dark-mode-fallback .text-amber-900,
+.dark-mode-fallback .text-amber-800,
+.dark-mode-fallback .text-amber-700 {
+  color: #fcd34d !important;
+}
+.dark-mode-fallback .border-amber-300,
+.dark-mode-fallback .border-amber-200 {
+  border-color: #b68a2a !important;
+}
+
+.dark-mode-fallback .bg-green-50 {
+  background-color: #132f21 !important;
+}
+.dark-mode-fallback .bg-green-100 {
+  background-color: #153a27 !important;
+}
+.dark-mode-fallback .text-green-900,
+.dark-mode-fallback .text-green-800,
+.dark-mode-fallback .text-green-700 {
+  color: #86efac !important;
+}
+.dark-mode-fallback .border-green-300,
+.dark-mode-fallback .border-green-200 {
+  border-color: #3f8f67 !important;
+}
+
+.dark-mode-fallback .bg-blue-50 {
+  background-color: #172a46 !important;
+}
+.dark-mode-fallback .bg-blue-100 {
+  background-color: #1a3560 !important;
+}
+.dark-mode-fallback .text-blue-900,
+.dark-mode-fallback .text-blue-800,
+.dark-mode-fallback .text-blue-700,
+.dark-mode-fallback .text-blue-600 {
+  color: #93c5fd !important;
+}
+.dark-mode-fallback .border-blue-200,
+.dark-mode-fallback .border-blue-100 {
+  border-color: #3a6da8 !important;
+}
+
+.dark-mode-fallback .bg-indigo-50 {
+  background-color: #23274d !important;
+}
+.dark-mode-fallback .text-indigo-700,
+.dark-mode-fallback .text-indigo-600 {
+  color: #a5b4fc !important;
+}
+.dark-mode-fallback .border-indigo-300,
+.dark-mode-fallback .border-indigo-200,
+.dark-mode-fallback .border-indigo-100 {
+  border-color: #5a68b8 !important;
+}

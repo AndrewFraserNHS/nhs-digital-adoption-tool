@@ -341,6 +341,7 @@ function ChevronIcon({ expanded }: { expanded: boolean }): JSX.Element {
 export interface BenefitsAppProps {
   embedded?: boolean;
   onBack?: () => void;
+  darkMode?: boolean;
   trustName?: string;
   projectName?: string;
   benefits?: BenefitItem[];
@@ -359,6 +360,7 @@ export interface BenefitsAppProps {
 
 export default function BenefitsApp({
   embedded = false,
+  darkMode = false,
   trustName = '',
   projectName = '',
   benefits = [],
@@ -530,7 +532,7 @@ export default function BenefitsApp({
     computeVariance(forecast, actual)?.status ?? null;
 
   return (
-    <div>
+    <div className={darkMode ? 'dark-mode-fallback' : ''}>
       <header
         className={
           embedded

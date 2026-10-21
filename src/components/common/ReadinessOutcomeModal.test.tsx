@@ -77,7 +77,7 @@ describe('ReadinessOutcomeModal', () => {
     );
 
     // assert
-    expect(screen.getByText(/aligned to Phase 3/)).toBeInTheDocument();
+    expect(screen.getByText(/You answered that you were at Phase 3/)).toBeInTheDocument();
     expect(screen.getByText('B1 · Lens')).toBeInTheDocument();
   });
 });

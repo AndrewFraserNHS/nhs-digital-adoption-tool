@@ -2711,6 +2711,7 @@ function GuidanceTab({
 export interface StakeholderAnalysisAppProps {
   embedded?: boolean;
   onBack?: () => void;
+  darkMode?: boolean;
   trustName?: string;
   projectName?: string;
   teamMembers?: TeamMember[];
@@ -2734,6 +2735,7 @@ type Tab =
 
 export default function StakeholderAnalysisApp({
   embedded = false,
+  darkMode = false,
   trustName = '',
   projectName = '',
   teamMembers = [],
@@ -3100,7 +3102,7 @@ export default function StakeholderAnalysisApp({
   ];
 
   return (
-    <div>
+    <div className={darkMode ? 'dark-mode-fallback' : ''}>
       <header
         className={
           embedded

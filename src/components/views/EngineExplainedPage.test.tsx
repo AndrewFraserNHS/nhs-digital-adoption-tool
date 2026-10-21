@@ -15,14 +15,21 @@ function completeNotionalExercise() {
 }
 
 describe('EngineExplainedPage', () => {
-  it('SHOULD start on the pathway-picker step with all 3 pathways as cards', () => {
+  it('SHOULD start on the one-page overview before the pathway picker', () => {
     // arrange
     render(<EngineExplainedPage onGetStarted={vi.fn()} onComponentClick={vi.fn()} />);
 
     // assert
+    expect(screen.getByText(/Step 1 of 9 · Overview/)).toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: 'Every programme starts with a pathway' })
+      screen.getByRole('heading', { name: 'The Adoption Engine, One page view' })
     ).toBeInTheDocument();
+
+    // act
+    fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+
+    // assert - pathways follow the overview
+    expect(screen.getByRole('heading', { name: 'Every programme starts with a pathway' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Starting for the First Time' })).toBeInTheDocument();
     expect(
       screen.getByRole('button', { name: 'Piloted and Ready to Scale Up' })
@@ -35,6 +42,7 @@ describe('EngineExplainedPage', () => {
   it('SHOULD show more detail about the selected pathway', () => {
     // arrange
     render(<EngineExplainedPage onGetStarted={vi.fn()} onComponentClick={vi.fn()} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Next' }));
 
     // assert 1 - default (Pathway 1) detail shown
     expect(screen.getByText(/For teams starting from scratch/)).toBeInTheDocument();
@@ -50,32 +58,40 @@ describe('EngineExplainedPage', () => {
     // arrange
     render(<EngineExplainedPage onGetStarted={vi.fn()} onComponentClick={vi.fn()} />);
 
-    // act 1 - move to Phases
+    // act 1 - move from overview to Pathways
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
 
-    // assert 1
+    // assert 1 - pathways appear after the overview
+    expect(
+      screen.getByRole('heading', { name: 'Every programme starts with a pathway' })
+    ).toBeInTheDocument();
+
+    // act 2 - move to Phases
+    fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+
+    // assert 2
     expect(
       screen.getByRole('heading', { name: 'Each pathway is broken into the 5 change phases' })
     ).toBeInTheDocument();
 
-    // act 2 - move to Components (generic, expandable, no links)
-    fireEvent.click(screen.getByRole('button', { name: 'Next' }));
-
-    // assert 2
-    expect(screen.getByRole('heading', { name: 'Change components' })).toBeInTheDocument();
-
-    // act 3 - move to Vision (specific example component)
+    // act 3 - move to Components (generic, expandable, no links)
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
 
     // assert 3
+    expect(screen.getByRole('heading', { name: 'Change components' })).toBeInTheDocument();
+
+    // act 4 - move to Vision (specific example component)
+    fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+
+    // assert 4
     expect(
       screen.getByRole('heading', { name: 'Vision is an example of a Change Component' })
     ).toBeInTheDocument();
 
-    // act 4 - move to Lens
+    // act 5 - move to Lens
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
 
-    // assert 4 - every canonical lens is listed, not just one
+    // assert 5 - every canonical lens is listed, not just one
     expect(
       screen.getByRole('heading', {
         name: 'A Lens is a different perspective of the same Change Component',
@@ -84,18 +100,18 @@ describe('EngineExplainedPage', () => {
     expect(screen.getAllByText(/Strategic Direction and Leadership/).length).toBeGreaterThan(0);
     expect(screen.getByText('Skills and Behaviour')).toBeInTheDocument();
 
-    // act 5 - move to Strat Direct (specific example lens)
+    // act 6 - move to Strat Direct (specific example lens)
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
 
-    // assert 5
+    // assert 6
     expect(
       screen.getByRole('heading', { name: 'An example lens for our example change component' })
     ).toBeInTheDocument();
 
-    // act 6 - move to Readiness
+    // act 7 - move to Readiness
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
 
-    // assert 6 - band list plus the two notional example radars
+    // assert 7 - band list plus the two notional example radars
     expect(
       screen.getByRole('heading', {
         name: "Readiness is scored on a scale from 'Not Started', to 'Thriving' for every lens",
@@ -106,40 +122,32 @@ describe('EngineExplainedPage', () => {
     expect(screen.getByText('At risk example')).toBeInTheDocument();
     expect(screen.getByText('Excelling example')).toBeInTheDocument();
 
-    // act 7 - move to Actions
+    // act 8 - move to Actions
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
 
-    // assert 7
+    // assert 8
     expect(screen.getByRole('heading', { name: 'Actions' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Get started' })).toBeDisabled();
 
-    // act 8 - complete the notional exercise, then move to Overview
+    // act 9 - complete the notional exercise
     completeNotionalExercise();
-    fireEvent.click(screen.getByRole('button', { name: 'Next' }));
 
-    // assert 8 - the full recap diagram, built from real data
-    expect(
-      screen.getByRole('heading', { name: 'The Adoption Engine, One page view' })
-    ).toBeInTheDocument();
-    expect(screen.getByText('Starting for the First Time')).toBeInTheDocument();
-    expect(screen.getByText('Pre-Discovery')).toBeInTheDocument();
-    expect(screen.getByText('Senior Sponsorship & Governance')).toBeInTheDocument();
-    expect(screen.getAllByText('Strategic Direction and Leadership').length).toBeGreaterThan(0);
-    expect(screen.getByText('Thriving')).toBeInTheDocument();
+    // assert 9 - the walkthrough ends at the ready-to-start action
+    expect(screen.getByRole('button', { name: 'Get started' })).toBeEnabled();
     expect(screen.queryByRole('button', { name: 'Next' })).not.toBeInTheDocument();
   });
 
-  it('SHOULD block leaving the Actions step until every notional action has an owner and is Completed, then unlock Next and Get started with a celebratory toast', () => {
+  it('SHOULD block leaving the Actions step until every notional action has an owner and is Completed, then unlock Get started with a celebratory toast', () => {
     // arrange
     const onGetStarted = vi.fn();
     render(<EngineExplainedPage onGetStarted={onGetStarted} onComponentClick={vi.fn()} />);
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 8; i++) {
       fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     }
     expect(screen.getByRole('heading', { name: 'Actions' })).toBeInTheDocument();
 
     // assert 1 - can't leave the Actions step yet
-    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Get started' })).toBeDisabled();
 
     // act - mark every action Completed WITHOUT assigning an owner
     screen.getAllByRole('combobox', { name: /^Status for/ }).forEach((select) => {
@@ -147,7 +155,7 @@ describe('EngineExplainedPage', () => {
     });
 
     // assert 2 - still blocked, owners are required too
-    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Get started' })).toBeDisabled();
     expect(screen.queryByText(/moved to the next readiness level/)).not.toBeInTheDocument();
 
     // act - now assign an owner to every row
@@ -158,21 +166,15 @@ describe('EngineExplainedPage', () => {
       });
     });
 
-    // assert 3 - toast fires and Next unlocks
+    // assert 3 - toast fires and Get started unlocks
     expect(screen.getByText(/moved to the next readiness level/)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Next' })).not.toBeDisabled();
-
-    // act - move to the final Overview step
-    fireEvent.click(screen.getByRole('button', { name: 'Next' }));
-
-    // assert 4 - Get started is enabled there
     const getStartedButton = screen.getByRole('button', { name: 'Get started' });
     expect(getStartedButton).not.toBeDisabled();
 
-    // act - click it
+    // act - get started
     fireEvent.click(getStartedButton);
 
-    // assert 5
+    // assert 4
     expect(onGetStarted).toHaveBeenCalled();
   });
 
@@ -181,6 +183,7 @@ describe('EngineExplainedPage', () => {
     render(<EngineExplainedPage onGetStarted={vi.fn()} onComponentClick={vi.fn()} />);
 
     // act
+    fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     fireEvent.click(screen.getByRole('button', { name: 'Piloted and Ready to Scale Up' }));
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
 

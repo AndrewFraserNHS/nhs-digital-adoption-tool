@@ -21,6 +21,7 @@ export interface EngineExplainedPageProps {
 }
 
 const STEP_TITLES = [
+  'Overview',
   'Pathways',
   'Phases',
   'Components',
@@ -29,7 +30,6 @@ const STEP_TITLES = [
   'Strat Direct',
   'Readiness',
   'Actions',
-  'Overview',
 ];
 
 const PATHWAY_DETAILS: Record<CstPathwayKey, string> = {
@@ -146,6 +146,7 @@ function Breadcrumb({
   darkMode: boolean;
 }): JSX.Element {
   const crumbs = [
+    'Overview',
     'Pathway',
     'Phases',
     'Components',
@@ -154,7 +155,6 @@ function Breadcrumb({
     EXAMPLE_LENSES[0],
     `Readiness`,
     'Actions',
-    'Overview',
   ];
 
   return (
@@ -459,8 +459,8 @@ export function EngineExplainedPage({
           Engine Explained
         </h2>
         <p className={`mt-2 max-w-3xl text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-          Adoption engine one page view: a quick worked example showing how everything fits
-          together, step by step.
+          Start with the one-page overview, then follow a worked example showing how everything
+          fits together, step by step.
         </p>
       </div>
 
@@ -474,6 +474,24 @@ export function EngineExplainedPage({
         </p>
 
         {activeStep === 0 ? (
+          <>
+            <h3
+              className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
+            >
+              The Adoption Engine, One page view
+            </h3>
+            <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
+              Every pathway, phase, component, lens and readiness level really used in this tool,
+              laid out top to bottom. Components and lenses connect both ways, since every component
+              is viewed through several lenses.
+            </p>
+            <div className="mt-6">
+              <EngineOverviewDiagram darkMode={darkMode} />
+            </div>
+          </>
+        ) : null}
+
+        {activeStep === 1 ? (
           <>
             <h3
               className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
@@ -533,7 +551,7 @@ export function EngineExplainedPage({
           </>
         ) : null}
 
-        {activeStep === 1 ? (
+        {activeStep === 2 ? (
           <>
             <h3
               className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
@@ -561,7 +579,7 @@ export function EngineExplainedPage({
           </>
         ) : null}
 
-        {activeStep === 2 ? (
+        {activeStep === 3 ? (
           <>
             <h3
               className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
@@ -586,7 +604,7 @@ export function EngineExplainedPage({
           </>
         ) : null}
 
-        {activeStep === 3 ? (
+        {activeStep === 4 ? (
           <>
             <h3
               className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
@@ -615,7 +633,7 @@ export function EngineExplainedPage({
           </>
         ) : null}
 
-        {activeStep === 4 ? (
+        {activeStep === 5 ? (
           <>
             <h3
               className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
@@ -648,7 +666,7 @@ export function EngineExplainedPage({
           </>
         ) : null}
 
-        {activeStep === 5 ? (
+        {activeStep === 6 ? (
           <>
             <h3
               className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
@@ -689,7 +707,7 @@ export function EngineExplainedPage({
           </>
         ) : null}
 
-        {activeStep === 6 ? (
+        {activeStep === 7 ? (
           <>
             <h3
               className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
@@ -760,7 +778,7 @@ export function EngineExplainedPage({
           </>
         ) : null}
 
-        {activeStep === 7 ? (
+        {activeStep === 8 ? (
           <>
             <h3
               className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
@@ -872,24 +890,6 @@ export function EngineExplainedPage({
           </>
         ) : null}
 
-        {activeStep === 8 ? (
-          <>
-            <h3
-              className={`mt-1 text-2xl font-bold ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}
-            >
-              The Adoption Engine, One page view
-            </h3>
-            <p className={`mt-3 max-w-2xl text-sm ${textClass}`}>
-              Every pathway, phase, component, lens and readiness level really used in this tool,
-              laid out top to bottom. Components and lenses connect both ways, since every component
-              is viewed through several lenses.
-            </p>
-            <div className="mt-6">
-              <EngineOverviewDiagram darkMode={darkMode} />
-            </div>
-          </>
-        ) : null}
-
         <div className="mt-8 flex items-center justify-between gap-2">
           <button
             type="button"
@@ -917,9 +917,9 @@ export function EngineExplainedPage({
             <button
               type="button"
               onClick={goNext}
-              disabled={activeStep === 7 && !notionalExerciseDone}
+              disabled={activeStep === 8 && !notionalExerciseDone}
               title={
-                activeStep === 7 && !notionalExerciseDone
+                activeStep === 8 && !notionalExerciseDone
                   ? 'Mark every notional action Completed with an owner assigned to continue'
                   : undefined
               }

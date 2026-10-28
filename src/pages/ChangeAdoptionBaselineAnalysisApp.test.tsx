@@ -26,7 +26,7 @@ const REPORT: ReadinessReviewReport = {
   icbRegion: 'North West ICB',
   completedBy: 'Alex Morgan (Change Lead)',
   dateCompleted: '2026-01-01',
-  programmeLead: 'Sam Patel',
+  leadSubmitter: 'Sam Patel',
   contactEmail: 'sam@example.nhs.uk',
   answers: [
     {

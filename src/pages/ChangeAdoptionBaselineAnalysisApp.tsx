@@ -96,7 +96,7 @@ function ReportDetailView({
               ['ICB / Region', report.icbRegion],
               ['Completed by', report.completedBy],
               ['Date completed', report.dateCompleted],
-              ['Programme lead', report.programmeLead],
+              ['Lead submitter', report.leadSubmitter],
               ['Contact email', report.contactEmail],
               ['Executive sponsor', report.executiveSponsor || ''],
             ] as [string, string][]

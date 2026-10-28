@@ -168,7 +168,7 @@ describe('computeReadinessOutcome (synthetic fixture)', () => {
     icbRegion: 'North West ICB',
     completedBy: 'Alex Morgan (Change Lead)',
     dateCompleted: '2026-01-01',
-    programmeLead: 'Sam Patel',
+    leadSubmitter: 'Sam Patel',
     contactEmail: 'sam@example.nhs.uk',
   };
 
@@ -257,7 +257,7 @@ describe('unscored, pathway and coverage handling', () => {
     icbRegion: '',
     completedBy: '',
     dateCompleted: '',
-    programmeLead: '',
+    leadSubmitter: '',
     contactEmail: '',
   };
 

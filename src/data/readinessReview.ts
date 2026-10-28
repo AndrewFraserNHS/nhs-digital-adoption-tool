@@ -968,7 +968,7 @@ export interface ReadinessReviewTrustDetails {
   icbRegion: string;
   completedBy: string;
   dateCompleted: string;
-  programmeLead: string;
+  leadSubmitter: string;
   contactEmail: string;
   /** Name of the executive sponsor / SRO from the project profile. */
   executiveSponsor?: string;

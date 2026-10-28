@@ -20,7 +20,7 @@ const REPORT: ReadinessReviewReport = {
   icbRegion: 'North West ICB',
   completedBy: 'Alex',
   dateCompleted: '2026-01-01',
-  programmeLead: 'Sam',
+  leadSubmitter: 'Sam',
   contactEmail: 'sam@example.nhs.uk',
   pathway: 'pathway-2',
   answers: Array.from({ length: 40 }, (_, index) => answer(index + 1)),

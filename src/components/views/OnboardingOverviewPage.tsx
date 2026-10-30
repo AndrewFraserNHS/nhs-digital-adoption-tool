@@ -53,7 +53,7 @@ function buildSteps(darkMode: boolean): Step[] {
       body: (
         <div className={`text-sm space-y-2 ${textClass}`}>
           <p className={darkMode ? 'text-slate-100 font-semibold' : 'text-slate-900 font-semibold'}>
-            Adoption engine one page view
+            Adoption Engine one page view
           </p>
           <p>
             Implementing a new product, service or way of working is only the beginning. To realise
@@ -85,7 +85,7 @@ function buildSteps(darkMode: boolean): Step[] {
       ),
     },
     {
-      title: 'Why use the Adoption engine?',
+      title: 'Why use the Adoption Engine?',
       body: (
         <div className={`text-sm space-y-2 ${textClass}`}>
           <p>Successful adoption doesn't happen by chance.</p>

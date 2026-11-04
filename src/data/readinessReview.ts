@@ -946,6 +946,7 @@ export function computeReadinessOutcome(
 
 /** Where the last completed Change Adoption Baseline (CAB)'s frozen report snapshot is saved - shared between `ChangeAdoptionBaselineReviewApp` (writes it on Finish) and `ChangeAdoptionBaselineAnalysisApp` (reads it for "My Answers"). */
 export const READINESS_REVIEW_REPORT_STORAGE_KEY = 'nhs-readiness-review-report';
+export const READINESS_REVIEW_IMPORTED_REPORT_STORAGE_KEY = 'nhs-readiness-review-imported-report';
 
 /** One answered question, frozen into a report: everything needed to display or re-derive a radar from it later, independent of the live question bank or CST. */
 export interface ReadinessReviewAnswer {

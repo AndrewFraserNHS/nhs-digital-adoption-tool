@@ -1,5 +1,6 @@
 import type { AssessmentComponent } from '@data/components';
 import {
+  READINESS_REVIEW_IMPORTED_REPORT_STORAGE_KEY,
   READINESS_REVIEW_REPORT_STORAGE_KEY,
   type ReadinessReviewReport,
 } from '@data/readinessReview';
@@ -64,7 +65,7 @@ describe('ChangeAdoptionBaselineAnalysisApp', () => {
     expect(screen.getByText('5. Top answer')).toBeInTheDocument();
   });
 
-  it('SHOULD import an external report, render it, and clear it without ever touching localStorage', async () => {
+  it('SHOULD import an external report, cache it, and clear it again when requested', async () => {
     render(<ChangeAdoptionBaselineAnalysisApp components={COMPONENTS} />);
 
     fireEvent.click(screen.getByRole('tab', { name: 'Import External Answers' }));
@@ -76,9 +77,11 @@ describe('ChangeAdoptionBaselineAnalysisApp', () => {
     fireEvent.change(input, { target: { files: [file] } });
 
     await waitFor(() => expect(screen.getByText('Test Trust')).toBeInTheDocument());
+    expect(window.localStorage.getItem(READINESS_REVIEW_IMPORTED_REPORT_STORAGE_KEY)).toBeTruthy();
     expect(window.localStorage.getItem(READINESS_REVIEW_REPORT_STORAGE_KEY)).toBeNull();
 
     fireEvent.click(screen.getByRole('button', { name: 'Clear imported report' }));
+    expect(window.localStorage.getItem(READINESS_REVIEW_IMPORTED_REPORT_STORAGE_KEY)).toBeNull();
     expect(screen.queryByText('Test Trust')).not.toBeInTheDocument();
   });
 

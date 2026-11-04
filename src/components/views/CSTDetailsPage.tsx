@@ -939,7 +939,9 @@ export function ProjectDetailsPage({
         const text = await file.text();
         const parsed = JSON.parse(text) as { orgProfile?: unknown };
         if (!parsed.orgProfile || typeof parsed.orgProfile !== 'object') {
-          window.alert('This file does not contain Project Profile data.');
+          window.alert(
+            'This file does not look like a Project Profile export. If you meant to upload a Change Adoption Baseline (CAB) report, import it from the CAB Analysis tool instead.'
+          );
           return;
         }
         const nextProfile = normalizeOrgProfile(parsed.orgProfile as Partial<OrgProfile>);

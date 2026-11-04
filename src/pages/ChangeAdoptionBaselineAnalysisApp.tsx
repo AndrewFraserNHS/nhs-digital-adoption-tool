@@ -4,6 +4,7 @@ import {
   buildReportRadarData,
   describeReportOutcome,
   getReportMissingLenses,
+  READINESS_REVIEW_IMPORTED_REPORT_STORAGE_KEY,
   READINESS_REVIEW_REPORT_STORAGE_KEY,
   type ReadinessReviewReport,
   shouldShowImpliedScore,
@@ -12,7 +13,7 @@ import { READINESS_RADAR_OPTIONS } from '@lib/adoptionMetrics';
 import { createRadarChart } from '@lib/charts';
 import { extractEmlAttachments } from '@lib/eml';
 import { downloadReportJson, downloadReportPdf } from '@lib/readinessExport';
-import { load } from '@lib/storage';
+import { load, remove, save } from '@lib/storage';
 import { ChangeEvent, JSX, useEffect, useMemo, useRef, useState } from 'react';
 
 import { PHASE_NAMES } from '../types/constants';
@@ -193,12 +194,15 @@ export default function ChangeAdoptionBaselineAnalysisApp({
   components = [],
 }: ReadinessReviewAnalysisAppProps = {}): JSX.Element {
   const [activeTab, setActiveTab] = useState<Tab>('my-answers');
-  const [importedReport, setImportedReport] = useState<ReadinessReviewReport | null>(null);
+  const [importedReport, setImportedReport] = useState<ReadinessReviewReport | null>(() =>
+    load<ReadinessReviewReport>(READINESS_REVIEW_IMPORTED_REPORT_STORAGE_KEY)
+  );
   const [importError, setImportError] = useState('');
 
   // Intentionally read fresh on every render rather than cached in state - this is a read-only
   // view of whatever was last saved, no local mutation of its own.
   const ownReport = load<ReadinessReviewReport>(READINESS_REVIEW_REPORT_STORAGE_KEY);
+  const myAnswersReport = importedReport ?? ownReport;
 
   const handleFileSelected = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -223,8 +227,8 @@ export default function ChangeAdoptionBaselineAnalysisApp({
           setImportError('This file does not look like a Change Adoption Baseline (CAB) report.');
           return;
         }
-        // Held only in this component's state - never written to localStorage or the CST, so it
-        // disappears on refresh or in a new session, as intended for a quick external review.
+        // Persist the imported report so the user can revisit it later without losing the view.
+        save(READINESS_REVIEW_IMPORTED_REPORT_STORAGE_KEY, parsed);
         setImportedReport(parsed);
       } catch (_error) {
         setImportError(
@@ -276,8 +280,8 @@ export default function ChangeAdoptionBaselineAnalysisApp({
       </div>
 
       {activeTab === 'my-answers' ? (
-        ownReport ? (
-          <ReportDetailView report={ownReport} components={components} />
+        myAnswersReport ? (
+          <ReportDetailView report={myAnswersReport} components={components} />
         ) : (
           <div className="rounded-lg border border-slate-200 bg-white p-8 text-center text-sm text-slate-500">
             Complete the change adoption baseline first to see your answers here.
@@ -307,7 +311,10 @@ export default function ChangeAdoptionBaselineAnalysisApp({
             {importedReport ? (
               <button
                 type="button"
-                onClick={() => setImportedReport(null)}
+                onClick={() => {
+                  setImportedReport(null);
+                  remove(READINESS_REVIEW_IMPORTED_REPORT_STORAGE_KEY);
+                }}
                 className="mt-3 rounded-md bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-200"
               >
                 Clear imported report

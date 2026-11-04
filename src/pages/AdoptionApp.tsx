@@ -292,6 +292,7 @@ export function AdoptionApp() {
   const mainContentRef = React.useRef<HTMLElement>(null);
   const [statusAnnouncement, setStatusAnnouncement] = useState('');
   const [signInNotice, setSignInNotice] = useState('');
+  const [showSignInModal, setShowSignInModal] = useState(false);
   /** Every data edit needs a chosen user (Project Profile > "You are signed in as") so the audit log always says who changed what. Reads a ref because most edit handlers are memoised. */
   const requireSignedIn = useCallback((): boolean => {
     if (currentUserIdRef.current) {
@@ -299,7 +300,7 @@ export function AdoptionApp() {
     }
     setSignInNotice(SIGN_IN_REQUIRED_MESSAGE);
     setStatusAnnouncement(SIGN_IN_REQUIRED_MESSAGE);
-    window.alert(SIGN_IN_REQUIRED_MESSAGE);
+    setShowSignInModal(true);
     return false;
   }, []);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
@@ -1242,6 +1243,7 @@ export function AdoptionApp() {
 
     // Remove tool-specific storage that may retain old assessment state
     localStorage.removeItem('nhs-readiness-review-report');
+    localStorage.removeItem('nhs-readiness-review-imported-report');
     localStorage.removeItem('nhs-readiness-review');
     localStorage.removeItem('nhs-moscow-tool');
     localStorage.removeItem('nhs-highlight-builder-layout');
@@ -1434,6 +1436,19 @@ export function AdoptionApp() {
   const trustLabel = store.orgProfile.trustName || 'Unconfigured Trust';
   const projectLabel = store.orgProfile.projectName || 'Unnamed Project';
   const projectConfigured = !isCstUnconfigured(store.orgProfile, store, currentUserId);
+  const shouldShowSignInPrompt =
+    Boolean(store.orgProfile.trustName.trim()) &&
+    !currentUserId &&
+    (store.orgProfile.teamMembers || []).length > 0 &&
+    view !== 'project-details' &&
+    view !== 'profile';
+  useEffect(() => {
+    if (currentUserId) {
+      setShowSignInModal(false);
+      return;
+    }
+    setShowSignInModal(shouldShowSignInPrompt);
+  }, [currentUserId, shouldShowSignInPrompt]);
   const signedInMember = (store.orgProfile.teamMembers || []).find(
     (member) => member.id === currentUserId && member.name.trim()
   );
@@ -1903,10 +1918,7 @@ export function AdoptionApp() {
               </div>
             </div>
           ) : null}
-          {projectConfigured &&
-          !currentUserId &&
-          view !== 'project-details' &&
-          view !== 'profile' ? (
+          {shouldShowSignInPrompt ? (
             <div
               role="alert"
               className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900"
@@ -2421,6 +2433,33 @@ export function AdoptionApp() {
             onCancel={handleCancelImportConflict}
             darkMode={Boolean(userSettings.darkMode)}
           />
+        ) : null}
+
+        {showSignInModal ? (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4">
+            <div
+              role="dialog"
+              aria-modal="true"
+              className={`w-full max-w-lg rounded-lg border p-6 shadow-xl ${userSettings.darkMode ? 'border-slate-700 bg-slate-900 text-slate-100' : 'border-slate-200 bg-white text-slate-800'}`}
+            >
+              <h2 className="text-xl font-semibold">Sign in required</h2>
+              <p className="mt-3 text-sm leading-6 text-slate-600">
+                {SIGN_IN_REQUIRED_MESSAGE}
+              </p>
+              <div className="mt-5 flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowSignInModal(false);
+                    handleViewChange('project-details');
+                  }}
+                  className="rounded-md bg-[#005eb8] px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+                >
+                  Go to Project Profile
+                </button>
+              </div>
+            </div>
+          </div>
         ) : null}
 
         <ToolkitChatbot

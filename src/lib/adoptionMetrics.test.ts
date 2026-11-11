@@ -464,8 +464,8 @@ describe('adoptionMetrics', () => {
     expect(chartData.datasets[0].data).toEqual([0, 2]);
   });
 
-  it('SHOULD count cancelled and skipped actions per phase separately from the completion percentage', () => {
-    // arrange - a cancelled action still counts towards the total; a skipped one is excluded entirely
+  it('SHOULD count cancelled and skipped actions per phase, with skipped contributing to completion', () => {
+    // arrange - a cancelled action still counts towards total actions; skipped now counts as completed
     const storeWithCancelledAndSkipped: AdoptionStore = {
       ...store,
       currentDraft: {
@@ -487,6 +487,8 @@ describe('adoptionMetrics', () => {
     const result = getMetrics(storeWithCancelledAndSkipped, components);
 
     // assert
+    expect(result.actionCompletionPct).toBe(67);
+    expect(result.phaseSummaries[0].actionCompletionPct).toBe(67);
     expect(result.phaseSummaries[0].cancelledActions).toBe(1);
     expect(result.phaseSummaries[0].skippedActions).toBe(1);
   });
@@ -542,6 +544,7 @@ describe('adoptionMetrics', () => {
     expect(chartData.datasets[1].label).toBe('Automatic target');
     expect(chartData.datasets[2].label).toBe('Manual target');
     expect(chartData.datasets[2].data).toEqual(components.map((component) => component.target));
+    expect(chartData.datasets[2].borderColor).toBe('#64748b');
   });
 
   it('SHOULD use the progress phase for Auto and the selected CAB phase for Manual', () => {

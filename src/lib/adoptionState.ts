@@ -8,6 +8,7 @@ import type { GuidanceLink, LinkOverrides } from '@data/maturity-guidance-links'
 import type { PreparednessAssessment } from '@data/readinessReview';
 import { DEFAULT_TOOL_LINK_TEXT, IN_APP_TOOLS, type ToolLinkEntry } from '@data/toolLinks';
 
+import { isCompletedActionStatus, normalizeActionStatus } from './actionModel';
 import type { ActionType, UnifiedActionStatus } from './actionModel';
 import type { AuditEvent } from './auditLog';
 import { type StateListener, Store } from './observable';
@@ -207,13 +208,13 @@ export function deriveObjectiveStatus(
     return action?.status || 'Planned';
   });
 
-  if (statuses.some((status) => status === 'Blocked')) {
+  if (statuses.some((status) => normalizeActionStatus(status) === 'Blocked')) {
     return 'Blocked';
   }
-  if (statuses.every((status) => status === 'Completed')) {
+  if (statuses.every((status) => isCompletedActionStatus(status))) {
     return 'Completed';
   }
-  if (statuses.some((status) => status !== 'Planned')) {
+  if (statuses.some((status) => normalizeActionStatus(status) !== 'Planned')) {
     return 'In Progress';
   }
   return 'Not Started';

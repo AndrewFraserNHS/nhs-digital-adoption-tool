@@ -1,5 +1,5 @@
 import { ASSESSMENT_COMPONENTS } from '@data/components';
-import { normalizeActionStatus } from '@lib/actionModel';
+import { isCompletedActionStatus, normalizeActionStatus } from '@lib/actionModel';
 import type { SavedAdoptionAssessment } from '@lib/adoptionIO';
 import type { DraftEntry, HistorySnapshot, OrgProfile } from '@lib/adoptionState';
 import { type DragEvent, JSX, useCallback, useRef, useState } from 'react';
@@ -136,7 +136,7 @@ function analyseFile(payload: SavedAdoptionAssessment): AnalysisResult {
         if (action.owner?.trim()) {
           ownerSet.add(action.owner.trim().toLowerCase());
         }
-        if (status === 'Completed') {
+        if (isCompletedActionStatus(status)) {
           completedActions += 1;
           compCompletedActions += 1;
         } else if (status === 'In Progress') {
@@ -1206,8 +1206,7 @@ function MonthComparison({
   if (!history.length) {
     return (
       <div className="rounded-lg border border-slate-200 bg-white p-6 text-sm text-slate-600">
-        No finalised months yet. Finalise a month on the dashboard to start comparing progress month
-        to month.
+        Not enough data to compare progress month to month.
       </div>
     );
   }

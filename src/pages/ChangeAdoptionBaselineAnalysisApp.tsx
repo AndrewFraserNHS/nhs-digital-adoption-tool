@@ -16,13 +16,15 @@ import { downloadReportJson, downloadReportPdf } from '@lib/readinessExport';
 import { load, remove, save } from '@lib/storage';
 import { ChangeEvent, JSX, useEffect, useMemo, useRef, useState } from 'react';
 
+import ChangeAdoptionBaselineReviewApp from '@pages/ChangeAdoptionBaselineReviewApp';
+
 import { PHASE_NAMES } from '../types/constants';
 
 export interface ReadinessReviewAnalysisAppProps {
   components?: AssessmentComponent[];
 }
 
-type Tab = 'my-answers' | 'import';
+type Tab = 'my-answers' | 'import' | 'cab-page';
 
 /** Trust details + answers table + maturity radar, shared by both tabs since they render the same frozen report shape. */
 function ReportDetailView({
@@ -287,7 +289,34 @@ export default function ChangeAdoptionBaselineAnalysisApp({
             Complete the change adoption baseline first to see your answers here.
           </div>
         )
-      ) : (
+      ) : null}
+
+      {activeTab === 'cab-page' ? (
+        importedReport ? (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between gap-2">
+              <h3 className="text-lg font-semibold text-slate-800">Imported CAB report</h3>
+              <button
+                type="button"
+                onClick={() => setActiveTab('import')}
+                className="rounded-md bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-200"
+              >
+                Back to import
+              </button>
+            </div>
+            <ChangeAdoptionBaselineReviewApp
+              components={components}
+              importedReport={importedReport}
+            />
+          </div>
+        ) : (
+          <div className="rounded-lg border border-slate-200 bg-white p-8 text-center text-sm text-slate-500">
+            Import a CAB report to view it in the assessment page.
+          </div>
+        )
+      ) : null}
+
+      {activeTab === 'import' ? (
         <div className="space-y-4">
           <div className="rounded-lg border border-slate-200 bg-white p-5">
             <label
@@ -309,16 +338,25 @@ export default function ChangeAdoptionBaselineAnalysisApp({
             />
             {importError ? <p className="mt-2 text-sm text-red-600">{importError}</p> : null}
             {importedReport ? (
-              <button
-                type="button"
-                onClick={() => {
-                  setImportedReport(null);
-                  remove(READINESS_REVIEW_IMPORTED_REPORT_STORAGE_KEY);
-                }}
-                className="mt-3 rounded-md bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-200"
-              >
-                Clear imported report
-              </button>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('cab-page')}
+                  className="rounded-md bg-[#005eb8] px-3 py-1.5 text-sm font-semibold text-white hover:bg-blue-700"
+                >
+                  View in CAB page
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setImportedReport(null);
+                    remove(READINESS_REVIEW_IMPORTED_REPORT_STORAGE_KEY);
+                  }}
+                  className="rounded-md bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-200"
+                >
+                  Clear imported report
+                </button>
+              </div>
             ) : null}
           </div>
 
@@ -326,7 +364,7 @@ export default function ChangeAdoptionBaselineAnalysisApp({
             <ReportDetailView report={importedReport} components={components} />
           ) : null}
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

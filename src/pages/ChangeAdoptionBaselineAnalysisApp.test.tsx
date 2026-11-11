@@ -85,6 +85,25 @@ describe('ChangeAdoptionBaselineAnalysisApp', () => {
     expect(screen.queryByText('Test Trust')).not.toBeInTheDocument();
   });
 
+  it('SHOULD allow an imported CAB report to be reviewed in the CAB page itself', async () => {
+    render(<ChangeAdoptionBaselineAnalysisApp components={COMPONENTS} />);
+
+    fireEvent.click(screen.getByRole('tab', { name: 'Import External Answers' }));
+
+    const file = new File([JSON.stringify(REPORT)], 'report.json', { type: 'application/json' });
+    const input = screen.getByLabelText(
+      /Import a Change Adoption Baseline \(CAB\) report/
+    ) as HTMLInputElement;
+    fireEvent.change(input, { target: { files: [file] } });
+
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'View in CAB page' })).toBeInTheDocument()
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'View in CAB page' }));
+    expect(screen.getByText(/Question 1 of/i)).toBeInTheDocument();
+  });
+
   it('SHOULD reject a file that is not a Change Adoption Baseline (CAB) report', async () => {
     render(<ChangeAdoptionBaselineAnalysisApp components={COMPONENTS} />);
 

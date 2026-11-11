@@ -16,7 +16,7 @@ import {
   type ReadinessReviewReport,
   type ReadinessSuggestion,
 } from '@data/readinessReview';
-import { isResolvedActionStatus } from '@lib/actionModel';
+import { isNotStartedActionStatus, isResolvedActionStatus } from '@lib/actionModel';
 import { computeCurrentPhase } from '@lib/adoptionMetrics';
 import type { DraftEntry } from '@lib/adoptionState';
 import { downloadReportEml, sendReportBundle } from '@lib/readinessExport';
@@ -73,6 +73,8 @@ export interface ReadinessReviewAppProps {
   components?: AssessmentComponent[];
   /** The project's question list, in display order. Defaults to the built-in questions. */
   questions?: PreparednessAssessment[];
+  /** A frozen CAB report to preload into the assessment so it can be reviewed or amended. */
+  importedReport?: ReadinessReviewReport | null;
   /** The project's current pathway, so a different Q1 answer can be offered as a switch. */
   currentPathway?: CstPathwayKey;
   onPathwayChosen?: (pathway: CstPathwayKey) => void;
@@ -99,20 +101,64 @@ export default function ChangeAdoptionBaselineReviewApp({
   currentPhase = 1,
   components = [],
   questions: QUESTIONS = DEFAULT_READINESS_QUESTIONS,
+  importedReport = null,
   currentPathway,
   onPathwayChosen,
   getEntry,
   onEntryUpdate,
   onReadinessEvaluated,
 }: ReadinessReviewAppProps = {}): JSX.Element {
-  const [state, setState] = useState<PreparednessState>(
-    () => load<PreparednessState>(STORAGE_KEY) || freshState()
-  );
+  const [state, setState] = useState<PreparednessState>(() => {
+    if (!importedReport) {
+      return load<PreparednessState>(STORAGE_KEY) || freshState();
+    }
+
+    const answers: Record<number, number> = {};
+    const textAnswers: Record<number, string> = {};
+    importedReport.answers.forEach((answer) => {
+      if (answer.optionNumber) {
+        answers[answer.nu] = answer.optionNumber;
+      }
+      if (answer.kind === 'text' && answer.optionText.trim()) {
+        textAnswers[answer.nu] = answer.optionText;
+      }
+    });
+    return { answers, textAnswers, currentIndex: 0, completed: false };
+  });
   const [page, setPage] = useState<1 | 2>(1);
   const [outcome, setOutcome] = useState<ReadinessOutcome | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [outcomeHandled, setOutcomeHandled] = useState(false);
+  const [outcomeHandled, setOutcomeHandled] = useState(() =>
+    Boolean(
+      load<PreparednessState>(STORAGE_KEY)?.completed &&
+        load<ReadinessReviewReport>(READINESS_REVIEW_REPORT_STORAGE_KEY)?.answers.length
+    )
+  );
   const [missingLenses, setMissingLenses] = useState<MissingLens[]>([]);
+
+  useEffect(() => {
+    if (!importedReport) {
+      return;
+    }
+
+    const answers: Record<number, number> = {};
+    const textAnswers: Record<number, string> = {};
+    importedReport.answers.forEach((answer) => {
+      if (answer.optionNumber) {
+        answers[answer.nu] = answer.optionNumber;
+      }
+      if (answer.kind === 'text' && answer.optionText.trim()) {
+        textAnswers[answer.nu] = answer.optionText;
+      }
+    });
+
+    setState({ answers, textAnswers, currentIndex: 0, completed: false });
+    setPage(2);
+    setOutcome(null);
+    setShowModal(false);
+    setOutcomeHandled(false);
+    setMissingLenses([]);
+  }, [importedReport]);
 
   const persist = (next: PreparednessState) => {
     setState(next);
@@ -279,7 +325,11 @@ export default function ChangeAdoptionBaselineReviewApp({
             ...entry,
             score: component.target,
             actions: entry.actions.map((action) =>
-              isResolvedActionStatus(action.status) ? action : { ...action, status: 'Completed' }
+              isResolvedActionStatus(action.status)
+                ? action
+                : isNotStartedActionStatus(action.status)
+                  ? { ...action, status: 'Skipped' }
+                  : action
             ),
           });
         });
@@ -343,8 +393,9 @@ export default function ChangeAdoptionBaselineReviewApp({
           // so any action still sitting at one of those earlier levels is no longer needed.
           actions: entry.actions.map((action) =>
             (action.readinessScore ?? 0) < suggestion.impliedScore &&
-            !isResolvedActionStatus(action.status)
-              ? { ...action, status: 'Completed' }
+            !isResolvedActionStatus(action.status) &&
+            isNotStartedActionStatus(action.status)
+              ? { ...action, status: 'Skipped' }
               : action
           ),
         });
@@ -491,6 +542,10 @@ export default function ChangeAdoptionBaselineReviewApp({
               <p className="text-sm text-green-800">
                 Thanks for completing the Change Adoption Baseline (CAB). See your updated readiness
                 in &quot;Readiness by component&quot; below, or retake the assessment any time.
+              </p>
+              <p className="text-xs text-green-900">
+                This CAB snapshot is session-only. It is not saved in the project and will be lost
+                when you close the browser.
               </p>
               <div className="flex flex-wrap justify-center gap-3">
                 <button

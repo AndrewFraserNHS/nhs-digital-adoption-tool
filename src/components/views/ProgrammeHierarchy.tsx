@@ -1,7 +1,7 @@
 import { useState, type JSX } from 'react';
 import { OVERARCHING_PHASES } from '@data/cst';
 import { getComponentObjectiveCounts } from '@lib/adoptionMetrics';
-import { ACTION_STATUS_BADGE_STYLES } from '@lib/actionModel';
+import { ACTION_STATUS_BADGE_STYLES, isCompletedActionStatus } from '@lib/actionModel';
 import { getStageLabel } from '@data/rubrics';
 import type { AssessmentComponent } from '@data/components';
 import type { AdoptionStore, DraftEntry } from '@lib/adoptionState';
@@ -76,7 +76,8 @@ export function ProgrammeHierarchy({
                         total: totals.total + entry.actions.length,
                         completed:
                           totals.completed +
-                          entry.actions.filter((action) => action.status === 'Completed').length,
+                          entry.actions.filter((action) => isCompletedActionStatus(action.status))
+                            .length,
                       };
                     },
                     { total: 0, completed: 0 }

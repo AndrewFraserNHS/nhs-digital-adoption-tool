@@ -9,7 +9,11 @@ import { READINESS_BANDS, getReadinessBand } from '@lib/readinessBands';
 import { GENERIC_RUBRIC } from '@data/rubrics';
 import { getComponentExemplarScore } from '@lib/adoptionMetrics';
 import { createRadarChart } from '@lib/charts';
-import { UNIFIED_ACTION_STATUSES, ACTION_STATUS_BADGE_STYLES } from '@lib/actionModel';
+import {
+  UNIFIED_ACTION_STATUSES,
+  ACTION_STATUS_BADGE_STYLES,
+  isCompletedActionStatus,
+} from '@lib/actionModel';
 import { DailyPhaseOverview } from '@components/views/DailyPhaseOverview';
 import { OwnerAvatar } from '@components/ui/OwnerAvatar';
 import { Toast } from '@components/ui/Toast';
@@ -432,7 +436,7 @@ export function EngineExplainedPage({
     setNotionalActions(next);
 
     const allComplete = next.every(
-      (action) => action.status === 'Completed' && action.owner.trim() !== ''
+      (action) => isCompletedActionStatus(action.status) && action.owner.trim() !== ''
     );
     if (allComplete && !notionalExerciseDone) {
       setNotionalExerciseDone(true);

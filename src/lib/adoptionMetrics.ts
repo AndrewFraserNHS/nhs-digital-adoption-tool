@@ -7,12 +7,7 @@ import { AssessmentComponent } from '@data/components';
 import type { ChartData } from 'chart.js';
 
 import { PHASE_NAMES } from '../types/constants';
-import {
-  isCompletedActionStatus,
-  isNonOutstandingActionStatus,
-  isSkippedActionStatus,
-  normalizeActionStatus,
-} from './actionModel';
+import { isCompletedActionStatus, isNonOutstandingActionStatus, isSkippedActionStatus, normalizeActionStatus } from './actionModel';
 import { AdoptionStore, deriveObjectiveStatus, DraftEntry } from './adoptionState';
 import { type BragStatus, getTimelineBragStatus } from './bragStatus';
 import { getPhasePassScore, getReadinessBand } from './readinessBands';
@@ -321,9 +316,6 @@ export function getMetrics(store: AdoptionStore, components: AssessmentComponent
       (entry?.actions || []).forEach((action) => {
         if (isSkippedActionStatus(action.status)) {
           phaseBucket.skippedActions += 1;
-          // Skipped actions count neither as outstanding nor as completed - they're excluded
-          // from this percentage entirely, so a skipped phase never drags the RAG down or up.
-          return;
         }
         if (normalizeActionStatus(action.status) === 'Cancelled') {
           phaseBucket.cancelledActions += 1;
@@ -560,9 +552,9 @@ export function buildComponentRadarChartData(
     data: components.map((component) =>
       getComponentExemplarScore(component.id, manualPhase, component.target)
     ),
-    borderColor: '#cbd5e1',
-    backgroundColor: 'rgba(203, 213, 225, 0.04)',
-    borderWidth: 2,
+    borderColor: '#64748b',
+    backgroundColor: 'rgba(100, 116, 139, 0.08)',
+    borderWidth: 2.5,
     borderDash: [2, 4],
     pointRadius: 3,
     pointHoverRadius: 5,
@@ -603,8 +595,8 @@ export function radarTooltipLabel(context: {
   if (
     label.startsWith('Exemplar') ||
     label === 'Target Average' ||
-    label.startsWith('Automatic target') ||
-    label === 'Manual target'
+    label.startsWith('Automatic') ||
+    label.startsWith('Manual target')
   ) {
     return label;
   }

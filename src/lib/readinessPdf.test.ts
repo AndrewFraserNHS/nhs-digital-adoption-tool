@@ -1,5 +1,6 @@
 import type { ReadinessReviewReport } from '@data/readinessReview';
 import { describe, expect, it } from 'vitest';
+import { jsPDF } from 'jspdf';
 
 import { buildReadinessReviewPdf } from './readinessPdf';
 
@@ -35,5 +36,24 @@ describe('buildReadinessReviewPdf', () => {
     expect(doc.internal.pageSize.getHeight()).toBeCloseTo(297, 0);
     expect(doc.getNumberOfPages()).toBeGreaterThan(1);
     expect(String(doc.output()).startsWith('%PDF')).toBe(true);
+  });
+
+  it('SHOULD include a radar colour key WHEN a radar image is provided', () => {
+    // arrange
+    const addImage = jsPDF.API.addImage;
+    jsPDF.API.addImage = () => undefined;
+
+    try {
+      const doc = buildReadinessReviewPdf(REPORT, 'data:image/png;base64,placeholder');
+
+      // act
+      const pdfText = String(doc.output());
+
+      // assert
+      expect(pdfText).toContain('Radar colour key');
+      expect(pdfText).toContain('Manual target');
+    } finally {
+      jsPDF.API.addImage = addImage;
+    }
   });
 });

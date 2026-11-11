@@ -20,6 +20,7 @@ import {
   type TeamMember,
 } from '@lib/adoptionState';
 import { createDoughnutChart } from '@lib/charts';
+import { isCompletedActionStatus, normalizeActionStatus } from '@lib/actionModel';
 import { getReadinessBand, READINESS_BANDS } from '@lib/readinessBands';
 import { load, save } from '@lib/storage';
 import { downloadFile } from '@lib/utils';
@@ -2819,9 +2820,9 @@ export default function StakeholderAnalysisApp({
             owner: action.owner,
             dueDate: action.dueDate || '',
             status:
-              action.status === 'Completed'
+              isCompletedActionStatus(action.status)
                 ? 'Completed'
-                : action.status === 'Planned'
+                : normalizeActionStatus(action.status) === 'Planned'
                   ? 'Planned'
                   : 'In Progress',
             notes: '',

@@ -105,7 +105,7 @@ export function buildReadinessReviewPdf(report: ReadinessReviewReport, radarImag
   if (radarImage) {
     const imageSize = Math.min(PDF_CONTENT_WIDTH, 150);
     writer.y += 4;
-    ensureSpace(imageSize + 12);
+    ensureSpace(imageSize + 40);
     write('Maturity radar', { size: 12, bold: true, gap: 2 });
     doc.addImage(
       radarImage,
@@ -116,6 +116,43 @@ export function buildReadinessReviewPdf(report: ReadinessReviewReport, radarImag
       imageSize
     );
     writer.y += imageSize;
+    writer.y += 3;
+    write('Radar colour key', { size: 10, bold: true, gap: 1 });
+
+    const drawLegendLine = (label: string, color: [number, number, number], dash: number[]) => {
+      ensureSpace(6);
+      const lineY = writer.y + 1.5;
+      doc.setDrawColor(color[0], color[1], color[2]);
+      doc.setLineWidth(0.7);
+      doc.setLineDashPattern(dash, 0);
+      doc.line(PDF_MARGIN, lineY, PDF_MARGIN + 12, lineY);
+      doc.setLineDashPattern([], 0);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      doc.setTextColor(40);
+      doc.text(label, PDF_MARGIN + 15, writer.y + 2.3);
+      writer.y += 5;
+    };
+
+    drawLegendLine('Current readiness', [0, 94, 184], []);
+    drawLegendLine('Automatic target', [148, 163, 184], [2, 2]);
+    drawLegendLine('Manual target', [100, 116, 139], [1, 2]);
+    writer.y += 0.5;
+
+    READINESS_BANDS.forEach((band) => {
+      ensureSpace(5);
+      const rgb = band.color
+        .replace('#', '')
+        .match(/.{1,2}/g)
+        ?.map((value) => parseInt(value, 16)) || [0, 0, 0];
+      doc.setFillColor(rgb[0] || 0, rgb[1] || 0, rgb[2] || 0);
+      doc.rect(PDF_MARGIN, writer.y, 4, 3, 'F');
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(50);
+      doc.text(`${band.score} - ${band.label}`, PDF_MARGIN + 6, writer.y + 2.4);
+      writer.y += 4.5;
+    });
   }
 
   return doc;

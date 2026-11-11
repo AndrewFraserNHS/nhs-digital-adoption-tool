@@ -13,6 +13,7 @@ import {
 } from '@components/onboarding/PageIntroModal';
 import { getBragStatusFromAverage, type BragStatus } from '@lib/bragStatus';
 import { getPhasePassScore, READINESS_BANDS } from '@lib/readinessBands';
+import { isCompletedActionStatus } from '@lib/actionModel';
 
 export interface DashboardProps {
   store: AdoptionStore;
@@ -150,7 +151,11 @@ export function AdoptionDashboard({
     components.forEach((comp) => {
       comp.lenses.forEach((lens) => {
         getEntry(comp.id, lens).actions.forEach((action) => {
-          if (!action.dueDate || action.status === 'Completed' || action.status === 'Cancelled')
+          if (
+            !action.dueDate ||
+            isCompletedActionStatus(action.status) ||
+            action.status === 'Cancelled'
+          )
             return;
           const due = new Date(action.dueDate);
           if (isNaN(due.getTime())) return;
@@ -189,7 +194,9 @@ export function AdoptionDashboard({
           }
           const actions = entry.actions || [];
           actionCount += actions.length;
-          completedActionCount += actions.filter((action) => action.status === 'Completed').length;
+          completedActionCount += actions.filter((action) =>
+            isCompletedActionStatus(action.status)
+          ).length;
         });
         const avgNum = Number((total / component.lenses.length).toFixed(1));
         const exemplarTarget = getComponentExemplarScore(
@@ -644,7 +651,7 @@ export function AdoptionDashboard({
                       <canvas id="adoption-line-chart" />
                     ) : (
                       <div className="text-center text-slate-400">
-                        <p>No historical data yet. Finalise your first month to generate trends.</p>
+                        <p>No historical data yet.</p>
                       </div>
                     )}
                   </div>
@@ -1082,7 +1089,8 @@ export function AdoptionDashboard({
                             score,
                             exemplarTarget,
                             actions.length,
-                            actions.filter((action) => action.status === 'Completed').length,
+                            actions.filter((action) => isCompletedActionStatus(action.status))
+                              .length,
                             false
                           );
 

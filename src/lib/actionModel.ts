@@ -122,13 +122,20 @@ export function deriveTemporalActionStatus(
 }
 
 export function isCompletedActionStatus(status: string | undefined): boolean {
-  return normalizeActionStatus(status) === 'Completed';
+  const normalized = normalizeActionStatus(status);
+  return normalized === 'Completed' || normalized === 'Skipped';
 }
 
-/** True for a Completed or Cancelled action - both mean the action no longer blocks progression. */
+/** True for a Completed, Skipped or Cancelled action - all no longer block progression. */
 export function isResolvedActionStatus(status: string | undefined): boolean {
   const normalized = normalizeActionStatus(status);
-  return normalized === 'Completed' || normalized === 'Cancelled';
+  return normalized === 'Completed' || normalized === 'Skipped' || normalized === 'Cancelled';
+}
+
+/** True for actions that have not started yet and can be safely auto-skipped by CAB updates. */
+export function isNotStartedActionStatus(status: string | undefined): boolean {
+  const normalized = normalizeActionStatus(status);
+  return normalized === 'Planned' || normalized === 'Overdue start';
 }
 
 /**

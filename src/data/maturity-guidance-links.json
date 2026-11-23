@@ -1,0 +1,1118 @@
+{
+  "Vision": {
+    "inputs": [
+      {
+        "key": "fnhs_37515792",
+        "label": "Vision for Change",
+        "url": "https://future.nhs.uk/CMN/view?objectId=37515792",
+        "type": "core",
+        "description": "Supports development and communication of a clear future vision."
+      },
+      {
+        "key": "fnhs_34039056",
+        "label": "Mind Map",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34039056",
+        "type": "core",
+        "description": "Captures and organises stakeholder viewpoints when developing the vision."
+      },
+      {
+        "key": "fnhs_34039088",
+        "label": "Rich Picture and Storytelling",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34039088",
+        "type": "core",
+        "description": "Creates a visual and narrative representation of the desired future state."
+      },
+      {
+        "key": "fnhs_34039184",
+        "label": "Sinek's Golden Circle",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34039184",
+        "type": "core",
+        "description": "Structures the vision around why, how and what."
+      },
+      {
+        "key": "fnhs_34037808",
+        "label": "Systems Thinking",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037808",
+        "type": "core",
+        "description": "Supports consideration of the wider system when defining the future state."
+      },
+      {
+        "key": "fnhs_34018288",
+        "label": "Stakeholder Analysis Tool",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34018288",
+        "type": "core",
+        "description": "Identifies the stakeholders who should help shape and validate the vision."
+      },
+      {
+        "key": "fnhs_34039024",
+        "label": "Sponsor Coalition Map",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34039024",
+        "type": "additional",
+        "description": "Identifies leaders and visible supporters who can reinforce the vision."
+      },
+      {
+        "key": "fnhs_69484112",
+        "label": "SHIFT: A Strategic Change Management Approach",
+        "url": "https://future.nhs.uk/CMN/view?objectId=69484112",
+        "type": "additional",
+        "description": "Provides an additional strategic approach for shaping and aligning change."
+      }
+    ]
+  },
+  "Case for Change": {
+    "inputs": [
+      {
+        "key": "fnhs_44287088",
+        "label": "Case for Change",
+        "url": "https://future.nhs.uk/CMN/view?objectId=44287088",
+        "type": "core",
+        "description": "Supports creation of a clear and compelling rationale for change."
+      },
+      {
+        "key": "fnhs_42608592",
+        "label": "Beckhard and Harris' Change Formula",
+        "url": "https://future.nhs.uk/CMN/view?objectId=42608592",
+        "type": "core",
+        "description": "Tests whether the conditions needed to overcome the perceived cost of change are present."
+      },
+      {
+        "key": "fnhs_34037360",
+        "label": "Force Field Analysis",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037360",
+        "type": "core",
+        "description": "Identifies the forces driving and restraining the change."
+      },
+      {
+        "key": "fnhs_34037232",
+        "label": "Benefits Workshop",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037232",
+        "type": "core",
+        "description": "Brings stakeholders together to identify and develop the benefits of change."
+      },
+      {
+        "key": "fnhs_34040176",
+        "label": "Benefits Map",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34040176",
+        "type": "core",
+        "description": "Links benefits, outcomes, enabling changes and strategic objectives."
+      },
+      {
+        "key": "fnhs_45000208",
+        "label": "What's in it for me? Benefits",
+        "url": "https://future.nhs.uk/CMN/view?objectId=45000208",
+        "type": "core",
+        "description": "Defines relevant benefits for each stakeholder group."
+      },
+      {
+        "key": "fnhs_69191376",
+        "label": "5 Whys Technique",
+        "url": "https://future.nhs.uk/CMN/view?objectId=69191376",
+        "type": "additional",
+        "description": "Supports root-cause exploration of the problem the change is intended to address."
+      },
+      {
+        "key": "fnhs_34037712",
+        "label": "SWOT Analysis",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037712",
+        "type": "additional",
+        "description": "Examines strengths, weaknesses, opportunities and threats relating to the change."
+      },
+      {
+        "key": "fnhs_34037072",
+        "label": "PESTLE Analysis",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037072",
+        "type": "additional",
+        "description": "Examines external factors influencing the need for change."
+      },
+      {
+        "key": "fnhs_34037680",
+        "label": "Porter's Five Forces",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037680",
+        "type": "additional",
+        "description": "Supports analysis of wider environmental and market pressures."
+      },
+      {
+        "key": "fnhs_34037040",
+        "label": "GAP Analysis",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037040",
+        "type": "additional",
+        "description": "Compares current and future states and identifies what needs to change."
+      },
+      {
+        "key": "fnhs_42608624",
+        "label": "AIDA Model",
+        "url": "https://future.nhs.uk/CMN/view?objectId=42608624",
+        "type": "additional",
+        "description": "Provides a structure for moving audiences from awareness towards action."
+      },
+      {
+        "key": "fnhs_34037744",
+        "label": "Kotter's 8 Steps",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037744",
+        "type": "additional",
+        "description": "Provides an additional framework for creating urgency and mobilising change."
+      },
+      {
+        "key": "fnhs_34039024",
+        "label": "Sponsor Coalition Map",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34039024",
+        "type": "additional",
+        "description": "Identifies leaders who need to champion the case for change."
+      }
+    ],
+    "deliverables": [
+      {
+        "key": "fnhs_44287088",
+        "label": "A clear case for change communicated to all stakeholders",
+        "url": "https://future.nhs.uk/CMN/view?objectId=44287088",
+        "type": "core"
+      }
+    ]
+  },
+  "Senior Sponsorship & Governance": {
+    "inputs": [
+      {
+        "key": "fnhs_34039024",
+        "label": "Sponsor Coalition Map",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34039024",
+        "type": "core",
+        "description": "Identifies senior leaders and visible supporters required to drive the change."
+      },
+      {
+        "key": "fnhs_34037520",
+        "label": "What Makes a Good Sponsor?",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037520",
+        "type": "core",
+        "description": "Supports sponsors to understand the behaviours expected of them."
+      },
+      {
+        "key": "fnhs_34040240",
+        "label": "RACI/RASCI Matrix",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34040240",
+        "type": "core",
+        "description": "Clarifies governance roles, responsibilities and accountability."
+      },
+      {
+        "key": "fnhs_34037552",
+        "label": "Change Network",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037552",
+        "type": "core",
+        "description": "Connects senior sponsorship with change agents and champions."
+      },
+      {
+        "key": "fnhs_42042672",
+        "label": "Change Management Strategy",
+        "url": "https://future.nhs.uk/CMN/view?objectId=42042672",
+        "type": "core",
+        "description": "Defines the strategic approach and leadership responsibilities for change."
+      },
+      {
+        "key": "fnhs_34018288",
+        "label": "Stakeholder Analysis Tool",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34018288",
+        "type": "additional",
+        "description": "Identifies influential stakeholders and required sponsor coverage."
+      },
+      {
+        "key": "fnhs_34038032",
+        "label": "Change Management Plan",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038032",
+        "type": "additional",
+        "description": "Translates governance and sponsorship responsibilities into planned activity."
+      },
+      {
+        "key": "fnhs_69484112",
+        "label": "SHIFT: A Strategic Change Management Approach",
+        "url": "https://future.nhs.uk/CMN/view?objectId=69484112",
+        "type": "additional",
+        "description": "Provides an additional strategic structure for leadership of change."
+      }
+    ]
+  },
+  "Change Network": {
+    "inputs": [
+      {
+        "key": "fnhs_34037552",
+        "label": "Change Network",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037552",
+        "type": "core",
+        "description": "Supports formation and operation of a network of change agents and champions."
+      },
+      {
+        "key": "fnhs_34039024",
+        "label": "Sponsor Coalition Map",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34039024",
+        "type": "core",
+        "description": "Connects the change network with visible senior sponsors."
+      },
+      {
+        "key": "fnhs_34018288",
+        "label": "Stakeholder Analysis Tool",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34018288",
+        "type": "core",
+        "description": "Helps ensure the network represents the right stakeholder groups."
+      },
+      {
+        "key": "fnhs_34037520",
+        "label": "What Makes a Good Sponsor?",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037520",
+        "type": "core",
+        "description": "Clarifies how sponsors should support and use the network."
+      },
+      {
+        "key": "fnhs_34039408",
+        "label": "Feedback Cycle",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34039408",
+        "type": "additional",
+        "description": "Supports two-way feedback between the network, programme and affected staff."
+      },
+      {
+        "key": "fnhs_69501968",
+        "label": "Psychological Safety",
+        "url": "https://future.nhs.uk/CMN/view?objectId=69501968",
+        "type": "additional",
+        "description": "Supports an environment in which network members can raise concerns safely."
+      },
+      {
+        "key": "fnhs_34040240",
+        "label": "RACI/RASCI Matrix",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34040240",
+        "type": "additional",
+        "description": "Clarifies the roles of sponsors, change agents and change champions."
+      },
+      {
+        "key": "fnhs_34038672",
+        "label": "User Surveys",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038672",
+        "type": "additional",
+        "description": "Provides additional evidence for themes surfaced by the change network."
+      }
+    ]
+  },
+  "Benefits": {
+    "inputs": [
+      {
+        "key": "fnhs_34037232",
+        "label": "Benefits Workshop",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037232",
+        "type": "core",
+        "description": "Identifies and develops benefits with relevant stakeholders."
+      },
+      {
+        "key": "fnhs_34040176",
+        "label": "Benefits Map",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34040176",
+        "type": "core",
+        "description": "Links benefits to outcomes, enabling changes and strategic objectives."
+      },
+      {
+        "key": "fnhs_34030736",
+        "label": "Benefits Realisation Plan",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34030736",
+        "type": "core",
+        "description": "Defines baselines, measures, owners and arrangements for tracking benefits."
+      },
+      {
+        "key": "fnhs_45000208",
+        "label": "What's in it for me? Benefits",
+        "url": "https://future.nhs.uk/CMN/view?objectId=45000208",
+        "type": "core",
+        "description": "Translates organisational benefits into relevant stakeholder benefits."
+      },
+      {
+        "key": "fnhs_69511824",
+        "label": "Measuring Digital Adoption",
+        "url": "https://future.nhs.uk/CMN/view?objectId=69511824",
+        "type": "core",
+        "description": "Supports definition of adoption measures linked to intended benefits."
+      },
+      {
+        "key": "fnhs_179918149",
+        "label": "What's in a name?",
+        "url": "https://future.nhs.uk/NationalBenefitsManagement/view?objectId=179918149",
+        "type": "additional",
+        "description": "The art of writing an appropriate benefit name and description"
+      },
+      {
+        "key": "fnhs_44287088",
+        "label": "Case for Change",
+        "url": "https://future.nhs.uk/CMN/view?objectId=44287088",
+        "type": "additional",
+        "description": "Connects the benefits to the rationale and intended outcomes of the change."
+      },
+      {
+        "key": "fnhs_34038608",
+        "label": "Creating Short-Term Wins",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038608",
+        "type": "additional",
+        "description": "Uses early progress to demonstrate value and maintain momentum."
+      },
+      {
+        "key": "fnhs_34038864",
+        "label": "Celebrate Successes",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038864",
+        "type": "additional",
+        "description": "Recognises evidence that benefits and positive outcomes are emerging."
+      },
+      {
+        "key": "fnhs_34038544",
+        "label": "End of Pilot Report",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038544",
+        "type": "additional",
+        "description": "Captures pilot evidence relevant to benefits and wider rollout."
+      },
+      {
+        "key": "fnhs_34038672",
+        "label": "User Surveys",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038672",
+        "type": "additional",
+        "description": "Collects qualitative evidence about benefits and user experience."
+      }
+    ]
+  },
+  "Change Impact": {
+    "inputs": [
+      {
+        "key": "fnhs_34037424",
+        "label": "Change Impact Assessment",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037424",
+        "type": "core",
+        "description": "Assesses impacts on people, teams, processes and business units."
+      },
+      {
+        "key": "fnhs_34039344",
+        "label": "Impact Analysis",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34039344",
+        "type": "core",
+        "description": "Supports structured analysis of intended and unintended impacts."
+      },
+      {
+        "key": "fnhs_34037968",
+        "label": "Heat Map",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037968",
+        "type": "core",
+        "description": "Provides a visual view of impact across business areas."
+      },
+      {
+        "key": "fnhs_34037040",
+        "label": "GAP Analysis",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037040",
+        "type": "core",
+        "description": "Identifies differences between current and future states."
+      },
+      {
+        "key": "fnhs_34040208",
+        "label": "McKinsey 7S Model",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34040208",
+        "type": "core",
+        "description": "Examines alignment across interdependent organisational factors."
+      },
+      {
+        "key": "fnhs_34037840",
+        "label": "Process Mapping",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037840",
+        "type": "additional",
+        "description": "Identifies impacts created by changes between current and future processes."
+      },
+      {
+        "key": "fnhs_34037392",
+        "label": "Change Management Capability Review",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037392",
+        "type": "additional",
+        "description": "Assesses the capability implications of the future state."
+      },
+      {
+        "key": "fnhs_34038000",
+        "label": "Proof of Concept",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038000",
+        "type": "additional",
+        "description": "Provides early evidence about likely organisational and user impacts."
+      },
+      {
+        "key": "fnhs_34037488",
+        "label": "Training Impact Assessment",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037488",
+        "type": "additional",
+        "description": "Identifies high-level learning resource and cost implications."
+      }
+    ]
+  },
+  "Risk Management": {
+    "inputs": [
+      {
+        "key": "fnhs_34037776",
+        "label": "Risk Assessment",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037776",
+        "type": "core",
+        "description": "Identifies and assesses risks, issues and barriers to successful adoption."
+      },
+      {
+        "key": "fnhs_34038640",
+        "label": "Sustainability Risk Assessment",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038640",
+        "type": "core",
+        "description": "Identifies risks that could prevent the change from being sustained."
+      },
+      {
+        "key": "fnhs_34037424",
+        "label": "Change Impact Assessment",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037424",
+        "type": "core",
+        "description": "Provides evidence about impact-related risks and mitigation needs."
+      },
+      {
+        "key": "fnhs_34040240",
+        "label": "RACI/RASCI Matrix",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34040240",
+        "type": "core",
+        "description": "RACI/RASCI Matrix"
+      },
+      {
+        "key": "fnhs_34037360",
+        "label": "Force Field Analysis",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037360",
+        "type": "core",
+        "description": "Identifies forces that may support or obstruct the change."
+      },
+      {
+        "key": "fnhs_34030736",
+        "label": "Benefits Realisation Plan",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34030736",
+        "type": "additional",
+        "description": "Helps identify and monitor risks to benefit realisation."
+      },
+      {
+        "key": "fnhs_34037968",
+        "label": "Heat Map",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037968",
+        "type": "additional",
+        "description": "Highlights areas where high impact and low readiness may create risk."
+      },
+      {
+        "key": "fnhs_34307760",
+        "label": "Resistance Management Plan",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34307760",
+        "type": "additional",
+        "description": "Defines actions for managing resistance-related adoption risks."
+      },
+      {
+        "key": "fnhs_69191376",
+        "label": "5 Whys Technique",
+        "url": "https://future.nhs.uk/CMN/view?objectId=69191376",
+        "type": "additional",
+        "description": "Supports investigation of the root causes of risks and recurring issues."
+      }
+    ]
+  },
+  "Change Management Readiness & Planning": {
+    "inputs": [
+      {
+        "key": "fnhs_42042672",
+        "label": "Change Management Strategy",
+        "url": "https://future.nhs.uk/CMN/view?objectId=42042672",
+        "type": "core",
+        "description": "Sets the overall direction and approach for managing the change."
+      },
+      {
+        "key": "fnhs_34038032",
+        "label": "Change Management Plan",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038032",
+        "type": "core",
+        "description": "Defines activities, ownership and timescales required to build readiness."
+      },
+      {
+        "key": "fnhs_34037040",
+        "label": "GAP Analysis",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037040",
+        "type": "core",
+        "description": "Identifies the work required to move to the future state."
+      },
+      {
+        "key": "fnhs_34037424",
+        "label": "Change Impact Assessment",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037424",
+        "type": "core",
+        "description": "Provides impact and readiness evidence for change planning."
+      },
+      {
+        "key": "fnhs_34038192",
+        "label": "Change Implementation Plan",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038192",
+        "type": "core",
+        "description": "Defines implementation tasks, milestones and responsibilities."
+      },
+      {
+        "key": "fnhs_34038576",
+        "label": "Go Live Business Readiness Assessment",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038576",
+        "type": "core",
+        "description": "Assesses people, process and support readiness before go-live."
+      }
+    ]
+  },
+  "Stakeholder Engagement & Comms": {
+    "inputs": [
+      {
+        "key": "fnhs_34018288",
+        "label": "Stakeholder Analysis Tool",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34018288",
+        "type": "core",
+        "description": "Stakeholder Analysis Tool identifies the stakeholders who should help shape and validate the vision."
+      },
+      {
+        "key": "fnhs_34037008",
+        "label": "Engagement and Comms Strategy",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037008",
+        "type": "core",
+        "description": "Engagement and Comms Strategy defines the approach for engaging stakeholders and communicating the change."
+      },
+      {
+        "key": "fnhs_34037616",
+        "label": "Engagement and Comms Plan",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037616",
+        "type": "core",
+        "description": "Engagement and Comms Plan defines the specific activities, channels and responsibilities for engaging stakeholders and communicating the change."
+      },
+      {
+        "key": "fnhs_34039056",
+        "label": "Mind Mapping",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34039056",
+        "type": "core",
+        "description": "Mind Mapping helps visualise and organise stakeholder relationships and communication strategies."
+      },
+      {
+        "key": "fnhs_34038064",
+        "label": "Communication Survey",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038064",
+        "type": "core",
+        "description": "Communication Survey gathers feedback from stakeholders about their communication needs and preferences."
+      },
+      {
+        "key": "fnhs_34039408",
+        "label": "Feedback Loop",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34039408",
+        "type": "core",
+        "description": "Feedback Loop provides a mechanism for gathering and acting on feedback from stakeholders."
+      },
+      {
+        "key": "fnhs_34037552",
+        "label": "Change Network",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037552",
+        "type": "core",
+        "description": "Change Network connects senior sponsorship with change agents and champions to facilitate stakeholder engagement."
+      },
+      {
+        "key": "fnhs_34039088",
+        "label": "Rich Picture and Story Telling",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34039088",
+        "type": "core",
+        "description": "Rich Picture and Story Telling helps communicate the change and its impacts to stakeholders in a compelling way."
+      },
+      {
+        "key": "fnhs_34038672",
+        "label": "User Survey",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038672",
+        "type": "core",
+        "description": "User Survey gathers feedback from users about their needs and experiences."
+      }
+    ]
+  },
+  "Change Adoption": {
+    "inputs": [
+      {
+        "key": "fnhs_74023728",
+        "label": "Change Adoption",
+        "url": "https://future.nhs.uk/CMN/view?objectId=74023728",
+        "type": "core",
+        "description": "Change Adoption"
+      },
+      {
+        "key": "fnhs_34037616",
+        "label": "Stakeholder Engagement & Comms Plan",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037616",
+        "type": "core",
+        "description": "Stakeholder Engagement & Comms Plan"
+      },
+      {
+        "key": "fnhs_34038640",
+        "label": "Sustainability Risk Assessment",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038640",
+        "type": "core",
+        "description": "Sustainability Risk Assessment"
+      },
+      {
+        "key": "fnhs_34030736",
+        "label": "Benefits Realisation Plan",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34030736",
+        "type": "core",
+        "description": "Benefits Realisation Plan"
+      },
+      {
+        "key": "fnhs_34037552",
+        "label": "Change Network",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037552",
+        "type": "core",
+        "description": "Change Network"
+      },
+      {
+        "key": "fnhs_34038672",
+        "label": "User Survey",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038672",
+        "type": "core",
+        "description": "User Survey"
+      },
+      {
+        "key": "fnhs_34038736",
+        "label": "Post Implementation Review",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038736",
+        "type": "core",
+        "description": "Post Implementation Review"
+      },
+      {
+        "key": "fnhs_34038768",
+        "label": "Lessons Learnt",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038768",
+        "type": "core",
+        "description": "Lessons Learnt"
+      },
+      {
+        "key": "fnhs_34038800",
+        "label": "Adoption Checklist",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038800",
+        "type": "core",
+        "description": "Adoption Checklist"
+      },
+      {
+        "key": "fnhs_34038256",
+        "label": "Business Transition Plan",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038256",
+        "type": "core",
+        "description": "Business Transition Plan"
+      },
+      {
+        "key": "fnhs_34038032",
+        "label": "Change Management Plan",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038032",
+        "type": "core",
+        "description": "Change Management Plan"
+      },
+      {
+        "key": "fnhs_45932336",
+        "label": "Schein Model of Organisational Culture",
+        "url": "https://future.nhs.uk/CMN/view?objectId=45932336",
+        "type": "additional",
+        "description": "Schein Model of Organisational Culture"
+      },
+      {
+        "key": "fnhs_34039376",
+        "label": "Tipping Point and Critical Mass",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34039376",
+        "type": "additional",
+        "description": "Tipping Point and Critical Mass"
+      },
+      {
+        "key": "fnhs_34308272",
+        "label": "Virtuous and Vicious Cycles",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34308272",
+        "type": "additional",
+        "description": "Virtuous and Vicious Cycles"
+      }
+    ]
+  },
+  "Transfer to BAU": {
+    "inputs": [
+      {
+        "key": "fnhs_34039344",
+        "label": "Impact Analysis",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34039344",
+        "type": "core",
+        "description": "Impact Analysis"
+      },
+      {
+        "key": "fnhs_34037424",
+        "label": "Change Impact Assessment",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037424",
+        "type": "core",
+        "description": "Change Impact Assessment"
+      },
+      {
+        "key": "fnhs_34038256",
+        "label": "Business Transition Plan",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038256",
+        "type": "core",
+        "description": "Business Transition Plan"
+      },
+      {
+        "key": "fnhs_34038032",
+        "label": "Change Management Plan",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038032",
+        "type": "core",
+        "description": "Change Management Plan"
+      }
+    ]
+  },
+  "Resistance Management": {
+    "inputs": [
+      {
+        "key": "fnhs_34307760",
+        "label": "Resistance Management Plan",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34307760",
+        "type": "core",
+        "description": "Resistance Management Plan"
+      },
+      {
+        "key": "fnhs_34307792",
+        "label": "Attitudes to Change",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34307792",
+        "type": "core",
+        "description": "Attitudes to Change"
+      },
+      {
+        "key": "fnhs_34037552",
+        "label": "Change Network",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037552",
+        "type": "core",
+        "description": "Change Network"
+      },
+      {
+        "key": "fnhs_42608592",
+        "label": "Beckhard and Harris' Change Formula",
+        "url": "https://future.nhs.uk/CMN/view?objectId=42608592",
+        "type": "core",
+        "description": "Beckhard and Harris' Change Formula"
+      },
+      {
+        "key": "fnhs_45000208",
+        "label": "What's In It For Me? (WIIFM?) Benefits",
+        "url": "https://future.nhs.uk/CMN/view?objectId=45000208",
+        "type": "core",
+        "description": "What's In It For Me? (WIIFM?) Benefits"
+      },
+      {
+        "key": "fnhs_34037424",
+        "label": "Change Impact Assessment",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037424",
+        "type": "core",
+        "description": "Change Impact Assessment"
+      },
+      {
+        "key": "fnhs_34038416",
+        "label": "Ways of Working (WoW)",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038416",
+        "type": "core",
+        "description": "Ways of Working (WoW)"
+      },
+      {
+        "key": "fnhs_34038128",
+        "label": "Kubler Ross Change Curve",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038128",
+        "type": "additional",
+        "description": "Kubler Ross Change Curve"
+      },
+      {
+        "key": "fnhs_34038096",
+        "label": "Managing Emotional States",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038096",
+        "type": "additional",
+        "description": "Managing Emotional States"
+      }
+    ]
+  },
+  "Process Change": {
+    "inputs": [
+      {
+        "key": "fnhs_34037840",
+        "label": "Process Mapping",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037840",
+        "type": "core",
+        "description": "Process Mapping"
+      },
+      {
+        "key": "fnhs_71268464",
+        "label": "Stop/Start/Continue",
+        "url": "https://future.nhs.uk/CMN/view?objectId=71268464",
+        "type": "core",
+        "description": "Stop/Start/Continue"
+      },
+      {
+        "key": "fnhs_34038416",
+        "label": "Ways of Working (WoW)",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038416",
+        "type": "core",
+        "description": "Ways of Working (WoW)"
+      },
+      {
+        "key": "fnhs_34037040",
+        "label": "Gap Analysis",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037040",
+        "type": "core",
+        "description": "Gap Analysis"
+      },
+      {
+        "key": "fnhs_34038320",
+        "label": "Business Process Validation",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038320",
+        "type": "core",
+        "description": "Business Process Validation"
+      }
+    ]
+  },
+  "Skills/Learning": {
+    "inputs": [
+      {
+        "key": "fnhs_34037456",
+        "label": "Learning Needs Analysis",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037456",
+        "type": "core",
+        "description": "Learning Needs Analysis"
+      },
+      {
+        "key": "fnhs_34037488",
+        "label": "Training Impact Assessment",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037488",
+        "type": "core",
+        "description": "Training Impact Assessment"
+      },
+      {
+        "key": "fnhs_34038384",
+        "label": "Training Plan",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038384",
+        "type": "core",
+        "description": "Training Plan"
+      },
+      {
+        "key": "fnhs_34038448",
+        "label": "Design a Training Programme",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038448",
+        "type": "core",
+        "description": "Design a Training Programme"
+      },
+      {
+        "key": "fnhs_34038416",
+        "label": "Developing and Delivering WoW Events",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038416",
+        "type": "core",
+        "description": "Developing and Delivering WoW Events"
+      },
+      {
+        "key": "fnhs_34037872",
+        "label": "Why Training Matters Toolkit",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037872",
+        "type": "core",
+        "description": "Why Training Matters Toolkit"
+      },
+      {
+        "key": "fnhs_69501968",
+        "label": "Psychological Safety",
+        "url": "https://future.nhs.uk/CMN/view?objectId=69501968",
+        "type": "core",
+        "description": "Psychological Safety"
+      },
+      {
+        "key": "fnhs_34038832",
+        "label": "ADKAR Model",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038832",
+        "type": "core",
+        "description": "ADKAR Model"
+      }
+    ]
+  },
+  "Reinforcement": {
+    "inputs": [
+      {
+        "key": "fnhs_34038800",
+        "label": "Adoption Checklist",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038800",
+        "type": "core",
+        "description": "Adoption Checklist"
+      },
+      {
+        "key": "fnhs_34039408",
+        "label": "Feedback Cycle",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34039408",
+        "type": "core",
+        "description": "Feedback Cycle"
+      },
+      {
+        "key": "fnhs_34038672",
+        "label": "User Surveys",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038672",
+        "type": "core",
+        "description": "User Surveys"
+      },
+      {
+        "key": "fnhs_34038768",
+        "label": "Lessons Learnt",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038768",
+        "type": "core",
+        "description": "Lessons Learnt"
+      },
+      {
+        "key": "fnhs_34030736",
+        "label": "Benefits Realisation Plan",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34030736",
+        "type": "core",
+        "description": "Benefits Realisation Plan"
+      },
+      {
+        "key": "fnhs_34038864",
+        "label": "Celebrate Successes",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038864",
+        "type": "core",
+        "description": "Celebrate Successes"
+      },
+      {
+        "key": "fnhs_34037552",
+        "label": "Change Network",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037552",
+        "type": "core",
+        "description": "Change Network"
+      },
+      {
+        "key": "fnhs_34038640",
+        "label": "Sustainability Risk Assessment",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038640",
+        "type": "additional",
+        "description": "Sustainability Risk Assessment"
+      },
+      {
+        "key": "fnhs_34038832",
+        "label": "ADKAR Model",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038832",
+        "type": "additional",
+        "description": "ADKAR Model"
+      }
+    ]
+  },
+  "Organisation Maturity": {
+    "inputs": [
+      {
+        "key": "fnhs_34037776",
+        "label": "Risk Assessment",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037776",
+        "type": "core",
+        "description": "Risk Assessment"
+      },
+      {
+        "key": "fnhs_34038256",
+        "label": "Business Transition Plan",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038256",
+        "type": "core",
+        "description": "Business Transition Plan"
+      },
+      {
+        "key": "fnhs_34038832",
+        "label": "ADKAR Model",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038832",
+        "type": "core",
+        "description": "ADKAR Model"
+      }
+    ]
+  },
+  "Change Management Capability": {
+    "inputs": [
+      {
+        "key": "fnhs_34037456",
+        "label": "Learning Needs Analysis",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037456",
+        "type": "core",
+        "description": "Learning Needs Analysis"
+      },
+      {
+        "key": "fnhs_34037488",
+        "label": "Training Impact Assessment",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037488",
+        "type": "core",
+        "description": "Training Impact Assessment"
+      },
+      {
+        "key": "fnhs_34038384",
+        "label": "Training Plan",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038384",
+        "type": "core",
+        "description": "Training Plan"
+      },
+      {
+        "key": "fnhs_34037872",
+        "label": "Why Training Matters Toolkit",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037872",
+        "type": "core",
+        "description": "Why Training Matters Toolkit"
+      },
+      {
+        "key": "fnhs_34038416",
+        "label": "Ways of Working",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038416",
+        "type": "core",
+        "description": "Ways of Working"
+      },
+      {
+        "key": "fnhs_34037392",
+        "label": "Capability Analysis Tool (KOPE)",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037392",
+        "type": "core",
+        "description": "Capability Analysis Tool (KOPE)"
+      },
+      {
+        "key": "fnhs_34037552",
+        "label": "Change Network",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037552",
+        "type": "core",
+        "description": "Change Network"
+      },
+      {
+        "key": "fnhs_34018288",
+        "label": "Stakeholder Analysis Tool",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34018288",
+        "type": "core",
+        "description": "Stakeholder Analysis Tool"
+      },
+      {
+        "key": "fnhs_34038832",
+        "label": "ADKAR model",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038832",
+        "type": "additional",
+        "description": "ADKAR model"
+      }
+    ]
+  },
+  "Org Maturity": {
+    "inputs": [
+      {
+        "key": "fnhs_36276080",
+        "label": "Change Maturity Assessment",
+        "url": "https://future.nhs.uk/CMN/view?objectId=36276080",
+        "type": "core",
+        "description": "Change Maturity Assessment"
+      },
+      {
+        "key": "fnhs_34037392",
+        "label": "Capability Analysis Tool (KOPE)",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037392",
+        "type": "core",
+        "description": "Capability Analysis Tool (KOPE)"
+      },
+      {
+        "key": "fnhs_34037424",
+        "label": "Change Impact Assessment",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34037424",
+        "type": "core",
+        "description": "Change Impact Assessment"
+      },
+      {
+        "key": "fnhs_34030736",
+        "label": "Benefits Realisation Plan",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34030736",
+        "type": "core",
+        "description": "Benefits Realisation Plan"
+      },
+      {
+        "key": "fnhs_34038640",
+        "label": "Sustainability Risk Assessment",
+        "url": "https://future.nhs.uk/CMN/view?objectId=34038640",
+        "type": "core",
+        "description": "Sustainability Risk Assessment"
+      }
+    ]
+  }
+}

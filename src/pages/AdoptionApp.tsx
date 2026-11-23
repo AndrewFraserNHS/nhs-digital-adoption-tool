@@ -80,6 +80,7 @@ import {
   type ConflictChoice,
   type ConflictReport,
 } from '@lib/cstConflict';
+import { parseMaybeEncodedJson } from '@lib/dataDecode';
 import { regenerateContentForPathway, syncDerivedContent } from '@lib/derivedContentSync';
 import { getReadinessBand } from '@lib/readinessBands';
 import { canEditProfile, SIGN_IN_REQUIRED_MESSAGE } from '@lib/signInGuard';
@@ -1190,7 +1191,7 @@ export function AdoptionApp() {
           throw new Error(`Failed to load sample data: ${response.status}`);
         }
 
-        const payload = parseImportedAdoptionAssessment(await response.json());
+        const payload = parseImportedAdoptionAssessment(parseMaybeEncodedJson(await response.text()));
         setStore((prev) => {
           const merged = syncDerivedContent(mergeImportedAdoptionState(payload, prev));
           return {

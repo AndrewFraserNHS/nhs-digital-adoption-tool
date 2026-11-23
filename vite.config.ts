@@ -3,9 +3,11 @@ import { fileURLToPath, URL } from 'node:url';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
+import { obfuscateDataPlugin } from './scripts/obfuscateDataPlugin.mjs';
+
 // Single-entry React SPA config for GitHub Pages.
 export default defineConfig({
-  plugins: [react()],
+  plugins: [obfuscateDataPlugin(), react()],
   base: './',
   server: {
     port: 5173,
@@ -14,6 +16,8 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     emptyOutDir: true,
+    // IP protection: never publish source maps (they expose original TypeScript source).
+    sourcemap: false,
     rollupOptions: {
       output: {
         manualChunks(id) {

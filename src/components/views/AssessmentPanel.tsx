@@ -10,8 +10,7 @@ import {
   type RaidItem,
 } from '@lib/adoptionState';
 import { ASSESSMENT_COMPONENTS, AssessmentComponent } from '@data/components';
-import { ActionTextExchange } from '@components/views/ActionTextExchange';
-import { TEXT_EXCHANGE_COMPONENT_IDS } from '@lib/actionTextExchange';
+import { ActionJsonImport } from '@components/views/ActionJsonImport';
 import { PATHWAY_LABELS } from '@data/cst';
 import {
   CORE_LINKS,
@@ -2176,16 +2175,12 @@ export function AssessmentPanel({
 
       {showActionsSection ? (
         <div className="space-y-8 mb-8">
-          {TEXT_EXCHANGE_COMPONENT_IDS.includes(component.id) ? (
-            <ActionTextExchange
-              componentId={component.id}
-              componentLabel={component.label}
-              lenses={component.lenses}
-              getEntry={getEntry}
-              onEntryUpdate={onEntryUpdate}
-              darkMode={darkMode}
-            />
-          ) : null}
+          <ActionJsonImport
+            components={components}
+            getEntry={getEntry}
+            onEntryUpdate={onEntryUpdate}
+            darkMode={darkMode}
+          />
           {component.lenses.map((lens) => {
             const entry = getEntry(component.id, lens);
             const targetKey = `${component.id}:${lens}`;

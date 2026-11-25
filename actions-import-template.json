@@ -1,0 +1,33 @@
+{
+  "_help": [
+    "Add actions for any component, offline, then send this file back to be loaded with 'Add actions from a JSON file' on the Assessment page.",
+    "Copy a row for each action. Only component, lens and action are required.",
+    "component: the id (benefits, benefit_realisation, vision, ...) or the full component name.",
+    "lens: must be one of that component's lenses (listed below), spelled as shown.",
+    "action: the action text. A leading 'M ' (must) or 'S ' (should) sets the priority.",
+    "status: Planned, In Progress, Blocked, Completed, Cancelled or Skipped (default Planned).",
+    "owner: a name (optional). startDate / dueDate: yyyy-mm-dd (optional).",
+    "Existing actions are never changed or removed, and an action already in that lens is skipped.",
+    "Lenses - benefits and benefit_realisation: Planning and Risk, Process and Sustainment."
+  ],
+  "actions": [
+    {
+      "component": "benefits",
+      "lens": "Planning and Risk",
+      "action": "M Agree a baseline measure for each benefit with its owner.",
+      "owner": "",
+      "status": "Planned",
+      "startDate": "",
+      "dueDate": "2026-12-31"
+    },
+    {
+      "component": "benefit_realisation",
+      "lens": "Process and Sustainment",
+      "action": "S Review benefit delivery against baseline at each programme board.",
+      "owner": "",
+      "status": "Planned",
+      "startDate": "",
+      "dueDate": ""
+    }
+  ]
+}

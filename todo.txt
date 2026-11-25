@@ -1,6 +1,42 @@
-Can there be a ‘bulk assign’ everything button on a component lens for a specific level, especially if there is only 1 person in team members. 
+Comparison
+Needs click in to show why something has it's "movement" and what it shows e.g. action progress
 
-Re the theirs and mine updates feature, can we put a date and time stamp on so we know which one is the most up to date 
+Change chart can be swapped to a brief summary/dropdown of progress
 
-Assess and Compare tool: Need an overhaul, this is still using numeric scores instead of RAG, has been deprecated in app only accessible via home screen and generally can do a better comparison with charts and graphs.
-In addition can we have Can we have categories: Baseline, Previous, Current and increase/decrease.  Start date / end dates, over due actions. 
+“Manual Target (Pre-discovery)” becomes “Manual Target (End of Pre-discovery)”
+
+Assign all -> Assign to all actions (3)
+
+Add action button needs same line in lens actions
+Current state on lens actions should be sortable/filterable by completed to planned
+Make two row with filterable on top and add action on bottom
+
+Move AVT last updated:
+25 Nov 2026, 09:20
+To top row on table in comparison 
+
+
+“Based on your answers, here's what could be updated. Untick anything you don't want applied.”
+
+Give more detail and make the checkbox list collapsed by default.
+
+CAB should make component hoverable/clickable and provide text for what it is and why it matters and what good looks like.
+
+Component	What it is and why it matters	Good looks like
+Vision	Sets a clear direction for the change and helps people understand what you are trying to achieve.	A clear, shared vision that is owned by leaders and understood by those affected.
+Case for Change	Explains why the change is needed, why it matters and the outcomes it should achieve.	A compelling case that creates shared understanding of the need, urgency and expected outcomes.
+Senior Sponsorship & Governance	Provides the leadership, accountability and oversight needed to drive the change.	Visible, active sponsors with clear accountability, effective governance and timely decision-making.
+Change Network	Connects the change with the people and services affected and provides local insight and support.	An active, representative network that engages people, gathers feedback and supports local adoption.
+Benefits	Defines the improvements expected from the change and how they will be measured and sustained.	Clear benefits with measures, baselines and owners, routinely tracked through delivery.
+Change Impact	Identifies how the change will affect people, roles, processes, workload and services.	Impacts are understood early, with actions in place to manage risks and opportunities.
+Risk Management	Identifies and manages risks that could affect adoption, benefits or long-term sustainment.	Change and adoption risks are actively identified, owned, monitored and addressed.
+CM Readiness & Planning	Establishes the current change position and the approach needed to support successful adoption.	Baseline findings inform a clear, proportionate change plan aligned with delivery.
+Stakeholder Engagement & Comms	Ensures people affected by the change are informed, involved and able to provide feedback.	Inclusive, timely and two-way engagement tailored to different stakeholder needs.
+Resistance Management	Identifies and addresses concerns and barriers that could make adoption more difficult.	Concerns and barriers are actively understood, monitored and addressed through targeted action.
+Skills/Learning	Builds the knowledge, skills and behaviours people need to work effectively in the new way.	Learning is tailored to need and leaves people prepared, capable and supported.
+Capability & Confidence	Assesses whether people feel able and supported to put the change into practice.	People have the confidence, capability and support to apply new ways of working consistently.
+Change Adoption	Assesses whether new ways of working and behaviours are actually being used in practice.	Adoption is measured, gaps are addressed and new ways of working are used consistently.
+Process Change	Focuses on whether changed processes are understood, applied and embedded in everyday work.	The new process is consistently followed and supported by the required skills and behaviours.
+Reinforcement	Provides ongoing support, feedback and oversight to help the change stick.	New behaviours and processes are recognised, monitored, reinforced and continually improved.
+Organisational Change Readiness	Considers the organisation’s wider capability and capacity to lead, learn from and sustain change.	Leaders and teams use consistent, repeatable approaches to lead, learn from and embed change.
+Transfer to BAU	Moves ownership of the change from the project into routine operational management.	Clear operational ownership is established and the change is embedded into everyday governance and delivery.

@@ -82,6 +82,7 @@ import {
 } from '@lib/cstConflict';
 import { parseMaybeEncodedJson } from '@lib/dataDecode';
 import { regenerateContentForPathway, syncDerivedContent } from '@lib/derivedContentSync';
+import { latestActivity } from '@lib/importTimestamps';
 import { getReadinessBand } from '@lib/readinessBands';
 import { canEditProfile, SIGN_IN_REQUIRED_MESSAGE } from '@lib/signInGuard';
 import { load, save } from '@lib/storage';
@@ -2309,7 +2310,7 @@ export function AdoptionApp() {
               onBack={() => handleViewChange('dashboard')}
               orgProfile={store.orgProfile}
               currentDraft={store.currentDraft}
-              history={store.history}
+              auditLog={store.auditLog}
             />
           )}
           {view === 'change-impact-assessment' && (
@@ -2430,6 +2431,12 @@ export function AdoptionApp() {
               importConflict.parsed.orgProfile?.trustName ||
               importConflict.file.name
             }
+            myUpdatedAt={latestActivity(store.auditLog)}
+            theirUpdatedAt={latestActivity(
+              importConflict.parsed.auditLog,
+              importConflict.parsed.exportedAt
+            )}
+            theirExportedAt={importConflict.parsed.exportedAt}
             onResolve={handleResolveImportConflict}
             onCancel={handleCancelImportConflict}
             darkMode={Boolean(userSettings.darkMode)}

@@ -1,7 +1,21 @@
 import { ASSESSMENT_COMPONENTS } from '@data/components';
 import { isCompletedActionStatus, normalizeActionStatus } from '@lib/actionModel';
 import type { SavedAdoptionAssessment } from '@lib/adoptionIO';
-import type { DraftEntry, HistorySnapshot, OrgProfile } from '@lib/adoptionState';
+import type { DraftEntry, OrgProfile } from '@lib/adoptionState';
+import type { AuditEvent } from '@lib/auditLog';
+import {
+  analysePeriod,
+  buildPeriodOptions,
+  COMPARE_RAG_LABEL,
+  compareComponents,
+  type CompareRag,
+  getCompareRag,
+  type Movement,
+  type PeriodOption,
+  type PeriodRole,
+  type PeriodStats,
+  summariseMovement,
+} from '@lib/compareAnalysis';
 import { type DragEvent, JSX, useCallback, useRef, useState } from 'react';
 
 // ─── Analysis types ───────────────────────────────────────────────────────────
@@ -51,6 +65,7 @@ interface AnalysisResult {
   overallPct: number;
   onTargetCount: number;
   totalComponents: number;
+  period: PeriodStats;
 }
 
 // ─── Pure analysis logic ──────────────────────────────────────────────────────
@@ -80,7 +95,7 @@ function classify(
   return 'moderate';
 }
 
-function analyseFile(payload: SavedAdoptionAssessment): AnalysisResult {
+function analyseFile(payload: SavedAdoptionAssessment, asOf: Date = new Date()): AnalysisResult {
   const draft = payload.currentDraft || {};
 
   let totalLensPairs = 0;
@@ -314,6 +329,7 @@ function analyseFile(payload: SavedAdoptionAssessment): AnalysisResult {
     overallPct,
     onTargetCount,
     totalComponents: ASSESSMENT_COMPONENTS.length,
+    period: analysePeriod(draft, asOf),
   };
 }
 
@@ -439,10 +455,10 @@ function TimelineView({
       <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-5">
           <div>
-            <h3 className="text-lg font-semibold text-slate-800">Component Scores Over Time</h3>
+            <h3 className="text-lg font-semibold text-slate-800">Component RAG Over Time</h3>
             <p className="text-xs text-slate-500 mt-0.5">
-              Each cell is the average lens score for that component that month. Colour shows the
-              change versus the previous column.
+              Each cell is that component's RAG status for the month (gap to its target). Hover a
+              cell to see whether it improved on the previous column.
             </p>
           </div>
           <select
@@ -484,21 +500,19 @@ function TimelineView({
                       index > 0 ? columns[index - 1].componentAverages[comp.id] || 0 : null;
                     const delta =
                       prevScore !== null ? Number((score - prevScore).toFixed(1)) : null;
-                    const cellClass =
+                    const cellTitle =
                       delta === null || delta === 0
-                        ? 'bg-slate-50 text-slate-600'
+                        ? 'No change versus previous column'
                         : delta > 0
-                          ? 'bg-green-50 text-green-700'
-                          : 'bg-red-50 text-red-600';
+                          ? 'Increase versus previous column'
+                          : 'Decrease versus previous column';
                     return (
                       <td
                         key={`${comp.id}-${col.label}-${index}`}
                         className="py-2.5 px-2 text-center"
                       >
-                        <span
-                          className={`inline-flex min-w-[2.5rem] justify-center rounded px-2 py-0.5 text-xs font-bold ${cellClass}`}
-                        >
-                          {score > 0 ? score.toFixed(1) : '–'}
+                        <span title={cellTitle}>
+                          <RagBadge rag={getCompareRag(score, comp.target)} />
                         </span>
                       </td>
                     );
@@ -835,7 +849,7 @@ function SingleAnalysis({ result, fileName }: { result: AnalysisResult; fileName
               <tr className="border-b border-slate-200 text-left text-xs text-slate-500 uppercase tracking-wide">
                 <th className="pb-2 font-semibold">Component</th>
                 <th className="pb-2 font-semibold text-center">Phase</th>
-                <th className="pb-2 font-semibold text-center">Score</th>
+                <th className="pb-2 font-semibold text-center">RAG</th>
                 <th className="pb-2 font-semibold text-center">Target</th>
                 <th className="pb-2 font-semibold text-center">Lenses</th>
                 <th className="pb-2 font-semibold text-center">Actions</th>
@@ -848,17 +862,7 @@ function SingleAnalysis({ result, fileName }: { result: AnalysisResult; fileName
                   <td className="py-2.5 pr-3 font-medium text-slate-700">{comp.label}</td>
                   <td className="py-2.5 text-center text-slate-500">{comp.phase}</td>
                   <td className="py-2.5 text-center">
-                    <span
-                      className={`text-xs font-bold px-2 py-0.5 rounded ${
-                        comp.avgScore === 0
-                          ? 'bg-slate-100 text-slate-400'
-                          : comp.onTarget
-                            ? 'bg-green-100 text-green-700'
-                            : 'bg-amber-100 text-amber-700'
-                      }`}
-                    >
-                      {comp.avgScore > 0 ? comp.avgScore.toFixed(1) : '–'}
-                    </span>
+                    <RagBadge rag={getCompareRag(comp.avgScore, comp.target)} />
                   </td>
                   <td className="py-2.5 text-center text-slate-500 text-xs">{comp.target}</td>
                   <td className="py-2.5 text-center text-xs text-slate-500">
@@ -971,26 +975,167 @@ function EstateSignal({
   );
 }
 
-// ─── Two-file comparison view ─────────────────────────────────────────────────
+// ─── RAG helpers ──────────────────────────────────────────────────────────────
+
+const RAG_STYLE: Record<CompareRag, string> = {
+  Red: 'bg-red-100 text-red-800',
+  Amber: 'bg-amber-100 text-amber-800',
+  Green: 'bg-green-100 text-green-800',
+  Blue: 'bg-sky-100 text-sky-800',
+  NotStarted: 'bg-slate-100 text-slate-500',
+};
+
+const RAG_BAR: Record<CompareRag, string> = {
+  Red: 'bg-red-500',
+  Amber: 'bg-amber-400',
+  Green: 'bg-green-500',
+  Blue: 'bg-sky-500',
+  NotStarted: 'bg-slate-300',
+};
+
+const RAG_ORDER: CompareRag[] = ['Green', 'Blue', 'Amber', 'Red', 'NotStarted'];
+
+function RagBadge({ rag }: { rag: CompareRag }) {
+  return (
+    <span className={`inline-block rounded px-2 py-0.5 text-xs font-bold ${RAG_STYLE[rag]}`}>
+      {COMPARE_RAG_LABEL[rag]}
+    </span>
+  );
+}
+
+const MOVEMENT_LABEL: Record<Movement, string> = {
+  increase: '▲ Increase',
+  decrease: '▼ Decrease',
+  unchanged: '– No change',
+};
+
+const MOVEMENT_STYLE: Record<Movement, string> = {
+  increase: 'bg-green-100 text-green-800',
+  decrease: 'bg-red-100 text-red-800',
+  unchanged: 'bg-slate-100 text-slate-500',
+};
+
+function formatDate(value: string | undefined): string {
+  const time = Date.parse(value || '');
+  return Number.isNaN(time)
+    ? '–'
+    : new Date(time).toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+      });
+}
+
+/** Stacked RAG bar: how many components sit in each RAG status for one period. */
+function RagDistributionBar({ label, stats }: { label: string; stats: PeriodStats }) {
+  const total = stats.components.length || 1;
+  return (
+    <div>
+      <p className="mb-1 text-xs font-semibold text-slate-600">{label}</p>
+      <div
+        role="img"
+        aria-label={`${label}: ${RAG_ORDER.filter((rag) => stats.ragCounts[rag] > 0)
+          .map((rag) => `${stats.ragCounts[rag]} ${COMPARE_RAG_LABEL[rag]}`)
+          .join(', ')}`}
+        className="flex h-6 w-full overflow-hidden rounded bg-slate-100"
+      >
+        {RAG_ORDER.filter((rag) => stats.ragCounts[rag] > 0).map((rag) => (
+          <div
+            key={rag}
+            className={`flex items-center justify-center text-[0.7rem] font-bold text-white ${RAG_BAR[rag]}`}
+            style={{ width: `${(stats.ragCounts[rag] / total) * 100}%` }}
+          >
+            {stats.ragCounts[rag]}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ActionDatesCard({
+  label,
+  stats,
+  roles,
+  available,
+}: {
+  label: string;
+  stats: PeriodStats;
+  roles: PeriodRole[];
+  available: boolean;
+}) {
+  return (
+    <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="mb-3 flex flex-wrap items-center gap-2">
+        <h4 className="text-sm font-semibold text-slate-800">{label}</h4>
+        {roles.map((role) => (
+          <span
+            key={role}
+            className="rounded bg-[#005eb8]/10 px-1.5 py-0.5 text-[0.7rem] font-bold text-[#005eb8]"
+          >
+            {role}
+          </span>
+        ))}
+      </div>
+      {!available ? (
+        <p className="text-xs text-slate-500">
+          Action dates and overdue counts are only available for current (live) data.
+        </p>
+      ) : (
+        <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs text-slate-600">
+          <dt>Actions completed</dt>
+          <dd className="text-right font-semibold">
+            {stats.completedActions}/{stats.totalActions}
+          </dd>
+          <dt>Overdue (past end date)</dt>
+          <dd
+            className={`text-right font-semibold ${stats.overdueCompletion ? 'text-red-700' : ''}`}
+          >
+            {stats.overdueCompletion}
+          </dd>
+          <dt>Overdue to start</dt>
+          <dd className={`text-right font-semibold ${stats.overdueStart ? 'text-amber-700' : ''}`}>
+            {stats.overdueStart}
+          </dd>
+          <dt>With start date</dt>
+          <dd className="text-right font-semibold">{stats.actionsWithStart}</dd>
+          <dt>With end date</dt>
+          <dd className="text-right font-semibold">{stats.actionsWithEnd}</dd>
+          <dt>Earliest start</dt>
+          <dd className="text-right font-semibold">{formatDate(stats.earliestStart)}</dd>
+          <dt>Latest end</dt>
+          <dd className="text-right font-semibold">{formatDate(stats.latestEnd)}</dd>
+        </dl>
+      )}
+    </div>
+  );
+}
+
+// ─── Two-period comparison view ───────────────────────────────────────────────
 
 function CompareView({
   results,
   fileNames,
+  roles = [[], []],
+  actionsAvailable = [true, true],
 }: {
   results: [AnalysisResult, AnalysisResult];
   fileNames: [string, string];
+  /** Baseline / Previous / Current categories each side fills (month-to-month mode). */
+  roles?: [PeriodRole[], PeriodRole[]];
+  /** False for periods rebuilt from the audit log, where action dates cannot be trusted. */
+  actionsAvailable?: [boolean, boolean];
 }) {
   const [a, b] = results;
   const [phaseFilter, setPhaseFilter] = useState<number | 'all'>('all');
-  const phases = [...new Set(ASSESSMENT_COMPONENTS.map((c) => c.phase))].sort((a, b) => a - b);
+  const phases = [...new Set(ASSESSMENT_COMPONENTS.map((c) => c.phase))].sort((x, y) => x - y);
+
+  const movement = compareComponents(a.period, b.period);
+  const summary = summariseMovement(movement);
+  const visibleRows = movement.filter((row) => phaseFilter === 'all' || row.phase === phaseFilter);
+  const maxAbsDelta = Math.max(1, ...movement.map((row) => Math.abs(row.delta)));
 
   const allInsights: Insight[] = [];
-  const scoreGapComps = ASSESSMENT_COMPONENTS.map((comp) => {
-    const ca = a.components.find((c) => c.id === comp.id);
-    const cb = b.components.find((c) => c.id === comp.id);
-    return { comp, ca, cb, delta: Number(((cb?.avgScore || 0) - (ca?.avgScore || 0)).toFixed(2)) };
-  }).filter((row) => phaseFilter === 'all' || row.comp.phase === phaseFilter);
-
   const engDelta = b.engagement.engagementIndex - a.engagement.engagementIndex;
   if (Math.abs(engDelta) > 20) {
     const [higher, lower] =
@@ -1001,33 +1146,62 @@ function CompareView({
       detail: `${higher} shows notably stronger tool engagement than ${lower}. The more engaged assessment is likely to produce more credible and actionable outcomes.`,
     });
   }
-
-  const overallDelta = b.overallPct - a.overallPct;
+  if (
+    actionsAvailable[0] &&
+    actionsAvailable[1] &&
+    b.period.overdueCompletion > a.period.overdueCompletion
+  ) {
+    allInsights.push({
+      kind: 'warning',
+      title: 'More overdue actions',
+      detail: `${fileNames[1]} has ${b.period.overdueCompletion} overdue action${b.period.overdueCompletion === 1 ? '' : 's'} versus ${a.period.overdueCompletion} in ${fileNames[0]}. Review end dates or unblock delivery.`,
+    });
+  }
+  if (summary.decrease > 0) {
+    allInsights.push({
+      kind: 'warning',
+      title: `${summary.decrease} component${summary.decrease === 1 ? '' : 's'} moved backwards`,
+      detail: `These components scored lower in ${fileNames[1]} than in ${fileNames[0]}. Check whether this is a genuine regression or a re-scoring.`,
+    });
+  }
 
   return (
     <div className="space-y-8">
-      {/* Summary cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      {/* Increase / decrease summary */}
+      <div className="grid grid-cols-3 gap-3" data-testid="compare-movement-summary">
+        {(['increase', 'decrease', 'unchanged'] as const).map((kind) => (
+          <div key={kind} className={`rounded-lg p-4 text-center ${MOVEMENT_STYLE[kind]}`}>
+            <p className="text-3xl font-bold">{summary[kind]}</p>
+            <p className="text-xs font-semibold">
+              {kind === 'increase' ? 'Increased' : kind === 'decrease' ? 'Decreased' : 'No change'}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      {/* Period summary cards with RAG distribution */}
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
         {results.map((result, i) => (
-          <div key={i} className="bg-white rounded-lg border border-slate-200 shadow-sm p-5">
-            <p className="text-xs text-slate-400 font-medium mb-1 truncate">{fileNames[i]}</p>
+          <div key={i} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="mb-1 flex flex-wrap items-center gap-2">
+              <p className="truncate text-xs font-medium text-slate-400">{fileNames[i]}</p>
+              {roles[i].map((role) => (
+                <span
+                  key={role}
+                  className="rounded bg-[#005eb8]/10 px-1.5 py-0.5 text-[0.7rem] font-bold text-[#005eb8]"
+                >
+                  {role}
+                </span>
+              ))}
+            </div>
             <h3 className="text-lg font-bold text-slate-800">
               {result.orgProfile.trustName || 'Unknown'}
             </h3>
             {result.orgProfile.projectName && (
               <p className="text-sm text-slate-500">{result.orgProfile.projectName}</p>
             )}
-            <div className="mt-4 grid grid-cols-3 gap-3 text-center">
-              {[
-                { label: 'Score', value: `${result.overallPct}%` },
-                { label: 'On target', value: `${result.onTargetCount}/${result.totalComponents}` },
-                { label: 'Engagement', value: result.engagement.engagementIndex },
-              ].map(({ label, value }) => (
-                <div key={label} className="bg-slate-50 rounded-md p-3">
-                  <p className="text-xl font-bold text-slate-800">{value}</p>
-                  <p className="text-xs text-slate-500">{label}</p>
-                </div>
-              ))}
+            <div className="mt-4">
+              <RagDistributionBar label="Components by RAG" stats={result.period} />
             </div>
             <div className="mt-4 space-y-2">
               <MetricBar label="Scoring coverage" value={result.engagement.scoringCoverage} />
@@ -1046,29 +1220,10 @@ function CompareView({
         ))}
       </div>
 
-      {/* Delta summary */}
-      <div
-        className={`rounded-lg border p-4 flex items-center gap-4 ${overallDelta >= 0 ? 'border-green-200 bg-green-50' : 'border-amber-200 bg-amber-50'}`}
-      >
-        <span className="text-2xl font-bold">
-          {overallDelta >= 0 ? '+' : ''}
-          {overallDelta}%
-        </span>
-        <p className="text-sm text-slate-700">
-          overall score difference. {fileNames[1]} is {Math.abs(overallDelta)}%{' '}
-          {overallDelta >= 0 ? 'higher' : 'lower'} than {fileNames[0]}. Engagement index delta:{' '}
-          <strong>
-            {engDelta >= 0 ? '+' : ''}
-            {engDelta}
-          </strong>
-          .
-        </p>
-      </div>
-
       {/* Combined insights */}
       {allInsights.length > 0 && (
         <div>
-          <h3 className="text-lg font-semibold text-slate-800 mb-3">Comparison Insights</h3>
+          <h3 className="mb-3 text-lg font-semibold text-slate-800">Comparison Insights</h3>
           <div className="space-y-3">
             {allInsights.map((ins, i) => (
               <InsightCard key={i} insight={ins} />
@@ -1077,13 +1232,67 @@ function CompareView({
         </div>
       )}
 
-      {/* Component delta table */}
-      <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-6">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-5">
+      {/* Actions, dates and overdue */}
+      <div>
+        <h3 className="mb-3 text-lg font-semibold text-slate-800">Actions, dates and overdue</h3>
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+          <ActionDatesCard
+            label={fileNames[0]}
+            stats={a.period}
+            roles={roles[0]}
+            available={actionsAvailable[0]}
+          />
+          <ActionDatesCard
+            label={fileNames[1]}
+            stats={b.period}
+            roles={roles[1]}
+            available={actionsAvailable[1]}
+          />
+        </div>
+        {actionsAvailable[1] && b.period.overdueActions.length > 0 && (
+          <div className="mt-5 overflow-x-auto rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+            <h4 className="mb-3 text-sm font-semibold text-slate-800">
+              Overdue actions in {fileNames[1]}
+              {b.period.overdueActions.length > 10 ? ' (oldest 10)' : ''}
+            </h4>
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-slate-200 text-left text-xs uppercase tracking-wide text-slate-500">
+                  <th className="pb-2 font-semibold">Action</th>
+                  <th className="pb-2 font-semibold">Component / lens</th>
+                  <th className="pb-2 font-semibold">Owner</th>
+                  <th className="pb-2 font-semibold">End date</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {b.period.overdueActions.slice(0, 10).map((action, index) => (
+                  <tr key={`${action.text}-${index}`}>
+                    <td className="py-2 pr-3 text-slate-700">{action.text}</td>
+                    <td className="py-2 pr-3 text-xs text-slate-500">
+                      {action.componentLabel} / {action.lens}
+                    </td>
+                    <td className="py-2 pr-3 text-xs text-slate-500">
+                      {action.owner || 'Unassigned'}
+                    </td>
+                    <td className="py-2 text-xs font-semibold text-red-700">
+                      {formatDate(action.dueDate)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* Component RAG comparison */}
+      <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h3 className="text-lg font-semibold text-slate-800">Component Score Comparison</h3>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Delta = {fileNames[1]} minus {fileNames[0]}
+            <h3 className="text-lg font-semibold text-slate-800">Component RAG Comparison</h3>
+            <p className="mt-0.5 text-xs text-slate-500">
+              Delta = {fileNames[1]} minus {fileNames[0]}. RAG shows the gap to each component's
+              target.
             </p>
           </div>
           <select
@@ -1091,6 +1300,7 @@ function CompareView({
             onChange={(e) =>
               setPhaseFilter(e.target.value === 'all' ? 'all' : Number(e.target.value))
             }
+            aria-label="Filter by phase"
             className="rounded-md border border-slate-300 px-3 py-2 text-sm sm:w-36"
           >
             <option value="all">All phases</option>
@@ -1104,44 +1314,48 @@ function CompareView({
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-200 text-xs text-slate-500 uppercase tracking-wide text-left">
+              <tr className="border-b border-slate-200 text-left text-xs uppercase tracking-wide text-slate-500">
                 <th className="pb-2 font-semibold">Component</th>
-                <th className="pb-2 font-semibold text-center">Ph</th>
-                <th className="pb-2 font-semibold text-center">
+                <th className="pb-2 text-center font-semibold">Ph</th>
+                <th className="pb-2 text-center font-semibold">
                   {fileNames[0].split('.')[0].slice(0, 14)}
                 </th>
-                <th className="pb-2 font-semibold text-center">
+                <th className="pb-2 text-center font-semibold">
                   {fileNames[1].split('.')[0].slice(0, 14)}
                 </th>
-                <th className="pb-2 font-semibold text-center">Delta</th>
-                <th className="pb-2 font-semibold text-center">Target</th>
+                <th className="pb-2 font-semibold">Movement</th>
+                <th className="hidden w-40 pb-2 font-semibold md:table-cell">Change</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {scoreGapComps.map(({ comp, ca, cb, delta }) => (
-                <tr key={comp.id} className="hover:bg-slate-50">
-                  <td className="py-2.5 pr-3 font-medium text-slate-700">{comp.label}</td>
-                  <td className="py-2.5 text-center text-slate-400 text-xs">{comp.phase}</td>
+              {visibleRows.map((row) => (
+                <tr key={row.id} className="hover:bg-slate-50">
+                  <td className="py-2.5 pr-3 font-medium text-slate-700">{row.label}</td>
+                  <td className="py-2.5 text-center text-xs text-slate-400">{row.phase}</td>
                   <td className="py-2.5 text-center">
-                    <ScoreBadge score={ca?.avgScore || 0} target={comp.target} />
+                    <RagBadge rag={row.fromRag} />
                   </td>
                   <td className="py-2.5 text-center">
-                    <ScoreBadge score={cb?.avgScore || 0} target={comp.target} />
+                    <RagBadge rag={row.toRag} />
                   </td>
-                  <td className="py-2.5 text-center">
+                  <td className="py-2.5">
                     <span
-                      className={`text-xs font-bold px-2 py-0.5 rounded ${
-                        delta === 0
-                          ? 'bg-slate-100 text-slate-400'
-                          : delta > 0
-                            ? 'bg-green-100 text-green-700'
-                            : 'bg-red-100 text-red-600'
-                      }`}
+                      className={`rounded px-2 py-0.5 text-xs font-bold ${MOVEMENT_STYLE[row.movement]}`}
                     >
-                      {delta === 0 ? '–' : `${delta > 0 ? '+' : ''}${delta.toFixed(1)}`}
+                      {MOVEMENT_LABEL[row.movement]}
                     </span>
                   </td>
-                  <td className="py-2.5 text-center text-xs text-slate-400">{comp.target}</td>
+                  <td className="hidden py-2.5 md:table-cell">
+                    <div className="relative h-3 w-40 rounded bg-slate-100" aria-hidden="true">
+                      <div className="absolute inset-y-0 left-1/2 w-px bg-slate-300" />
+                      {row.delta !== 0 && (
+                        <div
+                          className={`absolute inset-y-0 rounded ${row.delta > 0 ? 'left-1/2 bg-green-500' : 'right-1/2 bg-red-500'}`}
+                          style={{ width: `${(Math.abs(row.delta) / maxAbsDelta) * 50}%` }}
+                        />
+                      )}
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -1149,19 +1363,6 @@ function CompareView({
         </div>
       </div>
     </div>
-  );
-}
-
-function ScoreBadge({ score, target }: { score: number; target: number }) {
-  if (score === 0) {
-    return <span className="text-xs text-slate-300">–</span>;
-  }
-  return (
-    <span
-      className={`text-xs font-bold px-2 py-0.5 rounded ${score >= target ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}
-    >
-      {score.toFixed(1)}
-    </span>
   );
 }
 
@@ -1177,80 +1378,146 @@ export interface CompareAppProps {
   /** Rendered inside another app's shell (e.g. the Adoption tool's sidenav) - skips this page's own outer shell/header/back-link. */
   embedded?: boolean;
   onBack?: () => void;
-  /** When the project's live data is supplied, the page compares two months of progress from it instead of asking for exported files. */
+  /** When the project's live data is supplied, the page compares points in time rebuilt from the audit log instead of asking for exported files. */
   orgProfile?: OrgProfile;
   currentDraft?: Record<string, Record<string, DraftEntry>>;
-  history?: HistorySnapshot[];
+  auditLog?: AuditEvent[];
 }
 
-/** Compares any two finalised months (or the live "Current" data) with the same side-by-side view used for exported files. */
+/**
+ * Compares any two points in time using live data and the audit log (no month finalising needed):
+ * Current, Previous (30 days ago), Baseline (first scored day) or any custom date.
+ */
 function MonthComparison({
   orgProfile,
   currentDraft,
-  history,
+  auditLog,
 }: {
   orgProfile: OrgProfile;
   currentDraft: Record<string, Record<string, DraftEntry>>;
-  history: HistorySnapshot[];
+  auditLog: AuditEvent[];
 }): JSX.Element {
-  const options = [
-    { label: 'Current (live data)', draft: currentDraft },
-    ...[...history].reverse().map((snapshot) => ({
-      label: snapshot.monthLabel,
-      draft: snapshot.data,
-    })),
-  ];
-  const [aIndex, setAIndex] = useState(options.length > 1 ? 1 : 0);
-  const [bIndex, setBIndex] = useState(0);
+  const [fromId, setFromId] = useState<PeriodOption['id']>('previous');
+  const [toId, setToId] = useState<PeriodOption['id']>('current');
+  const [fromCustom, setFromCustom] = useState('');
+  const [toCustom, setToCustom] = useState('');
 
-  if (!history.length) {
-    return (
-      <div className="rounded-lg border border-slate-200 bg-white p-6 text-sm text-slate-600">
-        Not enough data to compare progress month to month.
-      </div>
+  const now = new Date();
+  const optionsFor = (customValue: string) =>
+    buildPeriodOptions(
+      currentDraft,
+      auditLog,
+      now,
+      customValue ? new Date(`${customValue}T00:00:00`) : undefined
     );
-  }
+  const fromOptions = optionsFor(fromCustom);
+  const toOptions = optionsFor(toCustom);
+  const from = fromOptions.find((option) => option.id === fromId) || fromOptions[0];
+  const to = toOptions.find((option) => option.id === toId) || toOptions[0];
 
-  const analyse = (index: number): AnalysisResult =>
-    analyseFile({
-      orgProfile,
-      currentDraft: options[index].draft,
-      history,
-      phaseOverrides: {},
-      pathwayChecks: {},
-    });
+  const analyse = (option: PeriodOption): AnalysisResult =>
+    analyseFile(
+      {
+        orgProfile,
+        currentDraft: option.draft,
+        history: [],
+        phaseOverrides: {},
+        pathwayChecks: {},
+      },
+      option.asOf
+    );
+
+  const quickPicks: Array<{
+    label: string;
+    from: PeriodOption['id'];
+    to: PeriodOption['id'];
+  }> = [
+    { label: 'Baseline → Current', from: 'baseline', to: 'current' },
+    { label: 'Previous → Current', from: 'previous', to: 'current' },
+    { label: 'Baseline → Previous', from: 'baseline', to: 'previous' },
+  ];
+
+  const pickers = [
+    {
+      id: 'compare-month-a',
+      label: 'From',
+      value: fromId,
+      set: setFromId,
+      options: fromOptions,
+      custom: fromCustom,
+      setCustom: setFromCustom,
+    },
+    {
+      id: 'compare-month-b',
+      label: 'To',
+      value: toId,
+      set: setToId,
+      options: toOptions,
+      custom: toCustom,
+      setCustom: setToCustom,
+    },
+  ];
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center gap-4 rounded-lg border border-slate-200 bg-white p-4">
-        {(
-          [
-            { id: 'compare-month-a', label: 'From', value: aIndex, set: setAIndex },
-            { id: 'compare-month-b', label: 'To', value: bIndex, set: setBIndex },
-          ] as const
-        ).map((picker) => (
-          <div key={picker.id} className="flex items-center gap-2">
-            <label htmlFor={picker.id} className="text-sm font-semibold text-slate-700">
-              {picker.label}
-            </label>
-            <select
-              id={picker.id}
-              value={picker.value}
-              onChange={(event) => picker.set(Number(event.target.value))}
-              className="rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+      <div className="space-y-3 rounded-lg border border-slate-200 bg-white p-4">
+        <p className="text-xs text-slate-500">
+          Live data compared with earlier points in time. Earlier scores are rebuilt from the audit
+          log; action dates and overdue counts are only available for current data.
+        </p>
+        <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Quick compare">
+          <span className="text-sm font-semibold text-slate-700">Compare</span>
+          {quickPicks.map((pick) => (
+            <button
+              key={pick.label}
+              type="button"
+              onClick={() => {
+                setFromId(pick.from);
+                setToId(pick.to);
+              }}
+              className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50"
             >
-              {options.map((option, index) => (
-                <option key={`${option.label}-${index}`} value={index}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
-        ))}
+              {pick.label}
+            </button>
+          ))}
+        </div>
+        <div className="flex flex-wrap items-center gap-4">
+          {pickers.map((picker) => (
+            <div key={picker.id} className="flex flex-wrap items-center gap-2">
+              <label htmlFor={picker.id} className="text-sm font-semibold text-slate-700">
+                {picker.label}
+              </label>
+              <select
+                id={picker.id}
+                value={picker.value}
+                onChange={(event) => picker.set(event.target.value as PeriodOption['id'])}
+                className="rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+              >
+                {picker.options.map((option) => (
+                  <option key={option.id} value={option.id}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              {picker.value === 'custom' ? (
+                <input
+                  type="date"
+                  aria-label={`${picker.label} custom date`}
+                  value={picker.custom}
+                  max={now.toISOString().slice(0, 10)}
+                  onChange={(event) => picker.setCustom(event.target.value)}
+                  className="rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+                />
+              ) : null}
+            </div>
+          ))}
+        </div>
       </div>
       <CompareView
-        results={[analyse(aIndex), analyse(bIndex)]}
-        fileNames={[options[aIndex].label, options[bIndex].label]}
+        results={[analyse(from), analyse(to)]}
+        fileNames={[from.label, to.label]}
+        roles={[from.roles, to.roles]}
+        actionsAvailable={[from.actionsAvailable, to.actionsAvailable]}
       />
     </div>
   );
@@ -1261,9 +1528,9 @@ export default function CompareApp({
   onBack,
   orgProfile,
   currentDraft,
-  history,
+  auditLog,
 }: CompareAppProps = {}): JSX.Element {
-  const monthMode = Boolean(orgProfile && currentDraft && history);
+  const monthMode = Boolean(orgProfile && currentDraft && auditLog);
   const [files, setFiles] = useState<LoadedFile[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [singleFileView, setSingleFileView] = useState<'engagement' | 'timeline'>('engagement');
@@ -1341,8 +1608,8 @@ export default function CompareApp({
         </div>
       )}
 
-      {monthMode && orgProfile && currentDraft && history ? (
-        <MonthComparison orgProfile={orgProfile} currentDraft={currentDraft} history={history} />
+      {monthMode && orgProfile && currentDraft && auditLog ? (
+        <MonthComparison orgProfile={orgProfile} currentDraft={currentDraft} auditLog={auditLog} />
       ) : null}
 
       {!monthMode && files.length === 0 && <DropZone onFiles={handleFiles} />}

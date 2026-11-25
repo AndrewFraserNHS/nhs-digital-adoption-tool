@@ -336,6 +336,96 @@ describe('AssessmentPanel', () => {
     expect(screen.queryByText('Write admin note')).toBeNull();
   });
 
+  it('SHOULD assign every action at the current level to the only team member WHERE bulk assign is clicked', () => {
+    // arrange
+    const entry = createEntry({
+      actions: [
+        {
+          id: 'action-1',
+          text: 'Run workshop',
+          owner: '',
+          timescale: 'Q3',
+          status: 'Planned',
+          readinessScore: 2,
+        },
+        {
+          id: 'action-2',
+          text: 'Write admin note',
+          owner: '',
+          timescale: 'Q3',
+          status: 'Planned',
+          readinessScore: 2,
+        },
+        {
+          id: 'action-3',
+          text: 'Level three task',
+          owner: '',
+          timescale: 'Q3',
+          status: 'Planned',
+          readinessScore: 3,
+        },
+      ],
+    });
+    const props = createProps({
+      entry,
+      teamMembers: [{ id: '1', name: 'Andy Fraser', role: 'Change Lead' }],
+    });
+    render(<AssessmentPanel {...props} />);
+
+    // act
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Assign all Level 2 Strategic Direction actions' })
+    );
+
+    // assert
+    const calls = props.onEntryUpdate.mock.calls;
+    const updated = calls[calls.length - 1][2] as DraftEntry;
+    expect(updated.actions.find((action) => action.id === 'action-1')?.owner).toBe('Andy Fraser');
+    expect(updated.actions.find((action) => action.id === 'action-2')?.owner).toBe('Andy Fraser');
+    expect(updated.actions.find((action) => action.id === 'action-3')?.owner).toBe('');
+  });
+
+  it('SHOULD ask before reassigning WHERE some level actions already have a different owner', () => {
+    // arrange
+    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
+    const entry = createEntry({
+      actions: [
+        {
+          id: 'action-1',
+          text: 'Run workshop',
+          owner: 'Sam Patel',
+          timescale: 'Q3',
+          status: 'Planned',
+          readinessScore: 2,
+        },
+      ],
+    });
+    const props = createProps({
+      entry,
+      teamMembers: [
+        { id: '1', name: 'Andy Fraser', role: 'Change Lead' },
+        { id: '2', name: 'Sam Patel', role: 'SRO' },
+      ],
+    });
+    render(<AssessmentPanel {...props} />);
+    fireEvent.change(
+      screen.getByRole('combobox', {
+        name: 'Owner to assign to all Level 2 Strategic Direction actions',
+      }),
+      { target: { value: 'Andy Fraser' } }
+    );
+
+    // act
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Assign all Level 2 Strategic Direction actions' })
+    );
+
+    // assert
+    expect(confirmSpy).toHaveBeenCalled();
+    expect(props.onEntryUpdate).not.toHaveBeenCalled();
+    confirmSpy.mockRestore();
+  });
+
   it('SHOULD populate the action editor owner select from the CST team roster', () => {
     // arrange
     const props = createProps({

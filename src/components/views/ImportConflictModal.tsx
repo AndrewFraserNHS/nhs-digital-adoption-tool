@@ -1,11 +1,18 @@
 import { JSX, useState, type ReactNode } from 'react';
 import type { ConflictChoice, ConflictItem, ConflictReport } from '@lib/cstConflict';
+import { formatStamp, newerSide } from '@lib/importTimestamps';
 import { nhsButtonPrimary, nhsButtonSecondary, nhsFocusRing } from '../../styles/nhsTheme';
 
 export interface ImportConflictModalProps {
   report: ConflictReport;
   myLabel: string;
   theirLabel: string;
+  /** ISO timestamp of the loaded data's last activity (shown so users can tell which side is newer). */
+  myUpdatedAt?: string;
+  /** ISO timestamp of the imported file's last activity. */
+  theirUpdatedAt?: string;
+  /** ISO timestamp the imported file was exported. */
+  theirExportedAt?: string;
   onResolve: (resolutions: Record<string, ConflictChoice>) => void;
   onCancel: () => void;
   darkMode?: boolean;
@@ -108,6 +115,9 @@ export function ImportConflictModal({
   report,
   myLabel,
   theirLabel,
+  myUpdatedAt,
+  theirUpdatedAt,
+  theirExportedAt,
   onResolve,
   onCancel,
   darkMode = false,
@@ -116,6 +126,8 @@ export function ImportConflictModal({
     buildDefaultResolutions(report)
   );
 
+  const newer = newerSide(myUpdatedAt, theirUpdatedAt);
+  const hasStamps = Boolean(myUpdatedAt || theirUpdatedAt || theirExportedAt);
   const totalConflicts = report.sections.reduce((sum, section) => sum + section.items.length, 0);
 
   const setAll = (choice: ConflictChoice) => {
@@ -156,6 +168,36 @@ export function ImportConflictModal({
             Comparing <span className="font-semibold">{myLabel}</span> (currently loaded) against{' '}
             <span className="font-semibold">{theirLabel}</span> (the imported file).
           </p>
+          {hasStamps ? (
+            <dl
+              data-testid="import-conflict-timestamps"
+              className={`mt-2 grid gap-1 text-xs sm:grid-cols-2 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+            >
+              <div>
+                <dt className="inline font-semibold">{myLabel} last updated: </dt>
+                <dd className="inline">
+                  {formatStamp(myUpdatedAt)}
+                  {newer === 'mine' ? (
+                    <span className="ml-1 rounded bg-[#005eb8]/10 px-1.5 py-0.5 font-bold text-[#005eb8]">
+                      Most recent
+                    </span>
+                  ) : null}
+                </dd>
+              </div>
+              <div>
+                <dt className="inline font-semibold">{theirLabel} last updated: </dt>
+                <dd className="inline">
+                  {formatStamp(theirUpdatedAt)}
+                  {newer === 'theirs' ? (
+                    <span className="ml-1 rounded bg-[#005eb8]/10 px-1.5 py-0.5 font-bold text-[#005eb8]">
+                      Most recent
+                    </span>
+                  ) : null}
+                  {theirExportedAt ? ` (exported ${formatStamp(theirExportedAt)})` : ''}
+                </dd>
+              </div>
+            </dl>
+          ) : null}
           <p className={`mt-1 text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
             {totalConflicts} item{totalConflicts === 1 ? '' : 's'} need a decision
             {report.autoMergeSummary.length

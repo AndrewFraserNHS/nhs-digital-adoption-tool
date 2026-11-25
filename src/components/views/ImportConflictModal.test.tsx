@@ -147,3 +147,43 @@ describe('ImportConflictModal', () => {
     expect(onCancel).toHaveBeenCalled();
   });
 });
+
+describe('ImportConflictModal timestamps', () => {
+  it('SHOULD flag the more recent side WHERE both last-updated times are supplied', () => {
+    // arrange
+    render(
+      <ImportConflictModal
+        report={buildReport()}
+        myLabel="Mine"
+        theirLabel="theirs.json"
+        myUpdatedAt="2026-03-01T10:00:00Z"
+        theirUpdatedAt="2026-04-01T10:00:00Z"
+        onResolve={vi.fn()}
+        onCancel={vi.fn()}
+      />
+    );
+
+    // act
+    const stamps = screen.getByTestId('import-conflict-timestamps');
+
+    // assert
+    expect(within(stamps).getAllByText('Most recent')).toHaveLength(1);
+    expect(within(stamps).getByText(/theirs.json last updated/)).toBeInTheDocument();
+  });
+
+  it('SHOULD omit the timestamp block WHERE no times are supplied', () => {
+    // arrange / act
+    render(
+      <ImportConflictModal
+        report={buildReport()}
+        myLabel="Mine"
+        theirLabel="theirs.json"
+        onResolve={vi.fn()}
+        onCancel={vi.fn()}
+      />
+    );
+
+    // assert
+    expect(screen.queryByTestId('import-conflict-timestamps')).not.toBeInTheDocument();
+  });
+});

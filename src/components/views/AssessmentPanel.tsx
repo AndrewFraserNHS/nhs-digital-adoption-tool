@@ -1134,6 +1134,7 @@ export function AssessmentPanel({
   const [editingOwnerRowKey, setEditingOwnerRowKey] = useState<string | null>(null);
   const [lensActionTypeFilters, setLensActionTypeFilters] = useState<Record<string, string>>({});
   const [lensActionOwnerFilters, setLensActionOwnerFilters] = useState<Record<string, string>>({});
+  const [bulkAssignOwners, setBulkAssignOwners] = useState<Record<string, string>>({});
   const objectives = store.objectives?.[component.id] || [];
   const teamMembers = store.orgProfile.teamMembers || [];
   const signedInMemberName = teamMembers.find((member) => member.id === currentUserId)?.name || '';
@@ -1576,6 +1577,46 @@ export function AssessmentPanel({
       ...entry,
       actions: nextActions,
     });
+  };
+
+  /** Sets the owner on every given action (grouped per source lens so each entry is updated once). */
+  const bulkAssignActionOwner = (targets: ResolvedLensAction[], owner: string) => {
+    const idsByEntry = new Map<string, { componentId: string; lens: string; ids: Set<string> }>();
+    targets.forEach((target) => {
+      const key = `${target.sourceComponentId}:${target.sourceLens}`;
+      const group = idsByEntry.get(key) || {
+        componentId: target.sourceComponentId,
+        lens: target.sourceLens,
+        ids: new Set<string>(),
+      };
+      group.ids.add(target.action.id);
+      idsByEntry.set(key, group);
+    });
+    idsByEntry.forEach(({ componentId, lens, ids }) => {
+      const entry = getEntry(componentId, lens);
+      onEntryUpdate(componentId, lens, {
+        ...entry,
+        actions: entry.actions.map((action) => (ids.has(action.id) ? { ...action, owner } : action)),
+      });
+    });
+  };
+
+  const requestBulkAssign = (targets: ResolvedLensAction[], owner: string, levelLabel: string) => {
+    if (!owner || !targets.length) {
+      return;
+    }
+    const overwriting = targets.filter(
+      (target) => target.action.owner && target.action.owner !== owner
+    ).length;
+    if (
+      overwriting > 0 &&
+      !window.confirm(
+        `${overwriting} ${levelLabel} action${overwriting === 1 ? ' is' : 's are'} already assigned to someone else. Reassign all ${targets.length} to ${owner}?`
+      )
+    ) {
+      return;
+    }
+    bulkAssignActionOwner(targets, owner);
   };
 
   const requestLinkedActionStatusChange = (lens: string, action: DraftAction, status: string) => {
@@ -2155,6 +2196,15 @@ export function AssessmentPanel({
                   .filter((owner): owner is string => Boolean(owner)),
               ])
             ).sort((left, right) => left.localeCompare(right));
+            const levelActions = actionsForLens.filter(
+              (resolvedAction) =>
+                (resolvedAction.action.readinessScore !== undefined
+                  ? resolvedAction.action.readinessScore
+                  : effectiveCurrentScore) === effectiveCurrentScore
+            );
+            const bulkOwner =
+              bulkAssignOwners[targetKey] ?? (teamMembers.length === 1 ? teamMembers[0].name : '');
+            const levelLabel = `Level ${effectiveCurrentScore}`;
             const lensActions = [...actionsForLens]
               .filter((resolvedAction) => {
                 const actionReadinessScore =
@@ -2321,6 +2371,37 @@ export function AssessmentPanel({
                           </option>
                         ))}
                       </select>
+                      {teamMembers.length > 0 && levelActions.length > 0 ? (
+                        <div className="flex items-center gap-1">
+                          <select
+                            aria-label={`Owner to assign to all ${levelLabel} ${lens} actions`}
+                            value={bulkOwner}
+                            onChange={(event) =>
+                              setBulkAssignOwners((current) => ({
+                                ...current,
+                                [targetKey]: event.target.value,
+                              }))
+                            }
+                            className={`rounded-md border px-2.5 py-1.5 text-xs font-semibold ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-700'}`}
+                          >
+                            <option value="">Assign all to…</option>
+                            {teamMembers.map((member) => (
+                              <option key={member.id} value={member.name}>
+                                {member.name}
+                              </option>
+                            ))}
+                          </select>
+                          <button
+                            type="button"
+                            disabled={!bulkOwner}
+                            onClick={() => requestBulkAssign(levelActions, bulkOwner, levelLabel)}
+                            aria-label={`Assign all ${levelLabel} ${lens} actions`}
+                            className={`rounded-md border px-2.5 py-1.5 text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-50 ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100 hover:bg-slate-800' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'}`}
+                          >
+                            Assign all ({levelActions.length})
+                          </button>
+                        </div>
+                      ) : null}
                       <button
                         onClick={() => openCreateActionModal(lens)}
                         className="px-3 py-1.5 rounded bg-[#005eb8] text-white text-xs font-semibold shadow-[0_2px_0_#003087] hover:bg-[#00417a] transition-colors focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2"

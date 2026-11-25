@@ -1,42 +1,25 @@
-Comparison
-Needs click in to show why something has it's "movement" and what it shows e.g. action progress
+Scoring and rationale scoring needs to have a clearer explanation as to what it shows
+Component by rag needs to show on hover more detail
 
-Change chart can be swapped to a brief summary/dropdown of progress
+We should be able to see how many actions were completed in previous months e.g. Action dates and overdue counts are only available for current (live) data, isn’t quite right.
 
-“Manual Target (Pre-discovery)” becomes “Manual Target (End of Pre-discovery)”
+Earliest start –
+Latest end
+Can both be removed
 
-Assign all -> Assign to all actions (3)
+ need to support 1) 3 months side by side in comparison view. As well as two different trusts being supportd.
 
-Add action button needs same line in lens actions
-Current state on lens actions should be sortable/filterable by completed to planned
-Make two row with filterable on top and add action on bottom
-
-Move AVT last updated:
-25 Nov 2026, 09:20
-To top row on table in comparison 
+Component RAG Comparison doesn’t make sense when comparing two different trusts, needs to offer user choice to show when same trust or two different and replace component with a better comparison if it’s different trusts.
 
 
-“Based on your answers, here's what could be updated. Untick anything you don't want applied.”
+List of things we want on comparison page
 
-Give more detail and make the checkbox list collapsed by default.
 
-CAB should make component hoverable/clickable and provide text for what it is and why it matters and what good looks like.
+1. Date the data was downloaded
+2. Date the data was last updated
+3. Date the data started progressing (Post CAB) e.g. if two trusts are being compared and one had a month head start, that would need to be called out and offer comparison at point in time, or at the same time from start e.g. 2 months in this is how the teams compared etc
 
-Component	What it is and why it matters	Good looks like
-Vision	Sets a clear direction for the change and helps people understand what you are trying to achieve.	A clear, shared vision that is owned by leaders and understood by those affected.
-Case for Change	Explains why the change is needed, why it matters and the outcomes it should achieve.	A compelling case that creates shared understanding of the need, urgency and expected outcomes.
-Senior Sponsorship & Governance	Provides the leadership, accountability and oversight needed to drive the change.	Visible, active sponsors with clear accountability, effective governance and timely decision-making.
-Change Network	Connects the change with the people and services affected and provides local insight and support.	An active, representative network that engages people, gathers feedback and supports local adoption.
-Benefits	Defines the improvements expected from the change and how they will be measured and sustained.	Clear benefits with measures, baselines and owners, routinely tracked through delivery.
-Change Impact	Identifies how the change will affect people, roles, processes, workload and services.	Impacts are understood early, with actions in place to manage risks and opportunities.
-Risk Management	Identifies and manages risks that could affect adoption, benefits or long-term sustainment.	Change and adoption risks are actively identified, owned, monitored and addressed.
-CM Readiness & Planning	Establishes the current change position and the approach needed to support successful adoption.	Baseline findings inform a clear, proportionate change plan aligned with delivery.
-Stakeholder Engagement & Comms	Ensures people affected by the change are informed, involved and able to provide feedback.	Inclusive, timely and two-way engagement tailored to different stakeholder needs.
-Resistance Management	Identifies and addresses concerns and barriers that could make adoption more difficult.	Concerns and barriers are actively understood, monitored and addressed through targeted action.
-Skills/Learning	Builds the knowledge, skills and behaviours people need to work effectively in the new way.	Learning is tailored to need and leaves people prepared, capable and supported.
-Capability & Confidence	Assesses whether people feel able and supported to put the change into practice.	People have the confidence, capability and support to apply new ways of working consistently.
-Change Adoption	Assesses whether new ways of working and behaviours are actually being used in practice.	Adoption is measured, gaps are addressed and new ways of working are used consistently.
-Process Change	Focuses on whether changed processes are understood, applied and embedded in everyday work.	The new process is consistently followed and supported by the required skills and behaviours.
-Reinforcement	Provides ongoing support, feedback and oversight to help the change stick.	New behaviours and processes are recognised, monitored, reinforced and continually improved.
-Organisational Change Readiness	Considers the organisation’s wider capability and capacity to lead, learn from and sustain change.	Leaders and teams use consistent, repeatable approaches to lead, learn from and embed change.
-Transfer to BAU	Moves ownership of the change from the project into routine operational management.	Clear operational ownership is established and the change is embedded into everyday governance and delivery.
+If different trusts it should be a Dashboard vs comparison, showing generally how people are getting on, not necessarily comparing side by side, think operations dashboard, and should support up to 4 being downloaded.
+
+Level 4 · Adopted → Thriving (10)
+Level 5 needs adding for thriving so people can add actions for thriving

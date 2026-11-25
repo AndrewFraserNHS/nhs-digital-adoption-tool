@@ -8,10 +8,11 @@ import type { GuidanceLink, LinkOverrides } from '@data/maturity-guidance-links'
 import type { PreparednessAssessment } from '@data/readinessReview';
 import { DEFAULT_TOOL_LINK_TEXT, IN_APP_TOOLS, type ToolLinkEntry } from '@data/toolLinks';
 
-import { isCompletedActionStatus, normalizeActionStatus } from './actionModel';
 import type { ActionType, UnifiedActionStatus } from './actionModel';
+import { isCompletedActionStatus, normalizeActionStatus } from './actionModel';
 import type { AuditEvent } from './auditLog';
 import { type StateListener, Store } from './observable';
+import { PHASE_MODEL_VERSION } from './phaseRealignment';
 
 export interface ActionTargetLink {
   componentId: string;
@@ -384,6 +385,8 @@ export interface AdoptionStore {
   benefits: BenefitItem[];
   benefitTracker: Record<string, BenefitTrackerEntry>;
   stakeholders: Stakeholder[];
+  /** Which phase model this data is on (see lib/phaseRealignment.ts). */
+  phaseModel?: number;
 }
 
 /** The CST: the single persisted document describing this program/project/initiative. */
@@ -462,6 +465,7 @@ export function initializeStore(persisted?: Partial<AdoptionStore>): AdoptionSto
     benefits: cloneBenefits(persisted?.benefits),
     benefitTracker: cloneBenefitTracker(persisted?.benefitTracker),
     stakeholders: (persisted?.stakeholders || []).map((s) => ({ ...s })),
+    phaseModel: persisted?.phaseModel ?? PHASE_MODEL_VERSION,
   };
 }
 

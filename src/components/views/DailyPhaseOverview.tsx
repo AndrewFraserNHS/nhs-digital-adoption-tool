@@ -10,7 +10,6 @@ import { toAbsoluteUrl } from '@lib/utils';
 interface PhaseOverview {
   phase: number;
   label: string;
-  programmeStage: string;
   tagline: string;
   color: string;
   darkColor: string;
@@ -24,9 +23,8 @@ interface PhaseOverview {
 const PHASES: PhaseOverview[] = [
   {
     phase: 1,
-    label: 'Pre-Discovery',
-    programmeStage: 'Concept',
-    tagline: 'Define the change',
+    label: 'Strategic Foundation',
+    tagline: 'Set the direction and the foundations',
     color: 'bg-blue-50',
     darkColor: 'bg-blue-950/45',
     textColor: 'text-blue-700',
@@ -34,19 +32,33 @@ const PHASES: PhaseOverview[] = [
     borderColor: 'border-blue-300',
     darkBorderColor: 'border-blue-700',
     deliverables: [
-      { text: 'Change Vision defined and communicated', componentIds: ['vision'] },
+      {
+        text: 'Change Vision defined and communicated',
+        componentIds: ['vision'],
+      },
       {
         text: 'Compelling case for change developed',
         componentIds: ['case_for_change'],
         showExternalGuidance: false,
       },
+      {
+        text: 'Senior sponsors in place with clear governance',
+        componentIds: ['sponsorship'],
+      },
+      {
+        text: 'Benefits identified, owned and baselined',
+        componentIds: ['benefits'],
+      },
+      {
+        text: 'Adoption risks and barriers identified',
+        componentIds: ['risk_management'],
+      },
     ],
   },
   {
     phase: 2,
-    label: 'Solution Design',
-    programmeStage: 'Definition',
-    tagline: 'Prepare the change',
+    label: 'Engagement, Insight and Impact',
+    tagline: 'Understand and engage the people affected',
     color: 'bg-violet-50',
     darkColor: 'bg-violet-950/45',
     textColor: 'text-violet-700',
@@ -54,23 +66,28 @@ const PHASES: PhaseOverview[] = [
     borderColor: 'border-violet-300',
     darkBorderColor: 'border-violet-700',
     deliverables: [
-      { text: 'Change Impact analysed', componentIds: ['change_impact'] },
       {
-        text: 'Change Management inputted to Business Case',
-        componentIds: ['case_for_change'],
-        showExternalGuidance: false,
+        text: 'Stakeholders engaged and communications planned',
+        componentIds: ['stakeholder'],
       },
       {
-        text: 'Engagement and Comms Strategy developed',
-        componentIds: ['change_network', 'stakeholder'],
+        text: 'Change Impact analysed',
+        componentIds: ['change_impact'],
+      },
+      {
+        text: 'Change Network established',
+        componentIds: ['change_network'],
+      },
+      {
+        text: 'Resistance understood and addressed',
+        componentIds: ['resistance'],
       },
     ],
   },
   {
     phase: 3,
-    label: 'Development',
-    programmeStage: 'Design & Develop',
-    tagline: 'Plan the change',
+    label: 'Design and Enable',
+    tagline: 'Design the change and prepare people for it',
     color: 'bg-amber-50',
     darkColor: 'bg-amber-950/45',
     textColor: 'text-amber-700',
@@ -78,15 +95,32 @@ const PHASES: PhaseOverview[] = [
     borderColor: 'border-amber-300',
     darkBorderColor: 'border-amber-700',
     deliverables: [
-      { text: 'Engagement and Comms Plan developed', componentIds: ['stakeholder'] },
-      { text: 'Change Management Plan developed', componentIds: ['cm_readiness'] },
+      {
+        text: 'Future State Processes designed and validated',
+        componentIds: ['process_change'],
+      },
+      {
+        text: 'Skills gaps addressed through learning',
+        componentIds: ['skills_learning'],
+      },
+      {
+        text: 'Capability and confidence built',
+        componentIds: ['capability'],
+      },
+      {
+        text: 'Change Management Plan developed',
+        componentIds: ['cm_readiness'],
+      },
+      {
+        text: 'Organisational change readiness assessed',
+        componentIds: ['org_maturity'],
+      },
     ],
   },
   {
     phase: 4,
-    label: 'Deployment / Go Live',
-    programmeStage: 'Implementation',
-    tagline: 'Manage implementation of the change',
+    label: 'Adopt and Sustain',
+    tagline: 'Embed new ways of working in practice',
     color: 'bg-orange-50',
     darkColor: 'bg-orange-950/45',
     textColor: 'text-orange-700',
@@ -94,18 +128,20 @@ const PHASES: PhaseOverview[] = [
     borderColor: 'border-orange-300',
     darkBorderColor: 'border-orange-700',
     deliverables: [
-      { text: 'Change Management Plan executed', componentIds: ['cm_readiness'] },
-      { text: 'Communications delivered and Stakeholders engaged', componentIds: ['stakeholder'] },
-      { text: 'Future State Processes validated', componentIds: ['process_change'] },
-      { text: 'Skills gaps addressed', componentIds: ['skills_learning'] },
-      { text: 'Future State Processes trialled and in use', componentIds: ['process_change'] },
+      {
+        text: 'Change adoption evaluated',
+        componentIds: ['change_adoption'],
+      },
+      {
+        text: 'Change reinforced and refinements actioned',
+        componentIds: ['reinforcement'],
+      },
     ],
   },
   {
     phase: 5,
-    label: 'Post-Deployment',
-    programmeStage: 'Transition / Close',
-    tagline: 'Reinforce and sustain the change',
+    label: 'Realise Value',
+    tagline: 'Hand over and deliver the benefits',
     color: 'bg-green-50',
     darkColor: 'bg-green-950/45',
     textColor: 'text-green-700',
@@ -113,9 +149,14 @@ const PHASES: PhaseOverview[] = [
     borderColor: 'border-green-300',
     darkBorderColor: 'border-green-700',
     deliverables: [
-      { text: 'Change adoption evaluated', componentIds: ['change_adoption'] },
-      { text: 'Business Change refinements actioned', componentIds: ['reinforcement'] },
-      { text: 'Change sustained', componentIds: ['transfer_bau'] },
+      {
+        text: 'Change sustained and transferred to BAU',
+        componentIds: ['transfer_bau'],
+      },
+      {
+        text: 'Benefits realised and evidenced',
+        componentIds: ['benefit_realisation'],
+      },
     ],
   },
 ];
@@ -173,7 +214,7 @@ export function DailyPhaseOverview({
                 <span
                   className={`mt-0.5 block text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
                 >
-                  {phase.tagline} · {phase.programmeStage}
+                  {phase.tagline}
                 </span>
               </div>
             );
@@ -202,7 +243,7 @@ export function DailyPhaseOverview({
                   <span
                     className={`mt-0.5 block text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
                   >
-                    {phase.tagline} · {phase.programmeStage}
+                    {phase.tagline}
                   </span>
                 </span>
                 <span

@@ -133,7 +133,7 @@ describe('AdoptionDashboard', () => {
 
     // assert
     expect(screen.getByText('60%')).toBeInTheDocument();
-    expect(screen.getAllByText('Pre-Discovery').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Strategic Foundation').length).toBeGreaterThan(0);
     expect(screen.getByText('0 actions completed. Keep it up!')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Hide change component radar' })).toBeInTheDocument();
   });

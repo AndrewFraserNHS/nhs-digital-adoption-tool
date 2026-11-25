@@ -22,10 +22,6 @@ export const BENEFITS_CONFIG: DerivedComponentConfig = {
       text: 'Benefits and disbenefits have been identified and defined',
     },
     { id: 'benefits:outcome:o2', text: 'Benefits are actively managed and monitored' },
-    {
-      id: 'benefits:outcome:o3',
-      text: 'Benefits are realised, evidenced and sustained',
-    },
   ],
   lensAliases: {
     'Strategic Direction and Leadership': 'Planning and Risk',

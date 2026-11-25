@@ -29,6 +29,7 @@ const DOMAIN_BY_COMPONENT_ID: Record<string, string> = {
   sponsorship: 'Senior Sponsorship and Governance',
   change_network: 'Change Network',
   benefits: 'Benefits and WIIFM',
+  benefit_realisation: 'Benefits and WIIFM',
   stakeholder: 'Stakeholder Engagement and Communication',
   process_change: 'Process Change and Ways of Working',
   change_impact: 'Change Impact and Risk',

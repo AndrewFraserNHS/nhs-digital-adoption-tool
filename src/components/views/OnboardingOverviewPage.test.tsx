@@ -22,9 +22,17 @@ describe('OnboardingOverviewPage', () => {
     expect(screen.getByRole('tab', { name: /5.*Change Manager/ })).toBeDisabled();
 
     // act - step through every step
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 4; i++) {
       fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     }
+
+    // assert - the dependencies page sits before the 6 Key Questions
+    fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+    expect(
+      screen.getByRole('heading', { name: 'How the components depend on each other' })
+    ).toBeInTheDocument();
+    expect(screen.getByTestId('component-dependency-diagram')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Next' }));
 
     // assert 2 - final step reached, Get Started enabled
     expect(screen.getByRole('heading', { name: 'The 6 Key Questions' })).toBeInTheDocument();

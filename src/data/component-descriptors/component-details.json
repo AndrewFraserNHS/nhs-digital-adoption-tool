@@ -123,7 +123,10 @@
         "title": "OPERATIONAL OWNERSHIP",
         "body": "Operational ownership embedded early and leading workflow redesign."
       },
-      { "title": "FRONTLINE FEEDBACK", "body": "Frontline feedback is heard and acted on." },
+      {
+        "title": "FRONTLINE FEEDBACK",
+        "body": "Frontline feedback is heard and acted on."
+      },
       {
         "title": "CLEAR GOVERNANCE",
         "body": "There is a clear $projectName governance forum aligned to existing clinical and operational structures, with clear decision rights, escalation routes and documented approval authority."
@@ -198,7 +201,10 @@
         "title": "LACK OF REPRESENTATION",
         "body": "Champions are not representative of affected teams."
       },
-      { "title": "STOPPED ACTIVITY", "body": "Network activity stops after launch." }
+      {
+        "title": "STOPPED ACTIVITY",
+        "body": "Network activity stops after launch."
+      }
     ]
   },
   "benefits": {
@@ -253,7 +259,6 @@
       }
     ]
   },
-
   "stakeholder": {
     "component": "Stakeholder Engagement and Communication",
     "description": "Engage early and involve staff in shaping how $projectName will work",
@@ -774,7 +779,6 @@
       }
     ]
   },
-
   "risk_management": {
     "component": "Risk Management",
     "description": "Identify and remove barriers that could prevent successful adoption",
@@ -928,6 +932,54 @@
       {
         "title": "BENEFITS ARE DELAYED OR LOST",
         "body": "Expected outcomes take longer to achieve because the conditions required for successful adoption were not established before implementation began."
+      }
+    ]
+  },
+  "benefit_realisation": {
+    "component": "Benefit Realisation",
+    "description": "Track, evidence and sustain the value $projectName delivers",
+    "whatIsIt": "Benefit Realisation tracks the benefits defined for $projectName against their baselines after go-live, evidences what has been delivered and keeps the value in place as the change becomes business as usual.",
+    "userInsight": "Where benefits were agreed up front but not tracked after go-live, teams struggled to show what $projectName had actually delivered and support for further investment faded.",
+    "whyThisMatters": "Benefits that are not measured are rarely realised.\n Evidence of delivered value maintains confidence and supports scale and funding decisions.\n Tracking shows where poor adoption is holding benefits back so action can be taken early.",
+    "quickRealityCheck": "Are benefits being tracked against their baselines? Do benefit owners review and report progress?\n Can you evidence what has been delivered, and what has not? Are risks to benefits being managed?",
+    "whatGoodLooksLike": [
+      {
+        "title": "TRACKED AGAINST BASELINES",
+        "body": "Each benefit has an owner, a measure and a baseline, and progress is reported regularly."
+      },
+      {
+        "title": "REVIEWED IN GOVERNANCE",
+        "body": "Realised, unrealised and unexpected benefits are reviewed through governance forums."
+      },
+      {
+        "title": "LINKED TO ADOPTION",
+        "body": "Shortfalls are linked to adoption data so barriers are understood and acted on."
+      },
+      {
+        "title": "EVIDENCED AND SHARED",
+        "body": "Realised benefits are evidenced and shared with stakeholders and sponsors."
+      },
+      {
+        "title": "SUSTAINED",
+        "body": "Tracking stops only when the benefit owner is confident the benefit is sustained."
+      }
+    ],
+    "risksIfYouDont": [
+      {
+        "title": "UNPROVEN VALUE",
+        "body": "The organisation cannot show what $projectName delivered, making further investment harder."
+      },
+      {
+        "title": "HIDDEN SHORTFALLS",
+        "body": "Benefits quietly fail to materialise because no one is looking at them."
+      },
+      {
+        "title": "LOST OWNERSHIP",
+        "body": "Benefit owners move on and no one is accountable for sustaining the value."
+      },
+      {
+        "title": "LOST CONFIDENCE",
+        "body": "Stakeholders stop believing in the change when results are not visible."
       }
     ]
   }

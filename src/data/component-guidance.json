@@ -16,16 +16,16 @@
     "good": "An active, representative network that engages people, gathers feedback and supports local adoption."
   },
   "benefits": {
-    "what": "Defines the improvements expected from the change and how they will be measured and sustained.",
-    "good": "Clear benefits with measures, baselines and owners, routinely tracked through delivery."
+    "what": "Defines the improvements expected from the change, who owns them and how they will be measured.",
+    "good": "Clear benefits with owners, measures and baselines, linked to the changes needed to achieve them."
   },
   "change_impact": {
     "what": "Identifies how the change will affect people, roles, processes, workload and services.",
     "good": "Impacts are understood early, with actions in place to manage risks and opportunities."
   },
   "risk_management": {
-    "what": "Identifies and manages risks that could affect adoption, benefits or long-term sustainment.",
-    "good": "Change and adoption risks are actively identified, owned, monitored and addressed."
+    "what": "Identifies and manages the risks and barriers that could affect adoption, benefits or long-term sustainment.",
+    "good": "Adoption risks and barriers are actively identified, owned, monitored and addressed from the start."
   },
   "cm_readiness": {
     "what": "Establishes the current change position and the approach needed to support successful adoption.",
@@ -66,5 +66,9 @@
   "transfer_bau": {
     "what": "Moves ownership of the change from the project into routine operational management.",
     "good": "Clear operational ownership is established and the change is embedded into everyday governance and delivery."
+  },
+  "benefit_realisation": {
+    "what": "Tracks and evidences the benefits delivered after go-live and keeps them in place.",
+    "good": "Benefits are tracked against baselines, reviewed in governance, evidenced and sustained."
   }
 }

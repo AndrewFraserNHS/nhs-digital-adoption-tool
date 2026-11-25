@@ -669,7 +669,7 @@ describe('AssessmentPanel', () => {
       actions: [
         {
           id: 'action-1',
-          text: 'See Phase 1: Pre-Discovery for what to prepare beforehand.',
+          text: 'See Phase 1: Strategic Foundation for what to prepare beforehand.',
           owner: 'PMO',
           timescale: 'Q3',
           status: 'Planned',
@@ -684,7 +684,7 @@ describe('AssessmentPanel', () => {
     render(<AssessmentPanel {...props} />);
 
     // assert
-    const link = screen.getByRole('link', { name: 'Phase 1: Pre-Discovery' });
+    const link = screen.getByRole('link', { name: 'Phase 1: Strategic Foundation' });
     expect(link).toHaveAttribute('href', PHASE_LINKS[1]);
   });
 

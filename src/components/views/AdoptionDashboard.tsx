@@ -1,3 +1,4 @@
+import { RadarPhaseKey } from './RadarPhaseKey';
 import { AdoptionStore, DraftAction, DraftEntry, View } from '@lib/adoptionState';
 import { Metrics } from '@lib/adoptionMetrics';
 import { getComponentExemplarScore } from '@lib/adoptionMetrics';
@@ -794,6 +795,7 @@ export function AdoptionDashboard({
                       </div>
                     ))}
                   </div>
+                  <RadarPhaseKey darkMode={darkMode} />
                   <p
                     className={`mt-4 text-center text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
                   >

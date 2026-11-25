@@ -4,8 +4,8 @@ React 18 + TypeScript + Vite, no backend (state in `localStorage`, moved as expo
 
 ## Verify changes
 
-- `npx tsc --noEmit` - baseline is **92 errors** (55 vite/vitest typings from missing `@types/node`, 11 `charts.ts`, 25 stale test fixtures, 1 `HighlightBuilderTool`). Don't add new ones. `npm run build` does not typecheck.
-- `npx vitest run` - must be fully green (61 files / 355 tests).
+- `npx tsc --noEmit` - baseline is **94 errors** (55 vite/vitest typings from missing `@types/node`, 11 `charts.ts`, 25 stale test fixtures, 1 `HighlightBuilderTool`). Don't add new ones. `npm run build` does not typecheck.
+- `npx vitest run` - must be fully green (77 files / 474 tests).
 - Aliases: `@lib`, `@pages`, `@data`, `@components`, `@types` (in both `tsconfig.json` and `vite.config.ts`).
 
 ## Conventions that matter

@@ -1,0 +1,162 @@
+{
+  "component": {
+    "id": "BENEFIT_REALISATION",
+    "name": "Benefit Realisation"
+  },
+  "outcomes": [
+    {
+      "id": "BEN_O2",
+      "name": "Benefits are actively managed and monitored"
+    },
+    {
+      "id": "BEN_O3",
+      "name": "Benefits are realised, evidenced and sustained"
+    }
+  ],
+  "actions": [
+    {
+      "id": "benefit_realisation-0",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Process & Sustainment",
+      "category": "Measurement & Evaluation",
+      "action": "S Compare benefit performance across services, roles and rollout waves.",
+      "outcomeIds": [
+        "BEN_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "benefit_realisation-1",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Process & Sustainment",
+      "category": "Measurement & Evaluation",
+      "action": "S Investigate where benefits are lower or different from expectations.",
+      "outcomeIds": [
+        "BEN_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "benefit_realisation-2",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Process & Sustainment",
+      "category": "Communication",
+      "action": "S Share effective practices that have improved benefit realisation.",
+      "outcomeIds": [
+        "BEN_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "benefit_realisation-3",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Process & Sustainment",
+      "category": "Reinforcement",
+      "action": "S Embed benefits monitoring within routine operational performance management.",
+      "outcomeIds": [
+        "BEN_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "benefit_realisation-4",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Process & Sustainment",
+      "category": "Implementation",
+      "action": "S Use benefits evidence to prioritise further improvement activity.",
+      "outcomeIds": [
+        "BEN_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "benefit_realisation-5",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Process & Sustainment",
+      "category": "Analysis & Insight",
+      "action": "S Review measures regularly to ensure sustained value is still being captured.",
+      "outcomeIds": [
+        "BEN_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "benefit_realisation-6",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "Analysis & Insight",
+      "action": "S Review benefits against targets and approved assumptions.",
+      "outcomeIds": [
+        "BEN_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "benefit_realisation-7",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "Measurement & Evaluation",
+      "action": "S Agree recovery actions where benefits are off track.",
+      "outcomeIds": [
+        "BEN_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "benefit_realisation-8",
+      "fromStatus": "Embedding",
+      "toStatus": "Adopted",
+      "lens": "Planning & Risk",
+      "category": "Implementation",
+      "action": "S Use evidence to adjust sequencing, support or future rollout scope.",
+      "outcomeIds": [
+        "BEN_O2"
+      ],
+      "readinessScore": 3
+    },
+    {
+      "id": "benefit_realisation-9",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Planning & Risk",
+      "category": "Reinforcement",
+      "action": "S Transfer benefit ownership and reporting into business as usual.",
+      "outcomeIds": [
+        "BEN_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "benefit_realisation-10",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Planning & Risk",
+      "category": "Reinforcement",
+      "action": "S Anticipate and manage risks to sustained benefits.",
+      "outcomeIds": [
+        "BEN_O3"
+      ],
+      "readinessScore": 4
+    },
+    {
+      "id": "benefit_realisation-11",
+      "fromStatus": "Adopted",
+      "toStatus": "Thriving",
+      "lens": "Planning & Risk",
+      "category": "Implementation",
+      "action": "S Use long-term benefit trends to guide optimisation and future investment.",
+      "outcomeIds": [
+        "BEN_O3"
+      ],
+      "readinessScore": 4
+    }
+  ]
+}

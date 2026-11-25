@@ -234,7 +234,7 @@ describe('ChangeAdoptionBaselineReviewApp', () => {
       />
     );
     goToQuestions();
-    fireEvent.click(screen.getByLabelText(/Phase 3: Development/));
+    fireEvent.click(screen.getByLabelText(/Phase 3: Design and Enable/));
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     PREPAREDNESS_ASSESSMENT.forEach((question, index) => {
       answerQuestion(question.nu, 1);

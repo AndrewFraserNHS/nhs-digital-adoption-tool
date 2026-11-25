@@ -44,6 +44,6 @@ describe('syncBenefitsDerivedContent', () => {
         action.text.includes('Capture initial ideas regarding expected benefits')
       )
     ).toBe(true);
-    expect(nextStore.objectives.benefits).toHaveLength(3);
+    expect(nextStore.objectives.benefits).toHaveLength(2);
   });
 });

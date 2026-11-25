@@ -112,7 +112,7 @@ describe('adoptionMetrics', () => {
           componentCount: 2,
           assessedLenses: 2,
           totalLenses: 3,
-          onTrackComponents: 1,
+          onTrackComponents: 0,
           actionCompletionPct: 50,
           cancelledActions: 0,
           skippedActions: 0,
@@ -234,7 +234,7 @@ describe('adoptionMetrics', () => {
         },
         benefits: {
           'Lens A': {
-            score: 1,
+            score: 3,
             rationale: '',
             evidence: '',
             actions: [],
@@ -264,7 +264,7 @@ describe('adoptionMetrics', () => {
         ...readyForPhaseOne.currentDraft,
         sponsorship: {
           'Lens A': {
-            score: 2,
+            score: 4,
             rationale: '',
             evidence: '',
             actions: [],
@@ -552,11 +552,11 @@ describe('adoptionMetrics', () => {
     const chartData = buildComponentRadarChartData(components, getEntry, 2, undefined, 'both', 3);
 
     // assert
-    expect(chartData.datasets[1].label).toBe('Automatic (Solution Design)');
+    expect(chartData.datasets[1].label).toBe('Automatic (Engagement, Insight and Impact)');
     expect(chartData.datasets[1].data).toEqual(
       components.map((component) => getComponentExemplarScore(component.id, 2, component.target))
     );
-    expect(chartData.datasets[2].label).toBe('Manual target (End of Development)');
+    expect(chartData.datasets[2].label).toBe('Manual target (End of Design and Enable)');
     expect(chartData.datasets[2].data).toEqual(
       components.map((component) => getComponentExemplarScore(component.id, 3, component.target))
     );

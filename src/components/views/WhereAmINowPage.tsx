@@ -11,6 +11,8 @@ import {
   type RadarTargetMode,
 } from '@lib/adoptionMetrics';
 import { createBarChart, createRadarChart } from '@lib/charts';
+import { phasePointLabels } from '@lib/radarPhaseBands';
+import { RadarPhaseKey } from './RadarPhaseKey';
 import { getReadinessBand, READINESS_BANDS } from '@lib/readinessBands';
 import { PHASE_NAMES } from '../../types/constants';
 
@@ -281,7 +283,7 @@ export function WhereAmINowPage({
             min: -1,
             max: 5,
             ticks: readinessScaleTicks,
-            pointLabels: { padding: 28 },
+            pointLabels: phasePointLabels(components),
           },
         },
         plugins: { tooltip: { callbacks: { label: radarTooltipLabel } } },
@@ -333,7 +335,7 @@ export function WhereAmINowPage({
             min: -1,
             max: 5,
             ticks: readinessScaleTicks,
-            pointLabels: { padding: 28 },
+            pointLabels: phasePointLabels(componentsWithLens),
           },
         },
         plugins: { tooltip: { callbacks: { label: radarTooltipLabel } } },
@@ -541,6 +543,7 @@ export function WhereAmINowPage({
                 <canvas ref={byComponentCanvasRef} className="block h-full w-full" />
               </div>
               <ReadinessColorLegend darkMode={darkMode} />
+              <RadarPhaseKey darkMode={darkMode} />
 
               <p className={`mt-4 text-center text-sm italic ${textClass}`}>
                 {nextUnderdevelopedComponent

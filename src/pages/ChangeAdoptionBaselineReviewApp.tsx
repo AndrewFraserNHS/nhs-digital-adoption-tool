@@ -10,6 +10,7 @@ import {
   getMissingLensCoverage,
   type MissingLens,
   pathwayFromAnswer,
+  PHASE_SELF_ASSESSMENT_QUESTION_NU,
   type PreparednessAssessment,
   READINESS_REVIEW_REPORT_STORAGE_KEY,
   type ReadinessOutcome,
@@ -20,6 +21,7 @@ import {
 import { isNotStartedActionStatus, isResolvedActionStatus } from '@lib/actionModel';
 import { computeCurrentPhase } from '@lib/adoptionMetrics';
 import type { DraftEntry } from '@lib/adoptionState';
+import { PHASE_MODEL_VERSION } from '@lib/phaseRealignment';
 import { downloadReportEml, sendReportBundle } from '@lib/readinessExport';
 import { load, remove, save } from '@lib/storage';
 import { JSX, useEffect, useState } from 'react';
@@ -33,6 +35,8 @@ interface PreparednessState {
   completed: boolean;
   /** The team chose "I'm new, skip assessment" - they start at Phase 1 with nothing changed. */
   skipped?: boolean;
+  /** Phase model the answers were given under; the phase answer is dropped when it differs. */
+  phaseModel?: number;
 }
 
 const STORAGE_KEY = 'nhs-readiness-review';
@@ -55,7 +59,21 @@ function cloneDraftEntry(entry: DraftEntry): DraftEntry {
 }
 
 function freshState(): PreparednessState {
-  return { answers: {}, currentIndex: 0, completed: false };
+  return { answers: {}, currentIndex: 0, completed: false, phaseModel: PHASE_MODEL_VERSION };
+}
+
+/**
+ * Saved answers keep their scores, but the "what phase are you in" answer was given against the
+ * old phase meanings, so it is cleared once and the team picks again.
+ */
+export function loadPreparednessState(): PreparednessState | null {
+  const saved = load<PreparednessState>(STORAGE_KEY);
+  if (!saved || saved.phaseModel === PHASE_MODEL_VERSION) {
+    return saved;
+  }
+  const answers = { ...saved.answers };
+  delete answers[PHASE_SELF_ASSESSMENT_QUESTION_NU];
+  return { ...saved, answers, phaseModel: PHASE_MODEL_VERSION };
 }
 
 export interface ReadinessReviewAppProps {
@@ -111,7 +129,7 @@ export default function ChangeAdoptionBaselineReviewApp({
 }: ReadinessReviewAppProps = {}): JSX.Element {
   const [state, setState] = useState<PreparednessState>(() => {
     if (!importedReport) {
-      return load<PreparednessState>(STORAGE_KEY) || freshState();
+      return loadPreparednessState() || freshState();
     }
 
     const answers: Record<number, number> = {};

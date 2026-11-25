@@ -86,6 +86,7 @@ export const ADOPTION_COMPONENT_TO_GUIDANCE_KEYS: Record<string, string[]> = {
   sponsorship: ['Senior Sponsorship & Governance'],
   change_network: ['Change Network'],
   benefits: ['Benefits'],
+  benefit_realisation: ['Benefits'],
   change_impact: ['Change Impact'],
   risk_management: ['Risk Management'],
   cm_readiness: ['Change Management Readiness & Planning'],

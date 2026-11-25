@@ -1,6 +1,10 @@
 import type { CstPathwayKey } from '@data/cst';
 
 import type { AdoptionStore } from './adoptionState';
+import {
+  clearBenefitRealisationDerivedContent,
+  syncBenefitRealisationDerivedContent,
+} from './benefitRealisationAutomation';
 import { clearBenefitsDerivedContent, syncBenefitsDerivedContent } from './benefitsAutomation';
 import {
   clearCapabilityDerivedContent,
@@ -65,76 +69,56 @@ import {
 } from './transferToBauAutomation';
 import { clearVisionDerivedContent, syncVisionDerivedContent } from './visionAutomation';
 
+const syncSteps: Array<(store: AdoptionStore) => AdoptionStore> = [
+  syncVisionDerivedContent,
+  syncCaseForChangeDerivedContent,
+  syncSponsorshipDerivedContent,
+  syncBenefitsDerivedContent,
+  syncChangeImpactDerivedContent,
+  syncChangeNetworkDerivedContent,
+  syncRiskManagementDerivedContent,
+  syncCmReadinessDerivedContent,
+  syncStakeholderDerivedContent,
+  syncResistanceDerivedContent,
+  syncSkillsLearningDerivedContent,
+  syncChangeAdoptionDerivedContent,
+  syncCapabilityDerivedContent,
+  syncProcessChangeDerivedContent,
+  syncReinforcementDerivedContent,
+  syncOrgChangeReadinessDerivedContent,
+  syncTransferToBauDerivedContent,
+  syncBenefitRealisationDerivedContent,
+];
+
 /** Seeds/refreshes every component's Pathway-1-style objectives and actions. */
 export function syncDerivedContent(store: AdoptionStore): AdoptionStore {
-  return syncPathwayObjectives(
-    syncTransferToBauDerivedContent(
-      syncOrgChangeReadinessDerivedContent(
-        syncReinforcementDerivedContent(
-          syncProcessChangeDerivedContent(
-            syncCapabilityDerivedContent(
-              syncChangeAdoptionDerivedContent(
-                syncSkillsLearningDerivedContent(
-                  syncResistanceDerivedContent(
-                    syncStakeholderDerivedContent(
-                      syncCmReadinessDerivedContent(
-                        syncRiskManagementDerivedContent(
-                          syncChangeNetworkDerivedContent(
-                            syncChangeImpactDerivedContent(
-                              syncBenefitsDerivedContent(
-                                syncSponsorshipDerivedContent(
-                                  syncCaseForChangeDerivedContent(syncVisionDerivedContent(store))
-                                )
-                              )
-                            )
-                          )
-                        )
-                      )
-                    )
-                  )
-                )
-              )
-            )
-          )
-        )
-      )
-    )
-  );
+  return syncPathwayObjectives(syncSteps.reduce((current, step) => step(current), store));
 }
+
+const clearSteps: Array<(store: AdoptionStore) => AdoptionStore> = [
+  clearVisionDerivedContent,
+  clearCaseForChangeDerivedContent,
+  clearSponsorshipDerivedContent,
+  clearBenefitsDerivedContent,
+  clearChangeImpactDerivedContent,
+  clearChangeNetworkDerivedContent,
+  clearRiskManagementDerivedContent,
+  clearCmReadinessDerivedContent,
+  clearStakeholderDerivedContent,
+  clearResistanceDerivedContent,
+  clearSkillsLearningDerivedContent,
+  clearChangeAdoptionDerivedContent,
+  clearCapabilityDerivedContent,
+  clearProcessChangeDerivedContent,
+  clearReinforcementDerivedContent,
+  clearOrgChangeReadinessDerivedContent,
+  clearTransferToBauDerivedContent,
+  clearBenefitRealisationDerivedContent,
+];
 
 /** Strips every component's auto-generated objectives/actions, leaving user-authored content untouched. */
 export function clearDerivedContent(store: AdoptionStore): AdoptionStore {
-  return clearTransferToBauDerivedContent(
-    clearOrgChangeReadinessDerivedContent(
-      clearReinforcementDerivedContent(
-        clearProcessChangeDerivedContent(
-          clearCapabilityDerivedContent(
-            clearChangeAdoptionDerivedContent(
-              clearSkillsLearningDerivedContent(
-                clearResistanceDerivedContent(
-                  clearStakeholderDerivedContent(
-                    clearCmReadinessDerivedContent(
-                      clearRiskManagementDerivedContent(
-                        clearChangeNetworkDerivedContent(
-                          clearChangeImpactDerivedContent(
-                            clearBenefitsDerivedContent(
-                              clearSponsorshipDerivedContent(
-                                clearCaseForChangeDerivedContent(clearVisionDerivedContent(store))
-                              )
-                            )
-                          )
-                        )
-                      )
-                    )
-                  )
-                )
-              )
-            )
-          )
-        )
-      )
-    )
-  );
+  return clearSteps.reduce((current, step) => step(current), store);
 }
 
 /**

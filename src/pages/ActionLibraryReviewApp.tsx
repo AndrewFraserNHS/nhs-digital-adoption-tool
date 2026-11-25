@@ -1,3 +1,6 @@
+import benefitRealisationRaw from '@data/component-actions/benefit-realisation-actions.json';
+import benefitRealisationRawP2 from '@data/component-actions/benefit-realisation-actions-pathway2.json';
+import benefitRealisationRawP3 from '@data/component-actions/benefit-realisation-actions-pathway3.json';
 import benefitsRaw from '@data/component-actions/benefits-actions.json';
 import benefitsRawP2 from '@data/component-actions/benefits-actions-pathway2.json';
 import benefitsRawP3 from '@data/component-actions/benefits-actions-pathway3.json';
@@ -110,6 +113,7 @@ const RAW_SOURCES_BY_PATHWAY: Record<CstPathwayKey, Record<string, unknown>> = {
     sponsorship: sponsorshipRaw,
     change_network: changeNetworkRaw,
     benefits: benefitsRaw,
+    benefit_realisation: benefitRealisationRaw,
     change_impact: changeImpactRaw,
     risk_management: riskManagementRaw,
     cm_readiness: cmReadinessRaw,
@@ -129,6 +133,7 @@ const RAW_SOURCES_BY_PATHWAY: Record<CstPathwayKey, Record<string, unknown>> = {
     sponsorship: sponsorshipRawP2,
     change_network: changeNetworkRawP2,
     benefits: benefitsRawP2,
+    benefit_realisation: benefitRealisationRawP2,
     change_impact: changeImpactRawP2,
     risk_management: riskManagementRawP2,
     cm_readiness: cmReadinessRawP2,
@@ -148,6 +153,7 @@ const RAW_SOURCES_BY_PATHWAY: Record<CstPathwayKey, Record<string, unknown>> = {
     sponsorship: sponsorshipRawP3,
     change_network: changeNetworkRawP3,
     benefits: benefitsRawP3,
+    benefit_realisation: benefitRealisationRawP3,
     change_impact: changeImpactRawP3,
     risk_management: riskManagementRawP3,
     cm_readiness: cmReadinessRawP3,

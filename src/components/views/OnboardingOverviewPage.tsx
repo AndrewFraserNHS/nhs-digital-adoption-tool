@@ -1,5 +1,6 @@
 import { JSX, useState, type ReactNode } from 'react';
 import { KEY_QUESTIONS } from '@data/key-questions';
+import { ComponentDependencyDiagram } from './ComponentDependencyDiagram';
 import { load, save } from '@lib/storage';
 
 export interface OnboardingOverviewPageProps {
@@ -182,6 +183,19 @@ function buildSteps(darkMode: boolean): Step[] {
               </div>
             ))}
           </div>
+        </div>
+      ),
+    },
+    {
+      title: 'How the components depend on each other',
+      body: (
+        <div className={`text-sm space-y-4 ${textClass}`}>
+          <p>
+            The components are grouped into five phases, from Strategic Foundation through to
+            Realising Value. Each one builds on others, so working in this order gives later
+            components something solid to stand on.
+          </p>
+          <ComponentDependencyDiagram darkMode={darkMode} />
         </div>
       ),
     },

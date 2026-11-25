@@ -22,11 +22,14 @@ import {
 } from './adoptionState';
 import type { AuditEvent } from './auditLog';
 import { trimAuditEvents } from './auditLog';
+import { migrateToRealignedPhases, PHASE_MODEL_VERSION } from './phaseRealignment';
 
 export const ADOPTION_STORAGE_KEY = 'nhs-digital-adoption-store';
 
 export interface SavedAdoptionAssessment {
   schemaVersion?: string;
+  /** Phase model of the data (absent = original phases); see lib/phaseRealignment.ts. */
+  phaseModel?: number;
   exportedAt?: string;
   orgProfile: OrgProfile;
   currentDraft: Record<string, Record<string, DraftEntry>>;
@@ -353,6 +356,7 @@ export function buildSnapshotLabel(date = new Date()): string {
 export function buildAdoptionExportPayload(store: AdoptionStore): SavedAdoptionAssessment {
   return {
     schemaVersion: '4.0',
+    phaseModel: store.phaseModel ?? PHASE_MODEL_VERSION,
     exportedAt: new Date().toISOString(),
     orgProfile: { ...store.orgProfile },
     currentDraft: cloneAndNormaliseDraft(store.currentDraft),
@@ -479,7 +483,7 @@ export function migrateSavedAdoptionAssessment(
 
   const objectivesSource = payload.objectives || migrateLegacyComponentActionsToObjectives(payload);
 
-  return {
+  return migrateToRealignedPhases({
     ...payload,
     schemaVersion: payload.schemaVersion || '2.0',
     orgProfile: migratedProfile,
@@ -487,7 +491,7 @@ export function migrateSavedAdoptionAssessment(
     auditLog: normalizeAuditLog(payload.auditLog, payload.actionAuditLog, migratedProfile),
     suppressedAutoActions: cloneSuppressedAutoActions(payload.suppressedAutoActions),
     pathwayChecks: clonePathwayChecks(payload.pathwayChecks),
-  };
+  });
 }
 
 export function mergeImportedAdoptionState(
@@ -525,6 +529,7 @@ export function mergeImportedAdoptionState(
     benefits: migrated.benefits || fallbackStore.benefits,
     benefitTracker: migrated.benefitTracker || fallbackStore.benefitTracker,
     stakeholders: migrated.stakeholders || fallbackStore.stakeholders,
+    phaseModel: migrated.phaseModel,
   });
 }
 

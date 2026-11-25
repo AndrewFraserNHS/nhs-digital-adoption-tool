@@ -83,6 +83,7 @@ import {
 import { parseMaybeEncodedJson } from '@lib/dataDecode';
 import { regenerateContentForPathway, syncDerivedContent } from '@lib/derivedContentSync';
 import { latestActivity } from '@lib/importTimestamps';
+import { phasePointLabels } from '@lib/radarPhaseBands';
 import { getReadinessBand } from '@lib/readinessBands';
 import { canEditProfile, SIGN_IN_REQUIRED_MESSAGE } from '@lib/signInGuard';
 import { load, save } from '@lib/storage';
@@ -368,7 +369,7 @@ export function AdoptionApp() {
   }, [effectivePhaseFocus]);
 
   // Reveal the phase group of a component the user navigates to. Skipped on first render and when
-  // only the view changes, so the default first component never re-opens Pre-Discovery.
+  // only the view changes, so the default first component never re-opens Strategic Foundation.
   const lastActiveComponentIdRef = React.useRef(activeComponentId);
   useEffect(() => {
     if (lastActiveComponentIdRef.current === activeComponentId) {
@@ -501,7 +502,7 @@ export function AdoptionApp() {
                     callback: (value: string | number) =>
                       Number(value) < 0 ? '' : getReadinessBand(Number(value)).label,
                   },
-                  pointLabels: { padding: 28 },
+                  pointLabels: phasePointLabels(COMPONENTS),
                 },
               },
             },

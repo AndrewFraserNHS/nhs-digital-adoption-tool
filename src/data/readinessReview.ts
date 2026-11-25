@@ -7,6 +7,7 @@ import {
   type RadarTargetMode,
 } from '@lib/adoptionMetrics';
 import type { DraftEntry } from '@lib/adoptionState';
+import { PHASE_MODEL_VERSION } from '@lib/phaseRealignment';
 import { getPhasePassScore } from '@lib/readinessBands';
 import type { ChartData } from 'chart.js';
 
@@ -59,6 +60,14 @@ export function pathwayFromAnswer(optionNumber: number | undefined): CstPathwayK
 
 export const PHASE_SELF_ASSESSMENT_QUESTION_NU = 101;
 
+const PHASE_DESCRIPTORS: Record<number, string> = {
+  1: 'Set the direction and the foundations',
+  2: 'Understand and engage the people affected',
+  3: 'Design the change and prepare people for it',
+  4: 'Embed new ways of working in practice',
+  5: 'Hand over and deliver the benefits',
+};
+
 export const PHASE_SELF_ASSESSMENT_QUESTION: PreparednessAssessment = {
   nu: PHASE_SELF_ASSESSMENT_QUESTION_NU,
   id: '',
@@ -69,16 +78,7 @@ export const PHASE_SELF_ASSESSMENT_QUESTION: PreparednessAssessment = {
     .map(Number)
     .sort((a, b) => a - b)
     .map((phase) => {
-      const phaseDescriptor =
-        phase === 1
-          ? 'Define the change'
-          : phase === 2
-            ? 'Prepare the change'
-            : phase === 3
-              ? 'Plan the change'
-              : phase === 4
-                ? 'Manage implementation of the change'
-                : 'Reinforce and sustain the change';
+      const phaseDescriptor = PHASE_DESCRIPTORS[phase];
       return `Phase ${phase}: ${PHASE_NAMES[phase]} - ${phaseDescriptor}`;
     }),
   progress: [],
@@ -301,6 +301,8 @@ export interface ReadinessReviewRadarSnapshot {
   /** Phase selected by the user in CAB Question 2. */
   manualPhase?: number | null;
   entries: Record<string, { score: number; assessed: boolean }>;
+  /** Phase model the snapshot was frozen under. Older snapshots (absent) used the original phases, so their phase targets are not drawn. */
+  phaseModel?: number;
 }
 
 /**
@@ -353,7 +355,7 @@ export function buildRadarSnapshot(
       };
     });
   });
-  return { phase, manualPhase, entries };
+  return { phase, manualPhase, entries, phaseModel: PHASE_MODEL_VERSION };
 }
 
 /** The radar data for a report, built the same way as the Adoption Baseline page's radar. */
@@ -364,7 +366,12 @@ export function buildReportRadarData(
   const manualPhaseAnswer = report.answers.find(
     (answer) => answer.kind === 'phase-self-assessment'
   );
-  const manualPhase = report.radar?.manualPhase ?? manualPhaseAnswer?.optionNumber ?? null;
+  // Reports frozen before the Nov 2026 phase realignment used different phase meanings, so their
+  // phase targets are not drawn (the flat component target is used instead).
+  const legacyPhases = !report.radar || report.radar.phaseModel !== PHASE_MODEL_VERSION;
+  const manualPhase = legacyPhases
+    ? null
+    : (report.radar?.manualPhase ?? manualPhaseAnswer?.optionNumber ?? null);
   const targetMode: RadarTargetMode = manualPhase ? 'both' : 'auto';
 
   if (!report.radar) {
@@ -397,7 +404,7 @@ export function buildReportRadarData(
         actions: [],
       };
     },
-    phase,
+    legacyPhases ? undefined : phase,
     undefined,
     targetMode,
     manualPhase ?? undefined

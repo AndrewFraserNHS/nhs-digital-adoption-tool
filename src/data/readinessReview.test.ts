@@ -24,11 +24,11 @@ import {
 const noExistingScores = () => undefined;
 
 describe('readinessReview', () => {
-  it('SHOULD define 36 questions, one per (component, lens) pair, matching components.ts', () => {
+  it('SHOULD define 38 questions, one per (component, lens) pair, matching components.ts', () => {
     // assert
-    expect(PREPAREDNESS_ASSESSMENT).toHaveLength(36);
-    expect(PREPAREDNESS_ASSESSMENT.map((q) => q.nu)).toEqual(
-      Array.from({ length: 36 }, (_, index) => index + 1)
+    expect(PREPAREDNESS_ASSESSMENT).toHaveLength(38);
+    expect(PREPAREDNESS_ASSESSMENT.map((q) => q.nu).sort((a, b) => a - b)).toEqual(
+      Array.from({ length: 38 }, (_, index) => index + 1)
     );
     PREPAREDNESS_ASSESSMENT.forEach((question) => {
       const component = ASSESSMENT_COMPONENTS.find((c) => c.id === question.id);
@@ -392,7 +392,7 @@ describe('unscored, pathway and coverage handling', () => {
     const fromSnapshot = buildReportRadarData(report, COMPONENTS);
 
     expect(fromSnapshot).toEqual(buildComponentRadarChartData(COMPONENTS, live, 2));
-    expect(fromSnapshot.datasets[1].label).toBe('Automatic (Solution Design)');
+    expect(fromSnapshot.datasets[1].label).toBe('Automatic (Engagement, Insight and Impact)');
   });
 
   it('SHOULD preserve Question 2 as the manual target while Auto follows progress', () => {
@@ -422,8 +422,8 @@ describe('unscored, pathway and coverage handling', () => {
 
     const data = buildReportRadarData(report, COMPONENTS);
 
-    expect(data.datasets[1].label).toBe('Automatic (Solution Design)');
-    expect(data.datasets[2].label).toBe('Manual target (End of Development)');
+    expect(data.datasets[1].label).toBe('Automatic (Engagement, Insight and Impact)');
+    expect(data.datasets[2].label).toBe('Manual target (End of Design and Enable)');
     expect(data.datasets[1].data).toEqual(
       buildComponentRadarChartData(COMPONENTS, live, 2).datasets[1].data
     );

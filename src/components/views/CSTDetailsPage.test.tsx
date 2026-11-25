@@ -969,7 +969,7 @@ describe('ProjectDetailsPage', () => {
     );
 
     // assert 1 - shows the bundled default, badged as such
-    const phaseOneInput = screen.getByLabelText('Phase 1: Pre-Discovery') as HTMLInputElement;
+    const phaseOneInput = screen.getByLabelText('Phase 1: Strategic Foundation') as HTMLInputElement;
     expect(phaseOneInput.value).toBe(PHASE_LINKS[1]);
     expect(within(phaseOneInput.parentElement as HTMLElement).getByText('Default')).toBeInTheDocument();
 
@@ -996,7 +996,7 @@ describe('ProjectDetailsPage', () => {
       />
     );
     fireEvent.click(
-      within(screen.getByLabelText('Phase 1: Pre-Discovery').parentElement as HTMLElement).getByRole(
+      within(screen.getByLabelText('Phase 1: Strategic Foundation').parentElement as HTMLElement).getByRole(
         'button',
         { name: 'Reset' }
       )

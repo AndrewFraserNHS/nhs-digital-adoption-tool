@@ -6,11 +6,11 @@ export const CONSTANTS = {
 };
 
 export const PHASE_NAMES: Record<number, string> = {
-  1: 'Pre-Discovery',
-  2: 'Solution Design',
-  3: 'Development',
-  4: 'Deployment / Go Live',
-  5: 'Post-Deployment',
+  1: 'Strategic Foundation',
+  2: 'Engagement, Insight and Impact',
+  3: 'Design and Enable',
+  4: 'Adopt and Sustain',
+  5: 'Realise Value',
 };
 
 export const SPECIFIC_RUBRICS = {
@@ -300,6 +300,22 @@ export const SPECIFIC_RUBRICS = {
       3: `Key processes, roles, and measures are in place and being followed. The change is being maintained in practice, with issues identified and addressed as they arise.`,
       4: `The change is embedded into day-to-day operations. Processes are consistently followed, and performance is stable, with benefits starting to be realised.`,
       5: `The change is fully sustained as “the way we do things.” Processes are regularly reviewed and improved, and performance continues to strengthen over time.`,
+    },
+  },
+  benefit_realisation: {
+    'Process and Sustainment': {
+      1: `Benefits and baselines have been defined, but arrangements for tracking and reporting delivered benefits have not been set up.`,
+      2: `Tracking arrangements are agreed and benefit owners know what they must report. Data collection is inconsistent and benefits are not yet reviewed after go-live.`,
+      3: `Benefits are tracked against baselines and reported through governance. Early realised and unrealised benefits are reviewed with benefit owners.`,
+      4: `Realised benefits are evidenced and shared with stakeholders. Barriers to benefits are understood through adoption data and acted on.`,
+      5: `Benefits are continuously monitored, evidenced and sustained. Tracking stops only when benefit owners confirm the benefit is sustained, and learning informs future investment.`,
+    },
+    'Planning and Risk': {
+      1: `Risks to realising benefits have not yet been identified or linked to the benefits register.`,
+      2: `Key risks, dependencies and assumptions affecting benefits are identified, with early mitigation considered.`,
+      3: `Risks to realisation are managed alongside delivery risks in the RAID log and reviewed in governance.`,
+      4: `Emerging risks to benefits trigger timely decisions, adjustments or re-prioritisation.`,
+      5: `Benefit risk management is continuous and adaptive, with future risks and opportunities proactively managed.`,
     },
   },
 };

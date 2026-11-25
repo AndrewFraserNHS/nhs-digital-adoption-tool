@@ -1,25 +1,71 @@
-Scoring and rationale scoring needs to have a clearer explanation as to what it shows
-Component by rag needs to show on hover more detail
+Bigger change, we are redoing the alignment of phases.
+Make a new branch off main called realignment-nov-25 and make the following.
+consider the radar, ask lots of questions, consider this change as impactful but pushback
 
-We should be able to see how many actions were completed in previous months e.g. Action dates and overdue counts are only available for current (live) data, isn’t quite right.
+Phase 1: Strategic Foundation
+Phase 2: Engagement, Insight and Impact
+Phase 3: Design and Enable
+Phase 4: Adopt and Sustain
+Phase 5: Realise Value
 
-Earliest start –
-Latest end
-Can both be removed
-
- need to support 1) 3 months side by side in comparison view. As well as two different trusts being supportd.
-
-Component RAG Comparison doesn’t make sense when comparing two different trusts, needs to offer user choice to show when same trust or two different and replace component with a better comparison if it’s different trusts.
-
-
-List of things we want on comparison page
-
-
-1. Date the data was downloaded
-2. Date the data was last updated
-3. Date the data started progressing (Post CAB) e.g. if two trusts are being compared and one had a month head start, that would need to be called out and offer comparison at point in time, or at the same time from start e.g. 2 months in this is how the teams compared etc
-
-If different trusts it should be a Dashboard vs comparison, showing generally how people are getting on, not necessarily comparing side by side, think operations dashboard, and should support up to 4 being downloaded.
-
-Level 4 · Adopted → Thriving (10)
-Level 5 needs adding for thriving so people can add actions for thriving
+Add a new page to page 6 of Introduction that highlights the dependencies
+graph LR;
+    Vision-->Case_for_Change;
+    Vision-->Benefits;
+    Case_for_Change-->Benefits;
+    Vision-->Senior_Sponsorship_and_Governance;
+    Case_for_Change-->Senior_Sponsorship_and_Governance;
+    Vision-->Stakeholder_Engagement_and_Communications;
+    Case_for_Change-->Stakeholder_Engagement_and_Communications;
+ 
+    Stakeholder_Engagement_and_Communications-->Change_Impact;
+    Stakeholder_Engagement_and_Communications-->Change_Network;
+    Senior_Sponsorship_and_Governance-->Change_Network;
+    Stakeholder_Engagement_and_Communications-->Resistance_Management;
+    Change_Impact-->Resistance_Management;
+ 
+    Change_Impact-->Process_Change;
+    Change_Impact-->Skills_and_Learning;
+    Process_Change-->Skills_and_Learning;
+    Skills_and_Learning-->Capability_and_Confidence;
+    Change_Impact-->Capability_and_Confidence;
+ 
+    Senior_Sponsorship_and_Governance-->Change_Management_Readiness_and_Planning;
+    Stakeholder_Engagement_and_Communications-->Change_Management_Readiness_and_Planning;
+    Change_Impact-->Change_Management_Readiness_and_Planning;
+ 
+    Change_Management_Readiness_and_Planning-->Organisational_Change_Readiness;
+    Change_Impact-->Organisational_Change_Readiness;
+ 
+    Stakeholder_Engagement_and_Communications-->Change_Adoption;
+    Change_Impact-->Change_Adoption;
+    Process_Change-->Change_Adoption;
+    Skills_and_Learning-->Change_Adoption;
+    Capability_and_Confidence-->Change_Adoption;
+    Change_Management_Readiness_and_Planning-->Change_Adoption;
+ 
+    Change_Adoption-->Reinforcement;
+    Change_Adoption-->Transfer_to_BAU;
+    Reinforcement-->Transfer_to_BAU;
+ 
+    Benefits-->Benefits_Realisation;
+    Change_Adoption-->Benefits_Realisation;
+    Reinforcement-->Benefits_Realisation;
+    Transfer_to_BAU-->Benefits_Realisation;
+ 
+    Vision-.->Adoption_Risks_and_Barriers;
+    Case_for_Change-.->Adoption_Risks_and_Barriers;
+    Senior_Sponsorship_and_Governance-.->Adoption_Risks_and_Barriers;
+    Stakeholder_Engagement_and_Communications-.->Adoption_Risks_and_Barriers;
+    Change_Impact-.->Adoption_Risks_and_Barriers;
+    Change_Network-.->Adoption_Risks_and_Barriers;
+    Resistance_Management-.->Adoption_Risks_and_Barriers;
+    Process_Change-.->Adoption_Risks_and_Barriers;
+    Skills_and_Learning-.->Adoption_Risks_and_Barriers;
+    Capability_and_Confidence-.->Adoption_Risks_and_Barriers;
+    Change_Management_Readiness_and_Planning-.->Adoption_Risks_and_Barriers;
+    Organisational_Change_Readiness-.->Adoption_Risks_and_Barriers;
+ 
+    Adoption_Risks_and_Barriers-.->Change_Adoption;
+    Adoption_Risks_and_Barriers-.->Reinforcement;
+    Adoption_Risks_and_Barriers-.->Transfer_to_BAU;

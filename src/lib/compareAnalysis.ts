@@ -3,6 +3,7 @@ import { ASSESSMENT_COMPONENTS } from '@data/components';
 import {
   deriveTemporalActionStatus,
   isCompletedActionStatus,
+  isThrivingActionId,
   normalizeActionStatus,
 } from './actionModel';
 import type { DraftEntry } from './adoptionState';
@@ -240,6 +241,15 @@ export interface PeriodStats {
   earliestStart?: string;
   latestEnd?: string;
   overdueActions: OverdueAction[];
+  /**
+   * Target actions are the ones a team is expected to finish: everything except Thriving
+   * (ongoing) actions and Cancelled/Skipped ones.
+   */
+  targetActions: number;
+  /** Target actions still open that have no due date, which is what makes "overdue" look better than it is. */
+  targetActionsWithoutDueDate: number;
+  /** Target actions still open whose due date has passed. */
+  targetActionsOverdue: number;
 }
 
 function earlier(current: string | undefined, next: string): string {
@@ -268,6 +278,9 @@ export function analysePeriod(draft: Draft, asOf: Date): PeriodStats {
     actionsWithStart: 0,
     actionsWithEnd: 0,
     overdueActions: [],
+    targetActions: 0,
+    targetActionsWithoutDueDate: 0,
+    targetActionsOverdue: 0,
   };
 
   ASSESSMENT_COMPONENTS.forEach((component) => {
@@ -301,6 +314,21 @@ export function analysePeriod(draft: Draft, asOf: Date): PeriodStats {
           action.dueDate,
           asOf
         );
+        const normalizedStatus = normalizeActionStatus(action.status);
+        const isTargetAction =
+          !isThrivingActionId(action.id) &&
+          normalizedStatus !== 'Cancelled' &&
+          normalizedStatus !== 'Skipped';
+        if (isTargetAction) {
+          stats.targetActions += 1;
+          if (normalizedStatus !== 'Completed') {
+            if (!action.dueDate || Number.isNaN(Date.parse(action.dueDate))) {
+              stats.targetActionsWithoutDueDate += 1;
+            } else if (temporal === 'Overdue completion') {
+              stats.targetActionsOverdue += 1;
+            }
+          }
+        }
         if (temporal === 'Overdue completion') {
           actionProgress.overdue += 1;
           stats.overdueCompletion += 1;

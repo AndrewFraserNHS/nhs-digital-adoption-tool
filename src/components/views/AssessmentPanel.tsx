@@ -10,6 +10,8 @@ import {
   type RaidItem,
 } from '@lib/adoptionState';
 import { ASSESSMENT_COMPONENTS, AssessmentComponent } from '@data/components';
+import { ActionTextExchange } from '@components/views/ActionTextExchange';
+import { TEXT_EXCHANGE_COMPONENT_IDS } from '@lib/actionTextExchange';
 import { PATHWAY_LABELS } from '@data/cst';
 import {
   CORE_LINKS,
@@ -25,6 +27,7 @@ import {
   ACTION_TYPES,
   UNIFIED_ACTION_STATUSES,
   deriveTemporalActionStatus,
+  isThrivingActionId,
   normalizeActionStatus,
 } from '@lib/actionModel';
 import { detectScoreAdvancementOpportunities } from '@lib/componentDerivedAutomation';
@@ -128,9 +131,9 @@ const SCORE_LABELS: Record<number, string> = Object.fromEntries(
 
 const OBJECTIVE_STATUS_BADGE_STYLES: Record<ObjectiveStatus, string> = {
   'Not Started': 'bg-slate-100 text-slate-700 border-slate-200',
-  'In Progress': 'bg-blue-100 text-blue-800 border-blue-200',
+  'In Progress': 'bg-green-100 text-green-800 border-green-200',
   Blocked: 'bg-amber-100 text-amber-800 border-amber-200',
-  Completed: 'bg-green-100 text-green-800 border-green-200',
+  Completed: 'bg-blue-100 text-blue-800 border-blue-200',
 };
 
 interface ComponentDetailPoint {
@@ -2173,6 +2176,16 @@ export function AssessmentPanel({
 
       {showActionsSection ? (
         <div className="space-y-8 mb-8">
+          {TEXT_EXCHANGE_COMPONENT_IDS.includes(component.id) ? (
+            <ActionTextExchange
+              componentId={component.id}
+              componentLabel={component.label}
+              lenses={component.lenses}
+              getEntry={getEntry}
+              onEntryUpdate={onEntryUpdate}
+              darkMode={darkMode}
+            />
+          ) : null}
           {component.lenses.map((lens) => {
             const entry = getEntry(component.id, lens);
             const targetKey = `${component.id}:${lens}`;
@@ -2602,7 +2615,7 @@ export function AssessmentPanel({
                                   {temporalHint ? (
                                     <div className="mt-1 text-xs text-rose-700">{temporalHint}</div>
                                   ) : null}
-                                  {!linkedOutcomes.length && (
+                                  {!linkedOutcomes.length && !isThrivingActionId(action.id) && (
                                     <div
                                       className={`mt-1 text-center text-xs ${darkMode ? 'text-amber-200' : 'text-amber-700'}`}
                                     >

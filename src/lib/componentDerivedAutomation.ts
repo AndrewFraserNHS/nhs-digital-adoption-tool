@@ -340,7 +340,8 @@ function createAction(
     actionType: template.actionType,
     owner: '',
     timescale: '',
-    status: 'Planned',
+    // Thriving is ongoing: it starts In Progress and never gets dates.
+    status: template.toScore >= 5 ? 'In Progress' : 'Planned',
     phase: 1,
     startDate: '',
     dueDate: '',

@@ -47,6 +47,15 @@ function componentTitle(component: ComponentPeriodStats): string {
   return `${component.label} - average ${component.avgScore.toFixed(1)} of target ${component.target} (${COMPARE_RAG_LABEL[component.rag]}). ${lenses}. Actions: ${actions.completed}/${actions.total} completed.`;
 }
 
+/** Share of components whose average score is under target, 0-100 (the flip of "on or above"). */
+export function percentBelowTarget(components: ComponentPeriodStats[]): number {
+  if (!components.length) {
+    return 0;
+  }
+  const below = components.filter((component) => component.avgScore < component.target).length;
+  return Math.round((below / components.length) * 100);
+}
+
 function sourceHeading(source: TrustSummary): string {
   return source.trust || source.name;
 }
@@ -161,17 +170,33 @@ export function TrustDashboard({ sources }: { sources: TrustSummary[] }): JSX.El
                 <RagBar stats={source.period} label={`${sourceHeading(source)} components`} />
               </div>
               <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
-                <Kpi label="On or above target" value={`${source.overallPct}%`} />
-                <Kpi label="Components scored" value={`${source.scoringCoverage}%`} />
+                <Kpi
+                  label="% Below Target"
+                  value={`${percentBelowTarget(source.period.components)}%`}
+                  tone={
+                    percentBelowTarget(source.period.components) > 0 ? 'text-amber-700' : undefined
+                  }
+                />
                 <Kpi
                   label="Actions completed"
                   value={totalActions ? `${completedActions}/${totalActions}` : '0'}
                 />
                 <Kpi
-                  label="Overdue actions"
-                  value={source.hasActionDates ? String(source.period.overdueCompletion) : '–'}
+                  label="Target actions without due date"
+                  value={
+                    source.hasActionDates ? String(source.period.targetActionsWithoutDueDate) : '–'
+                  }
                   tone={
-                    source.hasActionDates && source.period.overdueCompletion > 0
+                    source.hasActionDates && source.period.targetActionsWithoutDueDate > 0
+                      ? 'text-amber-700'
+                      : undefined
+                  }
+                />
+                <Kpi
+                  label="Target actions with deadline that are overdue"
+                  value={source.hasActionDates ? String(source.period.targetActionsOverdue) : '–'}
+                  tone={
+                    source.hasActionDates && source.period.targetActionsOverdue > 0
                       ? 'text-red-700'
                       : undefined
                   }

@@ -1,3 +1,4 @@
+import { ExpectedPacePanel } from '@components/views/ExpectedPacePanel';
 import {
   MultiPeriodTable,
   SourceMetaTable,
@@ -16,6 +17,7 @@ import {
   compareComponents,
   type CompareRag,
   type ComponentMovement,
+  firstScoreDate,
   getCompareRag,
   type Movement,
   type PeriodOption,
@@ -1139,6 +1141,18 @@ function ActionDatesCard({
             >
               {stats.overdueCompletion}
             </dd>
+            <dt>Target actions without due date</dt>
+            <dd
+              className={`text-right font-semibold ${stats.targetActionsWithoutDueDate ? 'text-amber-700' : ''}`}
+            >
+              {stats.targetActionsWithoutDueDate}/{stats.targetActions}
+            </dd>
+            <dt>Target actions with deadline that are overdue</dt>
+            <dd
+              className={`text-right font-semibold ${stats.targetActionsOverdue ? 'text-red-700' : ''}`}
+            >
+              {stats.targetActionsOverdue}
+            </dd>
             <dt>Overdue to start</dt>
             <dd
               className={`text-right font-semibold ${stats.overdueStart ? 'text-amber-700' : ''}`}
@@ -1152,6 +1166,12 @@ function ActionDatesCard({
           </>
         ) : null}
       </dl>
+      {available && stats.targetActionsWithoutDueDate > 0 ? (
+        <p className="mt-3 rounded-md bg-amber-50 p-2 text-xs text-amber-900">
+          {stats.targetActionsWithoutDueDate} of {stats.targetActions} target actions have no due
+          date, so they can never show as overdue. Add due dates for a true picture.
+        </p>
+      ) : null}
       {!available ? (
         <p className="mt-2 text-xs text-slate-500">
           Completed counts are rebuilt from the audit log. Dates and overdue counts are only
@@ -1759,6 +1779,7 @@ function MonthComparison({
   const [fromCustom, setFromCustom] = useState('');
   const [toCustom, setToCustom] = useState('');
   const [threeUp, setThreeUp] = useState(false);
+  const [showPace, setShowPace] = useState(false);
 
   const now = new Date();
   const optionsFor = (customValue: string) =>
@@ -1847,6 +1868,14 @@ function MonthComparison({
           >
             Baseline · Previous · Current side by side
           </button>
+          <button
+            type="button"
+            aria-pressed={showPace}
+            onClick={() => setShowPace((open) => !open)}
+            className={`rounded-md border px-3 py-1.5 text-xs font-semibold ${showPace ? 'border-[#005eb8] bg-[#005eb8] text-white' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'}`}
+          >
+            Compare to where you should be (from go live date)
+          </button>
         </div>
         <div className="flex flex-wrap items-center gap-4">
           {pickers.map((picker) => (
@@ -1880,6 +1909,14 @@ function MonthComparison({
           ))}
         </div>
       </div>
+      {showPace ? (
+        <ExpectedPacePanel
+          stats={analyse(toOptions.find((option) => option.id === 'current') || to).period}
+          startedAt={firstScoreDate(auditLog)?.toISOString()}
+          goLiveDate={orgProfile.cst?.goLiveDate}
+          asOf={now}
+        />
+      ) : null}
       {threeUp ? (
         <MultiPeriodTable
           sources={['baseline', 'previous', 'current']

@@ -581,9 +581,9 @@ export function AdoptionDashboard({
             <p className={`text-xs mb-4 ${darkMode ? 'text-slate-400' : 'text-slate-400'}`}>
               RAG status: <span className="font-semibold text-green-700">Green</span> - most
               components on target and half or more of its actions complete;{' '}
-              <span className="font-semibold text-amber-700">Amber</span> - some progress, but
-              short of Green; <span className="font-semibold text-red-700">Red</span> - limited
-              progress on components and actions alike.
+              <span className="font-semibold text-amber-700">Amber</span> - some progress, but short
+              of Green; <span className="font-semibold text-red-700">Red</span> - limited progress
+              on components and actions alike.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
               {metrics.phaseSummaries.map((phaseSummary) => {
@@ -728,8 +728,10 @@ export function AdoptionDashboard({
                     Change Component Radar
                   </h3>
                   <p className={`text-xs mt-1 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>
-                    Show or hide the change-component readiness radar, then use the overview list
-                    below to drill into delivery status.
+                    Visualises the weakest lens score for each component (a component is only as
+                    ready as its weakest lens) against the phase exemplar profile. Click a component
+                    label to jump to its assessment. Note: This is the minimum that needs to be
+                    achieved and does not prevent you from getting ahead on future components.
                   </p>
                 </div>
                 <div className="flex w-full flex-wrap items-center justify-end gap-2">
@@ -796,13 +798,6 @@ export function AdoptionDashboard({
                     ))}
                   </div>
                   <RadarPhaseKey darkMode={darkMode} />
-                  <p
-                    className={`mt-4 text-center text-xs ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}
-                  >
-                    Visualises the weakest lens score for each component (a component is only as
-                    ready as its weakest lens) against the phase exemplar profile. Click a component
-                    label to jump to its assessment.
-                  </p>
                 </div>
               ) : null}
 

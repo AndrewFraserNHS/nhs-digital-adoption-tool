@@ -94,9 +94,13 @@ const LENS_EXPORT_FORM: Record<string, string> = {
   'Skills and Behaviour': 'Skills & Behaviour',
 };
 
-const LEVEL_OPTIONS = [0, 1, 2, 3, 4].map((band) => ({
+/** Level 5 is Thriving: actions to sustain and keep improving, so there is no further band. */
+const LEVEL_OPTIONS = [0, 1, 2, 3, 4, 5].map((band) => ({
   value: band,
-  label: `Level ${band} · ${BAND_LABELS[band]} → ${BAND_LABELS[band + 1]}`,
+  label:
+    band === 5
+      ? `Level 5 · ${BAND_LABELS[5]} (sustain and improve)`
+      : `Level ${band} · ${BAND_LABELS[band]} → ${BAND_LABELS[band + 1]}`,
 }));
 
 const RAW_SOURCES_BY_PATHWAY: Record<CstPathwayKey, Record<string, unknown>> = {
@@ -444,7 +448,7 @@ function toExportAction(action: LibraryAction): RawAction & { readinessScore: nu
   return {
     id: action.id,
     fromStatus: BAND_LABELS[action.band],
-    toStatus: BAND_LABELS[action.band + 1],
+    toStatus: BAND_LABELS[Math.min(action.band + 1, 5)],
     lens: LENS_EXPORT_FORM[action.lens] || action.lens,
     category: action.category,
     action: toExportActionText(action),

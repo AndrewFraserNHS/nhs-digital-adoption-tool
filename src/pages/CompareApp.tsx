@@ -1,3 +1,9 @@
+import {
+  MultiPeriodTable,
+  SourceMetaTable,
+  TrustDashboard,
+  type TrustSummary,
+} from '@components/views/TrustDashboard';
 import { ASSESSMENT_COMPONENTS } from '@data/components';
 import { isCompletedActionStatus, normalizeActionStatus } from '@lib/actionModel';
 import type { SavedAdoptionAssessment } from '@lib/adoptionIO';
@@ -15,8 +21,17 @@ import {
   type PeriodOption,
   type PeriodRole,
   type PeriodStats,
+  reconstructDraftAt,
   summariseMovement,
 } from '@lib/compareAnalysis';
+import {
+  alignedDate,
+  allSameTrust,
+  getSourceMeta,
+  headStartNote,
+  maxAlignedWeeks,
+  type SourceMeta,
+} from '@lib/trustComparison';
 import { type DragEvent, Fragment, JSX, useCallback, useRef, useState } from 'react';
 
 // ─── Analysis types ───────────────────────────────────────────────────────────
@@ -559,13 +574,24 @@ function indexColor(n: number): string {
   return 'bg-red-400';
 }
 
+/** Plain-English meaning of each coverage bar. */
+const METRIC_HELP = {
+  scoring: 'Share of component lenses that have been given a score above Not Started.',
+  rationale:
+    'Of the lenses that are scored, the share with a written rationale explaining the score.',
+  evidence: 'Of the lenses that are scored, the share with evidence recorded to back the score up.',
+};
+
 function MetricBar({
   label,
+  description,
   value,
   max = 100,
   color = 'bg-[#005eb8]',
 }: {
   label: string;
+  /** Plain-English note on what the bar measures. */
+  description?: string;
   value: number;
   max?: number;
   color?: string;
@@ -580,6 +606,7 @@ function MetricBar({
           {max === 100 ? '%' : ''}
         </span>
       </div>
+      {description ? <p className="mb-1 text-[0.7rem] text-slate-400">{description}</p> : null}
       <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
         <div
           className={`h-full ${color} rounded-full transition-all`}
@@ -696,6 +723,9 @@ function DropZone({ onFiles }: { onFiles: (files: File[]) => void }) {
         <span className="text-xs bg-white border border-slate-200 rounded px-3 py-1 text-slate-600">
           2 files → Side-by-side comparison
         </span>
+        <span className="text-xs bg-white border border-slate-200 rounded px-3 py-1 text-slate-600">
+          3-4 files → Periods side by side, or a dashboard for different trusts
+        </span>
       </div>
     </div>
   );
@@ -774,13 +804,24 @@ function SingleAnalysis({ result, fileName }: { result: AnalysisResult; fileName
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <MetricBar label="Scoring coverage" value={eng.scoringCoverage} color="bg-[#005eb8]" />
+          <MetricBar
+            label="Scoring coverage"
+            description={METRIC_HELP.scoring}
+            value={eng.scoringCoverage}
+            color="bg-[#005eb8]"
+          />
           <MetricBar
             label="Rationale coverage"
+            description={METRIC_HELP.rationale}
             value={eng.rationaleCoverage}
             color="bg-violet-500"
           />
-          <MetricBar label="Evidence coverage" value={eng.evidenceCoverage} color="bg-teal-500" />
+          <MetricBar
+            label="Evidence coverage"
+            description={METRIC_HELP.evidence}
+            value={eng.evidenceCoverage}
+            color="bg-teal-500"
+          />
           <MetricBar
             label="Avg rationale length"
             value={Math.min(eng.avgRationaleWords, 50)}
@@ -1045,6 +1086,13 @@ function RagDistributionBar({ label, stats }: { label: string; stats: PeriodStat
             key={rag}
             className={`flex items-center justify-center text-[0.7rem] font-bold text-white ${RAG_BAR[rag]}`}
             style={{ width: `${(stats.ragCounts[rag] / total) * 100}%` }}
+            title={`${COMPARE_RAG_LABEL[rag]} (${stats.ragCounts[rag]}): ${stats.components
+              .filter((component) => component.rag === rag)
+              .map(
+                (component) =>
+                  `${component.label} ${component.avgScore.toFixed(1)}/${component.target}`
+              )
+              .join(', ')}`}
           >
             {stats.ragCounts[rag]}
           </div>
@@ -1078,36 +1126,38 @@ function ActionDatesCard({
           </span>
         ))}
       </div>
+      <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs text-slate-600">
+        <dt>Actions completed</dt>
+        <dd className="text-right font-semibold">
+          {stats.completedActions}/{stats.totalActions}
+        </dd>
+        {available ? (
+          <>
+            <dt>Overdue (past end date)</dt>
+            <dd
+              className={`text-right font-semibold ${stats.overdueCompletion ? 'text-red-700' : ''}`}
+            >
+              {stats.overdueCompletion}
+            </dd>
+            <dt>Overdue to start</dt>
+            <dd
+              className={`text-right font-semibold ${stats.overdueStart ? 'text-amber-700' : ''}`}
+            >
+              {stats.overdueStart}
+            </dd>
+            <dt>With start date</dt>
+            <dd className="text-right font-semibold">{stats.actionsWithStart}</dd>
+            <dt>With end date</dt>
+            <dd className="text-right font-semibold">{stats.actionsWithEnd}</dd>
+          </>
+        ) : null}
+      </dl>
       {!available ? (
-        <p className="text-xs text-slate-500">
-          Action dates and overdue counts are only available for current (live) data.
+        <p className="mt-2 text-xs text-slate-500">
+          Completed counts are rebuilt from the audit log. Dates and overdue counts are only
+          available for current (live) data.
         </p>
-      ) : (
-        <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs text-slate-600">
-          <dt>Actions completed</dt>
-          <dd className="text-right font-semibold">
-            {stats.completedActions}/{stats.totalActions}
-          </dd>
-          <dt>Overdue (past end date)</dt>
-          <dd
-            className={`text-right font-semibold ${stats.overdueCompletion ? 'text-red-700' : ''}`}
-          >
-            {stats.overdueCompletion}
-          </dd>
-          <dt>Overdue to start</dt>
-          <dd className={`text-right font-semibold ${stats.overdueStart ? 'text-amber-700' : ''}`}>
-            {stats.overdueStart}
-          </dd>
-          <dt>With start date</dt>
-          <dd className="text-right font-semibold">{stats.actionsWithStart}</dd>
-          <dt>With end date</dt>
-          <dd className="text-right font-semibold">{stats.actionsWithEnd}</dd>
-          <dt>Earliest start</dt>
-          <dd className="text-right font-semibold">{formatDate(stats.earliestStart)}</dd>
-          <dt>Latest end</dt>
-          <dd className="text-right font-semibold">{formatDate(stats.latestEnd)}</dd>
-        </dl>
-      )}
+      ) : null}
     </div>
   );
 }
@@ -1137,7 +1187,8 @@ function MovementDetail({
     row.fromRag === row.toRag
       ? `RAG stayed ${COMPARE_RAG_LABEL[row.toRag]} (target ${row.target}).`
       : `RAG moved from ${COMPARE_RAG_LABEL[row.fromRag]} to ${COMPARE_RAG_LABEL[row.toRag]} (target ${row.target}).`;
-  const showActions = actionsAvailable[1];
+  const showActions = true;
+  const live = actionsAvailable[1];
   const progress = row.toActions;
   return (
     <div className="space-y-3 text-xs text-slate-600">
@@ -1176,7 +1227,9 @@ function MovementDetail({
       </table>
       {showActions ? (
         <p>
-          <span className="font-semibold text-slate-800">Action progress (current): </span>
+          <span className="font-semibold text-slate-800">
+            Action progress{live ? ' (current)' : ' (from audit log)'}:{' '}
+          </span>
           {progress.total === 0
             ? 'no actions recorded for this component.'
             : `${progress.completed} of ${progress.total} completed, ${progress.inProgress} in progress, ${progress.overdue} overdue.`}
@@ -1293,14 +1346,20 @@ function CompareView({
               <RagDistributionBar label="Components by RAG" stats={result.period} />
             </div>
             <div className="mt-4 space-y-2">
-              <MetricBar label="Scoring coverage" value={result.engagement.scoringCoverage} />
+              <MetricBar
+                label="Scoring coverage"
+                description={METRIC_HELP.scoring}
+                value={result.engagement.scoringCoverage}
+              />
               <MetricBar
                 label="Rationale coverage"
+                description={METRIC_HELP.rationale}
                 value={result.engagement.rationaleCoverage}
                 color="bg-violet-500"
               />
               <MetricBar
                 label="Evidence coverage"
+                description={METRIC_HELP.evidence}
                 value={result.engagement.evidenceCoverage}
                 color="bg-teal-500"
               />
@@ -1522,6 +1581,154 @@ interface LoadedFile {
   name: string;
   result: AnalysisResult;
   payload: SavedAdoptionAssessment;
+  meta: SourceMeta;
+}
+
+const MAX_FILES = 4;
+
+/** Time of a file's last update, for ordering periods oldest to newest. */
+function lastUpdatedTime(file: LoadedFile): number {
+  const parsed = Date.parse(file.meta.lastUpdated || '');
+  return Number.isNaN(parsed) ? 0 : parsed;
+}
+
+/**
+ * Two or more downloaded files: same trust over time (side by side periods) or different trusts
+ * (an operations-style dashboard), either as exported or aligned to the same time from each start.
+ */
+function MultiFileComparison({ files }: { files: LoadedFile[] }): JSX.Element {
+  const detectedSame = allSameTrust(files.map((file) => file.result.orgProfile.trustName));
+  const [kind, setKind] = useState<'same' | 'different'>(detectedSame ? 'same' : 'different');
+  const [basis, setBasis] = useState<'latest' | 'aligned'>('latest');
+  const available = maxAlignedWeeks(files.map((file) => file.meta));
+  const [weeks, setWeeks] = useState<number | null>(null);
+  const alignedWeeks = Math.min(weeks ?? available, Math.max(available, 0));
+  const canAlign = files.every((file) => file.meta.startedAt);
+
+  const ordered =
+    kind === 'same' ? [...files].sort((a, b) => lastUpdatedTime(a) - lastUpdatedTime(b)) : files;
+  const aligned = basis === 'aligned' && canAlign;
+
+  const sources: TrustSummary[] = ordered.map((file) => {
+    let result = file.result;
+    if (aligned && file.meta.startedAt) {
+      const asOf = alignedDate(file.meta.startedAt, alignedWeeks);
+      result = analyseFile(
+        {
+          ...file.payload,
+          currentDraft: reconstructDraftAt(
+            file.payload.currentDraft,
+            file.payload.auditLog || [],
+            asOf
+          ),
+        },
+        asOf
+      );
+    }
+    return {
+      name: file.name,
+      trust: result.orgProfile.trustName || '',
+      project: result.orgProfile.projectName || '',
+      meta: file.meta,
+      period: result.period,
+      overallPct: result.overallPct,
+      scoringCoverage: result.engagement.scoringCoverage,
+      hasActionDates: !aligned,
+    };
+  });
+  const results = ordered.map((file, index) => {
+    if (!aligned || !file.meta.startedAt) {
+      return file.result;
+    }
+    return { ...file.result, period: sources[index].period };
+  });
+  const headStart = headStartNote(
+    files.map((file) => ({
+      label: file.result.orgProfile.trustName || file.name,
+      startedAt: file.meta.startedAt,
+    }))
+  );
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-center gap-4 rounded-lg border border-slate-200 bg-white p-4">
+        <div className="flex items-center gap-2">
+          <label htmlFor="compare-kind" className="text-sm font-semibold text-slate-700">
+            Comparing
+          </label>
+          <select
+            id="compare-kind"
+            value={kind}
+            onChange={(event) => setKind(event.target.value as 'same' | 'different')}
+            className="rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+          >
+            <option value="same">The same trust over time</option>
+            <option value="different">Different trusts (dashboard)</option>
+          </select>
+        </div>
+        <div className="flex items-center gap-2">
+          <label htmlFor="compare-basis" className="text-sm font-semibold text-slate-700">
+            Point in time
+          </label>
+          <select
+            id="compare-basis"
+            value={aligned ? 'aligned' : 'latest'}
+            onChange={(event) => setBasis(event.target.value as 'latest' | 'aligned')}
+            disabled={!canAlign}
+            className="rounded-md border border-slate-300 px-2 py-1.5 text-sm disabled:opacity-50"
+          >
+            <option value="latest">Latest data in each file</option>
+            <option value="aligned">Same time from each start</option>
+          </select>
+          {aligned ? (
+            <>
+              <label htmlFor="compare-weeks" className="text-sm text-slate-600">
+                Weeks in
+              </label>
+              <input
+                id="compare-weeks"
+                type="number"
+                min={0}
+                max={available}
+                value={alignedWeeks}
+                onChange={(event) => setWeeks(Number(event.target.value) || 0)}
+                className="w-20 rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+              />
+              <span className="text-xs text-slate-500">(up to {available})</span>
+            </>
+          ) : null}
+        </div>
+        {!canAlign ? (
+          <p className="text-xs text-slate-500">
+            Same-time comparison needs every file to have recorded scores.
+          </p>
+        ) : null}
+      </div>
+
+      {headStart ? (
+        <div
+          role="note"
+          className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900"
+        >
+          {headStart}
+        </div>
+      ) : null}
+
+      <SourceMetaTable sources={sources} />
+
+      {kind === 'different' ? (
+        <TrustDashboard sources={sources} />
+      ) : ordered.length === 2 ? (
+        <CompareView
+          results={[results[0], results[1]]}
+          fileNames={[ordered[0].name, ordered[1].name]}
+          actionsAvailable={[!aligned, !aligned]}
+        />
+      ) : (
+        <MultiPeriodTable sources={sources} />
+      )}
+    </div>
+  );
 }
 
 export interface CompareAppProps {
@@ -1551,6 +1758,7 @@ function MonthComparison({
   const [toId, setToId] = useState<PeriodOption['id']>('current');
   const [fromCustom, setFromCustom] = useState('');
   const [toCustom, setToCustom] = useState('');
+  const [threeUp, setThreeUp] = useState(false);
 
   const now = new Date();
   const optionsFor = (customValue: string) =>
@@ -1622,6 +1830,7 @@ function MonthComparison({
               key={pick.label}
               type="button"
               onClick={() => {
+                setThreeUp(false);
                 setFromId(pick.from);
                 setToId(pick.to);
               }}
@@ -1630,6 +1839,14 @@ function MonthComparison({
               {pick.label}
             </button>
           ))}
+          <button
+            type="button"
+            aria-pressed={threeUp}
+            onClick={() => setThreeUp((open) => !open)}
+            className={`rounded-md border px-3 py-1.5 text-xs font-semibold ${threeUp ? 'border-[#005eb8] bg-[#005eb8] text-white' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'}`}
+          >
+            Baseline · Previous · Current side by side
+          </button>
         </div>
         <div className="flex flex-wrap items-center gap-4">
           {pickers.map((picker) => (
@@ -1663,12 +1880,32 @@ function MonthComparison({
           ))}
         </div>
       </div>
-      <CompareView
-        results={[analyse(from), analyse(to)]}
-        fileNames={[from.label, to.label]}
-        roles={[from.roles, to.roles]}
-        actionsAvailable={[from.actionsAvailable, to.actionsAvailable]}
-      />
+      {threeUp ? (
+        <MultiPeriodTable
+          sources={['baseline', 'previous', 'current']
+            .map((id) => toOptions.find((option) => option.id === id) as PeriodOption)
+            .map((option) => {
+              const result = analyse(option);
+              return {
+                name: option.roles[0] || option.label,
+                trust: '',
+                project: '',
+                meta: {},
+                period: result.period,
+                overallPct: result.overallPct,
+                scoringCoverage: result.engagement.scoringCoverage,
+                hasActionDates: option.actionsAvailable,
+              };
+            })}
+        />
+      ) : (
+        <CompareView
+          results={[analyse(from), analyse(to)]}
+          fileNames={[from.label, to.label]}
+          roles={[from.roles, to.roles]}
+          actionsAvailable={[from.actionsAvailable, to.actionsAvailable]}
+        />
+      )}
     </div>
   );
 }
@@ -1691,10 +1928,15 @@ export default function CompareApp({
       const parsed = await Promise.all(
         incoming.map(async (f) => {
           const payload = await parseFile(f);
-          return { name: f.name, result: analyseFile(payload), payload };
+          return {
+            name: f.name,
+            result: analyseFile(payload),
+            payload,
+            meta: getSourceMeta(payload),
+          };
         })
       );
-      setFiles(parsed.slice(0, 2));
+      setFiles(parsed.slice(0, MAX_FILES));
       setSingleFileView('engagement');
     } catch {
       setError(
@@ -1803,12 +2045,7 @@ export default function CompareApp({
         </>
       )}
 
-      {!monthMode && files.length === 2 && (
-        <CompareView
-          results={[files[0].result, files[1].result]}
-          fileNames={[files[0].name, files[1].name]}
-        />
-      )}
+      {!monthMode && files.length >= 2 && <MultiFileComparison files={files} />}
     </>
   );
 

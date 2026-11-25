@@ -49,6 +49,7 @@ export interface ScoreAuditEvent {
   eventType: string;
   componentId?: string;
   lens?: string;
+  entityId?: string;
   before?: Record<string, unknown>;
 }
 
@@ -69,9 +70,10 @@ export function firstScoreDate(auditLog: ScoreAuditEvent[]): Date | undefined {
 }
 
 /**
- * Scores as they stood at `asOf`: starts from the live draft and undoes every score change logged
- * after that moment (newest first, using each event's recorded previous score). Actions are
- * dropped because they cannot be rebuilt reliably.
+ * Scores and action progress as they stood at `asOf`: starts from the live draft and undoes every
+ * change logged after that moment (newest first, using each event's recorded previous values).
+ * Actions created later are removed, later status changes are reverted and later removals are
+ * restored (text, status and owner only - the log does not record dates).
  */
 export function reconstructDraftAt(
   currentDraft: Draft,
@@ -82,36 +84,64 @@ export function reconstructDraftAt(
   Object.entries(currentDraft).forEach(([componentId, lenses]) => {
     draft[componentId] = {};
     Object.entries(lenses).forEach(([lens, entry]) => {
-      draft[componentId][lens] = { ...entry, actions: [] };
+      draft[componentId][lens] = {
+        ...entry,
+        actions: (entry.actions || []).map((a) => ({ ...a })),
+      };
     });
   });
 
+  const ensureEntry = (componentId: string, lens: string) => {
+    draft[componentId] = draft[componentId] || {};
+    draft[componentId][lens] = draft[componentId][lens] || {
+      score: 0,
+      rationale: '',
+      evidence: '',
+      actions: [],
+    };
+    return draft[componentId][lens];
+  };
+
   const later = auditLog
     .filter(
-      (event) =>
-        event.eventType === 'entry-score-updated' &&
-        event.componentId &&
-        event.lens &&
-        Date.parse(event.timestamp) > asOf.getTime()
+      (event) => event.componentId && event.lens && Date.parse(event.timestamp) > asOf.getTime()
     )
     .sort((left, right) => Date.parse(right.timestamp) - Date.parse(left.timestamp));
 
   later.forEach((event) => {
-    const previous = Number(event.before?.score);
-    if (Number.isNaN(previous) || !event.componentId || !event.lens) {
+    const componentId = event.componentId as string;
+    const lens = event.lens as string;
+    if (event.eventType === 'entry-score-updated') {
+      const previous = Number(event.before?.score);
+      if (!Number.isNaN(previous)) {
+        ensureEntry(componentId, lens).score = previous;
+      }
       return;
     }
-    const entry = draft[event.componentId]?.[event.lens];
-    if (entry) {
-      entry.score = previous;
-    } else {
-      draft[event.componentId] = draft[event.componentId] || {};
-      draft[event.componentId][event.lens] = {
-        score: previous,
-        rationale: '',
-        evidence: '',
-        actions: [],
-      };
+    if (!event.entityId) {
+      return;
+    }
+    const entry = ensureEntry(componentId, lens);
+    const index = entry.actions.findIndex((action) => action.id === event.entityId);
+    if (event.eventType === 'action-created') {
+      if (index >= 0) {
+        entry.actions.splice(index, 1);
+      }
+    } else if (event.eventType === 'action-updated') {
+      if (index >= 0 && typeof event.before?.status === 'string') {
+        entry.actions[index].status = event.before
+          .status as DraftEntry['actions'][number]['status'];
+      }
+    } else if (event.eventType === 'action-removed') {
+      if (index < 0 && typeof event.before?.text === 'string') {
+        entry.actions.push({
+          id: event.entityId,
+          text: event.before.text,
+          owner: typeof event.before.owner === 'string' ? event.before.owner : '',
+          timescale: '',
+          status: (event.before.status as DraftEntry['actions'][number]['status']) || 'Planned',
+        });
+      }
     }
   });
   return draft;

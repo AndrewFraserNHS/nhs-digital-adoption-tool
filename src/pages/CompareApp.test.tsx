@@ -123,6 +123,61 @@ describe('CompareApp', () => {
     expect(screen.getAllByText(/→/).length).toBeGreaterThan(0);
   });
 
+  it('SHOULD show Baseline, Previous and Current side by side WHERE that view is chosen', () => {
+    // arrange
+    render(
+      <CompareApp
+        embedded
+        orgProfile={orgProfile}
+        currentDraft={{ vision: { [LENS]: entry(1) } }}
+        auditLog={[scoreEvent(daysAgo(60), 0, 3), scoreEvent(daysAgo(10), 3, 1)]}
+      />
+    );
+
+    // act
+    fireEvent.click(screen.getByRole('button', { name: /side by side/ }));
+
+    // assert
+    const table = screen.getByTestId('multi-period-table');
+    expect(table).toHaveTextContent('Baseline');
+    expect(table).toHaveTextContent('Previous');
+    expect(table).toHaveTextContent('Current');
+  });
+
+  it('SHOULD rebuild completed actions for a past period WHERE the audit log has action history', () => {
+    // arrange - action created 40 days ago, completed 5 days ago
+    const completed: DraftEntry = entry(2, [
+      { id: 'a1', text: 'Agree vision', owner: '', timescale: '', status: 'Completed' },
+    ]);
+    const actionEvent = (timestamp: string, type: 'action-created' | 'action-updated') =>
+      ({
+        ...scoreEvent(timestamp, 0, 0),
+        eventType: type,
+        entityType: 'action',
+        entityId: 'a1',
+        before: type === 'action-updated' ? { status: 'In Progress' } : undefined,
+        after: { status: type === 'action-created' ? 'In Progress' : 'Completed' },
+      }) as AuditEvent;
+    render(
+      <CompareApp
+        embedded
+        orgProfile={orgProfile}
+        currentDraft={{ vision: { [LENS]: completed } }}
+        auditLog={[
+          scoreEvent(daysAgo(60), 0, 2),
+          actionEvent(daysAgo(40), 'action-created'),
+          actionEvent(daysAgo(5), 'action-updated'),
+        ]}
+      />
+    );
+
+    // assert - Previous (30 days ago) had the action, not yet completed; Current has it completed
+    const labels = screen.getAllByText('Actions completed');
+    expect(labels).toHaveLength(2);
+    expect(labels[0].nextElementSibling).toHaveTextContent('0/1');
+    expect(labels[1].nextElementSibling).toHaveTextContent('1/1');
+  });
+
   it('SHOULD list overdue actions for live data and say past periods have none WHERE dates are unavailable', () => {
     // arrange
     const overdue: DraftEntry = entry(2, [

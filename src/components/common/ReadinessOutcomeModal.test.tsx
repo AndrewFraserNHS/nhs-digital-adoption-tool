@@ -29,7 +29,14 @@ describe('ReadinessOutcomeModal', () => {
       />
     );
 
-    // assert
+    // assert - the list starts collapsed, with a summary, and opens on request
+    expect(screen.getByRole('button', { name: /Review the 1 suggested update/ })).toHaveAttribute(
+      'aria-expanded',
+      'false'
+    );
+    expect(screen.getByLabelText(/Vision/)).not.toBeVisible();
+    fireEvent.click(screen.getByRole('button', { name: /Review the 1 suggested update/ }));
+    expect(screen.getByLabelText(/Vision/)).toBeVisible();
     expect(screen.getByText(/Not Started/)).toHaveTextContent('Not Started → Emerging');
   });
 

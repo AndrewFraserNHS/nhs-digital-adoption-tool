@@ -374,7 +374,7 @@ describe('AssessmentPanel', () => {
 
     // act
     fireEvent.click(
-      screen.getByRole('button', { name: 'Assign all Level 2 Strategic Direction actions' })
+      screen.getByRole('button', { name: 'Assign to all Level 2 Strategic Direction actions' })
     );
 
     // assert
@@ -417,7 +417,7 @@ describe('AssessmentPanel', () => {
 
     // act
     fireEvent.click(
-      screen.getByRole('button', { name: 'Assign all Level 2 Strategic Direction actions' })
+      screen.getByRole('button', { name: 'Assign to all Level 2 Strategic Direction actions' })
     );
 
     // assert

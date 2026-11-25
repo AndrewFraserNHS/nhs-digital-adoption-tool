@@ -31,6 +31,7 @@ export function ReadinessOutcomeModal({
   );
   const [phaseSkipChecked, setPhaseSkipChecked] = useState(true);
   const [pathwayChecked, setPathwayChecked] = useState(true);
+  const [suggestionsOpen, setSuggestionsOpen] = useState(false);
 
   if (!open) {
     return null;
@@ -48,7 +49,9 @@ export function ReadinessOutcomeModal({
   outcome.suggestions.forEach((suggestion) =>
     componentLabelById.set(suggestion.componentId, suggestion.componentLabel)
   );
-  outcome.behindLenses.forEach((item) => componentLabelById.set(item.componentId, item.componentLabel));
+  outcome.behindLenses.forEach((item) =>
+    componentLabelById.set(item.componentId, item.componentLabel)
+  );
   const readyComponentLabels = outcome.readyComponentIds.map(
     (componentId) => componentLabelById.get(componentId) || componentId
   );
@@ -58,6 +61,10 @@ export function ReadinessOutcomeModal({
       current.map((checked, i) => (i === index ? !checked : checked))
     );
   };
+
+  const suggestionComponentCount = new Set(outcome.suggestions.map((item) => item.componentId))
+    .size;
+  const selectedCount = checkedSuggestions.filter(Boolean).length;
 
   const handleApply = () => {
     const selected = outcome.suggestions.filter((_, index) => checkedSuggestions[index]);
@@ -96,9 +103,7 @@ export function ReadinessOutcomeModal({
             ) : null}
             {outcome.behindLenses.length > 0 ? (
               <>
-                <p className="mt-2">
-                  The areas that you may need to focus more attention on are:
-                </p>
+                <p className="mt-2">The areas that you may need to focus more attention on are:</p>
                 <ul className="mt-1 list-disc space-y-0.5 pl-5">
                   {outcome.behindLenses.map((missing) => (
                     <li key={`${missing.componentId}-${missing.lens}`}>
@@ -126,16 +131,38 @@ export function ReadinessOutcomeModal({
         ) : (
           <>
             <p className="mt-3 text-sm text-slate-600">
-              Based on your answers, here&apos;s what could be updated. Untick anything you
-              don&apos;t want applied.
+              Based on your answers, here&apos;s what could be updated. Everything is selected to
+              start with. Nothing changes until you choose Apply selected, and you can untick
+              anything you don&apos;t want applied.
             </p>
 
             {hasSuggestions ? (
               <div className="mt-4">
-                <h3 className="text-sm font-semibold text-slate-700 mb-2">
+                <h3 className="text-sm font-semibold text-slate-700 mb-1">
                   Suggested readiness updates
                 </h3>
-                <ul className="space-y-1.5">
+                <p className="mb-2 text-xs text-slate-600">
+                  {outcome.suggestions.length} lens score
+                  {outcome.suggestions.length === 1 ? '' : 's'} across {suggestionComponentCount}{' '}
+                  component{suggestionComponentCount === 1 ? '' : 's'} could be raised to match what
+                  you have already put in place. Scores are only raised, never lowered, and you can
+                  change any of them later in the assessment.
+                </p>
+                <button
+                  type="button"
+                  aria-expanded={suggestionsOpen}
+                  aria-controls="readiness-suggestion-list"
+                  onClick={() => setSuggestionsOpen((open) => !open)}
+                  className="mb-2 text-sm font-semibold text-[#005eb8] underline"
+                >
+                  {suggestionsOpen ? 'Hide' : 'Review'} the {outcome.suggestions.length} suggested
+                  update{outcome.suggestions.length === 1 ? '' : 's'} ({selectedCount} selected)
+                </button>
+                <ul
+                  id="readiness-suggestion-list"
+                  hidden={!suggestionsOpen}
+                  className="space-y-1.5"
+                >
                   {outcome.suggestions.map((suggestion, index) => {
                     const inputId = `readiness-suggestion-${index}`;
                     return (

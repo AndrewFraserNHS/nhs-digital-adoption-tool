@@ -556,7 +556,7 @@ describe('adoptionMetrics', () => {
     expect(chartData.datasets[1].data).toEqual(
       components.map((component) => getComponentExemplarScore(component.id, 2, component.target))
     );
-    expect(chartData.datasets[2].label).toBe('Manual target (Development)');
+    expect(chartData.datasets[2].label).toBe('Manual target (End of Development)');
     expect(chartData.datasets[2].data).toEqual(
       components.map((component) => getComponentExemplarScore(component.id, 3, component.target))
     );

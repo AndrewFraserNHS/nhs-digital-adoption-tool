@@ -548,7 +548,7 @@ export function buildComponentRadarChartData(
   };
   // CAB Question 2 supplies the manual phase; without one, retain the configured flat target.
   const manualTargetDataset = {
-    label: manualPhaseName ? `Manual target (${manualPhaseName})` : 'Manual target',
+    label: manualPhaseName ? `Manual target (End of ${manualPhaseName})` : 'Manual target',
     data: components.map((component) =>
       getComponentExemplarScore(component.id, manualPhase, component.target)
     ),

@@ -101,6 +101,28 @@ describe('CompareApp', () => {
     expect(screen.getByText(/Delta = Current \(live data\) minus Baseline/)).toBeInTheDocument();
   });
 
+  it('SHOULD explain a movement WHERE its row is opened, and switch Change to a summary', () => {
+    // arrange
+    const auditLog = [scoreEvent(daysAgo(60), 0, 3), scoreEvent(daysAgo(10), 3, 1)];
+    render(
+      <CompareApp
+        embedded
+        orgProfile={orgProfile}
+        currentDraft={{ vision: { [LENS]: entry(1) } }}
+        auditLog={auditLog}
+      />
+    );
+
+    // act
+    fireEvent.click(screen.getByRole('button', { name: 'Show movement detail for Vision' }));
+    fireEvent.change(screen.getByLabelText('Change display'), { target: { value: 'summary' } });
+
+    // assert
+    expect(screen.getByTestId('movement-detail-vision')).toHaveTextContent(/lens score.*changed/);
+    expect(screen.getByTestId('movement-detail-vision')).toHaveTextContent('Action progress');
+    expect(screen.getAllByText(/→/).length).toBeGreaterThan(0);
+  });
+
   it('SHOULD list overdue actions for live data and say past periods have none WHERE dates are unavailable', () => {
     // arrange
     const overdue: DraftEntry = entry(2, [

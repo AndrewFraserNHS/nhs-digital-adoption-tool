@@ -168,10 +168,35 @@ export function ImportConflictModal({
             Comparing <span className="font-semibold">{myLabel}</span> (currently loaded) against{' '}
             <span className="font-semibold">{theirLabel}</span> (the imported file).
           </p>
+          <p className={`mt-1 text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+            {totalConflicts} item{totalConflicts === 1 ? '' : 's'} need a decision
+            {report.autoMergeSummary.length
+              ? ` · also merging automatically: ${report.autoMergeSummary.join(', ')}`
+              : ''}
+          </p>
+          <div className="mt-3 flex gap-2">
+            <button
+              type="button"
+              onClick={() => setAll('mine')}
+              className={`${nhsButtonSecondary} h-8 px-3 py-0 text-xs`}
+            >
+              Use all mine
+            </button>
+            <button
+              type="button"
+              onClick={() => setAll('theirs')}
+              className={`${nhsButtonSecondary} h-8 px-3 py-0 text-xs`}
+            >
+              Use all theirs
+            </button>
+          </div>
+        </div>
+
+        <div className="flex-1 space-y-6 overflow-y-auto p-6">
           {hasStamps ? (
             <dl
               data-testid="import-conflict-timestamps"
-              className={`mt-2 grid gap-1 text-xs sm:grid-cols-2 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}
+              className={`grid gap-1 rounded-md border px-3 py-2 text-xs sm:grid-cols-2 ${darkMode ? 'border-slate-700 text-slate-300' : 'border-slate-200 bg-slate-50 text-slate-600'}`}
             >
               <div>
                 <dt className="inline font-semibold">{myLabel} last updated: </dt>
@@ -198,31 +223,6 @@ export function ImportConflictModal({
               </div>
             </dl>
           ) : null}
-          <p className={`mt-1 text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
-            {totalConflicts} item{totalConflicts === 1 ? '' : 's'} need a decision
-            {report.autoMergeSummary.length
-              ? ` · also merging automatically: ${report.autoMergeSummary.join(', ')}`
-              : ''}
-          </p>
-          <div className="mt-3 flex gap-2">
-            <button
-              type="button"
-              onClick={() => setAll('mine')}
-              className={`${nhsButtonSecondary} h-8 px-3 py-0 text-xs`}
-            >
-              Use all mine
-            </button>
-            <button
-              type="button"
-              onClick={() => setAll('theirs')}
-              className={`${nhsButtonSecondary} h-8 px-3 py-0 text-xs`}
-            >
-              Use all theirs
-            </button>
-          </div>
-        </div>
-
-        <div className="flex-1 space-y-6 overflow-y-auto p-6">
           {report.sections.map((section) => (
             <div key={section.id}>
               <h3

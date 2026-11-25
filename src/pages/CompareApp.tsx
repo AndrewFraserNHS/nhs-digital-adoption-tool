@@ -9,6 +9,7 @@ import {
   COMPARE_RAG_LABEL,
   compareComponents,
   type CompareRag,
+  type ComponentMovement,
   getCompareRag,
   type Movement,
   type PeriodOption,
@@ -16,7 +17,7 @@ import {
   type PeriodStats,
   summariseMovement,
 } from '@lib/compareAnalysis';
-import { type DragEvent, JSX, useCallback, useRef, useState } from 'react';
+import { type DragEvent, Fragment, JSX, useCallback, useRef, useState } from 'react';
 
 // ─── Analysis types ───────────────────────────────────────────────────────────
 
@@ -1113,6 +1114,82 @@ function ActionDatesCard({
 
 // ─── Two-period comparison view ───────────────────────────────────────────────
 
+/** Explains one component's movement: why it changed, lens by lens, plus action progress. */
+function MovementDetail({
+  row,
+  fromLabel,
+  toLabel,
+  actionsAvailable,
+}: {
+  row: ComponentMovement;
+  fromLabel: string;
+  toLabel: string;
+  actionsAvailable: [boolean, boolean];
+}) {
+  const changedLenses = row.toLenses.filter(
+    (lens, index) => lens.score !== row.fromLenses[index]?.score
+  );
+  const headline =
+    row.movement === 'unchanged'
+      ? `No lens score changed between ${fromLabel} and ${toLabel}.`
+      : `${changedLenses.length} of ${row.toLenses.length} lens score${row.toLenses.length === 1 ? '' : 's'} changed, moving the average ${row.movement === 'increase' ? 'up' : 'down'} from ${row.fromAvg.toFixed(1)} to ${row.toAvg.toFixed(1)}.`;
+  const ragNote =
+    row.fromRag === row.toRag
+      ? `RAG stayed ${COMPARE_RAG_LABEL[row.toRag]} (target ${row.target}).`
+      : `RAG moved from ${COMPARE_RAG_LABEL[row.fromRag]} to ${COMPARE_RAG_LABEL[row.toRag]} (target ${row.target}).`;
+  const showActions = actionsAvailable[1];
+  const progress = row.toActions;
+  return (
+    <div className="space-y-3 text-xs text-slate-600">
+      <p>
+        <span className="font-semibold text-slate-800">Why: </span>
+        {headline} {ragNote}
+      </p>
+      <table className="w-full max-w-xl text-xs">
+        <thead>
+          <tr className="text-left uppercase tracking-wide text-slate-500">
+            <th className="pb-1 font-semibold">Lens</th>
+            <th className="pb-1 text-center font-semibold">{fromLabel.slice(0, 18)}</th>
+            <th className="pb-1 text-center font-semibold">{toLabel.slice(0, 18)}</th>
+            <th className="pb-1 text-center font-semibold">Change</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-slate-200">
+          {row.toLenses.map((lens, index) => {
+            const from = row.fromLenses[index]?.score ?? 0;
+            const diff = lens.score - from;
+            return (
+              <tr key={lens.lens}>
+                <td className="py-1 pr-3 text-slate-700">{lens.lens}</td>
+                <td className="py-1 text-center">{from}</td>
+                <td className="py-1 text-center">{lens.score}</td>
+                <td
+                  className={`py-1 text-center font-semibold ${diff > 0 ? 'text-green-700' : diff < 0 ? 'text-red-700' : 'text-slate-400'}`}
+                >
+                  {diff > 0 ? '+' : ''}
+                  {diff}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+      {showActions ? (
+        <p>
+          <span className="font-semibold text-slate-800">Action progress (current): </span>
+          {progress.total === 0
+            ? 'no actions recorded for this component.'
+            : `${progress.completed} of ${progress.total} completed, ${progress.inProgress} in progress, ${progress.overdue} overdue.`}
+        </p>
+      ) : (
+        <p className="text-slate-500">
+          Action progress is only available when the later period is current (live) data.
+        </p>
+      )}
+    </div>
+  );
+}
+
 function CompareView({
   results,
   fileNames,
@@ -1128,6 +1205,18 @@ function CompareView({
 }) {
   const [a, b] = results;
   const [phaseFilter, setPhaseFilter] = useState<number | 'all'>('all');
+  const [changeView, setChangeView] = useState<'chart' | 'summary'>('chart');
+  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+  const toggleRow = (id: string) =>
+    setExpandedRows((current) => {
+      const next = new Set(current);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
   const phases = [...new Set(ASSESSMENT_COMPONENTS.map((c) => c.phase))].sort((x, y) => x - y);
 
   const movement = compareComponents(a.period, b.period);
@@ -1295,22 +1384,36 @@ function CompareView({
               target.
             </p>
           </div>
-          <select
-            value={phaseFilter}
-            onChange={(e) =>
-              setPhaseFilter(e.target.value === 'all' ? 'all' : Number(e.target.value))
-            }
-            aria-label="Filter by phase"
-            className="rounded-md border border-slate-300 px-3 py-2 text-sm sm:w-36"
-          >
-            <option value="all">All phases</option>
-            {phases.map((p) => (
-              <option key={p} value={p}>
-                Phase {p}
-              </option>
-            ))}
-          </select>
+          <div className="flex flex-wrap items-center gap-2">
+            <select
+              value={changeView}
+              onChange={(e) => setChangeView(e.target.value as 'chart' | 'summary')}
+              aria-label="Change display"
+              className="rounded-md border border-slate-300 px-3 py-2 text-sm"
+            >
+              <option value="chart">Change: chart</option>
+              <option value="summary">Change: summary</option>
+            </select>
+            <select
+              value={phaseFilter}
+              onChange={(e) =>
+                setPhaseFilter(e.target.value === 'all' ? 'all' : Number(e.target.value))
+              }
+              aria-label="Filter by phase"
+              className="rounded-md border border-slate-300 px-3 py-2 text-sm sm:w-36"
+            >
+              <option value="all">All phases</option>
+              {phases.map((p) => (
+                <option key={p} value={p}>
+                  Phase {p}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
+        <p className="mb-3 text-xs text-slate-500">
+          Select a component to see why it moved: scores by lens, RAG and action progress.
+        </p>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -1328,36 +1431,83 @@ function CompareView({
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {visibleRows.map((row) => (
-                <tr key={row.id} className="hover:bg-slate-50">
-                  <td className="py-2.5 pr-3 font-medium text-slate-700">{row.label}</td>
-                  <td className="py-2.5 text-center text-xs text-slate-400">{row.phase}</td>
-                  <td className="py-2.5 text-center">
-                    <RagBadge rag={row.fromRag} />
-                  </td>
-                  <td className="py-2.5 text-center">
-                    <RagBadge rag={row.toRag} />
-                  </td>
-                  <td className="py-2.5">
-                    <span
-                      className={`rounded px-2 py-0.5 text-xs font-bold ${MOVEMENT_STYLE[row.movement]}`}
+              {visibleRows.map((row) => {
+                const expanded = expandedRows.has(row.id);
+                return (
+                  <Fragment key={row.id}>
+                    <tr
+                      className="cursor-pointer hover:bg-slate-50"
+                      onClick={() => toggleRow(row.id)}
                     >
-                      {MOVEMENT_LABEL[row.movement]}
-                    </span>
-                  </td>
-                  <td className="hidden py-2.5 md:table-cell">
-                    <div className="relative h-3 w-40 rounded bg-slate-100" aria-hidden="true">
-                      <div className="absolute inset-y-0 left-1/2 w-px bg-slate-300" />
-                      {row.delta !== 0 && (
-                        <div
-                          className={`absolute inset-y-0 rounded ${row.delta > 0 ? 'left-1/2 bg-green-500' : 'right-1/2 bg-red-500'}`}
-                          style={{ width: `${(Math.abs(row.delta) / maxAbsDelta) * 50}%` }}
-                        />
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                      <td className="py-2.5 pr-3 font-medium text-slate-700">
+                        <button
+                          type="button"
+                          aria-expanded={expanded}
+                          aria-label={`${expanded ? 'Hide' : 'Show'} movement detail for ${row.label}`}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            toggleRow(row.id);
+                          }}
+                          className="flex items-center gap-1.5 text-left"
+                        >
+                          <span aria-hidden="true" className="text-xs text-slate-400">
+                            {expanded ? '▾' : '▸'}
+                          </span>
+                          {row.label}
+                        </button>
+                      </td>
+                      <td className="py-2.5 text-center text-xs text-slate-400">{row.phase}</td>
+                      <td className="py-2.5 text-center">
+                        <RagBadge rag={row.fromRag} />
+                      </td>
+                      <td className="py-2.5 text-center">
+                        <RagBadge rag={row.toRag} />
+                      </td>
+                      <td className="py-2.5">
+                        <span
+                          className={`rounded px-2 py-0.5 text-xs font-bold ${MOVEMENT_STYLE[row.movement]}`}
+                        >
+                          {MOVEMENT_LABEL[row.movement]}
+                        </span>
+                      </td>
+                      <td className="hidden py-2.5 md:table-cell">
+                        {changeView === 'chart' ? (
+                          <div
+                            className="relative h-3 w-40 rounded bg-slate-100"
+                            aria-hidden="true"
+                          >
+                            <div className="absolute inset-y-0 left-1/2 w-px bg-slate-300" />
+                            {row.delta !== 0 && (
+                              <div
+                                className={`absolute inset-y-0 rounded ${row.delta > 0 ? 'left-1/2 bg-green-500' : 'right-1/2 bg-red-500'}`}
+                                style={{ width: `${(Math.abs(row.delta) / maxAbsDelta) * 50}%` }}
+                              />
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-xs text-slate-600">
+                            {row.fromAvg.toFixed(1)} → {row.toAvg.toFixed(1)} (
+                            {row.delta > 0 ? '+' : ''}
+                            {row.delta.toFixed(1)})
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                    {expanded && (
+                      <tr data-testid={`movement-detail-${row.id}`} className="bg-slate-50">
+                        <td colSpan={6} className="px-4 py-3">
+                          <MovementDetail
+                            row={row}
+                            fromLabel={fileNames[0]}
+                            toLabel={fileNames[1]}
+                            actionsAvailable={actionsAvailable}
+                          />
+                        </td>
+                      </tr>
+                    )}
+                  </Fragment>
+                );
+              })}
             </tbody>
           </table>
         </div>

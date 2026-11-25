@@ -1134,6 +1134,10 @@ export function AssessmentPanel({
   const [editingOwnerRowKey, setEditingOwnerRowKey] = useState<string | null>(null);
   const [lensActionTypeFilters, setLensActionTypeFilters] = useState<Record<string, string>>({});
   const [lensActionOwnerFilters, setLensActionOwnerFilters] = useState<Record<string, string>>({});
+  const [lensActionStatusFilters, setLensActionStatusFilters] = useState<Record<string, string>>(
+    {}
+  );
+  const [lensActionSortOrders, setLensActionSortOrders] = useState<Record<string, string>>({});
   const [bulkAssignOwners, setBulkAssignOwners] = useState<Record<string, string>>({});
   const objectives = store.objectives?.[component.id] || [];
   const teamMembers = store.orgProfile.teamMembers || [];
@@ -1596,7 +1600,9 @@ export function AssessmentPanel({
       const entry = getEntry(componentId, lens);
       onEntryUpdate(componentId, lens, {
         ...entry,
-        actions: entry.actions.map((action) => (ids.has(action.id) ? { ...action, owner } : action)),
+        actions: entry.actions.map((action) =>
+          ids.has(action.id) ? { ...action, owner } : action
+        ),
       });
     });
   };
@@ -2178,6 +2184,8 @@ export function AssessmentPanel({
               entry.score === 0 && !hasNotStartedActions ? 1 : entry.score;
             const lensActionTypeFilter = lensActionTypeFilters[targetKey] || 'all';
             const lensActionOwnerFilter = lensActionOwnerFilters[targetKey] || 'all';
+            const lensActionStatusFilter = lensActionStatusFilters[targetKey] || 'all';
+            const lensActionSortOrder = lensActionSortOrders[targetKey] || 'default';
             const lensActionTypeOptions = Array.from(
               new Set(
                 actionsForLens
@@ -2223,12 +2231,34 @@ export function AssessmentPanel({
                   return false;
                 }
 
+                if (
+                  lensActionStatusFilter !== 'all' &&
+                  normalizeActionStatus(resolvedAction.action.status) !== lensActionStatusFilter
+                ) {
+                  return false;
+                }
+
                 return (
                   lensActionOwnerFilter === 'all' ||
                   (resolvedAction.action.owner || '') === lensActionOwnerFilter
                 );
               })
               .sort((left, right) => {
+                if (
+                  lensActionSortOrder === 'completed-first' ||
+                  lensActionSortOrder === 'planned-first'
+                ) {
+                  const rank = (status: string) => {
+                    const index = STATUS_OPTIONS.indexOf(status as (typeof STATUS_OPTIONS)[number]);
+                    return index < 0 ? STATUS_OPTIONS.length : index;
+                  };
+                  const diff =
+                    rank(normalizeActionStatus(left.action.status)) -
+                    rank(normalizeActionStatus(right.action.status));
+                  if (diff !== 0) {
+                    return lensActionSortOrder === 'planned-first' ? diff : -diff;
+                  }
+                }
                 const leftCompleted = normalizeActionStatus(left.action.status) === 'Completed';
                 const rightCompleted = normalizeActionStatus(right.action.status) === 'Completed';
                 if (leftCompleted !== rightCompleted) {
@@ -2319,7 +2349,7 @@ export function AssessmentPanel({
                 <div
                   className={`${darkMode ? 'border-slate-700' : 'border-slate-100'} p-6 border-t`}
                 >
-                  <div className="flex items-center justify-between mb-3">
+                  <div className="flex flex-col gap-3 mb-3">
                     <div>
                       <h4
                         className={`text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
@@ -2333,6 +2363,39 @@ export function AssessmentPanel({
                       </p>
                     </div>
                     <div className="flex flex-wrap items-center gap-2">
+                      <select
+                        aria-label={`Filter ${lens} actions by current state`}
+                        value={lensActionStatusFilter}
+                        onChange={(event) =>
+                          setLensActionStatusFilters((current) => ({
+                            ...current,
+                            [targetKey]: event.target.value,
+                          }))
+                        }
+                        className={`rounded-md border px-2.5 py-1.5 text-xs font-semibold ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-700'}`}
+                      >
+                        <option value="all">All current states</option>
+                        {STATUS_OPTIONS.map((status) => (
+                          <option key={status} value={status}>
+                            {status}
+                          </option>
+                        ))}
+                      </select>
+                      <select
+                        aria-label={`Sort ${lens} actions by current state`}
+                        value={lensActionSortOrder}
+                        onChange={(event) =>
+                          setLensActionSortOrders((current) => ({
+                            ...current,
+                            [targetKey]: event.target.value,
+                          }))
+                        }
+                        className={`rounded-md border px-2.5 py-1.5 text-xs font-semibold ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-700'}`}
+                      >
+                        <option value="default">Sort: open first, by due date</option>
+                        <option value="completed-first">Sort: Completed to Planned</option>
+                        <option value="planned-first">Sort: Planned to Completed</option>
+                      </select>
                       <select
                         aria-label={`Filter ${lens} actions by type`}
                         value={lensActionTypeFilter}
@@ -2371,6 +2434,8 @@ export function AssessmentPanel({
                           </option>
                         ))}
                       </select>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2">
                       {teamMembers.length > 0 && levelActions.length > 0 ? (
                         <div className="flex items-center gap-1">
                           <select
@@ -2384,7 +2449,7 @@ export function AssessmentPanel({
                             }
                             className={`rounded-md border px-2.5 py-1.5 text-xs font-semibold ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-slate-300 bg-white text-slate-700'}`}
                           >
-                            <option value="">Assign all to…</option>
+                            <option value="">Assign to…</option>
                             {teamMembers.map((member) => (
                               <option key={member.id} value={member.name}>
                                 {member.name}
@@ -2395,10 +2460,10 @@ export function AssessmentPanel({
                             type="button"
                             disabled={!bulkOwner}
                             onClick={() => requestBulkAssign(levelActions, bulkOwner, levelLabel)}
-                            aria-label={`Assign all ${levelLabel} ${lens} actions`}
+                            aria-label={`Assign to all ${levelLabel} ${lens} actions`}
                             className={`rounded-md border px-2.5 py-1.5 text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-50 ${darkMode ? 'border-slate-600 bg-slate-900 text-slate-100 hover:bg-slate-800' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'}`}
                           >
-                            Assign all ({levelActions.length})
+                            Assign to all actions ({levelActions.length})
                           </button>
                         </div>
                       ) : null}

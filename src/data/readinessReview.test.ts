@@ -423,7 +423,7 @@ describe('unscored, pathway and coverage handling', () => {
     const data = buildReportRadarData(report, COMPONENTS);
 
     expect(data.datasets[1].label).toBe('Automatic (Solution Design)');
-    expect(data.datasets[2].label).toBe('Manual target (Development)');
+    expect(data.datasets[2].label).toBe('Manual target (End of Development)');
     expect(data.datasets[1].data).toEqual(
       buildComponentRadarChartData(COMPONENTS, live, 2).datasets[1].data
     );

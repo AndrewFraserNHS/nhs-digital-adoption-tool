@@ -1,0 +1,70 @@
+{
+  "vision": {
+    "what": "Sets a clear direction for the change and helps people understand what you are trying to achieve.",
+    "good": "A clear, shared vision that is owned by leaders and understood by those affected."
+  },
+  "case_for_change": {
+    "what": "Explains why the change is needed, why it matters and the outcomes it should achieve.",
+    "good": "A compelling case that creates shared understanding of the need, urgency and expected outcomes."
+  },
+  "sponsorship": {
+    "what": "Provides the leadership, accountability and oversight needed to drive the change.",
+    "good": "Visible, active sponsors with clear accountability, effective governance and timely decision-making."
+  },
+  "change_network": {
+    "what": "Connects the change with the people and services affected and provides local insight and support.",
+    "good": "An active, representative network that engages people, gathers feedback and supports local adoption."
+  },
+  "benefits": {
+    "what": "Defines the improvements expected from the change and how they will be measured and sustained.",
+    "good": "Clear benefits with measures, baselines and owners, routinely tracked through delivery."
+  },
+  "change_impact": {
+    "what": "Identifies how the change will affect people, roles, processes, workload and services.",
+    "good": "Impacts are understood early, with actions in place to manage risks and opportunities."
+  },
+  "risk_management": {
+    "what": "Identifies and manages risks that could affect adoption, benefits or long-term sustainment.",
+    "good": "Change and adoption risks are actively identified, owned, monitored and addressed."
+  },
+  "cm_readiness": {
+    "what": "Establishes the current change position and the approach needed to support successful adoption.",
+    "good": "Baseline findings inform a clear, proportionate change plan aligned with delivery."
+  },
+  "stakeholder": {
+    "what": "Ensures people affected by the change are informed, involved and able to provide feedback.",
+    "good": "Inclusive, timely and two-way engagement tailored to different stakeholder needs."
+  },
+  "resistance": {
+    "what": "Identifies and addresses concerns and barriers that could make adoption more difficult.",
+    "good": "Concerns and barriers are actively understood, monitored and addressed through targeted action."
+  },
+  "skills_learning": {
+    "what": "Builds the knowledge, skills and behaviours people need to work effectively in the new way.",
+    "good": "Learning is tailored to need and leaves people prepared, capable and supported."
+  },
+  "capability": {
+    "what": "Assesses whether people feel able and supported to put the change into practice.",
+    "good": "People have the confidence, capability and support to apply new ways of working consistently."
+  },
+  "change_adoption": {
+    "what": "Assesses whether new ways of working and behaviours are actually being used in practice.",
+    "good": "Adoption is measured, gaps are addressed and new ways of working are used consistently."
+  },
+  "process_change": {
+    "what": "Focuses on whether changed processes are understood, applied and embedded in everyday work.",
+    "good": "The new process is consistently followed and supported by the required skills and behaviours."
+  },
+  "reinforcement": {
+    "what": "Provides ongoing support, feedback and oversight to help the change stick.",
+    "good": "New behaviours and processes are recognised, monitored, reinforced and continually improved."
+  },
+  "org_maturity": {
+    "what": "Considers the organisation’s wider capability and capacity to lead, learn from and sustain change.",
+    "good": "Leaders and teams use consistent, repeatable approaches to lead, learn from and embed change."
+  },
+  "transfer_bau": {
+    "what": "Moves ownership of the change from the project into routine operational management.",
+    "good": "Clear operational ownership is established and the change is embedded into everyday governance and delivery."
+  }
+}

@@ -1,4 +1,5 @@
 import { ReadinessOutcomeModal } from '@components/common/ReadinessOutcomeModal';
+import { COMPONENT_GUIDANCE } from '@data/componentGuidance';
 import type { AssessmentComponent } from '@data/components';
 import type { CstPathwayKey } from '@data/cst';
 import {
@@ -128,10 +129,11 @@ export default function ChangeAdoptionBaselineReviewApp({
   const [page, setPage] = useState<1 | 2>(1);
   const [outcome, setOutcome] = useState<ReadinessOutcome | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [showComponentInfo, setShowComponentInfo] = useState(false);
   const [outcomeHandled, setOutcomeHandled] = useState(() =>
     Boolean(
       load<PreparednessState>(STORAGE_KEY)?.completed &&
-        load<ReadinessReviewReport>(READINESS_REVIEW_REPORT_STORAGE_KEY)?.answers.length
+      load<ReadinessReviewReport>(READINESS_REVIEW_REPORT_STORAGE_KEY)?.answers.length
     )
   );
   const [missingLenses, setMissingLenses] = useState<MissingLens[]>([]);
@@ -186,7 +188,9 @@ export default function ChangeAdoptionBaselineReviewApp({
         rollback.forEach((item) => {
           const liveEntry = getEntry(item.componentId, item.lens);
           const restoredActions = item.entry.actions.map((savedAction) => {
-            const matchingLive = liveEntry.actions.find((liveAction) => liveAction.id === savedAction.id);
+            const matchingLive = liveEntry.actions.find(
+              (liveAction) => liveAction.id === savedAction.id
+            );
             return matchingLive
               ? { ...savedAction, linkedTargets: matchingLive.linkedTargets }
               : savedAction;
@@ -216,6 +220,9 @@ export default function ChangeAdoptionBaselineReviewApp({
   const isLastQuestion = currentIndex === QUESTIONS.length - 1;
   const currentAnswer = currentQuestion ? state.answers[currentQuestion.nu] : undefined;
   const currentIsText = currentQuestion?.kind === 'text';
+  const componentGuidance = currentQuestion?.id
+    ? COMPONENT_GUIDANCE[currentQuestion.id]
+    : undefined;
   const chosenPathway = pathwayFromAnswer(
     state.answers[QUESTIONS.find((question) => question.kind === 'pathway')?.nu ?? -1]
   );
@@ -611,7 +618,22 @@ export default function ChangeAdoptionBaselineReviewApp({
                     <p className="text-xs font-semibold uppercase tracking-wide text-blue-600 break-words">
                       {currentQuestion.label ? (
                         <>
-                          <span className="text-blue-400">Component:</span> {currentQuestion.label}
+                          <span className="text-blue-400">Component:</span>{' '}
+                          {componentGuidance ? (
+                            <button
+                              type="button"
+                              aria-expanded={showComponentInfo}
+                              aria-controls="cab-component-info"
+                              title={componentGuidance.what}
+                              onClick={() => setShowComponentInfo((open) => !open)}
+                              className="font-semibold uppercase underline decoration-dotted underline-offset-2 hover:text-[#003087] focus:outline-none focus-visible:ring-4 focus-visible:ring-[#ffeb3b]"
+                            >
+                              {currentQuestion.label}
+                              <span aria-hidden="true"> ⓘ</span>
+                            </button>
+                          ) : (
+                            currentQuestion.label
+                          )}
                         </>
                       ) : null}
                       {currentQuestion.label && currentQuestion.lens ? ' - ' : null}
@@ -621,6 +643,23 @@ export default function ChangeAdoptionBaselineReviewApp({
                         </>
                       ) : null}
                     </p>
+                    {componentGuidance && showComponentInfo ? (
+                      <div
+                        id="cab-component-info"
+                        className="mt-3 rounded-md border border-blue-200 bg-white p-3 text-left text-sm text-slate-700"
+                      >
+                        <p>
+                          <span className="font-semibold text-slate-900">
+                            What it is and why it matters:{' '}
+                          </span>
+                          {componentGuidance.what}
+                        </p>
+                        <p className="mt-2">
+                          <span className="font-semibold text-slate-900">Good looks like: </span>
+                          {componentGuidance.good}
+                        </p>
+                      </div>
+                    ) : null}
                     <p className="mt-3 text-base font-medium text-slate-800 break-words">
                       {currentQuestion.question}
                     </p>

@@ -184,6 +184,10 @@ export interface ComponentPeriodStats {
   target: number;
   avgScore: number;
   rag: CompareRag;
+  /** Score per lens, so a movement can be explained lens by lens. */
+  lenses: { lens: string; score: number }[];
+  /** Action progress for this component across all its lenses. */
+  actions: { total: number; completed: number; inProgress: number; overdue: number };
 }
 
 export interface OverdueAction {
@@ -238,13 +242,20 @@ export function analysePeriod(draft: Draft, asOf: Date): PeriodStats {
 
   ASSESSMENT_COMPONENTS.forEach((component) => {
     let total = 0;
+    const lensScores: { lens: string; score: number }[] = [];
+    const actionProgress = { total: 0, completed: 0, inProgress: 0, overdue: 0 };
     component.lenses.forEach((lens) => {
       const entry = draft[component.id]?.[lens];
       total += Number(entry?.score || 0);
+      lensScores.push({ lens, score: Number(entry?.score || 0) });
       (entry?.actions || []).forEach((action) => {
         stats.totalActions += 1;
+        actionProgress.total += 1;
         if (isCompletedActionStatus(action.status)) {
           stats.completedActions += 1;
+          actionProgress.completed += 1;
+        } else if (normalizeActionStatus(action.status) === 'In Progress') {
+          actionProgress.inProgress += 1;
         }
         if (action.startDate && !Number.isNaN(Date.parse(action.startDate))) {
           stats.actionsWithStart += 1;
@@ -261,6 +272,7 @@ export function analysePeriod(draft: Draft, asOf: Date): PeriodStats {
           asOf
         );
         if (temporal === 'Overdue completion') {
+          actionProgress.overdue += 1;
           stats.overdueCompletion += 1;
           stats.overdueActions.push({
             componentLabel: component.label,
@@ -286,6 +298,8 @@ export function analysePeriod(draft: Draft, asOf: Date): PeriodStats {
       target: component.target,
       avgScore,
       rag,
+      lenses: lensScores,
+      actions: actionProgress,
     });
   });
 
@@ -306,6 +320,10 @@ export interface ComponentMovement {
   movement: Movement;
   fromRag: CompareRag;
   toRag: CompareRag;
+  fromLenses: { lens: string; score: number }[];
+  toLenses: { lens: string; score: number }[];
+  fromActions: ComponentPeriodStats['actions'];
+  toActions: ComponentPeriodStats['actions'];
 }
 
 export function compareComponents(from: PeriodStats, to: PeriodStats): ComponentMovement[] {
@@ -323,6 +341,10 @@ export function compareComponents(from: PeriodStats, to: PeriodStats): Component
       movement: delta > 0 ? 'increase' : delta < 0 ? 'decrease' : 'unchanged',
       fromRag: fromComponent.rag,
       toRag: toComponent.rag,
+      fromLenses: fromComponent.lenses,
+      toLenses: toComponent.lenses,
+      fromActions: fromComponent.actions,
+      toActions: toComponent.actions,
     };
   });
 }

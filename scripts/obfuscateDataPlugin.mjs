@@ -16,6 +16,7 @@ const KEY = 'nda-6f1c';
 const TARGET_DIRS = ['/src/data/component-actions/', '/src/data/component-descriptors/'];
 const TARGET_FILES = [
   '/src/data/preparedness-assessment.json',
+  '/src/data/component-guidance.json',
   '/src/data/maturity-guidance-links.json',
   '/src/data/pathwayAnalysis.txt',
 ];

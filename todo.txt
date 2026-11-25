@@ -1,0 +1,6 @@
+Can there be a ‘bulk assign’ everything button on a component lens for a specific level, especially if there is only 1 person in team members. 
+
+Re the theirs and mine updates feature, can we put a date and time stamp on so we know which one is the most up to date 
+
+Assess and Compare tool: Need an overhaul, this is still using numeric scores instead of RAG, has been deprecated in app only accessible via home screen and generally can do a better comparison with charts and graphs.
+In addition can we have Can we have categories: Baseline, Previous, Current and increase/decrease.  Start date / end dates, over due actions. 

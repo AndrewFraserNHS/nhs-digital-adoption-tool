@@ -18,9 +18,9 @@ export const TOOLKIT_OPTIONS: ToolkitOption[] = [
   },
   {
     key: 'avt-v2-2026',
-    label: 'AVT Digital Adoption Toolkit (V2.1, Jul 2026)',
-    filename: 'AVT Digital Adoption Toolkit - V2.1 July 2026.pdf',
-    path: toAppAssetUrl('/AVT%20Digital%20Adoption%20Toolkit%20-%20V2.1%20July%202026.pdf'),
+    label: 'AVT Digital Adoption Toolkit (V2.2, Nov 2026)',
+    filename: 'AVT Digital Adoption Toolkit - V2.2 Nov 2026.pdf',
+    path: toAppAssetUrl('/AVT%20Digital%20Adoption%20Toolkit%20-%20V2.2%20Nov%202026.pdf'),
   },
 ];
 

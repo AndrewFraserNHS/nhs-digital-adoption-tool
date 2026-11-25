@@ -1,33 +1,699 @@
 {
   "_help": [
-    "Add actions for any component, offline, then send this file back to be loaded with 'Add actions from a JSON file' on the Assessment page.",
-    "Copy a row for each action. Only component, lens and action are required.",
-    "component: the id (benefits, benefit_realisation, vision, ...) or the full component name.",
-    "lens: must be one of that component's lenses (listed below), spelled as shown.",
-    "action: the action text. A leading 'M ' (must) or 'S ' (should) sets the priority.",
-    "status: Planned, In Progress, Blocked, Completed, Cancelled or Skipped (default Planned).",
-    "owner: a name (optional). startDate / dueDate: yyyy-mm-dd (optional).",
-    "Existing actions are never changed or removed, and an action already in that lens is skipped.",
-    "Lenses - benefits and benefit_realisation: Planning and Risk, Process and Sustainment."
+    "Add actions for Benefit Management (benefits) and Benefit Realisation (benefit_realisation), offline, then load this file with 'Add actions from a JSON file' on the Assessment page.",
+    "Put each NEW action as a row in the 'actions' list (copy the examples). Only component, lens and action are required.",
+    "component: benefits or benefit_realisation. lens: Planning and Risk, or Process and Sustainment.",
+    "action: the text. Start with 'M ' (must) or 'S ' (should) to set the priority.",
+    "status: Planned, In Progress, Blocked, Completed, Cancelled or Skipped (default Planned). owner: a name. startDate / dueDate: yyyy-mm-dd. All optional.",
+    "Existing actions are never changed, and an action already in that lens is skipped.",
+    "'existing' lists what the app already has for each pathway, for reference only so you do not repeat it. It is ignored on import. Benefit Realisation has no Not Started to Embedding actions yet, so that is the best place to add."
   ],
   "actions": [
     {
       "component": "benefits",
       "lens": "Planning and Risk",
-      "action": "M Agree a baseline measure for each benefit with its owner.",
+      "action": "M ",
       "owner": "",
       "status": "Planned",
       "startDate": "",
-      "dueDate": "2026-12-31"
+      "dueDate": ""
     },
     {
       "component": "benefit_realisation",
       "lens": "Process and Sustainment",
-      "action": "S Review benefit delivery against baseline at each programme board.",
+      "action": "S ",
       "owner": "",
       "status": "Planned",
       "startDate": "",
       "dueDate": ""
     }
-  ]
+  ],
+  "existing": {
+    "pathway-1": {
+      "benefits": [
+        {
+          "lens": "Planning and Risk",
+          "from": "Not Started",
+          "to": "Emerging",
+          "action": "S Recognise the importance of benefits realisation as part of successful change delivery."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Not Started",
+          "to": "Emerging",
+          "action": "S Begin discussions with sponsors and leaders about the expected value of the change."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Not Started",
+          "to": "Emerging",
+          "action": "M Engage key stakeholders to explore potential organisational and stakeholder benefits."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Not Started",
+          "to": "Emerging",
+          "action": "M Capture initial ideas regarding expected benefits and possible disbenefits."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Not Started",
+          "to": "Emerging",
+          "action": "M Identify stakeholder groups likely to experience benefits from the change."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Not Started",
+          "to": "Emerging",
+          "action": "M Gain initial leadership support for benefits identification and management activities."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Not Started",
+          "to": "Emerging",
+          "action": "S Review available evidence that may indicate potential benefits."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Not Started",
+          "to": "Emerging",
+          "action": "S Begin raising awareness that benefits will need to be defined, measured and realised."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Emerging",
+          "to": "Developing",
+          "action": "S Facilitate structured benefits workshops with sponsors, leaders and subject matter experts."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Emerging",
+          "to": "Developing",
+          "action": "M Document and categorise expected organisational, operational, financial and user benefits."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Emerging",
+          "to": "Developing",
+          "action": "M Document likely disbenefits and trade-offs associated with the change."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Emerging",
+          "to": "Developing",
+          "action": "M Develop measurable benefit statements and draft success criteria for priority benefits."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Emerging",
+          "to": "Developing",
+          "action": "M Identify proposed benefit owners and establish accountability for benefit realisation."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Emerging",
+          "to": "Developing",
+          "action": "M Develop stakeholder-specific ‘What’s in it for me?’ (WIIFM) benefit statements."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Emerging",
+          "to": "Developing",
+          "action": "S Validate with stakeholders which benefits are most important and meaningful to them."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Emerging",
+          "to": "Developing",
+          "action": "S Review and validate draft benefits with stakeholders and sponsors."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Emerging",
+          "to": "Developing",
+          "action": "S Assess differences in expected value across stakeholder groups and business areas."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Emerging",
+          "to": "Developing",
+          "action": "S Refine benefit definitions, ownership and measures using stakeholder feedback."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Developing",
+          "to": "Embedding",
+          "action": "M Obtain approval and baseline the benefits realisation approach."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Developing",
+          "to": "Embedding",
+          "action": "M Define measures, KPIs and reporting arrangements for each benefit and record this in the benefits register."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Developing",
+          "to": "Embedding",
+          "action": "M Establish baseline measures against which benefits can be assessed and include in the business case."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Developing",
+          "to": "Embedding",
+          "action": "M Develop a benefits realisation plan including ownership, timelines and reporting."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Developing",
+          "to": "Embedding",
+          "action": "M Integrate benefits tracking into governance and programme reporting."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Developing",
+          "to": "Embedding",
+          "action": "M Use stakeholder-facing benefit messages (WIIFM benefits) to build support and momentum."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Developing",
+          "to": "Embedding",
+          "action": "S Communicate expected benefits and success measures to stakeholders."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Developing",
+          "to": "Embedding",
+          "action": "S Gather stakeholder feedback on benefit assumptions and expectations."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Developing",
+          "to": "Embedding",
+          "action": "S Validate that benefit measures are meaningful and understood by stakeholders."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Developing",
+          "to": "Embedding",
+          "action": "S Monitor stakeholder confidence in the expected benefits."
+        }
+      ],
+      "benefit_realisation": [
+        {
+          "lens": "Planning and Risk",
+          "from": "Embedding",
+          "to": "Adopted",
+          "action": "M Track benefit performance against agreed KPI's, measures and targets."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Embedding",
+          "to": "Adopted",
+          "action": "S Review realised, unrealised and unexpected benefits through governance forums."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Embedding",
+          "to": "Adopted",
+          "action": "M Identify risks to benefits realisation and agree mitigation actions."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Embedding",
+          "to": "Adopted",
+          "action": "M Assess whether expected benefits are being achieved and if not, why."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Embedding",
+          "to": "Adopted",
+          "action": "S Manage dependencies that affect benefit realisation (RAID log)."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Embedding",
+          "to": "Adopted",
+          "action": "S Share evidence of realised benefits and unintentional consequences with stakeholders."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Embedding",
+          "to": "Adopted",
+          "action": "S Use stakeholder insight to understand barriers to achieving benefits."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Embedding",
+          "to": "Adopted",
+          "action": "S Monitor stakeholder perceptions of realised benefits and improvement."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Embedding",
+          "to": "Adopted",
+          "action": "M Use WIIFM benefit stories and examples to reinforce adoption."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Embedding",
+          "to": "Adopted",
+          "action": "S Recognise teams and individuals contributing to benefit realisation."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Adopted",
+          "to": "Thriving",
+          "action": "M Continuously monitor long-term benefit realisation."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Adopted",
+          "to": "Thriving",
+          "action": "S Embed benefits management into normal business and adoption management processes."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Adopted",
+          "to": "Thriving",
+          "action": "S Refine benefit measures and approaches using organisational learning."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Adopted",
+          "to": "Thriving",
+          "action": "S Use benefit evidence to inform future investment and change decisions."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Adopted",
+          "to": "Thriving",
+          "action": "S Maintain management of long-term dependencies affecting realised benefits."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Adopted",
+          "to": "Thriving",
+          "action": "M Promote a culture of continuous benefits realisation and adoption."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Adopted",
+          "to": "Thriving",
+          "action": "S Regularly communicate realised benefits and improvement outcomes."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Adopted",
+          "to": "Thriving",
+          "action": "S Use stakeholder feedback to identify opportunities for further benefits realisation."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Adopted",
+          "to": "Thriving",
+          "action": "S Measure ongoing stakeholder perception of benefit delivered by the change."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Adopted",
+          "to": "Thriving",
+          "action": "S Use success stories and achievements to sustain belief in the value of the change."
+        }
+      ]
+    },
+    "pathway-2": {
+      "benefits": [
+        {
+          "lens": "Process and Sustainment",
+          "from": "Not Started",
+          "to": "Emerging",
+          "action": "S Review benefits and disbenefits achieved during the pilot against original measures and baselines."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Not Started",
+          "to": "Emerging",
+          "action": "S Identify which benefits can realistically be repeated in other services."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Not Started",
+          "to": "Emerging",
+          "action": "S Confirm the process and behaviour changes required to realise each benefit."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Emerging",
+          "to": "Developing",
+          "action": "S Update benefit measures using pilot evidence and service-level learning."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Emerging",
+          "to": "Developing",
+          "action": "S Define consistent measures and acceptable local variations for rollout areas."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Emerging",
+          "to": "Developing",
+          "action": "S Agree benefit owners and baselines before each service starts rollout."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Developing",
+          "to": "Embedding",
+          "action": "S Track benefits from the start of each rollout wave."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Developing",
+          "to": "Embedding",
+          "action": "S Check that required process changes are being applied in practice."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Developing",
+          "to": "Embedding",
+          "action": "S Provide support where adoption is not translating into expected benefits."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Not Started",
+          "to": "Emerging",
+          "action": "S Review the pilot benefits plan, assumptions, dependencies and risks."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Not Started",
+          "to": "Emerging",
+          "action": "S Identify benefits requiring new baselines or owners for wider rollout."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Not Started",
+          "to": "Emerging",
+          "action": "S Confirm balancing measures to detect displaced workload or unintended effects."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Emerging",
+          "to": "Developing",
+          "action": "S Update the benefits plan for each rollout wave and service."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Emerging",
+          "to": "Developing",
+          "action": "S Assign owners, measures, baselines, dependencies and review dates."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Emerging",
+          "to": "Developing",
+          "action": "S Agree how benefits evidence will inform rollout and investment decisions."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Developing",
+          "to": "Embedding",
+          "action": "S Collect benefit data and report progress through governance."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Developing",
+          "to": "Embedding",
+          "action": "S Manage dependencies and risks that could delay or reduce benefits."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Developing",
+          "to": "Embedding",
+          "action": "S Escalate gaps in data quality, ownership or delivery action."
+        }
+      ],
+      "benefit_realisation": [
+        {
+          "lens": "Process and Sustainment",
+          "from": "Embedding",
+          "to": "Adopted",
+          "action": "S Compare benefit performance across services, roles and rollout waves."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Embedding",
+          "to": "Adopted",
+          "action": "S Investigate where benefits are lower or different from expectations."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Embedding",
+          "to": "Adopted",
+          "action": "S Share effective practices that have improved benefit realisation."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Adopted",
+          "to": "Thriving",
+          "action": "S Embed benefits monitoring within routine operational performance management."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Adopted",
+          "to": "Thriving",
+          "action": "S Use benefits evidence to prioritise further improvement activity."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Adopted",
+          "to": "Thriving",
+          "action": "S Review measures regularly to ensure sustained value is still being captured."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Embedding",
+          "to": "Adopted",
+          "action": "S Review benefits against targets and approved assumptions."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Embedding",
+          "to": "Adopted",
+          "action": "S Agree recovery actions where benefits are off track."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Embedding",
+          "to": "Adopted",
+          "action": "S Use evidence to adjust sequencing, support or future rollout scope."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Adopted",
+          "to": "Thriving",
+          "action": "S Transfer benefit ownership and reporting into business as usual."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Adopted",
+          "to": "Thriving",
+          "action": "S Anticipate and manage risks to sustained benefits."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Adopted",
+          "to": "Thriving",
+          "action": "S Use long-term benefit trends to guide optimisation and future investment."
+        }
+      ]
+    },
+    "pathway-3": {
+      "benefits": [
+        {
+          "lens": "Process and Sustainment",
+          "from": "Not Started",
+          "to": "Emerging",
+          "action": "S Review benefits achieved since live use against original measures and baselines."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Not Started",
+          "to": "Emerging",
+          "action": "S Identify which benefits are not being realised because adoption is low or inconsistent."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Not Started",
+          "to": "Emerging",
+          "action": "S Confirm the process and behaviour changes required to realise each benefit."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Emerging",
+          "to": "Developing",
+          "action": "S Update benefit measures using live usage data and user feedback and service-level learning."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Emerging",
+          "to": "Developing",
+          "action": "S Define consistent measures and acceptable local variations for live services and teams."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Emerging",
+          "to": "Developing",
+          "action": "S Agree benefit owners and baselines before targeted recovery begins in each service."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Developing",
+          "to": "Embedding",
+          "action": "S Track benefits from the start of each targeted recovery activity."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Developing",
+          "to": "Embedding",
+          "action": "S Check that required process changes are being applied in practice."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Developing",
+          "to": "Embedding",
+          "action": "S Provide support where adoption is not translating into expected benefits."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Not Started",
+          "to": "Emerging",
+          "action": "S Review the current benefits plan, assumptions, dependencies and risks."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Not Started",
+          "to": "Emerging",
+          "action": "S Identify benefits requiring new baselines or owners for adoption recovery across live services."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Not Started",
+          "to": "Emerging",
+          "action": "S Confirm balancing measures to detect displaced workload or unintended effects."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Emerging",
+          "to": "Developing",
+          "action": "S Update the benefits plan for each targeted recovery activity and service."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Emerging",
+          "to": "Developing",
+          "action": "S Assign owners, measures, baselines, dependencies and review dates."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Emerging",
+          "to": "Developing",
+          "action": "S Agree how benefits evidence will inform rollout and investment decisions."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Developing",
+          "to": "Embedding",
+          "action": "S Collect benefit data and report progress through governance."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Developing",
+          "to": "Embedding",
+          "action": "S Manage dependencies and risks that could delay or reduce benefits."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Developing",
+          "to": "Embedding",
+          "action": "S Escalate gaps in data quality, ownership or delivery action."
+        }
+      ],
+      "benefit_realisation": [
+        {
+          "lens": "Process and Sustainment",
+          "from": "Embedding",
+          "to": "Adopted",
+          "action": "S Compare benefit performance across services, roles and targeted recovery activities."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Embedding",
+          "to": "Adopted",
+          "action": "S Investigate where benefits are lower or different from expectations."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Embedding",
+          "to": "Adopted",
+          "action": "S Share effective practices that have improved benefit realisation."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Adopted",
+          "to": "Thriving",
+          "action": "S Embed benefits monitoring within routine operational performance management."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Adopted",
+          "to": "Thriving",
+          "action": "S Use benefits evidence to prioritise further improvement activity."
+        },
+        {
+          "lens": "Process and Sustainment",
+          "from": "Adopted",
+          "to": "Thriving",
+          "action": "S Review measures regularly to ensure sustained value is still being captured."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Embedding",
+          "to": "Adopted",
+          "action": "S Review benefits against targets and approved assumptions."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Embedding",
+          "to": "Adopted",
+          "action": "S Agree recovery actions where benefits are off track."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Embedding",
+          "to": "Adopted",
+          "action": "S Use evidence to adjust sequencing, support or future recovery priorities."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Adopted",
+          "to": "Thriving",
+          "action": "S Transfer benefit ownership and reporting into business as usual."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Adopted",
+          "to": "Thriving",
+          "action": "S Anticipate and manage risks to sustained benefits."
+        },
+        {
+          "lens": "Planning and Risk",
+          "from": "Adopted",
+          "to": "Thriving",
+          "action": "S Use long-term benefit trends to guide optimisation and future investment."
+        }
+      ]
+    }
+  }
 }
